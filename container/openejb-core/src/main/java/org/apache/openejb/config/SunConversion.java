@@ -16,30 +16,20 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
-
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.PersistenceType;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.PortComponentRef;
-import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.PortComponentRef;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.jpa.AttributeOverride;
 import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.Column;
@@ -57,10 +47,9 @@ import org.apache.openejb.jee.jpa.PrimaryKeyJoinColumn;
 import org.apache.openejb.jee.jpa.RelationField;
 import org.apache.openejb.jee.jpa.SecondaryTable;
 import org.apache.openejb.jee.jpa.Table;
-import org.apache.openejb.jee.jpa.AttributeOverride;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.sun.Cmp;
 import org.apache.openejb.jee.sun.CmpFieldMapping;
@@ -68,21 +57,35 @@ import org.apache.openejb.jee.sun.CmrFieldMapping;
 import org.apache.openejb.jee.sun.ColumnName;
 import org.apache.openejb.jee.sun.ColumnPair;
 import org.apache.openejb.jee.sun.Ejb;
+import org.apache.openejb.jee.sun.EjbRef;
 import org.apache.openejb.jee.sun.EntityMapping;
 import org.apache.openejb.jee.sun.Finder;
 import org.apache.openejb.jee.sun.JaxbSun;
+import org.apache.openejb.jee.sun.MessageDestinationRef;
 import org.apache.openejb.jee.sun.OneOneFinders;
+import org.apache.openejb.jee.sun.PortInfo;
+import org.apache.openejb.jee.sun.ResourceEnvRef;
+import org.apache.openejb.jee.sun.ResourceRef;
+import org.apache.openejb.jee.sun.StubProperty;
+import org.apache.openejb.jee.sun.SunApplicationClient;
 import org.apache.openejb.jee.sun.SunCmpMapping;
 import org.apache.openejb.jee.sun.SunCmpMappings;
 import org.apache.openejb.jee.sun.SunEjbJar;
-import org.apache.openejb.jee.sun.EjbRef;
-import org.apache.openejb.jee.sun.SunApplicationClient;
-import org.apache.openejb.jee.sun.ResourceEnvRef;
-import org.apache.openejb.jee.sun.MessageDestinationRef;
-import org.apache.openejb.jee.sun.ResourceRef;
 import org.apache.openejb.jee.sun.SunWebApp;
-import org.apache.openejb.jee.sun.PortInfo;
-import org.apache.openejb.jee.sun.StubProperty;
+import org.apache.openejb.jee.sun.WebserviceEndpoint;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 //
 // Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
@@ -461,6 +464,7 @@ public class SunConversion implements DynamicDeployer {
         if (sunEjbJar == null) return;
         if (sunEjbJar.getEnterpriseBeans() == null) return;
 
+        Map<String,Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String,Map<String, WebserviceEndpoint>>();
         for (Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
             EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
             if (deployment == null) {
@@ -570,19 +574,36 @@ public class SunConversion implements DynamicDeployer {
                 deployment.setContainerId(resourceAdapterId);
             }
 
+            endpointMap.put(ejb.getEjbName(), ejb.getWebserviceEndpointMap());
+        }
 
-            // map wsdl locations
-            if (ejbModule.getWebservices() != null) {
-                Map<String, WebserviceDescription> descriptions = ejbModule.getWebservices().getWebserviceDescriptionMap();
-                for (org.apache.openejb.jee.sun.WebserviceDescription sunDescription : sunEjbJar.getEnterpriseBeans().getWebserviceDescription()) {
-                    WebserviceDescription description = descriptions.get(sunDescription.getWebserviceDescriptionName());
-                    if (description == null) continue;
+        // map wsdl locations
+        if (ejbModule.getWebservices() != null) {
+            Map<String, org.apache.openejb.jee.sun.WebserviceDescription> sunDescriptions = sunEjbJar.getEnterpriseBeans().getWebserviceDescriptionMap();
+            for (WebserviceDescription description : ejbModule.getWebservices().getWebserviceDescription()) {
+                org.apache.openejb.jee.sun.WebserviceDescription sunDescription = sunDescriptions.get(description.getWebserviceDescriptionName());
 
-                    String portId = extractPortId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                // get the portId if specified
+                String portId = null;
+                if (sunDescription != null) {
+                    portId = extractPortId(sunDescription.getWsdlPublishLocation(), description.getWsdlFile());
+                }
+
+                for (PortComponent port : description.getPortComponent()) {
+                    // set the portId
                     if (portId != null) {
-                        for (PortComponent portComponent : description.getPortComponent()) {
-                            // this could be a problem multiple port components used at runtime
-                            portComponent.setId(portId);
+                        port.setId(portId);
+                    }
+
+                    // set the bind location
+                    ServiceImplBean bean = port.getServiceImplBean();
+                    if (bean != null && bean.getEjbLink() != null) {
+                        Map<String, WebserviceEndpoint> endpoints = endpointMap.get(bean.getEjbLink());
+                        if (endpoints != null) {
+                            WebserviceEndpoint endpoint = endpoints.get(port.getPortComponentName());
+                            if (endpoint != null && endpoint.getEndpointAddressUri() != null) {
+                                port.setLocation(endpoint.getEndpointAddressUri());
+                            }
                         }
                     }
                 }

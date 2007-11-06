@@ -16,12 +16,16 @@
  */
 package org.apache.openejb.jee.sun;
 
+import org.apache.openejb.jee.KeyedCollection;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -45,7 +49,7 @@ public class EnterpriseBeans {
     @XmlElement(name = "message-destination")
     protected List<MessageDestination> messageDestination;
     @XmlElement(name = "webservice-description")
-    protected List<WebserviceDescription> webserviceDescription;
+    protected KeyedCollection<String, WebserviceDescription> webserviceDescription;
 
     public String getName() {
         return name;
@@ -93,10 +97,17 @@ public class EnterpriseBeans {
         return this.messageDestination;
     }
 
-    public List<WebserviceDescription> getWebserviceDescription() {
+    public Collection<WebserviceDescription> getWebserviceDescription() {
         if (webserviceDescription == null) {
-            webserviceDescription = new ArrayList<WebserviceDescription>();
+            webserviceDescription = new KeyedCollection<String,WebserviceDescription>();
         }
         return this.webserviceDescription;
+    }
+
+    public Map<String,WebserviceDescription> getWebserviceDescriptionMap() {
+        if (webserviceDescription == null) {
+            webserviceDescription = new KeyedCollection<String,WebserviceDescription>();
+        }
+        return this.webserviceDescription.toMap();
     }
 }

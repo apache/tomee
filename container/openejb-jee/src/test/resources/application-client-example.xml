@@ -42,7 +42,7 @@
         <service-ref-type>token</service-ref-type>
         <wsdl-file>http://www.altova.com</wsdl-file>
         <jaxrpc-mapping-file>token</jaxrpc-mapping-file>
-        <service-qname>q:name</service-qname>
+        <service-qname xmlns:q="http://examples.org/wsdl">q:name</service-qname>
         <port-component-ref>
             <service-endpoint-interface>token</service-endpoint-interface>
             <enable-mtom>true</enable-mtom>

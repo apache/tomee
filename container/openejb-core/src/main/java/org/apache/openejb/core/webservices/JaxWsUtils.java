@@ -196,7 +196,7 @@ public class JaxWsUtils {
 
         WebServiceProvider webServiceProvider = clazz.getAnnotation(WebServiceProvider.class);
         if (webServiceProvider != null) {
-            return clazz.getSimpleName();
+            return clazz.getName();
         }
 
         throw new IllegalArgumentException("The " + clazz.getName() + " is not annotated");

@@ -35,15 +35,19 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.xml.namespace.QName;
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.extensions.http.HTTPAddress;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class WsDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, WsDeployer.class.getPackage().getName());
@@ -165,6 +169,7 @@ public class WsDeployer implements DynamicDeployer {
                     if (portComponent == null) {
                         // create port
                         portComponent = new PortComponent();
+                        portComponent.setPortComponentName(JaxWsUtils.getName(clazz));
                         ServiceImplBean serviceImplBean = new ServiceImplBean();
                         serviceImplBean.setServletLink(className);
                         portComponent.setServiceImplBean(serviceImplBean);
@@ -190,9 +195,6 @@ public class WsDeployer implements DynamicDeployer {
                     // set port values from annotations if not already set
                     if (portComponent.getServiceEndpointInterface() == null) {
                         portComponent.setServiceEndpointInterface(JaxWsUtils.getServiceInterface(clazz));
-                    }
-                    if (portComponent.getPortComponentName() == null) {
-                        portComponent.setPortComponentName(JaxWsUtils.getName(clazz));
                     }
                     if (portComponent.getWsdlPort() == null) {
                         portComponent.setWsdlPort(JaxWsUtils.getPortQName(clazz));
@@ -225,9 +227,25 @@ public class WsDeployer implements DynamicDeployer {
             }
         }
 
+        URL baseURL = null;
+        try {
+            File file = new File(ejbModule.getJarLocation());
+            if (file.exists()) {
+                baseURL = file.toURL();
+                if (file.isFile()) {
+                    baseURL = new URL("jar", null, baseURL.toExternalForm() + "!/");
+                }
+            } else {
+                baseURL = new URL(ejbModule.getJarLocation());
+            }
+        } catch (MalformedURLException e) {
+            logger.error("Invalid module location " + ejbModule.getJarLocation());
+        }
+
         Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
         WebserviceDescription webserviceDescription = null;
+        Definition definition = null;
         for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
             if (!(enterpriseBean instanceof SessionBean)) continue;
@@ -235,15 +253,19 @@ public class WsDeployer implements DynamicDeployer {
             if (sessionBean.getSessionType() != SessionType.STATELESS) continue;
             if (sessionBean.getServiceEndpoint() == null) continue;
 
+
             EjbDeployment deployment = deploymentsByEjbName.get(sessionBean.getEjbName());
             if (deployment == null) continue;
 
-            Class<?> ejbClass = null;
+            Class<?> ejbClass;
             try {
                 ejbClass = ejbModule.getClassLoader().loadClass(sessionBean.getEjbClass());
             } catch (ClassNotFoundException e) {
                 throw new OpenEJBException("Unable to load ejb class: " + sessionBean.getEjbClass(), e);
             }
+
+            // for now, skip all non jaxws beans
+            if (!JaxWsUtils.isWebService(ejbClass)) continue;
 
             // create webservices dd if not defined
             if (webservices == null) {
@@ -264,6 +286,7 @@ public class WsDeployer implements DynamicDeployer {
             PortComponent portComponent = portMap.get(sessionBean.getEjbName());
             if (portComponent == null) {
                 portComponent = new PortComponent();
+                portComponent.setPortComponentName(JaxWsUtils.getName(ejbClass));
                 webserviceDescription.getPortComponent().add(portComponent);
 
                 ServiceImplBean serviceImplBean = new ServiceImplBean();
@@ -283,9 +306,6 @@ public class WsDeployer implements DynamicDeployer {
 
             // default location is /@WebService.serviceName/@WebService.name
             if (JaxWsUtils.isWebService(ejbClass)) {
-                if (portComponent.getPortComponentName() == null) {
-                    portComponent.setPortComponentName(JaxWsUtils.getName(ejbClass));
-                }
                 if (portComponent.getWsdlPort() == null) {
                     portComponent.setWsdlPort(JaxWsUtils.getPortQName(ejbClass));
                 }
@@ -295,9 +315,47 @@ public class WsDeployer implements DynamicDeployer {
                 if (webserviceDescription.getWsdlFile() == null) {
                     webserviceDescription.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(ejbClass, ejbModule.getClassLoader()));
                 }
+                if (portComponent.getLocation() == null && webserviceDescription.getWsdlFile() != null && baseURL != null) {
+                    if (definition == null) {
+                        try {
+                            definition = ReadDescriptors.readWsdl(new URL(baseURL, webserviceDescription.getWsdlFile()));
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    // set location based on wsdl port
+                    String locationURI = getLocationFromWsdl(definition, portComponent);
+                    portComponent.setLocation(locationURI);
+                }
             } else {
                 // todo location JAX-RPC services comes from wsdl file
             }
         }
+    }
+
+    private String getLocationFromWsdl(Definition definition, PortComponent portComponent) {
+        if (definition == null) return null;
+
+        try {
+            javax.wsdl.Service service = definition.getService(portComponent.getWsdlService());
+            if (service == null) return null;
+
+            Port port = service.getPort(portComponent.getWsdlPort().getLocalPart());
+            if (port == null) return null;
+
+            for (Object element : port.getExtensibilityElements()) {
+                if (element instanceof SOAPAddress) {
+                    SOAPAddress soapAddress = (SOAPAddress) element;
+                    URI uri = new URI(soapAddress.getLocationURI());
+                    return uri.getPath();
+                } else if (element instanceof HTTPAddress) {
+                    HTTPAddress httpAddress = (HTTPAddress) element;
+                    URI uri = new URI(httpAddress.getLocationURI());
+                    return uri.getPath();
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 }

@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.jee.sun;
 
+import org.apache.openejb.jee.KeyedCollection;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -35,7 +37,7 @@ public class Servlet {
     @XmlElement(name = "principal-name")
     protected PrincipalName principalName;
     @XmlElement(name = "webservice-endpoint")
-    protected List<WebserviceEndpoint> webserviceEndpoint;
+    protected KeyedCollection<String,WebserviceEndpoint> webserviceEndpoint;
 
     public ServletName getServletName() {
         return servletName;
@@ -53,10 +55,17 @@ public class Servlet {
         this.principalName = value;
     }
 
-    public List<WebserviceEndpoint> getWebserviceEndpoint() {
+    public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new ArrayList<WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
         }
         return this.webserviceEndpoint;
+    }
+
+    public Map<String,WebserviceEndpoint> getWebserviceEndpointMap() {
+        if (webserviceEndpoint == null) {
+            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+        }
+        return this.webserviceEndpoint.toMap();
     }
 }

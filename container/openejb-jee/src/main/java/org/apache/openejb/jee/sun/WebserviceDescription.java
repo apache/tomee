@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee.sun;
 
+import org.apache.openejb.jee.Keyable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,11 +28,15 @@ import javax.xml.bind.annotation.XmlType;
     "webserviceDescriptionName",
     "wsdlPublishLocation"
 })
-public class WebserviceDescription {
+public class WebserviceDescription implements Keyable<String> {
     @XmlElement(name = "webservice-description-name", required = true)
     protected String webserviceDescriptionName;
     @XmlElement(name = "wsdl-publish-location")
     protected String wsdlPublishLocation;
+
+    public String getKey() {
+        return webserviceDescriptionName;
+    }
 
     public String getWebserviceDescriptionName() {
         return webserviceDescriptionName;

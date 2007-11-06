@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee.sun;
 
+import org.apache.openejb.jee.Keyable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,7 +37,7 @@ import java.util.List;
     "servletImplClass",
     "debuggingEnabled"
 })
-public class WebserviceEndpoint {
+public class WebserviceEndpoint implements Keyable<String> {
     @XmlElement(name = "port-component-name", required = true)
     protected String portComponentName;
     @XmlElement(name = "endpoint-address-uri")
@@ -55,6 +57,10 @@ public class WebserviceEndpoint {
     protected String servletImplClass;
     @XmlElement(name = "debugging-enabled")
     protected String debuggingEnabled;
+
+    public String getKey() {
+        return portComponentName;
+    }
 
     public String getPortComponentName() {
         return portComponentName;

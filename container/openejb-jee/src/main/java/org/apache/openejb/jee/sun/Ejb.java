@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee.sun;
 
+import org.apache.openejb.jee.KeyedCollection;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -105,7 +109,7 @@ public class Ejb {
     @XmlElement(name = "mdb-resource-adapter")
     protected MdbResourceAdapter mdbResourceAdapter;
     @XmlElement(name = "webservice-endpoint")
-    protected List<WebserviceEndpoint> webserviceEndpoint;
+    protected KeyedCollection<String,WebserviceEndpoint> webserviceEndpoint;
     @XmlElement(name = "flush-at-end-of-method")
     protected FlushAtEndOfMethod flushAtEndOfMethod;
     @XmlElement(name = "checkpointed-methods")
@@ -300,11 +304,18 @@ public class Ejb {
         this.mdbResourceAdapter = value;
     }
 
-    public List<WebserviceEndpoint> getWebserviceEndpoint() {
+    public Collection<WebserviceEndpoint> getWebserviceEndpoint() {
         if (webserviceEndpoint == null) {
-            webserviceEndpoint = new ArrayList<WebserviceEndpoint>();
+            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
         }
         return this.webserviceEndpoint;
+    }
+
+    public Map<String,WebserviceEndpoint> getWebserviceEndpointMap() {
+        if (webserviceEndpoint == null) {
+            webserviceEndpoint = new KeyedCollection<String,WebserviceEndpoint>();
+        }
+        return this.webserviceEndpoint.toMap();
     }
 
     public FlushAtEndOfMethod getFlushAtEndOfMethod() {
