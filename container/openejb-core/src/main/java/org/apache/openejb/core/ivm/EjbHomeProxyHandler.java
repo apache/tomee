@@ -226,7 +226,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     if (interfaceType.isLocal()) {
                         throw (AccessLocalException)new AccessLocalException(exc.getMessage()).initCause(exc);
                     } else {
-                        throw (AccessException)new AccessException(exc.getMessage()).initCause(exc);
+                        throw new AccessException(exc.getMessage(), (Exception)exc);
                     }
                 }
 
