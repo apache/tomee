@@ -169,6 +169,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2Conversion());
         chain.add(new SunConversion());
+        chain.add(new WlsConversion());
 
         if (System.getProperty("duct tape") != null){
             // must be after CmpJpaConversion since it adds new persistence-context-refs

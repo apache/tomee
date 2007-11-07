@@ -41,8 +41,10 @@ public class EjbReferenceDescription {
 
     @XmlElement(name = "ejb-ref-name", required = true)
     protected String ejbRefName;
+
     @XmlElement(name = "jndi-name", required = true)
     protected String jndiName;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID

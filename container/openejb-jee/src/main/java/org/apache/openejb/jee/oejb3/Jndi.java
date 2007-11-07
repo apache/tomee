@@ -36,9 +36,9 @@ public class Jndi {
     public Jndi() {
     }
 
-    public Jndi(String ejbRefName, String deployentId) {
-        this.intrface = ejbRefName;
-        this.name = deployentId;
+    public Jndi(String name, String intrface) {
+        this.name = intrface;
+        this.intrface = name;
     }
 
     public String getName() {

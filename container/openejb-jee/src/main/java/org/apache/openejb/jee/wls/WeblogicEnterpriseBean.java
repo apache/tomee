@@ -83,50 +83,72 @@ public class WeblogicEnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
+
     @XmlElement(name = "entity-descriptor")
     protected EntityDescriptor entityDescriptor;
+
     @XmlElement(name = "stateless-session-descriptor")
     protected StatelessSessionDescriptor statelessSessionDescriptor;
+
     @XmlElement(name = "stateful-session-descriptor")
     protected StatefulSessionDescriptor statefulSessionDescriptor;
+
     @XmlElement(name = "message-driven-descriptor")
     protected MessageDrivenDescriptor messageDrivenDescriptor;
+
     @XmlElement(name = "transaction-descriptor")
     protected TransactionDescriptor transactionDescriptor;
+
     @XmlElement(name = "iiop-security-descriptor")
     protected IiopSecurityDescriptor iiopSecurityDescriptor;
+
     @XmlElement(name = "resource-description")
     protected List<ResourceDescription> resourceDescription;
+
     @XmlElement(name = "resource-env-description")
     protected List<ResourceEnvDescription> resourceEnvDescription;
+
     @XmlElement(name = "ejb-reference-description")
     protected List<EjbReferenceDescription> ejbReferenceDescription;
+
     @XmlElement(name = "service-reference-description")
     protected List<ServiceReferenceDescription> serviceReferenceDescription;
+
     @XmlElement(name = "enable-call-by-reference")
     @XmlJavaTypeAdapter(TrueFalseAdapter.class)
     protected Boolean enableCallByReference;
+
     @XmlElement(name = "network-access-point")
     protected String networkAccessPoint;
+
     @XmlElement(name = "clients-on-same-server")
     @XmlJavaTypeAdapter(TrueFalseAdapter.class)
     protected Boolean clientsOnSameServer;
+
     @XmlElement(name = "run-as-principal-name")
     protected String runAsPrincipalName;
+
     @XmlElement(name = "create-as-principal-name")
     protected String createAsPrincipalName;
+
     @XmlElement(name = "remove-as-principal-name")
     protected String removeAsPrincipalName;
+
     @XmlElement(name = "passivate-as-principal-name")
     protected String passivateAsPrincipalName;
+
     @XmlElement(name = "jndi-name")
     protected String jndiName;
+
     @XmlElement(name = "local-jndi-name")
     protected String localJndiName;
+
     @XmlElement(name = "dispatch-policy")
     protected String dispatchPolicy;
+
     @XmlElement(name = "remote-client-timeout")
     protected BigInteger remoteClientTimeout;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
