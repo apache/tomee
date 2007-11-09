@@ -31,6 +31,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.namespace.QName;
 import javax.xml.bind.JAXBContext;
+import javax.jws.WebService;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -68,6 +69,8 @@ public class ProviderWrapper extends Provider {
             System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
         }
 
+        System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {
             Thread.currentThread().setContextClassLoader(new ProviderClassLoader(oldClassLoader));
@@ -132,13 +135,24 @@ public class ProviderWrapper extends Provider {
 
         public <T> T getPort(QName portName, Class<T> serviceEndpointInterface) {
             T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
-            setProperties((BindingProvider) t);
+            setProperties((BindingProvider) t, portName);
             return t;
         }
 
         public <T> T getPort(Class<T> serviceEndpointInterface) {
             T t = serviceDelegate.getPort(serviceEndpointInterface);
-            setProperties((BindingProvider) t);
+
+            QName qname = null;
+            if (serviceEndpointInterface.isAnnotationPresent(WebService.class)) {
+                WebService webService = serviceEndpointInterface.getAnnotation(WebService.class);
+                String targetNamespace = webService.targetNamespace();
+                String name = webService.name();
+                if (targetNamespace != null && targetNamespace.length() > 0 && name != null && name.length() > 0) {
+                    qname = new QName(targetNamespace, name);
+                }
+            }
+
+            setProperties((BindingProvider) t, qname);
             return t;
         }
 
@@ -148,13 +162,13 @@ public class ProviderWrapper extends Provider {
 
         public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode) {
             Dispatch<T> dispatch = serviceDelegate.createDispatch(portName, type, mode);
-            setProperties(dispatch);
+            setProperties(dispatch, portName);
             return dispatch;
         }
 
         public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode) {
             Dispatch<Object> dispatch = serviceDelegate.createDispatch(portName, context, mode);
-            setProperties(dispatch);
+            setProperties(dispatch, portName);
             return dispatch;
         }
 
@@ -191,9 +205,21 @@ public class ProviderWrapper extends Provider {
             serviceDelegate.setExecutor(executor);
         }
 
-        private void setProperties(BindingProvider proxy) {
+        private void setProperties(BindingProvider proxy, QName qname) {
             for (PortRefData portRef : portRefs) {
-                if (portRef.getServiceEndpointInterface().isInstance(proxy)) {
+                Class intf = null;
+                if (portRef.getServiceEndpointInterface() != null) {
+                    try {
+                        intf = proxy.getClass().getClassLoader().loadClass(portRef.getServiceEndpointInterface());
+                    } catch (Exception e) {
+                    }
+                }
+                if ((qname != null && qname.equals(portRef.getQName())) || (intf != null && intf.isInstance(proxy))) {
+                    // set address
+                    if (!portRef.getAddresses().isEmpty()) {
+                        proxy.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, portRef.getAddresses().get(0));
+                    }
+
                     // set mtom
                     boolean enableMTOM = portRef.isEnableMtom();
                     if (enableMTOM && proxy.getBinding() instanceof SOAPBinding) {
@@ -283,6 +309,19 @@ public class ProviderWrapper extends Provider {
             return provider;
         }
 
+
+        // 4. Use javax.xml.ws.spi.Provider default
+        try {
+            System.getProperties().remove(JAXWSPROVIDER_PROPERTY);
+            provider = Provider.provider();
+            if (provider != null && !provider.getClass().getName().equals(ProviderWrapper.class.getName())) {
+                return provider;
+            }
+        } finally {
+            // restore original jax provider property
+            System.setProperty(JAXWSPROVIDER_PROPERTY, providerClass);
+        }
+
         throw new WebServiceException("No " + JAXWSPROVIDER_PROPERTY + " implementation found");
     }
 
@@ -304,6 +343,7 @@ public class ProviderWrapper extends Provider {
         static {
             try {
                 File tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
+                tempFile.deleteOnExit();
                 OutputStream out = new FileOutputStream(tempFile);
                 out.write(ProviderWrapper.class.getName().getBytes());
                 out.close();

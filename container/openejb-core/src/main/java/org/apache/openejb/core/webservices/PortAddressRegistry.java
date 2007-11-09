@@ -15,14 +15,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core.webservices;
+
+import org.apache.openejb.OpenEJBException;
 
 import javax.xml.namespace.QName;
-import java.util.Properties;
+import java.util.Set;
 
-public class PortRefInfo extends InfoObject {
-    public QName qname;
-    public String serviceEndpointInterface;
-    public boolean enableMtom;
-    public final Properties properties = new Properties();
+public interface PortAddressRegistry {
+    void addPort(String serviceId, QName serviceQName, String portId, QName portQName, String portInterface, String address) throws OpenEJBException;
+    void removePort(String serviceId, QName serviceQName, String portId);
+    Set<PortAddress> getPorts(String id, QName serviceQName);
 }

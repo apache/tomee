@@ -39,10 +39,11 @@ public class NamingUtil {
     public static final String PROPERTIES = "properties";
     public static final String RESOURCE_ID = "resourceid";
     public static final String COMPONENT_TYPE = "componenttype";
-    public static final String WEB_SERVICE_CLASS = "webserviceclass";
-    public static final String WEB_SERVICE_QNAME = "webserviceqname";
+    public static final String WS_ID = "wsid";
+    public static final String WS_CLASS = "wsclass";
+    public static final String WS_QNAME = "wsqname";
+    public static final String WS_PORT_QNAME = "wsportqname";
     public static final String WSDL_URL = "wsdlurl";
-    public static final String PORT_ID = "portid";
 
     private static final AtomicInteger id = new AtomicInteger(31);
     private static final Map<String,Object> registry = new HashMap<String,Object>();

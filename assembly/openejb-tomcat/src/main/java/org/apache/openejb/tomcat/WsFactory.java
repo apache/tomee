@@ -17,16 +17,17 @@
  */
 package org.apache.openejb.tomcat;
 
-import static org.apache.openejb.tomcat.NamingUtil.PORT_ID;
 import org.apache.naming.ResourceRef;
 import org.apache.openejb.Injection;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
 import static org.apache.openejb.tomcat.NamingUtil.JNDI_NAME;
-import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_CLASS;
-import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_QNAME;
 import static org.apache.openejb.tomcat.NamingUtil.WSDL_URL;
+import static org.apache.openejb.tomcat.NamingUtil.WS_CLASS;
+import static org.apache.openejb.tomcat.NamingUtil.WS_ID;
+import static org.apache.openejb.tomcat.NamingUtil.WS_PORT_QNAME;
+import static org.apache.openejb.tomcat.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.NamingUtil.getProperty;
 import static org.apache.openejb.tomcat.NamingUtil.getStaticValue;
 import static org.apache.openejb.tomcat.NamingUtil.loadClass;
@@ -38,9 +39,9 @@ import javax.naming.Reference;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Collections;
 
 public class WsFactory extends AbstractObjectFactory {
     public Object getObjectInstance(Object object, Name name, Context context, Hashtable environment) throws Exception {
@@ -57,7 +58,7 @@ public class WsFactory extends AbstractObjectFactory {
             value = super.getObjectInstance(object, name, context, environment);
         } else {
             // load service class which is used to construct the port
-            String serviceClassName = getProperty(ref, WEB_SERVICE_CLASS);
+            String serviceClassName = getProperty(ref, WS_CLASS);
             Class<? extends Service> serviceClass = Service.class;
             if (serviceClassName != null) {
                 serviceClass = loadClass(serviceClassName).asSubclass(Service.class);
@@ -74,22 +75,25 @@ public class WsFactory extends AbstractObjectFactory {
                 serviceClass = referenceClass.asSubclass(Service.class);
             }
 
+            // PORT ID
+            String serviceId = getProperty(ref, WS_ID);
+
             // Service QName
             QName serviceQName = null;
-            if (getProperty(ref, WEB_SERVICE_QNAME) != null) {
-                serviceQName = QName.valueOf(getProperty(ref, WEB_SERVICE_QNAME));
+            if (getProperty(ref, WS_QNAME) != null) {
+                serviceQName = QName.valueOf(getProperty(ref, WS_QNAME));
             }
 
             // WSDL URL
             URL wsdlUrl = null;
-            if (wsdlUrl == null && getProperty(ref, WSDL_URL) != null) {
+            if (getProperty(ref, WSDL_URL) != null) {
                 wsdlUrl = new URL(getProperty(ref, WSDL_URL));
             }
 
-            // PORT ID
-            String portId = null;
-            if (portId == null) {
-                portId = getProperty(ref, PORT_ID);
+            // Port QName
+            QName portQName = null;
+            if (getProperty(ref, WS_PORT_QNAME) != null) {
+                portQName = QName.valueOf(getProperty(ref, WS_PORT_QNAME));
             }
 
             // port refs
@@ -102,7 +106,14 @@ public class WsFactory extends AbstractObjectFactory {
             List<Injection> injections = getStaticValue(ref, "injections");
             if (injections == null) injections = Collections.emptyList();
 
-            JaxWsServiceReference serviceReference = new JaxWsServiceReference(portId, serviceClass, referenceClass, wsdlUrl, serviceQName, portRefs, handlerChains, injections);
+            JaxWsServiceReference serviceReference = new JaxWsServiceReference(serviceId,
+                    serviceQName,
+                    serviceClass, portQName,
+                    referenceClass,
+                    wsdlUrl,
+                    portRefs,
+                    handlerChains,
+                    injections);
             value = serviceReference.getObject();
         }
 

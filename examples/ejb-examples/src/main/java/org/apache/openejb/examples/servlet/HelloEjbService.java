@@ -18,6 +18,7 @@
 package org.apache.openejb.examples.servlet;
 
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 import javax.ejb.Stateless;
 
 @WebService(
@@ -26,9 +27,11 @@ import javax.ejb.Stateless;
     targetNamespace="http://examples.org/wsdl",
     endpointInterface="org.apache.openejb.examples.servlet.HelloEjb"
 )
+@HandlerChain(file = "server-handlers.xml")
 @Stateless
 public class HelloEjbService implements HelloEjb {
     public String hello(String name) {
+        WebserviceServlet.write("                HelloEjbService hello(" + name + ")");
         if (name == null) name = "World";
         return "Hello " + name + " from EJB Webservice!";
     }

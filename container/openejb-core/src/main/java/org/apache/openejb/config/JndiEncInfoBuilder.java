@@ -232,18 +232,18 @@ public class JndiEncInfoBuilder {
         for (ServiceRef ref : jndiConsumer.getServiceRef()) {
             ServiceReferenceInfo info = new ServiceReferenceInfo();
             info.referenceName = ref.getName();
+            info.id = ref.getMappedName();
             info.serviceQName = ref.getServiceQname();
+            info.serviceType = ref.getServiceInterface();
+            info.referenceType = ref.getServiceRefType();
             info.wsdlFile = ref.getWsdlFile();
             info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
-            info.referenceType = ref.getServiceRefType();
-            info.serviceType = ref.getServiceInterface();
-            info.portId = ref.getMappedName();
             info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getHandlerChains()));
             for (PortComponentRef portComponentRef : ref.getPortComponentRef()) {
                 PortRefInfo portRefInfo = new PortRefInfo();
+                portRefInfo.qname = portComponentRef.getQName();
                 portRefInfo.serviceEndpointInterface = portComponentRef.getServiceEndpointInterface();
                 portRefInfo.enableMtom = portComponentRef.isEnableMtom();
-                portRefInfo.portComponentLink = portComponentRef.getPortComponentLink();
                 portRefInfo.properties.putAll(portComponentRef.getProperties());
                 info.portRefs.add(portRefInfo);
             }

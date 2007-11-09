@@ -23,26 +23,47 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceRef;
+import javax.jws.HandlerChain;
 import java.io.IOException;
 
 public class WebserviceServlet extends HttpServlet {
+
     @WebServiceRef
+    @HandlerChain(file = "client-handlers.xml")
     private HelloPojo helloPojo;
 
     @WebServiceRef
+    @HandlerChain(file = "client-handlers.xml")
     private HelloEjb helloEjb;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
 
-        out.println("Pojo Webservice");
-        out.println("    helloPojo.hello(\"Bob\")=" + helloPojo.hello("Bob"));
-        out.println("    helloPojo.hello(null)=" + helloPojo.hello(null));
-        out.println();
-        out.println("EJB Webservice");
-        out.println("    helloEjb.hello(\"Bob\")=" + helloEjb.hello("Bob"));
-        out.println("    helloEjb.hello(null)=" + helloEjb.hello(null));
-        out.println();
+        OUT = out;
+        try {
+            out.println("Pojo Webservice");
+            out.println("    helloPojo.hello(\"Bob\")=" + helloPojo.hello("Bob"));
+            out.println();
+            out.println("    helloPojo.hello(null)=" + helloPojo.hello(null));
+            out.println();
+            out.println("EJB Webservice");
+            out.println("    helloEjb.hello(\"Bob\")=" + helloEjb.hello("Bob"));
+            out.println();
+            out.println("    helloEjb.hello(null)=" + helloEjb.hello(null));
+            out.println();
+        } finally {
+            OUT = out;
+        }
+    }
+
+    private static ServletOutputStream OUT;
+    public static void write(String message) {
+        try {
+            ServletOutputStream out = OUT;
+            out.println(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,7 +2,7 @@
 <application xmlns="http://java.sun.com/xml/ns/javaee" version="3.0">
     <description>String</description>
     <display-name>token</display-name>
-    <icon>
+    <icon xml:lang="en">
         <small-icon>token</small-icon>
         <large-icon>token</large-icon>
     </icon>

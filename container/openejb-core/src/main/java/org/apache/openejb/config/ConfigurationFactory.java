@@ -301,7 +301,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public AppInfo configureApplication(File jarFile) throws OpenEJBException {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
 
-        AppInfo appInfo = null;
+        AppInfo appInfo;
         try {
             AppModule appModule = deploymentLoader.load(jarFile);
             appInfo = configureApplication(appModule);
@@ -641,6 +641,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 PortInfo portInfo = new PortInfo();
 
                 ServiceImplBean serviceImplBean = port.getServiceImplBean();
+                portInfo.serviceId = desc.getId();
                 portInfo.portId = port.getId();
                 portInfo.serviceLink = serviceImplBean.getEjbLink();
                 if (portInfo.serviceLink == null) {
@@ -745,7 +746,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private <T extends ServiceInfo>Service getDefaultService(Class<? extends T> type) throws OpenEJBException {
         DefaultService defaultService = defaultProviders.get(type);
 
-        Service service = null;
+        Service service;
         try {
             service = JaxbOpenejb.create(defaultService.type);
             service.setType(defaultService.id);
@@ -784,7 +785,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             throw new OpenEJBException(messages.format("conf.4902", service.getId(), providerType));
         }
 
-        T info = null;
+        T info;
 
         try {
             info = infoType.newInstance();
@@ -846,7 +847,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      */
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
         Class<? extends Service> serviceClass = types.get(type);
-        Service service = null;
+        Service service;
         try {
             service = serviceClass.newInstance();
         } catch (Exception e) {

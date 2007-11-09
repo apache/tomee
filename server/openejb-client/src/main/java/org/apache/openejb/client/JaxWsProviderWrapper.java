@@ -28,6 +28,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.namespace.QName;
 import javax.xml.bind.JAXBContext;
+import javax.jws.WebService;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -64,8 +65,9 @@ public class JaxWsProviderWrapper extends Provider {
         String oldProperty = System.getProperty(JAXWSPROVIDER_PROPERTY);
         if (oldProperty != null && !oldProperty.equals(JaxWsProviderWrapper.class.getName())) {
             System.setProperty("openejb." + JAXWSPROVIDER_PROPERTY, oldProperty);
-            System.setProperty(JAXWSPROVIDER_PROPERTY, JaxWsProviderWrapper.class.getName());
         }
+
+        System.setProperty(JAXWSPROVIDER_PROPERTY, JaxWsProviderWrapper.class.getName());
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {
@@ -131,13 +133,24 @@ public class JaxWsProviderWrapper extends Provider {
 
         public <T> T getPort(QName portName, Class<T> serviceEndpointInterface) {
             T t = serviceDelegate.getPort(portName, serviceEndpointInterface);
-            setProperties((BindingProvider) t);
+            setProperties((BindingProvider) t, portName);
             return t;
         }
 
         public <T> T getPort(Class<T> serviceEndpointInterface) {
             T t = serviceDelegate.getPort(serviceEndpointInterface);
-            setProperties((BindingProvider) t);
+
+            QName qname = null;
+            if (serviceEndpointInterface.isAnnotationPresent(WebService.class)) {
+                WebService webService = serviceEndpointInterface.getAnnotation(WebService.class);
+                String targetNamespace = webService.targetNamespace();
+                String name = webService.name();
+                if (targetNamespace != null && targetNamespace.length() > 0 && name != null && name.length() > 0) {
+                    qname = new QName(targetNamespace, name);
+                }
+            }
+
+            setProperties((BindingProvider) t, qname);
             return t;
         }
 
@@ -147,13 +160,13 @@ public class JaxWsProviderWrapper extends Provider {
 
         public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode) {
             Dispatch<T> dispatch = serviceDelegate.createDispatch(portName, type, mode);
-            setProperties(dispatch);
+            setProperties(dispatch, portName);
             return dispatch;
         }
 
         public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode) {
             Dispatch<Object> dispatch = serviceDelegate.createDispatch(portName, context, mode);
-            setProperties(dispatch);
+            setProperties(dispatch, portName);
             return dispatch;
         }
 
@@ -190,14 +203,21 @@ public class JaxWsProviderWrapper extends Provider {
             serviceDelegate.setExecutor(executor);
         }
 
-        private void setProperties(BindingProvider proxy) {
+        private void setProperties(BindingProvider proxy, QName qname) {
             for (PortRefMetaData portRef : portRefs) {
                 Class<?> intf = null;
-                try {
-                    intf = proxy.getClass().getClassLoader().loadClass(portRef.getServiceEndpointInterface());
-                } catch (ClassNotFoundException e) {
+                if (portRef.getServiceEndpointInterface() != null) {
+                    try {
+                        intf = proxy.getClass().getClassLoader().loadClass(portRef.getServiceEndpointInterface());
+                    } catch (ClassNotFoundException e) {
+                    }
                 }
-                if (intf != null && intf.isInstance(proxy)) {
+                if ((qname != null && qname.equals(portRef.getQName())) || (intf != null && intf.isInstance(proxy))) {
+                    // set address
+                    if (!portRef.getAddresses().isEmpty()) {
+                        proxy.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, portRef.getAddresses().get(0));
+                    }
+
                     // set mtom
                     boolean enableMTOM = portRef.isEnableMtom();
                     if (enableMTOM && proxy.getBinding() instanceof SOAPBinding) {
@@ -287,6 +307,26 @@ public class JaxWsProviderWrapper extends Provider {
             return provider;
         }
 
+        // 4. Use javax.xml.ws.spi.Provider default
+        try {
+            // disable the OpenEJB JaxWS provider
+            if (classLoader instanceof ProviderClassLoader) {
+                ((ProviderClassLoader) classLoader).enabled = false;
+            }
+            System.getProperties().remove(JAXWSPROVIDER_PROPERTY);
+
+            provider = Provider.provider();
+            if (provider != null && !provider.getClass().getName().equals(JaxWsProviderWrapper.class.getName())) {
+                return provider;
+            }
+        } finally {
+            // reenable the OpenEJB JaxWS provider
+            System.setProperty(JAXWSPROVIDER_PROPERTY, providerClass);
+            if (classLoader instanceof ProviderClassLoader) {
+                ((ProviderClassLoader) classLoader).enabled = true;
+            }
+        }
+
         throw new WebServiceException("No " + JAXWSPROVIDER_PROPERTY + " implementation found");
     }
 
@@ -308,6 +348,7 @@ public class JaxWsProviderWrapper extends Provider {
         static {
             try {
                 File tempFile = File.createTempFile("openejb-jaxws-provider", "tmp");
+                tempFile.deleteOnExit();
                 OutputStream out = new FileOutputStream(tempFile);
                 out.write(JaxWsProviderWrapper.class.getName().getBytes());
                 out.close();
@@ -316,6 +357,8 @@ public class JaxWsProviderWrapper extends Provider {
                 throw new RuntimeException("Cound not create openejb-jaxws-provider file");
             }
         }
+
+        public boolean enabled = true;
 
         public ProviderClassLoader() {
         }
@@ -326,7 +369,7 @@ public class JaxWsProviderWrapper extends Provider {
 
         public Enumeration<URL> getResources(String name) throws IOException {
             Enumeration<URL> resources = super.getResources(name);
-            if (PROVIDER_RESOURCE.equals(name)) {
+            if (enabled && PROVIDER_RESOURCE.equals(name)) {
                 ArrayList<URL> list = new ArrayList<URL>();
                 list.add(PROVIDER_URL);
                 list.addAll(Collections.list(resources));
@@ -337,7 +380,7 @@ public class JaxWsProviderWrapper extends Provider {
 
 
         public URL getResource(String name) {
-            if (PROVIDER_RESOURCE.equals(name)) {
+            if (enabled && PROVIDER_RESOURCE.equals(name)) {
                 return PROVIDER_URL;
             }
             return super.getResource(name);

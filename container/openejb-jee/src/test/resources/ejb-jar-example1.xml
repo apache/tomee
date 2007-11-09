@@ -2,7 +2,7 @@
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
     <description>String</description>
     <display-name>token</display-name>
-    <icon>
+    <icon xml:lang="en">
         <small-icon>token</small-icon>
         <large-icon>token</large-icon>
     </icon>
@@ -54,7 +54,7 @@
         <session>
             <description>String</description>
             <display-name>token</display-name>
-            <icon>
+            <icon xml:lang="en">
                 <small-icon>token</small-icon>
                 <large-icon>token</large-icon>
             </icon>
@@ -145,7 +145,7 @@
             <service-ref>
                 <description>String</description>
                 <display-name>token1</display-name>
-                <icon>
+                <icon xml:lang="en">
                     <small-icon>token1</small-icon>
                     <large-icon>token1</large-icon>
                 </icon>
@@ -163,7 +163,7 @@
                 <handler>
                     <description>String</description>
                     <display-name>token</display-name>
-                    <icon>
+                    <icon xml:lang="en">
                         <small-icon>token</small-icon>
                         <large-icon>token</large-icon>
                     </icon>
@@ -187,7 +187,7 @@
             <service-ref>
                 <description>String</description>
                 <display-name>token2</display-name>
-                <icon>
+                <icon xml:lang="en">
                     <small-icon>token2</small-icon>
                     <large-icon>token2</large-icon>
                 </icon>
@@ -204,7 +204,7 @@
                 <handler>
                     <description>String</description>
                     <display-name>token</display-name>
-                    <icon>
+                    <icon xml:lang="en">
                         <small-icon>token</small-icon>
                         <large-icon>token</large-icon>
                     </icon>
@@ -360,7 +360,7 @@
             <service-ref>
                 <description>String</description>
                 <display-name>token</display-name>
-                <icon>
+                <icon xml:lang="en">
                     <small-icon>token</small-icon>
                     <large-icon>token</large-icon>
                 </icon>
@@ -378,7 +378,7 @@
                 <handler>
                     <description>String</description>
                     <display-name>token</display-name>
-                    <icon>
+                    <icon xml:lang="en">
                         <small-icon>token</small-icon>
                         <large-icon>token</large-icon>
                     </icon>
@@ -559,7 +559,7 @@
         <message-destination>
             <description>String</description>
             <display-name>token</display-name>
-            <icon>
+            <icon xml:lang="en">
                 <small-icon>token</small-icon>
                 <large-icon>token</large-icon>
             </icon>

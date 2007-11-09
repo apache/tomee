@@ -35,19 +35,21 @@ public class ServiceRefData {
         return registry.put(key, value);
     }
 
+    private final String id;
+    private final QName serviceQName;
     private final Class<? extends Service> serviceClass;
+    private final QName portQName;
     private final Class<?> referenceClass;
     private final URL wsdlURL;
-    private final QName serviceQName;
-    private final String portId;
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public ServiceRefData(String portId, Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlURL, QName serviceQName, List<HandlerChainData> handlerChains, List<PortRefData> portRefs) {
-        this.portId = portId;
-        this.serviceClass = serviceClass;
-        this.referenceClass = referenceClass;
+    public ServiceRefData(String id, QName serviceQName, Class<? extends Service> serviceClass, QName portQName, Class<?> referenceClass, URL wsdlURL, List<HandlerChainData> handlerChains, List<PortRefData> portRefs) {
+        this.id = id;
         this.serviceQName = serviceQName;
+        this.serviceClass = serviceClass;
+        this.portQName = portQName;
+        this.referenceClass = referenceClass;
         this.wsdlURL = wsdlURL;
         if (handlerChains != null) {
             this.handlerChains.addAll(handlerChains);
@@ -57,12 +59,20 @@ public class ServiceRefData {
         }
     }
 
-    public String getPortId() {
-        return portId;
+    public String getId() {
+        return id;
+    }
+
+    public QName getServiceQName() {
+        return serviceQName;
     }
 
     public Class<? extends Service> getServiceClass() {
         return serviceClass;
+    }
+
+    public QName getPortQName() {
+        return portQName;
     }
 
     public Class<?> getReferenceClass() {
@@ -71,10 +81,6 @@ public class ServiceRefData {
 
     public URL getWsdlURL() {
         return wsdlURL;
-    }
-
-    public QName getServiceQName() {
-        return serviceQName;
     }
 
     public List<HandlerChainData> getHandlerChains() {

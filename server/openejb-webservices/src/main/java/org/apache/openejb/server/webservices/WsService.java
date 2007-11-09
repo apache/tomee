@@ -32,8 +32,8 @@ import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.webservices.WsdlRepoImpl;
-import org.apache.openejb.core.webservices.WsdlRepo;
+import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebDeploymentInfo;
@@ -67,7 +67,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
     private StringTemplate wsAddressTemplate;
 
-    private WsdlRepo wsdlRepo;
+    private PortAddressRegistry portAddressRegistry;
     private CoreContainerSystem containerSystem;
     private Assembler assembler;
     private WsRegistry wsRegistry;
@@ -149,12 +149,12 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
     public void start() throws ServiceException {
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
-        if (wsdlRepo == null) {
-            wsdlRepo = new WsdlRepoImpl();
-            SystemInstance.get().setComponent(WsdlRepo.class, wsdlRepo);
+        if (portAddressRegistry == null) {
+            portAddressRegistry = new PortAddressRegistryImpl();
+            SystemInstance.get().setComponent(PortAddressRegistry.class, portAddressRegistry);
         }
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
-        wsdlRepo = SystemInstance.get().getComponent(WsdlRepo.class);
+        portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
         if (assembler != null) {
             assembler.addDeploymentListener(this);
@@ -239,7 +239,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 String address = selectSingleAddress(addresses);
 
                                 // register wsdl location
-                                wsdlRepo.addWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
+                                portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                                 logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
                                 ejbAddresses.put(bean.ejbDeploymentId, address);
                             }
@@ -266,7 +266,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
 
                 for (ServletInfo servlet : webApp.servlets) {
-                    PortInfo portInfo = ports.get(servlet.servletClass);
+                    PortInfo portInfo = ports.get(servlet.servletName);
                     if (portInfo == null) continue;
 
                     try {
@@ -287,7 +287,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                             String address = selectSingleAddress(addresses);
 
                             // add address to global registry
-                            wsdlRepo.addWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address.toString());
+                            portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                             logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                             servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                         }
@@ -317,7 +317,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                         // remove wsdl addresses from global registry
                         String address = ejbAddresses.remove(enterpriseBean.ejbDeploymentId);
                         if (address != null) {
-                            wsdlRepo.removeWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address);
+                            portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
                         }
 
                         // remove container from web server
@@ -344,7 +344,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                     // remove wsdl addresses from global registry
                     String address = servletAddresses.remove(webApp.moduleId + "." + servlet.servletName);
                     if (address != null) {
-                        wsdlRepo.removeWsdl(portInfo.portId, portInfo.wsdlService, portInfo.seiInterfaceName, address);
+                        portAddressRegistry.removePort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId);
                     }
 
                     // clear servlet's reference to the webservice container
@@ -381,7 +381,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         contextData.put("ejbDeploymentId", bean.ejbDeploymentId);
         contextData.put("ejbType", getEjbType(bean.type));
         contextData.put("ejbClass", bean.ejbClass);
-        contextData.put("ejbClass.simpleName", bean.ejbClass.substring(bean.ejbClass.lastIndexOf('.')));
+        contextData.put("ejbClass.simpleName", bean.ejbClass.substring(bean.ejbClass.lastIndexOf('.') + 1));
         contextData.put("ejbName", bean.ejbName);
         contextData.put("portComponentName", port.getPortName().getLocalPart());
         contextData.put("wsdlPort", port.getWsdlPort().getLocalPart());

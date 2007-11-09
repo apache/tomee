@@ -22,16 +22,21 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PortInfo extends InfoObject {
-    public String portId;
+    public String serviceId;
+    public QName wsdlService;
     public String serviceName;
+
+    public String portId;
+    public QName wsdlPort;
     public String portName;
+
     public String seiInterfaceName;
     public String wsdlFile;
+
     public String serviceLink;
     public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
     public boolean mtomEnabled;
     public String binding;
-    public QName wsdlPort;
-    public QName wsdlService;
+
     public String location;
 }

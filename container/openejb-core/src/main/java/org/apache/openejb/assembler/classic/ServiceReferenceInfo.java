@@ -27,12 +27,15 @@ public class ServiceReferenceInfo extends InjectableInfo {
 
     public String referenceName;
 
-    public String portId;
+    public String id;
     public QName serviceQName;
+    public String serviceType;
+
+    public QName portQName;
+    public String referenceType;
+
     public String wsdlFile;
     public String jaxrpcMappingFile;
-    public String referenceType;
-    public String serviceType;
     public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
     public final List<PortRefInfo> portRefs =new ArrayList<PortRefInfo>();
     

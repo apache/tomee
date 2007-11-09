@@ -53,7 +53,7 @@ import java.util.List;
     "handler",
     "handlerChains"
 })
-public class PortComponent {
+public class PortComponent implements Keyable<String> {
     protected String description;
     @XmlElement(name = "display-name")
     protected String displayName;
@@ -81,6 +81,10 @@ public class PortComponent {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getKey() {
+        return portComponentName;
+    }
 
     public String getDescription() {
         return description;
@@ -164,13 +168,11 @@ public class PortComponent {
 
     public HandlerChains getHandlerChains() {
         // convert the handlers to handler chain
-        if (handlerChains == null) {
+        if (handlerChains == null && handler != null) {
             handlerChains = new HandlerChains();
             HandlerChain handlerChain = new HandlerChain();
-            if (handler != null) {
-                handlerChain.getHandler().addAll(handler);
-                handler.clear();
-            }
+            handlerChain.getHandler().addAll(handler);
+            handler = null;
             handlerChains.getHandlerChain().add(handlerChain);
         }
         return handlerChains;

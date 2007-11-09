@@ -18,6 +18,7 @@
 package org.apache.openejb.examples.servlet;
 
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 
 @WebService(
     portName="HelloPojoPort",
@@ -25,8 +26,10 @@ import javax.jws.WebService;
     targetNamespace="http://examples.org/wsdl",
     endpointInterface="org.apache.openejb.examples.servlet.HelloPojo"
 )
+@HandlerChain(file = "server-handlers.xml")
 public class HelloPojoService implements HelloPojo {
     public String hello(String name) {
+        WebserviceServlet.write("                HelloPojoService hello(" + name + ")");
         if (name == null) name = "World";
         return "Hello " + name + " from Pojo Webservice!";
     }

@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.tomcat;
 
-import static org.apache.openejb.tomcat.NamingUtil.PORT_ID;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.ContextEjb;
@@ -29,20 +28,20 @@ import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.factory.Constants;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
+import org.apache.openejb.assembler.classic.PortRefInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
-import org.apache.openejb.assembler.classic.PortRefInfo;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.loader.SystemInstance;
@@ -57,9 +56,11 @@ import static org.apache.openejb.tomcat.NamingUtil.LOCAL;
 import static org.apache.openejb.tomcat.NamingUtil.NAME;
 import static org.apache.openejb.tomcat.NamingUtil.RESOURCE_ID;
 import static org.apache.openejb.tomcat.NamingUtil.UNIT;
-import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_CLASS;
-import static org.apache.openejb.tomcat.NamingUtil.WEB_SERVICE_QNAME;
 import static org.apache.openejb.tomcat.NamingUtil.WSDL_URL;
+import static org.apache.openejb.tomcat.NamingUtil.WS_CLASS;
+import static org.apache.openejb.tomcat.NamingUtil.WS_ID;
+import static org.apache.openejb.tomcat.NamingUtil.WS_PORT_QNAME;
+import static org.apache.openejb.tomcat.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.NamingUtil.setStaticValue;
 
 import javax.persistence.EntityManager;
@@ -69,8 +70,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TomcatJndiBuilder {
     private final StandardContext standardContext;
@@ -428,9 +429,20 @@ public class TomcatJndiBuilder {
             resource.setProperty(JNDI_NAME, ref.location.jndiName);
             resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
-            resource.setProperty(WEB_SERVICE_CLASS, ref.serviceType);
+            // ID
+            if (ref.id != null) {
+                resource.setProperty(WS_ID, ref.id);
+            }
+            // Service QName
             if (ref.serviceQName != null) {
-                resource.setProperty(WEB_SERVICE_QNAME, ref.serviceQName.toString());
+                resource.setProperty(WS_QNAME, ref.serviceQName.toString());
+            }
+            // Service Class
+            resource.setProperty(WS_CLASS, ref.serviceType);
+
+            // Port QName
+            if (ref.portQName != null) {
+                resource.setProperty(WS_PORT_QNAME, ref.portQName.toString());
             }
 
             // add the wsdl url
@@ -439,22 +451,14 @@ public class TomcatJndiBuilder {
                 resource.setProperty(WSDL_URL, wsdlURL.toString());
             }
 
-            if (ref.portId != null) {
-                resource.setProperty(PORT_ID, ref.portId);
-            }
-
             // add port refs
             if (!ref.portRefs.isEmpty()) {
                 List<PortRefData> portRefs = new ArrayList<PortRefData>(ref.portRefs.size());
                 for (PortRefInfo portRefInfo : ref.portRefs) {
                     PortRefData portRef = new PortRefData();
-                    try {
-                        portRef.setServiceEndpointInterface(standardContext.getLoader().getClassLoader().loadClass(portRefInfo.serviceEndpointInterface));
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException("Could not load service endpoint interface "+ portRefInfo.serviceEndpointInterface, e);
-                    }
+                    portRef.setQName(portRefInfo.qname);
+                    portRef.setServiceEndpointInterface(portRefInfo.serviceEndpointInterface);
                     portRef.setEnableMtom(portRefInfo.enableMtom);
-                    portRef.setPortComponentLink(portRefInfo.portComponentLink);
                     portRef.getProperties().putAll(portRefInfo.properties);
                     portRefs.add(portRef);
                 }
@@ -464,8 +468,7 @@ public class TomcatJndiBuilder {
             // add the handle chains
             if (!ref.handlerChains.isEmpty()) {
                 try {
-                    List<HandlerChainData> handlerChains = null;
-                    handlerChains = WsBuilder.toHandlerChainData(ref.handlerChains, standardContext.getLoader().getClassLoader());
+                    List<HandlerChainData> handlerChains = WsBuilder.toHandlerChainData(ref.handlerChains, standardContext.getLoader().getClassLoader());
                     setStaticValue(resource, "handler-chains", handlerChains);
                     setStaticValue(resource, "injections", injections);
                 } catch (OpenEJBException e) {

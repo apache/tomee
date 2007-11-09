@@ -395,13 +395,9 @@ public class JndiEncBuilder {
             List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
             for (PortRefInfo portRefInfo : referenceInfo.portRefs) {
                 PortRefData portRef = new PortRefData();
-                try {
-                    portRef.setServiceEndpointInterface(classLoader.loadClass(portRefInfo.serviceEndpointInterface));
-                } catch (Exception e) {
-                    throw new OpenEJBException("Could not load service endpoint interface "+ portRefInfo.serviceEndpointInterface, e);
-                }
+                portRef.setQName(portRefInfo.qname);
+                portRef.setServiceEndpointInterface(portRefInfo.serviceEndpointInterface);
                 portRef.setEnableMtom(portRefInfo.enableMtom);
-                portRef.setPortComponentLink(portRefInfo.portComponentLink);
                 portRef.getProperties().putAll(portRefInfo.properties);
                 portRefs.add(portRef);
             }
@@ -413,10 +409,23 @@ public class JndiEncBuilder {
             }
 
             if (!client) {
-                Reference reference = new JaxWsServiceReference(referenceInfo.portId, serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, portRefs, handlerChains, injections);
+                Reference reference = new JaxWsServiceReference(referenceInfo.id,
+                        referenceInfo.serviceQName,
+                        serviceClass, referenceInfo.portQName,
+                        referenceClass,
+                        wsdlUrl,
+                        portRefs,
+                        handlerChains,
+                        injections);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             } else {
-                ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.portId, serviceClass, referenceClass, wsdlUrl, referenceInfo.serviceQName, handlerChains, portRefs);
+                ServiceRefData serviceRefData = new ServiceRefData(referenceInfo.id,
+                        referenceInfo.serviceQName,
+                        serviceClass, referenceInfo.portQName,
+                        referenceClass,
+                        wsdlUrl,
+                        handlerChains,
+                        portRefs);
                 bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
             }
         }

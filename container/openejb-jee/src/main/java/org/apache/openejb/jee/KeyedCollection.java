@@ -88,6 +88,9 @@ public class KeyedCollection<K,V> extends AbstractCollection<V> {
 
     public boolean add(V value) {
         K key = getKey(value);
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
         V oldValue = map.put(key, value);
         return value != oldValue;
     }

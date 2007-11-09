@@ -54,7 +54,7 @@ public class Icon implements Keyable<String> {
     @XmlID
     protected String id;
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
-    protected String lang;
+    protected String lang = "en";
 
     public String getSmallIcon() {
         return smallIcon;

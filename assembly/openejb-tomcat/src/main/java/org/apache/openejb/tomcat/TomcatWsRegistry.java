@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.tomcat;
 
-import static org.apache.openejb.tomcat.TomcatWebAppBuilder.IGNORE_CONTEXT;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
@@ -38,9 +37,10 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
-import org.apache.openejb.server.httpd.HttpListener;
+import static org.apache.openejb.tomcat.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class TomcatWsRegistry implements WsRegistry {
         List<String> addresses = new ArrayList<String>();
         for (Connector connector : connectors) {
             for (String mapping : wrapper.findMappings()) {
-                URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), "/" + contextRoot + mapping, "wsdl", null);
+                URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), "/" + contextRoot + mapping, null, null);
                 addresses.add(address.toString());
             }
         }
@@ -221,7 +221,7 @@ public class TomcatWsRegistry implements WsRegistry {
         // register wsdl locations for service-ref resolution
         List<String> addresses = new ArrayList<String>();
         for (Connector connector : connectors) {
-            URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), path, "wsdl", null);
+            URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), path, null, null);
             addresses.add(address.toString());
         }
         return addresses;

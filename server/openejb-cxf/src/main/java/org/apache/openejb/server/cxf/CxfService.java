@@ -22,6 +22,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
+import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
 
@@ -32,6 +33,10 @@ import java.util.TreeMap;
 
 public class CxfService extends WsService {
     private final Map<String, CxfWsContainer> wsContainers = new TreeMap<String, CxfWsContainer>();
+
+    public CxfService() {
+        SaajInterceptor.registerInterceptors();
+    }
 
     public String getName() {
         return "cxf";

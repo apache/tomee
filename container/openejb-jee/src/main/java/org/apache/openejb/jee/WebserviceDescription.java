@@ -21,12 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The webservice-description element defines a WSDL document file
@@ -63,7 +63,7 @@ public class WebserviceDescription implements Keyable<String> {
     @XmlTransient
     protected JavaWsdlMapping jaxrpcMapping;
     @XmlElement(name = "port-component", required = true)
-    protected List<PortComponent> portComponent;
+    protected KeyedCollection<String, PortComponent> portComponent;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -130,11 +130,18 @@ public class WebserviceDescription implements Keyable<String> {
         this.jaxrpcMapping = jaxrpcMapping;
     }
 
-    public List<PortComponent> getPortComponent() {
+    public Collection<PortComponent> getPortComponent() {
         if (portComponent == null) {
-            portComponent = new ArrayList<PortComponent>();
+            portComponent = new KeyedCollection<String,PortComponent>();
         }
         return this.portComponent;
+    }
+
+    public Map<String,PortComponent> getPortComponentMap() {
+        if (portComponent == null) {
+            portComponent = new KeyedCollection<String,PortComponent>();
+        }
+        return this.portComponent.toMap();
     }
 
     public String getId() {

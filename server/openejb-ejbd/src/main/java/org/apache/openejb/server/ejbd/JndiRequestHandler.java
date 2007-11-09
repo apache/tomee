@@ -19,14 +19,16 @@ package org.apache.openejb.server.ejbd;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 import javax.naming.Context;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.jms.ConnectionFactory;
+import javax.xml.namespace.QName;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -39,7 +41,8 @@ import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortRefData;
-import org.apache.openejb.core.webservices.WsdlRepo;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
+import org.apache.openejb.core.webservices.PortAddress;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBMetaDataImpl;
@@ -103,7 +106,7 @@ class JndiRequestHandler {
             String name = req.getRequestString();
             if (name.startsWith("/")) name = name.substring(1);
 
-            Object object = null;
+            Object object;
             try {
                 if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
 
@@ -184,26 +187,28 @@ class JndiRequestHandler {
                     }
                     serviceMetaData.setReferenceClassName(referenceClassName);
 
-                    // resolve the wsdl url
-                    String wsdlUrl = null;
-                    if (serviceRef.getWsdlURL() != null) {
-                        wsdlUrl = serviceRef.getWsdlURL().toExternalForm();
-                    }
-                    WsdlRepo wsdlRepo = SystemInstance.get().getComponent(WsdlRepo.class);
-                    if (wsdlRepo != null) {
-                        String wsdlLocation = wsdlRepo.getWsdl(serviceRef.getPortId(), serviceRef.getServiceQName(), referenceClassName);
-                        if (wsdlLocation != null) {
-                            try {
-                                wsdlUrl = new URL(wsdlLocation).toExternalForm();
-                            } catch (MalformedURLException e) {
-                            }
-                        }
-                    }
-                    serviceMetaData.setWsdlUrl(wsdlUrl);
-
+                    // set service qname
                     if (serviceRef.getServiceQName() != null) {
                         serviceMetaData.setServiceQName(serviceRef.getServiceQName().toString());
                     }
+
+                    // get the port addresses for this service
+                    PortAddressRegistry portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
+                    Set<PortAddress> portAddresses = null;
+                    if (portAddressRegistry != null) {
+                        portAddresses = portAddressRegistry.getPorts(serviceRef.getId(), serviceRef.getServiceQName());
+                    }
+
+                    // resolve the wsdl url
+                    if (serviceRef.getWsdlURL() != null) {
+                        serviceMetaData.setWsdlUrl(serviceRef.getWsdlURL().toExternalForm());
+                    }
+                    if (portAddresses.size() == 1) {
+                        PortAddress portAddress = portAddresses.iterator().next();
+                        serviceMetaData.setWsdlUrl(portAddress.getAddress() + "?wsdl");
+                    }
+
+                    // add handler chains
                     for (HandlerChainData handlerChain : serviceRef.getHandlerChains()) {
                         HandlerChainMetaData handlerChainMetaData = new HandlerChainMetaData();
                         handlerChainMetaData.setServiceNamePattern(handlerChain.getServiceNamePattern());
@@ -228,14 +233,37 @@ class JndiRequestHandler {
                         }
                         serviceMetaData.getHandlerChains().add(handlerChainMetaData);
                     }
+
+                    // add port refs
+                    Map<QName,PortRefMetaData> portsByQName = new HashMap<QName,PortRefMetaData>();
                     for (PortRefData portRef : serviceRef.getPortRefs()) {
                         PortRefMetaData portRefMetaData = new PortRefMetaData();
-                        portRefMetaData.setPortComponentLink(portRef.getPortComponentLink());
+                        portRefMetaData.setQName(portRef.getQName());
+                        portRefMetaData.setServiceEndpointInterface(portRef.getServiceEndpointInterface());
                         portRefMetaData.setEnableMtom(portRef.isEnableMtom());
-                        portRefMetaData.setServiceEndpointInterface(portRef.getServiceEndpointInterface().getName());
                         portRefMetaData.getProperties().putAll(portRef.getProperties());
+                        portRefMetaData.getAddresses().addAll(portRef.getAddresses());
+                        if (portRef.getQName() != null) {
+                            portsByQName.put(portRef.getQName(), portRefMetaData);
+                        }
                         serviceMetaData.getPortRefs().add(portRefMetaData);
+                    }
 
+                    // add PortRefMetaData for any portAddress not added above
+                    for (PortAddress portAddress : portAddresses) {
+                        PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getQName());
+                        if (portRefMetaData == null) {
+                            portRefMetaData = new PortRefMetaData();
+                            portRefMetaData.setQName(portAddress.getQName());
+                            portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                            portRefMetaData.getAddresses().add(portAddress.getAddress());
+                            serviceMetaData.getPortRefs().add(portRefMetaData);
+                        } else {
+                            portRefMetaData.getAddresses().add(portAddress.getAddress());
+                            if (portRefMetaData.getServiceEndpointInterface() == null) {
+                                portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                            }
+                        }
                     }
 
                     res.setResponseCode(ResponseCodes.JNDI_WEBSERVICE);
@@ -252,7 +280,7 @@ class JndiRequestHandler {
             }
 
 
-            BaseEjbProxyHandler handler = null;
+            BaseEjbProxyHandler handler;
             try {
                 handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
             } catch (Exception e) {

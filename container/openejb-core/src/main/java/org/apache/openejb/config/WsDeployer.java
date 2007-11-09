@@ -31,6 +31,7 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -40,11 +41,12 @@ import javax.wsdl.Port;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceProvider;
+import javax.jws.HandlerChain;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -64,48 +66,26 @@ public class WsDeployer implements DynamicDeployer {
         // Resolve service-refs
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                resolveServiceRefs(enterpriseBean, ejbModule.getJarLocation());
+                resolveServiceRefs(ejbModule, enterpriseBean);
             }
         }
         for (WebModule webModule : appModule.getWebModules()) {
-            resolveServiceRefs(webModule.getWebApp(), webModule.getJarLocation());
+            resolveServiceRefs(webModule, webModule.getWebApp());
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
-            resolveServiceRefs(clientModule.getApplicationClient(), clientModule.getJarLocation());
+            resolveServiceRefs(clientModule, clientModule.getApplicationClient());
         }
 
         return appModule;
     }
 
-    private void resolveServiceRefs(JndiConsumer jndiConsumer, String baseLocation) {
-        URL baseURL;
-        try {
-            File file = new File(baseLocation);
-            if (file.exists()) {
-                baseURL = file.toURL();
-                if (file.isFile()) {
-                    baseURL = new URL("jar", null, baseURL.toExternalForm() + "!/");
-                }
-            } else {
-                baseURL = new URL(baseLocation);
-            }
-        } catch (MalformedURLException e) {
-            logger.error("Invalid module location " + baseLocation);
-            return;
-        }
-
-        Map<URL,Definition> wsdlFiles = new HashMap<URL,Definition>();
+    private void resolveServiceRefs(DeploymentModule module, JndiConsumer jndiConsumer) {
         for (ServiceRef serviceRef : jndiConsumer.getServiceRef()) {
             if (serviceRef.getServiceQname() == null && serviceRef.getWsdlFile() != null) {
                 // parse the wsdl and get the serviceQname
                 try {
                     String wsdlFile = serviceRef.getWsdlFile();
-                    URL wsdlUrl = new URL(baseURL, wsdlFile);
-                    Definition definition = wsdlFiles.get(wsdlUrl);
-                    if (definition == null) {
-                        definition = ReadDescriptors.readWsdl(wsdlUrl);
-                        wsdlFiles.put(wsdlUrl, definition);
-                    }
+                    Definition definition = getWsdl(module, wsdlFile);
 
                     Set serviceQNames = definition.getServices().keySet();
                     if (serviceQNames.size() == 1) {
@@ -138,6 +118,7 @@ public class WsDeployer implements DynamicDeployer {
             }
         }
 
+
         // map existing servlet-mapping declarations
         WebApp webApp = webModule.getWebApp();
         Map<String, ServletMapping> servletMappings = new TreeMap<String, ServletMapping>();
@@ -146,7 +127,7 @@ public class WsDeployer implements DynamicDeployer {
         }
 
         // add port declarations for webservices
-        WebserviceDescription webserviceDescription = null;
+        WebserviceDescription webserviceDescription;
         for (Servlet servlet : webApp.getServlet()) {
             String className = servlet.getServletClass();
 
@@ -155,41 +136,48 @@ public class WsDeployer implements DynamicDeployer {
                 if (JaxWsUtils.isWebService(clazz)) {
                     // add servlet mapping if not already declared
                     ServletMapping servletMapping = servletMappings.get(servlet.getServletName());
+                    String serviceName = JaxWsUtils.getServiceName(clazz);
                     if (servletMapping == null) {
                         servletMapping = new ServletMapping();
                         servletMapping.setServletName(servlet.getServletName());
 
-                        String location = "/" + JaxWsUtils.getServiceName(clazz);
+                        String location = "/" + serviceName;
                         servletMapping.getUrlPattern().add(location);
                         webApp.getServletMapping().add(servletMapping);
                     }
 
+                    // if we don't have a webservices document yet, we're gonna need one now
+                    if (webservices == null) {
+                        webservices = new Webservices();
+                        webModule.setWebservices(webservices);
+                    }
+
+                    // add web service description element (maps to service)
+                    webserviceDescription = webservices.getWebserviceDescriptionMap().get(serviceName);
+                    if (webserviceDescription == null) {
+                        webserviceDescription = new WebserviceDescription();
+                        webserviceDescription.setWebserviceDescriptionName(serviceName);
+                        webservices.getWebserviceDescription().add(webserviceDescription);
+                    }
+
                     // define port if not already declared
-                    PortComponent portComponent = portMap.get(clazz.getName());
+                    PortComponent portComponent = portMap.get(servlet.getServletName());
                     if (portComponent == null) {
-                        // create port
                         portComponent = new PortComponent();
-                        portComponent.setPortComponentName(JaxWsUtils.getName(clazz));
+                        portComponent.setPortComponentName(clazz.getSimpleName());
                         ServiceImplBean serviceImplBean = new ServiceImplBean();
-                        serviceImplBean.setServletLink(className);
+                        serviceImplBean.setServletLink(servlet.getServletName());
                         portComponent.setServiceImplBean(serviceImplBean);
 
-                        // add port declaration
-                        if (webservices == null) {
-                            webservices = new Webservices();
-                            webModule.setWebservices(webservices);
-                        }
-                        if (webserviceDescription == null) {
-                            webserviceDescription = new WebserviceDescription();
-                            webserviceDescription.setWebserviceDescriptionName(JaxWsUtils.getServiceName(clazz));
-                            webservices.getWebserviceDescription().add(webserviceDescription);
-                        }
                         webserviceDescription.getPortComponent().add(portComponent);
                     }
 
                     // default portId == moduleId.servletName
                     if (portComponent.getId() == null) {
                         portComponent.setId(webModule.getModuleId() + "." + servlet.getServletName());
+                    }
+                    if (webserviceDescription.getId() == null) {
+                        webserviceDescription.setId(webModule.getModuleId() + "." + servlet.getServletName());
                     }
 
                     // set port values from annotations if not already set
@@ -199,11 +187,27 @@ public class WsDeployer implements DynamicDeployer {
                     if (portComponent.getWsdlPort() == null) {
                         portComponent.setWsdlPort(JaxWsUtils.getPortQName(clazz));
                     }
-                    if (portComponent.getWsdlService() == null) {
-                        portComponent.setWsdlService(JaxWsUtils.getServiceQName(clazz));
-                    }
                     if (webserviceDescription.getWsdlFile() == null) {
                         webserviceDescription.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(clazz, webModule.getClassLoader()));
+                    }
+                    if (portComponent.getWsdlService() == null) {
+                        Definition definition = getWsdl(webModule, webserviceDescription.getWsdlFile());
+                        if (definition != null && definition.getServices().size() ==  1) {
+                            QName serviceQName = (QName) definition.getServices().keySet().iterator().next();
+                            portComponent.setWsdlService(serviceQName);
+                        } else {
+                            portComponent.setWsdlService(JaxWsUtils.getServiceQName(clazz));
+                        }
+                    }
+                    if (portComponent.getProtocolBinding() == null) {
+                        portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(clazz));
+                    }
+
+                    // handlers
+                    if (portComponent.getHandlerChains() == null) {
+                        HandlerChains handlerChains = getHandlerChains(clazz, portComponent.getServiceEndpointInterface(), webModule.getClassLoader());
+                        portComponent.setHandlerChains(handlerChains);
+
                     }
                 }
             } catch (Exception e) {
@@ -227,25 +231,9 @@ public class WsDeployer implements DynamicDeployer {
             }
         }
 
-        URL baseURL = null;
-        try {
-            File file = new File(ejbModule.getJarLocation());
-            if (file.exists()) {
-                baseURL = file.toURL();
-                if (file.isFile()) {
-                    baseURL = new URL("jar", null, baseURL.toExternalForm() + "!/");
-                }
-            } else {
-                baseURL = new URL(ejbModule.getJarLocation());
-            }
-        } catch (MalformedURLException e) {
-            logger.error("Invalid module location " + ejbModule.getJarLocation());
-        }
-
         Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
 
         WebserviceDescription webserviceDescription = null;
-        Definition definition = null;
         for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             // skip if this is not a webservices endpoint
             if (!(enterpriseBean instanceof SessionBean)) continue;
@@ -286,7 +274,11 @@ public class WsDeployer implements DynamicDeployer {
             PortComponent portComponent = portMap.get(sessionBean.getEjbName());
             if (portComponent == null) {
                 portComponent = new PortComponent();
-                portComponent.setPortComponentName(JaxWsUtils.getName(ejbClass));
+                if (ejbClass.isAnnotationPresent(WebServiceProvider.class)) {
+                    portComponent.setPortComponentName(ejbClass.getName());
+                } else {
+                    portComponent.setPortComponentName(ejbClass.getSimpleName());
+                }
                 webserviceDescription.getPortComponent().add(portComponent);
 
                 ServiceImplBean serviceImplBean = new ServiceImplBean();
@@ -297,6 +289,9 @@ public class WsDeployer implements DynamicDeployer {
             // default portId == deploymentId
             if (portComponent.getId() == null) {
                 portComponent.setId(deployment.getDeploymentId());
+            }
+            if (webserviceDescription.getId() == null) {
+                webserviceDescription.setId(deployment.getDeploymentId());
             }
 
             // set service endpoint interface
@@ -309,28 +304,77 @@ public class WsDeployer implements DynamicDeployer {
                 if (portComponent.getWsdlPort() == null) {
                     portComponent.setWsdlPort(JaxWsUtils.getPortQName(ejbClass));
                 }
-                if (portComponent.getWsdlService() == null) {
-                    portComponent.setWsdlService(JaxWsUtils.getServiceQName(ejbClass));
-                }
                 if (webserviceDescription.getWsdlFile() == null) {
                     webserviceDescription.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(ejbClass, ejbModule.getClassLoader()));
                 }
-                if (portComponent.getLocation() == null && webserviceDescription.getWsdlFile() != null && baseURL != null) {
-                    if (definition == null) {
-                        try {
-                            definition = ReadDescriptors.readWsdl(new URL(baseURL, webserviceDescription.getWsdlFile()));
-                        } catch (Exception e) {
-                        }
+                if (portComponent.getWsdlService() == null) {
+                    Definition definition = getWsdl(ejbModule, webserviceDescription.getWsdlFile());
+                    if (definition != null && definition.getServices().size() ==  1) {
+                        QName serviceQName = (QName) definition.getServices().keySet().iterator().next();
+                        portComponent.setWsdlService(serviceQName);
+                    } else {
+                        portComponent.setWsdlService(JaxWsUtils.getServiceQName(ejbClass));
                     }
-
+                }
+                if (portComponent.getLocation() == null && webserviceDescription.getWsdlFile() != null) {
                     // set location based on wsdl port
+                    Definition definition = getWsdl(ejbModule, webserviceDescription.getWsdlFile());
                     String locationURI = getLocationFromWsdl(definition, portComponent);
                     portComponent.setLocation(locationURI);
+                }
+                if (portComponent.getProtocolBinding() == null) {
+                    portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(ejbClass));
+                }
+
+                // handlers
+                if (portComponent.getHandlerChains() == null) {
+                    HandlerChains handlerChains = getHandlerChains(ejbClass, sessionBean.getServiceEndpoint(), ejbModule.getClassLoader());
+                    portComponent.setHandlerChains(handlerChains);
+
                 }
             } else {
                 // todo location JAX-RPC services comes from wsdl file
             }
         }
+    }
+
+    private Definition getWsdl(DeploymentModule module, String wsdlFile) {
+        Object object = module.getAltDDs().get(wsdlFile);
+        if (object instanceof Definition) {
+            Definition definition = (Definition) object;
+            return definition;
+        }
+
+        try {
+            URL wsdlUrl;
+            if (object instanceof URL) {
+                wsdlUrl = (URL) object;
+            } else {
+                URL baseUrl = getBaseUrl(module);
+                wsdlUrl = new URL(baseUrl, wsdlFile);
+            }
+
+            Definition definition = ReadDescriptors.readWsdl(wsdlUrl);
+            module.getAltDDs().put(wsdlFile, definition);
+            return definition;
+        } catch (Exception e) {
+            logger.error("Unable to read wsdl file " + wsdlFile);
+        }
+
+        return null;
+    }
+
+    private URL getBaseUrl(DeploymentModule module) throws MalformedURLException {
+        File file = new File(module.getJarLocation());
+        if (!file.exists()) {
+            return new URL(module.getJarLocation());
+        }
+
+        URL baseUrl = file.toURL();
+        if (file.isFile()) {
+            baseUrl = new URL("jar", null, baseUrl.toExternalForm() + "!/");
+        }
+        return baseUrl;
     }
 
     private String getLocationFromWsdl(Definition definition, PortComponent portComponent) {
@@ -357,5 +401,26 @@ public class WsDeployer implements DynamicDeployer {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static HandlerChains getHandlerChains(Class<?> declaringClass, String serviceEndpoint, ClassLoader classLoader) throws OpenEJBException {
+        HandlerChain handlerChain = declaringClass.getAnnotation(HandlerChain.class);
+        if (handlerChain == null && serviceEndpoint != null) {
+            try {
+                declaringClass = classLoader.loadClass(serviceEndpoint);
+                handlerChain = declaringClass.getAnnotation(HandlerChain.class);
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        HandlerChains handlerChains = null;
+        if (handlerChain != null) {
+            try {
+                URL handlerFileURL = declaringClass.getResource(handlerChain.file());
+                handlerChains = ReadDescriptors.readHandlerChains(handlerFileURL);
+            } catch (Throwable e) {
+                throw new OpenEJBException("Unable to load handler chain file: " + handlerChain.file(), e);
+            }
+        }
+        return handlerChains;
     }
 }

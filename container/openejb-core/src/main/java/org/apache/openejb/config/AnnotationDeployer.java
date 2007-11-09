@@ -395,7 +395,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
 
             ClassLoader classLoader = clientModule.getClassLoader();
-            Class<?> clazz = null;
+            Class<?> clazz;
             try {
                 clazz = classLoader.loadClass(clientModule.getMainClass());
             } catch (ClassNotFoundException e) {
@@ -483,6 +483,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         // skip ejb port defs
                         if (port.getServiceImplBean().getEjbLink() != null) continue;
 
+                        if (port.getHandlerChains() == null) continue;
                         for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                             for (Handler handler : handlerChain.getHandler()) {
                                 String handlerClass = handler.getHandlerClass();
@@ -500,7 +501,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
+            ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
             // Currently we only process the JNDI annotations for web applications
             buildAnnotatedRefs(webApp, inheritedClassFinder, classLoader);
@@ -519,7 +520,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
 
-                Class<?> clazz = null;
+                Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(bean.getEjbClass());
                 } catch (ClassNotFoundException e) {
@@ -932,6 +933,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             // only process port definitions for this ejb
                             if (!ejbName.equals(port.getServiceImplBean().getEjbLink())) continue;
 
+                            if (port.getHandlerChains() == null) continue;
                             for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                                 for (Handler handler : handlerChain.getHandler()) {
                                     String handlerClass = handler.getHandlerClass();
@@ -948,14 +950,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                 }
-                inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[0]));
+                inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
                 buildAnnotatedRefs(bean, inheritedClassFinder, classLoader);
                 processWebServiceClientHandlers(bean, classLoader);
             }
 
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
-                Class<?> clazz = null;
+                Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(interceptor.getInterceptorClass());
                 } catch (ClassNotFoundException e) {
@@ -1271,7 +1273,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 handlerClasses.removeAll(processedClasses);
 
                 // process handler classes
-                ClassFinder handlerClassFinder = createInheritedClassFinder(handlerClasses.toArray(new Class<?>[0]));
+                ClassFinder handlerClassFinder = createInheritedClassFinder(handlerClasses.toArray(new Class<?>[handlerClasses.size()]));
                 buildAnnotatedRefs(consumer, handlerClassFinder, classLoader);
                 processedClasses.addAll(handlerClasses);
             } while (!handlerClasses.isEmpty());
@@ -1316,7 +1318,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
-                String type = null;
+                String type;
                 if (resource.type() != java.lang.Object.class) {
                     type = resource.type().getName();
                 } else {
@@ -1397,7 +1399,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, HandlerChain handlerChain, Member member, ClassLoader classLoader) throws OpenEJBException {
 
-            ServiceRef serviceRef = null;
+            ServiceRef serviceRef;
 
             String refName = webService.name();
             if (refName.equals("")) {
@@ -1690,7 +1692,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class clazz : types) {
                 names.add(clazz.getName());
             }
-            return names.toArray(new String[]{});
+            return names.toArray(new String[names.size()]);
         }
 
         private TransAttribute cast(TransactionAttributeType transactionAttributeType) {

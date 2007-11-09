@@ -15,14 +15,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.examples.servlet;
 
-import javax.xml.namespace.QName;
-import java.util.Properties;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.MessageContext;
 
-public class PortRefInfo extends InfoObject {
-    public QName qname;
-    public String serviceEndpointInterface;
-    public boolean enableMtom;
-    public final Properties properties = new Properties();
+public class ClientHandler implements Handler {
+    public boolean handleMessage(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler handleMessage");
+        return true;
+    }
+
+    public void close(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler close");
+    }
+
+    public boolean handleFault(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler handleFault");
+        return true;
+    }
 }

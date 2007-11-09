@@ -23,10 +23,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import java.util.Properties;
 
 
@@ -51,6 +52,8 @@ public class PortComponentRef {
     protected Boolean enableMtom;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
+    @XmlTransient
+    protected QName qname;
     @XmlTransient
     protected Properties properties;
     @XmlAttribute
@@ -80,6 +83,14 @@ public class PortComponentRef {
 
     public void setPortComponentLink(String value) {
         this.portComponentLink = value;
+    }
+
+    public QName getQName() {
+        return qname;
+    }
+
+    public void setQName(QName qname) {
+        this.qname = qname;
     }
 
     public Properties getProperties() {

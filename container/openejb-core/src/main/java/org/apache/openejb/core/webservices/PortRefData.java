@@ -17,20 +17,42 @@
  */
 package org.apache.openejb.core.webservices;
 
-import java.util.Properties;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class PortRefData {
-    private Class serviceEndpointInterface;
+    private QName qname;
+    private String serviceEndpointInterface;
     private boolean enableMtom;
-    private String portComponentLink;
     private final Properties properties = new Properties();
+    private final List<String> addresses = new ArrayList<String>(1);
 
-    public Class getServiceEndpointInterface() {
+    public PortRefData() {
+    }
+
+    public PortRefData(PortRefData src) {
+        qname = src.qname;
+        serviceEndpointInterface = src.serviceEndpointInterface;
+        enableMtom = src.enableMtom;
+        properties.putAll(src.properties);
+        addresses.addAll(src.addresses);
+    }
+
+    public QName getQName() {
+        return qname;
+    }
+
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    public String getServiceEndpointInterface() {
         return serviceEndpointInterface;
     }
 
-    public void setServiceEndpointInterface(Class serviceEndpointInterface) {
+    public void setServiceEndpointInterface(String serviceEndpointInterface) {
         this.serviceEndpointInterface = serviceEndpointInterface;
     }
 
@@ -42,15 +64,11 @@ public class PortRefData {
         this.enableMtom = value;
     }
 
-    public String getPortComponentLink() {
-        return portComponentLink;
-    }
-
-    public void setPortComponentLink(String value) {
-        this.portComponentLink = value;
-    }
-
     public Properties getProperties() {
         return properties;
+    }
+
+    public List<String> getAddresses() {
+        return addresses;
     }
 }

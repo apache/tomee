@@ -19,8 +19,32 @@ package org.apache.openejb.core.webservices;
 
 import javax.xml.namespace.QName;
 
-public interface WsdlRepo {
-    void addWsdl(String portId, QName serviceQname, String serviceInterface, String address);
-    void removeWsdl(String portId, QName serviceQname, String serviceInterface, String address);
-    String getWsdl(String portId, QName serviceQname, String serviceInterface);
+public class PortAddress {
+    private final String id;
+    private final QName qname;
+    private final String address;
+    private final String serviceEndpointInterface;
+
+    public PortAddress(String id, QName qname, String address, String serviceEndpointInterface) {
+        this.id = id;
+        this.qname = qname;
+        this.address = address;
+        this.serviceEndpointInterface = serviceEndpointInterface;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public QName getQName() {
+        return qname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getServiceEndpointInterface() {
+        return serviceEndpointInterface;
+    }
 }

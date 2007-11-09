@@ -17,45 +17,51 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import org.apache.openejb.core.webservices.HandlerResolverImpl;
+import org.apache.openejb.Injection;
 import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortRefData;
-import org.apache.openejb.core.webservices.WsdlRepo;
 import org.apache.openejb.core.webservices.ProviderWrapper;
 import org.apache.openejb.core.webservices.ServiceRefData;
-import org.apache.openejb.Injection;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
+import org.apache.openejb.core.webservices.PortAddress;
 import org.apache.openejb.loader.SystemInstance;
 
-import javax.naming.NamingException;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.HandlerResolver;
-import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.List;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class JaxWsServiceReference extends Reference {
-    private String portId;
+    private final String id;
+    private final QName serviceQName;
+    private final QName portQName;
     private final Class<? extends Service> serviceClass;
     private final Class<?> referenceClass;
     private final URL wsdlUrl;
-    private final QName serviceQName;
     private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
     private final List<Injection> injections;
-    private WsdlRepo wsdlRepo;
+    private PortAddressRegistry portAddressRegistry;
     private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
 
-    public JaxWsServiceReference(String portId, Class<? extends Service> serviceClass, Class<?> referenceClass, URL wsdlUrl, QName serviceQName, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, List<Injection> injections) {
-        this.portId = portId;
+    public JaxWsServiceReference(String id, QName serviceQName, Class<? extends Service> serviceClass, QName portQName, Class<?> referenceClass, URL wsdlUrl, List<PortRefData> portRefs, List<HandlerChainData> handlerChains, List<Injection> injections) {
+        this.id = id;
+        this.serviceQName = serviceQName;
+        this.serviceClass = serviceClass;
+        this.portQName = portQName;
+        this.referenceClass = referenceClass;
+        this.wsdlUrl = wsdlUrl;
         if (portRefs != null) {
             this.portRefs.addAll(portRefs);
         }
-        this.serviceClass = serviceClass;
-        this.referenceClass = referenceClass;
-        this.wsdlUrl = wsdlUrl;
-        this.serviceQName = serviceQName;
         if (handlerChains != null) {
             this.handlerChains.addAll(handlerChains);
         }
@@ -63,9 +69,47 @@ public class JaxWsServiceReference extends Reference {
     }
 
     public Object getObject() throws javax.naming.NamingException {
-        URL wsdlUrl = getWsdlUrl();
+        Set<PortAddress> portAddresses = PortAddressRegistry().getPorts(id, serviceQName);
 
-        ProviderWrapper.beforeCreate(portRefs);
+        // if we only have one address, use that address for the wsdl
+        URL wsdlUrl = this.wsdlUrl;
+        if (portAddresses.size() == 1) {
+            try {
+                PortAddress portAddress = portAddresses.iterator().next();
+                wsdlUrl = new URL(portAddress.getAddress() + "?wsdl");
+            } catch (MalformedURLException e) {
+            }
+        }
+
+        // add the port addresses to the portRefData
+        Map<QName,PortRefData> portsByQName = new HashMap<QName,PortRefData>();
+        List<PortRefData> ports = new ArrayList<PortRefData>(portRefs.size() + portAddresses.size());
+        for (PortRefData portRef : portRefs) {
+            PortRefData port = new PortRefData(portRef);
+            if (port.getQName() != null) {
+                portsByQName.put(port.getQName(), port);
+            }
+            ports.add(port);
+        }
+
+        // add PortRefData for any portAddress not added above
+        for (PortAddress portAddress : portAddresses) {
+            PortRefData port = portsByQName.get(portAddress.getQName());
+            if (port == null) {
+                port = new PortRefData();
+                port.setQName(portAddress.getQName());
+                port.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                port.getAddresses().add(portAddress.getAddress());
+                ports.add(port);
+            } else {
+                port.getAddresses().add(portAddress.getAddress());
+                if (port.getServiceEndpointInterface() == null) {
+                    port.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
+                }
+            }
+        }
+
+        ProviderWrapper.beforeCreate(ports);
         Service instance;
         try {
             instance = null;
@@ -97,32 +141,22 @@ public class JaxWsServiceReference extends Reference {
         }
 
         // register the service data so it can be fetched when the service is passed over the EJBd protocol
-        ServiceRefData serviceRefData = new ServiceRefData(portId, serviceClass, referenceClass, wsdlUrl, serviceQName, handlerChains, portRefs);
+        ServiceRefData serviceRefData = new ServiceRefData(id,
+                serviceQName,
+                serviceClass, portQName,
+                referenceClass,
+                wsdlUrl,
+                handlerChains,
+                portRefs);
         ServiceRefData.putServiceRefData(port, serviceRefData);
 
         return port;
     }
 
-    private URL getWsdlUrl() {
-        WsdlRepo wsdlRepo = getWsdlRepo();
-        if (wsdlRepo != null) {
-            String wsdlLocation = wsdlRepo.getWsdl(portId, serviceQName, referenceClass.getName());
-            if (wsdlLocation != null) {
-                try {
-                    URL wsdlUrl = new URL(wsdlLocation);
-                    return wsdlUrl;
-                } catch (MalformedURLException e) {
-                }
-            }
+    private PortAddressRegistry PortAddressRegistry() {
+        if (portAddressRegistry == null) {
+            portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         }
-
-        return wsdlUrl;
-    }
-
-    private WsdlRepo getWsdlRepo() {
-        if (wsdlRepo == null) {
-            wsdlRepo = SystemInstance.get().getComponent(WsdlRepo.class);
-        }
-        return wsdlRepo;
+        return portAddressRegistry;
     }
 }
