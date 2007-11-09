@@ -63,6 +63,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "messageDrivenDescriptor",
     "transactionDescriptor",
     "iiopSecurityDescriptor",
+    "referenceDescriptor",
     "resourceDescription",
     "resourceEnvDescription",
     "ejbReferenceDescription",
@@ -101,6 +102,9 @@ public class WeblogicEnterpriseBean {
 
     @XmlElement(name = "iiop-security-descriptor")
     protected IiopSecurityDescriptor iiopSecurityDescriptor;
+
+    @XmlElement(name = "reference-descriptor")
+    protected ReferenceDescriptor referenceDescriptor;
 
     @XmlElement(name = "resource-description")
     protected List<ResourceDescription> resourceDescription;
@@ -320,6 +324,14 @@ public class WeblogicEnterpriseBean {
      */
     public void setIiopSecurityDescriptor(IiopSecurityDescriptor value) {
         this.iiopSecurityDescriptor = value;
+    }
+
+    public ReferenceDescriptor getReferenceDescriptor() {
+        return referenceDescriptor;
+    }
+
+    public void setReferenceDescriptor(ReferenceDescriptor referenceDescriptor) {
+        this.referenceDescriptor = referenceDescriptor;
     }
 
     /**
