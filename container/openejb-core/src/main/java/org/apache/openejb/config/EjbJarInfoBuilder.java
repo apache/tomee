@@ -187,7 +187,7 @@ public class EjbJarInfoBuilder {
 
     private void initJndiNames(Map<String, EjbDeployment> ejbds, EnterpriseBean bean, EnterpriseBeanInfo info) {
         EjbDeployment deployment = ejbds.get(info.ejbDeploymentId);
-        for (Jndi jndi : deployment.getJndi()) {
+        if (deployment != null) for (Jndi jndi : deployment.getJndi()) {
             JndiNameInfo jndiNameInfo = new JndiNameInfo();
             jndiNameInfo.intrface = jndi.getInterface();
             jndiNameInfo.name = jndi.getName();
