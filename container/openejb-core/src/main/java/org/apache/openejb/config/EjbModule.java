@@ -49,6 +49,10 @@ public class EjbModule implements WsModule {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
     }
 
+    public EjbModule(EjbJar ejbJar, OpenejbJar openejbJar){
+        this(Thread.currentThread().getContextClassLoader(), null, ejbJar, openejbJar);
+    }
+
     public EjbModule(ClassLoader classLoader, String moduleId, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");

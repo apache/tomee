@@ -37,8 +37,8 @@ public class Jndi {
     }
 
     public Jndi(String name, String intrface) {
-        this.name = intrface;
-        this.intrface = name;
+        this.name = name;
+        this.intrface = intrface;
     }
 
     public String getName() {

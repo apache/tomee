@@ -38,6 +38,7 @@ import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
+import org.apache.openejb.assembler.classic.JndiNameInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -74,6 +75,7 @@ import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
+import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -160,6 +162,7 @@ public class EjbJarInfoBuilder {
                 beanInfo.runAs = bean.getSecurityIdentity().getRunAs();
             }
 
+            initJndiNames(ejbds, bean, beanInfo);
         }
 
         if (jar.getEjbJar().getAssemblyDescriptor() != null) {
@@ -180,6 +183,16 @@ public class EjbJarInfoBuilder {
         }
 
         return ejbJar;
+    }
+
+    private void initJndiNames(Map<String, EjbDeployment> ejbds, EnterpriseBean bean, EnterpriseBeanInfo info) {
+        EjbDeployment deployment = ejbds.get(info.ejbDeploymentId);
+        for (Jndi jndi : deployment.getJndi()) {
+            JndiNameInfo jndiNameInfo = new JndiNameInfo();
+            jndiNameInfo.intrface = jndi.getInterface();
+            jndiNameInfo.name = jndi.getName();
+            info.jndiNamess.add(jndiNameInfo);
+        }
     }
 
     private void initRelationships(EjbModule jar, Map<String, EnterpriseBeanInfo> infos) throws OpenEJBException {
