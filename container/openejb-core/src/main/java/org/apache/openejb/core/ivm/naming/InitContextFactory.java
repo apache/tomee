@@ -30,28 +30,40 @@ import org.apache.openejb.spi.SecurityService;
 
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
+    private static Context ejbContext;
+
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
         if (!org.apache.openejb.OpenEJB.isInitialized()) {
             initializeOpenEJB(env);
         }
 
-
         String user = (String) env.get(Context.SECURITY_PRINCIPAL);
         String pass = (String) env.get(Context.SECURITY_CREDENTIALS);
+        String realmName = (String) env.get("openejb.authentication.realmName");
 
         if (user != null && pass != null){
             try {
                 SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-                Object identity = securityService.login(user, pass);
+                Object identity = null;
+                if (realmName == null) {
+                    identity = securityService.login(user, pass);
+                } else {
+                    identity = securityService.login(realmName, user, pass);
+                }
                 securityService.associate(identity);
             } catch (LoginException e) {
                 throw (AuthenticationException) new AuthenticationException("User could not be authenticated: "+user).initCause(e);
             }
         }
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        Context context = containerSystem.getJNDIContext();
-        context = (Context) context.lookup("java:openejb/ejb");
-        return context;
+
+        if (ejbContext == null){
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            Context context = containerSystem.getJNDIContext();
+            context = (Context) context.lookup("java:openejb/ejb");
+            ejbContext = context;
+        }
+
+        return ejbContext;
 
     }
 

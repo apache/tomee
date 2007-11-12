@@ -33,24 +33,27 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
 
-    static Context intraVmContext;
     private static OpenEJBInstance openejb;
     private static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
-        if (intraVmContext == null) {
-            try {
-                Properties properties = new Properties();
-                properties.putAll(env);
-                init(properties);
-            } catch (Exception e) {
-                throw (NamingException) new NamingException("Attempted to load OpenEJB. " + e.getMessage()).initCause(e);
-            }
-            intraVmContext = getIntraVmContext(env);
-        }
-        return intraVmContext;
+        init(env);
+        return getIntraVmContext(env);
     }
 
+    private void init(Hashtable env) throws javax.naming.NamingException {
+        if (openejb != null) {
+            return;
+        }
+        try {
+            Properties properties = new Properties();
+            properties.putAll(env);
+            init(properties);
+        } catch (Exception e) {
+            throw (NamingException) new NamingException("Attempted to load OpenEJB. " + e.getMessage()).initCause(e);
+        }
+    }
+    
     public void init(Properties properties) throws Exception {
         if (openejb != null) return;
         openejb = new OpenEJBInstance();
