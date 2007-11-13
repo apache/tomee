@@ -72,6 +72,7 @@ import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.Basic;
 import org.apache.openejb.jee.jpa.AttributeOverride;
 
+import javax.xml.bind.JAXBElement;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Map;
@@ -110,10 +111,12 @@ public class WlsConversion implements DynamicDeployer {
                 // todo warn about not being able to parse sun descriptor
             }
         }
-        if (altDD != null && type.isAssignableFrom(altDD.getClass())) {
-            return (T) altDD;
+        if (altDD == null) return null;
+        if (altDD instanceof JAXBElement) {
+            JAXBElement jaxbElement = (JAXBElement) altDD;
+            altDD = jaxbElement.getValue();
         }
-        return null;
+        return (T) altDD;
     }
 
     public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
