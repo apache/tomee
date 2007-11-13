@@ -242,10 +242,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         contextInfo.standardContext = standardContext;
 
         WebAppInfo webAppInfo = null;
-        for (WebAppInfo w : contextInfo.appInfo.webApps) {
-            if (("/" + w.contextRoot).equals(standardContext.getPath())) {
-                webAppInfo = w;
-                break;
+        // appInfo is null when deployment fails
+        if (contextInfo.appInfo != null) {
+            for (WebAppInfo w : contextInfo.appInfo.webApps) {
+                if (("/" + w.contextRoot).equals(standardContext.getPath())) {
+                    webAppInfo = w;
+                    break;
+                }
             }
         }
 
@@ -273,6 +276,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
     public void afterStart(StandardContext standardContext) {
         if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
+
+        // if appInfo is null this is a failed deployment... just ignore
+        ContextInfo contextInfo = getContextInfo(standardContext);
+        if (contextInfo.appInfo == null) return;
 
         // replace any webservices with the webservice servlet
         // HACK: use a temp class loader because the class may have been loaded before
@@ -305,7 +312,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
 
             // add context to WebDeploymentInfo
-            ContextInfo contextInfo = getContextInfo(standardContext);
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                 if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath())) {
                     CoreWebDeploymentInfo webDeploymentInfo = (CoreWebDeploymentInfo) getContainerSystem().getWebDeploymentInfo(webAppInfo.moduleId);
@@ -345,14 +351,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
 
         ContextInfo contextInfo = getContextInfo(standardContext);
-        if (contextInfo != null && contextInfo.deployer == null) {
+        if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null) {
             try {
                 assembler.destroyApplication(contextInfo.appInfo.jarPath);
             } catch (Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
-            removeContextInfo(standardContext);
         }
+        removeContextInfo(standardContext);
     }
 
     public void destroy(StandardContext standardContext) {
