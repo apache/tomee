@@ -29,6 +29,7 @@ import java.util.TreeMap;
 
 public class PortAddressRegistryImpl implements PortAddressRegistry {
     private Map<String, PortAddress> portsById = new TreeMap<String, PortAddress>();
+    private Map<String, Map<String, PortAddress>> portsByInterface = new TreeMap<String, Map<String, PortAddress>>();
     private Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<String, Map<String, PortAddress>>();
     private Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
 
@@ -42,19 +43,29 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         // create portAddress
         PortAddress portAddress = portsById.get(portId);
         if (portAddress != null) {
-            throw new OpenEJBException("A webservice port with qname " + portAddress.getQName() + " is already registered to the portId " + portId);
+            throw new OpenEJBException("A webservice port with qname " + portAddress.getPortQName() + " is already registered to the portId " + portId);
         }
-        portAddress = new PortAddress(portId, portQName, address, portInterface);
+        portAddress = new PortAddress(portId, serviceQName, portQName, address, portInterface);
         portsById.put(portId, portAddress);
 
+        // portsByInterface
+        Map<String, PortAddress> ports = portsByInterface.get(portInterface);
+        if (ports == null) {
+            ports = new TreeMap<String, PortAddress>();
+            portsByInterface.put(portInterface, ports);
+        }
+        ports.put(portId, portAddress);
 
-        Map<String, PortAddress> ports = portsByServiceId.get(serviceId);
+
+        // portsByServiceId
+        ports = portsByServiceId.get(serviceId);
         if (ports == null) {
             ports = new TreeMap<String, PortAddress>();
             portsByServiceId.put(serviceId, ports);
         }
         ports.put(portId, portAddress);
 
+        // portsByServiceQName
         ports = portsByServiceQName.get(serviceQName);
         if (ports == null) {
             ports = new TreeMap<String, PortAddress>();
@@ -75,8 +86,17 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
             return;
         }
 
+        // remove from portsByInterface
+        Map<String, PortAddress> ports = portsByInterface.get(serviceId);
+        if (ports != null) {
+            ports.remove(portId);
+            if (ports.isEmpty()) {
+                portsByInterface.remove(serviceId);
+            }
+        }
+
         // remove from portsByServiceId
-        Map<String, PortAddress> ports = portsByServiceId.get(serviceId);
+        ports = portsByServiceId.get(serviceId);
         if (ports != null) {
             ports.remove(portId);
             if (ports.isEmpty()) {
@@ -94,13 +114,22 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         }
     }
 
-    public synchronized Set<PortAddress> getPorts(String id, QName serviceQName) {
+    public synchronized Set<PortAddress> getPorts(String id, QName serviceQName, String referenceClassName) {
         if (serviceQName == null) throw new NullPointerException("serviceQName is null");
 
         // check if there is a port with the id
         if (id != null) {
             PortAddress portAddress = portsById.get(id);
             if (portAddress != null) {
+                return Collections.singleton(portAddress);
+            }
+        }
+
+        // check if there is a unique port with the specifiec interface
+        if (referenceClassName != null) {
+            Map<String, PortAddress> interfacePorts = portsByInterface.get(referenceClassName);
+            if (interfacePorts != null && interfacePorts.size() == 1) {
+                PortAddress portAddress = interfacePorts.values().iterator().next();
                 return Collections.singleton(portAddress);
             }
         }

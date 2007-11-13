@@ -253,6 +253,25 @@ public class JaxWsUtils {
             return endpointInterface;
         }
 
+        // if the bean implements only one WebService class, that is the SEI
+        String endpointInterface = null;
+        for (Class intf : clazz.getInterfaces()) {
+            webService = clazz.getAnnotation(WebService.class);
+            if (webService != null) {
+                if (endpointInterface == null) {
+                    endpointInterface = intf.getName();
+                } else {
+                    // multiple endpoint interfaces
+                    endpointInterface = null;
+                    break;
+                }
+            }
+        }
+
+        if (endpointInterface != null) {
+            return endpointInterface;
+        }
+
         return null;
     }
 

@@ -69,16 +69,19 @@ public class JaxWsServiceReference extends Reference {
     }
 
     public Object getObject() throws javax.naming.NamingException {
-        Set<PortAddress> portAddresses = PortAddressRegistry().getPorts(id, serviceQName);
+        String referenceClassName = referenceClass != null ? referenceClass.getName() : null;
+        Set<PortAddress> portAddresses = getPortAddressRegistry().getPorts(id, serviceQName, referenceClassName);
 
-        // if we only have one address, use that address for the wsdl
+        // if we only have one address, use that address for the wsdl and the serviceQName
         URL wsdlUrl = this.wsdlUrl;
+        QName serviceQName = this.serviceQName;
         if (portAddresses.size() == 1) {
+            PortAddress portAddress = portAddresses.iterator().next();
             try {
-                PortAddress portAddress = portAddresses.iterator().next();
                 wsdlUrl = new URL(portAddress.getAddress() + "?wsdl");
             } catch (MalformedURLException e) {
             }
+            serviceQName = portAddress.getServiceQName();
         }
 
         // add the port addresses to the portRefData
@@ -94,10 +97,10 @@ public class JaxWsServiceReference extends Reference {
 
         // add PortRefData for any portAddress not added above
         for (PortAddress portAddress : portAddresses) {
-            PortRefData port = portsByQName.get(portAddress.getQName());
+            PortRefData port = portsByQName.get(portAddress.getPortQName());
             if (port == null) {
                 port = new PortRefData();
-                port.setQName(portAddress.getQName());
+                port.setQName(portAddress.getPortQName());
                 port.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
                 port.getAddresses().add(portAddress.getAddress());
                 ports.add(port);
@@ -153,7 +156,7 @@ public class JaxWsServiceReference extends Reference {
         return port;
     }
 
-    private PortAddressRegistry PortAddressRegistry() {
+    private PortAddressRegistry getPortAddressRegistry() {
         if (portAddressRegistry == null) {
             portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         }

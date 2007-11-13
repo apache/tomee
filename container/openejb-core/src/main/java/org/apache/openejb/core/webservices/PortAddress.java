@@ -20,24 +20,30 @@ package org.apache.openejb.core.webservices;
 import javax.xml.namespace.QName;
 
 public class PortAddress {
-    private final String id;
-    private final QName qname;
+    private final String portId;
+    private final QName serviceQName;
+    private final QName portQName;
     private final String address;
     private final String serviceEndpointInterface;
 
-    public PortAddress(String id, QName qname, String address, String serviceEndpointInterface) {
-        this.id = id;
-        this.qname = qname;
+    public PortAddress(String portId, QName serviceQName, QName portQName, String address, String serviceEndpointInterface) {
+        this.portId = portId;
+        this.serviceQName = serviceQName;
+        this.portQName = portQName;
         this.address = address;
         this.serviceEndpointInterface = serviceEndpointInterface;
     }
 
-    public String getId() {
-        return id;
+    public String getPortId() {
+        return portId;
     }
 
-    public QName getQName() {
-        return qname;
+    public QName getServiceQName() {
+        return serviceQName;
+    }
+
+    public QName getPortQName() {
+        return portQName;
     }
 
     public String getAddress() {

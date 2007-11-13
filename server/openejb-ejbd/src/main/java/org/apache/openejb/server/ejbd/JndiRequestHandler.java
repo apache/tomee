@@ -196,7 +196,7 @@ class JndiRequestHandler {
                     PortAddressRegistry portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
                     Set<PortAddress> portAddresses = null;
                     if (portAddressRegistry != null) {
-                        portAddresses = portAddressRegistry.getPorts(serviceRef.getId(), serviceRef.getServiceQName());
+                        portAddresses = portAddressRegistry.getPorts(serviceRef.getId(), serviceRef.getServiceQName(), referenceClassName);
                     }
 
                     // resolve the wsdl url
@@ -251,10 +251,10 @@ class JndiRequestHandler {
 
                     // add PortRefMetaData for any portAddress not added above
                     for (PortAddress portAddress : portAddresses) {
-                        PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getQName());
+                        PortRefMetaData portRefMetaData = portsByQName.get(portAddress.getPortQName());
                         if (portRefMetaData == null) {
                             portRefMetaData = new PortRefMetaData();
-                            portRefMetaData.setQName(portAddress.getQName());
+                            portRefMetaData.setQName(portAddress.getPortQName());
                             portRefMetaData.setServiceEndpointInterface(portAddress.getServiceEndpointInterface());
                             portRefMetaData.getAddresses().add(portAddress.getAddress());
                             serviceMetaData.getPortRefs().add(portRefMetaData);

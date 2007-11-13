@@ -855,7 +855,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         for (Class interfce : copy(interfaces)) {
-                            if (interfce.isAnnotationPresent(Remote.class)) {
+                            if (interfce.isAnnotationPresent(WebService.class)) {
+                                if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
+                                    sessionBean.setServiceEndpoint(interfce.getName());
+                                }
+                                interfaces.remove(interfce);
+                            } else if (interfce.isAnnotationPresent(Remote.class)) {
                                 remotes.add(interfce);
                                 interfaces.remove(interfce);
                             } else {
