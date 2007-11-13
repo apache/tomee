@@ -31,6 +31,7 @@
   <name>OpenEJB :: Examples</name>
   <modules>
     <module>helloworld-stateful-pojo</module>
+    <module>helloworld-weblogic</module>
     <module>calculator-stateless-pojo</module>
     <module>counter-stateful-pojo</module>
     <module>ejb-injection</module>
