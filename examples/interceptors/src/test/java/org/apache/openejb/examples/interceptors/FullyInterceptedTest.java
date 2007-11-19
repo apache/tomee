@@ -49,7 +49,9 @@ public class FullyInterceptedTest {
 
         assertNotNull(fullyIntercepted);
 
-        String expected = "businessMethod-bean-methodone-methodtwo-classone-classtwo";
+        // messages in reverse invocation order
+        // TODO: Almost 6 interceptors are not executed;
+        String expected = "businessMethod-bean-methodtwo-methodone-classtwo-classone";
 
         String actual = fullyIntercepted.businessMethod();
         assert expected.equals(actual) : "Expected \"" + expected + "\", but got \"" + actual + "\"";

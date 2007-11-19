@@ -22,10 +22,10 @@ import javax.interceptor.InvocationContext;
 /**
  * @version $Rev$ $Date$
  */
-public class ClassLevelInterceptorSuperClassTwo extends SuperClassOfClassLevelInterceptor {
+public class SuperClassOfClassLevelInterceptor {
     @AroundInvoke
     private Object businessMethodInterceptor(InvocationContext ic) throws Exception {
-        return ic.proceed() + "-superclasstwo";
+        return ic.proceed() + "-superclassclasslevel";
     }
 
 }
