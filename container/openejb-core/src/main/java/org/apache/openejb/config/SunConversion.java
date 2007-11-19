@@ -92,7 +92,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 //
-// Note to developer:  the best doc on what the sun-cmp-mappings element mean can be foudn here
+// Note to developer:  the best doc on what the sun-cmp-mappings element mean can be found here
 //   http://java.sun.com/j2ee/1.4/docs/devguide/dgcmp.html
 //   https://glassfish.dev.java.net/javaee5/docs/DG/beajj.html
 //

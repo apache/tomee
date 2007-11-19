@@ -416,7 +416,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        // process JNDI refs... all JDNI refs for the whole application
+        // process JNDI refs... all JNDI refs for the whole application
         // must be processed at the same time
         JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
 
