@@ -39,5 +39,6 @@
     <module>telephone-stateful</module>
     <module>expanded-env-entries</module>
     <module>ejb-examples</module>
+    <module>interceptors</module>
   </modules>
 </project>
