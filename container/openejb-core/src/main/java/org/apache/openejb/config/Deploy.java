@@ -95,6 +95,7 @@ public class Deploy {
         if (line.getArgList().size() == 0) {
             System.out.println("Must specify an archive to deploy.");
             help(options);
+            return;
         }
 
 
@@ -130,7 +131,7 @@ public class Deploy {
             System.out.println(messages.format("cmd.deploy.serverOffline"));
             throw new SystemExitException(1);
         } catch (javax.naming.NamingException e) {
-            System.out.println("DeployerEjb does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
+            System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
             throw new SystemExitException(2);
         }
 
