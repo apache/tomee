@@ -80,7 +80,4 @@ OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
 
-java -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR "$@"
-
-# Standard debug options 
-#java -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR "$@"
+java $OPENEJB_OPTS -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR "$@"
