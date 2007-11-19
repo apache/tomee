@@ -207,10 +207,11 @@ public class Client {
 
         } finally {
             try {
-                conn.close();
+            	if (conn != null) {
+            	    conn.close();
+            	}
             } catch (Throwable t) {
-
-                System.out.println("Error closing connection with server: " + t.getMessage());
+                logger.log(Level.WARNING, "Error closing connection with server: " + t.getMessage(), t);
             }
         }
         return res;
