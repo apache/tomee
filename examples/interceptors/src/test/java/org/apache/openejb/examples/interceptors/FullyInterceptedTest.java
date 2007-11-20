@@ -23,6 +23,8 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ import org.junit.Test;
 /**
  * @version $Rev$ $Date$
  */
-public class FullyInterceptedTest {
+public class FullyInterceptedTest extends TestCase {
 
     private InitialContext initCtx;
 
