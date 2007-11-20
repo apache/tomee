@@ -67,8 +67,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <!-- DEBUG: Uncomment this line and comment out the next -->
-          <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>-->
           <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemProperties>
@@ -324,7 +322,6 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
-
     <!-- webservices  -->
     <dependency>
       <groupId>org.apache.axis2</groupId>
@@ -335,5 +332,32 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
   </dependencies>
-
+  <profiles>
+    <profile>
+      <id>openejb.debug</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkMode>pertest</forkMode>
+              <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions -agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine>
+              <workingDirectory>${basedir}/target</workingDirectory>
+              <systemProperties>
+                <property>
+                  <name>openejb.home</name>
+                  <value>${basedir}/target/test-classes</value>
+                </property>
+                <property>
+                  <name>log4j.configuration</name>
+                  <value>file:///${basedir}/target/classes/embedded.logging.properties</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
