@@ -349,7 +349,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
-        logger.info("Configuring app: "+appModule.getJarLocation());
+        
+        logger.info(messages.format("config.configApp", appModule.getJarLocation()));
         deployer.deploy(appModule);
 
         AppInfo appInfo = new AppInfo();
