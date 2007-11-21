@@ -45,6 +45,12 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
         System.setProperty("openejb.test.server", HttpEjbTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
+        
+        // Copied from org.apache.openejb.server.httpd.SomeoneBrokeSurefireAndThisIsADirtyHackForItTest which is now gone
+        System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
+        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
+        System.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+
         TestManager.init(null);
         TestManager.start();
     }

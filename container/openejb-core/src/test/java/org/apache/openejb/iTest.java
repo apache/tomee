@@ -53,6 +53,12 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         // @see http://publib.boulder.ibm.com/infocenter/cscv/v10r1/index.jsp?topic=/com.ibm.cloudscape.doc/cdevdvlp25889.html
         System.setProperty("derby.system.home", "target");
 
+        // Copied from org.apache.openejb.SomeoneBrokeSurefireAndThisIsADirtyHackForItTest that's now gone
+        System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
+        System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-*.*");
+        System.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        System.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+
         TestManager.init(null);
         TestManager.start();
     }

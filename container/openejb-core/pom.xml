@@ -84,6 +84,9 @@
             <include>**/SomeoneBrokeSurefireAndThisIsADirtyHackForItTest.java</include>
           </includes>
           -->
+          <excludes>
+            <exclude>**/TestHandler.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
