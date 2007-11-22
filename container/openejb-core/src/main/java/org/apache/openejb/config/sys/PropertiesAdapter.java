@@ -17,10 +17,9 @@
  */
 package org.apache.openejb.config.sys;
 
-import org.apache.activemq.util.ByteArrayOutputStream;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 
 /**
