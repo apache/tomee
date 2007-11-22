@@ -53,6 +53,13 @@ public class WsServlet implements Servlet {
     private Object pojo;
     private HttpListener service;
 
+    public WsServlet() {
+    }
+
+    public WsServlet(HttpListener service) {
+        this.service = service;
+    }
+
     public void init(ServletConfig config) throws ServletException {
         this.config = config;
 
