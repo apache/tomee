@@ -255,7 +255,11 @@ public class JndiEncBuilder {
             Reference reference = null;
 
             if ("java.net.URL".equals(referenceInfo.referenceType)) {
-                reference = new URLReference(referenceInfo.resourceID);
+                if (referenceInfo.location != null) {
+                    reference = buildReferenceLocation(referenceInfo.location);
+                } else {
+                    reference = new URLReference(referenceInfo.resourceID);
+                }
             } else if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
