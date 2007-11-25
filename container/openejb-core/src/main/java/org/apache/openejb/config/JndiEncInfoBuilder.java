@@ -232,6 +232,12 @@ public class JndiEncInfoBuilder {
         for (ServiceRef ref : jndiConsumer.getServiceRef()) {
             ServiceReferenceInfo info = new ServiceReferenceInfo();
             info.referenceName = ref.getName();
+            info.location = buildLocationInfo(ref);
+            info.targets.addAll(buildInjectionInfos(ref));
+            infos.add(info);
+            
+            if (System.getProperty("duct tape") != null) continue;
+            
             info.id = ref.getMappedName();
             info.serviceQName = ref.getServiceQname();
             info.serviceType = ref.getServiceInterface();
@@ -247,9 +253,6 @@ public class JndiEncInfoBuilder {
                 portRefInfo.properties.putAll(portComponentRef.getProperties());
                 info.portRefs.add(portRefInfo);
             }
-            info.location = buildLocationInfo(ref);
-            info.targets.addAll(buildInjectionInfos(ref));
-            infos.add(info);
         }
         return infos;
     }
