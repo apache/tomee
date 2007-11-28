@@ -66,8 +66,9 @@ public class ServiceDaemon implements ServerService, Runnable {
             stop = false;
 
             try {
-//                serverSocket = new ServerSocket(port, 20, InetAddress.getByName(ip));
-                serverSocket = new ServerSocket(port, 20);
+                InetAddress address = InetAddress.getByName(ip);
+                serverSocket = new ServerSocket(port, 20, address);
+//                serverSocket = new ServerSocket(port, 20);
                 port = serverSocket.getLocalPort();
                 ip = serverSocket.getInetAddress().getHostAddress();
 
