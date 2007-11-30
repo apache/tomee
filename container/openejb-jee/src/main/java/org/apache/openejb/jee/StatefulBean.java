@@ -30,8 +30,12 @@ public class StatefulBean extends SessionBean {
         this(ejbClass.getSimpleName(), ejbClass.getName());
     }
 
+    public StatefulBean(String name, Class ejbClass) {
+        this(name, ejbClass.getName());
+    }
+
     public StatefulBean() {
-        this(null, null);
+        this(null, (String) null);
     }
 
     public void setSessionType(SessionType value) {
