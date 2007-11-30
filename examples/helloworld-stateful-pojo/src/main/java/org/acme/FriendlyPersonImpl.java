@@ -16,6 +16,13 @@
  */
 package org.acme;
 
+import javax.ejb.Init;
+import javax.ejb.Remove;
+import javax.ejb.Stateful;
+import javax.ejb.Remote;
+import javax.ejb.Local;
+import javax.ejb.RemoteHome;
+import javax.ejb.LocalHome;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,7 +34,23 @@ import java.util.Properties;
  *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  */
-public class FriendlyPersonImpl implements FriendlyPerson {
+
+// EJB 3.0 Style business interfaces
+// Each of these interfaces are already annotated in the classes
+// themselves with @Remote and @Local, so annotating them here
+// in the bean class again is not really required.
+@Remote({FriendlyPersonRemote.class})
+@Local({FriendlyPersonLocal.class})
+
+// EJB 2.1 Style component interfaces
+// These interfaces, however, must be annotated here in the bean class.
+// Use of @RemoteHome in the FriendlyPersonEjbHome class itself is not allowed.
+// Use of @LocalHome in the FriendlyPersonEjbLocalHome class itself is also not allowed.
+@RemoteHome(FriendlyPersonEjbHome.class)
+@LocalHome(FriendlyPersonEjbLocalHome.class)
+
+@Stateful(name="FriendlyPerson")
+public class FriendlyPersonImpl implements FriendlyPersonLocal, FriendlyPersonRemote {
 
     private final HashMap<String, MessageFormat> greetings;
     private final Properties languagePreferences;
@@ -45,8 +68,27 @@ public class FriendlyPersonImpl implements FriendlyPerson {
         addGreeting("pl", "Witaj {0}!");
     }
 
+    /**
+     * This method corresponds to the FriendlyPersonEjbHome.create() method
+     * and the FriendlyPersonEjbLocalHome.create()
+     *
+     * If you do not have an EJBHome or EJBLocalHome interface, this method
+     * can be deleted.
+     */
+    @Init
     public void create(){}
 
+    /**
+     * This method corresponds to the following methods:
+     *  - EJBObject.remove()
+     *  - EJBHome.remove(ejbObject)
+     *  - EJBLocalObject.remove()
+     *  - EJBLocalHome.remove(ejbObject)
+     *
+     * If you do not have an EJBHome or EJBLocalHome interface, this method
+     * can be deleted.
+     */
+    @Remove
     public void remove(){}
 
     public String greet(String friend) {
@@ -78,9 +120,5 @@ public class FriendlyPersonImpl implements FriendlyPerson {
 
     public void setDefaultLanguage(String defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
-    }
-
-    public void setSessionContext(Object object){
-        // This is required until this bug is fixed http://jira.codehaus.org/browse/OPENEJB-259
     }
 }

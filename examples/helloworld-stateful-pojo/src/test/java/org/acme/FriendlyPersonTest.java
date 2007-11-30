@@ -34,40 +34,19 @@ public class FriendlyPersonTest extends TestCase {
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-
-        // Tells OpenEJB to look for META-INF/ejb-jar.xml files in the classpath
-        System.setProperty("openejb.deployments.classpath.include", ".*helloworld-stateful-pojo.*");
-
         initialContext = new InitialContext(properties);
     }
 
     /**
-     * Here we lookup the FriendlyPerson bean via it's remote home interface
+     * Here we lookup and test the FriendlyPerson bean via its EJB 2.1 EJBHome and EJBObject interfaces
      *
      * @throws Exception
      */
-    public void testFriendlyPersonViaRemoteInterface() throws Exception {
+    public void testEjbHomeAndEjbObject() throws Exception {
         Object object = initialContext.lookup("FriendlyPersonRemoteHome");
-        FriendlyPersonComponent.Home home = (FriendlyPersonComponent.Home) object;
-        FriendlyPerson friendlyPerson = home.create();
+        FriendlyPersonEjbHome home = (FriendlyPersonEjbHome) object;
+        FriendlyPersonEjbObject friendlyPerson = home.create();
 
-        assertFriendlyPerson(friendlyPerson);
-    }
-
-    /**
-     * Here we lookup the FriendlyPerson bean via it's local home interface
-     * 
-     * @throws Exception
-     */
-    public void testFriendlyPersonViaLocalInterface() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonLocalHome");
-        FriendlyPersonComponent.LocalHome home = (FriendlyPersonComponent.LocalHome) object;
-        FriendlyPerson friendlyPerson = home.create();
-
-        assertFriendlyPerson(friendlyPerson);
-    }
-
-    private void assertFriendlyPerson(FriendlyPerson friendlyPerson) {
         friendlyPerson.setDefaultLanguage("en");
 
         assertEquals("Hello David!", friendlyPerson.greet("David"));
@@ -84,6 +63,41 @@ public class FriendlyPersonTest extends TestCase {
         // Dave should take some Polish and if he had, he could say Hi in Polish
         assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
 
+        // Let's see if I speak Portuguese
+        assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
+
+        // Ok, well I've been meaning to learn, so...
+        friendlyPerson.addGreeting("pt", "Ola {0}!");
+
+        assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
+    }
+
+
+    /**
+     * Here we lookup and test the FriendlyPerson bean via its EJB 2.1 EJBLocalHome and EJBLocalObject interfaces
+     *
+     * @throws Exception
+     */
+    public void testEjbLocalHomeAndEjbLocalObject() throws Exception {
+        Object object = initialContext.lookup("FriendlyPersonLocalHome");
+        FriendlyPersonEjbLocalHome home = (FriendlyPersonEjbLocalHome) object;
+        FriendlyPersonEjbLocalObject friendlyPerson = home.create();
+
+        friendlyPerson.setDefaultLanguage("en");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hello Amelia!", friendlyPerson.greet("Amelia"));
+
+        friendlyPerson.setLanguagePreferences("Amelia", "es");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hola Amelia!", friendlyPerson.greet("Amelia"));
+
+        // Amelia took some French, let's see if she remembers
+        assertEquals("Bonjour Amelia!", friendlyPerson.greet("fr", "Amelia"));
+
+        // Dave should take some Polish and if he had, he could say Hi in Polish
+        assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
 
         // Let's see if I speak Portuguese
         assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
@@ -93,4 +107,76 @@ public class FriendlyPersonTest extends TestCase {
 
         assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
     }
+
+    /**
+     * Here we lookup and test the FriendlyPerson bean via its EJB 3.0 business remote interface
+     *
+     * @throws Exception
+     */
+    public void testBusinessRemote() throws Exception {
+        Object object = initialContext.lookup("FriendlyPersonRemote");
+
+        FriendlyPersonRemote friendlyPerson = (FriendlyPersonRemote) object;
+
+        friendlyPerson.setDefaultLanguage("en");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hello Amelia!", friendlyPerson.greet("Amelia"));
+
+        friendlyPerson.setLanguagePreferences("Amelia", "es");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hola Amelia!", friendlyPerson.greet("Amelia"));
+
+        // Amelia took some French, let's see if she remembers
+        assertEquals("Bonjour Amelia!", friendlyPerson.greet("fr", "Amelia"));
+
+        // Dave should take some Polish and if he had, he could say Hi in Polish
+        assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
+
+        // Let's see if I speak Portuguese
+        assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
+
+        // Ok, well I've been meaning to learn, so...
+        friendlyPerson.addGreeting("pt", "Ola {0}!");
+
+        assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
+    }
+
+    /**
+     * Here we lookup and test the FriendlyPerson bean via its EJB 3.0 business local interface
+     *
+     * @throws Exception
+     */
+    public void testBusinessLocal() throws Exception {
+        Object object = initialContext.lookup("FriendlyPersonLocal");
+
+        FriendlyPersonLocal friendlyPerson = (FriendlyPersonLocal) object;
+
+        friendlyPerson.setDefaultLanguage("en");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hello Amelia!", friendlyPerson.greet("Amelia"));
+
+        friendlyPerson.setLanguagePreferences("Amelia", "es");
+
+        assertEquals("Hello David!", friendlyPerson.greet("David"));
+        assertEquals("Hola Amelia!", friendlyPerson.greet("Amelia"));
+
+        // Amelia took some French, let's see if she remembers
+        assertEquals("Bonjour Amelia!", friendlyPerson.greet("fr", "Amelia"));
+
+        // Dave should take some Polish and if he had, he could say Hi in Polish
+        assertEquals("Witaj Dave!", friendlyPerson.greet("pl", "Dave"));
+
+        // Let's see if I speak Portuguese
+        assertEquals("Sorry, I don't speak " + new Locale("pt").getDisplayLanguage() + ".", friendlyPerson.greet("pt", "David"));
+
+        // Ok, well I've been meaning to learn, so...
+        friendlyPerson.addGreeting("pt", "Ola {0}!");
+
+        assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
+    }
+
+
 }

@@ -16,11 +16,10 @@
  */
 package org.acme;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * @version $Revision$ $Date$
- */
-public interface FriendlyPerson {
+import javax.ejb.Local;
+
+@Local
+public interface FriendlyPersonLocal {
     String greet(String friend);
 
     String greet(String language, String friend);
