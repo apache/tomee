@@ -19,12 +19,22 @@ package org.apache.openejb.client;
 import org.omg.CORBA.ORB;
 
 import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.ObjectOutput;
+import java.io.IOException;
+import java.io.ObjectInput;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.ConnectException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Collections;
 import java.lang.reflect.Constructor;
 import javax.naming.AuthenticationException;
 import javax.naming.ConfigurationException;
@@ -37,6 +47,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
 import javax.naming.ServiceUnavailableException;
+import javax.naming.NameClassPair;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
 
@@ -322,7 +333,49 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public NamingEnumeration list(String name) throws NamingException {
-        throw new OperationNotSupportedException("TODO: Needs to be implemented");
+        if (name == null) throw new InvalidNameException("The name cannot be null");
+        else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
+        else if (!name.startsWith("/")) name = tail + name;
+
+        JNDIRequest req = new JNDIRequest(RequestMethodConstants.JNDI_LIST, name);
+        req.setModuleId(moduleId);
+
+        JNDIResponse res = null;
+        try {
+            res = request(req);
+        } catch (Exception e) {
+            if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
+                e = (Exception) e.getCause();
+                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot list '" + name + "'.").initCause(e);
+            }
+            throw (NamingException) new NamingException("Cannot list '" + name + "'.").initCause(e);
+        }
+
+        switch (res.getResponseCode()) {
+
+            case ResponseCodes.JNDI_OK:
+                return null;
+
+            case ResponseCodes.JNDI_ENUMERATION:
+                return (NamingEnumeration) res.getResult();
+
+            case ResponseCodes.JNDI_NOT_FOUND:
+                throw new NameNotFoundException(name);
+
+            case ResponseCodes.JNDI_NAMING_EXCEPTION:
+                Throwable throwable = ((ThrowableArtifact) res.getResult()).getThrowable();
+                if (throwable instanceof NamingException) {
+                    throw (NamingException) throwable;
+                }
+                throw (NamingException) new NamingException().initCause(throwable);
+
+            case ResponseCodes.JNDI_ERROR:
+                throw (Error) res.getResult();
+
+            default:
+                throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
+        }
+
     }
 
     public NamingEnumeration list(Name name) throws NamingException {
@@ -330,7 +383,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public NamingEnumeration listBindings(String name) throws NamingException {
-        throw new OperationNotSupportedException("TODO: Needs to be implemented");
+        throw new OperationNotSupportedException("Use list(String) instead");
     }
 
     public NamingEnumeration listBindings(Name name) throws NamingException {

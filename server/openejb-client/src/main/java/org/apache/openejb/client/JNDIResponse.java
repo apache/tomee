@@ -85,6 +85,11 @@ public class JNDIResponse implements Response {
                 WsMetaData ws = (WsMetaData) in.readObject();
                 result = ws;
                 break;
+            case ResponseCodes.JNDI_ENUMERATION:
+                NameClassPairEnumeration ncpe = new NameClassPairEnumeration();
+                ncpe.readExternal(in);
+                result = ncpe;
+                break;
         }
     }
 
@@ -121,6 +126,10 @@ public class JNDIResponse implements Response {
             case ResponseCodes.JNDI_WEBSERVICE:
                 WsMetaData ws = (WsMetaData) result;
                 out.writeObject(ws);
+                break;
+            case ResponseCodes.JNDI_ENUMERATION:
+                NameClassPairEnumeration ncpe = (NameClassPairEnumeration) result;
+                ncpe.writeExternal(out);
                 break;
         }
     }
