@@ -37,6 +37,7 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.Entity;
 import org.apache.openejb.jee.jpa.GeneratedValue;
 import org.apache.openejb.jee.jpa.GenerationType;
+import org.custommonkey.xmlunit.Diff;
 
 /**
  * @version $Rev$ $Date$
@@ -111,7 +112,7 @@ public class SunCmpConversionTest extends TestCase {
 //        sunCmpConversion.mergeEntityMappings(ejbModule, entityMappings);
         sunConversion.deploy(appModule);
 
-        // compare the results to the expected results (direct text comparison)
+        // compare the results to the expected results
         if (expectedFileName != null) {
             in = getClass().getClassLoader().getResourceAsStream(expectedFileName);
             String expected = readContent(in);
@@ -125,7 +126,8 @@ public class SunCmpConversionTest extends TestCase {
                 }
             }
             String actual = toString(cmpMappings);
-            assertEquals(expected, actual);
+            Diff myDiff = new Diff(expected, actual);
+            assertTrue("Files are similar " + myDiff, myDiff.similar());
         }
 
         return appModule.getCmpMappings();

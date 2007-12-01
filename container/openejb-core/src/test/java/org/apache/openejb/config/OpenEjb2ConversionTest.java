@@ -31,6 +31,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
+import org.custommonkey.xmlunit.Diff;
 
 /**
  * @version $Rev$ $Date$
@@ -105,12 +106,13 @@ public class OpenEjb2ConversionTest extends TestCase {
         openEjb2Conversion.deploy(appModule);
 //        openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
 
-        // compare the results to the expected results (direct text comparison)
+        // compare the results to the expected results
         if (expectedFileName != null) {
             in = getClass().getClassLoader().getResourceAsStream(expectedFileName);
             String expected = readContent(in);
             String actual = toString(appModule.getCmpMappings());
-            assertEquals(expected, actual);
+            Diff myDiff = new Diff(expected, actual);
+            assertTrue("Files are similar " + myDiff, myDiff.similar());
         }
         return appModule.getCmpMappings();
     }

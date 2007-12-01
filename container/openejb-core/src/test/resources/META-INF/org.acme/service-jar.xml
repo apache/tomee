@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev: 596613 $ $Date: 2007-11-20 12:05:42 +0100 (Tue, 20 Nov 2007) $ -->
+
 <ServiceJar>
 
   <ServiceProvider id="CheddarContainer" service="Container" class-name="org.acme.SuperContainer">

@@ -48,5 +48,4 @@ Example: Combinations of options
  openejb validate -vvv /foo/bar.jar
  openejb validate -xml /home/dblevins/mybeans/*.jar
 
-
-Bug Reports to <user@openejb.org>
+Bug Reports to <user@openejb.apache.org>

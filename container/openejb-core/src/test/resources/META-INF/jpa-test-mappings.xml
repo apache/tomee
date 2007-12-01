@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,8 +15,9 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
 -->
+
+<!-- $Rev: 596613 $ $Date: 2007-11-20 12:05:42 +0100 (Tue, 20 Nov 2007) $ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">

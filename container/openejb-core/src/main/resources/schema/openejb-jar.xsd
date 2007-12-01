@@ -16,6 +16,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+
+<!-- $Rev$ $Date$ -->
+
 <xsd:schema
 	    targetNamespace="http://www.openejb.org/openejb-jar/1.1"
 	    xmlns="http://www.openejb.org/openejb-jar/1.1"
