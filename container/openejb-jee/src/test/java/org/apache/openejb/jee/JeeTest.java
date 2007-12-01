@@ -19,6 +19,8 @@ package org.apache.openejb.jee;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.custommonkey.xmlunit.Diff;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -99,7 +101,8 @@ public class JeeTest extends TestCase {
         String actual = new String(bytes);
 
         try {
-            assertEquals(expected, actual);
+            Diff myDiff = new Diff(expected, actual);
+            assertTrue("Files are similar " + myDiff, myDiff.similar());
         } catch (AssertionFailedError e) {
             writeToTmpFile(bytes, xmlFileName);
             throw e;            

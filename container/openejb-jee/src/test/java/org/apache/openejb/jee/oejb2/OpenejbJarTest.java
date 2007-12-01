@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.String;
 
+import org.custommonkey.xmlunit.Diff;
+
 /**
  * @version $Revision: 471447 $ $Date: 2006-11-05 07:42:50 -0800 (Sun, 05 Nov 2006) $
  */
@@ -74,13 +76,14 @@ public class OpenejbJarTest extends TestCase {
 
         String actual = JaxbOpenejbJar2.marshal(type, object);
 
+        String expected;
         if (xmlFileName.equals(expectedFile)) {
-            String sourceXml = readContent(getInputStream(xmlFileName));
-            assertEquals(sourceXml, actual);
+            expected = readContent(getInputStream(xmlFileName));
         } else {
-            String expected = readContent(getInputStream(expectedFile));
-            assertEquals(expected, actual);
+            expected = readContent(getInputStream(expectedFile));
         }
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private <T>InputStream getInputStream(String xmlFileName) {

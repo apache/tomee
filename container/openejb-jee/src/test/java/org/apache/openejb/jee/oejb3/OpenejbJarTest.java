@@ -25,6 +25,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
 
+import org.custommonkey.xmlunit.Diff;
+
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,8 +48,7 @@ public class OpenejbJarTest extends TestCase {
         unmarshaller.setEventHandler(new TestValidationEventHandler());
         Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
 
-        OpenejbJar ejbJar = (OpenejbJar) object;
-        System.out.println("unmarshalled");
+        assertTrue(object instanceof OpenejbJar);
 
         Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -55,9 +56,10 @@ public class OpenejbJarTest extends TestCase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-        java.lang.String actual = new java.lang.String(baos.toByteArray());
+        String actual = new String(baos.toByteArray());
 
-        assertEquals(expected, actual);
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {

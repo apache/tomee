@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+
+import org.custommonkey.xmlunit.Diff;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +61,9 @@ public class ConversionTest extends TestCase {
 
         JAXBElement root = new JAXBElement(new QName("http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0","ejb-jar"), GeronimoEjbJarType.class, g2);
         String result = JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
-        assertEquals(readContent(getInputStream("geronimo-openejb-converted.xml")), result);
+        String expected = readContent(getInputStream("geronimo-openejb-converted.xml"));
+        Diff myDiff = new Diff(expected, result);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
 
     }
 

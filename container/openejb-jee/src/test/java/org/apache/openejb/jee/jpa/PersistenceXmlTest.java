@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.custommonkey.xmlunit.Diff;
 
 /**
  * @version $Revision$ $Date$
@@ -88,9 +89,10 @@ public class PersistenceXmlTest extends TestCase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(element, baos);
 
-        java.lang.String actual = new java.lang.String(baos.toByteArray());
+        String actual = new String(baos.toByteArray());
 
-        assertEquals(expected, actual);
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {

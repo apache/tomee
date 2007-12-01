@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
+import org.custommonkey.xmlunit.Diff;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -41,13 +43,14 @@ public class JaxbTest extends TestCase {
 
         String actual = JpaJaxbUtil.marshal(type, object);
 
+        String expected;
         if (xmlFileName.equals(expectedFile)) {
-            String sourceXml = readContent(getInputStream(xmlFileName));
-            assertEquals(sourceXml, actual);
+            expected = readContent(getInputStream(xmlFileName));
         } else {
-            String expected = readContent(getInputStream(expectedFile));
-            assertEquals(expected, actual);
+            expected = readContent(getInputStream(expectedFile));
         }
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private <T>InputStream getInputStream(String xmlFileName) {

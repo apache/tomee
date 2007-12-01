@@ -18,16 +18,12 @@ package org.apache.openejb.jee.wls;
 
 import junit.framework.TestCase;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.JAXBElement;
+
+import org.custommonkey.xmlunit.Diff;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
@@ -53,11 +49,12 @@ public class JaxbWlsTest extends TestCase {
 
         JAXBElement element = (JAXBElement) object;
 
-        WeblogicEjbJar ejbJar = (WeblogicEjbJar) element.getValue();
+        assertTrue(element.getValue() instanceof WeblogicEjbJar);
 
         String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
 
-        assertEquals(expected, actual);
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
     private String readContent(InputStream in) throws IOException {
