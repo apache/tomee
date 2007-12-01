@@ -31,6 +31,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
+import javax.naming.Binding;
 import javax.ejb.Remote;
 import java.util.Properties;
 import java.util.Collections;
@@ -83,6 +84,9 @@ public class JndiTest extends TestCase {
             assertNameClassPair(context.list(""));
             assertNameClassPair(context.list("ejb"));
 
+            assertBindings(context.listBindings(""));
+            assertBindings(context.listBindings("ejb"));
+
         } finally {
             serviceDaemon.stop();
             OpenEJB.destroy();
@@ -104,6 +108,31 @@ public class JndiTest extends TestCase {
         assertTrue("PeachRemote", map.containsKey("PeachRemote"));
         assertTrue("PearRemote", map.containsKey("PearRemote"));
         assertTrue("PlumRemote", map.containsKey("PlumRemote"));
+    }
+
+    private void assertBindings(NamingEnumeration<Binding> namingEnumeration) {
+        assertNotNull("namingEnumeration", namingEnumeration);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        while (namingEnumeration.hasMoreElements()) {
+            Binding pair = namingEnumeration.nextElement();
+            map.put(pair.getName(), pair.getObject());
+        }
+
+        assertTrue("OrangeRemote", map.containsKey("OrangeRemote"));
+        assertTrue("OrangeRemote is FruitRemote", map.get("OrangeRemote") instanceof FruitRemote);
+
+        assertTrue("AppleRemote", map.containsKey("AppleRemote"));
+        assertTrue("AppleRemote is FruitRemote", map.get("AppleRemote") instanceof FruitRemote);
+
+        assertTrue("PeachRemote", map.containsKey("PeachRemote"));
+        assertTrue("PeachRemote is FruitRemote", map.get("PeachRemote") instanceof FruitRemote);
+
+        assertTrue("PearRemote", map.containsKey("PearRemote"));
+        assertTrue("PearRemote is FruitRemote", map.get("PearRemote") instanceof FruitRemote);
+
+        assertTrue("PlumRemote", map.containsKey("PlumRemote"));
+        assertTrue("PlumRemote is FruitRemote", map.get("PlumRemote") instanceof FruitRemote);
     }
 
     @Remote

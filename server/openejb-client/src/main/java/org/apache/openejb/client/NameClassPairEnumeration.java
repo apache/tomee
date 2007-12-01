@@ -18,6 +18,7 @@ package org.apache.openejb.client;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import java.io.Externalizable;
 import java.io.ObjectOutput;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 /**
  * The product of a javax.naming.Context.list() method
  */
-public class NameClassPairEnumeration implements NamingEnumeration<NameClassPair>, Externalizable {
+public class NameClassPairEnumeration<T extends NameClassPair> implements NamingEnumeration<T>, Externalizable {
 
     private List<NameClassPair> list;
     private Iterator<NameClassPair> iterator;
@@ -57,11 +58,11 @@ public class NameClassPairEnumeration implements NamingEnumeration<NameClassPair
         return hasMore();
     }
 
-    public NameClassPair next() {
-        return iterator.next();
+    public T next() {
+        return (T) iterator.next();
     }
 
-    public NameClassPair nextElement() {
+    public T nextElement() {
         return next();
     }
 
@@ -86,6 +87,7 @@ public class NameClassPairEnumeration implements NamingEnumeration<NameClassPair
         for (; size > 0; size--) {
             String name = (String) in.readObject();
             String className = (String) in.readObject();
+
             list.add(new NameClassPair(name, className));
         }
 

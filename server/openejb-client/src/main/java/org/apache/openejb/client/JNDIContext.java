@@ -19,22 +19,14 @@ package org.apache.openejb.client;
 import org.omg.CORBA.ORB;
 
 import java.io.Serializable;
-import java.io.Externalizable;
-import java.io.ObjectOutput;
-import java.io.IOException;
-import java.io.ObjectInput;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.ConnectException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Enumeration;
-import java.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
-import java.util.Collections;
 import java.lang.reflect.Constructor;
 import javax.naming.AuthenticationException;
 import javax.naming.ConfigurationException;
@@ -48,6 +40,7 @@ import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
 import javax.naming.ServiceUnavailableException;
 import javax.naming.NameClassPair;
+import javax.naming.Binding;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
 
@@ -332,7 +325,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         return lookup(name.toString());
     }
 
-    public NamingEnumeration list(String name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
         if (name == null) throw new InvalidNameException("The name cannot be null");
         else if (name.startsWith("java:")) name = name.replaceFirst("^java:", "");
         else if (!name.startsWith("/")) name = tail + name;
@@ -378,15 +371,53 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
     }
 
-    public NamingEnumeration list(Name name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
         return list(name.toString());
     }
 
-    public NamingEnumeration listBindings(String name) throws NamingException {
-        throw new OperationNotSupportedException("Use list(String) instead");
+    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+        Object o = lookup(name);
+        if (o instanceof Context) {
+            Context context = (Context) o;
+            NamingEnumeration<NameClassPair> enumeration = context.list("");
+            List<NameClassPair> bindings = new ArrayList<NameClassPair>();
+
+            while (enumeration.hasMoreElements()) {
+                NameClassPair pair = enumeration.nextElement();
+                bindings.add(new LazyBinding(pair.getName(), pair.getClassName(), context));
+            }
+
+            return new NameClassPairEnumeration(bindings);
+
+        } else {
+            return null;
+        }
+
     }
 
-    public NamingEnumeration listBindings(Name name) throws NamingException {
+    private static class LazyBinding extends Binding {
+        private RuntimeException failed;
+        private Context context;
+
+        public LazyBinding(String name, String className, Context context) {
+            super(name, className, null);
+            this.context = context;
+        }
+
+        public synchronized Object getObject() {
+            if (super.getObject() == null){
+                if (failed != null) throw failed;
+                try {
+                    super.setObject(context.lookup(getName()));
+                } catch (NamingException e) {
+                    throw failed = new RuntimeException("Failed to lazily fetch the binding '"+getName()+"'", e);
+                }
+            }
+            return super.getObject();
+        }
+    }
+
+    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException{
         return listBindings(name.toString());
     }
 
