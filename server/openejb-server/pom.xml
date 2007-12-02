@@ -36,7 +36,18 @@
       <resource>
         <directory>src/main/resources</directory>
       </resource>
-    </resources>    
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rat-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>src/main/resources/META-INF/org.apache.openejb.cli/*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
     <dependency>
