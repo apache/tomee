@@ -298,6 +298,7 @@
 
                 <!-- Eclipse files -->
                 <exclude>**/.*</exclude>
+                <exclude>**/.*/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
               </excludes>
             </configuration>
