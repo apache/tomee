@@ -40,5 +40,6 @@
     <module>expanded-env-entries</module>
     <module>ejb-examples</module>
     <module>interceptors</module>
+    <module>moviefun</module>
   </modules>
 </project>
