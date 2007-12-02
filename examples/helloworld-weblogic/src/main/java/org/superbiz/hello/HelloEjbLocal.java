@@ -16,8 +16,6 @@
  */
 package org.superbiz.hello;
 
-import javax.ejb.EJBLocalHome;
-import javax.ejb.CreateException;
 import javax.ejb.EJBLocalObject;
 
 /**
