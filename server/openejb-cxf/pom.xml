@@ -30,6 +30,19 @@
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: CXF</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rat-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>src/main/resources/META-INF/cxf.extension</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
