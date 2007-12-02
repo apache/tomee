@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+body, p, td, table, tr, .bodytext, .stepfield {
+	font-family: Verdana, arial, sans-serif;
+	font-size: 11px;
+	line-height: 16px;
+	color: #000000;
+	font-weight: normal;
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+    background-color: #f0f0f0;
+}
+
+#Content {
+	text-align: left;
+	background-color: #fff;
+	padding: 0px;
+	margin: 0px;
+}
+
+HR {
+	color: 3c78b5;
+	height: 1;
+}
+
+A:link, A:visited, A:active, A:hover {
+	color: #003366;
+}
+
+h1 A:link, h1 A:visited, h1 A:active {
+	text-decoration: none;
+}
+
+h1 A:hover {
+    border-bottom: 1px dotted #003366;
+}
+
+input {
+	font-family: verdana, geneva, arial, sans-serif;
+	font-size: 11px;
+	color: #000000;
+}
+
+h1 {
+	font-size: 24px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	color: #003366;
+ 	border-bottom: 1px solid #3c78b5;
+	padding: 2px;
+	margin: 36px 0px 4px 0px;
+}
+
+h2 {
+	font-size: 18px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+ 	border-bottom: 1px solid #3c78b5;
+	padding: 2px;
+	margin: 27px 0px 4px 0px;
+}
+
+h3 {
+	font-size: 14px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	padding: 2px;
+	margin: 21px 0px 4px 0px;
+}
+
+h4 {
+	font-size: 12px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	padding: 2px;
+	margin: 18px 0px 4px 0px;
+}
+
+h4.search {
+	font-size: 12px;
+	line-height: normal;
+	font-weight: normal;
+	background-color: #f0f0f0;
+	padding: 4px;
+	margin: 18px 0px 4px 0px;
+}
+
+h5 {
+	font-size: 10px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	padding: 2px;
+	margin: 14px 0px 4px 0px;
+}
+
+h6 {
+	font-size: 8px;
+	line-height: normal;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	padding: 2px;
+	margin: 14px 0px 4px 0px;
+}
+
+.smalltext {
+    color: #666666;
+    font-size: 10px;
+}
+.smalltext a {
+    color: #666666;
+}
+
+.tableview table {
+    margin: 0;
+}
+
+.tableview th {
+    text-align: left;
+    color: #003366;
+    font-size: 12px;
+    padding: 5px 0px 0px 5px;
+    border-bottom: 2px solid #3c78b5;
+}
+.tableview td {
+    text-align: left;
+    border-color: #ccc;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    margin: 0;
+    padding: 4px 10px 4px 5px;
+}
+
+.bottomshadow {
+    height: 12px;
+    background-image: url("/images/border/border_bottom.gif");
+    background-repeat: repeat-x;
+}
+
+.topBarDiv a:link {color: white;}
+.topBarDiv a:visited {color: white;}
+.topBarDiv a:active {color: white;}
+.topBarDiv a:hover {color: white;}
+.topBarDiv {color: white;}
+
+.topBar td {
+    background-color: #003366;
+}
+
+
+.basicPanelContainer {border: 1px solid #3c78b5; margin-top: 2px; margin-bottom: 8px; width: 100%}
+.basicPanelTitle {padding: 5px; margin: 0px; background-color: #f0f0f0; color: black; font-weight: bold;}
+.basicPanelBody {padding: 5px; margin: 0px}

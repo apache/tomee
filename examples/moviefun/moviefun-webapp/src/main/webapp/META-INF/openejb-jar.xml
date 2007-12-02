@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<!-- The purpose of this file is essentially to map you ejb-jar.xml to the openejb.xml -->
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+	<ejb-deployment ejb-name="MovieEJB" deployment-id="MovieEJB" container-id="Movie CMP Container">
+		<resource-link res-ref-name="jdbc/moviedb" res-id="Movie Database Connector"/>
+        <query>
+            <query-method>
+                <method-name>findByTitle</method-name>
+                <method-params><method-param>java.lang.String</method-param></method-params>
+            </query-method>
+            <object-ql>SELECT movie FROM org.acme.movie.MovieBean movie WHERE movie.title = $1</object-ql>
+        </query>
+        <query>
+            <query-method>
+                <method-name>findByDirector</method-name>
+                <method-params><method-param>java.lang.String</method-param></method-params>
+            </query-method>
+            <object-ql>SELECT movie FROM org.acme.movie.MovieBean movie WHERE movie.director = $1</object-ql>
+        </query>
+        <query>
+            <query-method>
+                <method-name>findByGenre</method-name>
+                <method-params><method-param>java.lang.String</method-param></method-params>
+            </query-method>
+            <object-ql>SELECT movie FROM org.acme.movie.MovieBean movie WHERE movie.genre = $1</object-ql>
+        </query>
+        <query>
+            <query-method>
+                <method-name>findAllMovies</method-name>
+                <method-params/>
+            </query-method>
+            <object-ql>SELECT movie FROM org.acme.movie.MovieBean movie</object-ql>
+        </query>
+    </ejb-deployment>
+    <ejb-deployment ejb-name="ContextEJB" deployment-id="ContextEJB" container-id="Default Stateless Container">
+        <resource-link res-ref-name="jdbc/moviedb" res-id="Movie Database Connector"/>
+    </ejb-deployment>
+</openejb-jar>
