@@ -81,16 +81,33 @@ public class JavaXmlTypeMapping {
         return anonymousTypeQname;
     }
 
+    public QName getAnonymousTypeQnameQName() {
+        int pos = anonymousTypeQname.lastIndexOf(":");
+        if (pos == -1) {
+            throw new IllegalArgumentException("anon QName is invalid, no final ':' " + anonymousTypeQname);
+        }
+        QName qname = new QName(anonymousTypeQname.substring(0, pos), anonymousTypeQname.substring(pos + 1));
+        return qname;
+    }
+
     public void setAnonymousTypeQname(String value) {
         this.anonymousTypeQname = value;
     }
 
-    public String getQnameScope() {
+    public String getQNameScope() {
         return qnameScope;
     }
 
-    public void setQnameScope(String value) {
+    public void setQNameScope(String value) {
         this.qnameScope = value;
+    }
+
+    public boolean isElement() {
+        return "element".equals(qnameScope);
+    }
+
+    public boolean isSimpleType() {
+        return "simpleType".equals(qnameScope);
     }
 
     public List<VariableMapping> getVariableMapping() {

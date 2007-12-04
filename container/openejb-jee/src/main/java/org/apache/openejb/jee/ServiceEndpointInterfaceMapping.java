@@ -45,7 +45,7 @@ import java.util.List;
     "wsdlBinding",
     "serviceEndpointMethodMapping"
 })
-public class ServiceEndpointInterfaceMapping {
+public class ServiceEndpointInterfaceMapping implements Keyable<String> {
     @XmlElement(name = "service-endpoint-interface", required = true)
     protected String serviceEndpointInterface;
     @XmlElement(name = "wsdl-port-type", required = true)
@@ -58,6 +58,10 @@ public class ServiceEndpointInterfaceMapping {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getKey() {
+        return serviceEndpointInterface;
+    }
 
     public String getServiceEndpointInterface() {
         return serviceEndpointInterface;

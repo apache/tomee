@@ -44,7 +44,7 @@ import javax.xml.namespace.QName;
     "wsdlMessagePartName",
     "constructorParameterOrder"
 })
-public class ExceptionMapping {
+public class ExceptionMapping implements Keyable<QName> {
     @XmlElement(name = "exception-type", required = true)
     protected String exceptionType;
     @XmlElement(name = "wsdl-message", required = true)
@@ -57,6 +57,10 @@ public class ExceptionMapping {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public QName getKey() {
+        return getWsdlMessage();
+    }
 
     public String getExceptionType() {
         return exceptionType;

@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "package-mappingType", propOrder = {"packageType", "namespaceURI"})
-public class PackageMapping {
+public class PackageMapping implements Keyable<String> {
     @XmlElement(name = "package-type", required = true)
     protected String packageType;
     @XmlElement(required = true)
@@ -42,6 +42,10 @@ public class PackageMapping {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public String getKey() {
+        return namespaceURI;
+    }
 
     public String getPackageType() {
         return packageType;

@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.axis;
 
+import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
@@ -24,6 +25,8 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.server.axis.assembler.JaxRpcServiceInfo;
+import org.apache.openejb.server.axis.assembler.JaxRpcServiceInfoBuilder;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
 
@@ -45,9 +48,27 @@ public class AxisService extends WsService {
     }
 
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) throws Exception {
+        ClassLoader classLoader = deploymentInfo.getClassLoader();
+
+        // todo build JaxRpcServiceInfo in assembler
+        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(null, null, null, null, null, classLoader);
+        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceDesc();
+
+        // Build java service descriptor
+        JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
+        JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
+
+        // Create service
         RPCProvider provider = new EjbContainerProvider(deploymentInfo, createHandlerInfos(port.getHandlerChains()));
         SOAPService service = new SOAPService(null, provider, null);
-        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, deploymentInfo.getClassLoader());
+        service.setServiceDescription(serviceDesc);
+
+        // Set class name
+        service.setOption("className", deploymentInfo.getServiceEndpointInterface().getName());
+        serviceDesc.setImplClass(deploymentInfo.getServiceEndpointInterface());
+
+        // Create container
+        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
         wsContainers.put(deploymentInfo.getDeploymentID().toString(), container);
         return container;
     }
@@ -60,21 +81,31 @@ public class AxisService extends WsService {
     }
 
     protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot) throws Exception {
+        ClassLoader classLoader = target.getClassLoader();
+
+        // todo build JaxRpcServiceInfo in assembler
+        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(null, null, null, null, null, classLoader);
+        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceDesc();
+
+        // Build java service descriptor
+        JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
+        JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
+
+        // Create service
         RPCProvider provider = new PojoProvider();
         SOAPService service = new SOAPService(null, provider, null);
+        service.setServiceDescription(serviceDesc);
 
-        // todo need to port this code
-        // ServiceInfo serviceInfo = createServiceInfo(portInfo, classLoader);
-        // JavaServiceDesc serviceDesc = serviceInfo.getServiceDesc();
-        // service.setServiceDescription(serviceDesc);
+        // Set class name
         service.setOption("className", target.getName());
 
+        // Add Handler Chain
         List<HandlerInfo> handlerInfos = createHandlerInfos(port.getHandlerChains());
         HandlerInfoChainFactory handlerInfoChainFactory = new HandlerInfoChainFactory(handlerInfos);
         service.setOption(org.apache.axis.Constants.ATTR_HANDLERINFOCHAIN, handlerInfoChainFactory);
 
-
-        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, target.getClassLoader());
+        // Create container
+        AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
         wsContainers.put(serviceId, container);
         return container;
     }

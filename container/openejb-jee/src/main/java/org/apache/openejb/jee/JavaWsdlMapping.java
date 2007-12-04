@@ -25,8 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The element describes the Java mapping to a known WSDL document.
@@ -46,15 +49,15 @@ import java.util.List;
 })
 public class JavaWsdlMapping {
     @XmlElement(name = "package-mapping", required = true)
-    protected List<PackageMapping> packageMapping;
+    protected KeyedCollection<String, PackageMapping> packageMapping;
     @XmlElement(name = "java-xml-type-mapping")
     protected List<JavaXmlTypeMapping> javaXmlTypeMapping;
     @XmlElement(name = "exception-mapping")
-    protected List<ExceptionMapping> exceptionMapping;
+    protected KeyedCollection<QName,ExceptionMapping> exceptionMapping;
     @XmlElement(name = "service-interface-mapping")
     protected List<ServiceInterfaceMapping> serviceInterfaceMapping;
     @XmlElement(name = "service-endpoint-interface-mapping")
-    protected List<ServiceEndpointInterfaceMapping> serviceEndpointInterfaceMapping;
+    protected KeyedCollection<String, ServiceEndpointInterfaceMapping> serviceEndpointInterfaceMapping;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -62,11 +65,18 @@ public class JavaWsdlMapping {
     @XmlAttribute(required = true)
     protected String version;
 
-    public List<PackageMapping> getPackageMapping() {
+    public Collection<PackageMapping> getPackageMapping() {
         if (packageMapping == null) {
-            packageMapping = new ArrayList<PackageMapping>();
+            packageMapping = new KeyedCollection<String, PackageMapping>();
         }
         return this.packageMapping;
+    }
+
+    public Map<String, PackageMapping> getPackageMappingMap() {
+        if (packageMapping == null) {
+            packageMapping = new KeyedCollection<String, PackageMapping>();
+        }
+        return this.packageMapping.toMap();
     }
 
     public List<JavaXmlTypeMapping> getJavaXmlTypeMapping() {
@@ -76,11 +86,18 @@ public class JavaWsdlMapping {
         return this.javaXmlTypeMapping;
     }
 
-    public List<ExceptionMapping> getExceptionMapping() {
+    public Collection<ExceptionMapping> getExceptionMapping() {
         if (exceptionMapping == null) {
-            exceptionMapping = new ArrayList<ExceptionMapping>();
+            exceptionMapping = new KeyedCollection<QName,ExceptionMapping>();
         }
         return this.exceptionMapping;
+    }
+
+    public Map<QName,ExceptionMapping> getExceptionMappingMap() {
+        if (exceptionMapping == null) {
+            exceptionMapping = new KeyedCollection<QName,ExceptionMapping>();
+        }
+        return this.exceptionMapping.toMap();
     }
 
     public List<ServiceInterfaceMapping> getServiceInterfaceMapping() {
@@ -90,11 +107,18 @@ public class JavaWsdlMapping {
         return this.serviceInterfaceMapping;
     }
 
-    public List<ServiceEndpointInterfaceMapping> getServiceEndpointInterfaceMapping() {
+    public Collection<ServiceEndpointInterfaceMapping> getServiceEndpointInterfaceMapping() {
         if (serviceEndpointInterfaceMapping == null) {
-            serviceEndpointInterfaceMapping = new ArrayList<ServiceEndpointInterfaceMapping>();
+            serviceEndpointInterfaceMapping = new KeyedCollection<String, ServiceEndpointInterfaceMapping>();
         }
         return this.serviceEndpointInterfaceMapping;
+    }
+
+    public Map<String, ServiceEndpointInterfaceMapping> getServiceEndpointInterfaceMappingMap() {
+        if (serviceEndpointInterfaceMapping == null) {
+            serviceEndpointInterfaceMapping = new KeyedCollection<String, ServiceEndpointInterfaceMapping>();
+        }
+        return this.serviceEndpointInterfaceMapping.toMap();
     }
 
     public String getId() {
