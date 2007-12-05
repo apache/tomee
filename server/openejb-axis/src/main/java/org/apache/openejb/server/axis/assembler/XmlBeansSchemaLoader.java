@@ -22,10 +22,6 @@ import com.ibm.wsdl.extensions.schema.SchemaConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
-import org.apache.xmlbeans.SchemaField;
-import org.apache.xmlbeans.SchemaGlobalElement;
-import org.apache.xmlbeans.SchemaParticle;
-import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlCursor;
@@ -41,11 +37,8 @@ import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
 import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.ExtensionRegistry;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -59,18 +52,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-public class SchemaInfoBuilder {
-    private static final Log log = LogFactory.getLog(SchemaInfoBuilder.class);
+public class XmlBeansSchemaLoader {
+    private static final Log log = LogFactory.getLog(XmlBeansSchemaInfoBuilder.class);
     private static final SchemaTypeSystem basicTypeSystem;
 
-    public static XmlOptions createXmlOptions(Collection errors) {
+    private static XmlOptions createXmlOptions(Collection errors) {
         XmlOptions options = new XmlOptions();
         options.setLoadLineNumbers();
         options.setErrorListener(errors);
@@ -78,7 +70,7 @@ public class SchemaInfoBuilder {
     }
 
     static {
-        InputStream is = SchemaInfoBuilder.class.getClassLoader().getResourceAsStream("META-INF/schema/soap_encoding_1_1.xsd");
+        InputStream is = XmlBeansSchemaInfoBuilder.class.getClassLoader().getResourceAsStream("META-INF/schema/soap_encoding_1_1.xsd");
         if (is == null) {
             throw new RuntimeException("Could not locate soap encoding schema");
         }
@@ -107,136 +99,20 @@ public class SchemaInfoBuilder {
         }
     }
 
+    private final URI wsdlUri;
     private final JarFile moduleFile;
-    private final Definition definition;
     private final LinkedList<URI> uris = new LinkedList<URI>();
 
-    private final Map<SchemaTypeKey, SchemaType> schemaTypeKeyToSchemaTypeMap;
 
-    // Simple types by QName
-    private final Map<QName, SchemaType> simpleTypeMap;
-
-    // Complex types by QName
-    private final Map<QName, SchemaType> complexTypeMap;
-
-    // Map from element QName to type QName
-    private final Map<QName, QName> elementToTypeMap;
-
-    // Ports by name
-    private final Map<String, Port> portMap;
-
-
-    public SchemaInfoBuilder(JarFile moduleFile, URI wsdlUri) throws OpenEJBException {
-        if (moduleFile == null) throw new NullPointerException("moduleFile is null");
-        if (wsdlUri == null) throw new NullPointerException("wsdlUri is null");
-
+    public XmlBeansSchemaLoader(URI wsdlUri, JarFile moduleFile) {
+        this.wsdlUri = wsdlUri;
         this.moduleFile = moduleFile;
         uris.addFirst(wsdlUri);
-        definition = readWsdl(wsdlUri);
-
-        SchemaTypeSystem schemaTypeSystem = compileSchemaTypeSystem(definition);
-        schemaTypeKeyToSchemaTypeMap = buildSchemaTypeKeyToSchemaTypeMap(schemaTypeSystem);
-
-        complexTypeMap = buildComplexTypeMap();
-        simpleTypeMap = buildSimpleTypeMap();
-        elementToTypeMap = buildElementMap();
-        portMap = buildPortMap();
     }
 
-    public Map<SchemaTypeKey, SchemaType> getSchemaTypeKeyToSchemaTypeMap() {
-        return schemaTypeKeyToSchemaTypeMap;
-    }
+    public SchemaTypeSystem loadSchema() throws OpenEJBException {
+        Definition definition = readWsdl(wsdlUri);
 
-    public Definition getDefinition() {
-        return definition;
-    }
-
-    /**
-     * Find all the complex types in the previously constructed schema analysis.
-     * Put them in a map from complex type QName to schema fragment.
-     *
-     * @return map of complexType QName to schema fragment
-     */
-    public Map<QName, SchemaType> getComplexTypesInWsdl() {
-        return complexTypeMap;
-    }
-
-    private Map<QName, SchemaType> buildComplexTypeMap() {
-        Map<QName, SchemaType> complexTypeMap = new HashMap<QName, SchemaType>();
-        for (Map.Entry<SchemaTypeKey, SchemaType> entry : schemaTypeKeyToSchemaTypeMap.entrySet()) {
-            SchemaTypeKey key = entry.getKey();
-            SchemaType schemaType = entry.getValue();
-
-            if (!key.isSimpleType() && !key.isAnonymous()) {
-                QName qName = key.getQName();
-                complexTypeMap.put(qName, schemaType);
-            }
-        }
-        return complexTypeMap;
-    }
-
-    public Map<QName, QName> getElementToTypeMap() {
-        return elementToTypeMap;
-    }
-
-    private Map<QName, QName> buildElementMap() {
-        Map<QName, QName> elementToTypeMap = new HashMap<QName, QName>();
-        for (Map.Entry<SchemaTypeKey, SchemaType> entry : schemaTypeKeyToSchemaTypeMap.entrySet()) {
-            SchemaTypeKey key = entry.getKey();
-            SchemaType schemaType = entry.getValue();
-
-            if (key.isElement()) {
-                QName elementQName = key.getQName();
-                QName typeQName = schemaType.getName();
-                elementToTypeMap.put(elementQName, typeQName);
-            }
-        }
-        return elementToTypeMap;
-    }
-
-    /**
-     * Gets a map of all the javax.wsdl.Port instance in the WSDL definition keyed by the port's QName
-     * <p/>
-     * WSDL 1.1 spec: 2.6 "The name attribute provides a unique name among all ports defined within in the enclosing WSDL document."
-     *
-     * @return Map of port QName to javax.wsdl.Port for that QName.
-     */
-
-    public Map<String, Port> getPortMap() {
-        return portMap;
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private Map<String, Port> buildPortMap() {
-        HashMap<String, Port> ports = new HashMap<String, Port>();
-        if (definition != null) {
-            for (Object object : definition.getServices().values()) {
-                Service service = (Service) object;
-                ports.putAll(service.getPorts());
-            }
-        }
-        return ports;
-    }
-
-    public Map<QName, SchemaType> getSimpleTypeMap() {
-        return simpleTypeMap;
-    }
-
-    private Map<QName, SchemaType> buildSimpleTypeMap() {
-        Map<QName, SchemaType> simpleTypeMap = new HashMap<QName, SchemaType>();
-        for (Map.Entry<SchemaTypeKey, SchemaType> entry : schemaTypeKeyToSchemaTypeMap.entrySet()) {
-            SchemaTypeKey key = entry.getKey();
-            SchemaType schemaType = entry.getValue();
-
-            if (key.isSimpleType() && !key.isAnonymous()) {
-                QName qName = key.getQName();
-                simpleTypeMap.put(qName, schemaType);
-            }
-        }
-        return simpleTypeMap;
-    }
-
-    public SchemaTypeSystem compileSchemaTypeSystem(Definition definition) throws OpenEJBException {
         List<XmlObject> schemaList = new ArrayList<XmlObject>();
         addImportsFromDefinition(definition, schemaList);
 //        System.out.println("Schemas: " + schemaList);
@@ -272,7 +148,7 @@ public class SchemaInfoBuilder {
     private void addImportsFromDefinition(Definition definition, List<XmlObject> schemaList) throws OpenEJBException {
         //noinspection unchecked
         Map<String,String> namespaceMap = definition.getNamespaces();
-        
+
         Types types = definition.getTypes();
         if (types != null) {
             for (Object extensibilityElement : types.getExtensibilityElements()) {
@@ -355,138 +231,7 @@ public class SchemaInfoBuilder {
         return parsed;
     }
 
-    /**
-     * builds a map of SchemaTypeKey containing jaxrpc-style fake QName and context info to xmlbeans SchemaType object.
-     *
-     * @param schemaTypeSystem
-     * @return Map of SchemaTypeKey to xmlbeans SchemaType object.
-     */
-    private Map<SchemaTypeKey, SchemaType> buildSchemaTypeKeyToSchemaTypeMap(SchemaTypeSystem schemaTypeSystem) {
-        Map<SchemaTypeKey, SchemaType> qnameMap = new HashMap<SchemaTypeKey, SchemaType>();
-
-        SchemaType[] globalTypes = schemaTypeSystem.globalTypes();
-        for (SchemaType globalType : globalTypes) {
-            QName typeQName = globalType.getName();
-            addSchemaType(typeQName, globalType, false, qnameMap);
-        }
-
-        SchemaGlobalElement[] globalElements = schemaTypeSystem.globalElements();
-        for (SchemaGlobalElement globalElement : globalElements) {
-            addElement(globalElement, null, qnameMap);
-        }
-
-        return qnameMap;
-    }
-
-    private void addElement(SchemaField element, SchemaTypeKey key, Map<SchemaTypeKey, SchemaType> qnameMap) {
-        //TODO is this null if element is a ref?
-        QName elementName = element.getName();
-        String elementNamespace = elementName.getNamespaceURI();
-        //"" namespace means local element with elementFormDefault="unqualified"
-        if (elementNamespace == null || elementNamespace.equals("")) {
-            elementNamespace = key.getQName().getNamespaceURI();
-        }
-        String elementQNameLocalName;
-        SchemaTypeKey elementKey;
-        if (key == null) {
-            //top level. rule 2.a,
-            elementQNameLocalName = elementName.getLocalPart();
-            elementKey = new SchemaTypeKey(elementName, true, false, false, elementName);
-        } else {
-            //not top level. rule 2.b, key will be for enclosing Type.
-            QName enclosingTypeQName = key.getQName();
-            String enclosingTypeLocalName = enclosingTypeQName.getLocalPart();
-            elementQNameLocalName = enclosingTypeLocalName + ">" + elementName.getLocalPart();
-            QName subElementName = new QName(elementNamespace, elementQNameLocalName);
-            elementKey = new SchemaTypeKey(subElementName, true, false, true, elementName);
-        }
-        SchemaType schemaType = element.getType();
-        qnameMap.put(elementKey, schemaType);
-//        new Exception("Adding: " + elementKey.getqName().getLocalPart()).printStackTrace();
-        //check if it's an array. maxOccurs is null if unbounded
-        //element should always be a SchemaParticle... this is a workaround for XMLBEANS-137
-        if (element instanceof SchemaParticle) {
-            addArrayForms((SchemaParticle) element, elementKey.getQName(), qnameMap, schemaType);
-        } else {
-            log.warn("element is not a schemaParticle! " + element);
-        }
-        //now, name for type.  Rule 1.b, type inside an element
-        String typeQNameLocalPart = ">" + elementQNameLocalName;
-        QName typeQName = new QName(elementNamespace, typeQNameLocalPart);
-        boolean isAnonymous = true;
-        addSchemaType(typeQName, schemaType, isAnonymous, qnameMap);
-    }
-
-    private void addSchemaType(QName typeQName, SchemaType schemaType, boolean anonymous, Map<SchemaTypeKey, SchemaType> qnameMap) {
-        SchemaTypeKey typeKey = new SchemaTypeKey(typeQName, false, schemaType.isSimpleType(), anonymous, null);
-        qnameMap.put(typeKey, schemaType);
-//        new Exception("Adding: " + typeKey.getqName().getLocalPart()).printStackTrace();
-        //TODO xmlbeans recommends using summary info from getElementProperties and getAttributeProperties instead of traversing the content model by hand.
-        SchemaParticle schemaParticle = schemaType.getContentModel();
-        if (schemaParticle != null) {
-            addSchemaParticle(schemaParticle, typeKey, qnameMap);
-        }
-    }
-
-
-    private void addSchemaParticle(SchemaParticle schemaParticle, SchemaTypeKey key, Map<SchemaTypeKey, SchemaType> qnameMap) {
-        if (schemaParticle.getParticleType() == SchemaParticle.ELEMENT) {
-            SchemaType elementType = schemaParticle.getType();
-            SchemaField element = elementType.getContainerField();
-            //element will be null if the type is defined elsewhere, such as a built in type.
-            if (element != null) {
-                addElement(element, key, qnameMap);
-            } else {
-                QName keyQName = key.getQName();
-                //TODO I can't distinguish between 3.a and 3.b, so generate names both ways.
-                //3.b
-                String localPart = schemaParticle.getName().getLocalPart();
-                QName elementName = new QName(keyQName.getNamespaceURI(), localPart);
-                addArrayForms(schemaParticle, elementName, qnameMap, elementType);
-                //3.a
-                localPart = keyQName.getLocalPart() + ">" + schemaParticle.getName().getLocalPart();
-                elementName = new QName(keyQName.getNamespaceURI(), localPart);
-                addArrayForms(schemaParticle, elementName, qnameMap, elementType);
-            }
-        } else {
-            try {
-                for (SchemaParticle child : schemaParticle.getParticleChildren()) {
-                    addSchemaParticle(child, key, qnameMap);
-                }
-            } catch (NullPointerException e) {
-                //ignore xmlbeans bug
-            }
-        }
-    }
-
-    private void addArrayForms(SchemaParticle schemaParticle, QName keyName, Map<SchemaTypeKey, SchemaType> qnameMap, SchemaType elementType) {
-        //it may be a ref or a built in type.  If it's an array (maxOccurs >1) form a type for it.
-        if (schemaParticle.getIntMaxOccurs() > 1) {
-            String maxOccurs = schemaParticle.getMaxOccurs() == null ? "unbounded" : "" + schemaParticle.getIntMaxOccurs();
-            int minOccurs = schemaParticle.getIntMinOccurs();
-            QName elementName = schemaParticle.getName();
-            String arrayQNameLocalName = keyName.getLocalPart() + "[" + minOccurs + "," + maxOccurs + "]";
-            String elementNamespace = elementName.getNamespaceURI();
-            if (elementNamespace == null || elementNamespace.equals("")) {
-                elementNamespace = keyName.getNamespaceURI();
-            }
-            QName arrayName = new QName(elementNamespace, arrayQNameLocalName);
-            SchemaTypeKey arrayKey = new SchemaTypeKey(arrayName, false, false, true, elementName);
-            //TODO not clear we want the schemaType as the value
-            qnameMap.put(arrayKey, elementType);
-//            new Exception("Adding: " + arrayKey.getqName().getLocalPart()).printStackTrace();
-            if (minOccurs == 1) {
-                arrayQNameLocalName = keyName.getLocalPart() + "[," + maxOccurs + "]";
-                arrayName = new QName(elementNamespace, arrayQNameLocalName);
-                arrayKey = new SchemaTypeKey(arrayName, false, false, true, elementName);
-                //TODO not clear we want the schemaType as the value
-                qnameMap.put(arrayKey, elementType);
-            }
-        }
-    }
-
-
-    public Definition readWsdl(URI wsdlURI) throws OpenEJBException {
+    private Definition readWsdl(URI wsdlURI) throws OpenEJBException {
         Definition definition;
         WSDLFactory wsdlFactory;
         try {
@@ -538,16 +283,6 @@ public class SchemaInfoBuilder {
         }
 
         return definition;
-    }
-
-    public static <T extends ExtensibilityElement> T getExtensibilityElement(Class<T> clazz, List extensibilityElements) throws OpenEJBException {
-        for (Object o : extensibilityElements) {
-            ExtensibilityElement extensibilityElement = (ExtensibilityElement) o;
-            if (clazz.isAssignableFrom(extensibilityElement.getClass())) {
-                return clazz.cast(extensibilityElement);
-            }
-        }
-        throw new OpenEJBException("No element of class " + clazz.getName() + " found");
     }
 
     private class JarEntityResolver implements EntityResolver {

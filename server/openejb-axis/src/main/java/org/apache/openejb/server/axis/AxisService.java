@@ -22,17 +22,23 @@ import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.axis.assembler.JaxRpcServiceInfo;
 import org.apache.openejb.server.axis.assembler.JaxRpcServiceInfoBuilder;
+import org.apache.openejb.server.axis.assembler.XmlBeansSchemaInfoBuilder;
+import org.apache.openejb.server.axis.assembler.XmlSchemaInfo;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
 
 import javax.naming.Context;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerInfo;
+import javax.wsdl.Port;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,12 +53,25 @@ public class AxisService extends WsService {
         return "axis";
     }
 
+    private JaxRpcServiceInfo getJaxRpcServiceInfo(ClassLoader classLoader) throws OpenEJBException {
+        JavaWsdlMapping mapping = null; // the java to wsdl mapping file
+        XmlBeansSchemaInfoBuilder xmlBeansSchemaInfoBuilder = new XmlBeansSchemaInfoBuilder(null, null); // the schema data from the wsdl file
+        PortComponent portComponent = null; // webservice.xml declaration of this service
+        Port port = null; // wsdl.xml declaration of this service
+        String wsdlFile = null;
+
+        XmlSchemaInfo schemaInfo = xmlBeansSchemaInfoBuilder.createSchemaInfo();
+
+        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(mapping, schemaInfo, portComponent, port, wsdlFile, classLoader);
+        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceInfo();
+        return serviceInfo;
+    }
+
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) throws Exception {
         ClassLoader classLoader = deploymentInfo.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
-        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(null, null, null, null, null, classLoader);
-        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceDesc();
+        JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
 
         // Build java service descriptor
         JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);
@@ -84,8 +103,7 @@ public class AxisService extends WsService {
         ClassLoader classLoader = target.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
-        JaxRpcServiceInfoBuilder serviceInfoBuilder = new JaxRpcServiceInfoBuilder(null, null, null, null, null, classLoader);
-        JaxRpcServiceInfo serviceInfo = serviceInfoBuilder.createServiceDesc();
+        JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
 
         // Build java service descriptor
         JavaServiceDescBuilder javaServiceDescBuilder = new JavaServiceDescBuilder(serviceInfo, classLoader);

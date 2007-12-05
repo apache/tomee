@@ -22,7 +22,6 @@ import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ServiceEndpointInterfaceMapping;
 import org.apache.openejb.jee.ServiceEndpointMethodMapping;
-import org.apache.xmlbeans.SchemaType;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -31,41 +30,39 @@ import javax.wsdl.Port;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class JaxRpcServiceInfoBuilder {
     private final JavaWsdlMapping javaWsdlMapping;
-    private final SchemaInfoBuilder schemaInfoBuilder;
+    private final XmlSchemaInfo schemaInfo;
     private final PortComponent portComponent;
     private final Port port;
     private final String wsdlFile;
     private final ClassLoader classLoader;
     private JaxRpcServiceInfo serviceInfo;
 
-    public JaxRpcServiceInfoBuilder(JavaWsdlMapping javaWsdlMapping, SchemaInfoBuilder schemaInfoBuilder, PortComponent portComponent, Port port, String wsdlFile, ClassLoader classLoader) {
+    public JaxRpcServiceInfoBuilder(JavaWsdlMapping javaWsdlMapping, XmlSchemaInfo schemaInfo, PortComponent portComponent, Port port, String wsdlFile, ClassLoader classLoader) {
         this.javaWsdlMapping = javaWsdlMapping;
-        this.schemaInfoBuilder = schemaInfoBuilder;
+        this.schemaInfo = schemaInfo;
         this.portComponent = portComponent;
         this.port = port;
         this.wsdlFile = wsdlFile;
         this.classLoader = classLoader;
     }
 
-    public JaxRpcServiceInfo createServiceDesc() throws OpenEJBException {
+    public JaxRpcServiceInfo createServiceInfo() throws OpenEJBException {
         Class serviceEndpointInterface;
         try {
             serviceEndpointInterface = classLoader.loadClass(portComponent.getServiceEndpointInterface());
         } catch (ClassNotFoundException e) {
             throw new OpenEJBException("Unable to load the service-endpoint interface for port-component " + portComponent.getPortComponentName(), e);
         }
-
-        Map<SchemaTypeKey, SchemaType> schemaTypeKeyToSchemaTypeMap = schemaInfoBuilder.getSchemaTypeKeyToSchemaTypeMap();
 
         serviceInfo = new JaxRpcServiceInfo();
         serviceInfo.name = portComponent.getWsdlPort().toString();
@@ -87,10 +84,10 @@ public class JaxRpcServiceInfoBuilder {
         //
         Collection<JaxRpcTypeInfo> types;
         if (isLightweight) {
-            LightweightTypeInfoBuilder builder = new LightweightTypeInfoBuilder(javaWsdlMapping, schemaTypeKeyToSchemaTypeMap, classLoader);
+            LightweightTypeInfoBuilder builder = new LightweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader);
             types = builder.buildTypeInfo();
         } else {
-            HeavyweightTypeInfoBuilder builder = new HeavyweightTypeInfoBuilder(javaWsdlMapping, schemaTypeKeyToSchemaTypeMap, classLoader, wrapperElementQNames, serviceInfo.operations, serviceInfo.defaultBindingStyle.isEncoded());
+            HeavyweightTypeInfoBuilder builder = new HeavyweightTypeInfoBuilder(javaWsdlMapping, schemaInfo, classLoader, wrapperElementQNames, serviceInfo.operations, serviceInfo.defaultBindingStyle.isEncoded());
             types = builder.buildTypeInfo();
         }
         serviceInfo.types.addAll(types);
@@ -119,7 +116,7 @@ public class JaxRpcServiceInfoBuilder {
                 ServiceEndpointMethodMapping methodMapping = getMethodMappingForOperation(operationName, serviceEndpointInterface);
 
                 // Build the operation info using the Java to XML method mapping
-                HeavyweightOperationInfoBuilder operationInfoBuilder = new HeavyweightOperationInfoBuilder(bindingOperation, methodMapping, javaWsdlMapping, schemaInfoBuilder);
+                HeavyweightOperationInfoBuilder operationInfoBuilder = new HeavyweightOperationInfoBuilder(bindingOperation, methodMapping, javaWsdlMapping, schemaInfo);
                 JaxRpcOperationInfo operationInfo = operationInfoBuilder.buildOperationInfo();
                 serviceInfo.operations.add(operationInfo);
 
@@ -133,11 +130,11 @@ public class JaxRpcServiceInfoBuilder {
     }
 
     private BindingStyle getStyle(Binding binding) throws OpenEJBException {
-        SOAPBinding soapBinding = SchemaInfoBuilder.getExtensibilityElement(SOAPBinding.class, binding.getExtensibilityElements());
+        SOAPBinding soapBinding = getExtensibilityElement(SOAPBinding.class, binding.getExtensibilityElements());
         String styleString = soapBinding.getStyle();
 
         BindingInput bindingInput = ((BindingOperation) binding.getBindingOperations().get(0)).getBindingInput();
-        SOAPBody soapBody = SchemaInfoBuilder.getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
+        SOAPBody soapBody = getExtensibilityElement(SOAPBody.class, bindingInput.getExtensibilityElements());
         String useString = soapBody.getUse();
 
         BindingStyle bindingStyle = BindingStyle.getBindingStyle(styleString, useString);
@@ -145,7 +142,7 @@ public class JaxRpcServiceInfoBuilder {
     }
 
     private String getAddressLocation(List extensibilityElements) throws OpenEJBException {
-        SOAPAddress soapAddress = SchemaInfoBuilder.getExtensibilityElement(SOAPAddress.class, extensibilityElements);
+        SOAPAddress soapAddress = getExtensibilityElement(SOAPAddress.class, extensibilityElements);
         String locationURIString = soapAddress.getLocationURI();
         return locationURIString;
     }
@@ -187,5 +184,15 @@ public class JaxRpcServiceInfoBuilder {
             availOps.append(methodMapping.getWsdlOperation());
         }
         throw new OpenEJBException("No method found for operation named '" + operationName + "'. Available operations: " + availOps);
+    }
+
+    public static <T extends ExtensibilityElement> T getExtensibilityElement(Class<T> clazz, List extensibilityElements) throws OpenEJBException {
+        for (Object o : extensibilityElements) {
+            ExtensibilityElement extensibilityElement = (ExtensibilityElement) o;
+            if (clazz.isAssignableFrom(extensibilityElement.getClass())) {
+                return clazz.cast(extensibilityElement);
+            }
+        }
+        throw new OpenEJBException("No element of class " + clazz.getName() + " found");
     }
 }
