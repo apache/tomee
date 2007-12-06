@@ -33,6 +33,7 @@ import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.jms.ConnectionFactory;
 import javax.xml.namespace.QName;
+import javax.sql.DataSource;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -64,7 +65,6 @@ import org.apache.openejb.client.PortRefMetaData;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.NameClassPairEnumeration;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.omg.CORBA.ORB;
 
 class JndiRequestHandler {
@@ -179,11 +179,16 @@ class JndiRequestHandler {
                 return;
             } else if (object == null) {
                 throw new NullPointerException("lookup of '"+name+"' returned null");
-            } else if (object instanceof BasicDataSource){
-                BasicDataSource cf = (BasicDataSource) object;
-                DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
-                res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
-                res.setResult(dataSourceMetaData);
+            } else if (object instanceof DataSource && object.getClass().getName().equals("org.apache.commons.dbcp.BasicDataSource")){
+                try {
+                    DbcpDataSource cf = new DbcpDataSource(object);
+                    DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
+                    res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
+                    res.setResult(dataSourceMetaData);
+                } catch (Exception e) {
+                    res.setResponseCode(ResponseCodes.JNDI_ERROR);
+                    res.setResult(new ThrowableArtifact(e));
+                }
                 return;
             } else if (object instanceof ConnectionFactory){
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
@@ -418,4 +423,29 @@ class JndiRequestHandler {
         }
     }
 
+
+    public static class DbcpDataSource {
+        private final Object object;
+        private final Class clazz;
+
+        public DbcpDataSource(Object object) {
+            clazz = object.getClass();
+            this.object = object;
+        }
+
+        public java.lang.String getDriverClassName() throws Exception {
+            return (String) clazz.getMethod("getDriverClassName").invoke(object);
+        }
+
+        public java.lang.String getPassword() throws Exception{
+            return (String) clazz.getMethod("getPassword").invoke(object);
+        }
+        public java.lang.String getUrl() throws Exception{
+            return (String) clazz.getMethod("getUrl").invoke(object);
+        }
+        public java.lang.String getUsername() throws Exception{
+            return (String) clazz.getMethod("getUsername").invoke(object);
+        }
+    }
 }
+
