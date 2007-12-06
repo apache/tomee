@@ -71,15 +71,6 @@
           <basedir>${project.build.directory}</basedir>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>src/main/resources/htdocs/functions.js</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
