@@ -27,7 +27,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.naming.InitialContext;
-import javax.sql.DataSource;
 import java.util.Hashtable;
 import java.util.Properties;
 

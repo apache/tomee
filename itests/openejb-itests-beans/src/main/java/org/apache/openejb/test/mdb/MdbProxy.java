@@ -165,7 +165,7 @@ public class MdbProxy {
                 // verify message
                 if (message == null) throw new NullPointerException("Did not get a response withing " + MdbProxy.MdbInvocationHandler.MAX_RESPONSE_WAIT + "ms");
                 if (!correlationId.equals(message.getJMSCorrelationID())) {
-                    throw new IllegalStateException("Recieved a response message with the wrong correlation id");
+                    throw new IllegalStateException("Received a response message with the wrong correlation id");
                 }
                 if (!(message instanceof ObjectMessage)) throw new IllegalArgumentException("Expected a ObjectMessage response but got a " + message.getClass().getName());
                 ObjectMessage resMessage = (ObjectMessage) message;
