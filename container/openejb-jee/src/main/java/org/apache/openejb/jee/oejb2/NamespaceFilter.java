@@ -152,7 +152,9 @@ public class NamespaceFilter extends XMLFilterImpl {
 
     //String uri, String localName, String qName, Attributes atts
     public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
-        if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
+        if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")){
+            uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+        } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
         }
 
