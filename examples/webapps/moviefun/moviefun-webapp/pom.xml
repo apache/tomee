@@ -19,27 +19,31 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project>
   <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
+    <artifactId>moviefun</artifactId>
+    <groupId>org.apache.openejb.examples</groupId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>examples</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Examples</name>
-  <modules>
-    <module>helloworld-stateful-pojo</module>
-    <module>helloworld-weblogic</module>
-    <module>calculator-stateless-pojo</module>
-    <module>counter-stateful-pojo</module>
-    <module>ejb-injection</module>
-    <module>resource-injection</module>
-    <module>telephone-stateful</module>
-    <module>expanded-env-entries</module>
-    <module>interceptors</module>
-    <module>webapps</module>
-  </modules>
+  <groupId>org.apache.openejb.examples.moviefun</groupId>
+  <artifactId>moviefun-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>OpenEJB :: Web Examples :: Movie Fun :: WAR</name>
+  <build>
+    <finalName>moviefun</finalName>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb.examples.moviefun</groupId>
+      <artifactId>moviefun-lib</artifactId>
+      <version>3.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
