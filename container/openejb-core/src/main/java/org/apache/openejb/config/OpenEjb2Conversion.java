@@ -54,6 +54,7 @@ import org.apache.openejb.jee.oejb2.ActivationConfigPropertyType;
 import org.apache.openejb.jee.oejb2.EjbRefType;
 import org.apache.openejb.jee.oejb2.PatternType;
 import org.apache.openejb.jee.oejb2.EjbLocalRefType;
+import org.apache.openejb.jee.oejb2.Jndi;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
@@ -118,6 +119,18 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             if (deployment == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
+            }
+
+            for (String name : enterpriseBean.getLocalJndiName()) {
+                deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(name, "LocalHome"));
+            }
+
+            for (String name : enterpriseBean.getJndiName()) {
+                deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(name, "RemoteHome"));
+            }
+
+            for (Jndi jndi : enterpriseBean.getJndi()) {
+                deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(jndi.getName(), jndi.getInterface()));
             }
 
             Set<String> ejbLinks =  new TreeSet<String>();

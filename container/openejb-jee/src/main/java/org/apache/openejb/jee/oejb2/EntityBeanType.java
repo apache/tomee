@@ -117,6 +117,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "ejbName",
     "jndiName",
     "localJndiName",
+    "jndi",
     "tssLink",
     "tss",
     "tableName",
@@ -147,6 +148,9 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     @XmlElement(name = "local-jndi-name")
     protected List<String> localJndiName;
+
+    @XmlElement(name = "jndi")
+    protected List<Jndi> jndi;
 
     @XmlElement(name = "tss-link")
     protected String tssLink;
@@ -290,6 +294,13 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
             localJndiName = new ArrayList<String>();
         }
         return this.localJndiName;
+    }
+
+    public List<Jndi> getJndi() {
+        if (jndi == null) {
+            jndi = new ArrayList<Jndi>();
+        }
+        return this.jndi;
     }
 
     /**

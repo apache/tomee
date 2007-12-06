@@ -76,6 +76,8 @@
             <jndi-name>jndiTwoString</jndi-name>
             <local-jndi-name>String</local-jndi-name>
             <local-jndi-name>String</local-jndi-name>
+            <jndi name="one" interface="two"/>
+            <jndi name="three" interface="four"/>
             <cache-size>0</cache-size>
             <tss-link>tssLinkString</tss-link>
             <persistence-context-ref>

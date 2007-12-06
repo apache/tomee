@@ -64,6 +64,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "ejbName",
     "jndiName",
     "localJndiName",
+    "jndi",
     "cacheSize",
     "tssLink",
     "tss",
@@ -87,6 +88,8 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     protected List<String> jndiName;
     @XmlElement(name = "local-jndi-name")
     protected List<String> localJndiName;
+    @XmlElement(name = "jndi")
+    protected List<Jndi> jndi;
     @XmlElement(name = "cache-size")
     protected Integer cacheSize;
     @XmlElement(name = "tss-link")
@@ -212,6 +215,13 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
             localJndiName = new ArrayList<String>();
         }
         return this.localJndiName;
+    }
+
+    public List<Jndi> getJndi() {
+        if (jndi == null) {
+            jndi = new ArrayList<Jndi>();
+        }
+        return this.jndi;
     }
 
     /**

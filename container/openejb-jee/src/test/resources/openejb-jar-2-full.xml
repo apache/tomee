@@ -73,6 +73,8 @@
             <ns3:jndi-name>jndiTwoString</ns3:jndi-name>
             <ns3:local-jndi-name>String</ns3:local-jndi-name>
             <ns3:local-jndi-name>String</ns3:local-jndi-name>
+            <ns3:jndi name="one" interface="two"/>
+            <ns3:jndi name="three" interface="four"/>
             <ns3:cache-size>0</ns3:cache-size>
             <ns3:tss-link>tssLinkString</ns3:tss-link>
             <ns2:persistence-context-ref>
