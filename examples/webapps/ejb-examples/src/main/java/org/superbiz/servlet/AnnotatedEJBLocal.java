@@ -15,24 +15,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.jws.WebService;
-import javax.jws.HandlerChain;
-import javax.ejb.Stateless;
+import javax.sql.DataSource;
+import javax.ejb.Local;
 
-@WebService(
-    portName="HelloEjbPort",
-    serviceName="HelloEjbService",
-    targetNamespace="http://examples.org/wsdl",
-    endpointInterface="org.apache.openejb.examples.servlet.HelloEjb"
-)
-@HandlerChain(file = "server-handlers.xml")
-@Stateless
-public class HelloEjbService implements HelloEjb {
-    public String hello(String name) {
-        WebserviceServlet.write("                HelloEjbService hello(" + name + ")");
-        if (name == null) name = "World";
-        return "Hello " + name + " from EJB Webservice!";
-    }
+@Local
+public interface AnnotatedEJBLocal {
+    String getName();
+
+    void setName(String name);
+
+    DataSource getDs();
+
+    void setDs(DataSource ds);
 }

@@ -15,23 +15,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import javax.ejb.Local;
+import java.security.Principal;
 
-public class ClientHandler implements Handler {
-    public boolean handleMessage(MessageContext messageContext) {
-        WebserviceServlet.write("    ClientHandler handleMessage");
-        return true;
-    }
+@Local
+public interface SecureEJBLocal {
+    Principal getCallerPrincipal();
 
-    public void close(MessageContext messageContext) {
-        WebserviceServlet.write("    ClientHandler close");
-    }
+    boolean isCallerInRole(String role);
 
-    public boolean handleFault(MessageContext messageContext) {
-        WebserviceServlet.write("    ClientHandler handleFault");
-        return true;
-    }
+    void allowUserMethod();
+
+    void allowManagerMethod();
+
+    void allowFakeMethod();
+
+    void denyAllMethod();
 }

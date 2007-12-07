@@ -15,11 +15,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.jws.WebService;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
 
-@WebService(targetNamespace="http://examples.org/wsdl")
-public interface HelloPojo {
-    String hello(String name);
+@Entity
+public class JpaBean {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public String toString() {
+        return "[JpaBean id=" + id + ", name=" + name + "]";
+    }
 }

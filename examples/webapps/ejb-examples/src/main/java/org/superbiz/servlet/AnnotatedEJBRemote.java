@@ -15,23 +15,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import javax.ejb.Remote;
 
-public class ServerHandler implements Handler {
-    public boolean handleMessage(MessageContext messageContext) {
-        WebserviceServlet.write("        ServerHandler handleMessage");
-        return true;
-    }
+@Remote
+public interface AnnotatedEJBRemote {
+    String getName();
 
-    public void close(MessageContext messageContext) {
-        WebserviceServlet.write("        ServerHandler close");
-    }
-
-    public boolean handleFault(MessageContext messageContext) {
-        WebserviceServlet.write("        ServerHandler handleFault");
-        return true;
-    }
+    void setName(String name);
 }

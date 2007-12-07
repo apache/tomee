@@ -29,7 +29,7 @@
 
   <servlet>
     <servlet-name>AnnotatedServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.AnnotatedServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.AnnotatedServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -39,7 +39,7 @@
 
   <servlet>
     <servlet-name>JpaServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.JpaServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.JpaServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -49,7 +49,7 @@
 
   <servlet>
     <servlet-name>JndiServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.JndiServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.JndiServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -59,7 +59,7 @@
 
   <servlet>
     <servlet-name>RunAsServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.RunAsServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.RunAsServlet</servlet-class>
     <run-as>
       <role-name>fake</role-name>
     </run-as>
@@ -72,7 +72,7 @@
 
   <servlet>
     <servlet-name>SecureServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.SecureServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.SecureServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -93,7 +93,7 @@
 
   <servlet>
     <servlet-name>WebserviceServlet</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.WebserviceServlet</servlet-class>
+    <servlet-class>org.superbiz.servlet.WebserviceServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -104,7 +104,7 @@
 
   <servlet>
     <servlet-name>HelloPojoService</servlet-name>
-    <servlet-class>org.apache.openejb.examples.servlet.HelloPojoService</servlet-class>
+    <servlet-class>org.superbiz.servlet.HelloPojoService</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -124,18 +124,18 @@
 
   <resource-env-ref>
     <resource-env-ref-name>web.xml/resource-env-ref</resource-env-ref-name>
-    <resource-env-ref-type>org.apache.openejb.examples.servlet.ResourceBean</resource-env-ref-type>
+    <resource-env-ref-type>org.superbiz.servlet.ResourceBean</resource-env-ref-type>
   </resource-env-ref>
 
   <resource-ref>
     <res-ref-name>web.xml/resource-ref</res-ref-name>
-    <res-type>org.apache.openejb.examples.servlet.ResourceBean</res-type>
+    <res-type>org.superbiz.servlet.ResourceBean</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
 
   <resource-ref>
     <res-ref-name>web.xml/resource-link</res-ref-name>
-    <res-type>org.apache.openejb.examples.servlet.ResourceBean</res-type>
+    <res-type>org.superbiz.servlet.ResourceBean</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
 
@@ -153,13 +153,13 @@
   <ejb-ref>
     <ejb-ref-name>web.xml/EjbRemote</ejb-ref-name>
     <ejb-ref-type>Session</ejb-ref-type>
-    <remote>org.apache.openejb.examples.servlet.AnnotatedEJBRemote</remote>
+    <remote>org.superbiz.servlet.AnnotatedEJBRemote</remote>
   </ejb-ref>
 
   <ejb-local-ref>
     <ejb-ref-name>web.xml/EjLocal</ejb-ref-name>
     <ejb-ref-type>Session</ejb-ref-type>
-    <local>org.apache.openejb.examples.servlet.AnnotatedEJBLocal</local>
+    <local>org.superbiz.servlet.AnnotatedEJBLocal</local>
   </ejb-local-ref>
 
   <persistence-unit-ref>

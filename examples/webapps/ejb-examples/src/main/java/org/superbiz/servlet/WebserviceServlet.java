@@ -15,63 +15,55 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.xml.ws.WebServiceRef;
+import javax.jws.HandlerChain;
 import java.io.IOException;
 
-public class AnnotatedServlet extends HttpServlet {
-    @EJB
-    private AnnotatedEJBLocal localEJB;
+public class WebserviceServlet extends HttpServlet {
 
-    @EJB
-    private AnnotatedEJBRemote remoteEJB;
+    @WebServiceRef
+    @HandlerChain(file = "client-handlers.xml")
+    private HelloPojo helloPojo;
 
-    @Resource
-    private DataSource ds;
-
+    @WebServiceRef
+    @HandlerChain(file = "client-handlers.xml")
+    private HelloEjb helloEjb;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
 
-        out.println("Local EJB");
-        out.println("@EJB=" + localEJB);
-        if (localEJB != null) {
-            out.println("@EJB.getName()=" + localEJB.getName());
-            out.println("@EJB.getDs()=" + localEJB.getDs());
+        OUT = out;
+        try {
+            out.println("Pojo Webservice");
+            out.println("    helloPojo.hello(\"Bob\")=" + helloPojo.hello("Bob"));
+            out.println();
+            out.println("    helloPojo.hello(null)=" + helloPojo.hello(null));
+            out.println();
+            out.println("EJB Webservice");
+            out.println("    helloEjb.hello(\"Bob\")=" + helloEjb.hello("Bob"));
+            out.println();
+            out.println("    helloEjb.hello(null)=" + helloEjb.hello(null));
+            out.println();
+        } finally {
+            OUT = out;
         }
-        out.println("JNDI=" + lookupField("localEJB"));
-        out.println();
-
-        out.println("Remote EJB");
-        out.println("@EJB=" + remoteEJB);
-        if (localEJB != null) {
-            out.println("@EJB.getName()=" + remoteEJB.getName());
-        }
-        out.println("JNDI=" + lookupField("remoteEJB"));
-        out.println();
-
-
-        out.println("DataSource");
-        out.println("@Resource=" + ds);
-        out.println("JNDI=" + lookupField("ds"));
     }
 
-    private Object lookupField(String name) {
+    private static ServletOutputStream OUT;
+    public static void write(String message) {
         try {
-            return new InitialContext().lookup("java:comp/env/" + getClass().getName() + "/" + name);
-        } catch (NamingException e) {
-            return null;
+            ServletOutputStream out = OUT;
+            out.println(message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

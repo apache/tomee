@@ -15,18 +15,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.sql.DataSource;
-import javax.ejb.Local;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.MessageContext;
 
-@Local
-public interface AnnotatedEJBLocal {
-    String getName();
+public class ClientHandler implements Handler {
+    public boolean handleMessage(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler handleMessage");
+        return true;
+    }
 
-    void setName(String name);
+    public void close(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler close");
+    }
 
-    DataSource getDs();
-
-    void setDs(DataSource ds);
+    public boolean handleFault(MessageContext messageContext) {
+        WebserviceServlet.write("    ClientHandler handleFault");
+        return true;
+    }
 }

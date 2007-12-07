@@ -15,22 +15,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.ejb.Local;
-import java.security.Principal;
+import javax.jws.WebService;
+import javax.jws.HandlerChain;
+import javax.ejb.Stateless;
 
-@Local
-public interface SecureEJBLocal {
-    Principal getCallerPrincipal();
-
-    boolean isCallerInRole(String role);
-
-    void allowUserMethod();
-
-    void allowManagerMethod();
-
-    void allowFakeMethod();
-
-    void denyAllMethod();
+@WebService(
+    portName="HelloEjbPort",
+    serviceName="HelloEjbService",
+    targetNamespace="http://examples.org/wsdl",
+    endpointInterface="org.superbiz.servlet.HelloEjb"
+)
+@HandlerChain(file = "server-handlers.xml")
+@Stateless
+public class HelloEjbService implements HelloEjb {
+    public String hello(String name) {
+        WebserviceServlet.write("                HelloEjbService hello(" + name + ")");
+        if (name == null) name = "World";
+        return "Hello " + name + " from EJB Webservice!";
+    }
 }

@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
 import javax.jws.WebService;
 import javax.jws.HandlerChain;
@@ -24,7 +24,7 @@ import javax.jws.HandlerChain;
     portName="HelloPojoPort",
     serviceName="HelloPojoService",
     targetNamespace="http://examples.org/wsdl",
-    endpointInterface="org.apache.openejb.examples.servlet.HelloPojo"
+    endpointInterface="org.superbiz.servlet.HelloPojo"
 )
 @HandlerChain(file = "server-handlers.xml")
 public class HelloPojoService implements HelloPojo {

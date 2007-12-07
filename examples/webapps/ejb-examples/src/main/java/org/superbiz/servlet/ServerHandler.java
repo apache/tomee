@@ -15,36 +15,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
-import javax.annotation.Resource;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.MessageContext;
 
-@Stateless
-public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
-    @Resource
-    private DataSource ds;
-
-    private String name = "foo";
-
-    public String getName() {
-        return name;
+public class ServerHandler implements Handler {
+    public boolean handleMessage(MessageContext messageContext) {
+        WebserviceServlet.write("        ServerHandler handleMessage");
+        return true;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void close(MessageContext messageContext) {
+        WebserviceServlet.write("        ServerHandler close");
     }
 
-    public DataSource getDs() {
-        return ds;
-    }
-
-    public void setDs(DataSource ds) {
-        this.ds = ds;
-    }
-
-    public String toString() {
-        return "AnnotatedEJB[name=" + name + "]";
+    public boolean handleFault(MessageContext messageContext) {
+        WebserviceServlet.write("        ServerHandler handleFault");
+        return true;
     }
 }

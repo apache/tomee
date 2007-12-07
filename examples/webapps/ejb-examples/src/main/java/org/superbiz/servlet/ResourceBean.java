@@ -15,38 +15,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
+public class ResourceBean {
+    private String value;
 
-@Entity
-public class JpaBean {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "name")
-    private String name;
-
-    public int getId() {
-        return id;
+    public String getValue() {
+        return value;
     }
 
-    public String getName() {
-        return name;
+    public void setValue(String value) {
+        this.value = value;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 
     public String toString() {
-        return "[JpaBean id=" + id + ", name=" + name + "]";
+        return "[ResourceBean " + value + "]";
     }
 }

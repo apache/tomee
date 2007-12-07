@@ -20,7 +20,7 @@
   <persistence-unit transaction-type="RESOURCE_LOCAL" name="jpa-example">
     <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
     <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
-    <class>org.apache.openejb.examples.servlet.JpaBean</class>
+    <class>org.superbiz.servlet.JpaBean</class>
 
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>

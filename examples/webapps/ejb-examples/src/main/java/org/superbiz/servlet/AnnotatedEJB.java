@@ -15,20 +15,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-public class ResourceBean {
-    private String value;
+import javax.ejb.Stateless;
+import javax.sql.DataSource;
+import javax.annotation.Resource;
 
-    public String getValue() {
-        return value;
+@Stateless
+public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
+    @Resource
+    private DataSource ds;
+
+    private String name = "foo";
+
+    public String getName() {
+        return name;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public DataSource getDs() {
+        return ds;
+    }
+
+    public void setDs(DataSource ds) {
+        this.ds = ds;
     }
 
     public String toString() {
-        return "[ResourceBean " + value + "]";
+        return "AnnotatedEJB[name=" + name + "]";
     }
 }

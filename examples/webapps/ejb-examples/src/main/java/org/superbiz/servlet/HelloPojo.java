@@ -15,13 +15,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.examples.servlet;
+package org.superbiz.servlet;
 
-import javax.ejb.Remote;
+import javax.jws.WebService;
 
-@Remote
-public interface AnnotatedEJBRemote {
-    String getName();
-
-    void setName(String name);
+@WebService(targetNamespace="http://examples.org/wsdl")
+public interface HelloPojo {
+    String hello(String name);
 }
