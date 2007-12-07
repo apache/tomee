@@ -26,13 +26,7 @@ available currently:
   * openejb-hsql
   * openejb-activemq
 
-The source for this example can be checked out from svn:
-
- $ svn co http://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/examples/telephone-stateful/
-
 To run the example simply type:
-
- $ cd telephone-stateful
 
  $ mvn clean install
 

@@ -9,13 +9,7 @@ With EJB 3.0, it's now possible to write stateful session bean without specifyin
   * a remote or local business interface, which is a plain-old-java-interface, annotated with the @Remote or @Local annotation
   * the stateful session bean implementation, a plain-old-java-object which implements the remote or the local business interface and is annotated with the @Stateful annotation
   
-The source for this example can be checked out from svn:
-
- $ svn co http://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/examples/counter-stateful-pojo/
-
 To run the example simply type:
-
- $ cd counter-stateful-pojo
 
  $ mvn clean install
 

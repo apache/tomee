@@ -11,13 +11,7 @@ With EJB 3.0, it's now possible to write stateless session bean without specifyi
   * a remote or local business interface, which is a plain-old-java-interface, annotated with the @Remote or @Local annotation
   * the stateless session bean implementation, a plain-old-java-object which implements the remote or the local business interface and is annotated with the @Stateless annotation
   
-The source for this example can be checked out from svn:
-
- $ svn co http://svn.apache.org/repos/asf/incubator/openejb/trunk/openejb3/examples/calculator-stateless-pojo/
-
 To run the example simply type:
-
- $ cd calculator-stateless-pojo
 
  $ mvn clean install
 
