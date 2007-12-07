@@ -57,7 +57,7 @@
     <remoteRepository refid="apache.snapshot.repository" />
     <remoteRepository refid="m2.repository" />
 
-    <dependency groupId="org.apache.openejb" artifactId="openejb-core" version="3.0.0-SNAPSHOT"/>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-ejbd" version="3.0.0-SNAPSHOT"/>
     <dependency groupId="junit" artifactId="junit" version="4.3.1"/>
   </artifact:dependencies>
 
