@@ -31,10 +31,10 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples</name>
   <modules>
-    <module>helloworld-stateful-pojo</module>
+    <module>component-interfaces</module>
     <module>helloworld-weblogic</module>
-    <module>calculator-stateless-pojo</module>
-    <module>counter-stateful-pojo</module>
+    <module>simple-stateless</module>
+    <module>simple-stateful</module>
     <module>ejb-injection</module>
     <module>resource-injection</module>
     <module>telephone-stateful</module>
