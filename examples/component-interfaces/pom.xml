@@ -48,11 +48,6 @@
   </build>
   <repositories>
     <repository>
-      <id>codehaus-m2-snapshot</id>
-      <name>Codehaus Snapshot Repository</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </repository>
-    <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
@@ -73,26 +68,8 @@
     </dependency>
 
     <!--
-    Nice thing about maven2 is it has test-only dependencies.
-    This guarantees that non of your runtime code is dependent
-    on any OpenEJB classes.
-
-    For those of you who want to know the minimum steps required
-    to add OpenEJB for testing to an existing maven 2 build, you
-    simply add this dependency below and in your test code create
-    your InitialContext like such:
-
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-
-        initialContext = new InitialContext(properties);
-
-    And include an add a src/main/resources/META-INF/ejb-jar.xml
-    file to your project containing at least "<ejb-jar/>"
-
-    There is a method for finding your app without the need for
-    an ejb-jar.xml via annotation scraping the classpath.  See:
-    http://openejb.apache.org/loading-deployments-from-the-classpath.html
+    The <scope>test</scope> guarantees that non of your runtime
+    code is dependent on any OpenEJB classes.
     -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
