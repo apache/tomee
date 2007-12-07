@@ -20,17 +20,17 @@
 <!-- $Rev$ $Date$ -->
 
 <%@ page import="
-org.apache.openejb.examples.moviefun.JndiContext,
+org.superbiz.moviefun.JndiContext,
 java.sql.Connection,
 javax.naming.Context,
 java.sql.Statement,
 java.util.Date,
-org.apache.openejb.examples.moviefun.MovieEntity,
+org.superbiz.moviefun.MovieEntity,
 java.text.SimpleDateFormat,
 javax.sql.DataSource,
 java.util.Collection,
 java.util.Iterator,
-org.apache.openejb.examples.moviefun.Movie"%>
+org.superbiz.moviefun.Movie"%>
 
 <h2>Setup</h2>
 <%

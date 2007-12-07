@@ -31,15 +31,15 @@
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples</name>
   <modules>
-    <module>component-interfaces</module>
-    <module>helloworld-weblogic</module>
-    <module>simple-stateless</module>
     <module>simple-stateful</module>
-    <module>ejb-injection</module>
-    <module>resource-injection</module>
-    <module>telephone-stateful</module>
-    <module>expanded-env-entries</module>
+    <module>simple-stateless</module>
+    <module>component-interfaces</module>
+    <module>injection-of-ejbs</module>
+    <module>injection-of-env-entry</module>
     <module>interceptors</module>
+    <module>expanded-env-entries</module>
+    <module>helloworld-weblogic</module>
+    <module>telephone-stateful</module>
     <module>webapps</module>
   </modules>
 </project>

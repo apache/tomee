@@ -24,9 +24,9 @@
   <enterprise-beans>
       <entity>
           <ejb-name>MovieEJB</ejb-name>
-          <local-home>org.acme.movie.MovieHome</local-home>
-          <local>org.acme.movie.MovieEntity</local>
-          <ejb-class>org.acme.movie.MovieBean</ejb-class>
+          <local-home>org.superbiz.movie.MovieHome</local-home>
+          <local>org.superbiz.movie.MovieEntity</local>
+          <ejb-class>org.superbiz.movie.MovieBean</ejb-class>
           <persistence-type>Container</persistence-type>
           <prim-key-class>java.lang.Integer</prim-key-class>
           <reentrant>False</reentrant>
@@ -58,9 +58,9 @@
       </entity>
       <session>
           <ejb-name>ContextEJB</ejb-name>
-          <local-home>org.acme.movie.JndiContext$LocalHome</local-home>
-          <local>org.acme.movie.JndiContext$Local</local>
-          <ejb-class>org.acme.movie.JndiContextBean</ejb-class>
+          <local-home>org.superbiz.movie.JndiContext$LocalHome</local-home>
+          <local>org.superbiz.movie.JndiContext$Local</local>
+          <ejb-class>org.superbiz.movie.JndiContextBean</ejb-class>
           <session-type>Stateless</session-type>
           <transaction-type>Bean</transaction-type>
           <resource-ref>

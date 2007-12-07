@@ -23,12 +23,12 @@
   <enterprise-beans>
     <session>
       <ejb-name>InvoiceBean</ejb-name>
-      <ejb-class>org.apache.openejb.examples.injection.InvoiceBean</ejb-class>
+      <ejb-class>org.superbiz.injection.InvoiceBean</ejb-class>
       <session-type>Stateful</session-type>
       <transaction-type>Container</transaction-type>
       <env-entry>
         <description>The maximum number of line items per invoice.</description>
-        <env-entry-name>org.apache.openejb.examples.injection.InvoiceBean/maxLineItems</env-entry-name>
+        <env-entry-name>org.superbiz.injection.InvoiceBean/maxLineItems</env-entry-name>
         <env-entry-type>java.lang.Integer</env-entry-type>
         <env-entry-value>15</env-entry-value>
       </env-entry>

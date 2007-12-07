@@ -24,16 +24,16 @@
   version="3.0">
   <interceptors>
     <interceptor>
-      <interceptor-class>org.apache.openejb.examples.interceptors.DefaultInterceptorOne</interceptor-class>
+      <interceptor-class>org.superbiz.interceptors.DefaultInterceptorOne</interceptor-class>
     </interceptor>
     <interceptor>
-      <interceptor-class>org.apache.openejb.examples.interceptors.DefaultInterceptorTwo</interceptor-class>
+      <interceptor-class>org.superbiz.interceptors.DefaultInterceptorTwo</interceptor-class>
     </interceptor>
   </interceptors>
   <assembly-descriptor>
     <interceptor-binding>
       <ejb-name>*</ejb-name>
-      <interceptor-class>org.apache.openejb.examples.interceptors.InterceptorBindingEjbJarInterceptor</interceptor-class>
+      <interceptor-class>org.superbiz.interceptors.InterceptorBindingEjbJarInterceptor</interceptor-class>
     </interceptor-binding>
   </assembly-descriptor>
 </ejb-jar>

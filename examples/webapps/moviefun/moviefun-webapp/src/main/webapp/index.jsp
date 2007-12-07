@@ -20,10 +20,9 @@
 <!-- $Rev$ $Date$ -->
 
 <%@ page import="java.util.Collection,
-                 org.apache.openejb.examples.moviefun.MovieEntity,
+                 org.superbiz.moviefun.MovieEntity,
                  java.util.Iterator,
-                 org.apache.openejb.examples.moviefun.Movie,
-                 java.util.Date,
+                 org.apache.openorg.superbiz.moviefun          java.util.Date,
                  java.io.PrintStream,
                  java.util.Map,
                  java.util.HashMap,

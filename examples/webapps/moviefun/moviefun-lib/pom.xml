@@ -26,7 +26,7 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.openejb.examples.moviefun</groupId>
+  <groupId>org.superbiz.moviefun</groupId>
   <artifactId>moviefun-lib</artifactId>
   <name>OpenEJB :: Web Examples :: Movie Fun :: Library</name>
   <dependencies>

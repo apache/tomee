@@ -24,10 +24,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.openejb</groupId>
-  <artifactId>resource-injection</artifactId>
+  <artifactId>injection-of-env-entry</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Resource Injection</name>
+  <name>OpenEJB :: Examples :: @Resource env-entry Injection</name>
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
