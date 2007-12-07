@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Swiped verbatim from ActiveMQ... the URI kings.
+ */
 public class URISupport {
     public static class CompositeData {
         String scheme;
