@@ -47,7 +47,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 public class CommonsSchemaLoader {
-    private static final Log log = LogFactory.getLog(XmlBeansSchemaInfoBuilder.class);
+    private static final Log log = LogFactory.getLog(CommonsSchemaLoader.class);
 
     private final URI wsdlUri;
     private final JarFile moduleFile;

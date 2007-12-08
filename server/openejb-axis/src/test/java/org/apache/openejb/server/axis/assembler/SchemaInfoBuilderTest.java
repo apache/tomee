@@ -19,19 +19,10 @@ package org.apache.openejb.server.axis.assembler;
 
 import junit.framework.TestCase;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.xmlbeans.XmlError;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
-import org.apache.openejb.OpenEJBException;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.ArrayList;
 
 public class SchemaInfoBuilderTest extends TestCase {
     public void testSimpleType() throws Exception {
@@ -378,41 +369,11 @@ public class SchemaInfoBuilderTest extends TestCase {
     }
 
     private XmlSchemaInfo loadSchemaInfo(String fileName) throws Exception {
-        if (true) {
-            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-            XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
-            xmlSchemaCollection.read(new InputStreamReader(in), null);
-            CommonsSchemaInfoBuilder schemaInfoBuilder = new CommonsSchemaInfoBuilder(xmlSchemaCollection);
-            XmlSchemaInfo schemaInfo = schemaInfoBuilder.createSchemaInfo();
-            return schemaInfo;
-        } else {
-            Collection<XmlError> errors = new ArrayList<XmlError>();
-            XmlOptions xmlOptions = new XmlOptions();
-            xmlOptions.setErrorListener(errors);
-            InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-            SchemaDocument schema = SchemaDocument.Factory.parse(in, xmlOptions);
-
-            SchemaTypeSystem schemaTypeSystem = XmlBeans.compileXsd(new XmlObject[]{schema}, XmlBeansSchemaLoader.basicTypeSystem, xmlOptions);
-            if (errors.size() > 0) {
-                boolean wasError = false;
-                for (XmlError xmlError : errors) {
-                    if (xmlError.getSeverity() == XmlError.SEVERITY_ERROR) {
-                        System.out.println(xmlError);
-                        wasError = true;
-                    } else if (xmlError.getSeverity() == XmlError.SEVERITY_WARNING) {
-                        System.out.println(xmlError);
-                    } else if (xmlError.getSeverity() == XmlError.SEVERITY_INFO) {
-                        System.out.println(xmlError);
-                    }
-                }
-                if (wasError) {
-                    throw new OpenEJBException("Could not compile schema type system, see log for errors");
-                }
-            }
-
-            XmlBeansSchemaInfoBuilder schemaInfoBuilder = new XmlBeansSchemaInfoBuilder(schemaTypeSystem);
-            XmlSchemaInfo schemaInfo = schemaInfoBuilder.createSchemaInfo();
-            return schemaInfo;
-        }
+        InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
+        XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
+        xmlSchemaCollection.read(new InputStreamReader(in), null);
+        CommonsSchemaInfoBuilder schemaInfoBuilder = new CommonsSchemaInfoBuilder(xmlSchemaCollection);
+        XmlSchemaInfo schemaInfo = schemaInfoBuilder.createSchemaInfo();
+        return schemaInfo;
     }
 }

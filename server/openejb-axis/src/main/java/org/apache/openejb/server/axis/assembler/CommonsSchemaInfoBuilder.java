@@ -55,7 +55,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 public class CommonsSchemaInfoBuilder {
-    private static final Log log = LogFactory.getLog(XmlBeansSchemaInfoBuilder.class);
+    private static final Log log = LogFactory.getLog(CommonsSchemaInfoBuilder.class);
     private static final String XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";
     private static final String XML_NS_NS = "http://www.w3.org/2000/xmlns/";
     private static final String SOAP_ENCODING_NS = "http://schemas.xmlsoap.org/soap/encoding/";
@@ -92,9 +92,6 @@ public class CommonsSchemaInfoBuilder {
     }
 
 
-    /**
-     * builds a map of SchemaTypeKey containing jaxrpc-style fake QName and context info to xmlbeans SchemaType object.
-     */
     private void buildXmlTypeInfos() {
         for (XmlSchema schema : xmlSchemaCollection.getXmlSchemas()) {
             // Global Elements
