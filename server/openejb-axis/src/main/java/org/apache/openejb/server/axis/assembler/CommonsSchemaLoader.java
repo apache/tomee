@@ -22,18 +22,9 @@ import com.ibm.wsdl.extensions.schema.SchemaConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openejb.OpenEJBException;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlError;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Element;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
@@ -49,106 +40,31 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-public class XmlBeansSchemaLoader {
+public class CommonsSchemaLoader {
     private static final Log log = LogFactory.getLog(XmlBeansSchemaInfoBuilder.class);
-    public static final SchemaTypeSystem basicTypeSystem;
-
-    private static XmlOptions createXmlOptions(Collection errors) {
-        XmlOptions options = new XmlOptions();
-        options.setLoadLineNumbers();
-        options.setErrorListener(errors);
-        return options;
-    }
-
-    static {
-        InputStream is = XmlBeansSchemaInfoBuilder.class.getClassLoader().getResourceAsStream("META-INF/schema/soap_encoding_1_1.xsd");
-        if (is == null) {
-            throw new RuntimeException("Could not locate soap encoding schema");
-        }
-        ArrayList errors = new ArrayList();
-        XmlOptions xmlOptions = createXmlOptions(errors);
-        try {
-            SchemaDocument parsed = SchemaDocument.Factory.parse(is, xmlOptions);
-            if (errors.size() != 0) {
-                throw new XmlException(errors.toArray().toString());
-            }
-
-            basicTypeSystem = XmlBeans.compileXsd(new XmlObject[]{parsed}, XmlBeans.getBuiltinTypeSystem(), xmlOptions);
-            if (errors.size() > 0) {
-                throw new RuntimeException("Could not compile schema type system: errors: " + errors);
-            }
-        } catch (XmlException e) {
-            throw new RuntimeException("Could not compile schema type system", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not compile schema type system", e);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException ignore) {
-                // ignore
-            }
-        }
-    }
 
     private final URI wsdlUri;
     private final JarFile moduleFile;
-    private final LinkedList<URI> uris = new LinkedList<URI>();
+    private final XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
-
-    public XmlBeansSchemaLoader(URI wsdlUri, JarFile moduleFile) {
+    public CommonsSchemaLoader(URI wsdlUri, JarFile moduleFile) {
         this.wsdlUri = wsdlUri;
         this.moduleFile = moduleFile;
-        uris.addFirst(wsdlUri);
     }
 
-    public SchemaTypeSystem loadSchema() throws OpenEJBException {
+    public XmlSchemaCollection loadSchema() throws OpenEJBException {
         Definition definition = readWsdl(wsdlUri);
-
-        List<XmlObject> schemaList = new ArrayList<XmlObject>();
-        addImportsFromDefinition(definition, schemaList);
-//        System.out.println("Schemas: " + schemaList);
-        Collection<XmlError> errors = new ArrayList<XmlError>();
-        XmlOptions xmlOptions = new XmlOptions();
-        xmlOptions.setErrorListener(errors);
-        xmlOptions.setEntityResolver(new JarEntityResolver());
-        XmlObject[] schemas = schemaList.toArray(new XmlObject[schemaList.size()]);
-        try {
-            SchemaTypeSystem schemaTypeSystem = XmlBeans.compileXsd(schemas, basicTypeSystem, xmlOptions);
-            if (errors.size() > 0) {
-                boolean wasError = false;
-                for (XmlError xmlError : errors) {
-                    if (xmlError.getSeverity() == XmlError.SEVERITY_ERROR) {
-                        log.error(xmlError);
-                        wasError = true;
-                    } else if (xmlError.getSeverity() == XmlError.SEVERITY_WARNING) {
-                        log.warn(xmlError);
-                    } else if (xmlError.getSeverity() == XmlError.SEVERITY_INFO) {
-                        log.debug(xmlError);
-                    }
-                }
-                if (wasError) {
-                    throw new OpenEJBException("Could not compile schema type system, see log for errors");
-                }
-            }
-            return schemaTypeSystem;
-        } catch (XmlException e) {
-            throw new OpenEJBException("Could not compile schema type system: " + schemaList, e);
-        }
+        addImportsFromDefinition(definition);
+        return xmlSchemaCollection;
     }
 
-    private void addImportsFromDefinition(Definition definition, List<XmlObject> schemaList) throws OpenEJBException {
-        //noinspection unchecked
-        Map<String,String> namespaceMap = definition.getNamespaces();
-
+    private void addImportsFromDefinition(Definition definition) throws OpenEJBException {
         Types types = definition.getTypes();
         if (types != null) {
             for (Object extensibilityElement : types.getExtensibilityElements()) {
@@ -157,7 +73,7 @@ public class XmlBeansSchemaLoader {
                     QName elementType = unknownExtensibilityElement.getElementType();
                     if (new QName("http://www.w3.org/2001/XMLSchema", "schema").equals(elementType)) {
                         Element element = unknownExtensibilityElement.getElement();
-                        addSchemaElement(element, namespaceMap, schemaList);
+                        xmlSchemaCollection.read(element);
                     }
                 } else if (extensibilityElement instanceof UnknownExtensibilityElement) {
                     //This is allegedly obsolete as of axis-wsdl4j-1.2-RC3.jar which includes the Schema extension above.
@@ -167,7 +83,7 @@ public class XmlBeansSchemaLoader {
                     String elementNamespace = element.getNamespaceURI();
                     String elementLocalName = element.getNodeName();
                     if ("http://www.w3.org/2001/XMLSchema".equals(elementNamespace) && "schema".equals(elementLocalName)) {
-                        addSchemaElement(element, namespaceMap, schemaList);
+                        xmlSchemaCollection.read(element);
                     }
                 }
             }
@@ -182,53 +98,15 @@ public class XmlBeansSchemaLoader {
                 for (Import anImport : importList) {
                     //according to the 1.1 jwsdl mr shcema imports are supposed to show up here,
                     //but according to the 1.0 spec there is supposed to be no Definition.
-                    Definition definition1 = anImport.getDefinition();
-                    if (definition1 != null) {
-                        try {
-                            URI uri = new URI(definition1.getDocumentBaseURI());
-                            uris.addFirst(uri);
-                        } catch (URISyntaxException e) {
-                            throw new OpenEJBException("Could not locate definition", e);
-                        }
-                        try {
-                            addImportsFromDefinition(definition1, schemaList);
-                        } finally {
-                            uris.removeFirst();
-                        }
+                    Definition importedDef = anImport.getDefinition();
+                    if (importedDef != null) {
+                        addImportsFromDefinition(importedDef);
                     } else {
                         log.warn("Missing definition in import for namespace " + namespaceURI);
                     }
                 }
             }
         }
-    }
-
-    private void addSchemaElement(Element element, Map<String,String>  namespaceMap, List<XmlObject> schemaList) throws OpenEJBException {
-        try {
-            XmlObject xmlObject = parseWithNamespaces(element, namespaceMap);
-            schemaList.add(xmlObject);
-        } catch (XmlException e) {
-            throw new OpenEJBException("Could not parse schema element", e);
-        }
-    }
-
-    static XmlObject parseWithNamespaces(Element element, Map<String,String> namespaceMap) throws XmlException {
-        ArrayList errors = new ArrayList();
-        XmlOptions xmlOptions = createXmlOptions(errors);
-        SchemaDocument parsed = SchemaDocument.Factory.parse(element, xmlOptions);
-        if (errors.size() != 0) {
-            throw new XmlException(errors.toArray().toString());
-        }
-        XmlCursor cursor = parsed.newCursor();
-        try {
-            cursor.toFirstContentToken();
-            for (Map.Entry<String,String> entry : namespaceMap.entrySet()) {
-                cursor.insertNamespace(entry.getKey(), entry.getValue());
-            }
-        } finally {
-            cursor.dispose();
-        }
-        return parsed;
     }
 
     private Definition readWsdl(URI wsdlURI) throws OpenEJBException {
@@ -283,22 +161,6 @@ public class XmlBeansSchemaLoader {
         }
 
         return definition;
-    }
-
-    private class JarEntityResolver implements EntityResolver {
-
-        private final static String PROJECT_URL_PREFIX = "project://local/";
-
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            //seems like this must be a bug in xmlbeans...
-            if (systemId.indexOf(PROJECT_URL_PREFIX) > -1) {
-                systemId = systemId.substring(PROJECT_URL_PREFIX.length());
-            }
-            URI location = uris.peek().resolve(systemId);
-            ZipEntry entry = moduleFile.getEntry(location.toString());
-            InputStream wsdlInputStream = moduleFile.getInputStream(entry);
-            return new InputSource(wsdlInputStream);
-        }
     }
 
     class JarWSDLLocator implements WSDLLocator {

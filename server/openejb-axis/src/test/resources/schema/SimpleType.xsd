@@ -1,0 +1,15 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="X"
+        xmlns:tns="X"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+
+  <simpleType name="type">
+    <restriction base="xsd:integer">
+      <minInclusive value="0"/>
+      <maxInclusive value="100"/>
+    </restriction>
+  </simpleType>
+
+</schema>

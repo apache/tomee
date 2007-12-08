@@ -17,15 +17,14 @@
  */
 package org.apache.openejb.server.axis.assembler;
 
+import org.apache.openejb.assembler.classic.InfoObject;
+
 import javax.xml.namespace.QName;
 
-public class XmlNestedElementInfo {
+public class XmlElementInfo extends InfoObject {
     public QName qname;
     public QName xmlType;
-    public boolean simpleType;
-    public QName baseType;
-    public int minOccurs;
-    public int maxOccurs;
+    public long minOccurs;
+    public long maxOccurs;
     public boolean nillable;
 }
-

@@ -45,7 +45,8 @@ public class LightweightTypeInfoBuilder {
         List<JaxRpcTypeInfo> typeInfoList = new ArrayList<JaxRpcTypeInfo>();
 
         for (XmlTypeInfo xmlTypeInfo : schemaInfo.types.values()) {
-            if (!(xmlTypeInfo.elementQName != null) && !xmlTypeInfo.anonymous) {
+            // skip anonymous elements
+            if (!xmlTypeInfo.anonymous) {
                 QName typeQName = xmlTypeInfo.qname;
                 Class clazz = loadClass(typeQName, mapping);
 
@@ -58,8 +59,7 @@ public class LightweightTypeInfoBuilder {
                 typeInfo.qname = typeQName;
                 typeInfo.javaType = clazz.getName();
                 typeInfo.serializerType = serializerType;
-                typeInfo.xmlType = typeQName;
-                typeInfo.canSearchParents = xmlTypeInfo.restriction;
+                typeInfo.simpleBaseType = xmlTypeInfo.simpleBaseType;
 
                 mapFields(clazz, xmlTypeInfo, typeInfo);
 
@@ -82,7 +82,7 @@ public class LightweightTypeInfoBuilder {
         }
 
         // Map the elements nexted in the XML Schema Type
-        for (XmlNestedElementInfo nestedElement : xmlTypeInfo.nestedElements.values()) {
+        for (XmlElementInfo nestedElement : xmlTypeInfo.elements.values()) {
             String fieldName = nestedElement.qname.getLocalPart();
             Class javaType = propertyToClass.get(fieldName);
             if (javaType == null) {
@@ -98,7 +98,6 @@ public class LightweightTypeInfoBuilder {
             if (javaType.isArray()) {
                 fieldInfo.minOccurs = nestedElement.minOccurs;
                 fieldInfo.maxOccurs = nestedElement.maxOccurs;
-                fieldInfo.maxOccursUnbounded = nestedElement.maxOccurs > 1;
             }
 
             typeInfo.fields.add(fieldInfo);

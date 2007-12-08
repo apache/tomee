@@ -1,0 +1,142 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="X"
+        xmlns:tns="X"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+
+  
+  <complexType name="root">
+    <sequence>
+      <element name="data" type="string"/>
+    </sequence>
+  </complexType>
+
+
+  <element name="root">
+    <complexType>
+      <sequence>
+        <element name="inside" maxOccurs="10">
+          <complexType>
+            <sequence>
+              <element name="data2" type="string"/>
+            </sequence>
+          </complexType>
+        </element>
+        <element ref="tns:someOtherElement" maxOccurs="20"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="someOtherElement" type="xsd:int"/>
+
+
+  <complexType name="ArrayOf_xsd_int">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:int[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_xsd_long">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:long[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_soapenc_string">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="SmallEchoStruct">
+    <sequence>
+      <element name="val1" nillable="true" type="soapenc:string"/>
+      <element name="val2" nillable="true" type="soapenc:string"/>
+    </sequence>
+  </complexType>
+  <complexType name="ArrayOf_xsd_short">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:short[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_xsd_boolean">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:boolean[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_xsd_double">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:double[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_xsd_float">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:float[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="ArrayOf_soapenc_base64Binary">
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:byte[][]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <complexType name="EchoStruct">
+    <sequence>
+      <element name="intaVal" nillable="true" type="tns:ArrayOf_xsd_int"/>
+      <element name="longaVal" nillable="true" type="tns:ArrayOf_xsd_long"/>
+      <element name="straVal" nillable="true" type="tns:ArrayOf_soapenc_string"/>
+      <element name="sturctaVal" nillable="true" type="tns:SmallEchoStruct"/>
+      <element name="intVal" type="xsd:int"/>
+      <element name="shortaVal" nillable="true" type="tns:ArrayOf_xsd_short"/>
+      <element name="shortVal" type="xsd:short"/>
+      <element name="sturctVal" nillable="true" type="tns:SmallEchoStruct"/>
+      <element name="longVal" type="xsd:long"/>
+      <element name="boolaenVal" type="xsd:boolean"/>
+      <element name="boolaenaVal" nillable="true" type="tns:ArrayOf_xsd_boolean"/>
+      <element name="doubleaVal" nillable="true" type="tns:ArrayOf_xsd_double"/>
+      <element name="floatVal" type="xsd:float"/>
+      <element name="bytesVal" nillable="true" type="soapenc:base64Binary"/>
+      <element name="doubleVal" type="xsd:double"/>
+      <element name="floataVal" nillable="true" type="tns:ArrayOf_xsd_float"/>
+      <element name="bytesaVal" nillable="true" type="tns:ArrayOf_soapenc_base64Binary"/>
+      <element name="strVal" nillable="true" type="soapenc:string"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="EchoAllStruct">
+    <all>
+      <element name="intaVal" nillable="true" type="tns:ArrayOf_xsd_int"/>
+      <element name="longaVal" nillable="true" type="tns:ArrayOf_xsd_long"/>
+      <element name="straVal" nillable="true" type="tns:ArrayOf_soapenc_string"/>
+      <element name="sturctaVal" nillable="true" type="tns:SmallEchoStruct"/>
+      <element name="intVal" type="xsd:int"/>
+      <element name="shortaVal" nillable="true" type="tns:ArrayOf_xsd_short"/>
+      <element name="shortVal" type="xsd:short"/>
+      <element name="sturctVal" nillable="true" type="tns:SmallEchoStruct"/>
+      <element name="longVal" type="xsd:long"/>
+      <element name="boolaenVal" type="xsd:boolean"/>
+      <element name="boolaenaVal" nillable="true" type="tns:ArrayOf_xsd_boolean"/>
+      <element name="doubleaVal" nillable="true" type="tns:ArrayOf_xsd_double"/>
+      <element name="floatVal" type="xsd:float"/>
+      <element name="bytesVal" nillable="true" type="soapenc:base64Binary"/>
+      <element name="doubleVal" type="xsd:double"/>
+      <element name="floataVal" nillable="true" type="tns:ArrayOf_xsd_float"/>
+      <element name="bytesaVal" nillable="true" type="tns:ArrayOf_soapenc_base64Binary"/>
+      <element name="strVal" nillable="true" type="soapenc:string"/>
+    </all>
+  </complexType>
+
+</schema>

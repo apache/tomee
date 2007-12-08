@@ -1,0 +1,16 @@
+<xsd:schema
+        targetNamespace="X"
+        xmlns:tns="X"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    >
+
+  <xsd:complexType name="array">
+    <xsd:complexContent>
+      <xsd:restriction base="soapenc:Array">
+        <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:integer[]"/>
+      </xsd:restriction>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

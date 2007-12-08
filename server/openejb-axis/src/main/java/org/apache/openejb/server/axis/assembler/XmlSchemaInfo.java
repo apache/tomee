@@ -17,10 +17,13 @@
  */
 package org.apache.openejb.server.axis.assembler;
 
+import org.apache.openejb.assembler.classic.InfoObject;
+
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class XmlSchemaInfo {
-    public final Map<QName, XmlTypeInfo> types = new HashMap<QName, XmlTypeInfo>();
+public class XmlSchemaInfo extends InfoObject {
+    public final Map<QName, XmlElementInfo> elements = new LinkedHashMap<QName, XmlElementInfo>();
+    public final Map<QName, XmlTypeInfo> types = new LinkedHashMap<QName, XmlTypeInfo>();
 }

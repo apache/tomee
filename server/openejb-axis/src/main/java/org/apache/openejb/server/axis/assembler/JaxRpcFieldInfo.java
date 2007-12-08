@@ -21,13 +21,13 @@ import javax.xml.namespace.QName;
 
 public class JaxRpcFieldInfo {
     public String name;
+    // is an element (or an attribute)
     public boolean isElement;
+
     public QName xmlName;
     public QName xmlType;
 
+    public long minOccurs;
+    public long maxOccurs;
     public boolean isNillable;
-
-    public int minOccurs;
-    public int maxOccurs;
-    public boolean maxOccursUnbounded;
 }

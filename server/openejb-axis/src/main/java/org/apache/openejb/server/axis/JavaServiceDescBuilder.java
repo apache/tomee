@@ -258,8 +258,9 @@ public class JavaServiceDescBuilder {
             throw new OpenEJBException("Could not load class for JaxRpc mapping " + type.javaType);
         }
 
-        Class serializerFactoryClass;
-        Class deserializerFactoryClass;
+        // Default uses the generic Java Beans serializer/deserializer
+        Class serializerFactoryClass = BeanSerializerFactory.class;
+        Class deserializerFactoryClass = BeanDeserializerFactory.class;
         switch (type.serializerType) {
             case ARRAY:
                 serializerFactoryClass = ArraySerializerFactory.class;
@@ -274,22 +275,19 @@ public class JavaServiceDescBuilder {
                 deserializerFactoryClass = SimpleListDeserializerFactory.class;
                 break;
             default:
-
-                Class clazz = SOAP_TYPE_MAPPING.getClassForQName(type.xmlType, null, null);
-                if (null != clazz) {
-                    // Built in SOAP type
-                    serializerFactoryClass = SOAP_TYPE_MAPPING.getSerializer(clazz, type.xmlType).getClass();
-                    deserializerFactoryClass = SOAP_TYPE_MAPPING.getDeserializer(clazz, type.xmlType, null).getClass();
-                } else {
-                    clazz = JAXRPC_TYPE_MAPPING.getClassForQName(type.xmlType, null, null);
+                if (type.simpleBaseType != null) {
+                    Class clazz = SOAP_TYPE_MAPPING.getClassForQName(type.simpleBaseType, null, null);
                     if (null != clazz) {
-                        // Built in XML schema type
-                        serializerFactoryClass = JAXRPC_TYPE_MAPPING.getSerializer(clazz, type.xmlType).getClass();
-                        deserializerFactoryClass = JAXRPC_TYPE_MAPPING.getDeserializer(clazz, type.xmlType, null).getClass();
+                        // Built in SOAP type
+                        serializerFactoryClass = SOAP_TYPE_MAPPING.getSerializer(clazz, type.simpleBaseType).getClass();
+                        deserializerFactoryClass = SOAP_TYPE_MAPPING.getDeserializer(clazz, type.simpleBaseType, null).getClass();
                     } else {
-                        // Unknown type so use the generic Java Beans serializer
-                        serializerFactoryClass = BeanSerializerFactory.class;
-                        deserializerFactoryClass = BeanDeserializerFactory.class;
+                        clazz = JAXRPC_TYPE_MAPPING.getClassForQName(type.simpleBaseType, null, null);
+                        if (null != clazz) {
+                            // Built in XML schema type
+                            serializerFactoryClass = JAXRPC_TYPE_MAPPING.getSerializer(clazz, type.simpleBaseType).getClass();
+                            deserializerFactoryClass = JAXRPC_TYPE_MAPPING.getDeserializer(clazz, type.simpleBaseType, null).getClass();
+                        }
                     }
                 }
                 break;

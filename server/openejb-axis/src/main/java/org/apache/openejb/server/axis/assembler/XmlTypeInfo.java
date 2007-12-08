@@ -17,24 +17,21 @@
  */
 package org.apache.openejb.server.axis.assembler;
 
+import org.apache.openejb.assembler.classic.InfoObject;
+
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class XmlTypeInfo {
+public class XmlTypeInfo extends InfoObject {
     public QName qname;
     public boolean anonymous;
-    public QName elementQName;
 
-    public QName xmlType;
-    public boolean simpleType;
-    public QName baseType;
-
+    public QName simpleBaseType;
     public boolean enumType;
     public boolean listType;
-    public boolean restriction;
     public QName arrayComponentType;
 
-    public final Map<String, QName> attributeTypes = new HashMap<String,QName>();
-    public final Map<QName, XmlNestedElementInfo> nestedElements = new HashMap<QName, XmlNestedElementInfo>();
+    public final Map<String, QName> attributes = new LinkedHashMap<String,QName>();
+    public final Map<QName, XmlElementInfo> elements = new LinkedHashMap<QName, XmlElementInfo>();
 }

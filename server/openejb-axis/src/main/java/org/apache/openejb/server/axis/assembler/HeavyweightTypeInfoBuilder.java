@@ -72,18 +72,16 @@ public class HeavyweightTypeInfoBuilder {
         // Map types with explicity Java to XML mappings
         //
         for (JavaXmlTypeMapping javaXmlTypeMapping : mapping.getJavaXmlTypeMapping()) {
-            QName typeQName;
-            XmlTypeInfo xmlTypeInfo;
+            // get the QName for this mapping
+            QName qname;
             if (javaXmlTypeMapping.getRootTypeQname() != null) {
-                typeQName = javaXmlTypeMapping.getRootTypeQname();
+                qname = javaXmlTypeMapping.getRootTypeQname();
 
                 // Skip the wrapper elements.
-                if (wrapperElementQNames.contains(typeQName)) {
+                if (wrapperElementQNames.contains(qname)) {
                     continue;
                 }
-
-                xmlTypeInfo = schemaInfo.types.get(typeQName);
-            } else if (javaXmlTypeMapping != null) {
+            } else if (javaXmlTypeMapping.getAnonymousTypeQname() != null) {
                 String anonTypeQNameString = javaXmlTypeMapping.getAnonymousTypeQname();
 
                 // this appears to be ignored...
@@ -91,30 +89,46 @@ public class HeavyweightTypeInfoBuilder {
                 if (pos == -1) {
                     throw new OpenEJBException("anon QName is invalid, no final ':' " + anonTypeQNameString);
                 }
-                typeQName = new QName(anonTypeQNameString.substring(0, pos), anonTypeQNameString.substring(pos + 1));
+                String namespace = anonTypeQNameString.substring(0, pos);
+                String localPart = anonTypeQNameString.substring(pos + 1);
+                qname = new QName(namespace, localPart);
 
                 // Skip the wrapper elements.
                 // todo why is this +2
-                if (wrapperElementQNames.contains(new QName(anonTypeQNameString.substring(0, pos), anonTypeQNameString.substring(pos + 2)))) {
+                if (wrapperElementQNames.contains(new QName(namespace, anonTypeQNameString.substring(pos + 2)))) {
                     continue;
                 }
-
-                xmlTypeInfo = schemaInfo.types.get(typeQName);
             } else {
                 throw new OpenEJBException("either root type qname or anonymous type qname must be set");
             }
 
-//            SchemaType schemaType = schemaTypeKeyToSchemaTypeMap.get(key);
+            // get the xml type qname of this mapping
+            QName xmlTypeQName;
+            if ("element".equals(javaXmlTypeMapping.getQNameScope())) {
+                XmlElementInfo elementInfo = schemaInfo.elements.get(qname);
+                if (elementInfo == null) {
+                    log.warn("Element [" + qname + "] not been found in schema, known elements: " + schemaInfo.elements.keySet());
+                }
+                xmlTypeQName = elementInfo.xmlType;
+            } else {
+                xmlTypeQName = qname;
+            }
+
+            // finally, get the xml type info for the mapping
+            XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlTypeQName);
             if (xmlTypeInfo == null) {
                 // if this is a built in type then assume this is a redundant mapping
                 if (WebserviceNameSpaces.contains(xmlTypeInfo.qname.getNamespaceURI())) {
                     continue;
                 }
-                log.warn("Schema type QName [" + typeQName + "] not been found in schema: " + schemaInfo.types.keySet());
+                log.warn("Schema type QName [" + qname + "] not been found in schema: " + schemaInfo.types.keySet());
                 continue;
             }
+
+            // mark this type as mapped
             mappedTypeQNames.add(xmlTypeInfo.qname);
 
+            // load the java class
             Class clazz;
             try {
                 clazz = Class.forName(javaXmlTypeMapping.getJavaType(), false, classLoader);
@@ -122,13 +136,8 @@ public class HeavyweightTypeInfoBuilder {
                 throw new OpenEJBException("Could not load java type " + javaXmlTypeMapping.getJavaType(), e);
             }
 
-            JaxRpcTypeInfo typeInfo = createTypeInfo(xmlTypeInfo, clazz);
-
-            typeInfo.qname = xmlTypeInfo.elementQName;
-            if (typeInfo.qname == null) {
-                typeInfo.qname = xmlTypeInfo.qname;
-            }
-
+            // create the jax-rpc type mapping
+            JaxRpcTypeInfo typeInfo = createTypeInfo(qname, xmlTypeInfo, clazz);
             mapFields(clazz, xmlTypeInfo, javaXmlTypeMapping, typeInfo);
 
             typeInfos.add(typeInfo);
@@ -160,7 +169,7 @@ public class HeavyweightTypeInfoBuilder {
                     continue;
                 }
 
-
+                // get the xml type info
                 XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlType);
                 if (xmlTypeInfo == null) {
                     log.warn("Type QName [" + xmlType + "] defined by operation [" + operationInfo + "] has not been found in schema: " + schemaInfo.types.keySet());
@@ -168,27 +177,25 @@ public class HeavyweightTypeInfoBuilder {
                 }
                 mappedTypeQNames.add(xmlTypeInfo.qname);
 
-                Class<?> javaType;
+                // load the java class
+                Class<?> clazz;
                 try {
-                    javaType = classLoader.loadClass(parameterInfo.javaType);
+                    clazz = classLoader.loadClass(parameterInfo.javaType);
                 } catch (ClassNotFoundException e) {
                     throw new OpenEJBException("Could not load paramter");
                 }
 
-                if (!xmlTypeInfo.simpleType && !javaType.isArray()) {
-                    if (!mappedTypeQNames.contains(xmlTypeInfo.xmlType)) {
+                // we only process simpleTypes and arrays (not normal complex types)
+                if (xmlTypeInfo.simpleBaseType == null && !clazz.isArray()) {
+                    if (!mappedTypeQNames.contains(xmlTypeInfo.qname)) {
                         // TODO: this lookup is not enough: the jaxrpc mapping file may define an anonymous mapping
                         log.warn("Operation " + operationInfo.name + "] uses XML type [" + xmlTypeInfo + "], whose mapping is not declared by the jaxrpc mapping file.\n Continuing deployment; " + "yet, the deployment is not-portable.");
                     }
                     continue;
                 }
 
-                JaxRpcTypeInfo typeInfo = createTypeInfo(xmlTypeInfo, javaType);
-                typeInfo.qname = xmlTypeInfo.elementQName;
-                if (typeInfo.qname == null) {
-                    typeInfo.qname = xmlTypeInfo.qname;
-                }
-
+                // create the jax-rpc type mapping
+                JaxRpcTypeInfo typeInfo = createTypeInfo(parameterInfo.qname, xmlTypeInfo, clazz);
                 typeInfos.add(typeInfo);
             }
         }
@@ -203,9 +210,8 @@ public class HeavyweightTypeInfoBuilder {
      * @return the JaxRpcTypeInfo object
      * @throws OpenEJBException if the schema is invalid
      */
-    private JaxRpcTypeInfo createTypeInfo(XmlTypeInfo xmlTypeInfo, Class clazz) throws OpenEJBException {
+    private JaxRpcTypeInfo createTypeInfo(QName qname, XmlTypeInfo xmlTypeInfo, Class clazz) throws OpenEJBException {
         SerializerType serializerType;
-        QName xmlType = null;
         if (xmlTypeInfo.listType) {
             serializerType = SerializerType.LIST;
         } else if (clazz.isArray()) {
@@ -214,16 +220,15 @@ public class HeavyweightTypeInfoBuilder {
             serializerType = SerializerType.ENUM;
         } else {
             serializerType = SerializerType.OTHER;
-            xmlType = xmlTypeInfo.baseType;
         }
 
         JaxRpcTypeInfo typeInfo = new JaxRpcTypeInfo();
+        typeInfo.qname = qname;
         typeInfo.javaType = clazz.getName();
         typeInfo.serializerType = serializerType;
-        typeInfo.xmlType = xmlType;
-        typeInfo.canSearchParents = xmlTypeInfo.restriction;
+        typeInfo.simpleBaseType = xmlTypeInfo.simpleBaseType;
 
-        // If we understand the axis comments correctly, componentQName is never set for j2ee ws.
+        // If we understand the axis comments correctly, componentQName is never set for a webservice.
         if (serializerType == SerializerType.ARRAY) {
             typeInfo.componentType = xmlTypeInfo.arrayComponentType;
         }
@@ -277,7 +282,7 @@ public class HeavyweightTypeInfoBuilder {
                 QName xmlName = new QName("", attributeLocalName);
                 fieldInfo.xmlName = xmlName;
 
-                fieldInfo.xmlType = xmlTypeInfo.attributeTypes.get(attributeLocalName);
+                fieldInfo.xmlType = xmlTypeInfo.attributes.get(attributeLocalName);
                 if (fieldInfo.xmlType == null) {
                     throw new OpenEJBException("attribute " + xmlName + " not found in schema " + xmlTypeInfo.qname);
                 }
@@ -302,11 +307,11 @@ public class HeavyweightTypeInfoBuilder {
 
 
                 QName xmlName = new QName("", variableMapping.getXmlElementName());
-                XmlNestedElementInfo nestedElement = xmlTypeInfo.nestedElements.get(xmlName);
+                XmlElementInfo nestedElement = xmlTypeInfo.elements.get(xmlName);
                 if (nestedElement == null) {
                     String ns = xmlTypeInfo.qname.getNamespaceURI();
                     xmlName = new QName(ns, variableMapping.getXmlElementName());
-                    nestedElement = xmlTypeInfo.nestedElements.get(xmlName);
+                    nestedElement = xmlTypeInfo.elements.get(xmlName);
                     if (nestedElement == null) {
                         throw new OpenEJBException("element " + xmlName + " not found in schema " + xmlTypeInfo.qname);
                     }
@@ -332,8 +337,6 @@ public class HeavyweightTypeInfoBuilder {
                 if (javaType.isArray()) {
                     fieldInfo.minOccurs = nestedElement.minOccurs;
                     fieldInfo.maxOccurs = nestedElement.maxOccurs;
-                    //TODO axis seems to have the wrong name for this property based on how it is used
-                    fieldInfo.maxOccursUnbounded = nestedElement.maxOccurs > 1;
                 }
 
                 typeInfo.fields.add(fieldInfo);

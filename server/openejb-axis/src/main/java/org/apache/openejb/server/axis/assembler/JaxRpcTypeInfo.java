@@ -26,10 +26,9 @@ public class JaxRpcTypeInfo {
     // QName is either the real QName or the generated anonymous name
     //
     public QName qname;
-    public boolean canSearchParents;
 
-    // this is the actual qname used to select the serializer and deserializer
-    public QName xmlType;
+    // for simple type, the base xml type qname
+    public QName simpleBaseType;
     public String javaType;
 
     public SerializerType serializerType;

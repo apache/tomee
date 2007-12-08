@@ -1,0 +1,17 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="X"
+        xmlns:tns="X"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+
+  <element name="element">
+    <complexType>
+      <all>
+        <element name="string" type="xsd:string"/>
+        <element name="int" type="xsd:integer"/>
+      </all>
+      <attribute name="stringAttribute" type="xsd:string"/>
+      <attribute name="intAttribute" type="xsd:integer"/>
+    </complexType>
+  </element>
+
+</schema>
