@@ -19,7 +19,11 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.net.URI;
 import java.net.URLEncoder;

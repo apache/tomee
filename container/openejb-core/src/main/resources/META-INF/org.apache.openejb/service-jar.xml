@@ -251,7 +251,11 @@
           id="Default JDBC Database"
           service="Resource"
           types="javax.sql.DataSource, DataSource"
-          class-name="org.apache.openejb.resource.jdbc.BasicManagedDataSource">
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    JtaManaged = true
 
     # Driver class name
 
@@ -431,7 +435,11 @@
           id="Default Unmanaged JDBC Database"
           service="Resource"
           types="javax.sql.DataSource, DataSource"
-          class-name="org.apache.openejb.resource.jdbc.BasicDataSource">
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    JtaManaged = false
 
     # Driver class name
 
