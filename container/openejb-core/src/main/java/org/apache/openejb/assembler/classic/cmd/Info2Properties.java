@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.URISupport;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -39,6 +40,8 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+import java.util.HashMap;
+import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -225,6 +228,20 @@ public class Info2Properties {
             // comment("codebase: " + info.codebase);
             comment("");
             Properties p = new Properties();
+
+
+            String uri = "new://" + info.service;
+            if (info.service.matches("Container|Resource|Connector")){
+                try {
+                    Map query = new HashMap();
+                    query.put("type", info.types.get(0));
+                    uri += "?" + URISupport.createQueryString(query);
+                } catch (Exception e) {
+                }
+            }
+
+            p.put(info.id, uri);
+            
             for (Map.Entry<Object, Object> entry : info.properties.entrySet()) {
                 if (!(entry.getKey() instanceof String)) continue;
                 if (!(entry.getValue() instanceof String)) continue;

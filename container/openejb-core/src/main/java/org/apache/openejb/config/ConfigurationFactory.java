@@ -57,6 +57,8 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.config.sys.JaxbOpenejb;
+import org.apache.openejb.config.sys.AbstractService;
+import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Connector;
@@ -87,10 +89,13 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.URISupport;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -231,6 +236,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             openejb = JaxbOpenejb.createOpenejb();
         }
 
+        loadPropertiesDeclaredConfiguration(openejb);
+
         sys = new OpenEjbConfiguration();
         sys.containerSystem = new ContainerSystemInfo();
         sys.facilities = new FacilitiesInfo();
@@ -297,6 +304,71 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return sys;
     }
 
+    private void loadPropertiesDeclaredConfiguration(Openejb openejb) {
+
+        Properties sysProps = new Properties(System.getProperties());
+        sysProps.putAll(SystemInstance.get().getProperties());
+
+        for (Map.Entry<Object, Object> entry : sysProps.entrySet()) {
+
+            Object o = entry.getValue();
+            if (!(o instanceof String)) continue;
+            if (!((String) o).startsWith("new://")) continue;
+
+            String name = (String) entry.getKey();
+            String value = (String) entry.getValue();
+
+            try {
+                URI uri = new URI(value);
+
+                openejb.add(toConfigDeclaration(name, uri));
+            } catch (URISyntaxException e) {
+                logger.error("Error declaring service '" + name + "'. Invalid Service URI '" + value + "'.  java.net.URISyntaxException: " + e.getMessage());
+            } catch (OpenEJBException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
+    public Object toConfigDeclaration(String id, URI uri) throws OpenEJBException {
+        String serviceType = null;
+        try {
+            serviceType = uri.getHost();
+
+            Object object = null;
+            try {
+                object = JaxbOpenejb.create(serviceType);
+            } catch (Exception e) {
+                throw new OpenEJBException("Invalid URI '" + uri + "'. " + e.getMessage());
+            }
+
+            Map<String, String> map = null;
+            try {
+                map = URISupport.parseParamters(uri);
+            } catch (URISyntaxException e) {
+                throw new OpenEJBException("Unable to parse URI parameters '" + uri + "'. URISyntaxException: " + e.getMessage());
+            }
+
+            if (object instanceof AbstractService) {
+                AbstractService service = (AbstractService) object;
+
+                service.setId(id);
+
+
+                service.setType(map.remove("type"));
+                service.setProvider(map.remove("provider"));
+                service.getProperties().putAll(map);
+            } else if (object instanceof Deployments){
+                Deployments deployments = (Deployments) object;
+                deployments.setDir(map.remove("dir"));
+                deployments.setJar(map.remove("jar"));
+            }
+
+            return object;
+        } catch (Exception e) {
+            throw new OpenEJBException("Error declaring service '" + id + "'. Unable to create Service definition from URI '" + uri.toString() + "'", e);
+        }
+    }
 
     public AppInfo configureApplication(File jarFile) throws OpenEJBException {
         logger.debug("Beginning load: " + jarFile.getAbsolutePath());
@@ -349,7 +421,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
-        
+
         logger.info(messages.format("config.configApp", appModule.getJarLocation()));
         deployer.deploy(appModule);
 
@@ -663,7 +735,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 portInfo.handlerChains.addAll(handlerChains);
 
                 // todo configure jaxrpc mappings here
-                
+
                 portMap.add(portInfo);
             }
         }

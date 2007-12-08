@@ -18,12 +18,11 @@ package org.apache.openejb.config;
 
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.Container;
 
-import java.util.Properties;
+import java.net.URI;
+import java.net.URLEncoder;
 
 /**
  * @version $Rev$ $Date$
@@ -116,6 +115,25 @@ public class ConfigureServiceTest extends TestCase {
         assertEquals("org.apache.openejb.core.stateless.StatelessContainer", myStatelessContainer.className);
     }
 
+    public void testConfigureServiceAddedPropertyViaURI() throws Exception {
+        ConfigurationFactory factory = new ConfigurationFactory();
 
+        URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer");
+
+        Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
+
+        container.getProperties().setProperty("anotherProperty", "Cheese is good");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+
+        assertNotNull(myStatelessContainer);
+        assertEquals("MyContainer", myStatelessContainer.id);
+        assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
+        assertNotNull(myStatelessContainer.constructorArgs);
+        assertNotNull(myStatelessContainer.properties);
+        assertNotNull(myStatelessContainer.properties.getProperty("myProperty"));
+        assertEquals("Yummy Cheese", myStatelessContainer.properties.getProperty("myProperty"));
+        assertNotNull(myStatelessContainer.properties.getProperty("anotherProperty"));
+        assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
+    }
 }
 

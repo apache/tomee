@@ -85,6 +85,37 @@ public abstract class JaxbOpenejb {
         throw new IllegalArgumentException("Unknown type " + type.getName());
     }
 
+    public static <T> T create(String type) {
+        if (type == null) throw new NullPointerException("type is null");
+
+        if (type.equals("ConnectionManager")) {
+            return (T) createConnectionManager();
+        } else if (type.equals("Connector")) {
+            return (T) createConnector();
+        } else if (type.equals("Container")) {
+            return (T) createContainer();
+        } else if (type.equals("Deployments")) {
+            return (T) createDeployments();
+        } else if (type.equals("JndiProvider")) {
+            return (T) createJndiProvider();
+        } else if (type.equals("Openejb")) {
+            return (T) createOpenejb();
+        } else if (type.equals("ProxyFactory")) {
+            return (T) createProxyFactory();
+        } else if (type.equals("Resource")) {
+            return (T) createResource();
+        } else if (type.equals("SecurityService")) {
+            return (T) createSecurityService();
+        } else if (type.equals("ServiceProvider")) {
+            return (T) createServiceProvider();
+        } else if (type.equals("ServicesJar")) {
+            return (T) createServicesJar();
+        } else if (type.equals("TransactionManager")) {
+            return (T) createTransactionManager();
+        }
+        throw new IllegalArgumentException("Unknown type " + type);
+    }
+
     public static ServicesJar readServicesJar(String providerName) throws OpenEJBException {
         InputStream in = null;
         URL url = null;

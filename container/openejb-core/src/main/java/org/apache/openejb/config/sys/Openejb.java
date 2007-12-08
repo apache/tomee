@@ -288,4 +288,26 @@ public class Openejb {
         }
         return this.deployments;
     }
+
+    public void add(Object service) {
+        if (service instanceof Container) {
+            getContainer().add((Container) service);
+        } else if (service instanceof Connector) {
+            getConnector().add((Connector) service);
+        } else if (service instanceof Resource) {
+            getResource().add((Resource) service);
+        } else if (service instanceof JndiProvider) {
+            getJndiProvider().add((JndiProvider) service);
+        } else if (service instanceof ConnectionManager) {
+            setConnectionManager((ConnectionManager) service);
+        } else if (service instanceof ProxyFactory) {
+            setProxyFactory((ProxyFactory) service);
+        } else if (service instanceof TransactionManager) {
+            setTransactionManager((TransactionManager) service);
+        } else if (service instanceof SecurityService) {
+            setSecurityService((SecurityService) service);
+        } else if (service instanceof Deployments) {
+            getDeployments().add((Deployments) service);
+        }
+    }
 }

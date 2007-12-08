@@ -94,7 +94,7 @@ public class URISupport {
         }
     }
 
-    public static Map parseQuery(String uri) throws URISyntaxException{
+    public static Map<String, String> parseQuery(String uri) throws URISyntaxException{
         try{
             Map<String, String> rc=new HashMap<String,String>();
             if(uri!=null){
@@ -116,7 +116,7 @@ public class URISupport {
         }
     }
 
-    public static Map parseParamters(URI uri) throws URISyntaxException {
+    public static Map<String, String> parseParamters(URI uri) throws URISyntaxException {
         return uri.getQuery()==null ? Collections.EMPTY_MAP : parseQuery(stripPrefix(uri.getQuery(), "?"));
     }
 
