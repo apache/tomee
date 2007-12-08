@@ -37,6 +37,7 @@
     <module>injection-of-ejbs</module>
     <module>injection-of-env-entry</module>
     <module>injection-of-datasource</module>
+    <module>injection-of-entitymanager</module>
     <module>interceptors</module>
     <module>expanded-env-entries</module>
     <module>helloworld-weblogic</module>
