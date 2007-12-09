@@ -16,38 +16,25 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.cli.SystemExitException;
-import org.apache.openejb.assembler.Deployer;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.InterceptorInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.PosixParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.Closeable;
-import java.util.Properties;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+import org.apache.openejb.NoSuchApplicationException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.cli.SystemExitException;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.OpenEjbVersion;
 
 /**
  * UnDeploy EJB beans
@@ -157,6 +144,9 @@ public class Undeploy {
     }
 
     public static class DeploymentTerminatedException extends Exception {
+
+        private static final long serialVersionUID = 1L;
+
         public DeploymentTerminatedException(String message) {
             super(message);
         }
