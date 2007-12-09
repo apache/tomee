@@ -52,7 +52,8 @@ public class CheckPersistenceRefs extends ValidationBase {
     }
 
     private boolean isExtented(PersistenceContextRef ref) {
-        return ref.getPersistenceContextType().equals(PersistenceContextType.EXTENDED);
+        PersistenceContextType type = ref.getPersistenceContextType();
+        return type != null && type.equals(PersistenceContextType.EXTENDED);
     }
 
     private String getType(EnterpriseBean bean) {
