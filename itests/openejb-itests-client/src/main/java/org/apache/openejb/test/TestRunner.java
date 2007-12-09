@@ -112,8 +112,7 @@ public class TestRunner extends junit.textui.TestRunner {
         setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
 
         System.out.println("_________________________________________________");
-        System.out
-                .println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
+        System.out.println("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|\n");
         System.out.println("Running EJB compliance tests on IntraVM Server");
         System.out.println("_________________________________________________");
     }
