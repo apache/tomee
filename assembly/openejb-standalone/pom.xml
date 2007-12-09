@@ -62,6 +62,7 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.2</version>
         <executions>
@@ -75,6 +76,7 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.1</version>
         <executions>
@@ -89,8 +91,7 @@
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/bin.xml</descriptor>
-            <!-- Creates some bizarre file -->
-            <!-- descriptor>src/main/assembly/test.xml</descriptor -->
+            <descriptor>src/main/assembly/test.xml</descriptor>
           </descriptors>
           <archive>
             <manifest>
@@ -190,11 +191,6 @@
       <artifactId>openejb-hsql</artifactId>
       <version>${version}</version>
     </dependency>
-    <!--<dependency>-->
-    <!--<groupId>org.apache.openejb</groupId>-->
-    <!--<artifactId>openejb-activemq</artifactId>-->
-    <!--<version>${version}</version>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
@@ -232,6 +228,7 @@
       <id>itest</id>
       <properties>
         <openejb.debug.suspend>n</openejb.debug.suspend>
+        <openejb.debug.port>5005</openejb.debug.port>
       </properties>
       <dependencies>
         <dependency>
@@ -267,58 +264,36 @@
                     <property name="targetDir" value="${basedir}/target/" />
                     <property name="openejb.home" value="${targetDir}/openejb-${pom.version}" />
                     <property name="openejb.dist" value="${targetDir}/openejb-${pom.version}-bin.zip" />
+                    <property name="openejb.version" value="${pom.version}" />
 
                     <unjar src="${openejb.dist}" dest="${targetDir}" />
+                    <copy file="${targetDir}/openejb-${pom.version}-test.jar" todir="${openejb.home}/apps" />
+
+                    <java classname="org.apache.openejb.test.Main" fork="yes">
+                      <classpath>
+                        <pathelement location="${targetDir}/openejb-${pom.version}-test.jar" />
+                        <fileset dir="${openejb.home}/lib">
+                          <include name="*.jar" />
+                        </fileset>
+                      </classpath>
+                      <sysproperty key="openejb.home" value="${openejb.home}" />
+                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
+                      <arg value="local" />
+                    </java>
+
+                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                      <sysproperty key="openejb.home" value="${openejb.home}" />
+                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
+                      <arg value="remote" />
+                    </java>
+
+                    <java jar="target/openejb-${openejb.version}-test.jar" fork="yes">
+                      <sysproperty key="openejb.home" value="${openejb.home}" />
+                      <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=${openejb.debug.port}" />
+                      <arg value="http"/>
+                    </java>
+
                   </tasks>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>setup:openejb:copy</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.apache.openejb</groupId>
-                      <artifactId>openejb-itests-beans</artifactId>
-                      <version>${version}</version>
-                      <type>jar</type>
-                      <outputDirectory>${basedir}/target/openejb-${pom.version}/beans</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>test:local</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>java</executable>
-                  <workingDirectory>${project.build.directory}</workingDirectory>
-                  <arguments>
-                    <argument>-Dopenejb.home=openejb-${pom.version}</argument>
-                    <argument>-classpath</argument>
-                    <classpath />
-                    <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=${openejb.debug.suspend},address=5005</argument>
-                    <argument>org.apache.openejb.test.Main</argument>
-                    <argument>local</argument>
-                  </arguments>
                 </configuration>
               </execution>
             </executions>
