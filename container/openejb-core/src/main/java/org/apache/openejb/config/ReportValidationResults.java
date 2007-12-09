@@ -26,7 +26,7 @@ import org.apache.openejb.util.LogCategory;
 public class ReportValidationResults implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        if (!appModule.hasErrors() && !appModule.hasWarnings()) return appModule;
+        if (!appModule.hasErrors() && !appModule.hasFailures()) return appModule;
 
         ValidationFailedException validationFailedException = null;
 

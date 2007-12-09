@@ -377,6 +377,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         try {
             AppModule appModule = deploymentLoader.load(jarFile);
             appInfo = configureApplication(appModule);
+        } catch (ValidationFailedException e) {
+            String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
+            logger.warning(message); // DO not include the stacktrace in the message
+            throw e;
         } catch (OpenEJBException e) {
             String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
