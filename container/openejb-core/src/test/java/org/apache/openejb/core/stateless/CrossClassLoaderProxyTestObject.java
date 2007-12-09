@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * @version $Revision: 522073 $ $Date: 2007-03-24 11:03:25 -0700 (Sat, 24 Mar 2007) $
+ * @version $Revision$ $Date$
  */
 public class CrossClassLoaderProxyTestObject extends TestCase {
     public static final Class widgetClass = CrossClassLoaderProxyTest.Widget.class;

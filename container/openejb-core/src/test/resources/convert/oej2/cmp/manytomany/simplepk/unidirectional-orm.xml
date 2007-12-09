@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 596613 $ $Date: 2007-11-20 12:05:42 +0100 (Tue, 20 Nov 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <entity name="manytomanyA" class="openejb.org.apache.openejb.deployment.entity.cmp.cmr.manytomany.manytomanyA">

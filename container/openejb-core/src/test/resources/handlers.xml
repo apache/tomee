@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 482336 $ $Date: 2006-12-04 15:12:19 -0500 (Mon, 04 Dec 2006) $ -->
+<!-- $Rev$ $Date$ -->
 
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
     <jws:handler-chain>

@@ -23,7 +23,7 @@ import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
 
 /**
- * @version $Rev: 497833 $ $Date: 2007-01-19 06:41:45 -0800 (Fri, 19 Jan 2007) $
+ * @version $Rev$ $Date$
  */
 public class SystemComponentReference extends Reference {
     private final Class<? extends Object> type;

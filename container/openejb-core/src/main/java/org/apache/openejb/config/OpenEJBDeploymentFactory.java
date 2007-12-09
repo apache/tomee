@@ -23,7 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * @version $Rev: 437623 $ $Date: 2006-08-28 02:48:23 -0700 (Mon, 28 Aug 2006) $
+ * @version $Rev$ $Date$
  */
 public class OpenEJBDeploymentFactory implements DeploymentFactory {
     public static final String URI_SCHEME = "openejb";

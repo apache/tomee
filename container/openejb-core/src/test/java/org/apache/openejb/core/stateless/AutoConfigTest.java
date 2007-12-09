@@ -36,7 +36,7 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EjbJar;
 
 /**
- * @version $Revision: 570984 $ $Date: 2007-08-29 16:42:12 -0700 (Wed, 29 Aug 2007) $
+ * @version $Revision$ $Date$
  */
 public class AutoConfigTest extends TestCase {
 

@@ -23,7 +23,7 @@ package org.apache.openejb.assembler.classic;
 import java.net.URI;
 
 /**
- * @version $Rev:$ $Date:$
+ * @version $Rev$ $Date$
  */
 public class UniqueDefaultLinkResolver<E> extends LinkResolver<E> {
 
