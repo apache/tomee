@@ -16,9 +16,20 @@
  */
 package org.apache.openejb.config;
 
-import java.util.Vector;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.config.rules.CheckClasses;
 import org.apache.openejb.config.rules.CheckMethods;
 import org.apache.openejb.config.rules.CheckAssemblyBindings;
@@ -26,7 +37,11 @@ import org.apache.openejb.config.rules.CheckCallbacks;
 import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.OpenEjbVersion;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class AppValidator {
 
     protected static final Messages _messages = new Messages("org.apache.openejb.config.rules");
@@ -36,7 +51,7 @@ public class AppValidator {
     boolean PRINT_WARNINGS = true;
     boolean PRINT_COUNT = false;
 
-    private Vector sets = new Vector();
+    private List<ValidationResults> sets = new ArrayList<ValidationResults>();
 
     /*------------------------------------------------------*/
     /*    Constructors                                      */
@@ -57,8 +72,7 @@ public class AppValidator {
 
     public ValidationResults[] getValidationResultsSets() {
         ValidationResults[] ejbSets = new ValidationResults[sets.size()];
-        sets.copyInto(ejbSets);
-        return ejbSets;
+        return sets.toArray(ejbSets);
     }
 
     public AppModule validate(final AppModule appModule) {
@@ -195,6 +209,66 @@ public class AppValidator {
                 }
             }
         }
+    }
+    
+    public static void main(String[] args) throws SystemExitException {
+        CommandLineParser parser = new PosixParser();
 
+        // create the Options
+        Options options = new Options();
+        options.addOption(AppValidator.option("v", "version", "cmd.validate.opt.version"));
+        options.addOption(AppValidator.option("h", "help", "cmd.validate.opt.help"));
+
+        CommandLine line = null;
+        try {
+            line = parser.parse(options, args);
+        } catch (ParseException exp) {
+            AppValidator.help(options);
+            throw new SystemExitException(-1);
+        }
+
+        if (line.hasOption("help")) {
+            AppValidator.help(options);
+            return;
+        } else if (line.hasOption("version")) {
+            OpenEjbVersion.get().print(System.out);
+            return;
+        }
+
+        if (line.getArgList().size() == 0) {
+            System.out.println("Must specify an module id.");
+            AppValidator.help(options);
+        }
+        
+        DeploymentLoader deploymentLoader = new DeploymentLoader();
+
+        try {
+            AppValidator validator = new AppValidator();
+            for (Object obj : line.getArgList()) {
+                String module = (String) obj;
+                File file = new File(module);
+                AppModule appModule = deploymentLoader.load(file);
+                validator.validate(appModule);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void help(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("validate [options] <file> [<file>...]", "\n"+ AppValidator.i18n("cmd.validate.description"), options, "\n");
+    }
+
+    private static Option option(String shortOpt, String longOpt, String description) {
+        return OptionBuilder.withLongOpt(longOpt).withDescription(AppValidator.i18n(description)).create(shortOpt);
+    }
+
+    private static Option option(String shortOpt, String longOpt, String argName, String description) {
+        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(AppValidator.i18n(description)).create(shortOpt);
+    }
+
+    private static String i18n(String key) {
+        return AppValidator._messages.format(key);
     }
 }
