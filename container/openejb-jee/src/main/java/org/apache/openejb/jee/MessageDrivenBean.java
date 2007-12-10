@@ -173,6 +173,10 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.ejbName = ejbName;
     }
 
+    public String getJndiConsumerName() {
+        return ejbName;
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

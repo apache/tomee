@@ -116,6 +116,13 @@ public class Interceptor implements JndiConsumer, Session {
         this.interceptorClass = interceptorClass;
     }
 
+    public String getJndiConsumerName() {
+        if (interceptorClass == null) {
+            return null;
+        }
+        return interceptorClass.replaceAll(".*\\.","");
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();

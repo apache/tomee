@@ -71,7 +71,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class PersistenceContextRef implements JndiReference {
+public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     @XmlElement(required = true)
     protected List<Text> description;

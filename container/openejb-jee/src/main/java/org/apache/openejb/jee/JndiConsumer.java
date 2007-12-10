@@ -23,6 +23,9 @@ import java.util.Map;
  * @version $Rev$ $Date$
  */
 public interface JndiConsumer {
+
+    String getJndiConsumerName();
+
     Collection<EnvEntry> getEnvEntry();
     Map<String,EnvEntry> getEnvEntryMap();
 

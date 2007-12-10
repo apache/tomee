@@ -100,6 +100,13 @@ public class ApplicationClient implements JndiConsumer {
     }
 
 
+    public String getJndiConsumerName() {
+        if (mainClass == null) {
+            return null;
+        }
+        return mainClass.replaceAll(".*\\.","");
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

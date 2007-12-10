@@ -236,6 +236,10 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         }
     }
 
+    public String getJndiConsumerName() {
+        return ejbName;
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

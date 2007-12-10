@@ -211,6 +211,10 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         this.sessionType = sessionType;
     }
 
+    public String getJndiConsumerName() {
+        return ejbName;
+    }
+    
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

@@ -69,6 +69,9 @@ import java.util.Map;
 })
 public class WebApp implements JndiConsumer {
     @XmlTransient
+    private String contextRoot;
+
+    @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
     protected TextMap displayName = new TextMap();
@@ -140,6 +143,21 @@ public class WebApp implements JndiConsumer {
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
+
+
+
+
+    public String getJndiConsumerName() {
+        return contextRoot;
+    }
+
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -91,6 +92,9 @@ import java.util.ArrayList;
 })
 public class PersistenceUnit {
 
+    @XmlTransient
+    private String id;
+
     protected String description;
     protected String provider;
     @XmlElement(name = "jta-data-source")
@@ -117,6 +121,14 @@ public class PersistenceUnit {
     }
 
     public PersistenceUnit() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDescription() {
