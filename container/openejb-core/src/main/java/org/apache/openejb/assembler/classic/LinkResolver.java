@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Collections;
 import java.net.URI;
 
 public class LinkResolver<E> {
@@ -46,6 +47,15 @@ public class LinkResolver<E> {
         values.add(value);
 
         return true;
+    }
+
+    public Collection<E> values() {
+        return byFullName.values();
+    }
+
+    public Collection<E> values(String shortName) {
+        Collection<E> es = byShortName.get(shortName);
+        return es != null? es: Collections.EMPTY_LIST;
     }
 
     public E resolveLink(String link, String moduleId) {

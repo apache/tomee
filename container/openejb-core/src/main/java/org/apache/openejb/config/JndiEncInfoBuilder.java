@@ -33,9 +33,9 @@ import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
@@ -51,9 +51,6 @@ import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.EjbLink;
-import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -61,7 +58,6 @@ import org.apache.openejb.util.Messages;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -71,78 +67,7 @@ import java.util.TreeMap;
  * @version $Rev$ $Date$
  */
 public class JndiEncInfoBuilder {
-    protected static void initJndiReferences(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
-        // index ejb modules
-        Map<String, EjbModule> ejbModules = new TreeMap<String, EjbModule>();
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            ejbModules.put(ejbModule.getModuleId(), ejbModule);
-        }
 
-        // Create the JNDI info builder
-        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-
-        // Build the JNDI tree for each ejb
-        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            EjbModule ejbModule = ejbModules.get(ejbJar.moduleId);
-
-            // index jaxb objects
-            Map<String, EnterpriseBean> beanData = new TreeMap<String, EnterpriseBean>();
-            for (EnterpriseBean enterpriseBean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                beanData.put(enterpriseBean.getEjbName(), enterpriseBean);
-            }
-            Map<String, EjbDeployment> ejbDeployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
-
-            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                String ejbName = beanInfo.ejbName;
-
-                // Get the ejb-jar.xml object
-                EnterpriseBean enterpriseBean = beanData.get(ejbName);
-
-                // Get the OpenEJB deployment
-                EjbDeployment ejbDeployment = ejbDeployments.get(ejbName);
-
-                // build the tree
-                initJndiReferences(enterpriseBean, ejbDeployment, beanInfo, jndiEncInfoBuilder, ejbJar.moduleId);
-            }
-        }
-    }
-
-
-    private static void initJndiReferences(EnterpriseBean enterpriseBean, EjbDeployment ejbDeployment, EnterpriseBeanInfo beanInfo, JndiEncInfoBuilder jndiEncInfoBuilder, String moduleId) throws OpenEJBException {
-        // Link all the resource refs
-        for (ResourceRef res : enterpriseBean.getResourceRef()) {
-            ResourceLink resourceLink = ejbDeployment.getResourceLink(res.getResRefName());
-            if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                res.setMappedName(resourceLink.getResId());
-            }
-        }
-
-        for (ResourceEnvRef ref : enterpriseBean.getResourceEnvRef()) {
-            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getResourceEnvRefName());
-            if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                ref.setMappedName(resourceLink.getResId());
-            }
-        }
-
-        for (MessageDestinationRef ref : enterpriseBean.getMessageDestinationRef()) {
-            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getMessageDestinationRefName());
-            if (resourceLink != null && resourceLink.getResId() != null /* don't overwrite with null */) {
-                ref.setMappedName(resourceLink.getResId());
-            }
-        }
-
-        // Link all the ejb refs
-        for (EjbRef ejbRef : enterpriseBean.getEjbRef()) {
-            EjbLink ejbLink = ejbDeployment.getEjbLink(ejbRef.getEjbRefName());
-            if (ejbLink != null && ejbLink.getDeployentId() != null /* don't overwrite with null */) {
-                ejbRef.setMappedName(ejbLink.getDeployentId());
-            }
-        }
-
-        // Build the JNDI info tree for the EJB
-        JndiEncInfo jndi = jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, moduleId);
-        beanInfo.jndiEnc = jndi;
-    }
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncInfoBuilder.class);
     protected static final Messages messages = new Messages(JndiEncInfoBuilder.class);
@@ -153,12 +78,9 @@ public class JndiEncInfoBuilder {
     private final Map<Interfaces, String> remoteInterfaces = new TreeMap<Interfaces, String>();
     private final Map<Interfaces, String> localInterfaces = new TreeMap<Interfaces, String>();
 
-    public JndiEncInfoBuilder(EjbJarInfo... ejbJarInfos) {
-        this(Arrays.asList(ejbJarInfos));
-    }
+    public JndiEncInfoBuilder(AppInfo appInfo) {
 
-    public JndiEncInfoBuilder(Collection<EjbJarInfo> ejbJarInfos) {
-        for (EjbJarInfo ejbJarInfo : ejbJarInfos) {
+        for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                 index(ejbJarInfo.moduleId, bean);
             }
@@ -218,9 +140,9 @@ public class JndiEncInfoBuilder {
 
         jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName, moduleUri));
 
-        jndi.persistenceUnitRefs.addAll(buildPersistenceUnitRefInfos(jndiConsumer));
+        jndi.persistenceUnitRefs.addAll(buildPersistenceUnitRefInfos(jndiConsumer, moduleUri));
 
-        jndi.persistenceContextRefs.addAll(buildPersistenceContextRefInfos(jndiConsumer));
+        jndi.persistenceContextRefs.addAll(buildPersistenceContextRefInfos(jndiConsumer, moduleUri));
 
         jndi.serviceRefs.addAll(buildServiceRefInfos(jndiConsumer));
 
@@ -257,7 +179,7 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private List<PersistenceUnitReferenceInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer) {
+    private List<PersistenceUnitReferenceInfo> buildPersistenceUnitRefInfos(JndiConsumer jndiConsumer, URI moduleId) {
         ArrayList<PersistenceUnitReferenceInfo> infos = new ArrayList<PersistenceUnitReferenceInfo>();
         for (PersistenceUnitRef puRef : jndiConsumer.getPersistenceUnitRef()) {
             PersistenceUnitReferenceInfo info = new PersistenceUnitReferenceInfo();
@@ -270,7 +192,7 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private List<PersistenceContextReferenceInfo> buildPersistenceContextRefInfos(JndiConsumer jndiConsumer) {
+    private List<PersistenceContextReferenceInfo> buildPersistenceContextRefInfos(JndiConsumer jndiConsumer, URI moduleId) {
         ArrayList<PersistenceContextReferenceInfo> infos = new ArrayList<PersistenceContextReferenceInfo>();
 
         for (PersistenceContextRef contextRef : jndiConsumer.getPersistenceContextRef()) {

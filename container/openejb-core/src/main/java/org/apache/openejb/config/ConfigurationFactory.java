@@ -23,17 +23,15 @@ import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.CmpEntityContainerInfo;
 import org.apache.openejb.assembler.classic.ConnectionManagerInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerSystemInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
-import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -41,14 +39,14 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.HandlerInfo;
-import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.config.sys.Deployments;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.JndiProvider;
 import org.apache.openejb.config.sys.Openejb;
 import org.apache.openejb.config.sys.ProxyFactory;
@@ -56,44 +54,18 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.config.sys.AbstractService;
-import org.apache.openejb.config.sys.Deployments;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.ResourceAdapter;
-import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.OutboundResourceAdapter;
-import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.InboundResource;
-import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.AdminObject;
-import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.HandlerChain;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.jpa.JpaJaxbUtil;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.Property;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.URISupport;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -113,7 +85,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private OpenEjbConfiguration sys;
 
-    private EjbJarInfoBuilder ejbJarInfoBuilder = new EjbJarInfoBuilder();
 
     private Openejb openejb;
 
@@ -128,6 +99,31 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public ConfigurationFactory(boolean offline, OpenEjbConfiguration configuration) {
         this(offline);
         sys = configuration;
+    }
+
+    public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
+        List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
+        if (chains == null) return handlerChains;
+
+        for (HandlerChain handlerChain : chains.getHandlerChain()) {
+            HandlerChainInfo handlerChainInfo = new HandlerChainInfo();
+            handlerChainInfo.serviceNamePattern = handlerChain.getServiceNamePattern();
+            handlerChainInfo.portNamePattern = handlerChain.getPortNamePattern();
+            handlerChainInfo.protocolBindings.addAll(handlerChain.getProtocolBindings());
+            for (Handler handler : handlerChain.getHandler()) {
+                HandlerInfo handlerInfo = new HandlerInfo();
+                handlerInfo.handlerName = handler.getHandlerName();
+                handlerInfo.handlerClass = handler.getHandlerClass();
+                handlerInfo.soapHeaders.addAll(handler.getSoapHeader());
+                handlerInfo.soapRoles.addAll(handler.getSoapRole());
+                for (ParamValue param : handler.getInitParam()) {
+                    handlerInfo.initParams.setProperty(param.getParamName(), param.getParamValue());
+                }
+                handlerChainInfo.handlers.add(handlerInfo);
+            }
+            handlerChains.add(handlerChainInfo);
+        }
+        return handlerChains;
     }
 
     public static class Chain implements DynamicDeployer{
@@ -189,6 +185,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         } else {
             chain.add(new AutoConfig(this));
         }
+
+        chain.add(new ApplyOpenejbJar());
 
         // TODO: How do we want this plugged in?
         //chain.add(new OutputGeneratedDescriptors());
@@ -428,357 +426,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         logger.info(messages.format("config.configApp", appModule.getJarLocation()));
         deployer.deploy(appModule);
+        AppInfoBuilder appInfoBuilder = new AppInfoBuilder(this);
 
-        AppInfo appInfo = new AppInfo();
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            try {
-                EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
-
-                Map<String, EjbDeployment> deploymentsByEjbName = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
-
-                for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
-                    EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
-
-                    if (!getContainerIds().contains(d.getContainerId()) && !skipMdb(bean)) {
-                        String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
-                        logger.fatal(msg);
-                        throw new OpenEJBException(msg);
-                    }
-
-                    bean.containerId = d.getContainerId();
-                }
-
-                ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
-
-                appInfo.ejbJars.add(ejbJarInfo);
-
-            } catch (OpenEJBException e) {
-                ConfigUtils.logger.warning("conf.0004", ejbModule.getJarLocation(), e.getMessage());
-                throw e;
-            }
-        }
-
-        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            String rootUrl = persistenceModule.getRootUrl();
-            Persistence persistence = persistenceModule.getPersistence();
-            for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
-                PersistenceUnitInfo info = new PersistenceUnitInfo();
-                info.name = persistenceUnit.getName();
-                info.watchedResources.addAll(persistenceModule.getWatchedResources());
-                info.persistenceUnitRootUrl = rootUrl;
-                info.provider = persistenceUnit.getProvider();
-                info.transactionType = persistenceUnit.getTransactionType().toString();
-
-                Boolean excludeUnlistedClasses = persistenceUnit.isExcludeUnlistedClasses();
-                info.excludeUnlistedClasses = excludeUnlistedClasses != null && excludeUnlistedClasses;
-
-                info.jtaDataSource = persistenceUnit.getJtaDataSource();
-                info.nonJtaDataSource = persistenceUnit.getNonJtaDataSource();
-
-                info.jarFiles.addAll(persistenceUnit.getJarFile());
-                info.classes.addAll(persistenceUnit.getClazz());
-                info.mappingFiles.addAll(persistenceUnit.getMappingFile());
-
-                // Handle Properties
-                org.apache.openejb.jee.jpa.unit.Properties puiProperties = persistenceUnit.getProperties();
-                if (puiProperties != null) {
-                    for (Property property : puiProperties.getProperty()) {
-                        info.properties.put(property.getName(), property.getValue());
-                    }
-                }
-
-                logger.info("Configuring PersistenceUnit(name="+info.name+", provider="+info.provider+")");
-                // Persistence Unit Root Url
-                appInfo.persistenceUnits.add(info);
-            }
-        }
-
-        // process JNDI refs... all JNDI refs for the whole application
-        // must be processed at the same time
-        JndiEncInfoBuilder.initJndiReferences(appModule, appInfo);
-
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            ApplicationClient applicationClient = clientModule.getApplicationClient();
-            ClientInfo clientInfo = new ClientInfo();
-            clientInfo.description = applicationClient.getDescription();
-            clientInfo.displayName = applicationClient.getDisplayName();
-            clientInfo.codebase = clientModule.getJarLocation();
-            clientInfo.mainClass = clientModule.getMainClass();
-            clientInfo.callbackHandler = applicationClient.getCallbackHandler();
-            clientInfo.moduleId = getClientModuleId(clientModule);
-            clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
-
-            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
-            appInfo.clients.add(clientInfo);
-        }
-
-        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-            //
-            // DEVELOPERS NOTE:  if you change the id generation code here, you must change
-            // the id generation code in AutoConfig$AppResources
-            //
-
-            Connector connector = connectorModule.getConnector();
-
-            ConnectorInfo connectorInfo = new ConnectorInfo();
-            connectorInfo.description = connector.getDescription();
-            connectorInfo.displayName = connector.getDisplayName();
-            connectorInfo.codebase = connectorModule.getJarLocation();
-            connectorInfo.moduleId = connectorModule.getModuleId();
-            connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
-
-            List<URL> libraries = connectorModule.getLibraries();
-            for (URL url : libraries) {
-                File file = new File(url.getPath());
-                connectorInfo.libs.add(file.getAbsolutePath());
-            }
-
-            ResourceAdapter resourceAdapter = connector.getResourceAdapter();
-            if (resourceAdapter.getResourceAdapterClass() != null) {
-                ResourceInfo resourceInfo = new ResourceInfo();
-                resourceInfo.service = "Resource";
-                if (resourceAdapter.getId() != null) {
-                    resourceInfo.id = resourceAdapter.getId();
-                } else {
-                    resourceInfo.id = connectorModule.getModuleId() + "RA";
-                }
-                resourceInfo.className = resourceAdapter.getResourceAdapterClass();
-                resourceInfo.properties = new Properties();
-                for (ConfigProperty property : resourceAdapter.getConfigProperty()) {
-                    String name = property.getConfigPropertyName();
-                    String value = property.getConfigPropertyValue();
-                    if (value != null) {
-                        resourceInfo.properties.setProperty(name, value);
-                    }
-                }
-                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
-                connectorInfo.resourceAdapter = resourceInfo;
-            }
-
-            OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
-            if (outbound != null) {
-                String transactionSupport = "none";
-                switch (outbound.getTransactionSupport()) {
-                    case LOCAL_TRANSACTION:
-                        transactionSupport = "local";
-                        break;
-                    case NO_TRANSACTION:
-                        transactionSupport = "none";
-                        break;
-                    case XA_TRANSACTION:
-                        transactionSupport = "xa";
-                        break;
-                }
-                for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
-                    ResourceInfo resourceInfo = new ResourceInfo();
-                    resourceInfo.service = "Resource";
-                    if (connection.getId() != null) {
-                        resourceInfo.id = connection.getId();
-                    } else if (outbound.getConnectionDefinition().size() == 1) {
-                        resourceInfo.id = connectorModule.getModuleId();
-                    } else {
-                        resourceInfo.id = connectorModule.getModuleId() + "-" + connection.getConnectionFactoryInterface();
-                    }
-                    resourceInfo.className = connection.getManagedConnectionFactoryClass();
-                    resourceInfo.types.add(connection.getConnectionFactoryInterface());
-                    resourceInfo.properties = new Properties();
-                    for (ConfigProperty property : connection.getConfigProperty()) {
-                        String name = property.getConfigPropertyName();
-                        String value = property.getConfigPropertyValue();
-                        if (value != null) {
-                            resourceInfo.properties.setProperty(name, value);
-                        }
-                    }
-                    resourceInfo.properties.setProperty("TransactionSupport", transactionSupport);
-                    resourceInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
-                    resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
-                    connectorInfo.outbound.add(resourceInfo);
-                }
-            }
-
-            InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
-            if (inbound != null) {
-                for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
-                    MdbContainerInfo mdbContainerInfo = new MdbContainerInfo();
-                    mdbContainerInfo.service = "Container";
-                    if (messageListener.getId() != null) {
-                        mdbContainerInfo.id = messageListener.getId();
-                    } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
-                        mdbContainerInfo.id = connectorModule.getModuleId();
-                    } else {
-                        mdbContainerInfo.id = connectorModule.getModuleId() + "-" + messageListener.getMessageListenerType();
-                    }
-
-                    mdbContainerInfo.properties = new Properties();
-                    mdbContainerInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
-                    mdbContainerInfo.properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
-                    mdbContainerInfo.properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
-
-                    // todo provider system should fill in this information
-                    mdbContainerInfo.types.add("MESSAGE");
-                    mdbContainerInfo.className = "org.apache.openejb.core.mdb.MdbContainer";
-                    mdbContainerInfo.constructorArgs.addAll(Arrays.asList("id", "transactionManager", "securityService", "ResourceAdapter", "MessageListenerInterface", "ActivationSpecClass", "InstanceLimit"));
-                    mdbContainerInfo.properties.setProperty("InstanceLimit", "10");
-
-                    mdbContainerInfo.properties.putAll(getSystemProperties(mdbContainerInfo.id, "CONTAINER"));
-                    connectorInfo.inbound.add(mdbContainerInfo);
-                }
-            }
-
-            for (AdminObject adminObject : resourceAdapter.getAdminObject()) {
-                ResourceInfo resourceInfo = new ResourceInfo();
-                resourceInfo.service = "Resource";
-                if (adminObject.getId() != null) {
-                    resourceInfo.id = adminObject.getId();
-                } else if (resourceAdapter.getAdminObject().size() == 1) {
-                    resourceInfo.id = connectorModule.getModuleId();
-                } else {
-                    resourceInfo.id = connectorModule.getModuleId() + "-" + adminObject.getAdminObjectInterface();
-                }
-                resourceInfo.className = adminObject.getAdminObjectClass();
-                resourceInfo.types.add(adminObject.getAdminObjectInterface());
-                resourceInfo.properties = new Properties();
-                for (ConfigProperty property : adminObject.getConfigProperty()) {
-                    String name = property.getConfigPropertyName();
-                    String value = property.getConfigPropertyValue();
-                    if (value != null) {
-                        resourceInfo.properties.setProperty(name, value);
-                    }
-                }
-                resourceInfo.properties.putAll(getSystemProperties(resourceInfo.id, "RESOURCE"));
-                connectorInfo.adminObject.add(resourceInfo);
-            }
-
-            appInfo.connectors.add(connectorInfo);
-        }
-
-        for (WebModule webModule : appModule.getWebModules()) {
-            WebApp webApp = webModule.getWebApp();
-            WebAppInfo webAppInfo = new WebAppInfo();
-            webAppInfo.description = webApp.getDescription();
-            webAppInfo.displayName = webApp.getDisplayName();
-            webAppInfo.codebase = webModule.getJarLocation();
-            webAppInfo.moduleId = webModule.getModuleId();
-            webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
-
-            webAppInfo.host = webModule.getHost();
-            webAppInfo.contextRoot = webModule.getContextRoot();
-
-            JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo.ejbJars);
-            webAppInfo.jndiEnc = jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId);
-
-            webAppInfo.portInfos.addAll(configureWebservices(webModule.getWebservices()));
-
-            for (Servlet servlet : webModule.getWebApp().getServlet()) {
-                ServletInfo servletInfo = new ServletInfo();
-                servletInfo.servletName = servlet.getServletName();
-                servletInfo.servletClass = servlet.getServletClass();
-                webAppInfo.servlets.add(servletInfo);
-            }
-
-            appInfo.webApps.add(webAppInfo);
-        }
-
-        appInfo.jarPath = appModule.getJarLocation();
-        appInfo.watchedResources.addAll(appModule.getWatchedResources());
-        List<URL> additionalLibraries = appModule.getAdditionalLibraries();
-        for (URL url : additionalLibraries) {
-            File file = new File(url.getPath());
-            appInfo.libs.add(file.getAbsolutePath());
-        }
-
-        if (appModule.getCmpMappings() != null) {
-            try {
-                String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
-                appInfo.cmpMappingsXml = cmpMappingsXml;
-            } catch (JAXBException e) {
-                throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
-            }
-        }
-
-        ReportValidationResults reportValidationResults = new ReportValidationResults();
-        reportValidationResults.deploy(appModule);
-
-        logger.info("Loaded Module: " + appInfo.jarPath);
-        return appInfo;
-    }
-
-    private List<PortInfo> configureWebservices(Webservices webservices) {
-        List<PortInfo> portMap = new ArrayList<PortInfo>();
-        if (webservices == null) {
-            return portMap;
-        }
-
-        for (WebserviceDescription desc : webservices.getWebserviceDescription()) {
-            String wsdlFile = desc.getWsdlFile();
-            String serviceName = desc.getWebserviceDescriptionName();
-
-            for (PortComponent port : desc.getPortComponent()) {
-                PortInfo portInfo = new PortInfo();
-
-                ServiceImplBean serviceImplBean = port.getServiceImplBean();
-                portInfo.serviceId = desc.getId();
-                portInfo.portId = port.getId();
-                portInfo.serviceLink = serviceImplBean.getEjbLink();
-                if (portInfo.serviceLink == null) {
-                    portInfo.serviceLink = serviceImplBean.getServletLink();
-                }
-
-                portInfo.seiInterfaceName = port.getServiceEndpointInterface();
-                portInfo.portName = port.getPortComponentName();
-                portInfo.binding = port.getProtocolBinding();
-                portInfo.serviceName = serviceName;
-                portInfo.wsdlFile = wsdlFile;
-                portInfo.mtomEnabled = port.isEnableMtom();
-                portInfo.wsdlPort = port.getWsdlPort();
-                portInfo.wsdlService = port.getWsdlService();
-                portInfo.location = port.getLocation();
-
-                List<HandlerChainInfo> handlerChains = toHandlerChainInfo(port.getHandlerChains());
-                portInfo.handlerChains.addAll(handlerChains);
-
-                // todo configure jaxrpc mappings here
-
-                portMap.add(portInfo);
-            }
-        }
-        return portMap;
-    }
-
-    public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
-        List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
-        if (chains == null) return handlerChains;
-
-        for (HandlerChain handlerChain : chains.getHandlerChain()) {
-            HandlerChainInfo handlerChainInfo = new HandlerChainInfo();
-            handlerChainInfo.serviceNamePattern = handlerChain.getServiceNamePattern();
-            handlerChainInfo.portNamePattern = handlerChain.getPortNamePattern();
-            handlerChainInfo.protocolBindings.addAll(handlerChain.getProtocolBindings());
-            for (Handler handler : handlerChain.getHandler()) {
-                HandlerInfo handlerInfo = new HandlerInfo();
-                handlerInfo.handlerName = handler.getHandlerName();
-                handlerInfo.handlerClass = handler.getHandlerClass();
-                handlerInfo.soapHeaders.addAll(handler.getSoapHeader());
-                handlerInfo.soapRoles.addAll(handler.getSoapRole());
-                for (ParamValue param : handler.getInitParam()) {
-                    handlerInfo.initParams.setProperty(param.getParamName(), param.getParamValue());
-                }
-                handlerChainInfo.handlers.add(handlerInfo);
-            }
-            handlerChains.add(handlerChainInfo);
-        }
-        return handlerChains;
-    }
-
-    private static String getClientModuleId(ClientModule clientModule) {
-        String jarLocation = clientModule.getJarLocation();
-        File file = new File(jarLocation);
-        String name = file.getName();
-        if (name.endsWith(".jar") || name.endsWith(".zip")) {
-            name = name.replaceFirst("....$", "");
-        }
-        return name;
+        return appInfoBuilder.build(appModule);
     }
 
     private static class DefaultService {
@@ -940,7 +590,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return configureService(service, type);
     }
 
-    private Properties getSystemProperties(String serviceId, String serviceType) {
+    protected static Properties getSystemProperties(String serviceId, String serviceType) {
         String fullPrefix = serviceType.toUpperCase() + "." + serviceId + ".";
         String fullPrefix2 = serviceType.toUpperCase() + "." + serviceId + "|";
         String shortPrefix = serviceId + ".";
@@ -1097,10 +747,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private OpenEjbConfiguration getRunningConfig() {
         return SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-    }
-
-    private static boolean skipMdb(EnterpriseBeanInfo bean) {
-        return bean instanceof MessageDrivenBeanInfo && System.getProperty("duct tape") != null;
     }
 
 }

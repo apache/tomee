@@ -61,6 +61,8 @@ public class WebModule implements WsModule {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
 
+        if (webApp != null) webApp.setContextRoot(contextRoot);
+
         if (moduleId == null){
             if (webApp != null && webApp.getId() != null){
                 moduleId = webApp.getId();
@@ -95,6 +97,7 @@ public class WebModule implements WsModule {
 
     public void setWebApp(WebApp webApp) {
         this.webApp = webApp;
+        if (webApp != null) webApp.setContextRoot(contextRoot);
     }
 
     public Webservices getWebservices() {
@@ -127,6 +130,7 @@ public class WebModule implements WsModule {
     }
 
     public void setContextRoot(String contextRoot) {
+        if (webApp != null) webApp.setContextRoot(contextRoot);
         this.contextRoot = contextRoot;
     }
 

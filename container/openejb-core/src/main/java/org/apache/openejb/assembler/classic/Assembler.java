@@ -330,7 +330,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (AppInfo appInfo : containerSystemInfo.applications) {
 
             try {
-                createApplication(appInfo, null, createAppClassLoader(appInfo));
+                createApplication(appInfo, createAppClassLoader(appInfo));
             } catch (DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (Throwable e) {
@@ -412,7 +412,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, null, classLoader);        
+        createApplication(appInfo, null, classLoader);
     }
 
     public void createApplication(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {

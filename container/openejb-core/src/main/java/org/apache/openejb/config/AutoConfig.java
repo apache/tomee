@@ -22,6 +22,7 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.LinkResolver;
+import org.apache.openejb.assembler.classic.UniqueDefaultLinkResolver;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EnterpriseBean;
@@ -40,6 +41,8 @@ import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.InboundResource;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceRef;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -47,6 +50,8 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URISupport;
+import static org.apache.openejb.util.Join.join;
 
 import javax.sql.DataSource;
 import javax.jms.Queue;
@@ -60,6 +65,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.net.URI;
 
 public class AutoConfig implements DynamicDeployer {
@@ -115,6 +121,8 @@ public class AutoConfig implements DynamicDeployer {
         }
         resolveDestinationLinks(appModule);
 
+        resolvePersistenceRefs(appModule);
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             deploy(ejbModule, appResources);
         }
@@ -132,6 +140,131 @@ public class AutoConfig implements DynamicDeployer {
         }
         return appModule;
     }
+
+    private void resolvePersistenceRefs(AppModule appModule) {
+        LinkResolver<PersistenceUnit> persistenceUnits = new UniqueDefaultLinkResolver<PersistenceUnit>();
+
+        for (PersistenceModule module : appModule.getPersistenceModules()) {
+            String rootUrl = module.getRootUrl();
+            for (PersistenceUnit unit : module.getPersistence().getPersistenceUnit()) {
+                unit.setId(rootUrl + "#" + unit.getName());
+                persistenceUnits.add(rootUrl, unit.getName(), unit);
+            }
+        }
+
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            URI moduleURI = URI.create(ejbModule.getModuleId());
+
+            for (JndiConsumer component : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                processPersistenceRefs(component, appModule, persistenceUnits, moduleURI);
+            }
+
+        }
+
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            URI moduleURI = URI.create(clientModule.getModuleId());
+            processPersistenceRefs(clientModule.getApplicationClient(), appModule, persistenceUnits, moduleURI);
+        }
+
+        for (WebModule webModule : appModule.getWebModules()) {
+            URI moduleURI = URI.create(webModule.getModuleId());
+            processPersistenceRefs(webModule.getWebApp(), appModule, persistenceUnits, moduleURI);
+        }
+    }
+
+    private void processPersistenceRefs(JndiConsumer component, AppModule appModule, LinkResolver<PersistenceUnit> persistenceUnits, URI moduleURI) {
+
+        String componentName = component.getJndiConsumerName();
+
+        ValidationContext validation = appModule.getValidation();
+
+        for (PersistenceRef ref : component.getPersistenceUnitRef()) {
+
+            resolvePersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+        }
+
+        for (PersistenceRef ref : component.getPersistenceContextRef()) {
+
+            resolvePersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+        }
+    }
+
+    private PersistenceUnit resolvePersistenceRef(LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
+        PersistenceUnit unit = persistenceUnits.resolveLink(ref.getPersistenceUnitName(), moduleURI);
+
+        // try again using the ref name
+        if (unit == null){
+            unit = persistenceUnits.resolveLink(ref.getName(), moduleURI);
+        }
+
+        // try again using the ref name with any prefix removed
+        if (unit == null){
+            String shortName = ref.getName().replaceFirst(".*/", "");
+            unit = persistenceUnits.resolveLink(shortName, moduleURI);
+        }
+
+        if (unit != null){
+            ref.setMappedName(unit.getId());
+        } else {
+
+            // ----------------------------------------------
+            //  Nothing was found.  Let's try and figure out
+            //  what went wrong and log a validation message
+            // ----------------------------------------------
+
+            String refType = "persistence";
+            if (ref instanceof PersistenceContextRef){
+                refType += "ContextRef";
+            } else refType += "UnitRef";
+
+            String refShortName = ref.getName();
+            if (refShortName.matches(".*\\..*/.*")){
+                refShortName = refShortName.replaceFirst(".*/", "");
+            }
+
+            List<String> availableUnits = new ArrayList<String>();
+            for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
+                availableUnits.add(persistenceUnit.getName());
+            }
+
+            Collections.sort(availableUnits);
+
+            String unitName = ref.getPersistenceUnitName();
+
+            if (availableUnits.size() == 0){
+                // Print a sample persistence.xml using their data
+                if (unitName == null){
+                    unitName = refShortName;
+                }
+                validation.fail(componentName, refType + ".noPersistenceUnits", refShortName, unitName);
+            } else if (ref.getPersistenceUnitName() == null && availableUnits.size() > 1) {
+                // Print a correct example of unitName in a ref
+                // DMB: Idea, the ability to set a default unit-name in openejb-jar.xml via a property
+                String sampleUnitName = availableUnits.get(0);
+                validation.fail(componentName, refType + ".noUnitName", refShortName, join(", ", availableUnits), sampleUnitName );
+            } else {
+                Collection<PersistenceUnit> vagueMatches = persistenceUnits.values(ref.getPersistenceUnitName());
+                if (vagueMatches.size() != 0) {
+                    // Print the full rootUrls
+
+                    List<String> possibleUnits = new ArrayList<String>();
+                    for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
+                        URI unitURI = URI.create(persistenceUnit.getId());
+                        unitURI = URISupport.relativize(moduleURI, unitURI);
+                        possibleUnits.add(unitURI.toString());
+                    }
+
+                    Collections.sort(possibleUnits);
+
+                    validation.fail(componentName, refType + ".vagueMatches", refShortName, unitName, possibleUnits.size(), join("\n", possibleUnits));
+                } else {
+                    validation.fail(componentName, refType + ".noMatches", refShortName, unitName, join(", ", availableUnits));
+                }
+            }
+        }
+        return unit;
+    }
+
 
     /**
      * Set destination, destinationType, clientId and subscriptionName in the MDB activation config.
@@ -175,7 +308,7 @@ public class AutoConfig implements DynamicDeployer {
                     link.setResRefName("openejb/destination");
                     ejbDeployment.addResourceLink(link);
                 }
-                                
+
                 // destination type
                 String destinationType = properties.getProperty("destinationType");
                 if (destinationType == null && mdb.getMessageDestinationType() != null) {
@@ -287,7 +420,7 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
         }
-        
+
         // resolve all message destination refs with links and assign a ref id to the reference
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
@@ -979,7 +1112,7 @@ public class AutoConfig implements DynamicDeployer {
                 }
                 return allResourceIds;
             }
-            
+
             List<String> resourceIds = resourceIdsByType.get(type);
             if (resourceIds != null) {
                 return resourceIds;

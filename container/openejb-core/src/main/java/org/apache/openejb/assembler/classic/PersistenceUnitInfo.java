@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class PersistenceUnitInfo extends InfoObject {
+    public String id;
     public String name;
     public String provider;
     public String transactionType;

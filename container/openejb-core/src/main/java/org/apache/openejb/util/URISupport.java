@@ -27,11 +27,68 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
+ *
+ * URI relativize(URI, URI) added afterwards to deal with the
+ * non-functional URI.relativize(URI) method
  */
 public class URISupport {
+
+    /**
+     * URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
+     * URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
+     *
+     * URI relativeB = URISupport.relativize(absoluteA, absoluteB);
+     *
+     * assertEquals("../../openejb-core/foo.jar", relativeB.toString());
+     *
+     * URI resolvedB = absoluteA.resolve(relativeB);
+     * assertTrue(resolvedB.equals(absoluteB));
+     *
+     * @param a
+     * @param b
+     * @return relative b
+     */
+    public static URI relativize(URI a, URI b) {
+        if (a == null || b == null) return b;
+
+        if (!a.isAbsolute() && b.isAbsolute()) return b;
+
+        if (!b.isAbsolute()) b = a.resolve(b);
+
+        List<String> pathA = Arrays.asList(a.getPath().split("/"));
+        List<String> pathB = Arrays.asList(b.getPath().split("/"));
+
+        int limit = Math.min(pathA.size(), pathB.size());
+
+
+        int lastMatch = 0;
+        while (lastMatch < limit) {
+            String aa = pathA.get(lastMatch);
+            String bb = pathB.get(lastMatch);
+            if (aa.equals(bb)) lastMatch++;
+            else break;
+        }
+
+        List<String> path = new ArrayList<String>();
+        for (int x = pathA.size() - lastMatch; x > 0; x--) {
+            path.add("..");
+        }
+
+        List<String> remaining = pathB.subList(lastMatch, pathB.size());
+        path.addAll(remaining);
+
+        try {
+            return new URI(null, null, Join.join("/", path), b.getQuery(), b.getFragment());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     public static class CompositeData {
         String scheme;
         String path;
