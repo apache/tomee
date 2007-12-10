@@ -1350,11 +1350,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 { // Little quick validation for common mistake
                     Class type = member.getType();
+                    boolean shouldReturn = false;
                     if (EntityManager.class.isAssignableFrom(type)){
                         validationContext.get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
+                        shouldReturn = true;
                     } else if (EntityManagerFactory.class.isAssignableFrom(type)){
                         validationContext.get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
+                        shouldReturn = true;
                     }
+                    if (shouldReturn) return;
                 }
                 String type;
                 if (resource.type() != java.lang.Object.class) {
