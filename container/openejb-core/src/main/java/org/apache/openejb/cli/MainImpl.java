@@ -74,6 +74,7 @@ public class MainImpl implements Main {
         Options options = new Options();
         options.addOption(null, "version", false, "");
         options.addOption("h", "help", false, "");
+        options.addOption("e", "errors", false, "Produce execution error messages");
 
         CommandLine line = null;
         String commandName = null;
@@ -149,7 +150,9 @@ public class MainImpl implements Main {
             // WARNING, Definitely do *not* unwrap 'new Object[]{args}' to 'args'
             mainMethod.invoke(clazz, new Object[]{args});
         } catch (Throwable e) {
-            e.printStackTrace();
+            if (line.hasOption("errors")) {
+                e.printStackTrace();
+            }   
             System.exit(-10);
         }
     }
