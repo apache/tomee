@@ -44,8 +44,12 @@ import javax.naming.Binding;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
 
-
+/** 
+ * @version $Rev$ $Date$
+ */
 public class JNDIContext implements Serializable, InitialContextFactory, Context {
+
+    private static final long serialVersionUID = 1L;
 
     private transient String tail = "/";
     private transient ServerMetaData server;
@@ -91,10 +95,11 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public Context getInitialContext(Hashtable environment) throws NamingException {
-        if (environment == null)
-            throw new NamingException("Invalid Argument, hashtable cannot be null.");
-        else
+        if (environment == null) {
+            throw new NamingException("Invalid argument, hashtable cannot be null.");
+        } else {
             env = (Hashtable) environment.clone();
+        }
 
         String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);

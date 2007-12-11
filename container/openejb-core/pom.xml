@@ -79,11 +79,6 @@
               <value>file:///${basedir}/target/classes/embedded.logging.properties</value>
             </property>
           </systemProperties>
-          <!--
-          <includes>
-            <include>**/SomeoneBrokeSurefireAndThisIsADirtyHackForItTest.java</include>
-          </includes>
-          -->
           <excludes>
             <exclude>**/TestHandler.java</exclude>
           </excludes>

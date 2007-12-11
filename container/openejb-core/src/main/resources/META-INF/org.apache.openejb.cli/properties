@@ -15,6 +15,7 @@
 #
 main.class = org.apache.openejb.assembler.classic.cmd.Info2Properties
 name = properties
-description = Convert and Print the OpenEJB configuration as properties
+description = Convert and print the OpenEJB configuration as properties
+description.pl = Zamie\u0144 i wy\u015bwietl konfiguracj\u0119 OpenEJB jako w\u0142a\u015bciwo\u015bci
 
 

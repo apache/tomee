@@ -16,6 +16,11 @@
  */
 package org.apache.openejb.client;
 
+/** 
+ * @version $Rev$ $Date$
+ */
 public class RemoteInitialContextFactory extends JNDIContext {
+
+    private static final long serialVersionUID = 1L;
 }
 

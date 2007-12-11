@@ -16,4 +16,5 @@
 main.class = org.apache.openejb.config.Undeploy
 name = undeploy
 description = Undeploy an ejb jar or ear
+description.pl = Odinstaluj ejb jar lub ear
 
