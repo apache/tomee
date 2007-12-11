@@ -48,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Closeable;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -97,7 +98,20 @@ public class Deploy {
             help(options);
             return;
         }
-
+        
+        // make sure that the modules given on the command line are accessible
+        List<?> modules = line.getArgList();
+        for (Object module : modules) {
+            String path = (String) module;
+            File file = new File(path);
+            try {
+                checkSource(file);
+            } catch (DeploymentTerminatedException e) {
+                System.out.println(e.getMessage());
+                // TODO: What is it for?
+                throw new SystemExitException(100);
+            }
+        }
 
         boolean offline = line.hasOption("offline");
 
@@ -113,26 +127,29 @@ public class Deploy {
             System.out.println("Directory does not exist: " + apps.getAbsolutePath());
         }
 
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-
-        String serverUrl = defaultServerUrl;
-        if (line.hasOption(serverUrl)) {
-            serverUrl = line.getOptionValue("serverUrl");
-        }
-        p.put(Context.PROVIDER_URL, serverUrl);
-
         Deployer deployer = null;
-        try {
-            InitialContext ctx = new InitialContext(p);
-            deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
-        } catch (javax.naming.ServiceUnavailableException e) {
-            System.out.println(e.getCause().getMessage());
-            System.out.println(messages.format("cmd.deploy.serverOffline"));
-            throw new SystemExitException(1);
-        } catch (javax.naming.NamingException e) {
-            System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
-            throw new SystemExitException(2);
+        if (!offline) {
+            Properties p = new Properties();
+            p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+
+            String serverUrl = defaultServerUrl;
+            if (line.hasOption(serverUrl)) {
+                serverUrl = line.getOptionValue("serverUrl");
+            }
+            p.put(Context.PROVIDER_URL, serverUrl);
+
+            try {
+                InitialContext ctx = new InitialContext(p);
+                deployer = (Deployer) ctx.lookup("openejb/DeployerBusinessRemote");
+            } catch (javax.naming.ServiceUnavailableException e) {
+                System.out.println(e.getCause().getMessage());
+                System.out.println(messages.format("cmd.deploy.serverOffline"));
+                throw new SystemExitException(1);
+            } catch (javax.naming.NamingException e) {
+                System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl
+                        + "', check the server logs to ensure it exists and has not been removed.");
+                throw new SystemExitException(2);
+            }
         }
 
         int exitCode = 0;
@@ -141,8 +158,6 @@ public class Deploy {
 
             try {
                 File file = new File(path);
-
-                checkSource(file);
 
                 File destFile = new File(apps, file.getName());
 
