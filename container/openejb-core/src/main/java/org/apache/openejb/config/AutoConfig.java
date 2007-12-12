@@ -180,16 +180,21 @@ public class AutoConfig implements DynamicDeployer {
 
         for (PersistenceRef ref : component.getPersistenceUnitRef()) {
 
-            resolvePersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
         }
 
         for (PersistenceRef ref : component.getPersistenceContextRef()) {
 
-            resolvePersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
+            processPersistenceRef(persistenceUnits, ref, moduleURI, componentName, validation);
         }
     }
 
-    private PersistenceUnit resolvePersistenceRef(LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
+    private PersistenceUnit processPersistenceRef(LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
+
+        if (ref.getMappedName().startsWith("jndi:")){
+            return null;
+        }
+
         PersistenceUnit unit = persistenceUnits.resolveLink(ref.getPersistenceUnitName(), moduleURI);
 
         // Explicitly check if we messed up the "if there's only one,
@@ -200,7 +205,7 @@ public class AutoConfig implements DynamicDeployer {
             for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                 if (!persistenceUnit.getName().equals("cmp")){
                     // Found it
-                    unit = persistenceUnit;                                                                                                                 
+                    unit = persistenceUnit;
                     break;
                 }
             }
