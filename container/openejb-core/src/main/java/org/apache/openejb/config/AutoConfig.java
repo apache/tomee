@@ -191,7 +191,7 @@ public class AutoConfig implements DynamicDeployer {
 
     private PersistenceUnit processPersistenceRef(LinkResolver<PersistenceUnit> persistenceUnits, PersistenceRef ref, URI moduleURI, String componentName, ValidationContext validation) {
 
-        if (ref.getMappedName().startsWith("jndi:")){
+        if (ref.getMappedName() != null && ref.getMappedName().startsWith("jndi:")){
             return null;
         }
 
