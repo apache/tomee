@@ -74,7 +74,8 @@ public class Undeploy {
 
         if (line.getArgList().size() == 0) {
             System.out.println("Must specify an module id.");
-            Undeploy.help(options);
+            help(options);
+            return;
         }
 
         Properties p = new Properties();
