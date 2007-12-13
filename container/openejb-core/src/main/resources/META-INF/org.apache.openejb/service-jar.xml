@@ -36,14 +36,6 @@
   #
   #  Over time this will be become a library of default
   #  configurations
-  #
-  #
-  #  The Configuraitions in this file reference the following other
-  #  files:
-  #
-  #  conf/default.cmp_global_tx_database.xml
-  #  conf/default.cmp_local_tx_database.xml
-  #  conf/default.idb_database.conf
   -->
 
   <!--
@@ -61,6 +53,10 @@
 
     #Engine  derby
     Engine  instantdb
+
+
+    # ConnectorName is he id of the Connector element which
+    # should provide connectivity for this CMP Container
 
     ConnectorName  Default JDBC Database
   </ServiceProvider>
@@ -157,6 +153,7 @@
     # Specifies the time to wait between invocations. This
     # value is measured in minutes. A value of 5 would
     # result in a time-out of 5 minutes between invocations.
+    # A value of zero would mean no timeout.
 
     TimeOut 20
 
@@ -254,6 +251,16 @@
           factory-name="create"
           constructor="JtaManaged"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    # Determines wether or not this data source should be JTA managed
+    # or user managed.  If set to 'true' it will automatically be enrolled
+    # in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
+    # on the datasource or connection will not be allowed.  If you need to perform
+    # these functions yourself, set JtaManaged to 'false'
+    #
+    # In terms of JPA persistence.xml:
+    # "JtaManaged=true" can be used as a <jta-data-source>
+    # "JtaManaged=false" can be used as a <non-jta-data-source>
 
     JtaManaged = true
 
