@@ -185,6 +185,7 @@ public class JndiEncInfoBuilder {
             PersistenceUnitReferenceInfo info = new PersistenceUnitReferenceInfo();
             info.referenceName = puRef.getPersistenceUnitRefName();
             info.persistenceUnitName = puRef.getPersistenceUnitName();
+            info.unitId = puRef.getMappedName();
             info.location = buildLocationInfo(puRef);
             info.targets.addAll(buildInjectionInfos(puRef));
             infos.add(info);
@@ -199,6 +200,7 @@ public class JndiEncInfoBuilder {
             PersistenceContextReferenceInfo info = new PersistenceContextReferenceInfo();
             info.referenceName = contextRef.getPersistenceContextRefName();
             info.persistenceUnitName = contextRef.getPersistenceUnitName();
+            info.unitId = contextRef.getMappedName();
             info.location = buildLocationInfo(contextRef);
             info.extended = (contextRef.getPersistenceContextType() == PersistenceContextType.EXTENDED);
             List<Property> persistenceProperty = contextRef.getPersistenceProperty();

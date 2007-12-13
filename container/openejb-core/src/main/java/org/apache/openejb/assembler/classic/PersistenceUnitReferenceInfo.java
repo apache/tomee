@@ -22,6 +22,7 @@ package org.apache.openejb.assembler.classic;
 public class PersistenceUnitReferenceInfo extends InjectableInfo {
     public String referenceName;
     public String persistenceUnitName;
+    public String unitId;
 
     public ReferenceLocationInfo location;
 }
