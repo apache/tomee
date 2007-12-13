@@ -169,6 +169,18 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
     }
 
+    public WebModule deploy(WebModule webModule) throws OpenEJBException {
+        validationContext.set(webModule.getValidation());
+        try {
+            webModule = discoverAnnotatedBeans.deploy(webModule);
+            webModule = envEntriesPropertiesDeployer.deploy(webModule);
+            webModule = processAnnotatedBeans.deploy(webModule);
+            return webModule;
+        } finally {
+            validationContext.remove();
+        }
+    }
+
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(Arrays.asList(
                 "javax.ejb.SessionContext",
@@ -195,16 +207,36 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
-                deploy(ejbModule);
+                validationContext.set(ejbModule.getValidation());
+                try {
+                    deploy(ejbModule);
+                } finally {
+                    validationContext.remove();
+                }
             }
             for (ClientModule clientModule : appModule.getClientModules()) {
-                deploy(clientModule);
+                validationContext.set(clientModule.getValidation());
+                try {
+                    deploy(clientModule);
+                } finally {
+                    validationContext.remove();
+                }
             }
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-                deploy(connectorModule);
+                validationContext.set(connectorModule.getValidation());
+                try {
+                    deploy(connectorModule);
+                } finally {
+                    validationContext.remove();
+                }
             }
             for (WebModule webModule : appModule.getWebModules()) {
-                deploy(webModule);
+                validationContext.set(webModule.getValidation());
+                try {
+                    deploy(webModule);
+                } finally {
+                    validationContext.remove();
+                }
             }
             return appModule;
         }
@@ -1512,9 +1544,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     serviceRef.setWsdlFile(wsdlLocation);
                 }
             }
-            
+
             if (System.getProperty("duct tape") != null) return;
-            
+
             if (serviceRef.getWsdlFile() == null && refType != null) {
                 serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(refType, classLoader));
             }
