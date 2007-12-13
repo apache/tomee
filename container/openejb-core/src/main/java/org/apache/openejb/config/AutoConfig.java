@@ -147,7 +147,7 @@ public class AutoConfig implements DynamicDeployer {
         for (PersistenceModule module : appModule.getPersistenceModules()) {
             String rootUrl = module.getRootUrl();
             for (PersistenceUnit unit : module.getPersistence().getPersistenceUnit()) {
-                unit.setId(rootUrl + "#" + unit.getName());
+                unit.setId(unit.getName() + " " + rootUrl.hashCode());
                 persistenceUnits.add(rootUrl, unit.getName(), unit);
             }
         }
