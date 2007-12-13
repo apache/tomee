@@ -259,8 +259,8 @@
     # these functions yourself, set JtaManaged to 'false'
     #
     # In terms of JPA persistence.xml:
-    # "JtaManaged=true" can be used as a <jta-data-source>
-    # "JtaManaged=false" can be used as a <non-jta-data-source>
+    # "JtaManaged=true" can be used as a 'jta-data-source'
+    # "JtaManaged=false" can be used as a 'non-jta-data-source'
 
     JtaManaged = true
 
