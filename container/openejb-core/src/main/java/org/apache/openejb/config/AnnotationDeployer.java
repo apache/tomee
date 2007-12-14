@@ -1380,7 +1380,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
 
-                { // Little quick validation for common mistake
+                if (member != null) { // Little quick validation for common mistake
                     Class type = member.getType();
                     boolean shouldReturn = false;
                     if (EntityManager.class.isAssignableFrom(type)){
