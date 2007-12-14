@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
@@ -28,7 +29,6 @@ import org.apache.openejb.core.ivm.naming.JndiUrlReference;
 import org.apache.openejb.core.ivm.naming.NameNode;
 import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
-import org.apache.openejb.core.ivm.naming.PersistenceUnitReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.ivm.naming.URLReference;
@@ -83,17 +83,14 @@ public class JndiEncBuilder {
     private final List<Injection> injections;
     private final ClassLoader classLoader;
 
-    // JPA factory indexes
-    private final LinkResolver<EntityManagerFactory> emfLinkResolver;
-
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, null, moduleId, classLoader);
+        this(jndiEnc, injections, null, moduleId, classLoader);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, LinkResolver<EntityManagerFactory> emfLinkResolver, String moduleId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, ClassLoader classLoader) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
@@ -103,7 +100,6 @@ public class JndiEncBuilder {
         } catch (URISyntaxException e) {
             throw new OpenEJBException(e);
         }
-        this.emfLinkResolver = emfLinkResolver;
         this.classLoader = classLoader;
     }
 
@@ -174,7 +170,7 @@ public class JndiEncBuilder {
 
         // bind TimerService
         bindings.put("java:comp/TimerService", new TimerServiceWrapper());
-        
+
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
             Reference reference = null;
@@ -285,7 +281,7 @@ public class JndiEncBuilder {
                     String jndiName = "java:comp/WebServiceContext";
                     linkRef = new LinkRef(jndiName);
                     bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
-                    continue;                          
+                    continue;
                 } else if (TimerService.class.equals(type)) {
                     String jndiName = "java:comp/TimerService";
                     linkRef = new LinkRef(jndiName);
@@ -312,41 +308,36 @@ public class JndiEncBuilder {
             }
         }
 
-        if (emfLinkResolver != null) {
-            for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
-                if (referenceInfo.location != null){
-                    Reference reference = buildReferenceLocation(referenceInfo.location);
-                    bindings.put(normalize(referenceInfo.referenceName), reference);
-                    continue;
-                }
-
-                EntityManagerFactory factory = emfLinkResolver.resolveLink(referenceInfo.persistenceUnitName, moduleUri);
-                if (factory == null) {
-                    throw new IllegalArgumentException("Persistence unit " + referenceInfo.persistenceUnitName + " for persistence-unit-ref " +
-                            referenceInfo.referenceName + " not found");
-                }
-
-                Reference reference = new PersistenceUnitReference(factory);
+        for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
+            if (referenceInfo.location != null){
+                Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
+                continue;
             }
 
-            for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
-                if (contextInfo.location != null){
-                    Reference reference = buildReferenceLocation(contextInfo.location);
-                    bindings.put(normalize(contextInfo.referenceName), reference);
-                    continue;
-                }
+            String jndiName = "java:openejb/PersistenceUnit/" + referenceInfo.unitId;
+            Reference reference = new IntraVmJndiReference(jndiName);
+            bindings.put(normalize(referenceInfo.referenceName), reference);
+        }
 
-                EntityManagerFactory factory = emfLinkResolver.resolveLink(contextInfo.persistenceUnitName, moduleUri);
-                if (factory == null) {
-                    throw new IllegalArgumentException("Persistence unit \"" + contextInfo.persistenceUnitName + "\" for persistence-context-ref " +
-                            contextInfo.referenceName + " not found");
-                }
-
-                JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
-                Reference reference = new PersistenceContextReference(jtaEntityManager);
+        for (PersistenceContextReferenceInfo contextInfo : jndiEnc.persistenceContextRefs) {
+            if (contextInfo.location != null){
+                Reference reference = buildReferenceLocation(contextInfo.location);
                 bindings.put(normalize(contextInfo.referenceName), reference);
+                continue;
             }
+
+            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            EntityManagerFactory factory;
+            try {
+                factory = (EntityManagerFactory) context.lookup("openejb/PersistenceUnit/" + contextInfo.unitId);
+            } catch (NamingException e) {
+                throw new OpenEJBException("PersistenceUnit '" + contextInfo.unitId + "' not found for EXTENDED ref '" + contextInfo.referenceName + "'");
+            }
+
+            JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+            Reference reference = new PersistenceContextReference(jtaEntityManager);
+            bindings.put(normalize(contextInfo.referenceName), reference);
         }
 
         for (ServiceReferenceInfo referenceInfo : jndiEnc.serviceRefs) {

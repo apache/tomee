@@ -42,7 +42,6 @@ import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.LinkResolver;
-import org.apache.openejb.assembler.classic.UniqueDefaultLinkResolver;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -148,7 +147,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     // OpenEJB WebAppBuilder
     //
 
-    public void deployWebApps(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws Exception {
+    public void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
@@ -167,7 +166,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     contextInfo.appInfo = appInfo;
                     contextInfo.deployer = deployer;
                     contextInfo.standardContext = standardContext;
-                    contextInfo.emfLinkResolver = emfLinkResolver;
                     deployer.manageApp(standardContext);
                 }
             }
@@ -229,10 +227,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     AppInfo appInfo = configurationFactory.configureApplication(appModule);
                     contextInfo.appInfo = appInfo;
 
-                    LinkResolver<EntityManagerFactory> emfLinkResolver = new UniqueDefaultLinkResolver<EntityManagerFactory>();
-                    assembler.createApplication(contextInfo.appInfo, emfLinkResolver, standardContext.getLoader().getClassLoader());
+                    assembler.createApplication(contextInfo.appInfo, standardContext.getLoader().getClassLoader());
                     // todo add watched resources to context
-                    contextInfo.emfLinkResolver = emfLinkResolver;
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
                 }
@@ -259,7 +255,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 List<Injection> injections = injectionBuilder.buildInjections(webAppInfo.jndiEnc);
 
                 // merge OpenEJB jndi into Tomcat jndi
-                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections, contextInfo.emfLinkResolver);
+                TomcatJndiBuilder jndiBuilder = new TomcatJndiBuilder(standardContext, webAppInfo, injections);
                 jndiBuilder.mergeJndi();
 
                 // add WebDeploymentInfo to ContainerSystem

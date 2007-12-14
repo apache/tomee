@@ -362,7 +362,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = ejbJar.jarPath;
         appInfo.ejbJars.add(ejbJar);
-        createApplication(appInfo, emfLinkResolver, classLoader);
+        createApplication(appInfo, classLoader);
     }
 
     public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
@@ -376,7 +376,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
-        createApplication(appInfo, null, classLoader);
+        createApplication(appInfo, classLoader);
     }
 
     public void createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
@@ -390,7 +390,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
-        createApplication(appInfo, null, classLoader);
+        createApplication(appInfo, classLoader);
     }
 
     public void createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
@@ -404,21 +404,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AppInfo appInfo = new AppInfo();
         appInfo.jarPath = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
-        createApplication(appInfo, null, classLoader);
+        createApplication(appInfo, classLoader);
     }
 
     public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, null, createAppClassLoader(appInfo));
+        createApplication(appInfo, createAppClassLoader(appInfo));
     }
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, null, classLoader);
-    }
-
-    public void createApplication(AppInfo appInfo, LinkResolver<EntityManagerFactory> emfLinkResolver, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
 
         logger.info("Assembling app: "+appInfo.jarPath);
-        
+
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -448,12 +444,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
-            emfLinkResolver = emfLinkResolver == null? new UniqueDefaultLinkResolver<EntityManagerFactory>(): emfLinkResolver;
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {
                     EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
-                    emfLinkResolver.add(info.persistenceUnitRootUrl, info.name, factory);
+                    containerSystem.getJNDIContext().bind("java:openejb/PersistenceUnit/" + info.id, factory);
                 } catch (Exception e) {
                     throw new OpenEJBException(e);
                 }
@@ -485,7 +480,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, emfLinkResolver);
+                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar);
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
@@ -569,7 +564,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // WebApp
             WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
-                webAppBuilder.deployWebApps(appInfo, emfLinkResolver, classLoader);
+                webAppBuilder.deployWebApps(appInfo, classLoader);
             }
 
             logger.info("Deployed Application(path="+appInfo.jarPath+")");
@@ -647,6 +642,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 } catch (Throwable t) {
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
+            }
+        }
+
+        for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
+            try {
+                globalContext.unbind("openejb/PersistenceUnit/"+unitInfo.id);
+            } catch (Throwable t) {
+                undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
         }
 

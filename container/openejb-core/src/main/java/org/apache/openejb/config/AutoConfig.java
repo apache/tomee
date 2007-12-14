@@ -200,7 +200,7 @@ public class AutoConfig implements DynamicDeployer {
         // Explicitly check if we messed up the "if there's only one,
         // that's what you get" rule by adding our "cmp" unit.
         Collection<PersistenceUnit> cmpUnits = persistenceUnits.values("cmp");
-        if (cmpUnits.size() > 0 && persistenceUnits.values().size() - cmpUnits.size() == 1) {
+        if (unit == null && cmpUnits.size() > 0 && persistenceUnits.values().size() - cmpUnits.size() == 1) {
             // We did, there is exactly one non-cmp unit.  Let's find it.
             for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                 if (!persistenceUnit.getName().equals("cmp")){

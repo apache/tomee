@@ -19,6 +19,8 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.apache.openejb.core.cmp.CmpUtil;
@@ -28,6 +30,7 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Classes;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -45,10 +48,9 @@ class EnterpriseBeanBuilder {
     private final List<String> defaultInterceptors;
     private final BeanType ejbType;
     private final ClassLoader cl;
-    private final LinkResolver<EntityManagerFactory> emfLinkResolver;
     private List<Exception> warnings = new ArrayList<Exception>();
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors, LinkResolver<EntityManagerFactory> emfLinkResolver) {
+    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors) {
         this.bean = bean;
         this.moduleId = moduleId;
         this.defaultInterceptors = defaultInterceptors;
@@ -66,7 +68,6 @@ class EnterpriseBeanBuilder {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }
         this.cl = cl;
-        this.emfLinkResolver = emfLinkResolver;
     }
 
     public Object build() throws OpenEJBException {
@@ -116,7 +117,7 @@ class EnterpriseBeanBuilder {
         List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
 
         // build the enc
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, emfLinkResolver, moduleId, cl);
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleId, cl);
         Context root = jndiEncBuilder.build();
 
         DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
@@ -185,8 +186,17 @@ class EnterpriseBeanBuilder {
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
             for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
-                    EntityManagerFactory entityManagerFactory = emfLinkResolver.resolveLink(info.persistenceUnitName, moduleId);
-                    extendedEntityManagerFactories.put(entityManagerFactory, info.properties);
+//                    EntityManagerFactory entityManagerFactory = emfLinkResolver.resolveLink(info.persistenceUnitName, moduleId);
+//                    extendedEntityManagerFactories.put(entityManagerFactory, info.properties);
+
+                    try {
+                        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                        Object o = containerSystem.getJNDIContext().lookup("openejb/PersistenceUnit/" + info.unitId);
+                        extendedEntityManagerFactories.put((EntityManagerFactory) o, info.properties);
+                    } catch (NamingException e) {
+                        throw new OpenEJBException("PersistenceUnit '" + info.unitId + "' not found for EXTENDED ref '" + info.referenceName + "'");
+                    }
+
                 }
             }
             deployment.setExtendedEntityManagerFactories(new Index<EntityManagerFactory, Map>(extendedEntityManagerFactories));

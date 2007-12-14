@@ -30,6 +30,7 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.factory.Constants;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
@@ -66,6 +67,8 @@ import static org.apache.openejb.tomcat.NamingUtil.setStaticValue;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -77,17 +80,15 @@ public class TomcatJndiBuilder {
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
     private final List<Injection> injections;
-    private final LinkResolver<EntityManagerFactory> emfLinkResolver;
     private final boolean replaceEntry;
     private boolean useCrossClassLoaderRef = true;
     private NamingContextListener namingContextListener;
 
-    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo,List<Injection> injections, LinkResolver<EntityManagerFactory> emfLinkResolver) {
+    public TomcatJndiBuilder(StandardContext standardContext, WebAppInfo webAppInfo, List<Injection> injections) {
         this.injections = injections;
         this.standardContext = standardContext;
         this.namingContextListener = standardContext.getNamingContextListener();
         this.webAppInfo = webAppInfo;
-        this.emfLinkResolver = emfLinkResolver;
 
         String parameter = standardContext.findParameter("openejb.start.late");
         replaceEntry = Boolean.parseBoolean(parameter);
@@ -268,9 +269,12 @@ public class TomcatJndiBuilder {
             resource.setProperty(JNDI_NAME, ref.location.jndiName);
             resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
-            EntityManagerFactory factory = emfLinkResolver.resolveLink(ref.persistenceUnitName, moduleUri);
-            if (factory == null) {
-                throw new IllegalArgumentException("Persistence unit " + ref.persistenceUnitName + " for persistence-context-ref " + ref.referenceName + " not found");
+            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            EntityManagerFactory factory;
+            try {
+                factory = (EntityManagerFactory) context.lookup("openejb/PersistenceUnit/" + ref.unitId);
+            } catch (NamingException e) {
+                throw new IllegalStateException("PersistenceUnit '" + ref.unitId + "' not found for EXTENDED ref '" + ref.referenceName + "'");
             }
 
             JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);

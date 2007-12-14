@@ -23,7 +23,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.Messages;
 
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -42,14 +41,14 @@ public class EjbJarBuilder {
         this.classLoader = classLoader;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, LinkResolver<EntityManagerFactory> emfLinkResolver) throws OpenEJBException {
+    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
 
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
 
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList<String>(), emfLinkResolver);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList<String>());
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);
