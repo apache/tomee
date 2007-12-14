@@ -315,9 +315,13 @@ public class TomcatJndiBuilder {
             resource.setProperty(JNDI_NAME, ref.location.jndiName);
             resource.setProperty(JNDI_PROVIDER_ID, ref.location.jndiProviderId);
         } else {
-            EntityManagerFactory factory = emfLinkResolver.resolveLink(ref.persistenceUnitName, moduleUri);
-            if (factory == null) {
-                throw new IllegalArgumentException("Persistence unit " + ref.persistenceUnitName + " for persistence-unit-ref " + ref.referenceName + " not found");
+            // TODO: This will not work if webapps don't use AutoConfi
+            Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            EntityManagerFactory factory;
+            try {
+                factory = (EntityManagerFactory) context.lookup("openejb/PersistenceUnit/" + ref.unitId);
+            } catch (NamingException e) {
+                throw new IllegalStateException("PersistenceUnit '" + ref.unitId + "' not found for EXTENDED ref '" + ref.referenceName + "'");
             }
             setStaticValue(resource, factory);
         }
