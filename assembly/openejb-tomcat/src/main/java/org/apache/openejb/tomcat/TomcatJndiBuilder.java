@@ -34,7 +34,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
-import org.apache.openejb.assembler.classic.LinkResolver;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.PortRefInfo;

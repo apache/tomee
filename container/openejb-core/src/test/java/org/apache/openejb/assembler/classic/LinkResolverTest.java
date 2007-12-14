@@ -16,12 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.Map;
 import java.net.URI;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
 
 import junit.framework.TestCase;
+import org.apache.openejb.util.LinkResolver;
 
 public class LinkResolverTest extends TestCase {
 

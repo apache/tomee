@@ -41,7 +41,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.LinkResolver;
+import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;

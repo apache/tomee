@@ -18,7 +18,9 @@
  */
 
 
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.util;
+
+import org.apache.openejb.util.LinkResolver;
 
 import java.net.URI;
 
