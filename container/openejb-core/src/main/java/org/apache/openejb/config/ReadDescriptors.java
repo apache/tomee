@@ -17,6 +17,10 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.ServicesJar;
+import org.apache.openejb.config.sys.ServiceProvider;
+import org.apache.openejb.config.sys.ListAdapter;
+import org.apache.openejb.config.sys.PropertiesAdapter;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
@@ -51,12 +55,14 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 public class ReadDescriptors implements DynamicDeployer {
@@ -336,9 +342,9 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static EjbJar readEjbJar(URL url) throws OpenEJBException {
-        EjbJar ejbJar = null;
         try {
-            ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, url.openStream());
+            if (isEmptyEjbJar(url)) return new EjbJar();
+            return (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, url.openStream());
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the ejb-jar.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
@@ -348,7 +354,26 @@ public class ReadDescriptors implements DynamicDeployer {
         } catch (Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: " + url.toExternalForm(), e);
         }
-        return ejbJar;
+    }
+
+    private static boolean isEmptyEjbJar(URL url) throws IOException, ParserConfigurationException, SAXException {
+        InputSource inputSource = new InputSource(url.openStream());
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        SAXParser parser = factory.newSAXParser();
+
+        try {
+            parser.parse(inputSource, new DefaultHandler(){
+                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+                    if (!localName.equals("ejb-jar")) throw new SAXException(localName);
+                }
+            });
+            return true;
+        } catch (SAXException e) {
+            return false;
+        }
     }
 
     public static Webservices readWebservices(URL url) throws OpenEJBException {

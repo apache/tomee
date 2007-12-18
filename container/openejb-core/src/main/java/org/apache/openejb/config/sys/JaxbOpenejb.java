@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.List;
 
 public abstract class JaxbOpenejb {
     @SuppressWarnings({"unchecked"})
@@ -124,7 +126,9 @@ public abstract class JaxbOpenejb {
             url = finder.find(providerName + "/service-jar.xml");
             in = url.openStream();
 
-            ServicesJar servicesJar = unmarshal(ServicesJar.class, in);
+            ServicesJar servicesJar = parseServicesJar(in);
+
+//            ServicesJar servicesJar = unmarshal(ServicesJar.class, in);
             return servicesJar;
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve service provider " + providerName, e);
@@ -138,6 +142,63 @@ public abstract class JaxbOpenejb {
                 }
             }
         }
+    }
+
+    private static ServicesJar parseServicesJar(InputStream in) throws ParserConfigurationException, SAXException, IOException {
+        InputSource inputSource = new InputSource(in);
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        SAXParser parser = factory.newSAXParser();
+
+        final ServicesJar servicesJar1 = new ServicesJar();
+
+        parser.parse(inputSource, new DefaultHandler(){
+            private ServiceProvider provider;
+            private StringBuilder content;
+
+            public void startDocument() throws SAXException {
+            }
+
+            public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+                if (!localName.equals("ServiceProvider")) return;
+
+                provider = new ServiceProvider();
+                provider.setId(att.getValue("","id"));
+                provider.setService(att.getValue("","service"));
+                provider.setFactoryName(att.getValue("","factory-name"));
+                provider.setConstructor(att.getValue("","constructor"));
+                provider.setClassName(att.getValue("","class-name"));
+                String typesString = att.getValue("", "types");
+                if (typesString != null){
+                    ListAdapter listAdapter = new ListAdapter();
+                    List<String> types = listAdapter.unmarshal(typesString);
+                    provider.getTypes().addAll(types);
+                }
+                servicesJar1.getServiceProvider().add(provider);
+            }
+
+            public void characters(char ch[], int start, int length) throws SAXException {
+                if (content == null) content = new StringBuilder();
+                content.append(ch, start, length);
+            }
+
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+                if (provider == null || content == null) return;
+
+                try {
+                    PropertiesAdapter propertiesAdapter = new PropertiesAdapter();
+                    provider.getProperties().putAll(propertiesAdapter.unmarshal(content.toString()));
+                } catch (Exception e) {
+                    throw new SAXException(e);
+                }
+                provider = null;
+                content = null;
+            }
+        });
+        ServicesJar servicesJar = servicesJar1;
+        return servicesJar;
     }
 
     public static Openejb readConfig(String configFile) throws OpenEJBException {

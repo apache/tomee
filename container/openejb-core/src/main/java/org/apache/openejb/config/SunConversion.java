@@ -489,7 +489,7 @@ public class SunConversion implements DynamicDeployer {
 
     public void convertModule(EjbModule ejbModule, EntityMappings entityMappings) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
-        for (Entity entity : entityMappings.getEntity()) {
+        if (entityMappings != null ) for (Entity entity : entityMappings.getEntity()) {
             entities.put(entity.getDescription(), new SunConversion.EntityData(entity));
         }
 

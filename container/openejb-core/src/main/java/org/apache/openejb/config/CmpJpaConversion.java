@@ -32,6 +32,7 @@ import org.apache.openejb.jee.RelationshipRoleSource;
 import org.apache.openejb.jee.Relationships;
 import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
+import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.jpa.Basic;
@@ -87,6 +88,9 @@ public class CmpJpaConversion implements DynamicDeployer {
     )));
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
+
+        if (!hasCmpEntities(appModule)) return appModule;
+
         // search for the cmp persistence unit
         PersistenceUnit persistenceUnit = null;
         for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
@@ -101,6 +105,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
+
 
         // create mappings
         EntityMappings cmpMappings = appModule.getCmpMappings();
@@ -145,6 +150,18 @@ public class CmpJpaConversion implements DynamicDeployer {
         return appModule;
     }
 
+    private boolean hasCmpEntities(AppModule appModule) {
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                if (bean instanceof EntityBean) {
+                    EntityBean entityBean = (EntityBean) bean;
+                    if (entityBean.getPersistenceType() == PersistenceType.CONTAINER) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public EntityMappings generateEntityMappings(EjbModule ejbModule) throws OpenEJBException {
         AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
         appModule.getEjbModules().add(ejbModule);
@@ -171,8 +188,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
-            if (!(enterpriseBean instanceof EntityBean) ||
-                    ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
+            if (!(enterpriseBean instanceof EntityBean) || ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
                 continue;
             }
             EntityBean bean = (EntityBean) enterpriseBean;

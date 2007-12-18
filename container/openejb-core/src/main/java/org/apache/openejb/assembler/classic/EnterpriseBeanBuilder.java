@@ -345,10 +345,10 @@ class EnterpriseBeanBuilder {
     private Class loadClass(String className, String messageCode) throws OpenEJBException {
         Class clazz = load(className, messageCode);
         try {
-            clazz.getDeclaredMethods();
-            clazz.getDeclaredFields();
-            clazz.getDeclaredConstructors();
-            clazz.getInterfaces();
+//            clazz.getDeclaredMethods();
+//            clazz.getDeclaredFields();
+//            clazz.getDeclaredConstructors();
+//            clazz.getInterfaces();
             return clazz;
         } catch (NoClassDefFoundError e) {
             if (clazz.getClassLoader() != cl) {

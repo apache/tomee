@@ -101,10 +101,10 @@ public class InjectionBuilder {
     private Class loadClass(String className) throws OpenEJBException {
         try {
             Class clazz = Class.forName(className, true, classLoader);
-            clazz.getDeclaredMethods();
-            clazz.getDeclaredFields();
-            clazz.getDeclaredConstructors();
-            clazz.getInterfaces();
+//            clazz.getDeclaredMethods();
+//            clazz.getDeclaredFields();
+//            clazz.getDeclaredConstructors();
+//            clazz.getInterfaces();
             return clazz;
         } catch (Throwable e) {
             throw new OpenEJBException("Unable to load class " + className);
