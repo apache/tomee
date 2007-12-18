@@ -91,6 +91,7 @@ import java.util.Map;
         "messagingType",
         "timeoutMethod",
         "transactionType",
+        "messageDrivenDestination",
         "messageDestinationType",
         "messageDestinationLink",
         "activationConfig",
@@ -129,6 +130,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected NamedMethod timeoutMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
+    @XmlElement(name = "message-driven-destination")
+    protected MessageDrivenDestination messageDrivenDestination;
     @XmlElement(name = "message-destination-type")
     protected String messageDestinationType;
     @XmlElement(name = "message-destination-link")
@@ -280,6 +283,14 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.timeoutMethod = value;
     }
 
+    public MessageDrivenDestination getMessageDrivenDestination() {
+        return messageDrivenDestination;
+    }
+
+    public void setMessageDrivenDestination(MessageDrivenDestination value) {
+        this.messageDrivenDestination = value;
+    }
+
     public TransactionType getTransactionType() {
         return transactionType;
     }
@@ -322,6 +333,23 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     }
 
     public ActivationConfig getActivationConfig() {
+        // convert the message-driven-destination to activation-config-property
+        // OPENEJB-701 EJB 2.0 depricated message-driven-destination tag not supported
+        // https://issues.apache.org/jira/browse/OPENEJB-701
+        if (messageDrivenDestination != null) {
+            if (activationConfig == null) {
+                activationConfig = new ActivationConfig();
+            }
+            DestinationType destinationType = messageDrivenDestination.getDestinationType();
+            if (destinationType != null) {
+                activationConfig.addProperty("destinationType", destinationType.getvalue());
+            }
+            SubscriptionDurability subscriptionDurability = messageDrivenDestination.getSubscriptionDurability();
+            if (subscriptionDurability != null) {
+                activationConfig.addProperty("subscriptionDurability", subscriptionDurability.getvalue());
+            }
+            messageDrivenDestination = null;
+        }
         return activationConfig;
     }
 
