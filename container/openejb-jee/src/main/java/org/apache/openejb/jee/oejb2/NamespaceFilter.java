@@ -32,8 +32,7 @@ import java.util.Stack;
  */
 public class NamespaceFilter extends XMLFilterImpl {
 
-    static Map<String, String> ns = new HashMap();
-    private String previousNs;
+    static Map<String, String> ns = new HashMap<String, String>();
 
     static {
         ns.put("abstract-naming-entry", "http://geronimo.apache.org/xml/ns/naming-1.2");

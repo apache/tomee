@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-
 /**
  * @version $Rev$ $Date$
  */

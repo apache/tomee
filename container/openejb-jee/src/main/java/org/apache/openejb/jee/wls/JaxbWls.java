@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.jee.wls;
 
-import org.apache.openejb.jee.JaxbJavaee;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -49,7 +48,7 @@ import java.io.IOException;
 public class JaxbWls {
     public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
 
-    private static Map<Class, JAXBContext> jaxbContexts = new HashMap<Class,JAXBContext>();
+    private static Map<Class<?>, JAXBContext> jaxbContexts = new HashMap<Class<?>,JAXBContext>();
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

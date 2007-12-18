@@ -17,9 +17,7 @@
 package org.apache.openejb.server.derbynet;
 
 import org.apache.derby.drda.NetworkServerControl;
-import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
-import org.apache.log4j.Logger;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;

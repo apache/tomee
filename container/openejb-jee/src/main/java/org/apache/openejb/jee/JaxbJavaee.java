@@ -48,7 +48,7 @@ import java.util.TreeSet;
 public class JaxbJavaee {
     public static final ThreadLocal<Set<String>> currentPublicId = new ThreadLocal<Set<String>>();
 
-    private static Map<Class,JAXBContext> jaxbContexts = new HashMap<Class,JAXBContext>();
+    private static Map<Class<?>,JAXBContext> jaxbContexts = new HashMap<Class<?>,JAXBContext>();
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

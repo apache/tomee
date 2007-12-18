@@ -315,7 +315,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         this.home = home;
     }
 
-    public void setHomeAndRemote(Class home, Class remote) {
+    public void setHomeAndRemote(Class<?> home, Class<?> remote) {
         this.remote = remote.getName();
         this.home = home.getName();
     }
@@ -325,7 +325,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         this.localHome = localHome;
     }
 
-    public void setHomeAndLocal(Class localHome, Class local) {
+    public void setHomeAndLocal(Class<?> localHome, Class<?> local) {
         this.local = local.getName();
         this.localHome = localHome.getName();
     }

@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -105,7 +104,7 @@ public class AssemblyDescriptor {
     }
 
     public Map<String,List<MethodTransaction>> getMethodTransactions(String ejbName) {
-        Map<String,List<MethodTransaction>> methods = new LinkedHashMap();
+        Map<String,List<MethodTransaction>> methods = new LinkedHashMap<String,List<MethodTransaction>>();
         for (ContainerTransaction transaction : getContainerTransaction()) {
 
             for (Method method : transaction.getMethod()) {
@@ -113,7 +112,7 @@ public class AssemblyDescriptor {
                     String methodName = method.getMethodName();
                     List<MethodTransaction> list = methods.get(methodName);
                     if (list == null){
-                        list = new ArrayList();
+                        list = new ArrayList<MethodTransaction>();
                         methods.put(methodName, list);
                     }
                     list.add(new MethodTransaction(transaction.getTransAttribute(), method));

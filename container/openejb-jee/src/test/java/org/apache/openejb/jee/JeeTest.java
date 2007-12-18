@@ -137,7 +137,7 @@ public class JeeTest extends TestCase {
         }
     }
 
-    private java.lang.String readContent(InputStream in) throws IOException {
+    private String readContent(InputStream in) throws IOException {
         StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
@@ -145,7 +145,7 @@ public class JeeTest extends TestCase {
             sb.append((char) i);
             i = in.read();
         }
-        java.lang.String content = sb.toString();
+        String content = sb.toString();
         return content;
     }
 

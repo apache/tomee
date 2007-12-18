@@ -17,7 +17,6 @@
 package org.apache.openejb.jee.oejb2;
 
 import javax.xml.bind.JAXBElement;
-import java.lang.*;
 import java.util.List;
 
 /**

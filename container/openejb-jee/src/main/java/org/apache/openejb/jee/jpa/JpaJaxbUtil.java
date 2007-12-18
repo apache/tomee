@@ -54,7 +54,6 @@ public class JpaJaxbUtil {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
 
         JAXBContext ctx = JAXBContext.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();

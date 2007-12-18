@@ -20,7 +20,6 @@ package org.apache.openejb.jee.oejb2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
-import java.lang.*;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -113,16 +112,16 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     @XmlTransient
     public List<String> getJndiName() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @XmlTransient
     public List<String> getLocalJndiName() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public List<Jndi> getJndi() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**

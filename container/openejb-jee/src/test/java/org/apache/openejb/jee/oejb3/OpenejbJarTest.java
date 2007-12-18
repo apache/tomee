@@ -43,7 +43,7 @@ public class OpenejbJarTest extends TestCase {
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("openejb-jar.xml");
-        java.lang.String expected = readContent(in);
+        String expected = readContent(in);
 
         unmarshaller.setEventHandler(new TestValidationEventHandler());
         Object object = unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));

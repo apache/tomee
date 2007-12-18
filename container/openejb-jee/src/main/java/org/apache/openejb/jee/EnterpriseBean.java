@@ -17,8 +17,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.List;
-
 /**
  * @version $Revision$ $Date$
  */

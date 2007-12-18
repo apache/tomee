@@ -39,9 +39,9 @@ import org.xml.sax.SAXException;
  */
 public class JaxbOpenejbJar2 {
 
-    private static final Map<Class,JAXBContext> contexts = new HashMap<Class,JAXBContext>();
+    private static final Map<Class<?>,JAXBContext> contexts = new HashMap<Class<?>,JAXBContext>();
 
-    private static JAXBContext getContext(Class type) throws JAXBException {
+    private static JAXBContext getContext(Class<?> type) throws JAXBException {
         JAXBContext jaxbContext = contexts.get(type);
         if (jaxbContext == null) {
             jaxbContext = JAXBContext.newInstance(type);

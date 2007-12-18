@@ -17,7 +17,6 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;

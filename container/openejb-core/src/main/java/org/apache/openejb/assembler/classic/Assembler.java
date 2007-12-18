@@ -175,8 +175,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (appServer == null) {
             system.setComponent(ApplicationServer.class, new org.apache.openejb.core.ServerFederation());
         }
-
-
     }
 
     private void setConfiguration(OpenEjbConfiguration config) {

@@ -14,7 +14,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,7 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 
 /**
  * The activation-configType defines information about the
