@@ -384,6 +384,11 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>java.net</id>
+      <url>http://download.java.net/maven/1</url>
+      <layout>legacy</layout>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -725,7 +730,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>2.0.3</version>
+        <version>2.0.5</version>
         <exclusions>
           <exclusion>
             <groupId>javax.xml</groupId>
