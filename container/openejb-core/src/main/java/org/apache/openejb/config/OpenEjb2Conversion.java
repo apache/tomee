@@ -230,8 +230,10 @@ public class OpenEjb2Conversion implements DynamicDeployer {
 
     public void mergeEntityMappings(String moduleId, EntityMappings entityMappings, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
         Map<String, EntityData> entities =  new TreeMap<String, EntityData>();
-        for (Entity entity : entityMappings.getEntity()) {
-            entities.put(entity.getDescription(), new EntityData(entity));
+        if (entityMappings != null) {
+            for (Entity entity : entityMappings.getEntity()) {
+                entities.put(entity.getDescription(), new EntityData(entity));
+            }
         }
         for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof EntityBeanType)) {
