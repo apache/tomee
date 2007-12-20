@@ -305,6 +305,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // bound after the context is created
         ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
         try {
+
+            Context openejbContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            openejbContext = (Context) openejbContext.lookup("openejb");
+
+            Context root = (Context) ContextBindings.getClassLoader().lookup("");
+            safeBind(root, "openejb", openejbContext);            
+
             Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
 
             // add context to WebDeploymentInfo

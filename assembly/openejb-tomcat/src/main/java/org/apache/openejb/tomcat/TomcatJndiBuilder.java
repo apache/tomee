@@ -102,6 +102,7 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeJndi() throws OpenEJBException {
+
         NamingResources naming = standardContext.getNamingResources();
 
         URI moduleUri;
