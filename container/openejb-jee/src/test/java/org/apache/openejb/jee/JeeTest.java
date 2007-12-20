@@ -92,7 +92,7 @@ public class JeeTest extends TestCase {
         Object object = unmarshaller.unmarshal(source);
 
         Marshaller marshaller = ctx.createMarshaller();
-        marshaller.setProperty("jaxb.formatted.output", true);
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
