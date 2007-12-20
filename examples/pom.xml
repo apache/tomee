@@ -33,6 +33,7 @@
   <modules>
     <module>simple-stateful</module>
     <module>simple-stateless</module>
+    <module>simple-webservice</module>
     <module>component-interfaces</module>
     <module>injection-of-ejbs</module>
     <module>injection-of-env-entry</module>

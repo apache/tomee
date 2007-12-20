@@ -32,21 +32,6 @@ public interface WsConstants {
     public static final String MESSAGE_CONTEXT = WsConstants.class.getName() + "@MessageContext";
 
     /**
-     * Used for JAX-WS MessageContext. MessageContext must expose HttpServletRequest.
-     */
-    public static final String SERVLET_REQUEST = WsConstants.class.getName() + "@ServletRequest";
-
-    /**
-     * Used for JAX-WS MessageContext. MessageContext must expose HttpServletResponse.
-     */
-    public static final String SERVLET_RESPONSE = WsConstants.class.getName() + "@ServletResponse";
-
-    /**
-     * Used for JAX-WS MessageContext. MessageContext must expose ServletContext.
-     */
-    public static final String SERVLET_CONTEXT = WsConstants.class.getName() + "@ServletContext";
-
-    /**
      * Token inserted into wsdl where location should be replaced with the real location
      */
     public static final String LOCATION_REPLACEMENT_TOKEN = "LOCATIONREPLACEMENTTOKEN";

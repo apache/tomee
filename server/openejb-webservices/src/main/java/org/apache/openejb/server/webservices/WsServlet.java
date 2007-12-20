@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.ServletRequestAdapter;
+import org.apache.openejb.server.httpd.ServletResponseAdapter;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -34,13 +36,7 @@ import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.server.ServletEndpointContext;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
 import java.security.Principal;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class WsServlet implements Servlet {
     public static final String POJO_CLASS = WsServlet.class.getName() + "@pojoClassName";
@@ -91,18 +87,15 @@ public class WsServlet implements Servlet {
         endpointContext.set(new InvocationContext((HttpServletRequest) req));
         try {
             res.setContentType("text/xml");
-            RequestAdapter request = new RequestAdapter((HttpServletRequest) req);
-            ResponseAdapter response = new ResponseAdapter((HttpServletResponse) res);
+            HttpRequest httpRequest = new ServletRequestAdapter((HttpServletRequest) req, (HttpServletResponse) res, config.getServletContext());
+            HttpResponse httpResponse = new ServletResponseAdapter((HttpServletResponse) res);
 
-            req.setAttribute(WsConstants.SERVLET_REQUEST, req);
-            req.setAttribute(WsConstants.SERVLET_RESPONSE, res);
-            req.setAttribute(WsConstants.SERVLET_CONTEXT, config.getServletContext());
             if (pojo != null) {
                 req.setAttribute(WsConstants.POJO_INSTANCE, pojo);
             }
 
             try {
-                service.onMessage(request, response);
+                service.onMessage(httpRequest, httpResponse);
             } catch (IOException e) {
                 throw e;
             } catch (ServletException e) {
@@ -147,176 +140,6 @@ public class WsServlet implements Servlet {
             }
         }
         return service;
-    }
-
-    private static class RequestAdapter implements HttpRequest {
-        private final HttpServletRequest request;
-
-        public RequestAdapter(HttpServletRequest request) {
-            this.request = request;
-        }
-
-        public org.apache.openejb.server.httpd.HttpSession getSession(boolean create) {
-            javax.servlet.http.HttpSession session = request.getSession(create);
-            if (session != null) {
-                return new HttpSessionAdapter(session);
-            } else {
-                return null;
-            }
-        }
-
-        public org.apache.openejb.server.httpd.HttpSession getSession() {
-            javax.servlet.http.HttpSession session = request.getSession();
-            if (session != null) {
-                return new HttpSessionAdapter(session);
-            } else {
-                return null;
-            }
-        }
-
-        public String getHeader(String name) {
-            return request.getHeader(name);
-        }
-
-        public java.net.URI getURI() {
-            try {
-                return new java.net.URI(request.getScheme(), null, request.getServerName(), request.getServerPort(), request.getRequestURI(), request.getQueryString(), null);
-            } catch (URISyntaxException e) {
-                throw new IllegalStateException(e.getMessage(), e);
-            }
-        }
-
-        public int getContentLength() {
-            return request.getContentLength();
-        }
-
-        public String getContentType() {
-            return request.getContentType();
-        }
-
-        public String getContextPath() {
-            return request.getContextPath();
-        }
-
-        public InputStream getInputStream() throws IOException {
-            return request.getInputStream();
-        }
-
-        public int getMethod() {
-            Integer method = methods.get(request.getMethod());
-            return method == null ? UNSUPPORTED : method.intValue();
-        }
-
-        public String getParameter(String name) {
-            return request.getParameter(name);
-        }
-
-        public Map getParameters() {
-            return request.getParameterMap();
-        }
-
-        private static final Map<String, Integer> methods = new TreeMap<String, Integer>();
-
-        static {
-            methods.put("OPTIONS", new Integer(OPTIONS));
-            methods.put("GET", new Integer(GET));
-            methods.put("HEAD", new Integer(HEAD));
-            methods.put("POST", new Integer(POST));
-            methods.put("PUT", new Integer(PUT));
-            methods.put("DELETE", new Integer(DELETE));
-            methods.put("TRACE", new Integer(TRACE));
-            methods.put("CONNECT", new Integer(CONNECT));
-        }
-
-        public Object getAttribute(String s) {
-            return request.getAttribute(s);
-        }
-
-        public void setAttribute(String s, Object o) {
-            request.setAttribute(s, o);
-        }
-
-        public String getRemoteAddr() {
-            return request.getRemoteAddr();
-        }
-
-    }
-
-    private static class HttpSessionAdapter implements org.apache.openejb.server.httpd.HttpSession {
-        private final javax.servlet.http.HttpSession session;
-
-        public HttpSessionAdapter(javax.servlet.http.HttpSession session) {
-            this.session = session;
-        }
-
-        public String getId() {
-            return session.getId();
-        }
-
-        public Object getAttribute(String name) {
-            return getAttribute(name);
-        }
-
-        public void setAttribute(String name, Object value) {
-            session.setAttribute(name, value);
-        }
-
-        public void removeAttribute(String name) {
-            session.removeAttribute(name);
-        }
-    }
-
-    private static class ResponseAdapter implements HttpResponse {
-        private final HttpServletResponse response;
-
-        public ResponseAdapter(HttpServletResponse response) {
-            this.response = response;
-        }
-
-        public PrintWriter getPrintWriter() throws IOException {
-            return response.getWriter();
-        }
-
-        public void setHeader(String name, String value) {
-            response.setHeader(name, value);
-        }
-
-        public String getHeader(String name) {
-            throw new UnsupportedOperationException("Not possible to implement");
-        }
-
-        public OutputStream getOutputStream() {
-            try {
-                return response.getOutputStream();
-            } catch (IOException e) {
-                throw (IllegalStateException) new IllegalStateException().initCause(e);
-            }
-        }
-
-        public void setStatusCode(int code) {
-            response.setStatus(code);
-        }
-
-        public int getStatusCode() {
-            throw new UnsupportedOperationException("Not possible to implement");
-        }
-
-        public void setContentType(String type) {
-            response.setContentType(type);
-        }
-
-        public String getContentType() {
-            return response.getContentType();
-        }
-
-        @SuppressWarnings({"deprecation"})
-        public void setStatusMessage(String responseString) {
-            response.setStatus(getStatusCode(), responseString);
-        }
-
-        public void flushBuffer() throws java.io.IOException {
-            response.flushBuffer();
-        }
     }
 
     private static ServletEndpointContext getContext() {

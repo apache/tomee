@@ -32,7 +32,6 @@ import java.io.OutputStream;
  * @version $Revision$ $Date$
  */
 public class HttpEjbServer implements ServerService {
-
     private HttpServer httpServer;
     private String name;
 

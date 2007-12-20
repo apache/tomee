@@ -214,9 +214,9 @@ public abstract class Axis2WsContainer implements HttpListener {
 
     public void doService2(HttpRequest request, HttpResponse response, MessageContext msgContext) throws Exception {
 
-        if (request.getMethod() == HttpRequest.GET) {
+        if (request.getMethod() == HttpRequest.Method.GET) {
             processGETRequest(request, response, this.service, msgContext);
-        } else if (request.getMethod() == HttpRequest.POST) {
+        } else if (request.getMethod() == HttpRequest.Method.POST) {
             processPOSTRequest(request, response, this.service, msgContext);
         } else {
             throw new UnsupportedOperationException("[" + request.getMethod() + " ] method not supported");
@@ -304,13 +304,13 @@ public abstract class Axis2WsContainer implements HttpListener {
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, request.getURI().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
 
-        HttpServletRequest servletRequest = (HttpServletRequest) request.getAttribute(WsConstants.SERVLET_REQUEST);
+        HttpServletRequest servletRequest = (HttpServletRequest) request.getAttribute(HttpRequest.SERVLET_REQUEST);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, servletRequest);
 
-        HttpServletResponse servletResponse = (HttpServletResponse) request.getAttribute(WsConstants.SERVLET_RESPONSE);
+        HttpServletResponse servletResponse = (HttpServletResponse) request.getAttribute(HttpRequest.SERVLET_RESPONSE);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, servletResponse);
 
-        ServletContext servletContext = (ServletContext) request.getAttribute(WsConstants.SERVLET_CONTEXT);
+        ServletContext servletContext = (ServletContext) request.getAttribute(HttpRequest.SERVLET_CONTEXT);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletContext);
 
         if (servletRequest != null) {

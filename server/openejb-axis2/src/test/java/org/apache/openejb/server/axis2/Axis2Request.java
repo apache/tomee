@@ -32,7 +32,7 @@ class Axis2Request implements HttpRequest {
 
     private InputStream in;
 
-    private int method;
+    private Method method;
 
     private Map<String,String> parameters;
 
@@ -44,7 +44,7 @@ class Axis2Request implements HttpRequest {
 
     private String remoteAddress;
 
-    public Axis2Request(int contentLength, String contentType, InputStream in, int method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+    public Axis2Request(int contentLength, String contentType, InputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
         this.contentLength = contentLength;
         this.contentType = contentType;
         this.in = in;
@@ -72,7 +72,7 @@ class Axis2Request implements HttpRequest {
         return in;
     }
 
-    public int getMethod() {
+    public Method getMethod() {
         return method;
     }
 

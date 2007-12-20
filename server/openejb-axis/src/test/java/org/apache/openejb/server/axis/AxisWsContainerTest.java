@@ -25,6 +25,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
+import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.webservices.WsConstants;
 
 import javax.xml.namespace.QName;
@@ -97,7 +98,7 @@ public class AxisWsContainerTest extends AbstractTestCase {
                     504,
                     "text/xml; charset=utf-8",
                     in,
-                    0,
+                    HttpRequest.Method.GET,
                     new HashMap<String,String>(),
                     location,
                     new HashMap<String,String>(),

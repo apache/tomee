@@ -132,7 +132,7 @@ public class AxisWsContainer implements HttpListener {
                 responseMessage = messageContext.getResponseMessage();
             } catch (AxisFault fault) {
                 
-               	if(req.getMethod() == HttpRequest.GET && req.getParameters().isEmpty()){
+               	if(req.getMethod() == HttpRequest.Method.GET && req.getParameters().isEmpty()){
                		String serviceName = req.getURI().getRawPath();
                     serviceName = serviceName.substring(serviceName.lastIndexOf("/")+1);
                		printServiceInfo(res,serviceName);

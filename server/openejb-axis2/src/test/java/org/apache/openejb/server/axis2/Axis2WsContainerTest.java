@@ -55,7 +55,7 @@ public class Axis2WsContainerTest extends Axis2AbstractTestCase {
         Axis2Request req = new Axis2Request(504,
                 "text/xml; charset=utf-8",
                 null,
-                HttpRequest.GET,
+                HttpRequest.Method.GET,
                 new HashMap<String,String>(),
                 new URI("/axis2/HelloWorld?wsdl"),
                 new HashMap<String,String>(),

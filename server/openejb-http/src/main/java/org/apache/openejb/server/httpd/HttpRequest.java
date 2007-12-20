@@ -26,29 +26,16 @@ import java.util.Map;
  *
  */
 public interface HttpRequest extends java.io.Serializable{
+    /**
+     * Request methods
+     */
+    public static enum Method {
+        OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT, UNSUPPORTED
+    }
 
-    /** the HTTP OPTIONS type */
-    public static final int OPTIONS = 0; // Section 9.2
-    /** the HTTP GET type */
-    public static final int GET     = 1; // Section 9.3
-    /** the HTTP HEAD type */
-    public static final int HEAD    = 2; // Section 9.4
-    /** the HTTP POST type */
-    public static final int POST    = 3; // Section 9.5
-    /** the HTTP PUT type */
-    public static final int PUT     = 4; // Section 9.6
-    /** the HTTP DELETE type */
-    public static final int DELETE  = 5; // Section 9.7
-    /** the HTTP TRACE type */
-    public static final int TRACE   = 6; // Section 9.8
-    /** the HTTP CONNECT type */
-    public static final int CONNECT = 7; // Section 9.9
-    /** the HTTP UNSUPPORTED type */
-    public static final int UNSUPPORTED = 8;
-
-    /* 
-    * Header variables
-    */
+    //
+    // Header variables
+    //
     /** the Accept header */
     public static final String HEADER_ACCEPT = "Accept";
     /** the Accept-Encoding header */
@@ -71,6 +58,29 @@ public interface HttpRequest extends java.io.Serializable{
     public static final String HEADER_SET_COOKIE = "Set-Cookie";
     /** the Cookie header */
     public static final String HEADER_COOKIE = "Cookie";
+
+    //
+    // Common attrobute values
+    //
+    /**
+     * If the https server implementation is based on Servlets, the real HttpServletRequest
+     * will be registered in the request attributes using this name.
+     */
+    public static final String SERVLET_REQUEST = HttpRequest.class.getName() + "@ServletRequest";
+
+    /**
+     * If the https server implementation is based on Servlets, the real HttpServletResponse
+     * will be registered in the request attributes using this name.
+     */
+    public static final String SERVLET_RESPONSE = HttpRequest.class.getName() + "@ServletResponse";
+
+    /**
+     * If the https server implementation is based on Servlets, the real ServletContext
+     * will be registered in the request attributes using this name.  Note: a ServletContext
+     * may not be registered even if HttpServletRequest and HttpServletResponse objects are
+     * registered.
+     */
+    public static final String SERVLET_CONTEXT = HttpRequest.class.getName() + "@ServletContext";
 
     /**
      * Gets a form or URL query parameter based on the name passed in.
@@ -120,20 +130,10 @@ public interface HttpRequest extends java.io.Serializable{
      */
     public String getHeader(String name);
 
-    /** Gets an integer value of the request method.  These values are:
-     *
-     * OPTIONS = 0
-     * GET     = 1
-     * HEAD    = 2
-     * POST    = 3
-     * PUT     = 4
-     * DELETE  = 5
-     * TRACE   = 6
-     * CONNECT = 7
-     * UNSUPPORTED = 8
+    /** Gets an integer value of the request method.
      * @return The integer value of the method
      */
-    public int getMethod();
+    public Method getMethod();
 
     /** Gets the URI for the current URL page.
      * @return The URI

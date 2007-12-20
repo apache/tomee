@@ -76,16 +76,16 @@ public class HttpDestination extends AbstractHTTPDestination {
         message.put(HttpRequest.class, request);
         message.put(HttpResponse.class, response);
 
-        final HttpServletRequest servletRequest = (HttpServletRequest) request.getAttribute(WsConstants.SERVLET_REQUEST);
+        final HttpServletRequest servletRequest = (HttpServletRequest) request.getAttribute(HttpRequest.SERVLET_REQUEST);
         message.put(MessageContext.SERVLET_REQUEST, servletRequest);
 
-        HttpServletResponse servletResponse = (HttpServletResponse) request.getAttribute(WsConstants.SERVLET_RESPONSE);
+        HttpServletResponse servletResponse = (HttpServletResponse) request.getAttribute(HttpRequest.SERVLET_RESPONSE);
         message.put(MessageContext.SERVLET_RESPONSE, servletResponse);
 
-        ServletContext servletContext = (ServletContext) request.getAttribute(WsConstants.SERVLET_CONTEXT);
+        ServletContext servletContext = (ServletContext) request.getAttribute(HttpRequest.SERVLET_CONTEXT);
         message.put(MessageContext.SERVLET_CONTEXT, servletContext);
 
-        if (this.passSecurityContext) {
+        if (this.passSecurityContext && servletRequest != null) {
             message.put(SecurityContext.class, new SecurityContext() {
                 public Principal getUserPrincipal() {
                     return servletRequest.getUserPrincipal();
@@ -100,11 +100,13 @@ public class HttpDestination extends AbstractHTTPDestination {
         // this calls copyRequestHeaders()
         setHeaders(message);
 
-        message.put(Message.HTTP_REQUEST_METHOD, servletRequest.getMethod());
-        message.put(Message.PATH_INFO, servletRequest.getPathInfo());
-        message.put(Message.QUERY_STRING, servletRequest.getQueryString());
-        message.put(Message.CONTENT_TYPE, servletRequest.getContentType());
-        message.put(Message.ENCODING, getCharacterEncoding(servletRequest.getCharacterEncoding()));
+        message.put(Message.HTTP_REQUEST_METHOD, request.getMethod().toString());
+        message.put(Message.PATH_INFO, request.getURI().getPath());
+        message.put(Message.QUERY_STRING, request.getURI().getFragment());
+        message.put(Message.CONTENT_TYPE, request.getContentType());
+        if (servletRequest != null) {
+            message.put(Message.ENCODING, getCharacterEncoding(servletRequest.getCharacterEncoding()));
+        }
 
         getMessageObserver().onMessage(message);
     }

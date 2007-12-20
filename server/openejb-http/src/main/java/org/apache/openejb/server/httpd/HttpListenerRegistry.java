@@ -17,32 +17,28 @@
 package org.apache.openejb.server.httpd;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
  */
 public class HttpListenerRegistry implements HttpListener {
-
-    private final HashMap registry = new HashMap();
+    private final Map<String, HttpListener> registry = new LinkedHashMap<String, HttpListener>();
 
     public HttpListenerRegistry() {
     }
 
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        HashMap listeners;
-
+        Map<String, HttpListener> listeners;
         synchronized (registry) {
-            listeners = new HashMap(registry);
+            listeners = new HashMap<String, HttpListener>(registry);
         }
 
         String path = request.getURI().getPath();
-
-        for (Iterator iterator = listeners.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String pattern = (String) entry.getKey();
-            HttpListener listener = (HttpListener) entry.getValue();
+        for (Map.Entry<String, HttpListener> entry : listeners.entrySet()) {
+            String pattern = entry.getKey();
+            HttpListener listener = entry.getValue();
             if (path.matches(pattern)) {
                 listener.onMessage(request, response);
                 break;
@@ -53,6 +49,12 @@ public class HttpListenerRegistry implements HttpListener {
     public void addHttpListener(HttpListener listener, String regex) {
         synchronized (registry) {
             registry.put(regex, listener);
+        }
+    }
+
+    public void removeHttpListener(String regex) {
+        synchronized (registry) {
+            registry.remove(regex);
         }
     }
 }

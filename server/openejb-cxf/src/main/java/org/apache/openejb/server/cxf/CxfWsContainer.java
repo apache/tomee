@@ -79,7 +79,7 @@ public abstract class CxfWsContainer implements HttpListener {
     }
 
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        if (request.getMethod() == HttpRequest.GET) {
+        if (request.getMethod() == HttpRequest.Method.GET) {
             processGET(request, response);
         } else {
             processPOST(request, response);

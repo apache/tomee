@@ -21,6 +21,7 @@ import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.assembler.classic.DeploymentListener;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -149,6 +150,10 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
     public void start() throws ServiceException {
         wsRegistry = SystemInstance.get().getComponent(WsRegistry.class);
+        if (wsRegistry == null && SystemInstance.get().getComponent(HttpListenerRegistry.class) != null) {
+            wsRegistry = new OpenEJBHttpWsRegistry();
+        }
+
         if (portAddressRegistry == null) {
             portAddressRegistry = new PortAddressRegistryImpl();
             SystemInstance.get().setComponent(PortAddressRegistry.class, portAddressRegistry);

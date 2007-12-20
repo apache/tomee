@@ -17,10 +17,10 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,6 @@ import java.util.Properties;
  * @since 11/25/2001
  */
 public class HttpServer implements ServerService {
-
     private static final Logger log = Logger.getInstance(LogCategory.HTTPSERVER, "org.apache.openejb.util.resources");
 
     private HttpListener listener;
@@ -85,6 +84,8 @@ public class HttpServer implements ServerService {
         throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
     }
 
+    public void init(Properties props) throws Exception {
+    }
 
     public void start() throws ServiceException {
     }
@@ -102,15 +103,6 @@ public class HttpServer implements ServerService {
 
     public String getIP() {
         return "";
-    }
-
-    /**
-     * Initalizes this instance and takes care of starting things up
-     *
-     * @param props a properties instance for system properties
-     * @throws Exception if an exeption is thrown
-     */
-    public void init(Properties props) throws Exception {
     }
 
     /**
@@ -137,7 +129,6 @@ public class HttpServer implements ServerService {
     }
 
     private HttpResponseImpl process(URI socketURI, InputStream in) throws OpenEJBException {
-
         HttpRequestImpl req = new HttpRequestImpl(socketURI);
         HttpResponseImpl res = new HttpResponseImpl();
 
@@ -153,7 +144,7 @@ public class HttpServer implements ServerService {
             throw new OpenEJBException("Could not read the request.\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
         }
 
-        URI uri = null;
+        URI uri;
         String location = null;
         try {
             uri = req.getURI();

@@ -41,7 +41,7 @@ public class HttpResponseImpl implements HttpResponse {
     private int code = 200;
 
     /** Response headers */
-    private HashMap<String,String> headers;
+    private final Map<String,String> headers = new HashMap<String,String>();
 
     /** Response body */
     private byte[] body = new byte[0];
@@ -180,7 +180,6 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected HttpResponseImpl(int code, String responseString, String contentType){
         this.responseString = responseString;
-        this.headers = new HashMap();
         this.code = code;
 
         // Default headers
@@ -231,7 +230,7 @@ public class HttpResponseImpl implements HttpResponse {
 
         buf.append(HTTP_VERSION);
         buf.append(SP);
-        buf.append(code+"");
+        buf.append(code);
         buf.append(SP);
         buf.append(responseString);
 
@@ -314,7 +313,11 @@ public class HttpResponseImpl implements HttpResponse {
         } else {
             InputStream in = content.getInputStream();
             byte buf[] = new byte[1024];
-            for(int i = 0; (i = in.read(buf)) != -1; out.write(buf, 0, i));
+
+            int i;
+            while ((i = in.read(buf)) != -1) {
+                 out.write(buf, 0, i);
+            }
         }
     }
 
@@ -445,6 +448,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      * @throws ClassNotFoundException if an exception is thrown
      */
+    @SuppressWarnings({"unchecked"})
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         /** Response string */
         this.responseString = (String)in.readObject();
@@ -453,7 +457,9 @@ public class HttpResponseImpl implements HttpResponse {
         this.code = in.readInt();
 
         /** Response headers */
-        this.headers = (HashMap) in.readObject();
+        Map headers = (Map) in.readObject();
+        this.headers.clear();
+        this.headers.putAll(headers);
 
         /** Response body */
         body = (byte[]) in.readObject();
