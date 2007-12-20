@@ -45,7 +45,7 @@ public class PropertiesLoginModuleTest extends TestCase {
                 System.setProperty("java.security.auth.login.config", path);
             }
         }
-        System.out.println("Path to login config: " + path);
+        //System.out.println("Path to login config: " + path);
     }
 
     public void testLogin() throws LoginException {
