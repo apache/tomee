@@ -16,21 +16,18 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.test.TestManager;
 
+import javax.naming.InitialContext;
+import java.util.Properties;
+
 /**
- * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class CmpTestSuite extends org.apache.openejb.test.TestSuite{
-       
-    public CmpTestSuite(){
+public class CmpTestSuite extends org.apache.openejb.test.TestSuite {
+
+    public CmpTestSuite() {
         super();
         this.addTest(new CmpJndiTests());
         this.addTest(new CmpHomeIntfcTests());
@@ -75,11 +72,11 @@ public class CmpTestSuite extends org.apache.openejb.test.TestSuite{
         //props.put(Context.SECURITY_PRINCIPAL, "ENTITY_TEST_CLIENT");
         //props.put(Context.SECURITY_CREDENTIALS, "ENTITY_TEST_CLIENT");
         InitialContext initialContext = new InitialContext(props);
-        
+
         /*[2] Create database table */
         TestManager.getDatabase().createEntityTable();
     }
-    
+
     /**
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.

@@ -19,18 +19,16 @@ package org.apache.openejb.test.entity.cmp;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.cmp2.EjbqlLocalTest;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
 /**
- *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class CmpLocalTestSuite extends org.apache.openejb.test.TestSuite{
+public class CmpLocalTestSuite extends org.apache.openejb.test.TestSuite {
 
-    public CmpLocalTestSuite(){
+    public CmpLocalTestSuite() {
         super();
         this.addTest(new CmpJndiTests());
         this.addTest(new CmpHomeIntfcTests());

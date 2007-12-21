@@ -21,12 +21,11 @@ import junit.framework.TestSuite;
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * 
  * @version $Rev$ $Date$
  */
-public class StatelessTestSuite extends junit.framework.TestCase{
-    
-    public StatelessTestSuite(String name){
+public class StatelessTestSuite extends junit.framework.TestCase {
+
+    public StatelessTestSuite(String name) {
         super(name);
     }
 
@@ -41,8 +40,8 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessPojoHomeIntfcTests());
 
         // EJBHome tests
-        suite.addTest(new StatelessEjbHomeTests() );
-        suite.addTest(new StatelessPojoEjbHomeTests() );
+        suite.addTest(new StatelessEjbHomeTests());
+        suite.addTest(new StatelessPojoEjbHomeTests());
 
         // EJBObject tests
         suite.addTest(new StatelessEjbObjectTests());
@@ -82,17 +81,17 @@ public class StatelessTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatelessRmiIiopTests());
 
         suite.addTest(new MiscEjbTests());
-        
+
         /*///////////////////////////
-         * Annotated test clients
-         *///////////////////////////
-        
+        * Annotated test clients
+        *///////////////////////////
+
         // Annotated field injection test clients
         suite.addTest(new AnnotatedFieldInjectionStatelessPojoHomeIntfcTests());
-        
+
         // Annotated setter injection test clients
         suite.addTest(new AnnotatedSetterInjectionStatelessPojoHomeIntfcTests());
-        
+
         /* TO DO
         suite.addTest(new StatelessEjbContextTests());
         suite.addTest(new BMTStatelessEjbContextTests());

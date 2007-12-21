@@ -16,21 +16,18 @@
  */
 package org.apache.openejb.test.stateful;
 
-import org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessPojoLocalHomeIntfcTests;
-import org.apache.openejb.test.stateless.AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.openejb.test.stateless.AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * 
  * @version $Rev$ $Date$
  */
-public class StatefulLocalTestSuite extends junit.framework.TestCase{
+public class StatefulLocalTestSuite extends junit.framework.TestCase {
 
-    public StatefulLocalTestSuite(String name){
+    public StatefulLocalTestSuite(String name) {
         super(name);
     }
 
@@ -64,17 +61,17 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase{
         suite.addTest(new StatefulRmiIiopTests());
         //suite.addTest(new StatefulInterceptorTests());
         suite.addTest(new StatefulDefaultInterceptorTests());
-        
+
         /*///////////////////////////
-         * Annotated test clients
-         *///////////////////////////
-        
+        * Annotated test clients
+        *///////////////////////////
+
         // Annotated field injection test clients
         suite.addTest(new AnnotatedFieldInjectionStatefulPojoLocalHomeIntfcTests());
-        
+
         // Annotated setter injection test clients
         suite.addTest(new AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests());
-        
+
         /* TO DO
         suite.addTest(new StatefulEjbContextTests());
         suite.addTest(new BMTStatefulEjbContextTests());

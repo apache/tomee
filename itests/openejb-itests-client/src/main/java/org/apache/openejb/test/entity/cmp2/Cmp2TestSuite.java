@@ -16,12 +16,11 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.cmr.CmrTestSuite;
+
+import javax.naming.InitialContext;
+import java.util.Properties;
 
 /**
  * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $

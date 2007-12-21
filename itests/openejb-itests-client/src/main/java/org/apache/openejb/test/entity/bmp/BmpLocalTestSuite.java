@@ -18,18 +18,16 @@ package org.apache.openejb.test.entity.bmp;
 
 import org.apache.openejb.test.TestManager;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
 
 /**
- *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class BmpLocalTestSuite extends org.apache.openejb.test.TestSuite{
+public class BmpLocalTestSuite extends org.apache.openejb.test.TestSuite {
 
-    public BmpLocalTestSuite(){
+    public BmpLocalTestSuite() {
         super();
         this.addTest(new BmpJndiTests());
         this.addTest(new BmpHomeIntfcTests());
