@@ -19,6 +19,7 @@ package org.apache.openejb.test.stateful;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.stateless.AnnotatedSetterInjectionStatelessPojoLocalHomeIntfcTests;
+import org.apache.openejb.test.FilteredTestSuite;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -32,7 +33,7 @@ public class StatefulLocalTestSuite extends junit.framework.TestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new FilteredTestSuite();
         suite.addTest(new StatefulJndiTests());
         suite.addTest(new StatefulPojoLocalJndiTests());
         suite.addTest(new StatefulHomeIntfcTests());

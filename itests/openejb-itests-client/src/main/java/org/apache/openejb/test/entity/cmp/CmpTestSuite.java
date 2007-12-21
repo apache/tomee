@@ -25,7 +25,7 @@ import java.util.Properties;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
-public class CmpTestSuite extends org.apache.openejb.test.TestSuite {
+public class CmpTestSuite extends org.apache.openejb.test.FilteredTestSuite {
 
     public CmpTestSuite() {
         super();

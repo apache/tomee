@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,17 +14,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.test.entity.cmr;
+package org.apache.openejb.test;
 
-public class CmrTestSuite extends org.apache.openejb.test.FilteredTestSuite {
-    public CmrTestSuite() {
-        super();
-        this.addTest(new OneToOneTests());
-        this.addTest(new OneToManyTests());
-        this.addTest(new ManyToManyTests());
-        this.addTest(new OneToOneComplexPkTests());
-        this.addTest(new OneToManyComplexPkTests());
-        this.addTest(new ManyToManyComplexPkTests());
-//        this.addTest(new CmrMappingTests());
+import junit.framework.Test;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class FilteredTestSuite extends TestSuite {
+
+    @Override
+    protected List<Test> getTests() {
+        return filter(super.getTests());
+    }
+
+    public static List<Test> filter(List<Test> tests) {
+        String itest = System.getProperty("itest");
+
+        if (itest == null) {
+            return tests;
+        }
+
+        ArrayList<Test> filtered = new ArrayList<Test>();
+        for (Test test : tests) {
+            String simpleName = test.getClass().getSimpleName();
+            if (simpleName.matches(itest)){
+                filtered.add(test);
+            }
+        }
+        return filtered;
     }
 }

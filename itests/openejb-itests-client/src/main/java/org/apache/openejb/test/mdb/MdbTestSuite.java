@@ -18,20 +18,20 @@
 package org.apache.openejb.test.mdb;
 
 import junit.framework.TestSuite;
+import org.apache.openejb.test.FilteredTestSuite;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- *
  * @version $Rev: 499359 $ $Date: 2007-01-24 03:19:37 -0800 (Wed, 24 Jan 2007) $
  */
 public class MdbTestSuite extends junit.framework.TestCase {
-    public MdbTestSuite(String name){
+    public MdbTestSuite(String name) {
         super(name);
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new FilteredTestSuite();
 
         // Verify the famework is working
         suite.addTest(new MdbConnectionFactoryTests());

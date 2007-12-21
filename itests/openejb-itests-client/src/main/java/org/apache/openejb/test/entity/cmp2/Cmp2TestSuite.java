@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
  */
-public class Cmp2TestSuite extends org.apache.openejb.test.TestSuite {
+public class Cmp2TestSuite extends org.apache.openejb.test.FilteredTestSuite {
 
     public Cmp2TestSuite() {
         super();

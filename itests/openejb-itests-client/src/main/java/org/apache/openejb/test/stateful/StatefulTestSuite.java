@@ -18,6 +18,7 @@ package org.apache.openejb.test.stateful;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.openejb.test.FilteredTestSuite;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -30,7 +31,7 @@ public class StatefulTestSuite extends junit.framework.TestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new FilteredTestSuite();
         suite.addTest(new StatefulJndiTests());
         suite.addTest(new StatefulPojoRemoteJndiTests());
         suite.addTest(new StatefulHomeIntfcTests());

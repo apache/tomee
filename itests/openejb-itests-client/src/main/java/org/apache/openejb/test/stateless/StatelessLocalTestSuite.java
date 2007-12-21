@@ -17,6 +17,7 @@
 package org.apache.openejb.test.stateless;
 
 import junit.framework.TestSuite;
+import org.apache.openejb.test.FilteredTestSuite;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -31,7 +32,7 @@ public class StatelessLocalTestSuite extends junit.framework.TestCase {
     }
 
     public static junit.framework.Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new FilteredTestSuite();
         suite.addTest(new StatelessJndiTests());
         suite.addTest(new StatelessPojoLocalJndiTests());
 
