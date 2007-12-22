@@ -60,8 +60,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         java.lang.Throwable exc = null;
 
         try {
-            if (logger.isInfoEnabled()) {
-                logger.info("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
+            if (logger.isDebugEnabled()) {
+                logger.debug("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
             }
             Integer operation = (Integer) dispatchTable.get(m.getName());
             if(operation != null){
@@ -137,22 +137,16 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         } catch (org.apache.openejb.SystemException se) {
             invalidateReference();
             exc = (se.getRootCause() != null) ? se.getRootCause() : se;
-            logger.error("The container received an unexpected exception: ", exc);
+            logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Container has suffered a SystemException", exc);
         } catch (org.apache.openejb.OpenEJBException oe) {
             exc = (oe.getRootCause() != null) ? oe.getRootCause() : oe;
-            logger.warning("The container received an unexpected exception: ", exc);
+            logger.debug("The container received an unexpected exception: ", exc);
             throw new RemoteException("Unknown Container Exception", oe.getRootCause());
         } finally {
             if (logger.isDebugEnabled()) {
                 if (exc == null) {
                     logger.debug("finished invoking method " + m.getName() + ". Return value:" + retValue);
-                } else {
-                    logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
-                }
-            } else if (logger.isInfoEnabled()) {
-                if (exc == null) {
-                    logger.debug("finished invoking method " + m.getName());
                 } else {
                     logger.debug("finished invoking method " + m.getName() + " with exception " + exc);
                 }

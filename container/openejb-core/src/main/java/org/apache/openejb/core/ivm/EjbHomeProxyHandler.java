@@ -249,7 +249,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 throw new RemoteException("Unknown Container Exception", oe.getRootCause());
             }
         } catch (Throwable t) {
-            logger.info("finished invoking method " + method.getName() + " with exception:" + t, t);
+            logger.debug("finished invoking method " + method.getName() + " with exception:" + t, t);
             throw t;
         }
     }

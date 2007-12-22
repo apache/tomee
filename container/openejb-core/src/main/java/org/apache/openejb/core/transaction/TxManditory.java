@@ -28,10 +28,10 @@ import javax.transaction.TransactionRequiredException;
  * attribute is set to Mandatory in a client's transaction context. The client
  * is required to call with a transaction context.
  *
- * ¥ If the client calls with a transaction context, the container invokes the
+ * * If the client calls with a transaction context, the container invokes the
  *   enterprise Bean's method in the client's transaction context.
  *
- * ¥ If the client calls without a transaction context, the Container throws
+ * * If the client calls without a transaction context, the Container throws
  *   the javax.transaction.TransactionRequiredException exception if the
  *   client is a remote client, or the
  *   javax.ejb.TransactionRequiredLocalException if the client is a local
@@ -58,7 +58,7 @@ public class TxManditory extends TransactionPolicy {
             context.currentTx = context.clientTx;
 
         } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during getTransaction()", se);
+            logger.debug("Exception during getTransaction()", se);
             throw new SystemException(se);
         }
     }

@@ -77,7 +77,7 @@ public class ThreadContext {
             try {
                 listener.contextExited(exitingContext, oldContext);
             } catch (Throwable e) {
-                log.warning("ThreadContextListener threw an exception", e);
+                log.debug("ThreadContextListener threw an exception", e);
             }
         }
     }

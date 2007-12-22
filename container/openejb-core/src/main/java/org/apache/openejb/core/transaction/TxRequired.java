@@ -78,7 +78,7 @@ public class TxRequired extends TransactionPolicy {
             }
 
         } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during getTransaction()", se);
+            logger.debug("Exception during getTransaction()", se);
             throw new SystemException(se);
         }
     }
