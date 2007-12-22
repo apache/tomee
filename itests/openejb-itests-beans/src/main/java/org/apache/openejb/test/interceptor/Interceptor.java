@@ -41,7 +41,7 @@ public class Interceptor {
      * The inner map is put back into the contextData against the method name as the key.
      * 
      * @param ctx - InvocationContext
-     * @param interceptorName
+     * @param interceptorName name of the interceptor
      * @return contextData - the contextData which now has been filled with a hashmap of hashmap.
      */
     @SuppressWarnings("unchecked")
@@ -61,9 +61,8 @@ public class Interceptor {
             KEY = ctx.getMethod().getName();    
         }        
         else {
-            KEY = ((SuperInterceptedBean)ctx.getTarget()).getClass().getSimpleName();
+            KEY = (ctx.getTarget()).getClass().getSimpleName();
         }
-        System.out.print("Intercepting " + KEY);
         
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
         innerMap = updateInterceptorsList(innerMap, interceptorName);
@@ -87,7 +86,6 @@ public class Interceptor {
         Map<String, Object> ctxData = new HashMap<String, Object>();
         
         String KEY = bean.getClass().getSimpleName();
-        System.out.print("Intercepting " + KEY);
         
         Map<String, Object> innerMap = (HashMap<String, Object>) ctxData.get(KEY);
         innerMap = updateInterceptorsList(innerMap, interceptorName);
@@ -111,8 +109,6 @@ public class Interceptor {
         if(interceptorsList == null) {
             interceptorsList = new ArrayList<String>();            
         }
-
-        System.out.println(" by " + interceptorName + "()");
         interceptorsList.add(interceptorName);
         innerMap.put("INTERCEPTORS", interceptorsList);
         

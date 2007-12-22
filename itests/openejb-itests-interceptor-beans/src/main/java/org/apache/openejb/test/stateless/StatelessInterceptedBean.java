@@ -34,8 +34,6 @@ import org.apache.openejb.test.interceptor.Interceptor;
 import org.apache.openejb.test.interceptor.MethodInterceptor;
 
 /**
- * 
- *
  * @version $Rev$ $Date$
  */
 @Stateless(name="StatelessIntercepted")
@@ -59,13 +57,16 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      */
     @Interceptors({MethodInterceptor.class})
     public String reverse(String str) {
+        if (str.length() > 0) {
+            throw new NullPointerException();
+        }
         System.out.println("Reversing " + str);
         StringBuffer b = new StringBuffer(str);
         return b.reverse().toString();
     }
     
     /**
-     * @param contextData the contextData to set
+     * @param ctxData the contextData to set
      */
     private void setContextData(Map<String, Object> ctxData) {
         StatelessInterceptedBean.contextData.putAll(ctxData);
@@ -94,7 +95,7 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned. 
      * If there is more than one such interceptor method, the invocation of proceed causes the container to execute those methods in order.
      * 
-     * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
+     * @throws Exception runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
      */
     @AroundInvoke
     public Object inBeanInterceptor(InvocationContext ctx) throws Exception {
@@ -108,7 +109,7 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      * The interceptor method. 
      * This should intercept postConstruct of the bean
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PostConstruct
     public void inBeanInterceptorPostConstruct() throws Exception {
@@ -121,7 +122,7 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
      * The interceptor method. 
      * This should intercept preDestroy of the bean.
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PreDestroy
     public void inBeanInterceptorPreDestroy() throws Exception {

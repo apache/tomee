@@ -85,8 +85,8 @@ public class StatelessRemoteIntfcTests extends BasicStatelessTestClient{
         } catch (java.rmi.RemoteException e){
             //Good, so far.
             Throwable n = e.detail;
-            assertNotNull("Nested exception should not be is null", n );
-            assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), (n instanceof NullPointerException));
+            assertNotNull("Nested exception should not be null", n );
+            assertTrue("Nested exception should be an instance of NullPointerException, but exception is "+n.getClass().getName(), n instanceof NullPointerException);
             return;
         } catch (Throwable e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());

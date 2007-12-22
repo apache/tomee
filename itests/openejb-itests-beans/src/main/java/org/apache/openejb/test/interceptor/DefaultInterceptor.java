@@ -44,7 +44,7 @@ public class DefaultInterceptor {
      * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned. 
      * If there is more than one such interceptor method, the invocation of proceed causes the container to execute those methods in order.
      * 
-     * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
+     * @throws Exception runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
      */    
     @AroundInvoke
     public Object defaultInterceptor(InvocationContext ctx) throws Exception {        
@@ -58,13 +58,12 @@ public class DefaultInterceptor {
      * 
      * @param ctx - InvocationContext
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PostConstruct
     public void defaultInterceptorPostConstruct(InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "defaultInterceptorPostConstruct");
         ctx.proceed();
-        return;
     }
     
     
@@ -74,13 +73,12 @@ public class DefaultInterceptor {
      * 
      * @param ctx - InvocationContext
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PostActivate
     public void defaultInterceptorPostActivate(InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "defaultInterceptorPostActivate");
         ctx.proceed();
-        return;
     }
     
     /**
@@ -89,13 +87,12 @@ public class DefaultInterceptor {
      * 
      * @param ctx - InvocationContext
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PrePassivate
     public void defaultInterceptorPrePassivate(InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "defaultInterceptorPrePassivate");
         ctx.proceed();
-        return;
     }
     
     /**
@@ -104,13 +101,12 @@ public class DefaultInterceptor {
      * 
      * @param ctx - InvocationContext
      * 
-     * @throws runtime exceptions.
+     * @throws Exception runtime exceptions.
      */    
     @PreDestroy
     public void defaultInterceptorPreDestroy(InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "defaultInterceptorPreDestroy");
         ctx.proceed();
-        return;
     }
 
 }

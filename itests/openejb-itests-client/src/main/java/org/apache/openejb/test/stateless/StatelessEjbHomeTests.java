@@ -42,8 +42,8 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
     //
     public void test01_getEJBMetaData(){
         try{
-        EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
-        assertNotNull( "EJBMetaData is null", ejbMetaData );
+            EJBMetaData ejbMetaData = ejbHome.getEJBMetaData();
+            assertNotNull("EJBMetaData is null", ejbMetaData);
         } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
@@ -73,7 +73,7 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
      *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
-     * client’s perspective, appear anonymous. In contrast to entity objects,
+     * client's perspective, appear anonymous. In contrast to entity objects,
      * which expose their identity as a primary key, session objects hide their
      * identity. As a result, the EJBObject.getPrimaryKey() and
      * EJBHome.remove(Object primaryKey) methods result in a java.rmi.RemoteException
@@ -91,7 +91,6 @@ public class StatelessEjbHomeTests extends BasicStatelessTestClient {
         try{
             ejbHome.remove("primaryKey");
         } catch (RemoveException e){
-            assertTrue( true );
             return;
         } catch (Exception e){
             fail("Received Exception " + e.getClass() + " instead of javax.ejb.RemoveException : " + e.getMessage());
