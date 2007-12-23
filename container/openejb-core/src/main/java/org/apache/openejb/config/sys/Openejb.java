@@ -228,7 +228,7 @@ public class Openejb {
      * Objects of the following type(s) are allowed in the list
      * {@link Connector }
      */
-    public List<Connector> getConnector() {
+    private List<Connector> getConnector() {
         if (connector == null) {
             connector = new ArrayList<Connector>();
         }
@@ -258,6 +258,19 @@ public class Openejb {
     public List<Resource> getResource() {
         if (resource == null) {
             resource = new ArrayList<Resource>();
+        }
+
+        List<Connector> connectors = getConnector();
+        if (connectors.size() > 0){
+            for (Connector connector : connectors) {
+                Resource resource = new Resource();
+                resource.setJar(connector.getJar());
+                resource.setId(connector.getId());
+                resource.setProvider(connector.getProvider());
+                resource.getProperties().putAll(connector.getProperties());
+                this.resource.add(resource);
+            }
+            connectors.clear();
         }
         return this.resource;
     }

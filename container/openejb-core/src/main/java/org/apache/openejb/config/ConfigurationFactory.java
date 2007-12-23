@@ -250,19 +250,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
-        // convert legacy connector declarations to resource declarations
-        for (org.apache.openejb.config.sys.Connector connector : openejb.getConnector()) {
-            Resource resource = JaxbOpenejb.createResource();
-            resource.setJar(connector.getJar());
-            resource.setId(connector.getId());
-            resource.setProvider(connector.getProvider());
-
-            resource.getProperties().clear();
-            resource.getProperties().putAll(connector.getProperties());
-
-            openejb.getResource().add(resource);
-        }
-
         for (Resource resource : openejb.getResource()) {
             ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
             sys.facilities.resources.add(resourceInfo);
