@@ -847,6 +847,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         Object service = serviceRecipe.create();
 
+        for (String property : serviceRecipe.getUnsetProperties().keySet()) {
+            logger.warning("Property '" + property + "' not supported by '" + serviceInfo.id + "'");
+        }
+
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
             ResourceAdapter resourceAdapter = (ResourceAdapter) service;
@@ -894,6 +898,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
             if (connectionManager == null) {
                 throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
+            }
+
+            for (String property : serviceRecipe.getUnsetProperties().keySet()) {
+                logger.warning("Property '" + property + "' not supported by '" + serviceInfo.id + "'");
             }
 
             // service becomes a ConnectorReference which merges connection manager and mcf
