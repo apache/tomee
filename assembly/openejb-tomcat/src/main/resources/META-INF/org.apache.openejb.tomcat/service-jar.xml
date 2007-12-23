@@ -255,7 +255,21 @@
           id="Default JDBC Database"
           service="Resource"
           types="javax.sql.DataSource, DataSource"
-          class-name="org.apache.openejb.resource.jdbc.BasicManagedDataSource">
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    # Determines wether or not this data source should be JTA managed
+    # or user managed.  If set to 'true' it will automatically be enrolled
+    # in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
+    # on the datasource or connection will not be allowed.  If you need to perform
+    # these functions yourself, set JtaManaged to 'false'
+    #
+    # In terms of JPA persistence.xml:
+    # "JtaManaged=true" can be used as a 'jta-data-source'
+    # "JtaManaged=false" can be used as a 'non-jta-data-source'
+
+    JtaManaged = true
 
     # Driver class name
 
@@ -435,7 +449,11 @@
           id="Default Unmanaged JDBC Database"
           service="Resource"
           types="javax.sql.DataSource, DataSource"
-          class-name="org.apache.openejb.resource.jdbc.BasicDataSource">
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    JtaManaged = false
 
     # Driver class name
 
