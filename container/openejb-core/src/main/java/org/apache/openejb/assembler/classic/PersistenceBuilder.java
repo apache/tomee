@@ -101,9 +101,6 @@ public class PersistenceBuilder {
         // Exclude Unlisted Classes
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
-        // Jar File Urls
-        unitInfo.setJarFileUrls(info.jarFiles);
-
         // JTA Datasource
         String dataSource = info.jtaDataSource;
         if (jtaDataSourceEnv != null) dataSource = jtaDataSourceEnv;
@@ -150,7 +147,7 @@ public class PersistenceBuilder {
         }
 
         // Persistence Unit Root Url
-        unitInfo.setPersistenceUnitRootUrl(new File(info.persistenceUnitRootUrl).toURL());
+        unitInfo.setRootUrlAndJarUrls(new File(info.persistenceUnitRootUrl).toURL(), info.jarFiles);
 
         // create the persistence provider
         String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();

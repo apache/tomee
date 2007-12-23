@@ -21,6 +21,8 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,21 +173,21 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return jarFileUrls;
     }
 
-    public void setJarFileUrls(List<String> jarFiles) throws MalformedURLException {
-        if (jarFiles == null) {
-            throw new NullPointerException("jarFiles is null");
-        }
-        for (String jarFile : jarFiles) {
-            jarFileUrls.add((new File(jarFile)).toURL());
-        }
-    }
-
     public URL getPersistenceUnitRootUrl() {
         return persistenceUnitRootUrl;
     }
 
-    public void setPersistenceUnitRootUrl(URL persistenceUnitRootUrl) {
+    public void setRootUrlAndJarUrls(URL persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
         this.persistenceUnitRootUrl = persistenceUnitRootUrl;
+        try {
+            URI uri = persistenceUnitRootUrl.toURI();
+            for (String path : jarFiles) {
+                URI jarURI = uri.resolve(path);
+                jarFileUrls.add(jarURI.toURL());
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public List<String> getManagedClassNames() {
