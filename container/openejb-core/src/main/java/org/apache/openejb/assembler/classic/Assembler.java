@@ -733,8 +733,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         serviceRecipe.setProperty("id", new StaticRecipe(serviceInfo.id));
         serviceRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
@@ -745,6 +744,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         replaceResourceAdapterProperty(serviceRecipe);
         
         Object service = serviceRecipe.create();
+
+        logUnusedProperties(serviceRecipe, serviceInfo);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -786,10 +787,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createProxyFactory(ProxyFactoryInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object service = serviceRecipe.create();
+
+        logUnusedProperties(serviceRecipe, serviceInfo);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -837,19 +839,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createResource(ResourceInfo serviceInfo) throws OpenEJBException {
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
         serviceRecipe.setProperty("transactionManager", transactionManager);
         serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
-        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
         replaceResourceAdapterProperty(serviceRecipe);
 
         Object service = serviceRecipe.create();
 
-        for (String property : serviceRecipe.getUnsetProperties().keySet()) {
-            logger.warning("Property '" + property + "' not supported by '" + serviceInfo.id + "'");
-        }
 
         // Java Connector spec ResourceAdapters and ManagedConnectionFactories need special activation
         if (service instanceof ResourceAdapter) {
@@ -877,13 +874,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 resourceAdapter.start(bootstrapContext);
             } catch (ResourceAdapterInternalException e) {
                 throw new OpenEJBException(e);
-            }            
+            }
+
+            Map<String, Object> unset = serviceRecipe.getUnsetProperties();
+            unset.remove("threadPoolSize");
+            logUnusedProperties(unset, serviceInfo)
+                    ;
         } else if (service instanceof ManagedConnectionFactory) {
             ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
             // connection manager is constructed via a recipe so we automatically expose all cmf properties
             ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
-            connectionManagerRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            connectionManagerRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
             connectionManagerRecipe.setAllProperties(serviceInfo.properties);
             connectionManagerRecipe.setProperty("name", serviceInfo.id);
 
@@ -900,12 +902,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw new RuntimeException("Invalid connection manager specified for connector identity = " + serviceInfo.id);
             }
 
-            for (String property : serviceRecipe.getUnsetProperties().keySet()) {
-                logger.warning("Property '" + property + "' not supported by '" + serviceInfo.id + "'");
+            Map<String, Object> unsetA = serviceRecipe.getUnsetProperties();
+            Map<String, Object> unsetB = connectionManagerRecipe.getUnsetProperties();
+            Map<String, Object> unset = new HashMap<String, Object>();
+            for (Map.Entry<String, Object> entry : unsetA.entrySet()) {
+                if (unsetB.containsKey(entry.getKey())) unset.put(entry.getKey(),entry.getValue());
             }
+            logUnusedProperties(unset, serviceInfo);
 
             // service becomes a ConnectorReference which merges connection manager and mcf
             service = new ConnectorReference(connectionManager, managedConnectionFactory);
+        } else {
+            logUnusedProperties(serviceRecipe, serviceInfo);
         }
 
         try {
@@ -932,13 +940,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object object = props.get("TransactionManager");
         serviceRecipe.setProperty("transactionManager", new StaticRecipe(object));
 
         Object service = serviceRecipe.create();
+
+        logUnusedProperties(serviceRecipe, serviceInfo);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -963,10 +972,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createSecurityService(SecurityServiceInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object service = serviceRecipe.create();
+
+        logUnusedProperties(serviceRecipe, serviceInfo);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -993,10 +1003,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws OpenEJBException {
 
-        ObjectRecipe serviceRecipe = new ObjectRecipe(serviceInfo.className, serviceInfo.factoryMethod, serviceInfo.constructorArgs.toArray(new String[0]), null);
-        serviceRecipe.setAllProperties(serviceInfo.properties);
+        ServiceInfo info = (ServiceInfo) serviceInfo;
+        ObjectRecipe serviceRecipe = createRecipe(info);
 
         Object service = serviceRecipe.create();
+
+        logUnusedProperties(serviceRecipe, info);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -1038,6 +1050,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
         Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
         SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
+    }
+
+    private void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
+        Map<String, Object> unsetProperties = serviceRecipe.getUnsetProperties();
+        logUnusedProperties(unsetProperties, info);
+    }
+
+    private void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
+        for (String property : unsetProperties.keySet()) {
+            logger.warning("Property '" + property + "' not supported by '" + info.id + "'");
+        }
+    }
+
+    private ObjectRecipe createRecipe(ServiceInfo info) {
+        ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, info.constructorArgs.toArray(new String[0]), null);
+        serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+        serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        serviceRecipe.setAllProperties(info.properties);
+        return serviceRecipe;
     }
 
     @SuppressWarnings({"unchecked"})

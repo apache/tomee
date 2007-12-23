@@ -107,7 +107,7 @@
     <version>3.0-SNAPSHOT</version>
         -->
     <derbyVersion>10.3.2.1</derbyVersion>
-    <xbeanVersion>3.2</xbeanVersion>
+    <xbeanVersion>3.3-SNAPSHOT</xbeanVersion>
   </properties>
 
   <build>
