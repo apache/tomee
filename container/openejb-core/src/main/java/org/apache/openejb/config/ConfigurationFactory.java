@@ -264,7 +264,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getType());
 
             if (infoClass == null) {
-                throw new OpenEJBException("Unrecognized contianer type " + declaration.getType());
+                throw new OpenEJBException("Unrecognized container type " + declaration.getType());
             }
 
             ContainerInfo info = configureService(declaration, infoClass);
@@ -411,7 +411,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public AppInfo configureApplication(AppModule appModule) throws OpenEJBException {
 
-        logger.info(messages.format("config.configApp", appModule.getJarLocation()));
+        logger.info("config.configApp", appModule.getJarLocation());
         deployer.deploy(appModule);
         AppInfoBuilder appInfoBuilder = new AppInfoBuilder(this);
 

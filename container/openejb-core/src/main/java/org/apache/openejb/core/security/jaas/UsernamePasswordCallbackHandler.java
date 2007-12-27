@@ -24,7 +24,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
 /**
- * A JASS username password CallbackHandler.
+ * A JAAS username password CallbackHandler.
  */
 public class UsernamePasswordCallbackHandler implements CallbackHandler {
 

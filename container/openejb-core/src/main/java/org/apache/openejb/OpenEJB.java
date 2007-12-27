@@ -118,16 +118,16 @@ public final class OpenEJB {
                 logger.warning("startup.deprecatedPropertyName", EnvProps.ASSEMBLER);
             }
 
-            logger.debug("startup.instantiatingAssemberClass", className);
+            logger.debug("startup.instantiatingAssemblerClass", className);
             Assembler assembler = null;
 
             try {
                 assembler = (Assembler) toolkit.newInstance(className);
             } catch (OpenEJBException oe) {
-                logger.fatal("startup.assemblerCannotBeInstanitated", oe);
+                logger.fatal("startup.assemblerCannotBeInstantiated", oe);
                 throw oe;
             } catch (Throwable t) {
-                String msg = messages.message("startup.openEjbEncounterUnexpectedError");
+                String msg = messages.message("startup.openejbEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
@@ -140,7 +140,7 @@ public final class OpenEJB {
                 logger.fatal("startup.assemblerFailedToInitialize", oe);
                 throw oe;
             } catch (Throwable t) {
-                String msg = messages.message("startup.assemblerEncounterUnexpectedError");
+                String msg = messages.message("startup.assemblerEncounteredUnexpectedError");
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }

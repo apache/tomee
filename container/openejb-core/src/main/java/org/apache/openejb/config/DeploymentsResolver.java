@@ -174,11 +174,8 @@ public class DeploymentsResolver {
      */
     private static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
 
-        String include = null;
-        String exclude = null;
-
-        include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
-        exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
+        String include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
+        String exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
         boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
         boolean filterDescriptors = SystemInstance.get().getProperty(CLASSPATH_FILTER_DESCRIPTORS, "false").equalsIgnoreCase("true");
         boolean filterSystemApps = SystemInstance.get().getProperty(CLASSPATH_FILTER_SYSTEMAPPS, "true").equalsIgnoreCase("true");
@@ -303,12 +300,12 @@ public class DeploymentsResolver {
 
     }
 
-    private static void processUrls(List<URL> urls, ClassLoader classLoader, boolean desc, FileUtils base, List<String> jarList) {
+    private static void processUrls(List<URL> urls, ClassLoader classLoader, boolean searchForDescriptorlessApplications, FileUtils base, List<String> jarList) {
         Deployments deployment;
         String path;
         for (URL url : urls) {
             try {
-                Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, desc);
+                Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {

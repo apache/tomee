@@ -96,7 +96,7 @@ public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal, Basi
     }
 
     public Object remove() {
-        return new String("Executed remove() Method");
+        return "Executed remove() Method";
     }
     
     public String remove(String arg) {

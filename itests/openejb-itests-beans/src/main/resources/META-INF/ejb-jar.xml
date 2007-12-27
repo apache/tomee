@@ -22,50 +22,13 @@
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-                  http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
          version="3.0" metadata-complete="false">
 
   <description>
     This ejb-jar file contains assembled enterprise beans that are
     part of employee self-service application.
   </description>
-  
-  <interceptors>
-  <interceptor>
-  	<interceptor-class>
-  		org.apache.openejb.test.interceptor.SecondClassInterceptor
-  	</interceptor-class>
-  </interceptor>
-  <interceptor>
-  		<interceptor-class>
-  			org.apache.openejb.test.interceptor.DDInterceptor
-  		</interceptor-class>
-  		<around-invoke>
-  			<method-name>ddInterceptor</method-name>
-  		</around-invoke>
-  		<post-construct>
-  			<lifecycle-callback-method>
-  				ddInterceptorPostConstruct
-  			</lifecycle-callback-method>
-  		</post-construct>
-  		<post-activate>
-  			<lifecycle-callback-method>
-  				ddInterceptorPostActivate
-  			</lifecycle-callback-method>
-  		</post-activate>
-  		<pre-passivate>
-  			<lifecycle-callback-method>
-  				ddInterceptorPrePassivate
-  			</lifecycle-callback-method>
-  		</pre-passivate>
-  		<pre-destroy>
-  			<lifecycle-callback-method>
-  				ddInterceptorPreDestroy
-  			</lifecycle-callback-method>
-  		</pre-destroy>
-  	</interceptor>
-  </interceptors>  
 
   <enterprise-beans>
     <!--
@@ -95,11 +58,10 @@
       <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
-      <abstract-schema-name>BasicCmpBeanX</abstract-schema-name>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>primaryKey</primkey-field>
+      <cmp-version>1.x</cmp-version>
+      <abstract-schema-name>BasicCmpBeanX</abstract-schema-name>
       <cmp-field>
         <field-name>primaryKey</field-name>
       </cmp-field>
@@ -109,6 +71,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>primaryKey</primkey-field>
       <resource-ref>
         <description>This is a reference to a JDBC database.</description>
         <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
@@ -127,10 +90,10 @@
       <remote>org.apache.openejb.test.entity.cmp.ComplexCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.ComplexCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
-      <abstract-schema-name>ComplexCmpBeanX</abstract-schema-name>
       <prim-key-class>org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk</prim-key-class>
       <reentrant>false</reentrant>
+      <cmp-version>1.x</cmp-version>
+      <abstract-schema-name>ComplexCmpBeanX</abstract-schema-name>
       <cmp-field>
         <field-name>firstName</field-name>
       </cmp-field>
@@ -155,10 +118,10 @@
       <remote>org.apache.openejb.test.entity.cmp.UnknownCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.UnknownCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
-      <abstract-schema-name>UnknownCmpBeanX</abstract-schema-name>
       <prim-key-class>java.lang.Object</prim-key-class>
       <reentrant>false</reentrant>
+      <cmp-version>1.x</cmp-version>
+      <abstract-schema-name>UnknownCmpBeanX</abstract-schema-name>
       <cmp-field>
         <field-name>firstName</field-name>
       </cmp-field>
@@ -189,11 +152,10 @@
       <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>BasicCmp2Bean</abstract-schema-name>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>id</primkey-field>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>BasicCmp2Bean</abstract-schema-name>
       <cmp-field>
         <field-name>id</field-name>
       </cmp-field>
@@ -203,6 +165,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>id</primkey-field>
       <resource-ref>
         <description>This is a reference to a JDBC database.</description>
         <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
@@ -221,10 +184,10 @@
       <remote>org.apache.openejb.test.entity.cmp.ComplexCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.ComplexCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>ComplexCmp2Bean</abstract-schema-name>
       <prim-key-class>org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk</prim-key-class>
       <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>ComplexCmp2Bean</abstract-schema-name>
       <cmp-field>
         <field-name>firstName</field-name>
       </cmp-field>
@@ -249,10 +212,10 @@
       <remote>org.apache.openejb.test.entity.cmp.UnknownCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.UnknownCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>UnknownCmp2Bean</abstract-schema-name>
       <prim-key-class>java.lang.Object</prim-key-class>
       <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>UnknownCmp2Bean</abstract-schema-name>
       <cmp-field>
         <field-name>firstName</field-name>
       </cmp-field>
@@ -286,10 +249,9 @@
       <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>primaryKey</primkey-field>
+      <cmp-version>1.x</cmp-version>
       <cmp-field>
         <field-name>primaryKey</field-name>
       </cmp-field>
@@ -302,6 +264,7 @@
       <cmp-field>
         <field-name>number</field-name>
       </cmp-field>
+      <primkey-field>primaryKey</primkey-field>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -351,27 +314,10 @@
       <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.AllowedOperationsCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>AllowedOperationsCmp2Bean</abstract-schema-name>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>id</primkey-field>
-      <query>
-        <query-method>
-          <method-name>findByLastName</method-name>
-          <method-params>
-            <method-param>java.lang.String</method-param>
-          </method-params>
-        </query-method>
-        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE o.lastName = ?1</ejb-ql>
-      </query>
-      <query>
-        <query-method>
-          <method-name>findEmptyCollection</method-name>
-          <method-params/>
-        </query-method>
-        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE 'true' = 'false'</ejb-ql>
-      </query>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>AllowedOperationsCmp2Bean</abstract-schema-name>
       <cmp-field>
         <field-name>id</field-name>
       </cmp-field>
@@ -384,6 +330,7 @@
       <cmp-field>
         <field-name>number</field-name>
       </cmp-field>
+      <primkey-field>id</primkey-field>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -416,6 +363,22 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
+      <query>
+        <query-method>
+          <method-name>findByLastName</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE o.lastName = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>findEmptyCollection</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>SELECT o FROM AllowedOperationsCmp2Bean o WHERE 'true' = 'false'</ejb-ql>
+      </query>
     </entity>
 
     <!--
@@ -433,10 +396,9 @@
       <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.EncCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>primaryKey</primkey-field>
+      <cmp-version>1.x</cmp-version>
       <cmp-field>
         <field-name>primaryKey</field-name>
       </cmp-field>
@@ -446,6 +408,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>primaryKey</primkey-field>
       <env-entry>
         <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -512,30 +475,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/cmp/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/cmp/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -561,13 +524,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -575,6 +531,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </entity>
 
     <!--
@@ -592,10 +555,9 @@
       <remote>org.apache.openejb.test.entity.cmp.EncCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.EncCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>id</primkey-field>
+      <cmp-version>2.x</cmp-version>
       <cmp-field>
         <field-name>id</field-name>
       </cmp-field>
@@ -605,6 +567,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>id</primkey-field>
       <env-entry>
         <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -666,30 +629,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/cmp/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/cmp/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/cmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -715,13 +678,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -729,6 +685,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </entity>
 
     <!--
@@ -747,9 +710,8 @@
       <ejb-class>org.apache.openejb.test.entity.cmp.ContextLookupCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
-      <cmp-version>1.x</cmp-version>
       <reentrant>false</reentrant>
-      <primkey-field>primaryKey</primkey-field>
+      <cmp-version>1.x</cmp-version>
       <cmp-field>
         <field-name>primaryKey</field-name>
       </cmp-field>
@@ -759,6 +721,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>primaryKey</primkey-field>
       <env-entry>
         <env-entry-name>entity/cmp/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -850,13 +813,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -864,6 +820,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </entity>
 
     <!--
@@ -881,10 +844,9 @@
       <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmpBean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>1.x</cmp-version>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>primaryKey</primkey-field>
+      <cmp-version>1.x</cmp-version>
       <cmp-field>
         <field-name>primaryKey</field-name>
       </cmp-field>
@@ -894,6 +856,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>primaryKey</primkey-field>
       <ejb-ref>
         <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
         <ejb-ref-type>Entity</ejb-ref-type>
@@ -922,10 +885,9 @@
       <remote>org.apache.openejb.test.entity.cmp.RmiIiopCmpObject</remote>
       <ejb-class>org.apache.openejb.test.entity.cmp.RmiIiopCmp2Bean</ejb-class>
       <persistence-type>Container</persistence-type>
-      <cmp-version>2.x</cmp-version>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
-      <primkey-field>id</primkey-field>
+      <cmp-version>2.x</cmp-version>
       <cmp-field>
         <field-name>id</field-name>
       </cmp-field>
@@ -935,6 +897,7 @@
       <cmp-field>
         <field-name>lastName</field-name>
       </cmp-field>
+      <primkey-field>id</primkey-field>
       <ejb-ref>
         <ejb-ref-name>cmp/rmi-iiop/home</ejb-ref-name>
         <ejb-ref-type>Entity</ejb-ref-type>
@@ -1833,34 +1796,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
-      <security-role-ref>
-        <role-name>TheMan</role-name>
-        <role-link>Executive</role-link>
-      </security-role-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -1885,13 +1844,6 @@
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -1907,6 +1859,17 @@
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
         <persistence-context-type>Extended</persistence-context-type>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </session>
 
     <!--
@@ -2036,16 +1999,6 @@
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
-          <injection-target-name>statelessBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -2056,16 +2009,6 @@
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
-          <injection-target-name>statefulBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -2076,6 +2019,26 @@
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -2120,17 +2083,6 @@
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
-          <injection-target-name>emf</injection-target-name>
-        </injection-target>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -2142,6 +2094,17 @@
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>emf</injection-target-name>
+        </injection-target>
+      </persistence-unit-ref>
     </session>
 
 
@@ -2272,16 +2235,6 @@
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
-          <injection-target-name>statelessBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -2292,16 +2245,6 @@
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
-          <injection-target-name>statefulBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -2312,6 +2255,26 @@
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -2356,17 +2319,6 @@
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
-          <injection-target-name>emf</injection-target-name>
-        </injection-target>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -2378,6 +2330,17 @@
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>emf</injection-target-name>
+        </injection-target>
+      </persistence-unit-ref>
     </session>
 
     <!--
@@ -3228,16 +3191,6 @@
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
-          <injection-target-name>statelessBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -3248,16 +3201,6 @@
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
-          <injection-target-name>statefulBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -3268,6 +3211,26 @@
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -3312,17 +3275,6 @@
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
-          <injection-target-name>emf</injection-target-name>
-        </injection-target>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -3334,6 +3286,17 @@
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>emf</injection-target-name>
+        </injection-target>
+      </persistence-unit-ref>
     </session>
 
 
@@ -3464,16 +3427,6 @@
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
-          <injection-target-name>statelessBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -3484,16 +3437,6 @@
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
-          <injection-target-name>statefulBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -3504,6 +3447,26 @@
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -3548,17 +3511,6 @@
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
-          <injection-target-name>emf</injection-target-name>
-        </injection-target>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -3570,6 +3522,17 @@
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-name>emf</injection-target-name>
+        </injection-target>
+      </persistence-unit-ref>
     </session>
 
     <!--
@@ -3668,10 +3631,6 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <security-role-ref>
-        <role-name>TheMan</role-name>
-        <role-link>Executive</role-link>
-      </security-role-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -3696,13 +3655,6 @@
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -3710,6 +3662,17 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </session>
 
     <!--
@@ -3808,10 +3771,6 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <security-role-ref>
-        <role-name>TheMan</role-name>
-        <role-link>Executive</role-link>
-      </security-role-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -3836,13 +3795,6 @@
         <resource-env-ref-name>sessioncontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -3850,6 +3802,17 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
+      <security-role-ref>
+        <role-name>TheMan</role-name>
+        <role-link>Executive</role-link>
+      </security-role-ref>
     </session>
 
     <!--
@@ -4060,30 +4023,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/bmp/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/bmp/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>entity/bmp/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>entity/bmp/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>entity/bmp/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -4109,13 +4072,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -4123,6 +4079,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </entity>
 
     <!--
@@ -4234,13 +4197,6 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
       </resource-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -4248,6 +4204,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </entity>
 
     <!--
@@ -4311,11 +4274,6 @@
           <activation-config-property-value>BasicMdb</activation-config-property-value>
         </activation-config-property>
       </activation-config>
-      <resource-ref>
-        <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
-        <res-auth>Container</res-auth>
-      </resource-ref>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -4328,6 +4286,11 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
         <ejb-link>BasicStatefulBean</ejb-link>
       </ejb-ref>
+      <resource-ref>
+        <res-ref-name>jms</res-ref-name>
+        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
       <resource-ref>
         <description>
           This is a reference to a JDBC database.
@@ -4354,11 +4317,6 @@
           <activation-config-property-value>BasicBmtMdb</activation-config-property-value>
         </activation-config-property>
       </activation-config>
-      <resource-ref>
-        <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
-        <res-auth>Container</res-auth>
-      </resource-ref>
       <env-entry>
         <env-entry-name>stateless/references/JNDI_access_to_java_comp_env</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -4371,6 +4329,11 @@
         <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
         <ejb-link>BasicStatefulBean</ejb-link>
       </ejb-ref>
+      <resource-ref>
+        <res-ref-name>jms</res-ref-name>
+        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
       <resource-ref>
         <description>
           This is a reference to a JDBC database.
@@ -4477,30 +4440,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -4525,13 +4488,6 @@
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -4539,6 +4495,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </message-driven>
 
     <message-driven>
@@ -4637,30 +4600,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -4685,13 +4648,6 @@
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -4699,6 +4655,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </message-driven>
 
     <message-driven>
@@ -4797,30 +4760,30 @@
         <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
         <ejb-link>BasicStatelessBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -4845,13 +4808,6 @@
         <resource-env-ref-name>mdbcontext</resource-env-ref-name>
         <resource-env-ref-type>javax.ejb.MessageDrivenContext</resource-env-ref-type>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -4859,6 +4815,13 @@
         <persistence-context-ref-name>persistence/TestContext</persistence-context-ref-name>
         <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+      </persistence-unit-ref>
     </message-driven>
 
     <message-driven>
@@ -4875,12 +4838,6 @@
           <activation-config-property-value>FieldInjectionMdbBean</activation-config-property-value>
         </activation-config-property>
       </activation-config>
-
-      <resource-ref>
-        <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
-        <res-auth>Container</res-auth>
-      </resource-ref>
 
       <env-entry>
         <env-entry-name>stateful/references/Boolean</env-entry-name>
@@ -5037,6 +4994,11 @@
         </injection-target>
       </ejb-ref>
       <resource-ref>
+        <res-ref-name>jms</res-ref-name>
+        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+      <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
@@ -5118,13 +5080,6 @@
           <activation-config-property-value>SetterInjectionMdbBean</activation-config-property-value>
         </activation-config-property>
       </activation-config>
-
-      <resource-ref>
-        <res-ref-name>jms</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
-        <res-auth>Container</res-auth>
-      </resource-ref>
-
       <env-entry>
         <env-entry-name>stateful/references/Boolean</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
@@ -5239,16 +5194,6 @@
           <injection-target-name>statelessHome</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
-        <ejb-link>BasicStatelessPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
-          <injection-target-name>statelessBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -5259,16 +5204,6 @@
           <injection-target-name>statelessBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
-        <ejb-link>BasicStatefulPojoBean</ejb-link>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
-          <injection-target-name>statefulBusinessLocal</injection-target-name>
-        </injection-target>
-      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -5279,6 +5214,31 @@
           <injection-target-name>statefulBusinessRemote</injection-target-name>
         </injection-target>
       </ejb-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <resource-ref>
+        <res-ref-name>jms</res-ref-name>
+        <res-type>javax.jms.ConnectionFactory</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
       <resource-ref>
         <res-ref-name>datasource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
@@ -5323,17 +5283,6 @@
           <injection-target-name>ejbContext</injection-target-name>
         </injection-target>
       </resource-env-ref>
-      <persistence-unit-ref>
-        <description>
-          Persistence unit for testing the functionality.
-        </description>
-        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
-        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
-        <injection-target>
-          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
-          <injection-target-name>emf</injection-target-name>
-        </injection-target>
-      </persistence-unit-ref>
       <persistence-context-ref>
         <description>
           Persistence context for testing the functionality.
@@ -5345,9 +5294,56 @@
           <injection-target-name>em</injection-target-name>
         </injection-target>
       </persistence-context-ref>
+      <persistence-unit-ref>
+        <description>
+          Persistence unit for testing the functionality.
+        </description>
+        <persistence-unit-ref-name>persistence/TestUnit</persistence-unit-ref-name>
+        <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.mdb.SetterInjectionMdbBean</injection-target-class>
+          <injection-target-name>emf</injection-target-name>
+        </injection-target>
+      </persistence-unit-ref>
     </message-driven>
 
   </enterprise-beans>
+
+  <interceptors>
+    <interceptor>
+      <interceptor-class>
+        org.apache.openejb.test.interceptor.SecondClassInterceptor
+      </interceptor-class>
+    </interceptor>
+    <interceptor>
+      <interceptor-class>
+        org.apache.openejb.test.interceptor.DDInterceptor
+      </interceptor-class>
+      <around-invoke>
+        <method-name>ddInterceptor</method-name>
+      </around-invoke>
+      <post-construct>
+        <lifecycle-callback-method>
+          ddInterceptorPostConstruct
+        </lifecycle-callback-method>
+      </post-construct>
+      <pre-destroy>
+        <lifecycle-callback-method>
+          ddInterceptorPreDestroy
+        </lifecycle-callback-method>
+      </pre-destroy>
+      <post-activate>
+        <lifecycle-callback-method>
+          ddInterceptorPostActivate
+        </lifecycle-callback-method>
+      </post-activate>
+      <pre-passivate>
+        <lifecycle-callback-method>
+          ddInterceptorPrePassivate
+        </lifecycle-callback-method>
+      </pre-passivate>
+    </interceptor>
+  </interceptors>
 
   <relationships>
 
@@ -5826,6 +5822,58 @@
       </method>
       <trans-attribute>Required</trans-attribute>
     </container-transaction>
+
+    <!-- test01_interceptorChaining
+    to test specifying an interceptor from a DD at the method level.
+    It should be invoked only after any method level interceptors defined by annotations on that method.
+    -->
+    <interceptor-binding>
+      <ejb-name>BasicStatefulIntercepted</ejb-name>
+      <interceptor-class>
+        org.apache.openejb.test.interceptor.DDInterceptor
+      </interceptor-class>
+      <method>
+        <method-name>reverse</method-name>
+      </method>
+    </interceptor-binding>
+
+    <!-- test04_excludeClassInterceptors_02 to test exclude-class-interceptor on a method level -->
+    <interceptor-binding>
+      <ejb-name>BasicStatefulIntercepted</ejb-name>
+      <exclude-class-interceptors>true</exclude-class-interceptors>
+      <method>
+        <method-name>concat</method-name>
+      </method>
+    </interceptor-binding>
+
+
+    <!--  test01_interceptorChaining
+    This interceptor applies and also changes the order of class level interceptors invoked on BasicStatelessIntercepted.
+    -->
+    <interceptor-binding>
+      <ejb-name>BasicStatelessIntercepted</ejb-name>
+      <interceptor-order>
+        <interceptor-class>
+          org.apache.openejb.test.interceptor.DDInterceptor
+        </interceptor-class>
+        <interceptor-class>
+          org.apache.openejb.test.interceptor.SecondClassInterceptor
+        </interceptor-class>
+        <interceptor-class>
+          org.apache.openejb.test.interceptor.ClassInterceptor
+        </interceptor-class>
+      </interceptor-order>
+    </interceptor-binding>
+
+    <!-- test04_excludeClassInterceptors_02 to test exclude-class-interceptor on a method level -->
+    <interceptor-binding>
+      <ejb-name>BasicStatelessIntercepted</ejb-name>
+      <exclude-class-interceptors>true</exclude-class-interceptors>
+      <method>
+        <method-name>concat</method-name>
+      </method>
+    </interceptor-binding>
+
     <message-destination>
       <message-destination-name>BasicMdb</message-destination-name>
     </message-destination>
@@ -5847,58 +5895,5 @@
     <message-destination>
       <message-destination-name>SetterInjectionMdbBean</message-destination-name>
     </message-destination>
-    
-     <!-- test01_interceptorChaining   
-     to test specifying an interceptor from a DD at the method level.
-     It should be invoked only after any method level interceptors defined by annotations on that method.
-     -->
-     <interceptor-binding>
-     	<ejb-name>BasicStatefulIntercepted</ejb-name>
-     	<interceptor-class>
-     		org.apache.openejb.test.interceptor.DDInterceptor
-     	</interceptor-class>
-     	<method>
-     		<method-name>reverse</method-name>
-     	</method>
-     </interceptor-binding>
- 
-      <!-- test04_excludeClassInterceptors_02
-        to test exclude-class-interceptor on a method level -->        
-     <interceptor-binding>
-     	<ejb-name>BasicStatefulIntercepted</ejb-name>
-     	<exclude-class-interceptors>true</exclude-class-interceptors>
-     	<method>
-     		<method-name>concat</method-name>
-     	</method>
-     </interceptor-binding>
-     
-         
-     <!--  test01_interceptorChaining  
-     This interceptor applies and also changes the order of class level interceptors invoked on BasicStatelessIntercepted.
-     -->
-     <interceptor-binding>
-     	<ejb-name>BasicStatelessIntercepted</ejb-name>
-     	<interceptor-order>    	
-     	    <interceptor-class>
-     			org.apache.openejb.test.interceptor.DDInterceptor
-     		</interceptor-class>    		
-     		<interceptor-class>
-     			org.apache.openejb.test.interceptor.SecondClassInterceptor
-     		</interceptor-class>
-     		<interceptor-class>
-     			org.apache.openejb.test.interceptor.ClassInterceptor
-     		</interceptor-class>
-     	</interceptor-order>
-     </interceptor-binding>
-     
-     <!-- test04_excludeClassInterceptors_02
-     to test exclude-class-interceptor on a method level -->        
-     <interceptor-binding>
-     	<ejb-name>BasicStatelessIntercepted</ejb-name>
-     	<exclude-class-interceptors>true</exclude-class-interceptors>
-     	<method>
-     		<method-name>concat</method-name>
-     	</method>
-     </interceptor-binding>       
   </assembly-descriptor>
 </ejb-jar>

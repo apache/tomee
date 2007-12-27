@@ -57,7 +57,6 @@ public class StatefulInterceptedBean extends SuperInterceptedBean
      */
     @Interceptors({MethodInterceptor.class})
     public String reverse(String str) {
-        System.out.println("Reversing " + str);
         StringBuffer b = new StringBuffer(str);
         return b.reverse().toString();
     }

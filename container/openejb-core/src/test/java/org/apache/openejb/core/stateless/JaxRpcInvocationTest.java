@@ -121,7 +121,7 @@ public class JaxRpcInvocationTest extends TestCase {
 
     private void assertCalls(Call... expectedCalls) {
         List expected = Arrays.asList(expectedCalls);
-        assertEquals(join("\n", expected) , join("\n", calls));
+        assertEquals("Interceptor call stack", join("\n", expected) , join("\n", calls));
     }
 
     public static enum Call {

@@ -75,7 +75,7 @@ public class InterceptorBindingBuilder {
             try {
                 clazz = Class.forName(info.clazz, true, cl);
             } catch (ClassNotFoundException e) {
-                throw new OpenEJBException("Intercpetor class cannot be loaded: "+info.clazz);
+                throw new OpenEJBException("Interceptor class cannot be loaded: "+info.clazz);
             }
             InterceptorData interceptor = new InterceptorData(clazz);
 

@@ -60,7 +60,6 @@ public class StatelessInterceptedBean extends SuperInterceptedBean
         if (str.length() > 0) {
             throw new NullPointerException();
         }
-        System.out.println("Reversing " + str);
         StringBuffer b = new StringBuffer(str);
         return b.reverse().toString();
     }

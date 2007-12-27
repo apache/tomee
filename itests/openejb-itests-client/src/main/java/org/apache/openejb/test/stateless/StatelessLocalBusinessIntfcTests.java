@@ -128,11 +128,7 @@ public class StatelessLocalBusinessIntfcTests extends StatelessTestClient {
     //=================================
     
     public void test06_testRemove(){
-        Object obj =businessLocal.remove();
+        Object obj = businessLocal.remove();
         assertNotNull(obj);
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 }

@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
+import javax.ejb.MessageDriven;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
@@ -74,12 +75,12 @@ public class DeploymentLoader {
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
 
-    public AppModule load(File jarFile) throws OpenEJBException, UnsupportedModuleTypeException, UnknownModuleTypeException {
+    public AppModule load(File jarFile) throws OpenEJBException {
         ClassLoader classLoader = getClassLoader(jarFile);
 
         URL baseUrl = getFileUrl(jarFile);
 
-        Class moduleClass = null;
+        Class moduleClass;
         try {
             moduleClass = discoverModuleType(baseUrl, classLoader, true);
         } catch (Exception e) {
@@ -96,7 +97,7 @@ public class DeploymentLoader {
 
             ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
-            Map<String, URL> appDescriptors = null;
+            Map<String, URL> appDescriptors;
             try {
                 appDescriptors = finder.getResourcesMap("META-INF");
             } catch (IOException e) {
@@ -231,7 +232,7 @@ public class DeploymentLoader {
                 classPath.addAll(clientModules.values());
                 classPath.addAll(rarLibs.values());
                 classPath.addAll(extraLibs);
-                URL[] urls = classPath.toArray(new URL[]{});
+                URL[] urls = classPath.toArray(new URL[classPath.size()]);
                 ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
 
                 //
@@ -404,7 +405,7 @@ public class DeploymentLoader {
         warFile = unpack(warFile);
 
         // read web.xml file
-        Map<String, URL> descriptors = null;
+        Map<String, URL> descriptors;
         try {
             descriptors = getWebDescriptors(warFile);
         } catch (IOException e) {
@@ -445,7 +446,7 @@ public class DeploymentLoader {
         }
 
         // create the class loader
-        URL[] webUrls = webClassPath.toArray(new URL[]{});
+        URL[] webUrls = webClassPath.toArray(new URL[webClassPath.size()]);
         ClassLoader warClassLoader = new TemporaryClassLoader(webUrls, parentClassLoader);
 
         // create web module
@@ -469,13 +470,13 @@ public class DeploymentLoader {
     private void addWebservices(WsModule wsModule) throws OpenEJBException {
         // get location of webservices.xml file
         Object webservicesObject = wsModule.getAltDDs().get("webservices.xml");
-        if (!(webservicesObject instanceof URL)) {
+        if (webservicesObject == null || !(webservicesObject instanceof URL)) {
             return;
         }
         URL webservicesUrl = (URL) webservicesObject;
 
         // determine the base url for this module (either file: or jar:)
-        URL moduleUrl = null;
+        URL moduleUrl;
         try {
             File jarFile = new File(wsModule.getJarLocation());
             moduleUrl = jarFile.toURL();
@@ -491,7 +492,7 @@ public class DeploymentLoader {
         Map<URL,JavaWsdlMapping> jaxrpcMappingCache = new HashMap<URL,JavaWsdlMapping>();
         Webservices webservices = ReadDescriptors.readWebservices(webservicesUrl);
         wsModule.setWebservices(webservices);
-        if (webservicesUrl != null && "file".equals(webservicesUrl.getProtocol())) {
+        if ("file".equals(webservicesUrl.getProtocol())) {
             wsModule.getWatchedResources().add(webservicesUrl.getPath());
         }
 
@@ -499,7 +500,7 @@ public class DeploymentLoader {
         for (WebserviceDescription webserviceDescription : webservices.getWebserviceDescription()) {
             String jaxrpcMappingFile = webserviceDescription.getJaxrpcMappingFile();
             if (jaxrpcMappingFile != null) {
-                URL jaxrpcMappingUrl = null;
+                URL jaxrpcMappingUrl;
                 try {
                     jaxrpcMappingUrl = new URL(moduleUrl, jaxrpcMappingFile);
                     JavaWsdlMapping jaxrpcMapping = jaxrpcMappingCache.get(jaxrpcMappingUrl);
@@ -508,7 +509,7 @@ public class DeploymentLoader {
                         jaxrpcMappingCache.put(jaxrpcMappingUrl, jaxrpcMapping);
                     }
                     webserviceDescription.setJaxrpcMapping(jaxrpcMapping);
-                    if (jaxrpcMappingUrl != null && "file".equals(jaxrpcMappingUrl.getProtocol())) {
+                    if ("file".equals(jaxrpcMappingUrl.getProtocol())) {
                         wsModule.getWatchedResources().add(jaxrpcMappingUrl.getPath());
                     }
                 } catch (MalformedURLException e) {
@@ -572,7 +573,7 @@ public class DeploymentLoader {
         Set<URL> urls = new HashSet<URL>();
         if (parentClassLoader == null) return urls;
 
-        UrlSet urlSet = null;
+        UrlSet urlSet;
         try {
             urlSet = new UrlSet(parentClassLoader);
             urlSet = urlSet.excludeJavaEndorsedDirs();
@@ -581,6 +582,7 @@ public class DeploymentLoader {
             urlSet = urlSet.exclude(ClassLoader.getSystemClassLoader());
         } catch (IOException e) {
             logger.warning("Error scanning class loader for JSP tag libraries", e);
+            return urls;
         }
 
         for (URL url : urlSet.getUrls()) {
@@ -681,6 +683,7 @@ public class DeploymentLoader {
                 try {
                     jarFile.close();
                 } catch (IOException e) {
+                    // exception ignored
                 }
             }
         }
@@ -716,7 +719,7 @@ public class DeploymentLoader {
         // create the class loader
         List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
-        URL[] urls = classPath.toArray(new URL[]{});
+        URL[] urls = classPath.toArray(new URL[classPath.size()]);
         ClassLoader appClassLoader = new TemporaryClassLoader(urls, parentClassLoader);
 
         // create the Resource Module
@@ -884,7 +887,7 @@ public class DeploymentLoader {
 
             if (classFinder.isAnnotationPresent(Stateless.class) ||
                     classFinder.isAnnotationPresent(Stateful.class) ||
-                    classFinder.isAnnotationPresent(javax.ejb.MessageDriven.class)) {
+                    classFinder.isAnnotationPresent(MessageDriven.class)) {
                 return EjbModule.class;
             }
         }
@@ -912,7 +915,7 @@ public class DeploymentLoader {
     }
 
     private URL getFileUrl(File jarFile) throws OpenEJBException {
-        URL baseUrl = null;
+        URL baseUrl;
         try {
             baseUrl = jarFile.toURL();
         } catch (MalformedURLException e) {

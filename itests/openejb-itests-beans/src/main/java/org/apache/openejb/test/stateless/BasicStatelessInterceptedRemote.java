@@ -21,11 +21,8 @@ import java.util.Map;
 import javax.ejb.Remote;
 
 /**
- * 
- *
  * @version $Rev$ $Date$
  */
-
 @Remote
 public interface BasicStatelessInterceptedRemote {
     

@@ -47,7 +47,6 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
 
     /**
      * A simple dummy business method to concat 2 strings
-     * @see org.apache.openejb.test.stateless.BasicStatelessInterceptedLocal#concat(java.lang.String, java.lang.String)
      */
     public String concat(String str1, String str2) {
         return str1.concat(str2);
@@ -55,11 +54,9 @@ public class SecondStatelessInterceptedBean extends SuperInterceptedBean
 
     /**
      * A simple dummy busines method to reverse a string
-     * @see org.apache.openejb.test.stateless.BasicStatelessInterceptedLocal#reverse(java.lang.String)
      */
     @Interceptors({MethodInterceptor.class})
     public String reverse(String str) {
-        System.out.println("Reversing " + str);
         StringBuffer b = new StringBuffer(str);
         return b.reverse().toString();
     }
