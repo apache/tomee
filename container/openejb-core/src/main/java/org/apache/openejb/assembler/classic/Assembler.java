@@ -886,6 +886,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // connection manager is constructed via a recipe so we automatically expose all cmf properties
             ObjectRecipe connectionManagerRecipe = new ObjectRecipe(GeronimoConnectionManagerFactory.class, "create");
             connectionManagerRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+            connectionManagerRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             connectionManagerRecipe.setAllProperties(serviceInfo.properties);
             connectionManagerRecipe.setProperty("name", serviceInfo.id);
 
