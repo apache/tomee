@@ -688,8 +688,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                Interceptors interceptors = clazz.getAnnotation(Interceptors.class);
-                if (interceptors != null) {
+                for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class)) {
+                    Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
                         if (ejbJar.getInterceptor(interceptor.getName()) == null) {
@@ -706,7 +706,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 for (Method method : classFinder.findAnnotatedMethods(Interceptors.class)) {
-                    interceptors = method.getAnnotation(Interceptors.class);
+                    Interceptors interceptors = method.getAnnotation(Interceptors.class);
                     if (interceptors != null) {
                         EjbJar ejbJar = ejbModule.getEjbJar();
                         for (Class interceptor : interceptors.value()) {
