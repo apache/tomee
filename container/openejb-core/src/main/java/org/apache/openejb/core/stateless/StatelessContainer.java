@@ -180,9 +180,16 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return instanceManager;
     }
 
-    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object [] args, Object object, ThreadContext callContext)
-            throws org.apache.openejb.OpenEJBException {
-        Instance instance = (Instance) object;
+    /**
+     * @deprecated use type-safe {@link #_invoke(Class, java.lang.reflect.Method, java.lang.reflect.Method, Object[], Instance, org.apache.openejb.core.ThreadContext)}
+     */
+    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Object object, ThreadContext callContext)
+            throws OpenEJBException {
+        return _invoke(callInterface, callMethod, runMethod, args, (Instance) object, callContext);
+    }
+
+    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext)
+            throws OpenEJBException {
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
