@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 #
-# $Rev: 600180 $ $Date: 2007-12-01 19:52:39 +0100 (Sat, 01 Dec 2007) $
+# $Rev$ $Date$
 #
 server      = org.apache.openejb.server.cxf.CxfService
 

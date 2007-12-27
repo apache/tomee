@@ -46,7 +46,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * @version $Rev: 480809 $ $Date: 2006-11-29 18:27:38 -0800 (Wed, 29 Nov 2006) $
+ * @version $Rev$ $Date$
  */
 public class HsqlService implements ServerService, SelfManaging {
     private int port = ServerConfiguration.getDefaultPort(ServerConstants.SC_PROTOCOL_HSQL, false);

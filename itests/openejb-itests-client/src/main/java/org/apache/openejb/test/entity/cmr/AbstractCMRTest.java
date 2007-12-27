@@ -36,7 +36,7 @@ import java.sql.ResultSetMetaData;
 import org.apache.openejb.test.TestManager;
 
 /**
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
+ * @version $Revision$ $Date$
  */
 public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestCase {
     private TransactionManager transactionManager;

@@ -38,7 +38,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
+ * @version $Revision$ $Date$
  */
 public class CmrMappingTests extends AbstractCMRTest {
     private Integer compoundPK_20_10;

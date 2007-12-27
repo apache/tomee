@@ -27,7 +27,7 @@ import javax.ejb.EJBHome;
  *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @version $Rev: 483412 $ $Date: 2006-12-07 02:46:28 -0800 (Thu, 07 Dec 2006) $
+ * @version $Rev$ $Date$
  */
 public class StatelessPojoEjbObjectTests extends BasicStatelessTestClient {
 

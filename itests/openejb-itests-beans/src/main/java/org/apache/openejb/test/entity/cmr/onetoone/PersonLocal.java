@@ -20,7 +20,7 @@ import javax.ejb.EJBLocalObject;
 
 /**
  *
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
+ * @version $Revision$ $Date$
  */
 public interface PersonLocal extends EJBLocalObject {
     // CMP

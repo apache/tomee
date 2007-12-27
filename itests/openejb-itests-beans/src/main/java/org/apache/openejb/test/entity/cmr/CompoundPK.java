@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  *
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
+ * @version $Revision$ $Date$
  */
 public class CompoundPK implements Serializable {
     private static final long serialVersionUID = 293670445102052793L;

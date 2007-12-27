@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 600180 $ $Date: 2007-12-01 19:52:39 +0100 (Sat, 01 Dec 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5" metadata-complete="false" id="ID001">
     <description xml:lang="en-US">description117</description>

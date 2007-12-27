@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 482336 $ $Date: 2006-12-04 15:12:19 -0500 (Mon, 04 Dec 2006) $ -->
+<!-- $Rev$ $Date$ -->
 
 <wsdl:definitions targetNamespace="http://org/apache/geronimo/axis2/rpclit" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://org/apache/geronimo/axis2/rpclit" xmlns:intf="http://org/apache/geronimo/axis2/rpclit" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 

@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 600180 $ $Date: 2007-12-01 19:52:39 +0100 (Sat, 01 Dec 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <connector xmlns="http://java.sun.com/xml/ns/javaee" version="1.5" id="ID001">
     <description xml:lang="">description0</description>

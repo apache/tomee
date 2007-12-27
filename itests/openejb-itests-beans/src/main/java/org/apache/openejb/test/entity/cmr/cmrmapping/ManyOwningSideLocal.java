@@ -20,7 +20,7 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.FinderException;
 
 /**
- * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
+ * @version $Revision$ $Date$
  */
 public interface ManyOwningSideLocal extends EJBLocalObject {
     // CMR

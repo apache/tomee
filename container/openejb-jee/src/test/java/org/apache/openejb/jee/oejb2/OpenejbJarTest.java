@@ -26,7 +26,7 @@ import java.lang.String;
 import org.custommonkey.xmlunit.Diff;
 
 /**
- * @version $Revision: 471447 $ $Date: 2006-11-05 07:42:50 -0800 (Sun, 05 Nov 2006) $
+ * @version $Revision$ $Date$
  */
 public class OpenejbJarTest extends TestCase {
 

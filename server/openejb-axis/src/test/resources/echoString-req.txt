@@ -17,6 +17,6 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 546344 $ $Date: 2007-06-11 18:10:15 -0700 (Mon, 11 Jun 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><ns1:echoString soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://ws.apache.org/echosample"><in0 xsi:type="soapenc:string" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">Hello</in0></ns1:echoString></soapenv:Body></soapenv:Envelope>

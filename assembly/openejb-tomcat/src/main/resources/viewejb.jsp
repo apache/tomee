@@ -17,7 +17,7 @@
 
 -->
 
-<!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <%@ page import="
 org.apache.openejb.BeanType,
@@ -39,7 +39,7 @@ javax.naming.InitialContext
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>XXXOpenEJB Tomcat Integration/1.0</title>
     <link href="default.css" rel="stylesheet">
-    <!-- $Id: viewejb.jsp,v 1.1.2.2 2003/05/06 11:59:21 dblevins Exp $ -->
+    <!-- $Id$ -->
     <!-- Author: David Blevins (david.blevins@visi.com) -->
 </head>
 <body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">

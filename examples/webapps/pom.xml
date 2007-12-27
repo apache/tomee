@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 600453 $ $Date: 2007-12-03 01:15:19 -0800 (Mon, 03 Dec 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">

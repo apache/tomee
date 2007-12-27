@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.ejb.CreateException;
 
 /**
- * @version $Revision: 472584 $ $Date: 2006-11-08 10:47:55 -0800 (Wed, 08 Nov 2006) $
+ * @version $Revision$ $Date$
  */
 public abstract class OneInverseSideBean extends AbstractEntityBean {
 

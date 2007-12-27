@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.BufferedInputStream;
 
 /**
- * @version $Revision: 500051 $ $Date: 2007-01-25 15:23:35 -0800 (Thu, 25 Jan 2007) $
+ * @version $Revision$ $Date$
  */
 public class JaxbWlsTest extends TestCase {
 

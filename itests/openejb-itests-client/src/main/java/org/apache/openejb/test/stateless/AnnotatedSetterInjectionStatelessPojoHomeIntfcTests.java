@@ -26,7 +26,7 @@ import javax.ejb.EJB;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  * @author <a href="mailto:nour.mohammad@gmail.com">Mohammad Nour El-Din</a>
  * 
- * @version $Rev: 485528 $ $Date: 2006-12-11 08:39:11 +0200 (Mon, 11 Dec 2006) $
+ * @version $Rev$ $Date$
  */
 public class AnnotatedSetterInjectionStatelessPojoHomeIntfcTests extends AnnotatedSetterInjectionStatelessTestClient {
 

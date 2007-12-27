@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 546344 $ $Date: 2007-06-11 18:10:15 -0700 (Mon, 11 Jun 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <%@ page import="
 javax.naming.InitialContext,
@@ -44,7 +44,7 @@ org.openejb.loader.SystemInstance"%>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>OpenEJB Tomcat Integration/1.0</title>
     <link href="default.css" rel="stylesheet">
-    <!-- $Id: testhome.jsp 445545 2005-07-12 23:51:17Z dblevins $ -->
+    <!-- $Id$ -->
     <!-- Author: David Blevins (david.blevins@visi.com) -->
 </head>
     <body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">

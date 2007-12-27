@@ -17,7 +17,7 @@
 package org.openejb.client;
 
 /**
- * @version $Revision: 454211 $ $Date: 2006-10-08 14:09:12 -0700 (Sun, 08 Oct 2006) $
+ * @version $Revision$ $Date$
  * @deprecated use org.apache.openejb.client.TomcatEjbFactory
  */
 public class TomcatEjbFactory extends org.apache.openejb.client.TomcatEjbFactory {

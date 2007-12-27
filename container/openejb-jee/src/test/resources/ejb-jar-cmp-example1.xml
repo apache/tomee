@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 600180 $ $Date: 2007-12-01 19:52:39 +0100 (Sat, 01 Dec 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="true">
     <description>This ejb-jar file contains assembled enterprise beans that are part of employee self-service application.</description>

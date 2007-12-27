@@ -23,7 +23,7 @@ import org.apache.openejb.test.FilteredTestSuite;
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
- * @version $Rev: 499359 $ $Date: 2007-01-24 03:19:37 -0800 (Wed, 24 Jan 2007) $
+ * @version $Rev$ $Date$
  */
 public class MdbTestSuite extends junit.framework.TestCase {
     public MdbTestSuite(String name) {

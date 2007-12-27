@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 
 /**
- * @version $Revision: 451417 $ $Date: 2006-09-29 13:13:22 -0700 (Fri, 29 Sep 2006) $
+ * @version $Revision$ $Date$
  */
 public class ManyToManyTests extends AbstractCMRTest {
     private PlatformLocalHome platformLocalHome;

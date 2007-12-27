@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 600180 $ $Date: 2007-12-01 19:52:39 +0100 (Sat, 01 Dec 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <ns3:openejb-jar xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2" xmlns:ns2="http://geronimo.apache.org/xml/ns/naming-1.2" xmlns:ns3="http://openejb.apache.org/xml/ns/openejb-jar-2.2" xmlns:ns4="http://openejb.apache.org/xml/ns/pkgen-2.1" xmlns:ns5="http://geronimo.apache.org/xml/ns/j2ee/application-1.2" xmlns:ns6="http://geronimo.apache.org/xml/ns/security-2.0" xmlns:ns7="http://java.sun.com/xml/ns/persistence" xmlns:ns8="http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0">
     <ns2:cmp-connection-factory>

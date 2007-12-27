@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 580640 $ $Date: 2007-09-29 13:42:19 -0700 (Sat, 29 Sep 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <!DOCTYPE weblogic-ejb-jar PUBLIC "-//BEA Systems, Inc.//DTD WebLogic 7.0.0 EJB//EN" "http://www.bea.com/servers/wls700/dtd/weblogic-ejb-jar.dtd">
 <weblogic-ejb-jar>

@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 482336 $ $Date: 2006-12-04 15:12:19 -0500 (Mon, 04 Dec 2006) $ -->
+<!-- $Rev$ $Date$ -->
 
 <wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
         xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

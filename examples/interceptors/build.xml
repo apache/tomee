@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 580640 $ $Date: 2007-09-29 13:42:19 -0700 (Sat, 29 Sep 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <project name="MyProject" default="dist" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 

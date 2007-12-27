@@ -30,7 +30,7 @@ import java.io.OutputStream;
  *
  * Some compatability is guaranteed with the major part of the version number.
  *
- * @version $Revision: 451417 $ $Date: 2006-09-29 15:13:22 -0500 (Fri, 29 Sep 2006) $
+ * @version $Revision$ $Date$
  */
 public class ProtocolMetaData {
 

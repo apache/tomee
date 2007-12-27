@@ -22,7 +22,7 @@ import javax.ejb.FinderException;
 
 
 /**
- * @version $Revision: 477809 $ $Date: 2006-11-21 10:41:16 -0800 (Tue, 21 Nov 2006) $
+ * @version $Revision$ $Date$
  */
 public interface OneInverseSideLocalHome extends EJBLocalHome {
     public OneInverseSideLocal create(Integer id) throws CreateException;

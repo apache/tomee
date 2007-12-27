@@ -17,7 +17,7 @@
 
 -->
 
-<!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
+<!-- $Rev$ $Date$ -->
 
 <%@ page import="org.apache.openejb.tomcat.installer.Installer" %>
 <%@ page import="java.io.File" %>

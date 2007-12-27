@@ -23,7 +23,7 @@ import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
 
 /**
- * @version $Rev: 450758 $ $Date: 2006-09-28 01:40:18 -0700 (Thu, 28 Sep 2006) $
+ * @version $Rev$ $Date$
  */
 public class EjbObjectInputStream extends ObjectInputStream {
 
