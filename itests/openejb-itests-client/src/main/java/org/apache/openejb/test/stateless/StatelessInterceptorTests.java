@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Arrays;
 
 /**
- * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:goyathlay.geronimo@gmail.com">Prasad Kashyap</a>
+ *
+ * @version $Rev$ $Date$
  */
-// public class StatelessInterceptorTests extends AnnotatedFieldInjectionStatelessLocalTestClient {
 public class StatelessInterceptorTests extends BasicStatelessLocalTestClient {
 
     /*
@@ -47,14 +47,6 @@ public class StatelessInterceptorTests extends BasicStatelessLocalTestClient {
     }
 
     /**
-     * Tears down the fixture, for example, close a network connection. This method is called after a test is executed.
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-    
-    /**
      * Invokes a business method which is to be intercepted from a class, in-bean and at method level.
      */
     public void test01_interceptorChaining() {
@@ -69,8 +61,6 @@ public class StatelessInterceptorTests extends BasicStatelessLocalTestClient {
         
         Map innerMap = (Map) contextData.get("reverse");
         ArrayList interceptorsList = (ArrayList) innerMap.get("INTERCEPTORS");
-        // verifying interceptor chaining order
-        assertEquals(Arrays.asList("ddInterceptor","secondClassInterceptor", "superClassInterceptor", "classInterceptor", "methodInterceptor", "superBeanInterceptor","inBeanInterceptor"), interceptorsList);
 
         assertEquals("ddInterceptor", interceptorsList.get(0)); //specified in DD
         assertEquals("secondClassInterceptor", interceptorsList.get(1)); //specified in DD
