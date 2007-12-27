@@ -16,11 +16,15 @@
  */
 package org.superbiz.interceptors;
 
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
 public interface FullyIntercepted {
 
-    String businessMethod();
+    List<String> businessMethod();
+
+    List<String> methodWithDefaultInterceptorsExcluded();
 
 }

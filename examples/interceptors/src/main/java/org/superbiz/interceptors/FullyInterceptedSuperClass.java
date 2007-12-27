@@ -21,7 +21,7 @@ import javax.interceptor.Interceptors;
 /**
  * @version $Rev$ $Date$
  */
-@Interceptors( { ClassLevelInterceptorSuperClassOne.class, ClassLevelInterceptorSuperClassTwo.class })
+@Interceptors({ClassLevelInterceptorSuperClassOne.class, ClassLevelInterceptorSuperClassTwo.class})
 public class FullyInterceptedSuperClass {
 
 }

@@ -17,6 +17,8 @@
 package org.superbiz.interceptors;
 
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -38,29 +40,57 @@ public class FullyInterceptedTest extends TestCase {
     public void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        properties.setProperty("openejb.deployments.classpath.include", ".*interceptors.*");
+        properties.setProperty("openejb.deployments.classpath.include", ".*interceptors/target/classes.*");
 
         initCtx = new InitialContext(properties);
     }
 
     @Test
     public void testBusinessMethod() throws Exception {
+
         FullyIntercepted fullyIntercepted = (FullyIntercepted) initCtx.lookup("FullyInterceptedBeanLocal");
 
-        assertNotNull(fullyIntercepted);
+        assert fullyIntercepted != null;
 
-        // messages in reverse invocation order
-        // TODO: Almost 6 interceptors are not executed;
-        String expected = "businessMethod-bean-methodtwo-methodone-classtwo-classone";
+        List<String> expected = new ArrayList<String>();
+        expected.add("DefaultInterceptorOne");
+        expected.add("DefaultInterceptorTwo");
+        expected.add("ClassLevelInterceptorSuperClassOne");
+        expected.add("ClassLevelInterceptorSuperClassTwo");
+        expected.add("ClassLevelInterceptorOne");
+        expected.add("ClassLevelInterceptorTwo");
+        expected.add("MethodLevelInterceptorOne");
+        expected.add("MethodLevelInterceptorTwo");
+        expected.add("beanClassBusinessMethodInterceptor");
+        expected.add("businessMethod");
 
-        String actual = fullyIntercepted.businessMethod();
-        assert expected.equals(actual) : "Expected \"" + expected + "\", but got \"" + actual + "\"";
+        List<String> actual = fullyIntercepted.businessMethod();
+        assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
+    }
 
+    @Test
+    public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
+
+        FullyIntercepted fullyIntercepted = (FullyIntercepted) initCtx.lookup("FullyInterceptedBeanLocal");
+
+        assert fullyIntercepted != null;
+
+        List<String> expected = new ArrayList<String>();
+        expected.add("ClassLevelInterceptorSuperClassOne");
+        expected.add("ClassLevelInterceptorSuperClassTwo");
+        expected.add("ClassLevelInterceptorOne");
+        expected.add("ClassLevelInterceptorTwo");
+        expected.add("MethodLevelInterceptorOne");
+        expected.add("MethodLevelInterceptorTwo");
+        expected.add("beanClassBusinessMethodInterceptor");
+        expected.add("methodWithDefaultInterceptorsExcluded");
+
+        List<String> actual = fullyIntercepted.methodWithDefaultInterceptorsExcluded();
+        assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 
     @After
     public void tearDown() throws Exception {
         initCtx.close();
     }
-
 }

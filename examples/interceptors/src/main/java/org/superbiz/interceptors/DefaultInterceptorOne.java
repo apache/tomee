@@ -16,6 +16,7 @@
  */
 package org.superbiz.interceptors;
 
+import javax.annotation.PostConstruct;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
@@ -23,9 +24,14 @@ import javax.interceptor.InvocationContext;
  * @version $Rev$ $Date$
  */
 public class DefaultInterceptorOne {
+
     @AroundInvoke
-    private Object businessMethodInterceptor(InvocationContext ic) throws Exception {
-        return ic.proceed() + "-defaultone";
+    protected Object businessMethodInterceptor(InvocationContext ic) throws Exception {
+        return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 
+    @PostConstruct
+    protected void postConstructInterceptor(InvocationContext ic) throws Exception {
+        Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
+    }
 }

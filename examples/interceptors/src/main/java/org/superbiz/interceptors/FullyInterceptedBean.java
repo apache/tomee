@@ -21,22 +21,33 @@ import javax.ejb.Stateless;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
 @Stateless
 @Local
-@Interceptors( { ClassLevelInterceptorOne.class, ClassLevelInterceptorTwo.class })
+@Interceptors({ClassLevelInterceptorOne.class, ClassLevelInterceptorTwo.class})
 public class FullyInterceptedBean extends FullyInterceptedSuperClass implements FullyIntercepted {
 
-    @Interceptors( { MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class })
-    public String businessMethod() {
-        return "businessMethod";
+    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
+    public List<String> businessMethod() {
+        List<String> list = new ArrayList<String>();
+        list.add("businessMethod");
+        return list;
+    }
+
+    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
+    public List<String> methodWithDefaultInterceptorsExcluded() {
+        List<String> list = new ArrayList<String>();
+        list.add("methodWithDefaultInterceptorsExcluded");
+        return list;
     }
 
     @AroundInvoke
-    private Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
-        return ic.proceed() + "-bean";
+    protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
+        return Utils.addClassSimpleName(ic, "beanClassBusinessMethodInterceptor");
     }
 }
