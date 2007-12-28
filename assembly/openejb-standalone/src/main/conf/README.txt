@@ -126,7 +126,7 @@ DETAILS ABOUT EACH FILE
     
     To know what properties can be overriden the './bin/openejb
     properties' command is very useful: see
-    http://openejb.apache.org/configuration-properties.html
+    http://openejb.apache.org/3.0/properties-tool.html
     
     It's function is to connect to a running server and print a canonical
     list of all properties OpenEJB can see via the various means of
@@ -144,7 +144,7 @@ DETAILS ABOUT EACH FILE
     
     The -D properties can actually go before or after the command
     
-    See http://openejb.apache.org/system-properties.html
+    See http://openejb.apache.org/3.0/system-properties.html
     
     NOT CONFIGURABLE VIA THIS FILE
     
