@@ -64,7 +64,7 @@ public class EjbModule implements WsModule {
         if (jarURI == null){
             if (moduleId != null){
                 jarURI = moduleId;
-            } else if (ejbJar.getId() != null){
+            } else if (ejbJar.getId() != null && !ejbJar.getId().equals("")){
                 jarURI = ejbJar.getId();
             } else {
                 jarURI = ejbJar.toString();
@@ -73,11 +73,14 @@ public class EjbModule implements WsModule {
         this.jarLocation = jarURI;
 
         if (moduleId == null){
-            if (ejbJar != null && ejbJar.getId() != null){
+            if (ejbJar != null && ejbJar.getId() != null && !ejbJar.getId().equals("")){
                 moduleId = ejbJar.getId();
             } else {
                 File file = new File(jarURI);
                 moduleId = file.getName();
+                if (moduleId == null){
+                    moduleId = jarURI;
+                }
             }
         }
         this.moduleId = moduleId;
