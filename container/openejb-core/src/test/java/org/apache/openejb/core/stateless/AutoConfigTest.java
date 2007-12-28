@@ -51,9 +51,9 @@ public class AutoConfigTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
-        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("defaultDataSource", null, "DataSource"), ResourceInfo.class));
-        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("yellowDataSource", null, "DataSource"), ResourceInfo.class));
-        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpleDataSource", null, "DataSource"), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("defaultDataSource", "DataSource", null), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("yellowDataSource", "DataSource", null), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpleDataSource", "DataSource", null), ResourceInfo.class));
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));

@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Properties;
 
 
 /**
@@ -52,8 +51,8 @@ public class Container extends AbstractService {
         super(id);
     }
 
-    public Container(String id, String provider, String type) {
-        super(id, provider, type);
+    public Container(String id, String type, String provider) {
+        super(id, type, provider);
     }
 
     public Container() {

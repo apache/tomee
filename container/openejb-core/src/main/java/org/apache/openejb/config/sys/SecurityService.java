@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Properties;
 
 
 /**
@@ -50,8 +49,8 @@ public class SecurityService extends AbstractService {
         super(id);
     }
 
-    public SecurityService(String id, String provider, String type) {
-        super(id, provider, type);
+    public SecurityService(String id, String type, String provider) {
+        super(id, type, provider);
     }
 
     public SecurityService() {

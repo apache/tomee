@@ -988,7 +988,7 @@ public class AutoConfig implements DynamicDeployer {
             throw new OpenEJBException("No provider available for resource-env-ref '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
 
-        Resource resource = new Resource(resourceId, providerId, null);
+        Resource resource = new Resource(resourceId, null, providerId);
         resource.getProperties().setProperty("destination", resourceId);
 
         ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);

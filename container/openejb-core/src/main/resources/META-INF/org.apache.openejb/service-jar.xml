@@ -678,7 +678,7 @@
           types="javax.jms.Queue, Queue"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
-
+    destination destination
   </ServiceProvider>
 
   <ServiceProvider
@@ -687,7 +687,7 @@
           types="javax.jms.Topic, Topic"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
-
+    destination destination
   </ServiceProvider>
 
   <!--

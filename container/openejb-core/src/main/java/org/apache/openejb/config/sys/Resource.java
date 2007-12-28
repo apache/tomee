@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Properties;
 
 
 /**
@@ -54,8 +53,12 @@ public class Resource extends AbstractService {
         super(id);
     }
 
-    public Resource(String id, String provider, String type) {
-        super(id, provider, type);
+    public Resource(String id, String type) {
+        super(id, type);
+    }
+
+    public Resource(String id, String type, String provider) {
+        super(id, type, provider);
     }
 
     public Resource() {
