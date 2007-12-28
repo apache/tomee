@@ -55,6 +55,9 @@ public class CmpJarBuilder {
     }
 
     private void generate() throws IOException {
+        // Don't generate an empty jar
+        if (!hasCmpBeans()) return;
+
         boolean threwException = false;
         JarOutputStream jarOutputStream = openJarFile();
         try {
@@ -83,6 +86,20 @@ public class CmpJarBuilder {
                 jarFile = null;
             }
         }
+    }
+
+    private boolean hasCmpBeans() {
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                if (beanInfo instanceof EntityBeanInfo) {
+                    EntityBeanInfo entityBeanInfo = (EntityBeanInfo) beanInfo;
+                    if ("CONTAINER".equalsIgnoreCase(entityBeanInfo.persistenceType)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void generateClass(JarOutputStream jarOutputStream, EntityBeanInfo entityBeanInfo) throws IOException {
