@@ -517,8 +517,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         info.properties = props;
         info.constructorArgs.addAll(parseConstructorArgs(provider));
 
+        specialProcessing(info);
+
+
         return info;
     }
+
+    private <T extends ServiceInfo> void specialProcessing(T info) {
+        ServiceInfo serviceInfo = info;
+        TopicOrQueueDefaults.process(serviceInfo);
+    }
+
 
     @SuppressWarnings({"unchecked"})
     private ServiceProvider resolveServiceProvider(Service service, Class infoType) throws OpenEJBException {
@@ -736,4 +745,37 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return SystemInstance.get().getComponent(OpenEjbConfiguration.class);
     }
 
+
+    private static class TopicOrQueueDefaults {
+        public static void process(ServiceInfo provider) {
+            if (!provider.service.equals("Resource")) return;
+            if (!provider.types.contains("Topic") && !provider.types.contains("Queue")) return;
+            if (!provider.className.matches("org.apache.activemq.command.ActiveMQ(Topic|Queue)")) return;
+
+
+            Properties properties = provider.properties;
+            String destination = normalizePropertyName(properties, "destination");
+            if (properties.getProperty(destination) == null || properties.getProperty(destination).equals("")){
+                properties.setProperty(destination, provider.id);
+            }
+        }
+
+        /**
+         * Our properties are not case sensitive, so they may have specified the name
+         * under any case.  Would be super to have a case insensitive properties impl.
+         * @param properties
+         * @param property
+         * @return the property name under any corrected case
+         */
+        private static String normalizePropertyName(Properties properties, String property) {
+            for (Object o : properties.keySet()) {
+                String name  = (String) o;
+                if (name.equalsIgnoreCase(property)){
+                    return name;
+                }
+            }
+
+            return property;
+        }
+    }
 }

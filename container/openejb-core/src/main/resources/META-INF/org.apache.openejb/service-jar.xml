@@ -278,7 +278,7 @@
 
     # Default password
 
-    Password  
+    Password
 
     # The connection properties that will be sent to the JDBC
     # driver when establishing new connections
@@ -413,7 +413,7 @@
     # limit.
     #
     # NOTE - Some drivers have limits on the number of open
-    # statements, so make sure there are some resources left 
+    # statements, so make sure there are some resources left
     # for the other (non-prepared) statements.
 
     MaxOpenPreparedStatements 0
@@ -434,7 +434,7 @@
     #
     # NOTE: Do NOT close the underlying connection, only the
     # original logical connection wrapper.
-    
+
     AccessToUnderlyingConnectionAllowed	false
   </ServiceProvider>
 
@@ -638,7 +638,7 @@
 
     # Broker configuration
     BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
-    
+
     # Broker address
     ServerUrl vm://localhost?async=true
 
@@ -652,7 +652,7 @@
           service="Resource"
           types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
           class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
-    
+
     ResourceAdapter Default JMS Resource Adapter
 
     # Specifies if the connection is enrolled in global transaction
@@ -678,7 +678,7 @@
           types="javax.jms.Queue, Queue"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQQueue">
-    destination destination
+    destination
   </ServiceProvider>
 
   <ServiceProvider
@@ -687,7 +687,7 @@
           types="javax.jms.Topic, Topic"
           constructor="destination"
           class-name="org.apache.activemq.command.ActiveMQTopic">
-    destination destination
+    destination
   </ServiceProvider>
 
   <!--

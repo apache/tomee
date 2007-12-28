@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 
@@ -135,5 +136,19 @@ public class ConfigureServiceTest extends TestCase {
         assertNotNull(myStatelessContainer.properties.getProperty("anotherProperty"));
         assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
     }
+
+    public void testQueue() throws Exception {
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        ResourceInfo resourceInfo = factory.configureService(new Resource("myQueue", "Queue"), ResourceInfo.class);
+
+        assertNotNull(resourceInfo);
+        assertEquals("myQueue", resourceInfo.id);
+        assertNotNull(resourceInfo.constructorArgs);
+        assertNotNull(resourceInfo.properties);
+        assertEquals("myQueue", resourceInfo.properties.getProperty("destination"));
+    }
+
+
 }
 
