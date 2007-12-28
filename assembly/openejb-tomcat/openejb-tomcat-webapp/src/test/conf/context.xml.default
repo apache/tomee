@@ -15,23 +15,14 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
 -->
-<!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>assembly</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>openejb-tomcat</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Assembly :: Tomcat</name>
+<!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
 
-  <modules>
-    <module>openejb-tomcat-naming</module>
-    <module>openejb-tomcat-webapp</module>
-  </modules>
-</project>
+<Context>
+  <Environment
+      name="conf/context.xml/environment"
+      value="ConfContextString"
+      type="java.lang.String"/>
+</Context>

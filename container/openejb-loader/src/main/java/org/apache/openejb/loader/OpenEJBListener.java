@@ -33,7 +33,7 @@ public class OpenEJBListener implements LifecycleListener {
     static private Boolean listenerInstalled;
 
     public static boolean isListenerInstalled() {
-        return listenerInstalled;
+        return listenerInstalled != null && listenerInstalled;
     }
 
     public static void tryDynamicInstall() {
@@ -68,15 +68,16 @@ public class OpenEJBListener implements LifecycleListener {
             Properties properties = new Properties();
             properties.setProperty("openejb.loader", "tomcat-system");
 
-            File webappDir = findOpenEjbWar(standardServer);
-            System.setProperty("openejb.war", webappDir.getAbsolutePath());            
-            File libDir = new File(webappDir, "lib");
             String catalinaHome = System.getProperty("catalina.home");
             properties.setProperty("openejb.home", catalinaHome);
             System.setProperty("openejb.home", catalinaHome);
             String catalinaBase = System.getProperty("catalina.base");
             properties.setProperty("openejb.base", catalinaBase);
             System.setProperty("openejb.base", catalinaBase);
+
+            File webappDir = findOpenEjbWar(standardServer);
+            System.setProperty("openejb.war", webappDir.getAbsolutePath());
+            File libDir = new File(webappDir, "lib");
             String libPath = libDir.getAbsolutePath();
             properties.setProperty("openejb.libs", libPath);
 

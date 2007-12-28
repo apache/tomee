@@ -44,25 +44,19 @@ public class LoaderServlet extends HttpServlet {
         // let it do the rest.
         Properties p = initParamsToProperties(config);
 
-        String embeddingStyle = p.getProperty("openejb.loader");
+        String webappPath = getWebappPath(config);
 
-        // Set the mandatory values for a webapp-only setup
-        if (embeddingStyle.endsWith("tomcat-webapp")) {
-            setPropertyIfNUll(p, "openejb.base", getWebappPath(config));
-//            setPropertyIfNUll(p, "openejb.configuration", "META-INF/openejb.xml");
-//            setPropertyIfNUll(p, "openejb.container.decorators", "org.apache.openejb.tomcat.TomcatJndiSupport");
-//            setPropertyIfNUll(p, "log4j.configuration", "META-INF/log4j.properties");
-        } else if (embeddingStyle.endsWith("tomcat-system")){
-            String webappPath = getWebappPath(config);
-            File webappDir = new File(webappPath);
-            File libDir = new File(webappDir, "lib");
-            String catalinaHome = System.getProperty("catalina.home");
-            p.setProperty("openejb.home", catalinaHome);
-            String catalinaBase = System.getProperty("catalina.base");
-            p.setProperty("openejb.base", catalinaBase);
-            String libPath = libDir.getAbsolutePath();
-            p.setProperty("openejb.libs", libPath);
-        }
+        File webappDir = new File(webappPath);
+        File libDir = new File(webappDir, "lib");
+
+        String catalinaHome = System.getProperty("catalina.home");
+        p.setProperty("openejb.home", catalinaHome);
+
+        String catalinaBase = System.getProperty("catalina.base");
+        p.setProperty("openejb.base", catalinaBase);
+
+        String libPath = libDir.getAbsolutePath();
+        p.setProperty("openejb.libs", libPath);
 
         try {
             SystemInstance.init(p);
@@ -73,25 +67,6 @@ public class LoaderServlet extends HttpServlet {
                 loader = (Loader) instance;
             } catch (ClassCastException e) {
                 loader = new LoaderWrapper(instance);
-            }
-
-            // loader created, now finish adding all properties
-            if (embeddingStyle.endsWith("tomcat-webapp")) {
-                ServletContext ctx = config.getServletContext();
-                File webInf = new File(ctx.getRealPath("WEB-INF"));
-                File webapp = webInf.getParentFile();
-                String webappPath = webapp.getAbsolutePath();
-
-                setPropertyIfNUll(p, "openejb.base", webappPath);
-                setPropertyIfNUll(p, "openejb.configuration", "META-INF/openejb.xml");
-                setPropertyIfNUll(p, "openejb.container.decorators", "org.apache.openejb.tomcat.TomcatJndiSupport");
-                setPropertyIfNUll(p, "log4j.configuration", "META-INF/log4j.properties");
-            } else if (embeddingStyle.endsWith("tomcat-system")) {
-                String catalinaHome = System.getProperty("catalina.home");
-                p.setProperty("openejb.home", catalinaHome);
-
-                String catalinaBase = System.getProperty("catalina.base");
-                p.setProperty("openejb.base", catalinaBase);
             }
 
             // initialize the loader

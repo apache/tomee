@@ -1,0 +1,284 @@
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<!-- $Rev: 597221 $ $Date: 2007-11-21 22:51:05 +0100 (Wed, 21 Nov 2007) $ -->
+
+BODY { 
+	background: #ffffff; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	font-size: 8px;
+}
+
+A:link, 
+A:visited, 
+A:active { 
+	text-decoration: none 
+}
+
+.userdata	{ 
+	behavior: url('#default#userdata'); 
+}
+
+.bg { 
+	background-repeat: no-repeat
+}
+
+.pageTitle {
+	font-size: 18px; 
+	font-family: arial, "Helvetica", "Arial", "sans-serif"; 
+	line-height: 28px; 
+	font-weight: bold; 
+	color: #666666;
+}
+
+.pageSubTitle {
+	font-size: 15px; 
+	font-family: arial, "Helvetica", "Arial", "sans-serif"; 
+	line-height: 40px; 
+	font-weight: bold; 
+	color: #444444;
+}
+
+.bodyGrey { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.bodyBlack { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.newsSummary { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.newsTitle { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+	font-weight: bold; 
+}
+
+.option { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.option-flag { 
+	font-size: 12px; 
+	font-family: courier new, arial, helvetica, sans-serif;
+	line-height: 16px; color: #7270c2;
+	font-weight: bold; 
+}
+
+.option-param { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #7270c2;
+}
+
+.note { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.note-caption { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #FFFFFF;
+	font-weight: bold; 
+}
+
+.toc { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 16px; color: #222222;
+}
+
+.bodyBlackOLD { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #222222;
+}
+
+
+h1 { 
+	font-size: 19px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 20px; color: #000000;
+}
+
+h2 { 
+	font-size: 17px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 20px; color: #000000;
+}
+
+h3 { 
+	font-size: 15px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 17px; color: #000000;
+	font-weight: bold; 
+}
+
+h4 { 
+	font-size: 13px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 15px; color: #000000;
+	font-weight: bold; 
+}
+
+h5 { 
+	font-size: 12px; 
+	font-family: arial, helvetica, sans-serif;
+	line-height: 15px; color: #444444;
+}
+
+.bodyCode { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #757585;
+}
+
+.command { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #757585;
+}
+
+.code-title { 
+	font-size: 12px; 
+	font-family: arial, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 12px; color: #666666;
+}
+
+.code-block { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px; color: #757585;
+}
+
+.code-comment { 
+	font-size: 12px; 
+	font-family: courier new, "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 16px; color: #8888CC;
+}
+
+.legalBlack { 
+	font-size: 10px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #000000;
+}
+
+.legalGrey { 
+	font-size: 9px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #999999;
+}
+
+.bigGrey { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 14px; color: #666666;
+}
+
+.projectBlack { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif";
+	line-height: 11px; color: #000000;
+}
+
+.header { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #181818;
+}
+
+.teamMember { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #181818;
+}
+
+.teamMemberRole { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 14px; 
+	font-weight: bold; 
+	color: #A8A8A8;
+}
+
+.menuTopOn { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 0px; 
+	color: #6763a9;
+}
+
+.menuTopOff { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 0px; 
+	color: #999999;
+}
+
+.menuProjectOn { 
+	font-size: 12px; 
+	font-family: "Helvetica", "Arial", "sans-serif"; 
+	line-height: 20px; 
+	font-weight: bold; 
+	color: #cbcbeb;
+}
+
+.menuProjectOff { 
+	font-size: 12px; 
+	font-family: "Helvetica", "Arial", "sans-serif"; 
+	line-height: 20px; 
+	font-weight: bold; 
+	color: #ffffff;
+}
+
+.subMenuOn { 
+	font-size: 11px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 30px; 
+	font-weight: bold; 
+	color: #4d4b7e;
+}
+
+.subMenuOff { 
+	font-size: 10px; 
+	font-family: "Tahoma", "Helvetica", "Arial", "sans-serif"; 
+	line-height: 17px; 
+	font-weight: bold; 
+	color: #cbcbeb;
+}
+
+

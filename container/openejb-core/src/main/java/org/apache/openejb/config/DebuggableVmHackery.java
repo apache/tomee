@@ -32,6 +32,8 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.JndiConsumer;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -60,28 +62,7 @@ class DebuggableVmHackery implements DynamicDeployer {
                 EjbDeployment ejbDeployment = deployments.get(ejbName);
 
 
-                for (ResourceRef ref : copy(bean.getResourceRef())) {
-                    if (ref.getResType().startsWith("javax.jms.")){
-                        ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
-                        ejbDeployment.getResourceLink().remove(resourceLink);
-                        bean.getResourceRef().remove(ref);
-                    }
-                }
-
-                for (ResourceEnvRef ref : bean.getResourceEnvRef()) {
-                    ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
-                    ejbDeployment.getResourceLink().remove(resourceLink);
-                }
-                bean.getResourceEnvRef().clear();
-
-                for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
-                    ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
-                    ejbDeployment.getResourceLink().remove(resourceLink);
-                }
-                bean.getMessageDestinationRef().clear();
-
-                bean.getPersistenceContextRef().clear();
-                bean.getPersistenceUnitRef().clear();
+                pruneRefs(bean, ejbDeployment);
 
 
                 if (!(bean instanceof MessageDrivenBean) && !(bean instanceof EntityBean)) {
@@ -130,8 +111,37 @@ class DebuggableVmHackery implements DynamicDeployer {
                 bean.getEjbRefMap().keySet().removeAll(removed);
             }
 
+            for (Interceptor interceptor : ejbJar.getInterceptors()) {
+                pruneRefs(interceptor, new EjbDeployment());
+            }
+
         }
         return appModule;
+    }
+
+    private void pruneRefs(JndiConsumer bean, EjbDeployment ejbDeployment) {
+        for (ResourceRef ref : copy(bean.getResourceRef())) {
+            if (ref.getResType().startsWith("javax.jms.")){
+                ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+                ejbDeployment.getResourceLink().remove(resourceLink);
+                bean.getResourceRef().remove(ref);
+            }
+        }
+
+        for (ResourceEnvRef ref : bean.getResourceEnvRef()) {
+            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+            ejbDeployment.getResourceLink().remove(resourceLink);
+        }
+        bean.getResourceEnvRef().clear();
+
+        for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
+            ResourceLink resourceLink = ejbDeployment.getResourceLink(ref.getName());
+            ejbDeployment.getResourceLink().remove(resourceLink);
+        }
+        bean.getMessageDestinationRef().clear();
+
+        bean.getPersistenceContextRef().clear();
+        bean.getPersistenceUnitRef().clear();
     }
 
     public <T> List<T> copy(Collection<T> list) {
