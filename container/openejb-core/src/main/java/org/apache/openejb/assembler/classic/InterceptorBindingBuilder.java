@@ -222,7 +222,7 @@ public class InterceptorBindingBuilder {
     private List<InterceptorBindingInfo> processBindings(Method method, String ejbName, List<InterceptorBindingInfo> bindings){
         List<InterceptorBindingInfo> methodBindings = new ArrayList<InterceptorBindingInfo>();
 
-        // The only critical thing to understand in this loop as that
+        // The only critical thing to understand in this loop is that
         // the bindings have already been sorted high to low (first to last)
         // in this order:
         //
@@ -274,8 +274,10 @@ public class InterceptorBindingBuilder {
                 excludes.add(level);
                 continue;
             }
-
-            methodBindings.add(info);
+            boolean excludeInterceptorsOnly = info.interceptors.size() == 0 && info.interceptorOrder.size() == 0;
+            if (!excludeInterceptorsOnly) {
+                methodBindings.add(info);
+            }
             if (info.excludeClassInterceptors) excludes.add(Level.CLASS);
             if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
         }
@@ -293,7 +295,7 @@ public class InterceptorBindingBuilder {
 
         // do we have parameters?
         List<String> params = methodInfo.methodParams;
-        if (params == null) return true;
+        if (params == null || params.size() == 0) return true;
 
         // do we have the same number of parameters?
         if (params.size() != method.getParameterTypes().length) return false;
@@ -340,10 +342,15 @@ public class InterceptorBindingBuilder {
     }
 
     private static Type type(Level level, InterceptorBindingInfo info) {
-        if (info.interceptorOrder.size() > 0) return Type.EXPLICIT_ORDERING;
-        if (level == Level.CLASS && info.excludeClassInterceptors && info.excludeDefaultInterceptors)
+        if (info.interceptorOrder.size() > 0) {
+            return Type.EXPLICIT_ORDERING;
+        }
+        if (level == Level.CLASS && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
             return Type.SAME_AND_LOWER_EXCLUSION;
-        if (level == Level.CLASS && info.excludeClassInterceptors) return Type.SAME_LEVEL_EXCLUSION;
+        }
+        if (level == Level.CLASS && info.excludeClassInterceptors) {
+            return Type.SAME_LEVEL_EXCLUSION;
+        }
         return Type.ADDITION_OR_LOWER_EXCLUSION;
     }
 
