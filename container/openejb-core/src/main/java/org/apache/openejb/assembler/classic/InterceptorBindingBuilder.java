@@ -247,13 +247,11 @@ public class InterceptorBindingBuilder {
         for (InterceptorBindingInfo info : bindings) {
             Level level = level(info);
 
-            if (excludes.contains(level)) continue;
-
             if (!implies(method, ejbName, level, info)) continue;
 
             Type type = type(level, info);
 
-            if (type == Type.EXPLICIT_ORDERING){
+            if (type == Type.EXPLICIT_ORDERING && !excludes.contains(level)){
                 methodBindings.add(info);
                 // An explicit ordering trumps all other bindings of the same level or below
                 // (even other explicit order bindings).  Any bindings that were higher than
@@ -272,12 +270,10 @@ public class InterceptorBindingBuilder {
 
             if (type == Type.SAME_LEVEL_EXCLUSION){
                 excludes.add(level);
-                continue;
             }
-            boolean excludeInterceptorsOnly = info.interceptors.size() == 0 && info.interceptorOrder.size() == 0;
-            if (!excludeInterceptorsOnly) {
-                methodBindings.add(info);
-            }
+
+            if (!excludes.contains(level)) methodBindings.add(info);
+
             if (info.excludeClassInterceptors) excludes.add(Level.CLASS);
             if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
         }
@@ -295,7 +291,7 @@ public class InterceptorBindingBuilder {
 
         // do we have parameters?
         List<String> params = methodInfo.methodParams;
-        if (params == null || params.size() == 0) return true;
+        if (params == null) return true;
 
         // do we have the same number of parameters?
         if (params.size() != method.getParameterTypes().length) return false;
@@ -335,9 +331,18 @@ public class InterceptorBindingBuilder {
     }
 
     private static Level level(InterceptorBindingInfo info) {
-        if (info.ejbName.equals("*")) return Level.PACKAGE;
-        if (info.method == null) return Level.CLASS;
-        if (info.method.methodParams == null) return Level.OVERLOADED_METHOD;
+        if (info.ejbName.equals("*")) {
+            return Level.PACKAGE;
+        }
+
+        if (info.method == null) {
+            return Level.CLASS;
+        }
+
+        if (info.method.methodParams == null) {
+            return Level.OVERLOADED_METHOD;
+        }
+
         return Level.EXACT_METHOD;
     }
 
@@ -345,12 +350,15 @@ public class InterceptorBindingBuilder {
         if (info.interceptorOrder.size() > 0) {
             return Type.EXPLICIT_ORDERING;
         }
+
         if (level == Level.CLASS && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
             return Type.SAME_AND_LOWER_EXCLUSION;
         }
+
         if (level == Level.CLASS && info.excludeClassInterceptors) {
             return Type.SAME_LEVEL_EXCLUSION;
         }
+
         return Type.ADDITION_OR_LOWER_EXCLUSION;
     }
 
