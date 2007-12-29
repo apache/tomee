@@ -63,7 +63,7 @@ public class ServiceUtils {
         try {
             ProviderInfo info = getProviderInfo(id);
 
-            List<ServiceProvider> services = getServices(info.getPackageName());
+            List<ServiceProvider> services = getServiceProviders(info.getPackageName());
 
             for (ServiceProvider service : services) {
                 if (service.getId().equals(id)) {
@@ -79,7 +79,7 @@ public class ServiceUtils {
     public static ServiceProvider getServiceProvider(String id) throws OpenEJBException {
         ProviderInfo info = getProviderInfo(id);
 
-        List<ServiceProvider> services = getServices(info.getPackageName());
+        List<ServiceProvider> services = getServiceProviders(info.getPackageName());
 
         for (ServiceProvider service : services) {
             if (service.getId().equals(info.getServiceName())) {
@@ -95,10 +95,27 @@ public class ServiceUtils {
         return provider != null? provider.getId(): null;
     }
 
+
+    public static List<ServiceProvider> getServiceProvidersByServiceType(String type) throws OpenEJBException {
+        ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+        if (type == null) return providers;
+
+        List<ServiceProvider> services = getServiceProviders(defaultProviderURL);
+
+        for (ServiceProvider service : services) {
+            if (service.getService().equals(type)) {
+                providers.add(service);
+            }
+        }
+
+        return providers;
+    }
+
+
     public static ServiceProvider getServiceProviderByType(String type) throws OpenEJBException {
         if (type == null) return null;
 
-        List<ServiceProvider> services = getServices(defaultProviderURL);
+        List<ServiceProvider> services = getServiceProviders(defaultProviderURL);
 
         for (ServiceProvider service : services) {
             if (service.getTypes().contains(type)) {
@@ -112,11 +129,9 @@ public class ServiceUtils {
     public static ServiceProvider getServiceProviderByType(String providerType, String serviceType) throws OpenEJBException {
         if (serviceType == null) return null;
 
-        List<ServiceProvider> services = getServices(defaultProviderURL);
+        List<ServiceProvider> services = getServiceProvidersByServiceType(providerType);
 
         for (ServiceProvider service : services) {
-            if (!service.getService().equals(providerType)) continue;
-            
             if (service.getTypes().contains(serviceType)) {
                 return service;
             }
@@ -125,7 +140,11 @@ public class ServiceUtils {
         return null;
     }
 
-    private static List<ServiceProvider> getServices(String packageName) throws OpenEJBException {
+    public static List<ServiceProvider> getServiceProviders() throws OpenEJBException {
+        return getServiceProviders(defaultProviderURL);
+    }
+
+    public static List<ServiceProvider> getServiceProviders(String packageName) throws OpenEJBException {
         List<ServiceProvider> services = loadedServiceJars.get(packageName);
         if (services == null) {
             ServicesJar servicesJar = JaxbOpenejb.readServicesJar(packageName);

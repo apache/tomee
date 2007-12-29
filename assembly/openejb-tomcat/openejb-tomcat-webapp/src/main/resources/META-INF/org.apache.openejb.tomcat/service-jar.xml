@@ -641,6 +641,7 @@
   <ServiceProvider
           id="Default JMS Resource Adapter"
           service="Resource"
+          types="ActiveMQResourceAdapter"
           class-name="org.apache.activemq.ra.ActiveMQResourceAdapter">
 
     # Broker configuration

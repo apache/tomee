@@ -64,8 +64,11 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.util.Join;
 
 import java.io.File;
+import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -75,11 +78,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Comparator;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    private static final Messages messages = new Messages("org.apache.openejb.util.resources");
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
+    private static final Messages messages = new Messages(ConfigurationFactory.class);
 
     private String configLocation = "";
 
@@ -250,10 +254,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         sys.facilities.transactionService = configureService(openejb.getTransactionManager(), TransactionServiceInfo.class);
 
+        List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
         for (Resource resource : openejb.getResource()) {
             ResourceInfo resourceInfo = configureService(resource, ResourceInfo.class);
-            sys.facilities.resources.add(resourceInfo);
+            resources.add(resourceInfo);
         }
+        Collections.sort(resources, new ResourceInfoComparator(resources));
+
+        sys.facilities.resources.addAll(resources);
+
+
 
 //        ConnectionManagerInfo service = configureService(openejb.getConnectionManager(), ConnectionManagerInfo.class);
 //        sys.facilities.connectionManagers.add(service);
@@ -363,14 +373,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             AppModule appModule = deploymentLoader.load(jarFile);
             appInfo = configureApplication(appModule);
         } catch (ValidationFailedException e) {
-            String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
-            logger.warning(message); // DO not include the stacktrace in the message
+            logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
             throw e;
         } catch (OpenEJBException e) {
-            String message = messages.format("conf.0004", jarFile.getAbsolutePath(), e.getMessage());
             // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
             // removing this message causes NO messages to be printed when embedded
-            logger.warning(message, e);
+            logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
             throw e;
         }
         return appInfo;
@@ -452,75 +460,109 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
 
     public <T extends ServiceInfo> T configureService(Class<? extends T> type) throws OpenEJBException {
-        Service service = getDefaultService(type);
-
-        return configureService(service, type);
+        return configureService((Service)null, type);
     }
 
     private <T extends ServiceInfo>Service getDefaultService(Class<? extends T> type) throws OpenEJBException {
         DefaultService defaultService = defaultProviders.get(type);
+
+        if (defaultService == null) return null;
 
         Service service;
         try {
             service = JaxbOpenejb.create(defaultService.type);
             service.setType(defaultService.id);
         } catch (Exception e) {
-            throw new OpenEJBException("Cannot instantiate class " + defaultService.type.getName(), e);
+            String name = (defaultService == null || defaultService.type == null) ? "null" : defaultService.type.getName();
+            throw new OpenEJBException("Cannot instantiate class " + name, e);
         }
         return service;
     }
 
 
     public <T extends ServiceInfo> T configureService(Service service, Class<? extends T> infoType) throws OpenEJBException {
-        if (infoType == null) throw new NullPointerException("type");
-
-        if (service == null) {
-            service = getDefaultService(infoType);
-        }
-
-        String providerType = service.getClass().getSimpleName();
-
-        ServiceProvider provider = resolveServiceProvider(service, infoType);
-
-        if (provider == null){
-            throw new NoSuchProviderException("Cannot determine a default provider for Service("+service.getId() +", "+infoType.getSimpleName()+")");
-        }
-
-        if (service.getId() == null) service.setId(provider.getId());
-
-        logger.info("Configuring Service(id=" + service.getId() + ", type=" + provider.getService() + ", provider-id=" + provider.getId() + ")");
-
-        Properties props = new Properties();
-        props.putAll(provider.getProperties());
-        props.putAll(service.getProperties());
-        props.putAll(getSystemProperties(service.getId(), provider.getService()));
-
-        if (providerType != null && !provider.getService().equals(providerType)) {
-            throw new OpenEJBException(messages.format("conf.4902", service.getId(), providerType));
-        }
-
-        T info;
-
         try {
-            info = infoType.newInstance();
-        } catch (Exception e) {
-            throw new OpenEJBException("Cannot instantiate class " + infoType.getName(), e);
+            if (infoType == null) throw new NullPointerException("type");
+
+            if (service == null) {
+                service = getDefaultService(infoType);
+                if (service == null){
+                    throw new OpenEJBException(messages.format("configureService.noDefaultService", infoType.getName()));
+                }
+            }
+
+
+            String providerType = service.getClass().getSimpleName();
+
+            ServiceProvider provider = resolveServiceProvider(service, infoType);
+
+            if (provider == null){
+                List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
+                StringBuilder sb = new StringBuilder();
+//                for (ServiceProvider p : providers) {
+//                    sb.append(System.getProperty("line.separator"));
+//                    sb.append("  <").append(p.getService());
+//                    sb.append(" id=\"").append(service.getId()).append('"');
+//                    sb.append(" provider=\"").append(p.getId()).append("\"/>");
+//                }
+
+                List<String> types = new ArrayList<String>();
+                for (ServiceProvider p : providers) {
+                    for (String type : p.getTypes()) {
+                        if (types.contains(type)) continue;
+                        types.add(type);
+                        sb.append(System.getProperty("line.separator"));
+                        sb.append("  <").append(p.getService());
+                        sb.append(" id=\"").append(service.getId()).append('"');
+                        sb.append(" type=\"").append(type).append("\"/>");
+                    }
+                }
+                String noProviderMessage = messages.format("configureService.noProviderForService", providerType, service.getId(), service.getType(), service.getProvider(), sb.toString());
+                throw new NoSuchProviderException(noProviderMessage);
+            }
+
+            if (service.getId() == null) service.setId(provider.getId());
+
+            logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
+
+            Properties props = new Properties();
+            props.putAll(provider.getProperties());
+            props.putAll(service.getProperties());
+            props.putAll(getSystemProperties(service.getId(), provider.getService()));
+
+            if (providerType != null && !provider.getService().equals(providerType)) {
+                throw new OpenEJBException(messages.format("configureService.wrongProviderType", service.getId(), providerType));
+            }
+
+            T info;
+
+            try {
+                info = infoType.newInstance();
+            } catch (Exception e) {
+                throw new OpenEJBException("Cannot instantiate class " + infoType.getName(), e);
+            }
+
+            info.service = provider.getService();
+            info.types.addAll(provider.getTypes());
+            info.description = provider.getDescription();
+            info.displayName = provider.getDisplayName();
+            info.className = provider.getClassName();
+            info.factoryMethod = provider.getFactoryName();
+            info.id = service.getId();
+            info.properties = props;
+            info.constructorArgs.addAll(parseConstructorArgs(provider));
+
+            specialProcessing(info);
+
+
+            return info;
+        } catch (NoSuchProviderException e) {
+            String message = logger.fatal("configureService.failed", e, service.getId());
+            throw new OpenEJBException(message + ": " + e.getMessage());
+        } catch (Throwable e) {
+            String message = logger.fatal("configureService.failed", e, service.getId());
+            throw new OpenEJBException(message, e);
         }
-
-        info.service = provider.getService();
-        info.types.addAll(provider.getTypes());
-        info.description = provider.getDescription();
-        info.displayName = provider.getDisplayName();
-        info.className = provider.getClassName();
-        info.factoryMethod = provider.getFactoryName();
-        info.id = service.getId();
-        info.properties = props;
-        info.constructorArgs.addAll(parseConstructorArgs(provider));
-
-        specialProcessing(info);
-
-
-        return info;
     }
 
     private <T extends ServiceInfo> void specialProcessing(T info) {
@@ -549,7 +591,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (infoType != null) {
             Service defaultService = getDefaultService(infoType);
-            return resolveServiceProvider(defaultService, null);
+            if (defaultService != null) {
+                return resolveServiceProvider(defaultService, null);
+            }
         }
 
         return null;
@@ -776,6 +820,62 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             return property;
+        }
+    }
+
+    public static class ResourceInfoComparator implements Comparator<ResourceInfo> {
+        private final List<String> ids;
+
+        public ResourceInfoComparator(List<ResourceInfo> resources){
+            ids = new ArrayList<String>();
+            for (ResourceInfo info : resources) {
+                ids.add(info.id);
+            }
+        }
+
+        public int compare(ResourceInfo a, ResourceInfo b) {
+            String refA = getReference(a);
+            String refB = getReference(b);
+
+            // both null or the same id
+            if (refA == refB) return 0;
+
+            // b is null
+            if (refA != null && refB == null){
+                return 1;
+            }
+
+            // a is null
+            if (refB != null && refA == null){
+                return -1;
+            }
+
+            // b is referencing a
+            if (a.id.equals(refB)) {
+                return 1;
+            }
+
+            // a is referencing b
+            if (b.id.equals(refA)) {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        public int hasReference(ResourceInfo info){
+            for (Object value : info.properties.values()) {
+                if (ids.contains(value)) return 1;
+            }
+            return 0;
+        }
+
+        public String getReference(ResourceInfo info){
+            for (Object value : info.properties.values()) {
+                value = ((String)value).trim();
+                if (ids.contains(value)) return (String) value;
+            }
+            return null;
         }
     }
 }

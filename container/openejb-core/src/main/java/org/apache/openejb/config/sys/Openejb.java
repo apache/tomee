@@ -266,6 +266,7 @@ public class Openejb {
                 Resource resource = new Resource();
                 resource.setJar(connector.getJar());
                 resource.setId(connector.getId());
+                resource.setType(connector.getType());
                 resource.setProvider(connector.getProvider());
                 resource.getProperties().putAll(connector.getProperties());
                 this.resource.add(resource);
