@@ -80,4 +80,4 @@ OPENEJB_CORE_JAR="$OPENEJB_HOME/lib/openejb-core-${version}.jar"
 OPENEJB_JAVAAGENT_JAR="$OPENEJB_HOME/lib/openejb-javaagent-${version}.jar"
 
 
-java $OPENEJB_OPTS -javaagent:$OPENEJB_JAVAAGENT_JAR -jar $OPENEJB_CORE_JAR "$@"
+java $OPENEJB_OPTS "-javaagent:$OPENEJB_JAVAAGENT_JAR" -jar "$OPENEJB_CORE_JAR" "$@"
