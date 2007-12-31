@@ -130,10 +130,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             listeners = new ArrayList<DeploymentListener>(deploymentListeners);
         }
         for (DeploymentListener listener : listeners) {
+            String listenerName = listener.getClass().getSimpleName();
             try {
+                logger.debug("appCreationEvent.start", listenerName, appInfo.jarPath);
                 listener.afterApplicationCreated(appInfo);
             } catch (Throwable e) {
-                logger.error("Error notifying deployment listener of created application " + appInfo.jarPath, e);
+                logger.error("appCreationEvent.failed", e, listenerName, appInfo.jarPath);
             }
         }
     }
@@ -144,10 +146,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             listeners = new ArrayList<DeploymentListener>(deploymentListeners);
         }
         for (DeploymentListener listener : listeners) {
+            String listenerName = listener.getClass().getSimpleName();
             try {
+                logger.debug("appDestroyedEvent.start", listenerName, appInfo.jarPath);
                 listener.beforeApplicationDestroyed(appInfo);
             } catch (Throwable e) {
-                logger.error("Error notifying deployment listener of destroyed application " + appInfo.jarPath, e);
+                logger.error("appDestroyedEvent.failed", e, listenerName, appInfo.jarPath);
             }
         }
     }
@@ -332,7 +336,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (Throwable e) {
-                logger.error("Application could not be deployed: " + appInfo.jarPath, e);
+                logger.error("appNotDeployed", e, appInfo.jarPath);
             }
         }
     }
@@ -411,7 +415,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
 
-        logger.info("Assembling app: "+appInfo.jarPath);
+        logger.info("createApplication.start", appInfo.jarPath);
 
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
@@ -423,10 +427,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         if (used.size() > 0) {
-            String message = "Application cannot be deployed as it contains deployment-ids which are in use: app: " + appInfo.jarPath;
-            logger.error(message);
+            String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.jarPath);
             for (String id : used) {
-                logger.debug("DeploymentId already used: " + id);
+                logger.debug("createApplication.deploymentIdInUse", id);
                 message += "\n    "+id;
             }
             throw new DuplicateDeploymentIdException(message);
@@ -523,7 +526,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             coreDeploymentInfo.addApplicationException(exceptionClass, exceptionInfo.rollback);
                         }
                     } catch (ClassNotFoundException e) {
-                        logger.error("Application class invalid: class=" + exceptionInfo.exceptionClass + ".  Exception: " + e.getMessage(), e);
+                        logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());
                     }
                 }
 
@@ -531,7 +534,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 ejbJarBuilder.deploy(deployments);
 
                 for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                    logger.info("Created Ejb(deployment-id="+beanInfo.ejbDeploymentId+", ejb-name="+beanInfo.ejbName+", container="+beanInfo.containerId+")");
+                    logger.info("createApplication.createdEjb", beanInfo.ejbDeploymentId, beanInfo.ejbName, beanInfo.containerId);
                 }
             }
 
@@ -565,7 +568,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 webAppBuilder.deployWebApps(appInfo, classLoader);
             }
 
-            logger.info("Deployed Application(path="+appInfo.jarPath+")");
+            logger.info("createApplication.success", appInfo.jarPath);
 
             deployedApplications.put(appInfo.jarPath, appInfo);
             fireAfterApplicationCreated(appInfo);
@@ -573,9 +576,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             try {
                 destroyApplication(appInfo);
             } catch (Exception e1) {
-                logger.debug("App failing deployment may not have undeployed cleanly: "+appInfo.jarPath, e1);
+                logger.debug("createApplication.undeployFailed", e1, appInfo.jarPath);
             }
-            throw new OpenEJBException("Creating application failed: "+appInfo.jarPath, t);
+            throw new OpenEJBException(messages.format("createApplication.failed", appInfo.jarPath), t);
         }
     }
 
@@ -588,12 +591,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyApplication(AppInfo appInfo) throws UndeployException {
-        logger.info("Undeploying app: "+appInfo.jarPath);
+        logger.info("destroyApplication.start", appInfo.jarPath);
 
         fireBeforeApplicationDestroyed(appInfo);
 
         Context globalContext = containerSystem.getJNDIContext();
-        UndeployException undeployException = new UndeployException("Failed undeploying application: id=" + appInfo.jarPath);
+        UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.jarPath));
 
         WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
         if (webAppBuilder != null) {
@@ -686,6 +689,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (undeployException.getCauses().size() > 0) {
             throw undeployException;
         }
+
+        logger.debug("destroyApplication.success", appInfo.jarPath);
     }
 
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
@@ -711,6 +716,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {
+        logger.info("createService", contextInfo.service, contextInfo.id, contextInfo.className);
+
         InitialContext result;
         try {
             InitialContext ic = new InitialContext(contextInfo.properties);
@@ -729,6 +736,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.remoteJndiContexts.add(contextInfo);
+
+        logger.debug("createService.success", contextInfo.service, contextInfo.id, contextInfo.className);
     }
 
     public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException {
@@ -766,6 +775,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.containerSystem.containers.add(serviceInfo);
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void removeContainer(String containerId) {
@@ -779,7 +790,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     this.containerSystem.getJNDIContext().unbind("java:openejb/" + containerInfo.service + "/" + containerInfo.id);
                 } catch (Exception e) {
-                    logger.error("Failed to unbind " + containerId);
+                    logger.error("removeContainer.unbindFailed", containerId);
                 }
             }
         }
@@ -815,6 +826,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.intraVmServer = serviceInfo;
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private void replaceResourceAdapterProperty(ObjectRecipe serviceRecipe) throws OpenEJBException {
@@ -874,6 +887,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // start the resource adapter
             try {
+                logger.debug("createResource.startingResourceAdapter", serviceInfo.id, service.getClass().getName());
                 resourceAdapter.start(bootstrapContext);
             } catch (ResourceAdapterInternalException e) {
                 throw new OpenEJBException(e);
@@ -899,6 +913,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (classLoader == null) classLoader = getClass().getClassLoader();
             if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
             connectionManagerRecipe.setProperty("classLoader", classLoader);
+
+            logger.info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
 
             // create the connection manager
             ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
@@ -928,6 +944,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.resources.add(serviceInfo);
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private int getIntProperty(Properties properties, String propertyName, int defaultValue) {
@@ -972,6 +990,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.connectionManagers.add(serviceInfo);
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void createSecurityService(SecurityServiceInfo serviceInfo) throws OpenEJBException {
@@ -1003,16 +1023,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Update the config tree
         config.facilities.securityService = serviceInfo;
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws OpenEJBException {
 
-        ServiceInfo info = (ServiceInfo) serviceInfo;
-        ObjectRecipe serviceRecipe = createRecipe(info);
+        ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object service = serviceRecipe.create();
 
-        logUnusedProperties(serviceRecipe, info);
+        logUnusedProperties(serviceRecipe, serviceInfo);
 
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
@@ -1054,6 +1075,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         JtaEntityManagerRegistry jtaEntityManagerRegistry = new JtaEntityManagerRegistry(synchronizationRegistry);
         Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
         SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
+
+        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
@@ -1063,11 +1086,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
         for (String property : unsetProperties.keySet()) {
-            logger.warning("Property '" + property + "' not supported by '" + info.id + "'");
+            logger.warning("unusedProperty", property, info.id);
         }
     }
 
     private ObjectRecipe createRecipe(ServiceInfo info) {
+        logger.info("createService", info.service, info.id, info.className);
         ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, info.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
