@@ -20,8 +20,8 @@
   <properties>
   openejb.jndiname.format = {deploymentId}{interfaceType.openejbLegacyName}
   </properties>
-  <ejb-deployment ejb-name="BasicCmpBean" deployment-id="client/tests/entity/cmp/BasicCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="BasicCmpBean" deployment-id="client/tests/entity/cmp/BasicCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -39,8 +39,8 @@
       <object-ql>SELECT o FROM BasicCmpBean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ComplexCmpBean" deployment-id="client/tests/entity/cmp/ComplexCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="ComplexCmpBean" deployment-id="client/tests/entity/cmp/ComplexCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -58,8 +58,8 @@
       <object-ql>SELECT o FROM ComplexCmpBean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="UnknownCmpBean" deployment-id="client/tests/entity/cmp/UnknownCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="UnknownCmpBean" deployment-id="client/tests/entity/cmp/UnknownCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -77,8 +77,8 @@
       <object-ql>SELECT o FROM UnknownCmpBean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="BasicCmp2Bean" deployment-id="client/tests/entity/cmp2/BasicCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -96,8 +96,8 @@
       <object-ql>SELECT o FROM BasicCmp2Bean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ComplexCmp2Bean" deployment-id="client/tests/entity/cmp2/ComplexCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="ComplexCmp2Bean" deployment-id="client/tests/entity/cmp2/ComplexCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -115,8 +115,8 @@
       <object-ql>SELECT o FROM ComplexCmp2Bean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="UnknownCmp2Bean" deployment-id="client/tests/entity/cmp2/UnknownCmpHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="UnknownCmp2Bean" deployment-id="client/tests/entity/cmp2/UnknownCmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -134,8 +134,8 @@
       <object-ql>SELECT o FROM UnknownCmp2Bean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -153,200 +153,200 @@
       <object-ql>SELECT o FROM AOBasicCmpBean o WHERE 'true' = 'false'</object-ql>
     </query>
   </ejb-deployment>
-  <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome" container-id="Default CMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncCmpBean" deployment-id="client/tests/entity/cmp/EncBean" container-id="Default CMP Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncCmpBean" deployment-id="client/tests/entity/cmp/EncBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncCmp2Bean" deployment-id="client/tests/entity/cmp2/EncBean" container-id="Default CMP Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncCmp2Bean" deployment-id="client/tests/entity/cmp2/EncBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupCmpBean" deployment-id="client/tests/entity/cmp/ContextLookupCmpBean" container-id="Default CMP Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupCmpBean" deployment-id="client/tests/entity/cmp/ContextLookupCmpBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Cmp2 RMI-IIOP Bean" deployment-id="client/tests/entity/cmp2/RMI-over-IIOP/EJBHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Person" deployment-id="client/tests/entity/cmr/oneToOne/Person" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="License" deployment-id="client/tests/entity/cmr/oneToOne/License" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Artist" deployment-id="client/tests/entity/cmr/oneToMany/Artist" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Song" deployment-id="client/tests/entity/cmr/oneToMany/Song" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Game" deployment-id="client/tests/entity/cmr/manyToMany/Game" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Platform" deployment-id="client/tests/entity/cmr/manyToMany/Platform" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexPerson" deployment-id="client/tests/entity/cmr/oneToOne/ComplexPerson" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexLicense" deployment-id="client/tests/entity/cmr/oneToOne/ComplexLicense" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexArtist" deployment-id="client/tests/entity/cmr/oneToMany/ComplexArtist" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexSong" deployment-id="client/tests/entity/cmr/oneToMany/ComplexSong" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexGame" deployment-id="client/tests/entity/cmr/manyToMany/ComplexGame" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ComplexPlatform" deployment-id="client/tests/entity/cmr/manyToMany/ComplexPlatform" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="Query" deployment-id="client/tests/entity/ejbql/Query" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="QueryData" deployment-id="client/tests/entity/ejbql/QueryData" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome" container-id="Default CMP Container"/>
-  <ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome" container-id="Default Stateful Container"/>
-  <ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome" container-id="Default Stateful Container"/>
-  <ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome" container-id="Default Stateful Container"/>
-  <ejb-deployment ejb-name="BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedTransactionTests/EJBHome" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Cmp RMI-IIOP Bean" deployment-id="client/tests/entity/cmp/RMI-over-IIOP/EJBHome"/>
+  <ejb-deployment ejb-name="Cmp2 RMI-IIOP Bean" deployment-id="client/tests/entity/cmp2/RMI-over-IIOP/EJBHome"/>
+  <ejb-deployment ejb-name="Person" deployment-id="client/tests/entity/cmr/oneToOne/Person"/>
+  <ejb-deployment ejb-name="License" deployment-id="client/tests/entity/cmr/oneToOne/License"/>
+  <ejb-deployment ejb-name="Artist" deployment-id="client/tests/entity/cmr/oneToMany/Artist"/>
+  <ejb-deployment ejb-name="Song" deployment-id="client/tests/entity/cmr/oneToMany/Song"/>
+  <ejb-deployment ejb-name="Game" deployment-id="client/tests/entity/cmr/manyToMany/Game"/>
+  <ejb-deployment ejb-name="Platform" deployment-id="client/tests/entity/cmr/manyToMany/Platform"/>
+  <ejb-deployment ejb-name="ComplexPerson" deployment-id="client/tests/entity/cmr/oneToOne/ComplexPerson"/>
+  <ejb-deployment ejb-name="ComplexLicense" deployment-id="client/tests/entity/cmr/oneToOne/ComplexLicense"/>
+  <ejb-deployment ejb-name="ComplexArtist" deployment-id="client/tests/entity/cmr/oneToMany/ComplexArtist"/>
+  <ejb-deployment ejb-name="ComplexSong" deployment-id="client/tests/entity/cmr/oneToMany/ComplexSong"/>
+  <ejb-deployment ejb-name="ComplexGame" deployment-id="client/tests/entity/cmr/manyToMany/ComplexGame"/>
+  <ejb-deployment ejb-name="ComplexPlatform" deployment-id="client/tests/entity/cmr/manyToMany/ComplexPlatform"/>
+  <ejb-deployment ejb-name="Query" deployment-id="client/tests/entity/ejbql/Query"/>
+  <ejb-deployment ejb-name="QueryData" deployment-id="client/tests/entity/ejbql/QueryData"/>
+  <ejb-deployment ejb-name="OneOwningSideBean" deployment-id="client/tests/entity/cmp2/OneOwningSideBean/EJBHome"/>
+  <ejb-deployment ejb-name="OneInverseSideBean" deployment-id="client/tests/entity/cmp2/OneInverseSideBean/EJBHome"/>
+  <ejb-deployment ejb-name="ManyOwningSideBean" deployment-id="client/tests/entity/cmp2/ManyOwningSideBean/EJBHome"/>
+  <ejb-deployment ejb-name="BasicStatefulBean" deployment-id="client/tests/stateful/BasicStatefulHome"/>
+  <ejb-deployment ejb-name="BasicStatefulPojoBean" deployment-id="client/tests/stateful/BasicStatefulPojoHome"/>
+  <ejb-deployment ejb-name="Basic BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedBasicStatefulHome"/>
+  <ejb-deployment ejb-name="BMT StatefulBean" deployment-id="client/tests/stateful/BeanManagedTransactionTests/EJBHome">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncStatefulBean" deployment-id="client/tests/stateful/EncBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncStatefulBean" deployment-id="client/tests/stateful/EncBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="FieldInjectionStatefulBean" deployment-id="client/tests/stateful/FieldInjectionStatefulBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="FieldInjectionStatefulBean" deployment-id="client/tests/stateful/FieldInjectionStatefulBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="SetterInjectionStatefulBean" deployment-id="client/tests/stateful/SetterInjectionStatefulBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="SetterInjectionStatefulBean" deployment-id="client/tests/stateful/SetterInjectionStatefulBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="PersistenceContextStatefulBean" deployment-id="client/tests/stateful/PersistenceContextStatefulBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="PersistenceContextStatefulBean" deployment-id="client/tests/stateful/PersistenceContextStatefulBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupStatefulBean" deployment-id="client/tests/stateful/ContextLookupStatefulBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupStatefulPojoBean" deployment-id="client/tests/stateful/ContextLookupStatefulPojoBean" container-id="Default Stateful Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupStatefulPojoBean" deployment-id="client/tests/stateful/ContextLookupStatefulPojoBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome" container-id="Default Stateful Container"/>
-  <ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome" container-id="Default Stateless Container">
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Stateful RMI-IIOP Bean" deployment-id="client/tests/stateful/RMI-over-IIOP/EJBHome"/>
+  <ejb-deployment ejb-name="BasicStatelessBean" deployment-id="client/tests/stateless/BasicStatelessHome">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="BasicStatelessPojoBean" deployment-id="client/tests/stateless/BasicStatelessPojoHome" container-id="Default Stateless Container">
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="BasicStatelessPojoBean" deployment-id="client/tests/stateless/BasicStatelessPojoHome">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Basic BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedBasicStatelessHome" container-id="Default Stateless Container">
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Basic BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedBasicStatelessHome">
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="DatabaseBean" deployment-id="client/tools/DatabaseHome" container-id="Default Stateless Container">
-    <resource-link res-ref-name="database" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="DatabaseBean" deployment-id="client/tools/DatabaseHome">
+    <resource-link res-ref-name="database" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedTransactionTests/EJBHome" container-id="Default Stateless Container">
-    <resource-link res-ref-name="database" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="BMT StatelessBean" deployment-id="client/tests/stateless/BeanManagedTransactionTests/EJBHome">
+    <resource-link res-ref-name="database" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncStatelessBean" deployment-id="client/tests/stateless/EncBean" container-id="Default Stateless Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncStatelessBean" deployment-id="client/tests/stateless/EncBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="FieldInjectionStatelessBean" deployment-id="client/tests/stateless/FieldInjectionStatelessBean" container-id="Default Stateless Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="FieldInjectionStatelessBean" deployment-id="client/tests/stateless/FieldInjectionStatelessBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="SetterInjectionStatelessBean" deployment-id="client/tests/stateless/SetterInjectionStatelessBean" container-id="Default Stateless Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="SetterInjectionStatelessBean" deployment-id="client/tests/stateless/SetterInjectionStatelessBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupStatelessBean" deployment-id="client/tests/stateless/ContextLookupStatelessBean" container-id="Default Stateless Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupStatelessBean" deployment-id="client/tests/stateless/ContextLookupStatelessBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupStatelessPojoBean" deployment-id="client/tests/stateless/ContextLookupStatelessPojoBean" container-id="Default Stateless Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupStatelessPojoBean" deployment-id="client/tests/stateless/ContextLookupStatelessPojoBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome" container-id="Default Stateless Container"/>
-  <ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome" container-id="Default BMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Stateless RMI-IIOP Bean" deployment-id="client/tests/stateless/RMI-over-IIOP/EJBHome"/>
+  <ejb-deployment ejb-name="BasicBmpBean" deployment-id="client/tests/entity/bmp/BasicBmpHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="AOBasicBmpBean" deployment-id="client/tests/entity/bmp/allowed_operations/EntityHome" container-id="Default BMP Container">
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="AOBasicBmpBean" deployment-id="client/tests/entity/bmp/allowed_operations/EntityHome">
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncBmpBean" deployment-id="client/tests/entity/bmp/EncBean" container-id="Default BMP Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncBmpBean" deployment-id="client/tests/entity/bmp/EncBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupBmpBean" deployment-id="client/tests/entity/bmp/ContextLookupBmpBean" container-id="Default BMP Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupBmpBean" deployment-id="client/tests/entity/bmp/ContextLookupBmpBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Bmp RMI-IIOP Bean" deployment-id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome" container-id="Default BMP Container"/>
-  <ejb-deployment ejb-name="BasicMdbBean" deployment-id="client/tests/messagedriven/mdb/BasicMdb" container-id="Default MDB Container">
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Bmp RMI-IIOP Bean" deployment-id="client/tests/entity/bmp/RMI-over-IIOP/EJBHome"/>
+  <ejb-deployment ejb-name="BasicMdbBean" deployment-id="client/tests/messagedriven/mdb/BasicMdb">
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="Basic BMT Mdb Bean" deployment-id="Basic BMT Mdb Bean" container-id="Default MDB Container">
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="Default JDBC Database"/>
+  <ejb-deployment ejb-name="Basic BMT Mdb Bean" deployment-id="Basic BMT Mdb Bean">
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="EncMdbBean" deployment-id="EncMdbBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="EncMdbBean" deployment-id="EncMdbBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupMdbBean" deployment-id="ContextLookupMdbBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupMdbBean" deployment-id="ContextLookupMdbBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="ContextLookupMdbPojoBean" deployment-id="ContextLookupMdbPojoBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="QueueCF" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="TopicCF" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="ContextLookupMdbPojoBean" deployment-id="ContextLookupMdbPojoBean">
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="QueueCF" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="TopicCF" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="FieldInjectionMdbBean" deployment-id="FieldInjectionMdbBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="FieldInjectionMdbBean" deployment-id="FieldInjectionMdbBean">
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="SetterInjectionMdbBean" deployment-id="SetterInjectionMdbBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="datasource" res-id="Default JDBC Database"/>
-    <resource-link res-ref-name="connectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="queueConnectionFactory" res-id="Default JMS Connection Factory"/>
-    <resource-link res-ref-name="topicConnectionFactory" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="SetterInjectionMdbBean" deployment-id="SetterInjectionMdbBean">
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="datasource" res-id="My DataSource"/>
+    <resource-link res-ref-name="connectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="queueConnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="topicConnectionFactory" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  <ejb-deployment ejb-name="TimerSyncBean" deployment-id="TimerSyncBean" container-id="Default Stateless Container"/>
-  <ejb-deployment ejb-name="InterceptorMdbBean" deployment-id="InterceptorMdbBean" container-id="Default MDB Container">
-    <resource-link res-ref-name="jms" res-id="Default JMS Connection Factory"/>
+  <ejb-deployment ejb-name="TimerSyncBean" deployment-id="TimerSyncBean"/>
+  <ejb-deployment ejb-name="InterceptorMdbBean" deployment-id="InterceptorMdbBean">
+    <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
   
 </openejb-jar>
