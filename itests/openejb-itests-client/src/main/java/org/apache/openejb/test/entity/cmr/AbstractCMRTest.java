@@ -75,7 +75,7 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
 
         InitialContext jndiContext = new InitialContext( );
         transactionManager = (TransactionManager) jndiContext.lookup("java:openejb/TransactionManager");
-        ds = (DataSource) jndiContext.lookup("java:openejb/Resource/Default JDBC Database");
+        ds = (DataSource) jndiContext.lookup("java:openejb/Resource/My DataSource");
     }
 
     protected static void dumpTable(DataSource ds, String table) throws SQLException {
