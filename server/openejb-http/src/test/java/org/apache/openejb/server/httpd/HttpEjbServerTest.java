@@ -77,7 +77,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
             try {
                 EjbServer ejbServer = new EjbServer();
                 ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
-                HttpServer httpServer = new HttpServer(adapter);
+                HttpServer httpServer = new OpenEJBHttpServer(adapter);
 
                 props.put("openejb.deployments.classpath", "true");
                 OpenEJB.init(props, new ServerFederation());

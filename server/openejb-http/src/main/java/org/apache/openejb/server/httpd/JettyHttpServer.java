@@ -17,7 +17,6 @@
 package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.server.SelfManaging;
-import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -40,7 +39,7 @@ import java.util.Properties;
 /**
  * Jetty based http server implementation
  */
-public class JettyHttpServer implements ServerService, SelfManaging {
+public class JettyHttpServer implements HttpServer, SelfManaging {
     private final HttpListener listener;
     private Server server;
     private int port;
@@ -51,6 +50,10 @@ public class JettyHttpServer implements ServerService, SelfManaging {
 
     public JettyHttpServer(HttpListener listener) throws Exception {
         this.listener = listener;
+    }
+
+    public HttpListener getListener() {
+        return listener;
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
@@ -74,7 +77,7 @@ public class JettyHttpServer implements ServerService, SelfManaging {
     }
 
     public void init(Properties props) throws Exception {
-        port = Integer.parseInt(props.getProperty("port"));
+        port = Integer.parseInt(props.getProperty("port", "8080"));
 
         // Create all the Jetty objects but dont' start them
         server = new Server();

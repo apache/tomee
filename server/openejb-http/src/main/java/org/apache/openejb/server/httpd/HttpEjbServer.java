@@ -49,7 +49,28 @@ public class HttpEjbServer implements ServerService {
 
         registry.addHttpListener(adapter, "/ejb/?.*");
 
-        httpServer = new HttpServer(registry);
+        // props can name an implementation
+        // if implementation is not named, use jetty if jetty classes are present; otherwise use openejb
+        String impl = props.getProperty("impl");
+        if ("Jetty".equalsIgnoreCase(impl)) {
+            httpServer = (HttpServer) getClass().getClassLoader().loadClass("org.apache.openejb.server.httpd.JettyHttpServer").newInstance();
+        } else if ("OpenEJB".equalsIgnoreCase(impl)) {
+            httpServer = new OpenEJBHttpServer(registry);
+        } else if (impl == null) {
+            try {
+                getClass().getClassLoader().loadClass("org.mortbay.jetty.Server");
+                httpServer = (HttpServer) getClass().getClassLoader().loadClass("org.apache.openejb.server.httpd.JettyHttpServer").newInstance();
+            } catch (Exception ignored) {
+                // Jetty classes not available
+                httpServer = new OpenEJBHttpServer(registry);
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown HTTP server impl '" + impl + "'. Valid implementation are OpenEJB and Jetty.");
+        }
+
+        // register the http server
+        systemInstance.setComponent(HttpServer.class, httpServer);
+
         httpServer.init(props);
         ejbServer.init(props);
     }
