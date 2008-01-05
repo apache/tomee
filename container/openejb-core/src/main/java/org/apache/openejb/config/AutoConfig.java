@@ -298,11 +298,13 @@ public class AutoConfig implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
+        Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (bean instanceof MessageDrivenBean) {
                 MessageDrivenBean mdb = (MessageDrivenBean) bean;
 
-                EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+                EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
                 if (ejbDeployment == null) {
                     throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
                 }
@@ -671,8 +673,10 @@ public class AutoConfig implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
+        Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+            EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
             if (ejbDeployment == null) {
                 throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
             }
@@ -849,11 +853,16 @@ public class AutoConfig implements DynamicDeployer {
 
         Persistence persistence = persistenceModule.getPersistence();
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
-            String jtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource(), DataSource.class.getName(), null);
+            Properties required = new Properties();
+
+            required.put("JtaManaged", "true");
+            String jtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource(), DataSource.class.getName(), null, required);
             if (jtaDataSourceId != null) {
                 persistenceUnit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
             }
-            String nonJtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource(), DataSource.class.getName(), null);
+
+            required.put("JtaManaged", "false");
+            String nonJtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource(), DataSource.class.getName(), null, required);
             if (nonJtaDataSourceId != null) {
                 persistenceUnit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
             }
@@ -861,9 +870,14 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private String getResourceId(String beanName, String resourceId, String type, AppResources appResources) throws OpenEJBException {
+        return getResourceId(beanName, resourceId, type, appResources, null);
+    }
+
+    private String getResourceId(String beanName, String resourceId, String type, AppResources appResources, Properties required) throws OpenEJBException {
         if(resourceId == null){
             return null;
         }
+
         if (appResources == null) appResources = new AppResources();
 
         // skip references such as URL which are automatically handled by the server
@@ -879,7 +893,7 @@ public class AutoConfig implements DynamicDeployer {
         // check for existing resource with specified resourceId
         List<String> resourceIds = new ArrayList<String>();
         resourceIds.addAll(appResources.getResourceIds(type));
-        resourceIds.addAll(configFactory.getResourceIds(type));
+        resourceIds.addAll(configFactory.getResourceIds(type, required));
         for (String id : resourceIds) {
             if (id.equalsIgnoreCase(resourceId)) return id;
         }
@@ -893,7 +907,7 @@ public class AutoConfig implements DynamicDeployer {
         // expand search to any type -- may be asking for a reference to a sub-type
         List<String> allResourceIds = new ArrayList<String>();
         allResourceIds.addAll(appResources.getResourceIds(null));
-        allResourceIds.addAll(configFactory.getResourceIds(null));
+        allResourceIds.addAll(configFactory.getResourceIds(null, required));
         for (String id : allResourceIds) {
             if (id.equalsIgnoreCase(resourceId)) return id;
         }
@@ -923,7 +937,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         // Auto create a resource using the first provider that can supply a resource of the desired type
-        resourceId = ServiceUtils.getServiceProviderId(type);
+        resourceId = ServiceUtils.getServiceProviderId(type, required);
         if (resourceId == null) {
             throw new OpenEJBException("No provider available for resource-ref '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }

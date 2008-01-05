@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ServiceUtils {
+    public static final String ANY = ServiceUtils.class.getName() + "@ANY";
+
     public static final String defaultProviderURL = System.getProperty("openejb.provider.default", "org.apache.openejb");
     private static Map<String, List<ServiceProvider>> loadedServiceJars = new HashMap<String, List<ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -90,7 +92,11 @@ public class ServiceUtils {
     }
 
     public static String getServiceProviderId(String type) throws OpenEJBException {
-        ServiceProvider provider = getServiceProviderByType(type);
+        return getServiceProviderId(type, null);
+    }
+
+    public static String getServiceProviderId(String type, Properties required) throws OpenEJBException {
+        ServiceProvider provider = getServiceProviderByType(type, required);
 
         return provider != null? provider.getId(): null;
     }
@@ -113,18 +119,38 @@ public class ServiceUtils {
 
 
     public static ServiceProvider getServiceProviderByType(String type) throws OpenEJBException {
+        return getServiceProviderByType(type, (Properties) null);
+    }
+
+    public static ServiceProvider getServiceProviderByType(String type, Properties required) throws OpenEJBException {
         if (type == null) return null;
+        if (required == null) required = new Properties();
 
         List<ServiceProvider> services = getServiceProviders(defaultProviderURL);
 
         for (ServiceProvider service : services) {
-            if (service.getTypes().contains(type)) {
+            if (service.getTypes().contains(type) && implies(required, service.getProperties())) {
                 return service;
             }
         }
 
         return null;
     }
+
+    public static boolean implies(Properties a, Properties b){
+        for (Map.Entry<Object, Object> entry : a.entrySet()) {
+            Object value = b.get(entry.getKey());
+
+            // does b have the key?
+            if (value == null) return false;
+
+            // do the values match?
+            Object expected = entry.getValue();
+            if (!expected.equals(ANY) && !expected.equals(value)) return false;
+        }
+        return true;
+    }
+
 
     public static ServiceProvider getServiceProviderByType(String providerType, String serviceType) throws OpenEJBException {
         if (serviceType == null) return null;

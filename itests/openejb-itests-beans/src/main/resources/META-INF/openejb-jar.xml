@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -136,6 +136,7 @@
   </ejb-deployment>
   <ejb-deployment ejb-name="AOBasicCmpBean" deployment-id="client/tests/entity/cmp/allowed_operations/EntityHome">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
     <query>
       <query-method>
         <method-name>findByLastName</method-name>
@@ -155,6 +156,7 @@
   </ejb-deployment>
   <ejb-deployment ejb-name="AOBasicCmp2Bean" deployment-id="client/tests/entity/cmp2/allowed_operations/EntityHome">
     <resource-link res-ref-name="jdbc/basic/entityDatabase" res-id="My DataSource"/>
+    <resource-link res-ref-name="stateless/references/Resource_manager_access" res-id="My DataSource"/>
   </ejb-deployment>
   <ejb-deployment ejb-name="EncCmpBean" deployment-id="client/tests/entity/cmp/EncBean">
     <resource-link res-ref-name="datasource" res-id="My DataSource"/>
@@ -348,5 +350,25 @@
   <ejb-deployment ejb-name="InterceptorMdbBean" deployment-id="InterceptorMdbBean">
     <resource-link res-ref-name="jms" res-id="My JMS Connection Factory"/>
   </ejb-deployment>
-  
+  <ejb-deployment ejb-name="AnnotatedFieldInjectionStatefulBean" deployment-id="AnnotatedFieldInjectionStatefulBean">
+    <resource-link res-ref-name="org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/daataSource" res-id="My DataSource"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/coonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/queueCoonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean/topicCoonnectionFactory" res-id="My JMS Connection Factory"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="AnnotatedFieldInjectionStatelessBean" deployment-id="AnnotatedFieldInjectionStatelessBean">
+    <resource-link res-ref-name="org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/daataSource" res-id="My DataSource"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/coonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/queueCoonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.stateless.AnnotatedFieldInjectionStatelessBean/topicCoonnectionFactory" res-id="My JMS Connection Factory"/>
+  </ejb-deployment>
+  <ejb-deployment ejb-name="BasicStatelessIntercepted" deployment-id="BasicStatelessIntercepted"/>
+  <ejb-deployment ejb-name="BasicStatefulIntercepted" deployment-id="BasicStatefulIntercepted"/>
+  <ejb-deployment ejb-name="AnnotatedFieldInjectionMdbBean" deployment-id="AnnotatedFieldInjectionMdbBean">
+    <resource-link res-ref-name="openejb/destination" res-id="AnnotatedFieldInjectionMdb"/>
+    <resource-link res-ref-name="org.apache.openejb.test.mdb.AnnotatedFieldInjectionMdbBean/daataSource" res-id="My DataSource"/>
+    <resource-link res-ref-name="org.apache.openejb.test.mdb.AnnotatedFieldInjectionMdbBean/coonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.mdb.AnnotatedFieldInjectionMdbBean/queueCoonnectionFactory" res-id="My JMS Connection Factory"/>
+    <resource-link res-ref-name="org.apache.openejb.test.mdb.AnnotatedFieldInjectionMdbBean/topicCoonnectionFactory" res-id="My JMS Connection Factory"/>
+  </ejb-deployment>
 </openejb-jar>

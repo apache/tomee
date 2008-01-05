@@ -26,6 +26,7 @@ import javax.transaction.TransactionManager;
 import javax.sql.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.NamingException;
 import java.util.Properties;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -75,7 +76,11 @@ public abstract class AbstractCMRTest extends org.apache.openejb.test.NamedTestC
 
         InitialContext jndiContext = new InitialContext( );
         transactionManager = (TransactionManager) jndiContext.lookup("java:openejb/TransactionManager");
-        ds = (DataSource) jndiContext.lookup("java:openejb/Resource/My DataSource");
+        try {
+            ds = (DataSource) jndiContext.lookup("java:openejb/Resource/My DataSource");
+        } catch (NamingException e) {
+            ds = (DataSource) jndiContext.lookup("java:openejb/Resource/Default JDBC Database");
+        }
     }
 
     protected static void dumpTable(DataSource ds, String table) throws SQLException {

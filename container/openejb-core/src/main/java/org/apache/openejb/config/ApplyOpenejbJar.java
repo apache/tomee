@@ -45,6 +45,8 @@ public class ApplyOpenejbJar implements DynamicDeployer {
                 // Get the OpenEJB deployment from openejb-jar.xml
                 EjbDeployment ejbDeployment = ejbDeployments.get(enterpriseBean.getEjbName());
 
+                enterpriseBean.setId(ejbDeployment.getDeploymentId());
+
                 // Copy all links over to mappedName
 
                 for (ResourceRef ref : enterpriseBean.getResourceRef()) {

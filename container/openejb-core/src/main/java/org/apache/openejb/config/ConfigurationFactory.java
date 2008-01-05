@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.config.ServiceUtils.implies;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -64,11 +65,9 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.URISupport;
-import org.apache.openejb.util.Join;
+import org.apache.openejb.util.CaseInsensitiveProperties;
 
 import java.io.File;
-import java.io.DataOutputStream;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -155,6 +154,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new AnnotationDeployer());
 
+        chain.add(new ClearEmptyMappedName());
+
         boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
         if (shouldValidate) {
             chain.add(new ValidateModules());
@@ -193,7 +194,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new ApplyOpenejbJar());
 
         // TODO: How do we want this plugged in?
-        //chain.add(new OutputGeneratedDescriptors());
+        chain.add(new OutputGeneratedDescriptors());
+
         this.deployer = chain;
     }
 
@@ -525,7 +527,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
 
-            Properties props = new Properties();
+            Properties props = new CaseInsensitiveProperties();
             props.putAll(provider.getProperties());
             props.putAll(service.getProperties());
             props.putAll(getSystemProperties(service.getId(), provider.getService()));
@@ -690,12 +692,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     protected List<String> getResourceIds(String type) {
+        return getResourceIds(type, null);
+    }
+
+    protected List<String> getResourceIds(String type, Properties required) {
         List<String> resourceIds = new ArrayList<String>();
+
+        if (required == null) required = new Properties();
 
         OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
             for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-                if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
+                if (isResourceType(resourceInfo.service, resourceInfo.types, type) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }
@@ -703,7 +711,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         if (sys != null) {
             for (ResourceInfo resourceInfo : sys.facilities.resources) {
-                if (isResourceType(resourceInfo.service, resourceInfo.types, type)) {
+                if (isResourceType(resourceInfo.service, resourceInfo.types, type) && implies(required, resourceInfo.properties)) {
                     resourceIds.add(resourceInfo.id);
                 }
             }
@@ -716,7 +724,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     if (resource.getType() != null){
                         types.add(resource.getType());
                     }
-                    if (isResourceType("Resource", types, type)) {
+                    if (isResourceType("Resource", types, type) && implies(required, resource.getProperties())) {
                         resourceIds.add(resource.getId());
                     }
                 }
@@ -796,30 +804,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             if (!provider.types.contains("Topic") && !provider.types.contains("Queue")) return;
             if (!provider.className.matches("org.apache.activemq.command.ActiveMQ(Topic|Queue)")) return;
 
-
-            Properties properties = provider.properties;
-            String destination = normalizePropertyName(properties, "destination");
-            if (properties.getProperty(destination) == null || properties.getProperty(destination).equals("")){
-                properties.setProperty(destination, provider.id);
+            String dest = provider.properties.getProperty("destination");
+            if (dest == null || dest.length() == 0) {
+                provider.properties.setProperty("destination", provider.id);
             }
-        }
-
-        /**
-         * Our properties are not case sensitive, so they may have specified the name
-         * under any case.  Would be super to have a case insensitive properties impl.
-         * @param properties
-         * @param property
-         * @return the property name under any corrected case
-         */
-        private static String normalizePropertyName(Properties properties, String property) {
-            for (Object o : properties.keySet()) {
-                String name  = (String) o;
-                if (name.equalsIgnoreCase(property)){
-                    return name;
-                }
-            }
-
-            return property;
         }
     }
 
