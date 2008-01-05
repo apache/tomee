@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
@@ -25,21 +26,46 @@ import org.apache.openejb.util.LogCategory;
  */
 public class ReportValidationResults implements DynamicDeployer {
 
+    private static final String VALIDATION_LEVEL = "openejb.validation.level";
+
+    private enum Level {
+        UNUSED,
+        TERSE,
+        MEDIUM,
+        VERBOSE
+    }
+
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        String levelString = SystemInstance.get().getProperty(VALIDATION_LEVEL, Level.MEDIUM.toString());
+
+        Level level;
+        try {
+            level = Level.valueOf(levelString);
+        } catch (IllegalArgumentException noSuchEnumConstant) {
+            try {
+                int i = Integer.parseInt(levelString);
+                level = Level.values()[i];
+            } catch (NumberFormatException e) {
+                level = Level.MEDIUM;
+            }
+        }
+        
+        if (level == Level.UNUSED) level = Level.MEDIUM;
+
         if (!appModule.hasErrors() && !appModule.hasFailures()) return appModule;
 
         ValidationFailedException validationFailedException = null;
 
 
         for (DeploymentModule module : appModule.getEjbModules()) {
-            validationFailedException = logResults(module, validationFailedException);
+            validationFailedException = logResults(module, validationFailedException, level);
         }
 
         for (DeploymentModule module : appModule.getClientModules()) {
-            validationFailedException = logResults(module, validationFailedException);
+            validationFailedException = logResults(module, validationFailedException, level);
         }
 
-        validationFailedException = logResults(appModule, validationFailedException);
+        validationFailedException = logResults(appModule, validationFailedException, level);
 
         if (validationFailedException != null)
             throw validationFailedException;
@@ -47,7 +73,7 @@ public class ReportValidationResults implements DynamicDeployer {
         return appModule;
     }
 
-    private ValidationFailedException logResults(DeploymentModule module, ValidationFailedException validationFailedException) {
+    private ValidationFailedException logResults(DeploymentModule module, ValidationFailedException validationFailedException, Level level) {
         ValidationResults results = module.getValidation();
 
         if (results.hasErrors() || results.hasFailures()) {
@@ -57,12 +83,12 @@ public class ReportValidationResults implements DynamicDeployer {
             for (int j = 0; j < errors.length; j++) {
                 ValidationError e = errors[j];
                 String ejbName = e.getComponentName();
-                logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(2));
+                logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(level.ordinal()));
             }
             ValidationFailure[] failures = results.getFailures();
             for (int j = 0; j < failures.length; j++) {
                 ValidationFailure e = failures[j];
-                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(2));
+                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal()));
             }
 
             validationFailedException = new ValidationFailedException("Module failed validation. "+results.getModuleType()+"(path="+results.getJarPath()+")", results, validationFailedException);
