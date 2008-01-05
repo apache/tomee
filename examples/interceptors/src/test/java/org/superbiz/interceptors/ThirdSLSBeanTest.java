@@ -25,10 +25,12 @@ import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 /**
  * @version $Rev$ $Date$
  */
-public class ThirdSLSBeanTest {
+public class ThirdSLSBeanTest extends TestCase {
     private InitialContext initCtx;
 
     @Before

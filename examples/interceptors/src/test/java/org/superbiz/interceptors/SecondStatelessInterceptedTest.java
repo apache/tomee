@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class SecondStatelessInterceptedTest {
+import junit.framework.TestCase;
+
+public class SecondStatelessInterceptedTest extends TestCase {
 
     private InitialContext initCtx;
 
