@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
@@ -34,16 +35,23 @@ import java.io.FileOutputStream;
  */
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+    private static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
+        boolean output = SystemInstance.get().getProperty(OUTPUT_DESCRIPTORS, "false").equalsIgnoreCase("true");
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-            if (ejbModule.getEjbJar() != null) {
-                writeEjbJar(ejbModule);
-            }
+            output = ejbModule.getOpenejbJar().getProperties().getProperty(OUTPUT_DESCRIPTORS, output+"").equalsIgnoreCase("true");
 
-            if (ejbModule.getOpenejbJar() != null) {
-                writeOpenejbJar(ejbModule);
+            if (output){
+                if (ejbModule.getEjbJar() != null) {
+                    writeEjbJar(ejbModule);
+                }
+
+                if (ejbModule.getOpenejbJar() != null) {
+                    writeOpenejbJar(ejbModule);
+                }
             }
         }
 
@@ -53,7 +61,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     private void writeOpenejbJar(EjbModule ejbModule) {
         try {
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-            File tempFile = File.createTempFile(ejbModule.getModuleId(), ".openejb-jar.xml");
+            File tempFile = File.createTempFile("openejb-jar-", ejbModule.getModuleId() + ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
@@ -70,7 +78,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     private void writeEjbJar(EjbModule ejbModule) {
         try {
             EjbJar ejbJar = ejbModule.getEjbJar();
-            File tempFile = File.createTempFile(ejbModule.getModuleId(), ".ejb-jar.xml");
+            File tempFile = File.createTempFile("ejb-jar-", ejbModule.getModuleId() + ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
             BufferedOutputStream out = new BufferedOutputStream(fout);
             try {
