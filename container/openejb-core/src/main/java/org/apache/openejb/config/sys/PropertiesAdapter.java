@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.config.sys;
 
+import org.apache.openejb.util.CaseInsensitiveProperties;
+
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +29,7 @@ import java.util.Properties;
  */
 public class PropertiesAdapter extends XmlAdapter<String, Properties> {
     public Properties unmarshal(String s) throws Exception {
-        Properties properties = new Properties();
+        Properties properties = new CaseInsensitiveProperties();
         ByteArrayInputStream in = new ByteArrayInputStream(s.getBytes());
         properties.load(in);
         return properties;
