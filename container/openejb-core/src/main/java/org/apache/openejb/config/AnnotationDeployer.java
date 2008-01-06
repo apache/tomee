@@ -303,7 +303,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     finder = new ClassFinder(ejbModule.getClassLoader(), url);
                 } catch (MalformedURLException e) {
-                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. EjbModule URL not valid: " + ejbModule.getJarLocation());
+                    DeploymentLoader.logger.warning("startup.scrapeFailedForModule", ejbModule.getJarLocation());
                     return ejbModule;
                 }
             } else {

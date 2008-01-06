@@ -216,8 +216,7 @@ public abstract class TransactionPolicy {
     }
 
     protected void logSystemException(Throwable sysException) {
-
-        logger.error("The bean instances business method encountered a system exception: " + sysException.getMessage(), sysException);
+        logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
     }
 
     protected void discardBeanInstance(Object instance, ThreadContext callContext) {

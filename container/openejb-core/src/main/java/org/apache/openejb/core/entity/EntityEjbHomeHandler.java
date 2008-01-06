@@ -52,11 +52,11 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
     }
 
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        Object retValue = null;
+        Object retValue;
         try {
             retValue = container.invoke(deploymentID, interfce, method, args, null);
         } catch (OpenEJBException e) {
-            e.printStackTrace();
+            logger.debug("entityEjbHomeHandler.containerInvocationFailure", e, e.getMessage());
             throw e;
         }
 
