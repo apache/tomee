@@ -27,12 +27,12 @@
   <display-name>openejb-itests-app</display-name>
   <description>OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.</description>
   <module>
-    <ejb>openejb-itests-beans-3.0-incubating-SNAPSHOT.jar</ejb>
+    <ejb>openejb-itests-beans-${version}.jar</ejb>
   </module>
    <module>
-    <ejb>openejb-itests-interceptor-beans-3.0-incubating-SNAPSHOT.jar</ejb>
+    <ejb>openejb-itests-interceptor-beans-${version}.jar</ejb>
   </module>
   <module>
-    <java>openejb-itests-client-3.0-incubating-SNAPSHOT.jar</java>
+    <java>openejb-itests-client-${version}.jar</java>
   </module>
 </application>

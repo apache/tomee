@@ -38,6 +38,12 @@
         <filtering>true</filtering>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -117,7 +123,7 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar xbean-finder-3.2.jar</Class-Path>
+              <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar xbean-finder-${xbeanVersion}.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
