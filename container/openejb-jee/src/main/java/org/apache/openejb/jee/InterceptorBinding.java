@@ -176,8 +176,11 @@ public class InterceptorBinding {
 
     public InterceptorBinding(String ejbName, String... interceptorClasses) {
         this.ejbName = ejbName;
-
         this.getInterceptorClass().addAll(Arrays.asList(interceptorClasses));
+    }
+
+    public InterceptorBinding(String ejbName) {
+        this.ejbName = ejbName;
     }
 
     public List<Text> getDescription() {
