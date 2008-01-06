@@ -42,8 +42,7 @@ public class ThirdSLSBeanTest extends TestCase {
         initCtx = new InitialContext(properties);
     }
 
-    // TODO: Enable it once OPENEJB-583 gets fixed
-    //@Test
+    @Test
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         ThirdSLSBeanLocal bean = (ThirdSLSBeanLocal) initCtx.lookup("ThirdSLSBeanLocal");
 
@@ -61,8 +60,7 @@ public class ThirdSLSBeanTest extends TestCase {
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 
-    // TODO: Enable it once OPENEJB-583 gets fixed
-    //@Test
+    @Test
     public void testMethodWithDefaultAndClassInterceptorsExcluded() throws Exception {
         ThirdSLSBeanLocal bean = (ThirdSLSBeanLocal) initCtx.lookup("ThirdSLSBeanLocal");
 
