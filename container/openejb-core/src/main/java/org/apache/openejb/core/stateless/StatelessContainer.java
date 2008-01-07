@@ -214,6 +214,13 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
+                /**
+                 * The bean instance is not put into the pool via instanceManager.poolInstance
+                 * and therefore the instance will be garbage collected and destroyed.
+                 * For this reason the discardInstance method of the StatelessInstanceManager
+                 * does nothing.
+                 */
+
                 txPolicy.handleSystemException(re, instance, txContext);
             } else {
                 /* Application Exception ***********************/

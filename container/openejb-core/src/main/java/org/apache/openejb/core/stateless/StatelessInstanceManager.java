@@ -78,6 +78,21 @@ public class StatelessInstanceManager {
         }
     }
 
+    /**
+     * Removes an instance from the pool and returns it for use
+     * by the container in business methods.
+     *
+     * If the pool is at it's limit the StrictPooling flag will
+     * cause this thread to wait.
+     *
+     * If StrictPooling is not enabled this method will create a
+     * new stateless bean instance performing all required injection
+     * and callbacks before returning it in a method ready state.
+     * 
+     * @param callContext
+     * @return
+     * @throws OpenEJBException
+     */
     public Object getInstance(ThreadContext callContext)
             throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
@@ -238,6 +253,20 @@ public class StatelessInstanceManager {
         return new StatelessContext(transactionManager, securityService);
     }
 
+    /**
+     * All instances are removed from the pool in getInstance(...).  They are only
+     * returned by the StatelessContainer via this method under two circumstances.
+     *
+     * 1.  The business method returns normally
+     * 2.  The business method throws an application exception
+     *
+     * Instances are not returned to the pool if the business method threw a system
+     * exception.
+     *
+     * @param callContext
+     * @param bean
+     * @throws OpenEJBException
+     */
     public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
         if (bean == null) {
             throw new SystemException("Invalid arguments");
@@ -277,6 +306,14 @@ public class StatelessInstanceManager {
 
     }
 
+    /**
+     * This method has no work to do as all instances are removed from
+     * the pool on getInstance(...) and not returned via poolInstance(...)
+     * if they threw a system exception.
+     *
+     * @param callContext
+     * @param bean
+     */
     public void discardInstance(ThreadContext callContext, Object bean) {
 
     }
