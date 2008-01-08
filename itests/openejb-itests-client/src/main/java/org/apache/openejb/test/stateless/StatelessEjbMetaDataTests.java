@@ -64,7 +64,7 @@ public class StatelessEjbMetaDataTests extends BasicStatelessTestClient{
      *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
-     * client’s perspective, appear anonymous. In contrast to entity objects,
+     * client's perspective, appear anonymous. In contrast to entity objects,
      * which expose their identity as a primary key, session objects hide their
      * identity. As a result, the EJBObject.getPrimaryKey() and
      * EJBHome.remove(Object primaryKey) methods result in a java.rmi.RemoteException

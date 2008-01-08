@@ -64,7 +64,7 @@ public class StatelessHandleTests extends BasicStatelessTestClient{
     }
 
     /**
-     * <B>5.6 Client view of session object’s life cycle</B>
+     * <B>5.6 Client view of session object's life cycle</B>
      * <P>
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object

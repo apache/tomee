@@ -88,7 +88,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      * <P>
      * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean’s business method via the javax.ejb.EJBContext interface and under the
+     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit()—or rollback()—
@@ -115,7 +115,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      * <P>
      * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean’s business method via the javax.ejb.EJBContext interface and under the
+     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit()—or rollback()—
@@ -295,11 +295,11 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -344,11 +344,11 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -366,8 +366,8 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </PRE>
      * <P>
      * If the client is associated with a transaction T1, and the instance is not associated with a transaction,
-     * the container suspends the client’s transaction association and invokes the method with
-     * an unspecified transaction context. The container resumes the client’s ntransaction association
+     * the container suspends the client's transaction association and invokes the method with
+     * an unspecified transaction context. The container resumes the client's ntransaction association
      * (T1) when the method completes.
      * </P>
      * <P>--------------------------------------------------------</P>

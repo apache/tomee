@@ -88,7 +88,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      * <P>
      * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean’s business method via the javax.ejb.EJBContext interface and under the
+     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit()—or rollback()—
@@ -115,7 +115,7 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * <B>11.6.1 Bean-managed transaction demarcation</B>
      * <P>
      * The Container must make the javax.transaction.UserTransaction interface available to
-     * the enterprise bean’s business method via the javax.ejb.EJBContext interface and under the
+     * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
      * resource managers used by the instance between the begin() and commit()—or rollback()—
@@ -291,11 +291,11 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -340,11 +340,11 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -362,8 +362,8 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </PRE>
      * <P>
      * If the client is associated with a transaction T1, and the instance is not associated with a transaction,
-     * the container suspends the client’s transaction association and invokes the method with
-     * an unspecified transaction context. The container resumes the client’s transaction association
+     * the container suspends the client's transaction association and invokes the method with
+     * an unspecified transaction context. The container resumes the client's transaction association
      * (T1) when the method completes.
      * </P>
      * <P>--------------------------------------------------------</P>
@@ -389,11 +389,11 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -437,11 +437,11 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </P>
      * <PRE>
      * =========================================================================
-     * Container’s actions for methods of beans with bean-managed transaction
+     * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
      *
      *            |      IF     |          AND             |          THEN
-     *  scenario  |   Client’s  | Transaction currently    | Transaction associated
+     *  scenario  |   Client's  | Transaction currently    | Transaction associated
      *            | transaction | associated with instance | with the method is
      * ___________|_____________|__________________________|________________________
      *            |             |                          |
@@ -459,9 +459,9 @@ public class StatefulBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * </PRE>
      * <P>
      * If the client is associated with a transaction T1, and the instance is already associated with a
-     * transaction T2, the container suspends the client’s transaction association and invokes the
+     * transaction T2, the container suspends the client's transaction association and invokes the
      * method with the transaction context that is associated with the instance (T2). The container
-     * resumes the client’s transaction association (T1) when the method completes. This case can
+     * resumes the client's transaction association (T1) when the method completes. This case can
      * never happen for a stateless Session Bean.
      * </P>
      * <P>--------------------------------------------------------</P>
