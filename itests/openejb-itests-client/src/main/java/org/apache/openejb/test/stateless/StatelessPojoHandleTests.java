@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.rmi.NoSuchObjectException;
-
 import javax.ejb.EJBObject;
 
 /**
@@ -27,57 +25,57 @@ import javax.ejb.EJBObject;
  */
 public class StatelessPojoHandleTests extends BasicStatelessTestClient {
 
-	public StatelessPojoHandleTests() {
-		 super("PojoHandle.");
+    public StatelessPojoHandleTests() {
+        super("PojoHandle.");
     }
 
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
         Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
-        ejbHome = (BasicStatelessHome)javax.rmi.PortableRemoteObject.narrow( obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
     }
 
-    protected void tearDown() throws Exception{       
-       super.tearDown();        
+    protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
     //=================================
     // Test handle methods
     //
-    public void test01_getEJBObject(){
+    public void test01_getEJBObject() {
 
-        try{
+        try {
             EJBObject object = ejbHandle.getEJBObject();
-            assertNotNull( "The EJBObject is null", object );
+            assertNotNull("The EJBObject is null", object);
             assertTrue("EJBObjects are not identical", object.isIdentical(ejbObject));
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
 
     /**
      * <B>3.6.6 Client view of session object’s life cycle</B>
-     * <P>
+     * <p/>
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object
      * that does not exist result in java.rmi.NoSuchObjectException.
      * </P>
-     *
-     * <P>
+     * <p/>
+     * <p/>
      * This remove method of the EJBHome is placed hear as it
      * is more a test on the handle then on the remove method
      * itself.
      * </P>
      */
-    public void test02_EJBHome_remove(){
-        try{
+    public void test02_EJBHome_remove() {
+        try {
             ejbHome.remove(ejbHandle);
             // you can't really remove a stateless handle
             ejbObject.businessMethod("Should not throw an exception");
-        } catch (Exception e){
-            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
         }
     }
     //
