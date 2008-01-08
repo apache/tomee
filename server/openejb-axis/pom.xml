@@ -47,6 +47,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- for proxies -->
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.1_3</version>
+    </dependency>
+ 
     <!-- For schema processing -->
     <dependency>
       <groupId>org.apache.ws.commons.schema</groupId>

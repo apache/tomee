@@ -435,11 +435,6 @@
         <version>2.2.3</version>
       </dependency>
       <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib-nodep</artifactId>
-        <version>2.1_3</version>
-      </dependency>
-      <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging-api</artifactId>
         <version>1.1</version>
