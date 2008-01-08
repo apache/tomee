@@ -93,9 +93,9 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             // Interface class must be listed first, before EJBObjectProxy,
             // otherwise the proxy code will selectï the openejb system class
             // loader for proxy creation instead of the application class loader
-            if (ejb.remoteClass != null){
+            if (ejb.remoteClass != null) {
                 interfaces.add(ejb.remoteClass);
-            } else if (ejb.businessClasses.size() > 0){
+            } else if (ejb.businessClasses.size() > 0) {
                 interfaces.addAll(ejb.businessClasses);
             }
             interfaces.add(EJBObjectProxy.class);
@@ -174,9 +174,9 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             }
         } catch (Throwable oe) {
             if (remote) {
-                throw new RemoteException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage(), oe.getCause());
+                throw new RemoteException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage(), oe.getCause());
             } else {
-                throw new EJBException("Unknown Container Exception: "+oe.getClass().getName()+": "+oe.getMessage()).initCause(oe.getCause());
+                throw new EJBException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage()).initCause(oe.getCause());
             }
         }
         return retValue;
