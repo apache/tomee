@@ -91,7 +91,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
-     * resource managers used by the instance between the begin() and commit()—or rollback()—
+     * resource managers used by the instance between the begin() and commit(),or rollback(),
      * methods with the transaction. When the instance attempts to commit the transaction, the Container is
      * responsible for the global coordination of the transaction commit.
      * </P>
@@ -118,7 +118,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase{
      * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
      * UserTransaction interface to demarcate a transaction, the Container must enlist all the
-     * resource managers used by the instance between the begin() and commit()—or rollback()—
+     * resource managers used by the instance between the begin() and commit(),or rollback(),
      * methods with the transaction. When the instance attempts to commit the transaction, the Container is
      * responsible for the global coordination of the transaction commit.
      * </P>
