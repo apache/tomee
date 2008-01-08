@@ -56,7 +56,7 @@ public class StatelessPojoHandleTests extends BasicStatelessTestClient {
     }
 
     /**
-     * <B>3.6.6 Client view of session object’s life cycle</B>
+     * <B>3.6.6 Client view of session object's life cycle</B>
      * <p/>
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object
