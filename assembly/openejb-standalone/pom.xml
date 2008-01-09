@@ -168,10 +168,6 @@
       <artifactId>geronimo-jaxr_1.0_spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-saaj_1.1_spec</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${version}</version>
