@@ -17,6 +17,11 @@
  */
 package org.apache.openejb.server.webservices;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
@@ -27,11 +32,6 @@ import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.xerces.util.URI;
-
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OpenEJBHttpWsRegistry implements WsRegistry {
     public static final Logger log = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
@@ -87,7 +87,7 @@ public class OpenEJBHttpWsRegistry implements WsRegistry {
         // register wsdl locations for service-ref resolution
         List<String> addresses = new ArrayList<String>();
         for (URI baseUri : baseUris) {
-            URI address = new URI(baseUri, path);
+            URI address = baseUri.resolve(path);
             addresses.add(address.toString());
         }
         return addresses;
