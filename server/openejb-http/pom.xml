@@ -93,6 +93,7 @@
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty-embedded</artifactId>
       <version>6.1.6</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
