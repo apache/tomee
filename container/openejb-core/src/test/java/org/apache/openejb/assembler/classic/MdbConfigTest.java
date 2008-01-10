@@ -52,6 +52,11 @@ public class MdbConfigTest extends TestCase {
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
+        // JMS persistence datasource
+        ResourceInfo dataSourceInfo = config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class);
+        dataSourceInfo.properties.setProperty("JdbcUrl", "jdbc:hsqldb:mem:MdbConfigTest");
+        assembler.createResource(dataSourceInfo);
+
         // JMS
         assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
 

@@ -635,13 +635,16 @@
           id="Default JMS Resource Adapter"
           service="Resource"
           types="ActiveMQResourceAdapter"
-          class-name="org.apache.activemq.ra.ActiveMQResourceAdapter">
+          class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
 
     # Broker configuration
     BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
 
     # Broker address
     ServerUrl vm://localhost?async=true
+
+    # DataSource for persistence messages
+    DataSource Default Unmanaged JDBC Database
 
     # Specifies the size of the thread pool available to AciveMQ.
     ThreadPoolSize 30

@@ -955,6 +955,13 @@ public class AutoConfig implements DynamicDeployer {
                 resourceInfo.properties.setProperty("ResourceAdapter", newResourceId);
             }
         }
+        String dataSourceId = resourceInfo.properties.getProperty("DataSource");
+        if (dataSourceId != null) {
+            String newResourceId = getResourceId(beanName, dataSourceId, null, null);
+            if (dataSourceId != newResourceId) {
+                resourceInfo.properties.setProperty("DataSource", newResourceId);
+            }
+        }
 
         configFactory.install(resourceInfo);
         return resourceInfo.id;

@@ -106,7 +106,6 @@
               as the maven-release-plugin will not update this value.
     <version>3.0-SNAPSHOT</version>
         -->
-    <derbyVersion>10.3.2.1</derbyVersion>
     <xbeanVersion>3.3-SNAPSHOT</xbeanVersion>
   </properties>
 
@@ -568,21 +567,6 @@
             <artifactId>nlog4j</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>${derbyVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derbyclient</artifactId>
-        <version>${derbyVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derbynet</artifactId>
-        <version>${derbyVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>

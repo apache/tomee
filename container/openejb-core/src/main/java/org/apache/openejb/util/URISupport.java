@@ -23,12 +23,13 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
@@ -153,7 +154,7 @@ public class URISupport {
 
     public static Map<String, String> parseQuery(String uri) throws URISyntaxException{
         try{
-            Map<String, String> rc=new HashMap<String,String>();
+            Map<String, String> rc = new LinkedHashMap<String,String>();
             if(uri!=null){
                 String[] parameters=uri.split("&");
                 for(int i=0;i<parameters.length;i++){
@@ -244,7 +245,7 @@ public class URISupport {
         } else {
             if( params.length() > 0 )
                 rc.path = stripPrefix(params, "/");
-            rc.parameters = Collections.EMPTY_MAP;
+            rc.parameters = new LinkedHashMap();
         }
     }
 
