@@ -103,6 +103,14 @@
                 <groupId>stax</groupId>
                 <artifactId>stax-api</artifactId>
             </exclusion>
+            <exclusion>
+                <groupId>velocity</groupId>
+                <artifactId>velocity</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>velocity</groupId>
+                <artifactId>velocity-deps</artifactId>
+            </exclusion>
         </exclusions>
     </dependency>
 
@@ -160,12 +168,6 @@
                 <artifactId>jaxb-impl</artifactId>
             </exclusion>
         </exclusions>
-    </dependency>
-
-    <!-- Excluded above and reincluded here so version matches the version used by the rest of OpenEJB -->
-    <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-xjc</artifactId>
     </dependency>
   </dependencies>
 </project>
