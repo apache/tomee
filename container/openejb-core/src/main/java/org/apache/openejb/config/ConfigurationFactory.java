@@ -813,6 +813,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static class ResourceInfoComparator implements Comparator<ResourceInfo> {
         private final List<String> ids;
+        private static final int EQUAL = 0;
+        private static final int GREATER = 1;
+        private static final int LESS = -1;
 
         public ResourceInfoComparator(List<ResourceInfo> resources){
             ids = new ArrayList<String>();
@@ -826,36 +829,39 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             String refB = getReference(b);
 
             // both null or the same id
-            if (refA == refB) return 0;
-
-            // b is null
-            if (refA != null && refB == null){
-                return 1;
-            }
-
-            // a is null
-            if (refB != null && refA == null){
-                return -1;
+            if (refA == null && refB == null ||
+                    refA != null && refA.equals(refB)) {
+                return EQUAL;
             }
 
             // b is referencing a
             if (a.id.equals(refB)) {
-                return 1;
+                return LESS;
             }
 
             // a is referencing b
             if (b.id.equals(refA)) {
-                return 1;
+                return GREATER;
             }
 
-            return 0;
+            // a has a ref and b doesn't
+            if (refA != null && refB == null){
+                return GREATER;
+            }
+
+            // b has a ref and a doesn't
+            if (refB != null && refA == null){
+                return LESS;
+            }
+
+            return EQUAL;
         }
 
         public int hasReference(ResourceInfo info){
             for (Object value : info.properties.values()) {
-                if (ids.contains(value)) return 1;
+                if (ids.contains(value)) return GREATER;
             }
-            return 0;
+            return EQUAL;
         }
 
         public String getReference(ResourceInfo info){
