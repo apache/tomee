@@ -17,6 +17,8 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.ServicesJar;
 import org.apache.openejb.config.sys.JaxbOpenejb;
@@ -38,7 +40,29 @@ import java.util.ArrayList;
 public class ServiceUtils {
     public static final String ANY = ServiceUtils.class.getName() + "@ANY";
 
-    public static final String defaultProviderURL = System.getProperty("openejb.provider.default", "org.apache.openejb");
+    /**
+     * Default service provider package.  This value is choosen as follows:
+     * </p>
+     * 1. System property "openejb.provider.default" </br>
+     * 2. If in a full server containing a "conf" directory "org.apache.openejb" </br>
+     * 3. Embedded mode "org.apache.openejb.embedded" </br>
+     */
+    public static final String defaultProviderURL;
+    static {
+        String defaultValue = "org.apache.openejb";
+        try {
+            SystemInstance system = SystemInstance.get();
+            FileUtils base = system.getBase();
+            File confDir = base.getDirectory("conf");
+            if (!confDir.exists()) {
+                defaultValue = "org.apache.openejb.embedded";
+            }
+        } catch (Exception ignored) {
+        }
+        defaultProviderURL = System.getProperty("openejb.provider.default", defaultValue);
+    }
+
+
     private static Map<String, List<ServiceProvider>> loadedServiceJars = new HashMap<String, List<ServiceProvider>>();
     public static Messages messages = new Messages("org.apache.openejb.util.resources");
     public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");

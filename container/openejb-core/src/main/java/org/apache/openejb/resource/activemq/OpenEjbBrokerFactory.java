@@ -44,6 +44,10 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
         Properties properties = getLowerCaseProperties();
         
         Object value = properties.get("datasource");
+        if (value instanceof String && value.toString().length() == 0) {
+            value = null;
+        }
+        
         if (value != null) {
             DataSource dataSource;
             if (value instanceof DataSource) {

@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev$ $Date$ -->
+
+<ServiceJar>
+
+  <!--
+  #===================================================================#
+  #       E M B E D D E D    O P E N E J B    S E R V I C E S         #
+  #===================================================================#
+  #
+  #
+  #  This file defines all the default configurations of containers,
+  #  factories, managers and services when operating OpenEJB in
+  #  embedded mode.
+  #
+  #  Can contain numerous configurations of the standard services
+  #  making it easy for users to simply name the one they want in
+  #  their configuration files.
+  -->
+
+  <!--
+  # ==========================================================
+  # Default Container-Managed Persistence EntityBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider id="Default CMP Container"
+                   service="Container"
+                   types="CMP_ENTITY"
+                   constructor="id, transactionManager, securityService, CmpEngineFactory, Engine, ConnectorName"
+                   class-name="org.apache.openejb.core.cmp.CmpContainer">
+
+    CmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
+
+    #Engine  derby
+    Engine  instantdb
+
+
+    # ConnectorName is he id of the Connector element which
+    # should provide connectivity for this CMP Container
+
+    ConnectorName  Default JDBC Database
+  </ServiceProvider>
+
+  <!--
+  # ==========================================================
+  # Default Bean-Managed Persistence EntityBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default BMP Container"
+          service="Container"
+          types="BMP_ENTITY"
+          constructor="id, transactionManager, securityService, PoolSize"
+          class-name="org.apache.openejb.core.entity.EntityContainer">
+
+    # Specifies the size of the bean pools for this
+    # bmp entity container.
+
+    PoolSize 10
+
+</ServiceProvider>
+
+
+
+  <!--
+  # ==========================================================
+  # Default Stateless SessinBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default Stateless Container"
+          service="Container"
+          types="STATELESS"
+          constructor="id, transactionManager, securityService, TimeOut, PoolSize, StrictPooling"
+          class-name="org.apache.openejb.core.stateless.StatelessContainer">
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in milliseconds. A value of 5 would
+    # result in a time-out of 5 milliseconds between invocations.
+    # A value of zero would mean no timeout.
+
+    TimeOut 0
+
+    # Specifies the size of the bean pools for this
+    # stateless SessionBean container.
+
+    PoolSize 10
+
+    # StrictPooling tells the container what to do when the pool
+    # reaches it's maximum size and there are incoming requests
+    # that need instances.
+    #
+    # With strict pooling, requests will have to wait for instances
+    # to become available. The pool size will never grow beyond the
+    # the set PoolSize value.
+    #
+    # Without strict pooling, the container will create temporary
+    # instances to meet demand. The instances will last for just one
+    # method invocation and then are removed.
+
+    StrictPooling true
+
+
+  </ServiceProvider>
+
+
+  <!--
+  # ==========================================================
+  # Default Stateful SessinBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default Stateful Container"
+          service="Container"
+          types="STATEFUL"
+          constructor="id, transactionManager, securityService, Passivator, TimeOut, PoolSize, BulkPassivate"
+          class-name="org.apache.openejb.core.stateful.StatefulContainer">
+
+    # The passivator is responsible for writing beans to disk
+    # at passivation time. Different passivators can be used
+    # by setting this property to the fully qualified class name
+    # of the PassivationStrategy implementation. The passivator
+    # is not responsible for invoking any callbacks or other
+    # processing, its only responsibly is to write the bean state
+    # to disk.
+    #
+    # Known implementations:
+    # org.apache.openejb.core.stateful.RAFPassivater
+    # org.apache.openejb.core.stateful.SimplePassivater
+
+    Passivator org.apache.openejb.core.stateful.SimplePassivater
+
+    # Specifies the time to wait between invocations. This
+    # value is measured in minutes. A value of 5 would
+    # result in a time-out of 5 minutes between invocations.
+    # A value of zero would mean no timeout.
+
+    TimeOut 20
+
+    # Specifies the size of the bean pools for this
+    # stateful SessionBean container.
+
+    PoolSize 1000
+
+    # Property name that specifies the number of instances
+    # to passivate at one time when doing bulk passivation.
+
+    BulkPassivate 100
+
+  </ServiceProvider>
+
+  <!--
+  # ==========================================================
+  # Default Message Driven Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default MDB Container"
+          service="Container"
+          types="MESSAGE"
+          constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
+          class-name="org.apache.openejb.core.mdb.MdbContainer">
+
+    # The resource adapter delivers messages to the container
+
+    ResourceAdapter Default JMS Resource Adapter
+
+    # Specifies the message listener interface handled by this container
+
+    MessageListenerInterface javax.jms.MessageListener
+
+    # Specifies the activation spec class
+
+    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
+
+    # Specifies the maximum number of bean instances that are
+    # allowed to exist for each MDB deployment.
+
+    InstanceLimit 10
+
+  </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default Proxy Factory implementation for JDK 1.3
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default JDK 1.3 ProxyFactory"
+          service="ProxyFactory"
+          types="ProxyFactory"
+          class-name="org.apache.openejb.util.proxy.Jdk13ProxyFactory"/>
+
+  <!--
+  # ================================================
+  # Default Security Service implementation
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default Security Service"
+          service="SecurityService"
+          types="SecurityService"
+          class-name="org.apache.openejb.core.security.SecurityServiceImpl"/>
+
+  <ServiceProvider
+          id="PseudoSecurityService"
+          service="SecurityService"
+          types="SecurityService"
+          class-name="org.apache.openejb.ri.sp.PseudoSecurityService"/>
+
+  <!--
+  # ================================================
+  # Default Transaction Manager implementation
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default Transaction Manager"
+          service="TransactionManager"
+          types="TransactionManager"
+          class-name="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
+
+  <!--
+  # ================================================
+  # Default JCA ManagedConnectionFactory for JDBC
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default JDBC Database"
+          service="Resource"
+          types="javax.sql.DataSource, DataSource"
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    # Determines wether or not this data source should be JTA managed
+    # or user managed.  If set to 'true' it will automatically be enrolled
+    # in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
+    # on the datasource or connection will not be allowed.  If you need to perform
+    # these functions yourself, set JtaManaged to 'false'
+    #
+    # In terms of JPA persistence.xml:
+    # "JtaManaged=true" can be used as a 'jta-data-source'
+    # "JtaManaged=false" can be used as a 'non-jta-data-source'
+
+    JtaManaged = true
+
+    # Driver class name
+
+    JdbcDriver org.hsqldb.jdbcDriver
+
+    # Url for creating connections
+
+    JdbcUrl jdbc:hsqldb:mem:hsqldb
+
+    # Default user name
+
+    UserName sa
+
+    # Default password
+
+    Password
+
+    # The connection properties that will be sent to the JDBC
+    # driver when establishing new connections
+    #
+    # Format of the string must be [propertyName=property;]*
+    #
+    # NOTE - The "user" and "password" properties will be passed
+    # explicitly, so they do not need to be included here.
+
+    ConnectionProperties
+
+    # The default auto-commit state of new connections
+
+    DefaultAutoCommit true
+
+    # The default read-only state of new connections
+    # If not set then the setReadOnly method will not be called.
+    # (Some drivers don't support read only mode, ex: Informix)
+
+    # DefaultReadOnly
+
+
+    # The default TransactionIsolation state of new connections
+    # If not set then the setTransactionIsolation method will not
+    # be called. The allowed values for this property are:
+    #     NONE
+    #     READ_COMMITTED
+    #     READ_UNCOMMITTED
+    #     REPEATABLE_READ
+    #     SERIALIZABLE
+    #
+    # Note: Most JDBC drivers do not support all isolation levels
+
+    # DefaultTransactionIsolation
+
+
+    # The initial number of connections that are created when the
+    # pool is started
+
+    InitialSize	0
+
+    # The maximum number of active connections that can be
+    # allocated from this pool at the same time, or a negative
+    # number for no limit.
+
+    MaxActive	20
+
+    # The maximum number of connections that can remain idle in
+    # the pool, without extra ones being released, or a negative
+    # number for no limit.
+
+    MaxIdle	20
+
+    # The minimum number of connections that can remain idle in
+    # the pool, without extra ones being created, or zero to
+    # create none.
+
+    MinIdle	0
+
+    # The maximum number of milliseconds that the pool will wait
+    # (when there are no available connections) for a connection
+    # to be returned before throwing an exception, or -1 to wait
+    # indefinitely.
+
+    MaxWait	-1
+
+    # The SQL query that will be used to validate connections from
+    # this pool before returning them to the caller. If specified,
+    # this query MUST be an SQL SELECT statement that returns at
+    # least one row.
+
+    # ValidationQuery
+
+    # If true connections will be validated before being returned
+    # from the pool. If the validation fails, the connection is
+    # destroyed, and a new conection will be retrieved from the
+    # pool (and validated).
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnBorrow	true
+
+    # If true connections will be validated before being returned
+    # to the pool.  If the validation fails, the connection is
+    # destroyed instead of being returned to the pool.
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnReturn	false
+
+    # If true connections will be validated by the idle connection
+    # evictor (if any). If the validation fails, the connection is
+    # destroyed and removed from the pool
+    #
+    # NOTE - for a true value to have any effect, the
+    # timeBetweenEvictionRunsMillis property must be a positive
+    # number and the ValidationQuery parameter must be set.
+
+    TestWhileIdle	false
+
+    # The number of milliseconds to sleep between runs of the idle
+    # connection evictor thread. When set to a negative number, no
+    # idle connection evictor thread will be run.
+
+    TimeBetweenEvictionRunsMillis	-1
+
+    # The number of connectionss to examine during each run of the
+    # idle connection evictor thread (if any).
+
+    NumTestsPerEvictionRun	3
+
+    # The minimum amount of time a connection may sit idle in the
+    # pool before it is eligable for eviction by the idle
+    # connection evictor (if any).
+
+    MinEvictableIdleTimeMillis	1800000
+
+    # If true, a statement pool is created for each Connection and
+    # PreparedStatements created by one of the following methods are
+    # pooled:
+    #    public PreparedStatement prepareStatement(String sql);
+    #    public PreparedStatement prepareStatement(String sql,
+    #            int resultSetType,
+    #            int resultSetConcurrency)
+
+    PoolPreparedStatements false
+
+    # The maximum number of open statements that can be allocated
+    # from the statement pool at the same time, or zero for no
+    # limit.
+    #
+    # NOTE - Some drivers have limits on the number of open
+    # statements, so make sure there are some resources left
+    # for the other (non-prepared) statements.
+
+    MaxOpenPreparedStatements 0
+
+    # If true the raw physical connection to the database can be
+    # accessed using the following construct:
+    #     Connection conn = ds.getConnection();
+    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    #     ...
+    #     conn.close()
+    #
+    # Default is false, because misbehaving programs can do harmfull
+    # things to the raw connection shuch as closing the raw
+    # connection or continuing to use the raw connection after it
+    # has been assigned to another logical connection.  Be carefull
+    # and only use when you need direct access to driver specific
+    # extentions.
+    #
+    # NOTE: Do NOT close the underlying connection, only the
+    # original logical connection wrapper.
+
+    AccessToUnderlyingConnectionAllowed	false
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default Unmanaged JDBC Database"
+          service="Resource"
+          types="javax.sql.DataSource, DataSource"
+          factory-name="create"
+          constructor="JtaManaged"
+          class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
+
+    JtaManaged = false
+
+    # Driver class name
+
+    #JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    JdbcDriver org.hsqldb.jdbcDriver
+
+    # Url for creating connections
+
+    #JdbcUrl jdbc:derby:derbyDB;create=true
+    JdbcUrl jdbc:hsqldb:mem:hsqldb
+
+    # Default user name
+
+    #UserName admin
+    UserName sa
+
+    # Default password
+
+    #Password pass
+    Password
+
+    # The connection properties that will be sent to the JDBC
+    # driver when establishing new connections
+    #
+    # Format of the string must be [propertyName=property;]*
+    #
+    # NOTE - The "user" and "password" properties will be passed
+    # explicitly, so they do not need to be included here.
+
+    ConnectionProperties
+
+    # The default auto-commit state of new connections
+
+    DefaultAutoCommit true
+
+    # The default read-only state of new connections
+    # If not set then the setReadOnly method will not be called.
+    # (Some drivers don't support read only mode, ex: Informix)
+
+    # DefaultReadOnly
+
+
+    # The default TransactionIsolation state of new connections
+    # If not set then the setTransactionIsolation method will not
+    # be called. The allowed values for this property are:
+    #     NONE
+    #     READ_COMMITTED
+    #     READ_UNCOMMITTED
+    #     REPEATABLE_READ
+    #     SERIALIZABLE
+    #
+    # Note: Most JDBC drivers do not support all isolation levels
+
+    # DefaultTransactionIsolation
+
+
+    # The initial number of connections that are created when the
+    # pool is started
+
+    InitialSize	0
+
+    # The maximum number of active connections that can be
+    # allocated from this pool at the same time, or a negative
+    # number for no limit.
+
+    MaxActive	10
+
+    # The maximum number of connections that can remain idle in
+    # the pool, without extra ones being released, or a negative
+    # number for no limit.
+
+    MaxIdle	10
+
+    # The minimum number of connections that can remain idle in
+    # the pool, without extra ones being created, or zero to
+    # create none.
+
+    MinIdle	0
+
+    # The maximum number of milliseconds that the pool will wait
+    # (when there are no available connections) for a connection
+    # to be returned before throwing an exception, or -1 to wait
+    # indefinitely.
+
+    MaxWait	-1
+
+    # The SQL query that will be used to validate connections from
+    # this pool before returning them to the caller. If specified,
+    # this query MUST be an SQL SELECT statement that returns at
+    # least one row.
+
+    # ValidationQuery
+
+    # If true connections will be validated before being returned
+    # from the pool. If the validation fails, the connection is
+    # destroyed, and a new conection will be retrieved from the
+    # pool (and validated).
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnBorrow	true
+
+    # If true connections will be validated before being returned
+    # to the pool.  If the validation fails, the connection is
+    # destroyed instead of being returned to the pool.
+    #
+    # NOTE - for a true value to have any effect, the
+    # ValidationQuery parameter must be set.
+
+    TestOnReturn	false
+
+    # If true connections will be validated by the idle connection
+    # evictor (if any). If the validation fails, the connection is
+    # destroyed and removed from the pool
+    #
+    # NOTE - for a true value to have any effect, the
+    # timeBetweenEvictionRunsMillis property must be a positive
+    # number and the ValidationQuery parameter must be set.
+
+    TestWhileIdle	false
+
+    # The number of milliseconds to sleep between runs of the idle
+    # connection evictor thread. When set to a negative number, no
+    # idle connection evictor thread will be run.
+
+    TimeBetweenEvictionRunsMillis	-1
+
+    # The number of connectionss to examine during each run of the
+    # idle connection evictor thread (if any).
+
+    NumTestsPerEvictionRun	3
+
+    # The minimum amount of time a connection may sit idle in the
+    # pool before it is eligable for eviction by the idle
+    # connection evictor (if any).
+
+    MinEvictableIdleTimeMillis	1800000
+
+    # If true, a statement pool is created for each Connection and
+    # PreparedStatements created by one of the following methods are
+    # pooled:
+    #    public PreparedStatement prepareStatement(String sql);
+    #    public PreparedStatement prepareStatement(String sql,
+    #            int resultSetType,
+    #            int resultSetConcurrency)
+
+    PoolPreparedStatements false
+
+    # The maximum number of open statements that can be allocated
+    # from the statement pool at the same time, or zero for no
+    # limit.
+    #
+    # NOTE - Some drivers have limits on the number of open
+    # statements, so make sure there are some resources left
+    # for the other (non-prepared) statements.
+
+    MaxOpenPreparedStatements 0
+
+    # If true the raw physical connection to the database can be
+    # accessed using the following construct:
+    #     Connection conn = ds.getConnection();
+    #     Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
+    #     ...
+    #     conn.close()
+    #
+    # Default is false, because misbehaving programs can do harmfull
+    # things to the raw connection shuch as closing the raw
+    # connection or continuing to use the raw connection after it
+    # has been assigned to another logical connection.  Be carefull
+    # and only use when you need direct access to driver specific
+    # extentions.
+    #
+    # NOTE: Do NOT close the underlying connection, only the
+    # original logical connection wrapper.
+
+    AccessToUnderlyingConnectionAllowed	false
+  </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default JMS
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default JMS Resource Adapter"
+          service="Resource"
+          types="ActiveMQResourceAdapter"
+          class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
+
+    # Broker configuration
+    BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
+
+    # Broker address
+    ServerUrl vm://localhost?async=true
+
+    # DataSource for persistence messages
+    DataSource 
+
+    # Specifies the size of the thread pool available to AciveMQ.
+    ThreadPoolSize 30
+
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default JMS Connection Factory"
+          service="Resource"
+          types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+          class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory">
+
+    ResourceAdapter Default JMS Resource Adapter
+
+    # Specifies if the connection is enrolled in global transaction
+    # allowed values: xa, local or none
+    TransactionSupport xa
+
+    # Maximum number of physical connection to the ActiveMQ broker
+    PoolMaxSize 10
+
+    # Minimum number of physical connection to the ActiveMQ broker
+    PoolMinSize 0
+
+    # Maximum amount of time to wait for a connection
+    ConnectionMaxWaitMilliseconds 5000
+
+    # Maximum amount of time a connection can be idle before being reclaimed
+    ConnectionMaxIdleMinutes 15
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default Queue"
+          service="Resource"
+          types="javax.jms.Queue, Queue"
+          constructor="destination"
+          class-name="org.apache.activemq.command.ActiveMQQueue">
+    destination
+  </ServiceProvider>
+
+  <ServiceProvider
+          id="Default Topic"
+          service="Resource"
+          types="javax.jms.Topic, Topic"
+          constructor="destination"
+          class-name="org.apache.activemq.command.ActiveMQTopic">
+    destination
+  </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default ORB
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default ORB"
+          service="Resource"
+          types="org.omg.CORBA.ORB, ORB"
+          factory-name="create"
+          class-name="org.apache.openejb.core.OrbFactory">
+
+  </ServiceProvider>
+
+  <!--
+  # ================================================
+  # Default ORB
+  # ================================================
+  -->
+  <ServiceProvider
+          id="Default Mail Session"
+          service="Resource"
+          types="javax.mail.Session"
+          factory-name="create"
+          class-name="org.apache.openejb.core.MailSessionFactory">
+
+  </ServiceProvider>
+
+
+</ServiceJar>
