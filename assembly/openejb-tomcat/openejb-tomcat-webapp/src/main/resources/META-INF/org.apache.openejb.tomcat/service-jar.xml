@@ -277,7 +277,7 @@
 
     # Url for creating connections
 
-    JdbcUrl jdbc:hsqldb:file:hsqldb
+    JdbcUrl jdbc:hsqldb:file:data/hsqldb/hsqldb
 
     # Default user name
 
@@ -463,7 +463,7 @@
     # Url for creating connections
 
     #JdbcUrl jdbc:derby:derbyDB;create=true
-    JdbcUrl jdbc:hsqldb:file:hsqldb
+    JdbcUrl jdbc:hsqldb:file:data/hsqldb/hsqldb
 
     # Default user name
 

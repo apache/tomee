@@ -69,7 +69,20 @@
       <directory>target/classes/empty</directory>
       <outputDirectory>apps/</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>target/classes/empty</directory>
+      <outputDirectory>data/</outputDirectory>
+    </fileSet>
   </fileSets>
+  <files>
+    <file>
+      <source>target/classes/DATA-README.txt</source>
+      <outputDirectory>data/</outputDirectory>
+      <destName>README.txt</destName>
+      <!-- TODO Assembly 2.1 plugin takes a decimal permission instead of octal -->
+      <fileMode>420</fileMode>
+    </file>
+  </files>
   <dependencySets>
     <dependencySet>
       <outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
