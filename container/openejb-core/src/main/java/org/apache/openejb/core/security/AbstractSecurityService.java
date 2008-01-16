@@ -31,6 +31,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.jacc.PolicyContext;
 import javax.security.jacc.EJBRoleRefPermission;
 import javax.security.jacc.EJBMethodPermission;
+import javax.security.jacc.PolicyConfigurationFactory;
 import java.security.AccessControlContext;
 import java.security.PrivilegedAction;
 import java.security.AccessController;
@@ -237,10 +238,26 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     protected static void installJacc() {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
         final String providerKey = "javax.security.jacc.PolicyConfigurationFactory.provider";
-        if (System.getProperty(providerKey) == null){
-            System.setProperty(providerKey, JaccProvider.Factory.class.getName()) ;
+        try {
+            if (System.getProperty(providerKey) == null) {
+                System.setProperty(providerKey, JaccProvider.Factory.class.getName());
+                ClassLoader cl = JaccProvider.Factory.class.getClassLoader();
+                Thread.currentThread().setContextClassLoader(cl);
+            }
+
+            // Force the loading of the javax.security.jacc.PolicyConfigurationFactory.provider
+            // Hopefully it will be cached thereafter and ClassNotFoundExceptions thrown
+            // from the equivalent call in JaccPermissionsBuilder can be avoided.
+            PolicyConfigurationFactory.getPolicyConfigurationFactory();
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + System.getProperty(providerKey), e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
+
 
         String policyProvider = System.getProperty("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
         try {
