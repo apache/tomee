@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.persistence;
 
-import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
@@ -37,6 +36,11 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
      * External handler which handles adding a runtime ClassTransformer to the classloader.
      */
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
+
+    /**
+     * The unique id of this persistence unit.
+     */
+    private String id;
 
     /**
      * Name of this persistence unit.  The JPA specification has restrictions on the
@@ -108,6 +112,14 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
     public PersistenceUnitInfoImpl(PersistenceClassLoaderHandler persistenceClassLoaderHandler) {
         this.persistenceClassLoaderHandler = persistenceClassLoaderHandler;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPersistenceUnitName() {
@@ -233,7 +245,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     public void addTransformer(ClassTransformer classTransformer) {
         if (persistenceClassLoaderHandler != null) {
             PersistenceClassFileTransformer classFileTransformer = new PersistenceClassFileTransformer(classTransformer);
-            persistenceClassLoaderHandler.addTransformer(classLoader, classFileTransformer);
+            persistenceClassLoaderHandler.addTransformer(id, classLoader, classFileTransformer);
         }
     }
 

@@ -85,6 +85,9 @@ public class PersistenceBuilder {
     public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
+        // Persistence Unit Id
+        unitInfo.setId(info.id);
+
         // Persistence Unit Name
         unitInfo.setPersistenceUnitName(info.name);
 

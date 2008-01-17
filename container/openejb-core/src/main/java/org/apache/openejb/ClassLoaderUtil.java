@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Map;
@@ -74,6 +75,16 @@ public class ClassLoaderUtil {
             synchronized (cache) {
                 cache.clear();
             }
+        }
+    }
+
+    public static void cleanOpenJPACache(ClassLoader classLoader) {
+        try {
+            Class<?> pcRegistryClass = classLoader.loadClass("org.apache.openjpa.enhance.PCRegistry");
+            Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
+            deRegisterMethod.invoke(null, classLoader);
+        } catch (Throwable ignored) {
+            // there is nothing a user could do about this anyway
         }
     }
 }

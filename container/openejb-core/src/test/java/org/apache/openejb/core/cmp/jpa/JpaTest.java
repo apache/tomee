@@ -159,9 +159,13 @@ public class JpaTest extends TestCase {
 
     private EntityManagerFactory createEntityManagerFactory() throws Exception {
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
-            public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+
+            public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
                 Instrumentation instrumentation = Agent.getInstrumentation();
                 instrumentation.addTransformer(classFileTransformer);
+            }
+
+            public void destroy(String unitId) {
             }
 
             public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {

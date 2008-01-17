@@ -20,6 +20,7 @@ package org.apache.openejb.persistence;
 import java.lang.instrument.ClassFileTransformer;
 
 public interface PersistenceClassLoaderHandler {
-    void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer);
+    void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer);
+    void destroy(String unitId);
     ClassLoader getNewTempClassLoader(ClassLoader classLoader);
 }

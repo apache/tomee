@@ -16,6 +16,45 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.work.WorkManager;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+
+import org.apache.geronimo.connector.GeronimoBootstrapContext;
+import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.BeanType;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.DuplicateDeploymentIdException;
@@ -25,21 +64,19 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.BeanType;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
-import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
+import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -50,45 +87,9 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
-import org.apache.geronimo.connector.work.GeronimoWorkManager;
-import org.apache.geronimo.connector.GeronimoBootstrapContext;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.work.WorkManager;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -96,6 +97,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
+    private final ClassLoaderRegistry classLoaderRegistry;;
     private final JndiBuilder jndiBuilder;
     private TransactionManager transactionManager;
     private SecurityService securityService;
@@ -161,6 +163,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public Assembler() {
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
+
+        classLoaderRegistry = new ClassLoaderRegistry();
 
         installNaming();
 
@@ -436,11 +440,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
+            classLoaderRegistry.registerClassLoader(appInfo.jarPath, classLoader);
+
             // Generate the cmp2 concrete subclasses
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
             File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
                 classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
+                classLoaderRegistry.registerClassLoader(appInfo.jarPath, classLoader);
             }
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -648,7 +655,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {
             try {
+                Object object = globalContext.lookup("openejb/PersistenceUnit/" + unitInfo.id);
                 globalContext.unbind("openejb/PersistenceUnit/"+unitInfo.id);
+
+                // close EMF so all resources are released
+                ((EntityManagerFactory) object).close();
+                persistenceClassLoaderHandler.destroy(unitInfo.id);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
@@ -684,6 +696,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        classLoaderRegistry.unregisterClassLoaders(appInfo.jarPath);
         ClassLoaderUtil.clearClassLoaderCaches();
 
         if (undeployException.getCauses().size() > 0) {
@@ -1113,17 +1126,84 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
-        public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+        private final Map<String,List<ClassFileTransformer>> transformers = new TreeMap<String,List<ClassFileTransformer>>();
+
+        public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
             Instrumentation instrumentation = Agent.getInstrumentation();
             if (instrumentation != null) {
                 instrumentation.addTransformer(classFileTransformer);
+
+                if (unitId != null) {
+                    List<ClassFileTransformer> transformers = this.transformers.get(unitId);
+                    if (transformers == null) {
+                        transformers = new ArrayList<ClassFileTransformer>(1);
+                        this.transformers.put(unitId, transformers);
+                    }
+                    transformers.add(classFileTransformer);
+                }
             } else {
                 logger.error("assembler.noAgent");
             }
         }
 
+        public void destroy(String unitId) {
+            List<ClassFileTransformer> transformers = this.transformers.remove(unitId);
+            if (transformers != null) {
+                Instrumentation instrumentation = Agent.getInstrumentation();
+                if (instrumentation != null) {
+                    for (ClassFileTransformer transformer : transformers) {
+                        instrumentation.removeTransformer(transformer);
+                    }
+                } else {
+                    logger.error("assembler.noAgent");
+                }
+            }
+        }
+
         public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
             return new TemporaryClassLoader(classLoader);
+        }
+    }
+
+    // todo remove this when OpenJPA fixes it ClassLoader cache
+    private static class ClassLoaderRegistry {
+        private final Map<String,List<ClassLoader>> classLoadersByApp = new HashMap<String,List<ClassLoader>>();
+        private final Map<ClassLoader,List<String>> appsByClassLoader = new HashMap<ClassLoader,List<String>>();
+
+        public void registerClassLoader(String appId, ClassLoader classLoader) {
+            List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
+            if (classLoaders == null) {
+                classLoaders = new ArrayList<ClassLoader>(2);
+                classLoadersByApp.put(appId, classLoaders);
+            }
+            classLoaders.add(classLoader);
+
+            List<String> apps = appsByClassLoader.get(classLoader);
+            if (apps == null) {
+                apps = new ArrayList<String>(1);
+                appsByClassLoader.put(classLoader, apps);
+            }
+            apps.add(appId);
+        }
+
+        public void unregisterClassLoaders(String appId) {
+            List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
+            if (classLoaders != null) {
+                for (ClassLoader classLoader : classLoaders) {
+                    // get the apps using the class loader
+                    List<String> apps = appsByClassLoader.get(classLoader);
+                    if (apps == null) apps = Collections.emptyList();
+
+                    // this app is no longer using the class loader
+                    apps.remove(appId);
+
+                    // if no apps are using the class loader, clear the OpenJPA cache
+                    if (apps.isEmpty()) {
+                        appsByClassLoader.remove(classLoader);
+                        ClassLoaderUtil.cleanOpenJPACache(classLoader);
+                    }
+                }
+            }
         }
     }
 

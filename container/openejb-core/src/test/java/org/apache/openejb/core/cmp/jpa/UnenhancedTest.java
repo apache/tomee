@@ -190,11 +190,15 @@ public class UnenhancedTest extends TestCase {
         ClassLoader loader = new FilteredChildFirstClassLoader(getClass().getClassLoader(), "org.apache.openejb.core.cmp.jpa");
 
         PersistenceClassLoaderHandler persistenceClassLoaderHandler = new PersistenceClassLoaderHandler() {
-            public void addTransformer(ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
+
+            public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
                 Instrumentation instrumentation = Agent.getInstrumentation();
                 if (instrumentation != null) {
                     instrumentation.addTransformer(new ControllableTransformer(classFileTransformer));
                 }
+            }
+
+            public void destroy(String unitId) {
             }
 
             public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
