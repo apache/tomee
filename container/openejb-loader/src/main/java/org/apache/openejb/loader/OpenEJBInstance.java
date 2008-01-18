@@ -35,7 +35,10 @@ public class OpenEJBInstance {
         try {
             init.invoke(null, props);
         } catch (InvocationTargetException e) {
-            throw (Exception) e.getCause();
+            if (e.getCause() instanceof Exception) {
+                throw (Exception) e.getCause();
+            }
+            throw (Error) e.getCause();
         } catch (Exception e) {
             throw new RuntimeException("OpenEJB.init: ", e);
         }
