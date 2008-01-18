@@ -123,8 +123,10 @@
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
-              <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar xbean-finder-${xbeanVersion}.jar</Class-Path>
-              <J2EE-DeploymentFactory-Implementation-Class>org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
+              <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar
+                xbean-finder-${xbeanVersion}.jar</Class-Path>
+              <J2EE-DeploymentFactory-Implementation-Class>
+                org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -213,8 +215,8 @@
     </dependency>
     <!-- End ActiveMQ -->
     <dependency>
-        <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa-persistence-jdbc</artifactId>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa-persistence-jdbc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -277,7 +279,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-     </dependency>
+    </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
@@ -354,7 +356,8 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <forkMode>pertest</forkMode>
-              <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions -agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine>
+              <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions
+                -agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine>
               <workingDirectory>${basedir}/target</workingDirectory>
               <systemProperties>
                 <property>
