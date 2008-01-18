@@ -17,6 +17,8 @@
 package org.apache.openejb.config;
 
 import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -105,7 +107,26 @@ public class Undeploy {
             String moduleId = (String) obj;
 
             try {
-                deployer.undeploy(moduleId);
+                boolean undeployed = false;
+
+                // Treat moduleId as a file path, and see if there is a matching app to undeploy
+                String path = null;
+                try {
+                    path = new File(moduleId).getCanonicalPath();
+                } catch (IOException e) {
+                }
+                if (path != null) {
+                    try {
+                        deployer.undeploy(path);
+                        undeployed = true;
+                    } catch (NoSuchApplicationException e) {
+                    }
+                }
+
+                // If that didn't work, undeploy using just the moduleId
+                if (!undeployed) {
+                    deployer.undeploy(moduleId);
+                }
 
                 // TODO make this message
                 System.out.println(messages.format("cmd.undeploy.successful", moduleId));

@@ -51,7 +51,12 @@ public class FileUtils {
                 home = new File(homePath);
             }
 
-            home = home.getAbsoluteFile();
+            try {
+                home = home.getCanonicalFile();
+            } catch (IOException e) {
+                // this shouldn't happen, but let's get absolute file
+                home = home.getAbsoluteFile();
+            }
         } catch (SecurityException e) {
 
         }

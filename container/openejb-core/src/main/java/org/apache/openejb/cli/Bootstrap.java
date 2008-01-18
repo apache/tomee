@@ -62,7 +62,7 @@ public class Bootstrap {
 
                 if (jarFile.getName().indexOf("openejb-core") > -1) {
                     File lib = jarFile.getParentFile();
-                    File home = lib.getParentFile();
+                    File home = lib.getParentFile().getCanonicalFile();
 
                     System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }

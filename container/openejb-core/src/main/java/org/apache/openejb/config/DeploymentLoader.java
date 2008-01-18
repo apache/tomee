@@ -87,9 +87,21 @@ public class DeploymentLoader {
             throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
         }
 
+        String jarPath;
+        try {
+            jarPath = jarFile.getCanonicalPath();
+        } catch (IOException e) {
+            throw new OpenEJBException("Invalid application file path " + jarFile);
+        }
+
         if (AppModule.class.equals(moduleClass)) {
 
             File appDir = unpack(jarFile);
+            try {
+                appDir = appDir.getCanonicalFile();
+            } catch (IOException e) {
+                throw new OpenEJBException("Invalid application directory " + appDir.getAbsolutePath());
+            }
 
             URL appUrl = getFileUrl(appDir);
 
@@ -342,7 +354,7 @@ public class DeploymentLoader {
                 return appModule;
 
             } catch (OpenEJBException e) {
-                logger.error("Unable to load EAR: " + jarFile.getAbsolutePath(), e);
+                logger.error("Unable to load EAR: " + jarPath, e);
                 throw e;
             }
 
@@ -356,9 +368,9 @@ public class DeploymentLoader {
             }
 
             // create the EJB Module
-            EjbModule ejbModule = new EjbModule(classLoader, jarFile.getAbsolutePath(), ejbJar, null);
+            EjbModule ejbModule = new EjbModule(classLoader, jarPath, ejbJar, null);
             ejbModule.getAltDDs().putAll(descriptors);
-            ejbModule.getWatchedResources().add(jarFile.getAbsolutePath());
+            ejbModule.getWatchedResources().add(jarPath);
             if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
                 ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
             }

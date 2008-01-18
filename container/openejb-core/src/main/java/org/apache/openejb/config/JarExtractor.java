@@ -33,9 +33,8 @@ import java.util.jar.JarFile;
 public class JarExtractor {
 
     /**
-     * Extract the Jar file into an unpacked
-     * directory structure, and return the absolute pathname to the extracted
-     * directory.
+     * Extract the Jar file into an unpacked directory structure, and
+     * return the absolute pathname to the extracted directory.
      *
      * @param file Jar file to unpack
      * @param pathname Context path name for web application
@@ -43,19 +42,30 @@ public class JarExtractor {
      * @throws java.io.IOException              if an input/output error was encountered
      *                                  during expansion
      */
-    public static File extract(File file, String pathname)
-            throws IOException {
-
+    public static File extract(File file, String pathname) throws IOException {
         File docBase = new File(file.getParentFile(), pathname);
-        if (docBase.exists()) {
+        extract(file, docBase);
+        return docBase;
+    }
+
+    /**
+     * Extract the jar file into the specifiec destination directory.  If the destination directory
+     * already exists, the jar will not be unpacked.
+     *
+     * @param file jar file to unpack
+     * @param destinationDir the directory in which the jar will be unpacked; must not exist
+     * @throws java.io.IOException if an input/output error was encountered during expansion
+     */
+    public static void extract(File file, File destinationDir) throws IOException {
+        if (destinationDir.exists()) {
             // Ear file is already installed
-            return docBase;
+            return;
         }
 
         DeploymentLoader.logger.info("Extracting jar: " + file.getAbsolutePath());
 
         // Create the new document base directory
-        docBase.mkdir();
+        destinationDir.mkdirs();
 
         // Extract the JAR into the new directory
         JarFile jarFile = null;
@@ -68,7 +78,7 @@ public class JarExtractor {
                 String name = jarEntry.getName();
                 int last = name.lastIndexOf('/');
                 if (last >= 0) {
-                    File parent = new File(docBase,
+                    File parent = new File(destinationDir,
                             name.substring(0, last));
                     parent.mkdirs();
                 }
@@ -77,7 +87,7 @@ public class JarExtractor {
                 }
                 input = jarFile.getInputStream(jarEntry);
 
-                File extractedFile = extract(input, docBase, name);
+                File extractedFile = extract(input, destinationDir, name);
                 long lastModified = jarEntry.getTime();
                 if ((lastModified != -1) && (lastModified != 0) && (extractedFile != null)) {
                     extractedFile.setLastModified(lastModified);
@@ -89,7 +99,7 @@ public class JarExtractor {
         } catch (IOException e) {
             // If something went wrong, delete extracted dir to keep things
             // clean
-            deleteDir(docBase);
+            deleteDir(destinationDir);
             throw e;
         } finally {
             if (input != null) {
@@ -97,22 +107,17 @@ public class JarExtractor {
                     input.close();
                 } catch (Throwable t) {
                 }
-                input = null;
             }
             if (jarFile != null) {
                 try {
                     jarFile.close();
                 } catch (Throwable t) {
                 }
-                jarFile = null;
             }
         }
 
         // Return the absolute path to our new document base directory
-        DeploymentLoader.logger.info("Extracted path: " + docBase.getAbsolutePath());
-
-        return docBase;
-
+        DeploymentLoader.logger.info("Extracted path: " + destinationDir.getAbsolutePath());
     }
 
 
@@ -126,7 +131,7 @@ public class JarExtractor {
 
         boolean result = true;
 
-        String files[] = null;
+        String files[];
         if (src.isDirectory()) {
             files = src.list();
             result = dest.mkdir();
@@ -196,12 +201,12 @@ public class JarExtractor {
      */
     public static boolean deleteDir(File dir) {
 
-        String files[] = dir.list();
-        if (files == null) {
-            files = new String[0];
+        String fileNames[] = dir.list();
+        if (fileNames == null) {
+            fileNames = new String[0];
         }
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(dir, files[i]);
+        for (String fileName : fileNames) {
+            File file = new File(dir, fileName);
             if (file.isDirectory()) {
                 deleteDir(file);
             } else {

@@ -46,8 +46,8 @@ public class DeployerEjb implements Deployer {
     static {
         String uniqueName = "OpenEJB-" + new BigInteger(128, new SecureRandom()).toString(Character.MAX_RADIX);
         String tempDir = System.getProperty("java.io.tmpdir");
-        uniqueFile = new File(tempDir, uniqueName);
         try {
+            uniqueFile = new File(tempDir, uniqueName).getCanonicalFile();
             uniqueFile.createNewFile();
         } catch (IOException e) {
             throw new RuntimeException(e);

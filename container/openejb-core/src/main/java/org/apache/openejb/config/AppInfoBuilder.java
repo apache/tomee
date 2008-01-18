@@ -66,6 +66,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.net.URL;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -179,7 +180,11 @@ class AppInfoBuilder {
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
             File file = new File(url.getPath());
-            appInfo.libs.add(file.getAbsolutePath());
+            try {
+                appInfo.libs.add(file.getCanonicalPath());
+            } catch (IOException e) {
+                throw new OpenEJBException("Invalid application lib path " + file.getAbsolutePath());
+            }
         }
 
         if (appModule.getCmpMappings() != null) {
@@ -263,7 +268,11 @@ class AppInfoBuilder {
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {
                 File file = new File(url.getPath());
-                connectorInfo.libs.add(file.getAbsolutePath());
+                try {
+                    connectorInfo.libs.add(file.getCanonicalPath());
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Invalid application lib path " + file.getAbsolutePath());                    
+                }
             }
 
             ResourceAdapter resourceAdapter = connector.getResourceAdapter();

@@ -16,6 +16,19 @@
  */
 package org.apache.openejb.config;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Properties;
+import java.util.jar.JarFile;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -25,31 +38,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.cli.SystemExitException;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.InterceptorInfo;
-import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
-import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.cli.SystemExitException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Closeable;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Deploy EJB beans
@@ -76,7 +77,7 @@ public class Deploy {
         options.addOption(option("q", "quiet", "cmd.deploy.opt.quiet"));
         options.addOption(option(null, "dir", "cmd.deploy.opt.dir"));
 
-        CommandLine line = null;
+        CommandLine line;
         try {
             // parse the command line arguments
             line = parser.parse(options, args);
@@ -115,7 +116,7 @@ public class Deploy {
 
         boolean offline = line.hasOption("offline");
 
-        File apps = null;
+        File apps;
         try {
             String dir = line.getOptionValue("dir", "apps");
             apps = SystemInstance.get().getBase().getDirectory(dir);
@@ -161,16 +162,26 @@ public class Deploy {
 
                 File destFile = new File(apps, file.getName());
 
-                checkDest(destFile, file);
 
-                copyFile(file, destFile);
+                if (shouldUnpack(file)) {
+                    destFile = unpack(file, apps);
+                } else {
+                    checkDest(destFile, file);
+                    copyFile(file, destFile);
+                }
 
                 if (offline) {
                     System.out.println(messages.format("cmd.deploy.offline", path, apps.getAbsolutePath()));
                     continue;
                 }
 
-                AppInfo appInfo = deployer.deploy(file.getAbsolutePath());
+                String location;
+                try {
+                    location = destFile.getCanonicalPath();
+                } catch (IOException e) {
+                    throw new OpenEJBException(messages.format("cmd.deploy.fileNotFound", path));
+                }
+                AppInfo appInfo = deployer.deploy(location);
 
                 System.out.println(messages.format("cmd.deploy.successful", path, appInfo.jarPath));
 
@@ -266,6 +277,62 @@ public class Deploy {
             close(out);
         }
     }
+
+    private static boolean shouldUnpack(File file) {
+        String name = file.getName();
+        if (name.endsWith(".ear") || name.endsWith(".rar") || name.endsWith(".rar")) {
+            return true;
+        }
+
+        JarFile jarFile = null;
+        try {
+            jarFile = new JarFile(file);
+
+            if (jarFile.getEntry("META-INF/application.xml") != null) {
+                return true;
+            }
+            if (jarFile.getEntry("META-INF/ra.xml") != null) {
+                return true;
+            }
+            if (jarFile.getEntry("WEB-INF/web.xml") != null) {
+                return true;
+            }
+        } catch (IOException e) {
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        return false;
+    }
+        
+    private static File unpack(File jarFile, File destDir) throws OpenEJBException, DeploymentTerminatedException {
+        if (jarFile.isDirectory()) {
+            return jarFile;
+        }
+
+        String name = jarFile.getName();
+        if (name.endsWith(".jar") || name.endsWith(".ear") || name.endsWith(".zip") || name.endsWith(".war") || name.endsWith(".rar")) {
+            name = name.replaceFirst("....$", "");
+        } else {
+            name += ".unpacked";
+        }
+
+
+        try {
+            File destinationDir = new File(destDir, name);
+            checkDest(destinationDir, jarFile);
+            JarExtractor.extract(jarFile, destinationDir);
+            return destinationDir;
+        } catch (IOException e) {
+            throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
+        }
+    }
+
 
     private static void close(Closeable in) {
         if (in != null) {

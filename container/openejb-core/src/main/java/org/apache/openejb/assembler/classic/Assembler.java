@@ -97,7 +97,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
-    private final ClassLoaderRegistry classLoaderRegistry;;
+    private final ClassLoaderRegistry classLoaderRegistry;
     private final JndiBuilder jndiBuilder;
     private TransactionManager transactionManager;
     private SecurityService securityService;
