@@ -44,18 +44,4 @@
     <module>openejb-axis2</module>
     <module>openejb-cxf</module>
   </modules>
-  <dependencies>
-    <!--
-       This dependency is here to ensure that absolutely nothing
-       under the container module section can be dependent on any
-       server modules.
-    -->
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>container</artifactId>
-      <version>${version}</version>
-      <type>pom</type>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
 </project>
