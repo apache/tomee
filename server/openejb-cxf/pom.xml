@@ -46,8 +46,45 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-http</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-interceptor_3.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_2.5_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-saaj-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-jaxws-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>wsdl4j</groupId>
+      <artifactId>wsdl4j</artifactId>
     </dependency>
 
     <dependency>
@@ -168,6 +205,11 @@
                 <artifactId>jaxb-impl</artifactId>
             </exclusion>
         </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>1.2</version>
     </dependency>
   </dependencies>
 </project>

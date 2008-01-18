@@ -76,6 +76,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${version}</version>
     </dependency>
@@ -93,6 +98,10 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ejb_3.0_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>

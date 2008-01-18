@@ -83,8 +83,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>

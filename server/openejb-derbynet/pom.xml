@@ -34,8 +34,22 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>

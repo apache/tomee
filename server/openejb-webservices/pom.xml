@@ -33,13 +33,28 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-server</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
       <version>${version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.swizzle</groupId>
+      <artifactId>swizzle-stream</artifactId>
     </dependency>
 
     <!-- spec dependencies -->
