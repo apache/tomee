@@ -292,12 +292,11 @@ public class ServiceManager {
         } catch (Throwable t) {
             logger.fatal("Unable to keep the server thread alive. Received exception: " + t.getClass().getName() + " : " + t.getMessage());
         }
-        System.out.println("[] exiting vm");
         logger.info("Stopping Remote Server");
     }
 
     public synchronized void stop() throws ServiceException {
-        System.out.println("[] received stop signal");
+        logger.info("Received stop signal");
         stop = true;
 
         try {
