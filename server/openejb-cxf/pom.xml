@@ -181,6 +181,10 @@
       <version>2.0.2-incubator</version>
       <exclusions>
         <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-servlet_2.5_spec</artifactId>
         </exclusion>
