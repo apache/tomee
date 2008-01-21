@@ -16,7 +16,18 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.config.ServiceUtils.implies;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -29,6 +40,8 @@ import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerSystemInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
+import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.HandlerInfo;
 import org.apache.openejb.assembler.classic.JndiContextInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -41,8 +54,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.HandlerChainInfo;
-import org.apache.openejb.assembler.classic.HandlerInfo;
+import static org.apache.openejb.config.ServiceUtils.implies;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.ConnectionManager;
 import org.apache.openejb.config.sys.Container;
@@ -56,28 +68,16 @@ import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.HandlerChain;
 import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChain;
+import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
-import org.apache.openejb.util.CaseInsensitiveProperties;
-
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Comparator;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -527,7 +527,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
 
-            Properties props = new CaseInsensitiveProperties();
+            Properties props = new SuperProperties();
             props.putAll(provider.getProperties());
             props.putAll(service.getProperties());
             props.putAll(getSystemProperties(service.getId(), provider.getService()));
