@@ -17,6 +17,9 @@
  */
 package org.apache.openejb.config.sys;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,9 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
+
+import org.apache.openejb.util.SuperProperties;
 
 
 /**
@@ -97,7 +99,7 @@ public class ServiceProvider {
      */
     public Properties getProperties() {
         if (properties == null) {
-            properties = new Properties();
+            properties = new SuperProperties();
         }
         return properties;
     }
