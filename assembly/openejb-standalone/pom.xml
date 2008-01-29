@@ -125,47 +125,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-kernel</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-webservices</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-naming</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-timer</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-security</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.4_mail</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jaxr_1.0_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -195,6 +160,16 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-telnet</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>

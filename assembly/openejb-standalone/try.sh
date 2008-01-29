@@ -25,6 +25,8 @@ tar xzvf openejb-3.0.0-SNAPSHOT-bin.tar.gz
 cd openejb-3.0.0-SNAPSHOT
 cp $JAR apps/
 ./bin/openejb start &
+sleep 1
+tail -f logs/openejb.log
 #sleep 14
 #./bin/openejb deploy -h
 #$JAR

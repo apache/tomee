@@ -94,6 +94,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${version}</version>
     </dependency>
@@ -130,16 +135,8 @@
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.4_mail</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jaxr_1.0_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

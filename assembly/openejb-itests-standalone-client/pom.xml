@@ -58,6 +58,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
       <version>${version}</version>
     </dependency>
@@ -81,10 +86,6 @@
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
     </dependency>
   </dependencies>
 </project>

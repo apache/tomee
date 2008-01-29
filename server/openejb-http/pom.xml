@@ -76,6 +76,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${version}</version>
     </dependency>
@@ -105,10 +110,6 @@
           <artifactId>servlet-api-2.5</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_2.5_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

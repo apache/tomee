@@ -46,6 +46,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${version}</version>
     </dependency>
@@ -58,28 +63,6 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-interceptor_3.0_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_2.5_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-saaj-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-jaxws-api</artifactId>
     </dependency>
 
     <dependency>
