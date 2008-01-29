@@ -32,7 +32,6 @@
 
   <modules>
     <module>openejb-itests-standalone-client</module>
-    <module>openejb-itests-webapp</module>
     <module>openejb-standalone</module>
     <module>openejb-tomcat</module>
   </modules>
