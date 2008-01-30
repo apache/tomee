@@ -20,11 +20,12 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPTransportFactory;
 
 import java.io.IOException;
 
-public class HttpTransportFactory extends AbstractHTTPTransportFactory {
+public class HttpTransportFactory extends AbstractHTTPTransportFactory implements DestinationFactory {
     public HttpTransportFactory() {
     }
 
