@@ -58,7 +58,7 @@ import org.xml.sax.SAXParseException;
  * @see java.lang.System#getProperties
  */
 public class SuperProperties extends Properties {
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = "\n";
 
     private static final String PROP_DTD_NAME = "http://java.sun.com/dtd/properties.dtd";
 

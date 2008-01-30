@@ -351,7 +351,7 @@ public class SuperPropertiesTest extends PropertiesTest {
         assertEquals(2, properties.getCommentIndent());
     }
 
-    protected String store(Properties properties) throws IOException {
+    protected String store(Properties properties) throws IOException {        
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
         return new String(out.toByteArray());
