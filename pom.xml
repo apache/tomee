@@ -637,9 +637,45 @@
       </dependency>
       <dependency>
         <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa-persistence-jdbc</artifactId>
+        <artifactId>openjpa</artifactId>
         <version>1.0.1</version>
         <exclusions>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-jdbc</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-jdbc-5</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-kernel</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-kernel-5</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-lib-5</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-lib</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-persistence-jdbc</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa-xmlstore</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
@@ -666,6 +702,28 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <!--
+      Required for openjpa (their uber pom is messed)
+      -->
+      <dependency>
+        <groupId>net.sourceforge.serp</groupId>
+        <artifactId>serp</artifactId>
+        <version>1.13.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2</version>
+      </dependency>
+      <!--
+      end: Required for openjpa
+      -->
+
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
