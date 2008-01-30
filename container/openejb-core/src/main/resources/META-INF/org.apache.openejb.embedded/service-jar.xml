@@ -644,9 +644,6 @@
     # DataSource for persistence messages
     DataSource 
 
-    # Specifies the size of the thread pool available to AciveMQ.
-    ThreadPoolSize 30
-
   </ServiceProvider>
 
   <ServiceProvider

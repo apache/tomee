@@ -49,6 +49,12 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         super.setUrl(string);
     }
 
+    public synchronized void setDefaultTransactionIsolation(String s) {
+        if (s == null || s.equals("")) return;
+        int level = IsolationLevels.getIsolationLevel(s);
+        super.setDefaultTransactionIsolation(level);
+    }
+    
     protected synchronized DataSource createDataSource() throws SQLException {
         if (dataSource != null) {
             return dataSource;

@@ -729,7 +729,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createExternalContext(JndiContextInfo contextInfo) throws OpenEJBException {
-        logger.info("createService", contextInfo.service, contextInfo.id, contextInfo.className);
+        logger.getChildLogger("service").info("createService", contextInfo.service, contextInfo.id, contextInfo.className);
 
         InitialContext result;
         try {
@@ -750,7 +750,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.remoteJndiContexts.add(contextInfo);
 
-        logger.debug("createService.success", contextInfo.service, contextInfo.id, contextInfo.className);
+        logger.getChildLogger("service").debug("createService.success", contextInfo.service, contextInfo.id, contextInfo.className);
     }
 
     public void createContainer(ContainerInfo serviceInfo) throws OpenEJBException {
@@ -789,7 +789,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.containerSystem.containers.add(serviceInfo);
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void removeContainer(String containerId) {
@@ -840,7 +840,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.intraVmServer = serviceInfo;
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private void replaceResourceAdapterProperty(ObjectRecipe serviceRecipe) throws OpenEJBException {
@@ -927,7 +927,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (classLoader == null) classLoader = ClassLoader.getSystemClassLoader();
             connectionManagerRecipe.setProperty("classLoader", classLoader);
 
-            logger.info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
+            logger.getChildLogger("service").info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
 
             // create the connection manager
             ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
@@ -958,7 +958,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.resources.add(serviceInfo);
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private int getIntProperty(Properties properties, String propertyName, int defaultValue) {
@@ -1004,7 +1004,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.connectionManagers.add(serviceInfo);
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void createSecurityService(SecurityServiceInfo serviceInfo) throws OpenEJBException {
@@ -1037,7 +1037,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.securityService = serviceInfo;
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     public void createTransactionManager(TransactionServiceInfo serviceInfo) throws OpenEJBException {
@@ -1089,7 +1089,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Assembler.getContext().put(JtaEntityManagerRegistry.class.getName(), jtaEntityManagerRegistry);
         SystemInstance.get().setComponent(JtaEntityManagerRegistry.class, jtaEntityManagerRegistry);
 
-        logger.debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+        logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
     }
 
     private void logUnusedProperties(ObjectRecipe serviceRecipe, ServiceInfo info) {
@@ -1099,12 +1099,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void logUnusedProperties(Map<String, Object> unsetProperties, ServiceInfo info) {
         for (String property : unsetProperties.keySet()) {
-            logger.warning("unusedProperty", property, info.id);
+            //TODO: DMB: Make more robust later
+            if (property.equalsIgnoreCase("properties")) return;
+            if (property.equalsIgnoreCase("transactionManager")) return;
+            //---
+
+            logger.getChildLogger("service").warning("unusedProperty", property, info.id);
         }
     }
 
     private ObjectRecipe createRecipe(ServiceInfo info) {
-        logger.info("createService", info.service, info.id, info.className);
+        logger.getChildLogger("service").info("createService", info.service, info.id, info.className);
         ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, info.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);

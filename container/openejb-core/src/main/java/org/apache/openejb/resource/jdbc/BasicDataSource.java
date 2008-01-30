@@ -22,9 +22,12 @@ import org.apache.openejb.loader.SystemInstance;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.File;
 
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
+
     public synchronized String getUserName() {
         return super.getUsername();
     }
@@ -47,6 +50,12 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
 
     public synchronized void setJdbcUrl(String string) {
         super.setUrl(string);
+    }
+
+    public synchronized void setDefaultTransactionIsolation(String s) {
+        if (s == null || s.equals("")) return;
+        int level = IsolationLevels.getIsolationLevel(s);
+        super.setDefaultTransactionIsolation(level);
     }
 
     protected synchronized DataSource createDataSource() throws SQLException {

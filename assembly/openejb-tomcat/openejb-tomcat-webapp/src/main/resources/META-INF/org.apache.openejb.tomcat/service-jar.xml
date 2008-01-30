@@ -653,9 +653,6 @@
     # DataSource for persistence messages
     DataSource Default Unmanaged JDBC Database
 
-    # Specifies the size of the thread pool available to AciveMQ.
-    ThreadPoolSize 30
-
   </ServiceProvider>
 
   <ServiceProvider

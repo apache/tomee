@@ -36,7 +36,74 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
-
+//   DMB:  Work in progress.  These all should go into the service-jar.xml
+//   Sources of info:
+//         - http://activemq.apache.org/resource-adapter-properties.html
+//         - http://activemq.apache.org/camel/maven/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html
+//
+//    /**
+//     * 100	 The maximum number of messages sent to a consumer on a durable topic until acknowledgements are received
+//     * @param integer
+//     */
+//    public void setDurableTopicPrefetch(Integer integer) {
+//        super.setDurableTopicPrefetch(integer);
+//    }
+//
+//    /**
+//     * 1000	 The delay before redeliveries start. Also configurable on the ActivationSpec.
+//     * @param aLong
+//     */
+//    public void setInitialRedeliveryDelay(Long aLong) {
+//        super.setInitialRedeliveryDelay(aLong);
+//    }
+//
+//    /**
+//     * 100	 The maximum number of messages sent to a consumer on a JMS stream until acknowledgements are received
+//     * @param integer
+//     */
+//    public void setInputStreamPrefetch(Integer integer) {
+//        super.setInputStreamPrefetch(integer);
+//    }
+//
+//    /**
+//     * 5	 The maximum number of redeliveries or -1 for no maximum. Also configurable on the ActivationSpec.
+//     * @param integer
+//     */
+//    public void setMaximumRedeliveries(Integer integer) {
+//        super.setMaximumRedeliveries(integer);
+//    }
+//
+//    public void setQueueBrowserPrefetch(Integer integer) {
+//        super.setQueueBrowserPrefetch(integer);
+//    }
+//
+//    /**
+//     * 1000	 The maximum number of messages sent to a consumer on a queue until acknowledgements are received
+//     * @param integer
+//     */
+//    public void setQueuePrefetch(Integer integer) {
+//        super.setQueuePrefetch(integer);
+//    }
+//
+//    /**
+//     * 5	 The multiplier to use if exponential back off is enabled. Also configurable on the ActivationSpec.
+//     * @param aShort
+//     */
+//    public void setRedeliveryBackOffMultiplier(Short aShort) {
+//        super.setRedeliveryBackOffMultiplier(aShort);
+//    }
+//
+//    public void setRedeliveryUseExponentialBackOff(Boolean aBoolean) {
+//        super.setRedeliveryUseExponentialBackOff(aBoolean);
+//    }
+//
+//    /**
+//     * 32766  The maximum number of messages sent to a consumer on a non-durable topic until acknowledgements are received
+//     * @param integer
+//     */
+//    public void setTopicPrefetch(Integer integer) {
+//        super.setTopicPrefetch(integer);
+//    }
 
     public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         Properties properties = new Properties();
