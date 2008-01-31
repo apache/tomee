@@ -1,0 +1,33 @@
+// ------------------------------------------------------------------
+// NOTICE file corresponding to the section 4d of The Apache License,
+// Version 2.0, in this case for Apache OpenEJB
+// ------------------------------------------------------------------
+
+Apache OpenEJB
+Copyright 1999-2008 The Apache OpenEJB development community
+
+This product includes/uses software, HSQLDB (http://hsqldb.org/)
+
+This product includes/uses software, WSDL4J (http://sf.net/projects/wsdl4j)
+
+This product includes/uses software, Serp (http://serp.sourceforge.net)
+
+This product includes/uses software, Swizzle :: Stream (http://swizzle.codehaus.org)
+
+This product includes/uses software, Backport of JSR 166 (http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/),
+developed by Dawid Kurzyniec  (http://www.mathcs.emory.edu/~dawidk/)
+
+This product includes/uses software, Sun JAXB Reference Implementation Runtime,
+developed by Sun Microsystems  (http://www.sun.com/)
+
+This product includes/uses software, Java Architecture for XML Binding (JAXB) API,
+developed by Sun Microsystems  (http://www.sun.com/)
+
+This product includes/uses software, ASM Tree (http://asm.objectweb.org/asm-tree),
+developed by ObjectWeb  (http://www.objectweb.org/)
+
+This product includes/uses software, ASM Core (http://asm.objectweb.org/asm),
+developed by ObjectWeb  (http://www.objectweb.org/)
+
+This product includes/uses software, ASM Commons (http://asm.objectweb.org/asm-commons),
+developed by ObjectWeb  (http://www.objectweb.org/)
