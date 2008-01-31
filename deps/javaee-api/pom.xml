@@ -27,7 +27,7 @@
   <artifactId>javaee-api</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Dependencies :: JavaEE API</name>
-  <version>5.0-1</version>
+  <version>5.0-1-SNAPSHOT</version>
 
 
   <build>
