@@ -16,12 +16,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0-beta-2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-beans</artifactId>
@@ -52,11 +51,11 @@
             <configuration>
               <tasks>
                 <java classname="org.apache.openjpa.enhance.PCEnhancer">
-                  <arg value="-p"/>
-                  <arg value="${basedir}/src/main/resources/META-INF/persistence.xml"/>
+                  <arg value="-p" />
+                  <arg value="${basedir}/src/main/resources/META-INF/persistence.xml" />
                   <classpath>
-                    <path refid="maven.dependency.classpath"/>
-                    <path refid="maven.compile.classpath"/>
+                    <path refid="maven.dependency.classpath" />
+                    <path refid="maven.compile.classpath" />
                   </classpath>
                 </java>
               </tasks>
