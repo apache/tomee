@@ -318,6 +318,11 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
+    <!-- added temporarily till we get a fixed version of the dep report plugin -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
     <!-- webservices  -->
     <dependency>
       <groupId>wsdl4j</groupId>

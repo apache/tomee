@@ -125,6 +125,16 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>5.0-1</version>
     </dependency>
@@ -151,6 +161,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-hsql</artifactId>
       <version>${version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -161,16 +172,13 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-telnet</artifactId>
       <version>${version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-loader</artifactId>
+      <artifactId>openejb-cxf</artifactId>
       <version>${version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

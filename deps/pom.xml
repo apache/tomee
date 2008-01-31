@@ -29,7 +29,6 @@
   <name>OpenEJB :: Dependencies</name>
 
   <modules>
-    <module>cxf-all</module>
     <module>commons-dbcp-all</module>
     <module>javaee-api</module>
   </modules>
