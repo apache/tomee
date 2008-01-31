@@ -47,16 +47,16 @@ public class LoaderServlet extends HttpServlet {
         String webappPath = getWebappPath(config);
 
         File webappDir = new File(webappPath);
+        System.setProperty("openejb.war", webappDir.getAbsolutePath());
+
         File libDir = new File(webappDir, "lib");
+        p.setProperty("openejb.libs", libDir.getAbsolutePath());
 
         String catalinaHome = System.getProperty("catalina.home");
         p.setProperty("openejb.home", catalinaHome);
 
         String catalinaBase = System.getProperty("catalina.base");
         p.setProperty("openejb.base", catalinaBase);
-
-        String libPath = libDir.getAbsolutePath();
-        p.setProperty("openejb.libs", libPath);
 
         try {
             SystemInstance.init(p);

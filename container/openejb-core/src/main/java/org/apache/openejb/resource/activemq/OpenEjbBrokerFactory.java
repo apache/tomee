@@ -21,6 +21,8 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -56,7 +58,8 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
                 String resouceId = (String) value;
 
                 try {
-                    Context context = new InitialContext();
+                    ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                    Context context = containerSystem.getJNDIContext();
                     Object obj = context.lookup("java:openejb/Resource/" + resouceId);
                     if (!(obj instanceof DataSource)) {
                         throw new IllegalArgumentException("Resource with id " + resouceId +

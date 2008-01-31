@@ -61,6 +61,10 @@ public class TomcatLoader implements Loader {
     protected ServiceManager manager;
 
     public void init(Properties props) throws Exception {
+        // Loader maybe the first thing executed in a new classloader
+        // so we must attempt to initialize the system instance.
+        SystemInstance.init(props);
+        
         installConfigFiles();
 
         // Not thread safe
