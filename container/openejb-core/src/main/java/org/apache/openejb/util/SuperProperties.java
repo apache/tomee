@@ -58,7 +58,6 @@ import org.xml.sax.SAXParseException;
  * @see java.lang.System#getProperties
  */
 public class SuperProperties extends Properties {
-    private static final String LINE_SEPARATOR = "\n";
 
     private static final String PROP_DTD_NAME = "http://java.sun.com/dtd/properties.dtd";
 
@@ -100,6 +99,11 @@ public class SuperProperties extends Properties {
      * The text between a key and the value.
      */
     protected String keyValueSeparator = "=";
+
+    /**
+     * The line separator to use when storing.  Defaults to system line separator.
+     */
+    protected String lineSeparator = System.getProperty("line.separator");
 
     /**
      * Number of spaces to indent each line of the properties file.
@@ -176,6 +180,25 @@ public class SuperProperties extends Properties {
         if (keyValueSeparator == null) throw new NullPointerException("keyValueSeparator is null");
         if (keyValueSeparator.length() == 0) throw new NullPointerException("keyValueSeparator is empty");
         this.keyValueSeparator = keyValueSeparator;
+    }
+
+    /**
+     * Gets the text that separates lines while storing.
+     * The default is the system line.separator.
+     * @return the text that separates keys and values
+     */
+    public String getLineSeparator() {
+        return lineSeparator;
+    }
+
+    /**
+     * Sets the text that separates lines while storing
+     * @param lineSeparator the text that separates lines
+     */
+    public void setLineSeparator(String lineSeparator) {
+        if (lineSeparator == null) throw new NullPointerException("lineSeparator is null");
+        if (lineSeparator.length() == 0) throw new NullPointerException("lineSeparator is empty");
+        this.lineSeparator = lineSeparator;
     }
 
     /**
@@ -502,7 +525,7 @@ public class SuperProperties extends Properties {
                         } else {
                             // append comment
                             if (comment.length() != 0) {
-                                comment.append(LINE_SEPARATOR);
+                                comment.append(lineSeparator);
                             }
                             comment.append(commentLine.toString().substring(commentLineIndent));
                         }
@@ -700,7 +723,7 @@ public class SuperProperties extends Properties {
             writer.write("#");
             writer.write(commentIndent);
             writer.write(headComment);
-            writer.write(LINE_SEPARATOR);
+            writer.write(lineSeparator);
         }
 
         boolean firstProperty = true;
@@ -710,7 +733,7 @@ public class SuperProperties extends Properties {
             String value = (String) entry.getValue();
 
             if (!firstProperty && spaceBetweenProperties) {
-                buffer.append(LINE_SEPARATOR);
+                buffer.append(lineSeparator);
             }
 
             String comment = comments.get(key);
@@ -718,7 +741,7 @@ public class SuperProperties extends Properties {
             if (comment != null || !attributes.isEmpty()) {
                 dumpComment(buffer, comment, attributes, "#");
                 if (spaceAfterComment) {
-                    buffer.append(LINE_SEPARATOR);
+                    buffer.append(lineSeparator);
                 }
             }
 
@@ -729,7 +752,7 @@ public class SuperProperties extends Properties {
                 buffer.append(keyValueSeparator);
                 dumpString(buffer, value, false);
             }
-            buffer.append(LINE_SEPARATOR);
+            buffer.append(lineSeparator);
 
             writer.write(buffer.toString());
             buffer.setLength(0);
@@ -799,12 +822,12 @@ public class SuperProperties extends Properties {
                     case '\r':
                         // if next character is not \n, this is the line break
                         if (i+1 < comment.length() && comment.charAt(i+1) != '\n') {
-                            buffer.append(LINE_SEPARATOR);
+                            buffer.append(lineSeparator);
                             startOfLine = true;
                         }
                         break;
                     case '\n':
-                        buffer.append(LINE_SEPARATOR);
+                        buffer.append(lineSeparator);
                         startOfLine = true;
                         break;
                     default:
@@ -814,7 +837,7 @@ public class SuperProperties extends Properties {
 
             // if the last character written was not a line break, write one now
             if (ch != '\r' && ch != '\n'){
-                buffer.append(LINE_SEPARATOR);
+                buffer.append(lineSeparator);
             }
         }
 
@@ -829,7 +852,7 @@ public class SuperProperties extends Properties {
                 buffer.append("=");
                 buffer.append(entry.getValue());
             }
-            buffer.append(LINE_SEPARATOR);
+            buffer.append(lineSeparator);
         }
     }
 
@@ -909,7 +932,7 @@ public class SuperProperties extends Properties {
                             } else {
                                 // append comment
                                 if (comment.length() != 0) {
-                                    comment.append(LINE_SEPARATOR);
+                                    comment.append(lineSeparator);
                                 }
                                 comment.append(commentLine.toString().substring(commentLineIndent));
                             }
@@ -987,9 +1010,9 @@ public class SuperProperties extends Properties {
         // header
         OutputStreamWriter osw = new OutputStreamWriter(os, encodingCanonicalName);
         StringBuilder buf = new StringBuilder(200);
-        buf.append("<?xml version=\"1.0\" encoding=\"").append(encodingCanonicalName).append("\"?>").append(LINE_SEPARATOR);
-        buf.append("<!DOCTYPE properties SYSTEM \"" + PROP_DTD_NAME + "\">").append(LINE_SEPARATOR);
-        buf.append("<properties>").append(LINE_SEPARATOR);
+        buf.append("<?xml version=\"1.0\" encoding=\"").append(encodingCanonicalName).append("\"?>").append(lineSeparator);
+        buf.append("<!DOCTYPE properties SYSTEM \"" + PROP_DTD_NAME + "\">").append(lineSeparator);
+        buf.append("<properties>").append(lineSeparator);
 
         // comment
         if (headComment != null) {
@@ -997,10 +1020,10 @@ public class SuperProperties extends Properties {
             buf.append("<comment>");
             buf.append(substitutePredefinedEntries(headComment));
             buf.append("</comment>");
-            buf.append(LINE_SEPARATOR);
+            buf.append(lineSeparator);
 
             if (!isEmpty() && (spaceBetweenProperties || spaceAfterComment)) {
-                buf.append(LINE_SEPARATOR);
+                buf.append(lineSeparator);
             }
         }
 
@@ -1011,7 +1034,7 @@ public class SuperProperties extends Properties {
             String value = (String) entry.getValue();
 
             if (!firstProperty && spaceBetweenProperties) {
-                buf.append(LINE_SEPARATOR);
+                buf.append(lineSeparator);
             }
 
             // property comment
@@ -1020,7 +1043,7 @@ public class SuperProperties extends Properties {
             if (comment != null || !attributes.isEmpty()) {
                 buf.append(indent);
                 buf.append("<!--");
-                buf.append(LINE_SEPARATOR);
+                buf.append(lineSeparator);
 
                 // comments can't contain "--" so we shrink all sequences of them to a single "-"
                 comment = comment.replaceAll("--*", "-");
@@ -1028,10 +1051,10 @@ public class SuperProperties extends Properties {
 
                 buf.append(indent);
                 buf.append("-->");
-                buf.append(LINE_SEPARATOR);
+                buf.append(lineSeparator);
 
                 if (spaceAfterComment) {
-                    buf.append(LINE_SEPARATOR);
+                    buf.append(lineSeparator);
                 }
             }
 
@@ -1043,13 +1066,13 @@ public class SuperProperties extends Properties {
             buf.append("\">");
             buf.append(substitutePredefinedEntries(value));
             buf.append("</entry>");
-            buf.append(LINE_SEPARATOR);
+            buf.append(lineSeparator);
 
             firstProperty = false;
         }
 
 
-        buf.append("</properties>").append(LINE_SEPARATOR);
+        buf.append("</properties>").append(lineSeparator);
 
         osw.write(buf.toString());
         osw.flush();
