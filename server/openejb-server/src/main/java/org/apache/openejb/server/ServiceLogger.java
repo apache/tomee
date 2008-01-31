@@ -62,10 +62,13 @@ public class ServiceLogger implements ServerService {
 
     
     public void service(Socket socket) throws ServiceException, IOException {
-
         InetAddress client = socket.getInetAddress();
-        org.apache.log4j.MDC.put("HOST", client.getHostName());
-        org.apache.log4j.MDC.put("SERVER", getName());
+
+        try {
+            org.apache.log4j.MDC.put("HOST", client.getHostName());
+            org.apache.log4j.MDC.put("SERVER", getName());
+        } catch (Throwable e) {
+        }
 
         try {
 

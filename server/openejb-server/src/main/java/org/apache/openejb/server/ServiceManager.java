@@ -135,7 +135,7 @@ public class ServiceManager {
             org.apache.log4j.MDC.put("SERVER", "main");
             InetAddress localhost = InetAddress.getLocalHost();
             org.apache.log4j.MDC.put("HOST", localhost.getHostName());
-        } catch (Exception e) {
+        } catch (Throwable e) {
         }
 
         ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
