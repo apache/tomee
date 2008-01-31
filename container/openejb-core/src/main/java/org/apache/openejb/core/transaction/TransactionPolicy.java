@@ -20,6 +20,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -215,8 +216,13 @@ public abstract class TransactionPolicy {
 
     }
 
-    protected void logSystemException(Throwable sysException) {
-        logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
+    protected void logSystemException(Throwable sysException, TransactionContext context) {
+        Operation operation = context.callContext.getCurrentOperation();
+        if (operation.isCallback()){
+            logger.error("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
+        } else {
+            logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
+        }
     }
 
     protected void discardBeanInstance(Object instance, ThreadContext callContext) {

@@ -68,7 +68,7 @@ public class TxNever extends TransactionPolicy {
 
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
         /* [1] Log the system exception or error *********/
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         /* [2] Discard instance. *************************/
         discardBeanInstance(instance, context.callContext);

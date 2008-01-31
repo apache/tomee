@@ -91,7 +91,7 @@ public class StatelessBeanManagedTxPolicy extends TransactionPolicy {
             context.currentTx = null;
         }
 
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         if (context.currentTx != null) markTxRollbackOnly(context.currentTx);
 

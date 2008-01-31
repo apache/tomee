@@ -75,7 +75,7 @@ public class TxManditory extends TransactionPolicy {
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         /* [1] Log the system exception or error *********/
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         /* [2] Mark the transaction for rollback. ********/
         markTxRollbackOnly(context.currentTx);

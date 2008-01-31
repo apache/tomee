@@ -90,7 +90,7 @@ public class StatefulBeanManagedTxPolicy extends TransactionPolicy {
     }
 
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         if (context.currentTx != null) markTxRollbackOnly(context.currentTx);
 

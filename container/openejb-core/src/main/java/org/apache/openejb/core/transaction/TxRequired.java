@@ -92,7 +92,7 @@ public class TxRequired extends TransactionPolicy {
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         /* [1] Log the system exception or error **********/
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         boolean runningInContainerTransaction = (!context.currentTx.equals(context.clientTx));
         if (runningInContainerTransaction) {

@@ -72,7 +72,7 @@ public class TxSupports extends TransactionPolicy {
 
         if (runningInTransaction) {
             /* [1] Log the system exception or error *********/
-            logSystemException(sysException);
+            logSystemException(sysException, context);
 
             /* [2] Mark the transaction for rollback. ********/
             markTxRollbackOnly(context.currentTx);
@@ -85,7 +85,7 @@ public class TxSupports extends TransactionPolicy {
 
         } else {
             /* [1] Log the system exception or error *********/
-            logSystemException(sysException);
+            logSystemException(sysException, context);
 
             /* [2] Discard instance. *************************/
             discardBeanInstance(instance, context.callContext);

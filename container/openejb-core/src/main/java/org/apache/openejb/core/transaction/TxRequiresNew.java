@@ -94,7 +94,7 @@ public class TxRequiresNew extends TransactionPolicy {
     public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
 
         /* [1] Log the system exception or error **********/
-        logSystemException(sysException);
+        logSystemException(sysException, context);
 
         /* [2] afterInvoke will roll back the tx */
         markTxRollbackOnly(context.currentTx);
