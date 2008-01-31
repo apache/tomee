@@ -38,6 +38,9 @@ import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.core.CoreContainerSystem;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.naming.context.ImmutableContext;
 import org.hsqldb.jdbc.jdbcDataSource;
 
@@ -115,6 +118,10 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
         DataSource dataSource = new jdbcDataSource();
         MockInitialContextFactory.install(Collections.singletonMap("java:openejb/Resource/TestDs", dataSource));
         assertSame(dataSource, new InitialContext().lookup("java:openejb/Resource/TestDs"));
+
+        CoreContainerSystem containerSystem = new CoreContainerSystem();
+        containerSystem.getJNDIContext().bind("java:openejb/Resource/TestDs", dataSource);
+        SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
 
         properties.put("DataSource", "TestDs");
 
