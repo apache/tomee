@@ -17,18 +17,18 @@
  */
 package org.apache.openejb.resource.activemq;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.net.URI;
+import java.util.Map;
+import java.util.Properties;
 
 public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler {
     private static final ThreadLocal<Properties> threadProperties = new ThreadLocal<Properties>();
@@ -42,12 +42,12 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
         BrokerService broker = BrokerFactory.createBroker(uri);
 
         Properties properties = getLowerCaseProperties();
-        
+
         Object value = properties.get("datasource");
         if (value instanceof String && value.toString().length() == 0) {
             value = null;
         }
-        
+
         if (value != null) {
             DataSource dataSource;
             if (value instanceof DataSource) {
