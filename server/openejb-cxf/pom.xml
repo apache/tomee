@@ -30,6 +30,12 @@
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: CXF</name>
+  <properties>
+    <openejb.osgi.import.pkg>
+      org.apache.xml.resolver*;resolution:=optional,
+      *
+    </openejb.osgi.import.pkg>
+  </properties>
   <build>
     <plugins>
       <plugin>

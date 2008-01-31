@@ -30,6 +30,12 @@
   <artifactId>openejb-loader</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Loader</name>
+  <properties>
+    <openejb.osgi.import.pkg>
+      org.apache.catalina*;resolution:=optional,
+      *
+    </openejb.osgi.import.pkg>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>

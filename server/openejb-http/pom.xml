@@ -30,6 +30,12 @@
   <artifactId>openejb-http</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Http</name>
+  <properties>
+    <openejb.osgi.import.pkg>
+	  org.mortbay*;resolution:=optional,
+	  *
+    </openejb.osgi.import.pkg>
+  </properties>
   <build>
     <plugins>
       <plugin>

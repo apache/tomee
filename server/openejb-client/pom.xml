@@ -30,6 +30,14 @@
   <artifactId>openejb-client</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Client</name>
+  <properties>
+    <openejb.osgi.import.pkg>
+      *
+    </openejb.osgi.import.pkg>
+    <openejb.osgi.require.bundle>
+      org.apache.openejb.openejb-core
+    </openejb.osgi.require.bundle>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -58,6 +66,22 @@
             <exclude>src/main/resources/META-INF/org.apache.openejb.client.IdentityResolver/*</exclude>
           </excludes>
         </configuration>
+      </plugin>
+	  <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <configuration>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${openejb.osgi.symbolic.name}</Bundle-SymbolicName>
+	        <Export-Package>${openejb.osgi.export}</Export-Package>
+	        <Import-Package>${openejb.osgi.import}</Import-Package>
+	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
+	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+            <Require-Bundle>${openejb.osgi.require.bundle}</Require-Bundle>
+	      </instructions>
+	    </configuration>
       </plugin>
     </plugins>
   </build>

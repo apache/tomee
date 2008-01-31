@@ -31,6 +31,24 @@
   <artifactId>openejb-core</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Core</name>
+  <properties>
+    <openejb.osgi.import.pkg>
+      javax.enterprise.deploy*;resolution:=optional,
+      javax.jms*;resolution:=optional,
+      javax.xml.registry*;resolution:=optional,
+      javax.xml.rpc*;resolution:=optional,
+      org.apache.activemq*;resolution:=optional,
+      org.apache.catalina*;resolution:=optional,
+      org.apache.commons.dbcp*;resolution:=optional,
+      org.apache.xerces*;resolution:=optional,
+      org.apache.xml.resolver*;resolution:=optional,
+      *
+    </openejb.osgi.import.pkg>
+    <openejb.osgi.export>
+      org.apache.openejb.client;partial=true;mandatory=partial;version=${openejb.osgi.export.version},
+      org.apache.openejb*;version=${openejb.osgi.export.version}
+    </openejb.osgi.export>
+  </properties>
   <build>
     <resources>
       <resource>
@@ -142,6 +160,21 @@
             <exclude>src/main/resources/schema/ejb-jar_1_1.xsd</exclude>
           </excludes>
         </configuration>
+      </plugin>
+	  <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <configuration>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${openejb.osgi.symbolic.name}</Bundle-SymbolicName>
+	        <Export-Package>${openejb.osgi.export}</Export-Package>
+	        <Import-Package>${openejb.osgi.import}</Import-Package>
+	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
+	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+	      </instructions>
+	    </configuration>
       </plugin>
     </plugins>
   </build>

@@ -107,6 +107,16 @@
     <version>3.0-SNAPSHOT</version>
         -->
     <xbeanVersion>3.3</xbeanVersion>
+
+
+    <!-- OSGi bundles properties -->
+    <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
+    <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
+    <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
+    <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
+    <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
+    <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
+    <openejb.osgi.symbolic.name>${groupId}.${artifactId}</openejb.osgi.symbolic.name>
   </properties>
 
   <build>
@@ -201,6 +211,41 @@
           <goals>deploy</goals>
           <arguments>-Prelease</arguments>
         </configuration>
+      </plugin>
+	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-jar-plugin</artifactId>
+	    <version>2.1</version>
+	    <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+	    </configuration>
+      </plugin>
+	  <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <version>1.2.0</version>
+	    <configuration>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${openejb.osgi.symbolic.name}</Bundle-SymbolicName>
+	        <Export-Package>${openejb.osgi.export}</Export-Package>
+	        <Import-Package>${openejb.osgi.import}</Import-Package>
+	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
+	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+	      </instructions>
+	    </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
