@@ -106,7 +106,7 @@
               as the maven-release-plugin will not update this value.
     <version>3.0-SNAPSHOT</version>
         -->
-    <xbeanVersion>3.3-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.3</xbeanVersion>
   </properties>
 
   <build>
@@ -117,7 +117,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4-SNAPSHOT</version>
+          <version>2.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -585,7 +585,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
-        <version>2.1-SNAPSHOT</version>
+        <version>2.1</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -604,7 +604,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>2.0.2</version>
+        <version>2.1</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
