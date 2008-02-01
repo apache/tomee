@@ -165,7 +165,7 @@ public class JndiEncInfoBuilder {
             info.referenceType = ref.getServiceRefType();
             info.wsdlFile = ref.getWsdlFile();
             info.jaxrpcMappingFile = ref.getJaxrpcMappingFile();
-            info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getHandlerChains()));
+            info.handlerChains.addAll(ConfigurationFactory.toHandlerChainInfo(ref.getAllHandlers()));
             for (PortComponentRef portComponentRef : ref.getPortComponentRef()) {
                 PortRefInfo portRefInfo = new PortRefInfo();
                 portRefInfo.qname = portComponentRef.getQName();

@@ -1294,7 +1294,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // get unprocessed handler classes
                 handlerClasses.clear();
                 for (ServiceRef serviceRef : consumer.getServiceRef()) {
-                    HandlerChains chains = serviceRef.getHandlerChains();
+                    HandlerChains chains = serviceRef.getAllHandlers();
                     if (chains == null) continue;
                     for (org.apache.openejb.jee.HandlerChain handlerChain : chains.getHandlerChain()) {
                         for (Handler handler : handlerChain.getHandler()) {

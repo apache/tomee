@@ -194,14 +194,6 @@ public class ServiceRef implements JndiReference {
     }
 
     public HandlerChains getHandlerChains() {
-        // convert the handlers to handler chain
-        if (handlerChains == null && handler != null) {
-            handlerChains = new HandlerChains();
-            HandlerChain handlerChain = new HandlerChain();
-            handlerChain.getHandler().addAll(handler);
-            handler.clear();
-            handlerChains.getHandlerChain().add(handlerChain);
-        }
         return handlerChains;
     }
 
@@ -209,6 +201,26 @@ public class ServiceRef implements JndiReference {
         this.handlerChains = value;
     }
 
+    public List<Handler> getHandler() {
+        if (handler == null) {
+            handler = new ArrayList<Handler>();
+        }
+        return this.handler;
+    }
+    
+    public HandlerChains getAllHandlers() {
+        // convert the handlers to handler chain
+        if (handlerChains == null && handler != null) {
+            HandlerChains handlerChains = new HandlerChains();
+            HandlerChain handlerChain = new HandlerChain();
+            handlerChain.getHandler().addAll(handler);
+            handlerChains.getHandlerChain().add(handlerChain);
+            return handlerChains;
+        } else {
+            return handlerChains;
+        }
+    }
+    
     public String getMappedName() {
         return mappedName;
     }
