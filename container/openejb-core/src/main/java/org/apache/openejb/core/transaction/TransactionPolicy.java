@@ -218,7 +218,7 @@ public abstract class TransactionPolicy {
 
     protected void logSystemException(Throwable sysException, TransactionContext context) {
         Operation operation = context.callContext.getCurrentOperation();
-        if (operation.isCallback()){
+        if (operation != null && operation.isCallback()){
             logger.error("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
         } else {
             logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
