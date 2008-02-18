@@ -25,6 +25,9 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
+import org.apache.xbean.recipe.MissingFactoryMethodException;
 
 import javax.naming.NamingException;
 import javax.naming.Binding;
@@ -40,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -67,7 +71,7 @@ public class ServiceManager {
         return manager;
     }
 
-    // Have properties files (like xinet.d) that specifies what daemons to 
+    // Have properties files (like xinet.d) that specifies what daemons to
     // Look into the xinet.d file structure again
     // conf/server.d/
     //    admin.properties
@@ -116,11 +120,6 @@ public class ServiceManager {
 
                 Class impl = classLoader.loadClass(className);
 
-                if (!interfase.isAssignableFrom(impl)) {
-                    services.remove(name);
-                    continue;
-                }
-
                 properties.put(interfase, impl);
                 String rawProperties = resourceFinder.findString(interfase.getName() + "/" + name);
                 properties.put(Properties.class, rawProperties);
@@ -149,6 +148,8 @@ public class ServiceManager {
             String serviceName = (String) entry.getKey();
             Properties serviceProperties = (Properties) entry.getValue();
 
+            logger.debug("Processing ServerService(id="+serviceName+")");
+
             overrideProperties(serviceName, serviceProperties);
             serviceProperties.setProperty("name", serviceName);
 
@@ -162,28 +163,46 @@ public class ServiceManager {
             }
 
 
-            if (isEnabled(serviceProperties)) {
 
-                // Create Service
-                ServerService service = null;
+            boolean enabled = isEnabled(serviceProperties);
+
+            logger.debug("Found ServerService(id=" + serviceName + ", disabled=" + (!enabled) + ")");
+
+            if (enabled) {
 
                 Class serviceClass = (Class) serviceProperties.get(ServerService.class);
 
+                logger.debug("Creating ServerService(id=" + serviceName + ")");
+
                 try {
-                    service = (ServerService) serviceClass.newInstance();
+                    // Create Service
+                    ServerService service = null;
+
+
+                    ObjectRecipe recipe = new ObjectRecipe(serviceClass);
+                    try {
+                        if (recipe.findFactoryMethod(serviceClass, "createServerService") != null){
+                            recipe = new ObjectRecipe(serviceClass, "createServerService");
+                        }
+                    } catch (MissingFactoryMethodException e) {
+                    }
+
+                    recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+                    recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+
+                    service = (ServerService) recipe.create(serviceClass.getClassLoader());
+
+                    if (!(service instanceof SelfManaging)) {
+                        service = new ServiceLogger(service);
+                        service = new ServiceAccessController(service);
+                        service = new ServiceDaemon(service);
+                    }
+
+                    service.init(serviceProperties);
+                    enabledServers.add(service);
                 } catch (Throwable t) {
-                    String msg1 = messages.format("service.instantiation.err", serviceClass.getName(), t.getClass().getName(), t.getMessage());
-                    throw new ServiceException(msg1, t);
+                    logger.error("service.instantiation.err", t, serviceClass.getName(), t.getClass().getName(), t.getMessage());
                 }
-
-                if (!(service instanceof SelfManaging)) {
-                    service = new ServiceLogger(service);
-                    service = new ServiceAccessController(service);
-                    service = new ServiceDaemon(service);
-                }
-
-                service.init(serviceProperties);
-                enabledServers.add(service);
             }
 
         }
@@ -274,7 +293,7 @@ public class ServiceManager {
             System.out.println("Ready!");
         }
         if (!block) return;
-        
+
         /*
         * This will cause the user thread (the thread that keeps the
         *  vm alive) to go into a state of constant waiting.

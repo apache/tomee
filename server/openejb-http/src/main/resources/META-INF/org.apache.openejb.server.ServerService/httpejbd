@@ -18,7 +18,7 @@
 # $Rev$ $Date$
 #
 
-server      = org.apache.openejb.server.httpd.OpenEJBHttpEjbServer
+server      = org.apache.openejb.server.httpd.HttpServerFactory
 bind        = 127.0.0.1
 port        = 4204
 disabled    = false
