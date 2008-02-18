@@ -16,7 +16,17 @@
  */
 package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.server.SelfManaging;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.openejb.server.ServiceException;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -26,29 +36,19 @@ import org.mortbay.jetty.handler.AbstractHandler;
 import org.mortbay.jetty.handler.ContextHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.Properties;
-
 /**
  * Jetty based http server implementation
  */
-public class JettyHttpServer implements HttpServer, SelfManaging {
+public class JettyHttpServer implements HttpServer {
     private final HttpListener listener;
     private Server server;
     private int port;
 
-    public JettyHttpServer() throws Exception {
+    public JettyHttpServer() {
         this(null);
     }
 
-    public JettyHttpServer(HttpListener listener) throws Exception {
+    public JettyHttpServer(HttpListener listener) {
         this.listener = listener;
     }
 
@@ -78,7 +78,7 @@ public class JettyHttpServer implements HttpServer, SelfManaging {
 
     public void init(Properties props) throws Exception {
         port = Integer.parseInt(props.getProperty("port", "8080"));
-
+        
         // Create all the Jetty objects but dont' start them
         server = new Server();
         Connector connector = new SelectChannelConnector();

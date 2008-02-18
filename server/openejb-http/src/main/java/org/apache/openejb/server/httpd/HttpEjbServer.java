@@ -17,22 +17,22 @@
  */
 package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ejbd.EjbServer;
-import org.apache.openejb.loader.SystemInstance;
-
-import java.util.Properties;
-import java.net.Socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
+import java.util.Properties;
+
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ejbd.EjbServer;
 
 /**
  * @version $Revision$ $Date$
  */
-public class HttpEjbServer implements ServerService {
-    private HttpServer httpServer;
+public abstract class HttpEjbServer implements ServerService {
+    protected HttpServer httpServer;
     private String name;
 
     public void init(Properties props) throws Exception {
@@ -48,30 +48,7 @@ public class HttpEjbServer implements ServerService {
         }
 
         registry.addHttpListener(adapter, "/ejb/?.*");
-
-        // todo this breaks the http ejb server impl
-        // the service manage makes a static decision based on the interface of this class to create
-        // a service daemon socket or not.  Since jetty is "self managed" and throws an exception from
-        // service socket, this breaks this code
-//        // props can name an implementation
-//        // if implementation is not named, use jetty if jetty classes are present; otherwise use openejb
-//        String impl = props.getProperty("impl");
-//        if ("Jetty".equalsIgnoreCase(impl)) {
-//            httpServer = (HttpServer) getClass().getClassLoader().loadClass("org.apache.openejb.server.httpd.JettyHttpServer").newInstance();
-//        } else if ("OpenEJB".equalsIgnoreCase(impl)) {
-            httpServer = new OpenEJBHttpServer(registry);
-//        } else if (impl == null) {
-//            try {
-//                getClass().getClassLoader().loadClass("org.mortbay.jetty.Server");
-//                httpServer = (HttpServer) getClass().getClassLoader().loadClass("org.apache.openejb.server.httpd.JettyHttpServer").newInstance();
-//            } catch (Exception ignored) {
-//                // Jetty classes not available
-//                httpServer = new OpenEJBHttpServer(registry);
-//            }
-//        } else {
-//            throw new IllegalArgumentException("Unknown HTTP server impl '" + impl + "'. Valid implementation are OpenEJB and Jetty.");
-//        }
-
+        
         // register the http server
         systemInstance.setComponent(HttpServer.class, httpServer);
 

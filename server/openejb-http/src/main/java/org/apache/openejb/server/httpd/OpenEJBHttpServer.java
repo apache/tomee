@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URI;
 import java.util.Properties;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 /**
  * This is the main class for the web administration.  It takes care of the

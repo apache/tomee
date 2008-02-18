@@ -17,20 +17,20 @@
  */
 package org.apache.openejb.server.httpd;
 
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ejbd.EjbServer;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import java.util.Properties;
 
 /**
  * To run from intellij or another IDE add
@@ -70,20 +70,23 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
     }
 
     public static class HttpEjbTestServer implements org.apache.openejb.test.TestServer {
-        private ServiceDaemon serviceDaemon;
-        private int port;
+        // private ServiceDaemon serviceDaemon;
+    	HttpServer httpServer;
+        private int port = 8080;
 
         public void init(Properties props) {
             try {
                 EjbServer ejbServer = new EjbServer();
                 ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
-                HttpServer httpServer = new OpenEJBHttpServer(adapter);
+                httpServer = new JettyHttpServer(adapter);
 
                 props.put("openejb.deployments.classpath", "true");
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
+                
+                httpServer.init(props);
 
-                serviceDaemon = new ServiceDaemon(httpServer, 0, "localhost");
+                // serviceDaemon = new ServiceDaemon(httpServer, 0, "localhost");
 
             } catch (Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
@@ -92,8 +95,9 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
         public void start() {
             try {
-                serviceDaemon.start();
-                port = serviceDaemon.getPort();
+                // serviceDaemon.start();
+            	httpServer.start();
+                // port = serviceDaemon.getPort();
             } catch (ServiceException e) {
                 throw new RuntimeException("Unable to start Test Server.", e);
             }
@@ -101,7 +105,8 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
         public void stop() {
             try {
-                serviceDaemon.stop();
+                // serviceDaemon.stop();
+            	httpServer.stop();
             } catch (ServiceException e) {
                 throw new RuntimeException("Unable to stop Test Server.", e);
             }
