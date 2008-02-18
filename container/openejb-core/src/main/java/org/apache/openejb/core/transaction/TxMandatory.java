@@ -38,9 +38,9 @@ import javax.transaction.TransactionRequiredException;
  *   client.
  *
  */
-public class TxManditory extends TransactionPolicy {
+public class TxMandatory extends TransactionPolicy {
 
-    public TxManditory(TransactionContainer container) {
+    public TxMandatory(TransactionContainer container) {
         super(Type.Mandatory, container);
     }
 

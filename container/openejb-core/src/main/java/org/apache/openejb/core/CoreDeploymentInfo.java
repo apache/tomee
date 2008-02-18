@@ -51,7 +51,7 @@ import org.apache.openejb.core.stateful.StatefulContainerManagedTxPolicy;
 import org.apache.openejb.core.stateless.StatelessBeanManagedTxPolicy;
 import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TxManditory;
+import org.apache.openejb.core.transaction.TxMandatory;
 import org.apache.openejb.core.transaction.TxNever;
 import org.apache.openejb.core.transaction.TxNotSupported;
 import org.apache.openejb.core.transaction.TxRequired;
@@ -604,7 +604,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         } else if (transAttribute.equalsIgnoreCase("Mandatory")) {
             if (container instanceof TransactionContainer) {
-                policy = new TxManditory((TransactionContainer) container);
+                policy = new TxMandatory((TransactionContainer) container);
             }
             byteValue = new Byte(TX_MANDITORY);
 
