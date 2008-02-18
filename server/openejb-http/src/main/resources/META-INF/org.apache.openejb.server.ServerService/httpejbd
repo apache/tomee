@@ -21,5 +21,5 @@
 server      = org.apache.openejb.server.httpd.OpenEJBHttpEjbServer
 bind        = 127.0.0.1
 port        = 4204
-disabled    = true
+disabled    = false
 threads     = 200
