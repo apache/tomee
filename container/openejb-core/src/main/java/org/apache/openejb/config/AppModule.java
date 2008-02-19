@@ -110,6 +110,26 @@ public class AppModule implements DeploymentModule {
         return false;
     }
 
+    public List<ValidationContext> getValidationContexts() {
+        List<ValidationContext> contexts = new ArrayList<ValidationContext>();
+
+        contexts.add(getValidation());
+
+        for (EjbModule module : ejbModules) {
+            contexts.add(module.getValidation());
+        }
+        for (ClientModule module : clientModules) {
+            contexts.add(module.getValidation());
+        }
+        for (ConnectorModule module : connectorModules) {
+            contexts.add(module.getValidation());
+        }
+        for (WebModule module : webModules) {
+            contexts.add(module.getValidation());
+        }
+        return contexts;
+    }
+
     public String getModuleId() {
         return moduleId;
     }

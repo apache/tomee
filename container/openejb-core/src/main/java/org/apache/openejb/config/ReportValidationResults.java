@@ -16,20 +16,27 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Join;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @version $Rev$ $Date$
  */
 public class ReportValidationResults implements DynamicDeployer {
 
-    private static final String VALIDATION_LEVEL = "openejb.validation.level";
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
+
+    private static final String VALIDATION_LEVEL = "openejb.validation.output.level";
 
     private enum Level {
-        UNUSED,
         TERSE,
         MEDIUM,
         VERBOSE
@@ -40,61 +47,74 @@ public class ReportValidationResults implements DynamicDeployer {
 
         Level level;
         try {
-            level = Level.valueOf(levelString);
+            level = Level.valueOf(levelString.toUpperCase());
         } catch (IllegalArgumentException noSuchEnumConstant) {
             try {
-                int i = Integer.parseInt(levelString);
+                int i = Integer.parseInt(levelString) - 1;
                 level = Level.values()[i];
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 level = Level.MEDIUM;
             }
         }
-        
-        if (level == Level.UNUSED) level = Level.MEDIUM;
+
 
         if (!appModule.hasErrors() && !appModule.hasFailures()) return appModule;
 
         ValidationFailedException validationFailedException = null;
 
+        List<ValidationContext> contexts = appModule.getValidationContexts();
 
-        for (DeploymentModule module : appModule.getEjbModules()) {
-            validationFailedException = logResults(module, validationFailedException, level);
+        for (ValidationContext context : contexts) {
+            logResults(context, level);
         }
 
-        for (DeploymentModule module : appModule.getClientModules()) {
-            validationFailedException = logResults(module, validationFailedException, level);
+        ValidationContext uberContext = new ValidationContext(AppModule.class, appModule.getValidation().getJarPath());
+        for (ValidationContext context : contexts) {
+            for (ValidationError error : context.getErrors()) {
+                uberContext.addError(error);
+            }
+            for (ValidationFailure error : context.getFailures()) {
+                uberContext.addFailure(error);
+            }
+            for (ValidationWarning error : context.getWarnings()) {
+                uberContext.addWarning(error);
+            }
         }
 
-        validationFailedException = logResults(appModule, validationFailedException, level);
+        if (level != Level.VERBOSE){
+            List<Level> levels = Arrays.asList(Level.values());
+            levels = levels.subList(level.ordinal() + 1, levels.size());
 
-        if (validationFailedException != null)
-            throw validationFailedException;
+            logger.info("Set the '"+VALIDATION_LEVEL+"' system property to "+ join(" or ", levels) +" for increased validation details.");
+        }
+
+        validationFailedException = new ValidationFailedException("Module failed validation. "+uberContext.getModuleType()+"(path="+uberContext.getJarPath()+")", uberContext, validationFailedException);
+
+        if (validationFailedException != null) throw validationFailedException;
 
         return appModule;
     }
 
-    private ValidationFailedException logResults(DeploymentModule module, ValidationFailedException validationFailedException, Level level) {
-        ValidationResults results = module.getValidation();
+    private void logResults(ValidationContext context, Level level) {
+        if (context.hasErrors() || context.hasFailures()) {
 
-        if (results.hasErrors() || results.hasFailures()) {
-            Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
+            ValidationError[] errors = context.getErrors();
+            ValidationFailure[] failures = context.getFailures();
 
-            ValidationError[] errors = results.getErrors();
             for (int j = 0; j < errors.length; j++) {
                 ValidationError e = errors[j];
                 String ejbName = e.getComponentName();
-                logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(level.ordinal()));
+                logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(level.ordinal() + 1));
             }
-            ValidationFailure[] failures = results.getFailures();
+
             for (int j = 0; j < failures.length; j++) {
                 ValidationFailure e = failures[j];
-                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal()));
+                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
             }
 
-            validationFailedException = new ValidationFailedException("Module failed validation. "+results.getModuleType()+"(path="+results.getJarPath()+")", results, validationFailedException);
+            logger.error("Invalid "+context.getModuleType()+"(path="+context.getJarPath()+")");
+//            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
         }
-
-        return validationFailedException;
     }
 
 }

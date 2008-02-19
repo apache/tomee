@@ -156,27 +156,27 @@ public class AutoConfig implements DynamicDeployer {
             URI moduleURI = URI.create(ejbModule.getModuleId());
 
             for (JndiConsumer component : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                processPersistenceRefs(component, appModule, persistenceUnits, moduleURI);
+                processPersistenceRefs(component, ejbModule, persistenceUnits, moduleURI);
             }
 
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
             URI moduleURI = URI.create(clientModule.getModuleId());
-            processPersistenceRefs(clientModule.getApplicationClient(), appModule, persistenceUnits, moduleURI);
+            processPersistenceRefs(clientModule.getApplicationClient(), clientModule, persistenceUnits, moduleURI);
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
             URI moduleURI = URI.create(webModule.getModuleId());
-            processPersistenceRefs(webModule.getWebApp(), appModule, persistenceUnits, moduleURI);
+            processPersistenceRefs(webModule.getWebApp(), webModule, persistenceUnits, moduleURI);
         }
     }
 
-    private void processPersistenceRefs(JndiConsumer component, AppModule appModule, LinkResolver<PersistenceUnit> persistenceUnits, URI moduleURI) {
+    private void processPersistenceRefs(JndiConsumer component, DeploymentModule module, LinkResolver<PersistenceUnit> persistenceUnits, URI moduleURI) {
 
         String componentName = component.getJndiConsumerName();
 
-        ValidationContext validation = appModule.getValidation();
+        ValidationContext validation = module.getValidation();
 
         for (PersistenceRef ref : component.getPersistenceUnitRef()) {
 
