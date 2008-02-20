@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
@@ -70,15 +71,15 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
     }
 
     public static class HttpEjbTestServer implements org.apache.openejb.test.TestServer {
-        // private ServiceDaemon serviceDaemon;
+        private ServiceDaemon serviceDaemon;
     	HttpServer httpServer;
-        private int port = 8080;
+        private int port;
 
         public void init(Properties props) {
             try {
                 EjbServer ejbServer = new EjbServer();
                 ServerServiceAdapter adapter = new ServerServiceAdapter(ejbServer);
-                httpServer = new JettyHttpServer(adapter);
+                httpServer = new OpenEJBHttpServer(adapter);
 
                 props.put("openejb.deployments.classpath", "true");
                 OpenEJB.init(props, new ServerFederation());
@@ -86,7 +87,9 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
                 
                 httpServer.init(props);
 
-                // serviceDaemon = new ServiceDaemon(httpServer, 0, "localhost");
+                // Binding to port 0 means that the OS will
+                // randomly pick an *available* port and bind to it
+                serviceDaemon = new ServiceDaemon(httpServer, 0, "localhost");
 
             } catch (Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
@@ -95,9 +98,12 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
         public void start() {
             try {
-                // serviceDaemon.start();
-            	httpServer.start();
-                // port = serviceDaemon.getPort();
+                serviceDaemon.start();
+                httpServer.start();
+
+                // Here we figure out which port the OS picked for us
+                // so we can use it in the getContextEnvironment method
+                port = serviceDaemon.getPort();
             } catch (ServiceException e) {
                 throw new RuntimeException("Unable to start Test Server.", e);
             }
@@ -105,7 +111,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
         public void stop() {
             try {
-                // serviceDaemon.stop();
+                serviceDaemon.stop();
             	httpServer.stop();
             } catch (ServiceException e) {
                 throw new RuntimeException("Unable to stop Test Server.", e);
