@@ -38,9 +38,40 @@ import javax.xml.bind.JAXBElement;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * <p>Java class for geronimo-ejb-jarType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="geronimo-ejb-jarType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment" minOccurs="0"/>
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}clustering" minOccurs="0"/>
+ *         &lt;element name="openejb-jar" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}openejb-jarType" minOccurs="0"/>
+ *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="tss-link" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}tss-linkType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="web-service-binding" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}web-service-bindingType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}security" minOccurs="0"/>
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0">
+ *           &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service"/>
+ *           &lt;element ref="{http://java.sun.com/xml/ns/persistence}persistence"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "geronimo-ejb-jarType", namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", propOrder = {
     "environment",
+    "clustering",
     "openejbJar",
     "abstractNamingEntry",
     "persistenceContextRef",
@@ -61,6 +92,9 @@ public class GeronimoEjbJarType {
 
     @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
+
+    @XmlElementRef(name="clustering", namespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", type = JAXBElement.class)
+    protected JAXBElement<? extends AbstractClusteringType> clustering;
 
     @XmlAnyElement(lax = true)
     protected Object openejbJar;
@@ -131,7 +165,33 @@ public class GeronimoEjbJarType {
         this.environment = value;
     }
 
+    /**
+     * 
+     *                         Reference to abstract clustering element defined in
+     *                         imported "geronimo-application-2.0.xsd"
+     *                     
+     * 
+     * @return
+     *     possible object is
+     *     {@link AbstractClusteringType }
+     *     
+     */
+    public JAXBElement<? extends AbstractClusteringType> getClustering() {
+        return clustering;
+    }
 
+    /**
+     * Sets the value of the clustering property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link AbstractClusteringType }
+     *     
+     */
+    public void setClustering(JAXBElement<? extends AbstractClusteringType> value) {
+        this.clustering = value;
+    }
+    
     /**
      * Gets the value of the jndiEnvironmentRefsGroup property.
      *

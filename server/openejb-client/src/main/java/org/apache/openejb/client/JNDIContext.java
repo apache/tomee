@@ -79,7 +79,14 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     private JNDIResponse request(JNDIRequest req) throws Exception {
-        return (JNDIResponse) Client.request(req, new JNDIResponse(), server);
+        req.setServerHash(server.buildHash());
+        
+        JNDIResponse response = new JNDIResponse();
+        Client.request(req, response, server);
+        if (null != response.getServer()) {
+            server.merge(response.getServer());
+        }
+        return response;
     }
 
     public static void print(String s) {

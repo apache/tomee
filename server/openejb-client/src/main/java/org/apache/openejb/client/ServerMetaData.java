@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
     private transient URI[] locations;
+    private transient ConnectionFactoryStrategy connectionFactoryStrategy;
 
     public ServerMetaData() {
     }
@@ -34,8 +36,32 @@ public class ServerMetaData implements Externalizable {
         this.locations = locations;
     }
 
+    public void merge(ServerMetaData toMerge) {
+        locations = toMerge.locations;
+    }
+    
     public URI[] getLocations() {
         return locations;
+    }
+
+    public int buildHash() {
+        int locationsHash = 0;
+        for (URI location : locations) {
+            locationsHash += location.hashCode();
+        }
+        return locationsHash;
+    }
+
+    public Connection connect(Request request) throws RemoteException {
+        ConnectionFactoryStrategy factoryStrategy = getConnectionFactoryStrategy();
+        return factoryStrategy.connect(locations, request);
+    }
+    
+    protected ConnectionFactoryStrategy getConnectionFactoryStrategy() {
+        if (null == connectionFactoryStrategy) {
+            connectionFactoryStrategy = new StickToLastServerConnectionFactoryStrategy(); 
+        }
+        return connectionFactoryStrategy;
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -54,5 +80,6 @@ public class ServerMetaData implements Externalizable {
     public String toString() {
         return Arrays.toString(locations);
     }
+
 }
 

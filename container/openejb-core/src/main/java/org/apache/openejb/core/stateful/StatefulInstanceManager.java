@@ -62,7 +62,7 @@ import java.io.Serializable;
 public class StatefulInstanceManager {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    private final long timeOut;
+    protected final long timeOut;
 
     // queue of beans for LRU algorithm
     private final BeanEntryQueue lruQueue;
@@ -201,7 +201,7 @@ public class StatefulInstanceManager {
             InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
             interceptorStack.invoke();
             
-            bean = new Instance(bean, interceptorInstances);
+            bean = newInstance(primaryKey, bean, interceptorInstances);
 
         } catch (Throwable callbackException) {
             /*
@@ -218,12 +218,20 @@ public class StatefulInstanceManager {
         }
 
         // add to index
-        BeanEntry entry = new BeanEntry(bean, primaryKey, timeOut);
+        BeanEntry entry = newBeanEntry(primaryKey, bean);
         getBeanIndex(threadContext).put(primaryKey, entry);
 
         return bean;
     }
 
+    protected Instance newInstance(Object primaryKey, Object bean, Map<String, Object> interceptorInstances) {
+        return new Instance(bean, interceptorInstances);
+    }
+
+    protected BeanEntry newBeanEntry(Object primaryKey, Object bean) {
+        return new BeanEntry(bean, primaryKey, timeOut);
+    }
+    
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
         for (Injection injection : deploymentInfo.getInjections()) {
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
@@ -307,6 +315,11 @@ public class StatefulInstanceManager {
             throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
         }
 
+        return activateInstance(callContext, entry);
+    }
+
+    public Object activateInstance(ThreadContext callContext, BeanEntry entry)
+        throws SystemException, ApplicationException {
         if (entry.isTimedOut()) {
             // Since the bean instance hasn't had its ejbActivate() method called yet,
             // it is still considered to be passivated at this point. Instances that timeout
@@ -328,7 +341,6 @@ public class StatefulInstanceManager {
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.ACTIVATE, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
-
         } catch (Throwable callbackException) {
             /*
             In the event of an exception, OpenEJB is required to log the exception, evict the instance,
@@ -343,7 +355,7 @@ public class StatefulInstanceManager {
         }
 
         // add it to the index
-        getBeanIndex(callContext).put(primaryKey, entry);
+        getBeanIndex(callContext).put(entry.primaryKey, entry);
 
         return entry.bean;
     }
@@ -413,8 +425,13 @@ public class StatefulInstanceManager {
             if (entry.beanTransaction == null) {
                 // add it to end of Queue; the most reciently used bean
                 lruQueue.add(entry);
+                
+                onPoolInstanceWithoutTransaction(callContext, entry);
             }
         }
+    }
+
+    protected void onPoolInstanceWithoutTransaction(ThreadContext callContext, BeanEntry entry) {
     }
 
     public Object freeInstance(ThreadContext threadContext) throws SystemException {
@@ -430,7 +447,12 @@ public class StatefulInstanceManager {
             return null;
         }
 
+        onFreeBeanEntry(threadContext, entry);
+        
         return entry.bean;
+    }
+
+    protected void onFreeBeanEntry(ThreadContext threadContext, BeanEntry entry) {
     }
 
     protected void passivate() throws SystemException {
@@ -451,24 +473,7 @@ public class StatefulInstanceManager {
                 if (currentEntry.isTimedOut()) {
                     handleTimeout(currentEntry, threadContext);
                 } else {
-                    threadContext.setCurrentOperation(Operation.PASSIVATE);
-                    try {
-                        StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) currentEntry.bean;
-
-                        Method passivate = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbPassivate"): null;
-
-                        List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, passivate, Operation.PASSIVATE, callbackInterceptors, instance.interceptors);
-
-                        interceptorStack.invoke();
-
-                    } catch (Throwable e) {
-
-                        String logMessage = "An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance; " + e.getClass().getName() + " " + e.getMessage();
-
-                        /* [1] Log the exception or error */
-                        logger.error(logMessage);
-                    }
+                    passivate(threadContext, currentEntry);
                     stateTable.put(currentEntry.primaryKey, currentEntry);
                 }
             }
@@ -490,6 +495,28 @@ public class StatefulInstanceManager {
         } finally {
 
             IntraVmCopyMonitor.postPassivationOperation();
+        }
+    }
+
+    public void passivate(ThreadContext threadContext, BeanEntry currentEntry) {
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        threadContext.setCurrentOperation(Operation.PASSIVATE);
+        try {
+            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) currentEntry.bean;
+
+            Method passivate = instance.bean instanceof SessionBean? SessionBean.class.getMethod("ejbPassivate"): null;
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, passivate, Operation.PASSIVATE, callbackInterceptors, instance.interceptors);
+
+            interceptorStack.invoke();
+
+        } catch (Throwable e) {
+
+            String logMessage = "An unexpected exception occured while invoking the ejbPassivate method on the Stateful SessionBean instance; " + e.getClass().getName() + " " + e.getMessage();
+
+            /* [1] Log the exception or error */
+            logger.error(logMessage);
         }
     }
 
@@ -535,7 +562,7 @@ public class StatefulInstanceManager {
         return entry;
     }
 
-    private Hashtable<Object, BeanEntry> getBeanIndex(ThreadContext threadContext) {
+    protected Hashtable<Object, BeanEntry> getBeanIndex(ThreadContext threadContext) {
         CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
         Data data = (Data) deployment.getContainerData();
         return data.getBeanIndex();

@@ -32,7 +32,7 @@ public class BeanEntry implements Serializable {
     protected final Object primaryKey;
     protected boolean inQueue = false;
     private long timeStamp;
-    private long timeOutInterval;
+    protected long timeOutInterval;
     protected transient Transaction beanTransaction;
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
@@ -48,6 +48,14 @@ public class BeanEntry implements Serializable {
         timeOutInterval = timeOut;
     }
 
+    protected BeanEntry(BeanEntry prototype) {
+        bean = prototype.bean;
+        primaryKey = prototype.primaryKey;
+        beanTransaction = null;
+        timeStamp = prototype.timeStamp;
+        timeOutInterval = prototype.timeOutInterval;
+    }
+    
     protected boolean isTimedOut() {
         if (timeOutInterval == 0) {
             return false;
@@ -82,4 +90,13 @@ public class BeanEntry implements Serializable {
             entityManagerArray = null;
         }
     }
+
+    public Object getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public Object getBean() {
+        return bean;
+    }
+
 }

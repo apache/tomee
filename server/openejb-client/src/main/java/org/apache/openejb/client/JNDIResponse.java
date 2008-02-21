@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class JNDIResponse implements Response {
+public class JNDIResponse implements ClusterableResponse {
 
     private transient int responseCode = -1;
     private transient Object result;
+    private transient ServerMetaData server;
 
     public JNDIResponse() {
     }
@@ -49,11 +50,25 @@ public class JNDIResponse implements Response {
         this.result = result;
     }
 
+    public void setServer(ServerMetaData server) {
+        this.server = server;
+    }
+
+    public ServerMetaData getServer() {
+        return server;
+    }
+    
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
+        boolean readServer = in.readBoolean();
+        if (readServer) {
+            server = new ServerMetaData();
+            server.readExternal(in);
+        }
+        
         responseCode = in.readByte();
-
+        
         switch (responseCode) {
             case ResponseCodes.JNDI_BUSINESS_OBJECT:
             case ResponseCodes.JNDI_OK:
@@ -97,6 +112,13 @@ public class JNDIResponse implements Response {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
+        if (null != server) {
+            out.writeBoolean(true);
+            server.writeExternal(out);
+        } else {
+            out.writeBoolean(false);
+        }
+        
         out.writeByte((byte) responseCode);
 
         switch (responseCode) {

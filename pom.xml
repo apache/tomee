@@ -498,6 +498,12 @@
         <version>4.4</version>
         <scope>test</scope>
       </dependency>
+       <dependency>
+        <groupId>com.agical.rmock</groupId>
+        <artifactId>rmock</artifactId>
+        <version>2.0.0</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>

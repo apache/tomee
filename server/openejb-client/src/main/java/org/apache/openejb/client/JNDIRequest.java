@@ -20,11 +20,12 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class JNDIRequest implements Request {
+public class JNDIRequest implements ClusterableRequest {
 
     private transient int requestMethod = -1;
     private transient String requestString;
     private transient String moduleId;
+    private transient int serverHash;
 
     public JNDIRequest() {
     }
@@ -62,12 +63,21 @@ public class JNDIRequest implements Request {
         this.requestString = requestString;
     }
 
+    public void setServerHash(int serverHash) {
+        this.serverHash = serverHash;
+    }
+
+    public int getServerHash() {
+        return serverHash;
+    }
+
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
         requestMethod = in.readByte();
         requestString = in.readUTF();
         moduleId = (String) in.readObject();
+        serverHash = in.readInt();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -77,6 +87,7 @@ public class JNDIRequest implements Request {
         out.writeByte((byte) requestMethod);
         out.writeUTF(requestString);
         out.writeObject(moduleId);
+        out.writeInt(serverHash);
     }
 
     public String toString() {
@@ -91,5 +102,6 @@ public class JNDIRequest implements Request {
         sb.append(this.requestString);
         return sb.toString();
     }
+
 }
 

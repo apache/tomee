@@ -100,10 +100,17 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(boolean offline, OpenEjbConfiguration configuration) {
-        this(offline);
+        this(offline, (DynamicDeployer) null);
         sys = configuration;
     }
 
+    public ConfigurationFactory(boolean offline,
+        DynamicDeployer preAutoConfigDeployer,
+        OpenEjbConfiguration configuration) {
+        this(offline, preAutoConfigDeployer);
+        sys = configuration;
+    }
+    
     public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
         List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
         if (chains == null) return handlerChains;
@@ -145,6 +152,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(boolean offline) {
+        this(offline, (DynamicDeployer) null);
+    }
+    
+    public ConfigurationFactory(boolean offline, DynamicDeployer preAutoConfigDeployer) {
         this.offline = offline;
         deploymentLoader = new DeploymentLoader();
 
@@ -180,6 +191,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (System.getProperty("duct tape") != null){
             // must be after CmpJpaConversion since it adds new persistence-context-refs
             chain.add(new GeronimoMappedName());
+        }
+        
+        if (null != preAutoConfigDeployer) {
+            chain.add(preAutoConfigDeployer);
         }
 
         if (offline) {

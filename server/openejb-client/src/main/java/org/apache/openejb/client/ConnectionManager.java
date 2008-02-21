@@ -48,6 +48,14 @@ public class ConnectionManager {
         installFactory(factoryName);
     }
 
+    public static void setFactory(ConnectionFactory factory) throws IOException {
+        if (null == factory) {
+            throw new IllegalArgumentException("factory is required");
+        }
+        ConnectionManager.factory = factory;
+        factoryName = factory.getClass().getName();
+    }
+    
     public static ConnectionFactory getFactory() {
         return factory;
     }

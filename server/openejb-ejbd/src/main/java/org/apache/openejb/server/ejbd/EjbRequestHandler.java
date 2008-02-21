@@ -25,17 +25,17 @@ import java.util.Collection;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.client.EJBHomeProxyHandle;
+import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
-import org.apache.openejb.client.EJBHomeProxyHandle;
-import org.apache.openejb.client.EJBObjectProxyHandle;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 class EjbRequestHandler {
     public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
@@ -43,8 +43,16 @@ class EjbRequestHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("ejb"), "org.apache.openejb.server.util.resources");
     private final EjbDaemon daemon;
 
+    private final ClusterableRequestHandler clusterableRequestHandler;
+
     EjbRequestHandler(EjbDaemon daemon) {
         this.daemon = daemon;
+        
+        clusterableRequestHandler = newClusterableRequestHandler();
+    }
+
+    protected BasicClusterableRequestHandler newClusterableRequestHandler() {
+        return new BasicClusterableRequestHandler();
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
@@ -119,37 +127,45 @@ class EjbRequestHandler {
             // Remote interface methods
                 case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
                     doEjbObject_BUSINESS_METHOD(req, res);
+                    updateServer(req, res);
                     break;
 
                 // Home interface methods
                 case RequestMethodConstants.EJB_HOME_CREATE:
                     doEjbHome_CREATE(req, res);
+                    updateServer(req, res);
                     break;
 
                 // Home interface methods
                 case RequestMethodConstants.EJB_HOME_METHOD:
                     doEjbHome_METHOD(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_HOME_FIND:
                     doEjbHome_FIND(req, res);
+                    updateServer(req, res);
                     break;
 
                 // javax.ejb.EJBObject methods
                 case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
                     doEjbObject_GET_EJB_HOME(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_OBJECT_GET_HANDLE:
                     doEjbObject_GET_HANDLE(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY:
                     doEjbObject_GET_PRIMARY_KEY(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL:
                     doEjbObject_IS_IDENTICAL(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_OBJECT_REMOVE:
@@ -159,10 +175,12 @@ class EjbRequestHandler {
                 // javax.ejb.EJBHome methods
                 case RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA:
                     doEjbHome_GET_EJB_META_DATA(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE:
                     doEjbHome_GET_HOME_HANDLE(req, res);
+                    updateServer(req, res);
                     break;
 
                 case RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE:
@@ -206,6 +224,12 @@ class EjbRequestHandler {
         }
     }
 
+    protected void updateServer(EJBRequest req, EJBResponse res) {
+        CallContext callContext = CallContext.getCallContext();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        clusterableRequestHandler.updateServer(deploymentInfo, req, res);
+    }
+
     protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
@@ -216,7 +240,7 @@ class EjbRequestHandler {
                 req.getMethodParameters(),
                 req.getPrimaryKey()
         );
-
+        
         res.setResponse(ResponseCodes.EJB_OK, result);
     }
 

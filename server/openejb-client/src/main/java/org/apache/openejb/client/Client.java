@@ -17,12 +17,11 @@
 package org.apache.openejb.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.InputStream;
-import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,31 +55,7 @@ public class Client {
             /*----------------------------*/
             /* Get a connection to server */
             /*----------------------------*/
-            URI[] uris = server.getLocations();
-            for (int i = 0; i < uris.length; i++) {
-                URI uri = uris[i];
-                try {
-                    conn = ConnectionManager.getConnection(uri);
-                } catch (IOException e) {
-                    if (uris.length == 1){
-                        throw new RemoteException("Cannot connect to server '"+uri+'"', e);                        
-                    } else {
-                        logger.log(Level.WARNING, "Cannot connect to server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ", e);
-                    }
-                } catch (Throwable e) {
-                    throw new RemoteException("Cannot connect to server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
-                }
-            }
-            
-            // If no servers responded, throw an error
-            if (conn == null) {
-                StringBuffer buffer = new StringBuffer();
-                for (int i = 0; i < uris.length; i++) {
-                    URI uri = uris[i];
-                    buffer.append((i != 0 ? ", " : "") + "Server #" + i + ": " + uri);
-                }
-                throw new RemoteException("Cannot connect to any servers: " + buffer.toString());
-            }
+            conn = server.connect(req);
 
             /*----------------------------------*/
             /* Get output streams */
@@ -216,4 +191,5 @@ public class Client {
         }
         return res;
     }
+
 }

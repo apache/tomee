@@ -68,9 +68,9 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     private final Object containerID;
     private final TransactionManager transactionManager;
     private final SecurityService securityService;
-    private final StatefulInstanceManager instanceManager;
+    protected final StatefulInstanceManager instanceManager;
     // todo this should be part of the constructor
-    private final JtaEntityManagerRegistry entityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
+    protected final JtaEntityManagerRegistry entityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
@@ -78,15 +78,41 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     protected final Map<Object, DeploymentInfo> deploymentsById = new HashMap<Object, DeploymentInfo>();
 
 
-    public StatefulContainer(Object id, TransactionManager transactionManager, SecurityService securityService, Class passivator, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
+    public StatefulContainer(Object id,
+        TransactionManager transactionManager,
+        SecurityService securityService,
+        Class passivator,
+        int timeOut,
+        int poolSize,
+        int bulkPassivate) throws OpenEJBException {
         this.containerID = id;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatefulInstanceManager(transactionManager, securityService, entityManagerRegistry, passivator, timeOut, poolSize, bulkPassivate);
+        instanceManager = newStatefulInstanceManager(transactionManager,
+            securityService,
+            passivator,
+            timeOut,
+            poolSize,
+            bulkPassivate);
     }
 
-    private Map<Method, MethodType> getLifecycelMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
+    protected StatefulInstanceManager newStatefulInstanceManager(TransactionManager transactionManager,
+        SecurityService securityService,
+        Class passivator,
+        int timeOut,
+        int poolSize,
+        int bulkPassivate) throws OpenEJBException {
+        return new StatefulInstanceManager(transactionManager,
+            securityService,
+            entityManagerRegistry,
+            passivator,
+            timeOut,
+            poolSize,
+            bulkPassivate);
+    }
+
+    private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
         List<Method> removeMethods = deploymentInfo.getRemoveMethods();
@@ -174,7 +200,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         return methods;
     }
 
-    static enum MethodType {
+    public static enum MethodType {
         CREATE, REMOVE, BUSINESS
     }
 
@@ -214,7 +240,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
     }
 
     private synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Map<Method, MethodType> methods = getLifecycelMethodsOfInterface(deploymentInfo);
+        Map<Method, MethodType> methods = getLifecycleMethodsOfInterface(deploymentInfo);
 
         deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
@@ -238,14 +264,11 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         switch (methodType) {
             case CREATE:
-                ProxyInfo proxyInfo = createEJBObject(deployInfo, callInterface, callMethod, args);
-                return proxyInfo;
+                return createEJBObject(deployInfo, callInterface, callMethod, args);
             case REMOVE:
-                Object o = removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
-                return o;
+                return removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
             default:
-                Object value = businessMethod(deployInfo, primKey, callInterface, callMethod, args);
-                return value;
+                return businessMethod(deployInfo, primKey, callInterface, callMethod, args);
         }
     }
 
@@ -369,7 +392,7 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    private Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
+    protected Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {

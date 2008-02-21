@@ -73,6 +73,7 @@ public class ObjectFactory {
     private final static QName _OpenejbJar_QNAME = new QName("http://openejb.apache.org/xml/ns/openejb-jar-2.2", "openejb-jar");
     private final static QName _EjbRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "ejb-ref");
     private final static QName _WebContainer_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "web-container");
+    private final static QName _OpenejbClusteringWadi_QNAME = new QName("http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2", "openejb-clustering-wadi");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.oej2
@@ -876,6 +877,23 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0", name = "ejb-jar")
     public JAXBElement<GeronimoEjbJarType> createEjbJar(GeronimoEjbJarType value) {
         return new JAXBElement<GeronimoEjbJarType>(_EjbJar_QNAME, GeronimoEjbJarType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link OpenejbClusteringWadiType }
+     * 
+     */
+    public OpenejbClusteringWadiType createOpenejbClusteringWadiType() {
+        return new OpenejbClusteringWadiType();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link OpenejbClusteringWadiType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/openejb-clustering-wadi-1.2", name = "openejb-clustering-wadi", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2", substitutionHeadName = "clustering")
+    public JAXBElement<OpenejbClusteringWadiType> createOpenejbClusteringWadi(OpenejbClusteringWadiType value) {
+        return new JAXBElement<OpenejbClusteringWadiType>(_OpenejbClusteringWadi_QNAME, OpenejbClusteringWadiType.class, null, value);
     }
 
 }

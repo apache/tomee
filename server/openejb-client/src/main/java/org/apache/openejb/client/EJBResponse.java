@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class EJBResponse implements Response {
+public class EJBResponse implements ClusterableResponse {
 
     private transient int responseCode = -1;
     private transient Object result;
+    private transient ServerMetaData server;
 
     public EJBResponse() {
 
@@ -47,6 +48,14 @@ public class EJBResponse implements Response {
         this.result = result;
     }
 
+    public void setServer(ServerMetaData server) {
+        this.server = server;
+    }
+
+    public ServerMetaData getServer() {
+        return server;
+    }
+    
     public String toString() {
         StringBuffer s = null;
         switch (responseCode) {
@@ -88,6 +97,12 @@ public class EJBResponse implements Response {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte(); // future use
 
+        boolean readServer = in.readBoolean();
+        if (readServer) {
+            server = new ServerMetaData();
+            server.readExternal(in);
+        }
+
         responseCode = in.readByte();
 
         result = in.readObject();
@@ -96,6 +111,13 @@ public class EJBResponse implements Response {
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
         out.writeByte(1);
+
+        if (null != server) {
+            out.writeBoolean(true);
+            server.writeExternal(out);
+        } else {
+            out.writeBoolean(false);
+        }
 
         out.writeByte(responseCode);
 
@@ -110,4 +132,5 @@ public class EJBResponse implements Response {
         }
         out.writeObject(result);
     }
+
 }

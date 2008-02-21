@@ -18,53 +18,53 @@ package org.apache.openejb.server.ejbd;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.naming.Context;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
 import javax.jms.ConnectionFactory;
-import javax.xml.namespace.QName;
+import javax.naming.Context;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+import javax.xml.namespace.QName;
 
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.Injection;
-import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
-import org.apache.openejb.core.ivm.naming.IvmContext;
-import org.apache.openejb.core.webservices.ServiceRefData;
-import org.apache.openejb.core.webservices.HandlerChainData;
-import org.apache.openejb.core.webservices.HandlerData;
-import org.apache.openejb.core.webservices.PortRefData;
-import org.apache.openejb.core.webservices.PortAddressRegistry;
-import org.apache.openejb.core.webservices.PortAddress;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.client.EJBMetaDataImpl;
-import org.apache.openejb.client.JNDIRequest;
-import org.apache.openejb.client.JNDIResponse;
-import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.client.CallbackMetaData;
 import org.apache.openejb.client.DataSourceMetaData;
-import org.apache.openejb.client.InjectionMetaData;
-import org.apache.openejb.client.WsMetaData;
+import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.HandlerChainMetaData;
 import org.apache.openejb.client.HandlerMetaData;
-import org.apache.openejb.client.CallbackMetaData;
-import org.apache.openejb.client.PortRefMetaData;
-import org.apache.openejb.client.ThrowableArtifact;
-import org.apache.openejb.client.RequestMethodConstants;
+import org.apache.openejb.client.InjectionMetaData;
+import org.apache.openejb.client.JNDIRequest;
+import org.apache.openejb.client.JNDIResponse;
 import org.apache.openejb.client.NameClassPairEnumeration;
+import org.apache.openejb.client.PortRefMetaData;
+import org.apache.openejb.client.RequestMethodConstants;
+import org.apache.openejb.client.ResponseCodes;
+import org.apache.openejb.client.ThrowableArtifact;
+import org.apache.openejb.client.WsMetaData;
+import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.core.webservices.HandlerChainData;
+import org.apache.openejb.core.webservices.HandlerData;
+import org.apache.openejb.core.webservices.PortAddress;
+import org.apache.openejb.core.webservices.PortAddressRegistry;
+import org.apache.openejb.core.webservices.PortRefData;
+import org.apache.openejb.core.webservices.ServiceRefData;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.ProxyManager;
 import org.omg.CORBA.ORB;
 
 class JndiRequestHandler {
@@ -73,6 +73,7 @@ class JndiRequestHandler {
     private Context ejbJndiTree;
     private Context clientJndiTree;
     private Context deploymentsJndiTree;
+    private final ClusterableRequestHandler clusterableRequestHandler;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -82,6 +83,11 @@ class JndiRequestHandler {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
         } catch (NamingException e) {
         }
+        clusterableRequestHandler = newClusterableRequestHandler();
+    }
+
+    protected BasicClusterableRequestHandler newClusterableRequestHandler() {
+        return new BasicClusterableRequestHandler();
     }
 
     public void processRequest(ObjectInputStream in, ObjectOutputStream out) {
@@ -338,6 +344,8 @@ class JndiRequestHandler {
         DeploymentInfo deployment = proxyInfo.getDeploymentInfo();
         String deploymentID = deployment.getDeploymentID().toString();
 
+        updateServer(req, res, proxyInfo);
+
         switch(proxyInfo.getInterfaceType()){
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
@@ -394,6 +402,10 @@ class JndiRequestHandler {
             }
         }
 
+    }
+
+    protected void updateServer(JNDIRequest req, JNDIResponse res, ProxyInfo proxyInfo) {
+        clusterableRequestHandler.updateServer(proxyInfo.getDeploymentInfo(), req, res);
     }
 
     private void doList(JNDIRequest req, JNDIResponse res, Context context) {

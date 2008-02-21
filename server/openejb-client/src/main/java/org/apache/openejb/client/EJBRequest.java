@@ -30,12 +30,13 @@ import javax.rmi.CORBA.Stub;
 
 import org.omg.CORBA.ORB;
 
-public class EJBRequest implements Request {
+public class EJBRequest implements ClusterableRequest {
 
     private transient int requestMethod;
     private transient int deploymentCode = 0;
     private transient Object clientIdentity;
     private transient String deploymentId;
+    private transient int serverHash;
 
     private transient Body body;
 
@@ -449,6 +450,14 @@ public class EJBRequest implements Request {
         this.deploymentCode = deploymentCode;
     }
 
+    public void setServerHash(int serverHash) {
+        this.serverHash = serverHash;
+    }
+
+    public int getServerHash() {
+        return serverHash;
+    }
+
     public String toString() {
         StringBuffer s = null;
         switch (requestMethod) {
@@ -525,6 +534,7 @@ public class EJBRequest implements Request {
         } catch (ClassNotFoundException cnfe) {
             if (result == null) result = cnfe;
         }
+        serverHash = in.readInt();
         if (result != null)
             throw result;
     }
@@ -540,6 +550,7 @@ public class EJBRequest implements Request {
 
         out.writeShort(deploymentCode);
         out.writeObject(clientIdentity);
+        out.writeInt(serverHash);
         body.writeExternal(out);
     }
 
