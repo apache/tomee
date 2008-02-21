@@ -19,6 +19,7 @@ package org.apache.openejb.config.sys;
 
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.ArrayList;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.SuperProperties;
@@ -50,7 +51,7 @@ public class WikiGenerator {
 
         // generate containers
         out.println("{anchor: containers}");
-        out.println("h2. Containers");
+        out.println("h1. Containers");
         for (ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Container".equals(provider.getService())) {
                 generateService(out, provider, "container");
@@ -59,10 +60,16 @@ public class WikiGenerator {
         out.println();
 
         out.println("{anchor: resources}");
-        out.println("h2. Resources");
+        out.println("h1. Resources");
+        ArrayList<String> seen = new ArrayList<String>();
         for (ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Resource".equals(provider.getService())) {
+
+                if (seen.containsAll(provider.getTypes())) continue;
+
                 generateService(out, provider, "resource");
+
+                seen.addAll(provider.getTypes());
             }
         }
         out.println();
@@ -71,7 +78,19 @@ public class WikiGenerator {
 
     private void generateService(PrintWriter out, ServiceProvider provider, String serviceType) {
         out.println("{anchor:" + provider.getId() + "-" + serviceType + "}");
-        out.println("h3. " + provider.getId() );
+        String type = provider.getTypes().get(0);
+        out.println("h2. " + type );
+        out.println("Declarable in openejb.xml via");
+        out.println("{code:xml}");
+        out.println("<"+provider.getService()+" id=\"Foo\" type=\""+type+"\">");
+        out.println("</"+provider.getService()+">");
+        out.println("{code}");
+
+        out.println("Declarable in properties via");
+        out.println("{panel}");
+        out.println("Foo = new://"+provider.getService()+"?type="+type+"");
+        out.println("{panel}");
+
 
 //        out.println("    class: " + provider.getClassName());
 //
@@ -81,6 +100,7 @@ public class WikiGenerator {
 
         SuperProperties properties = (SuperProperties) provider.getProperties();
         if (properties.size() > 0) {
+            out.println("Supports the following properties");
             out.println("    || Property Name || Description ||");
 
             for (Object key : properties.keySet()) {
