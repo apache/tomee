@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -40,6 +41,17 @@ public class OpenEJBHttpServer implements HttpServer {
     private HttpListener listener;
 
     public OpenEJBHttpServer() {
+        this(getHttpListenerRegistry());
+    }
+
+    private static HttpListenerRegistry getHttpListenerRegistry() {
+        SystemInstance systemInstance = SystemInstance.get();
+        HttpListenerRegistry registry = systemInstance.getComponent(HttpListenerRegistry.class);
+        if (registry == null){
+            registry = new HttpListenerRegistry();
+            systemInstance.setComponent(HttpListenerRegistry.class, registry);
+        }
+        return registry;
     }
 
     public OpenEJBHttpServer(HttpListener listener) {

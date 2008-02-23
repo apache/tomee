@@ -25,11 +25,11 @@ import java.util.List;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.HttpEjbServer;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
+import org.apache.openejb.server.httpd.HttpServerFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -42,7 +42,7 @@ public class OpenEJBHttpWsRegistry implements WsRegistry {
         try {
             OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
             for (ServiceInfo service : configuration.facilities.services) {
-                if (service.className.equals(HttpEjbServer.class.getName())) {
+                if (service.className.equals(HttpServerFactory.class.getName())) {
                     int port = Integer.parseInt(service.properties.getProperty("port"));
                     String ip = service.properties.getProperty("bind");
                     if ("0.0.0.0".equals(ip)) {

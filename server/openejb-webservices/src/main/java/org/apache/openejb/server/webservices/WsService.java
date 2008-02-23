@@ -243,10 +243,12 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 // one of the registered addresses to be the connonical address
                                 String address = selectSingleAddress(addresses);
 
-                                // register wsdl location
-                                portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                                logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
-                                ejbAddresses.put(bean.ejbDeploymentId, address);
+                                if (address != null) {
+                                    // register wsdl location
+                                    portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                                    logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
+                                    ejbAddresses.put(bean.ejbDeploymentId, address);
+                                }
                             }
                         } catch (Throwable e) {
                             logger.error("Error deploying CXF webservice for ejb " + deploymentInfo.getDeploymentID(), e);
@@ -365,6 +367,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     }
 
     private String selectSingleAddress(List<String> addresses) {
+        if (addresses == null || addresses.isEmpty()) return null;
+
         // return the first http address
         for (String address : addresses) {
             if (address.startsWith("http:")) {
