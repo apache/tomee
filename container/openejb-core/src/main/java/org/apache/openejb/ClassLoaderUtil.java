@@ -44,7 +44,6 @@ public class ClassLoaderUtil {
      * Cleans well known class loader leaks in VMs and libraries.  There is a lot of bad code out there and this method
      * will clear up the know problems.  This method should only be called when the class loader will no longer be used.
      * It this method is called two often it can have a serious impact on preformance.
-     * @param classLoader the class loader to destroy
      */
     public static void clearClassLoaderCaches() {
         clearSunSoftCache(ObjectInputStream.class, "subclassAudits");
@@ -80,7 +79,7 @@ public class ClassLoaderUtil {
 
     public static void cleanOpenJPACache(ClassLoader classLoader) {
         try {
-            Class<?> pcRegistryClass = classLoader.loadClass("org.apache.openjpa.enhance.PCRegistry");
+            Class<?> pcRegistryClass = ClassLoaderUtil.class.getClassLoader().loadClass("org.apache.openjpa.enhance.PCRegistry");
             Method deRegisterMethod = pcRegistryClass.getMethod("deRegister", ClassLoader.class);
             deRegisterMethod.invoke(null, classLoader);
         } catch (Throwable ignored) {
