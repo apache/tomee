@@ -29,7 +29,9 @@ import java.util.Arrays;
  */
 public class EjbResolver {
 
-    public static interface EjbReference {
+    public static interface Reference {
+
+        String getName();
 
         Type getRefType();
 
@@ -169,7 +171,7 @@ public class EjbResolver {
         return info;
     }
 
-    public String resolve(EjbReference ref, URI moduleUri) {
+    public String resolve(Reference ref, URI moduleUri) {
 
         if (ref.getMappedName() != null && !ref.getMappedName().equals("")) {
             return ref.getMappedName();
@@ -177,7 +179,7 @@ public class EjbResolver {
 
         String targetId = this.resolveLink(ref.getEjbLink(), moduleUri);
 
-        if (targetId == null) {
+        if (targetId == null && ref.getEjbLink() == null) {
             targetId = this.resolveInterface(ref.getRefType(), ref.getHome(), ref.getInterface());
         }
 

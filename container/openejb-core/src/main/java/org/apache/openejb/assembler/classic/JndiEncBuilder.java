@@ -177,6 +177,8 @@ public class JndiEncBuilder {
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.ejbDeploymentId == null){
+                reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
                 String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
@@ -194,6 +196,8 @@ public class JndiEncBuilder {
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
+            } else if (referenceInfo.ejbDeploymentId == null){
+                reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
                 String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
                 reference = new IntraVmJndiReference(jndiName);
@@ -485,5 +489,43 @@ public class JndiEncBuilder {
                 name = "java:comp/env/" + name;
         }
         return name;
+    }
+
+    private static class Ref implements EjbResolver.Reference {
+        private final EjbReferenceInfo info;
+
+        public Ref(EjbReferenceInfo info) {
+            this.info = info;
+        }
+
+        public String getEjbLink() {
+            return info.link;
+        }
+
+        public String getHome() {
+            return info.homeType;
+        }
+
+        public String getInterface() {
+            return info.interfaceType;
+        }
+
+        public String getMappedName() {
+            return null;
+        }
+
+        public String getName() {
+            return info.referenceName;
+        }
+
+        public EjbResolver.Type getRefType() {
+            if (info instanceof EjbLocalReferenceInfo){
+                return EjbResolver.Type.LOCAL;
+            } else if (info.homeType != null) {
+                return EjbResolver.Type.REMOTE;
+            } else {
+                return EjbResolver.Type.UNKNOWN;
+            }
+        }
     }
 }

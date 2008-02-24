@@ -151,6 +151,7 @@ public class JndiEncInfoBuilder {
             info.homeType = ref.getHome();
             info.interfaceType = ref.getInterface();
             info.referenceName = ref.getName();
+            info.link = ref.getEjbLink();
             info.location = buildLocationInfo(ref);
             info.targets.addAll(buildInjectionInfos(ref));
 
@@ -169,6 +170,17 @@ public class JndiEncInfoBuilder {
             String deploymentId = ejbResolver.resolve(new Ref(ref), moduleUri);
 
             info.ejbDeploymentId = deploymentId;
+
+            if (info.ejbDeploymentId == null) {
+                logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
+                if (ref.getRefType() == EjbReference.Type.LOCAL) {
+                    jndi.ejbLocalReferences.add(toLocal(info));
+                } else {
+                    jndi.ejbReferences.add(info);
+                }
+                continue;
+            }
+            
             info.externalReference = ejbResolver.getScope(deploymentId) == EjbResolver.Scope.GLOBAL;
 
 
@@ -192,9 +204,6 @@ public class JndiEncInfoBuilder {
                 jndi.ejbReferences.add(info);
             }
 
-            if (info.ejbDeploymentId==null){
-                logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
-            }
         }
     }
 
@@ -205,6 +214,7 @@ public class JndiEncInfoBuilder {
         l.homeType = r.homeType;
         l.interfaceType = r.interfaceType;
         l.referenceName = r.referenceName;
+        l.link = r.link;
         l.location = r.location;
         l.targets.addAll(r.targets);
         return l;
@@ -365,11 +375,15 @@ public class JndiEncInfoBuilder {
      * so we simply have a trimmed down copy of the org.apache.openejb.jee.EjbReference interface
      * and we adapt to it here.
      */
-    private static class Ref implements EjbResolver.EjbReference {
+    private static class Ref implements EjbResolver.Reference {
         private final EjbReference ref;
 
         public Ref(EjbReference ref) {
             this.ref = ref;
+        }
+
+        public String getName() {
+            return ref.getName();
         }
 
         public String getEjbLink() {

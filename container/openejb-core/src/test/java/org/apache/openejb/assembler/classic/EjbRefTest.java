@@ -34,6 +34,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
+ * A potential issue with this feature is that the stateless bean is created
+ * and the object it references does not exist at the time it is instantiated
+ * and put into the pool.  Later the bean is deployed yet the instances in the
+ * pool remain with null references, only new instances will be able to reference
+ * the newly deployed bean.
+ *
  * @version $Rev$ $Date$
  */
 public class EjbRefTest extends TestCase {
@@ -228,6 +234,86 @@ public class EjbRefTest extends TestCase {
         assertEquals(fruitRef.getFruit(), orange);
     }
 
+    public void testInterEarLazyInterfaceRef1() throws Exception {
+        ear(ejbjar(AmbiguousFruitRef.class));
+        ear(ejbjar(Apple.class));
+
+        Fruit apple = get(Apple.class, Fruit.class);
+        assertNotNull(apple);
+
+        FruitRef fruitRef = get(AmbiguousFruitRef.class, FruitRef.class);
+        assertNotNull(fruitRef);
+
+        assertEquals(fruitRef.getFruit(), apple);
+    }
+
+    public void testInterEarLazyBeanNameRef1() throws Exception {
+        ear(ejbjar(Apple.class, OrangeFruitRef.class));
+        ear(ejbjar(Orange.class));
+
+        Fruit apple = get(Apple.class, Fruit.class);
+        assertNotNull(apple);
+
+        Fruit orange = get(Orange.class, Fruit.class);
+        assertNotNull(orange);
+
+        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        assertNotNull(fruitRef);
+
+        assertEquals(fruitRef.getFruit(), orange);
+    }
+
+    public void testInterEarLazyBeanNameRef2() throws Exception {
+        ear(ejbjar(OrangeFruitRef.class));
+        ear(ejbjar(Apple.class));
+        ear(ejbjar(Orange.class));
+
+        Fruit apple = get(Apple.class, Fruit.class);
+        assertNotNull(apple);
+
+        Fruit orange = get(Orange.class, Fruit.class);
+        assertNotNull(orange);
+
+        FruitRef fruitRef = get(OrangeFruitRef.class, FruitRef.class);
+        assertNotNull(fruitRef);
+
+        assertEquals(fruitRef.getFruit(), orange);
+    }
+
+    public void testInterEarCircularBeanNameRef() throws Exception {
+        ear(ejbjar(BlueBean.class));
+        ear(ejbjar(WhiteBean.class));
+
+        Blue blue = get(BlueBean.class, Blue.class);
+        White white = get(WhiteBean.class, White.class);
+
+        assertNotNull(blue);
+        assertNotNull(blue.getWhite());
+
+        assertNotNull(white);
+        assertNotNull(white.getBlue());
+
+        assertEquals(blue, white.getBlue());
+        assertEquals(white, blue.getWhite());
+    }
+
+    public void testInterEarCircularInterfaceRef() throws Exception {
+        ear(ejbjar(RedBean.class));
+        ear(ejbjar(BlackBean.class));
+
+        Red red = get(RedBean.class, Red.class);
+        Black black = get(BlackBean.class, Black.class);
+
+        assertNotNull(red);
+        assertNotNull(red.getBlack());
+
+        assertNotNull(black);
+        assertNotNull(black.getRed());
+
+        assertEquals(red, black.getRed());
+        assertEquals(black, red.getBlack());
+    }
+
 
     public void ear(Class ... beans) throws Exception {
         EjbJar ejbJar = ejbjar(beans);
@@ -257,62 +343,6 @@ public class EjbRefTest extends TestCase {
             throw new IllegalStateException(e);
         }
     }
-
-    /**
-     * A potential issue with this feature is that the stateless bean is created
-     * and the object it references does not exist at the time it is instantiated
-     * and put into the pool.  Later the bean is deployed yet the instances in the
-     * pool remain with null references, only new instances will be able to reference
-     * the newly deployed bean.
-     *
-     * @throws Exception
-     */
-    public void _test() throws Exception {
-
-        // Inter ear (between ear) Uni-directional references, local interfaces
-        EjbJar circleApp = new EjbJar();
-        circleApp.addEnterpriseBean(new StatelessBean(CircleBean.class));
-        assembler.createApplication(config.configureApplication(circleApp));
-
-        EjbJar squareApp = new EjbJar();
-        squareApp.addEnterpriseBean(new StatelessBean(SquareBean.class));
-        assembler.createApplication(config.configureApplication(squareApp));
-
-
-        Square square = (Square) context.lookup("SquareBeanLocal");
-        Circle circle = (Circle) context.lookup("CircleBeanLocal");
-
-        assertNotNull(square);
-        assertNotNull(circle);
-
-        assertNotNull(square.getCircle());
-        assertEquals(circle, square.getCircle());
-
-        // Inter ear (between ear) Bi-directional (circular) references, local interfaces
-        EjbJar redApp = new EjbJar();
-        redApp.addEnterpriseBean(new StatelessBean(RedBean.class));
-        assembler.createApplication(config.configureApplication(redApp));
-
-        EjbJar blackApp = new EjbJar();
-        blackApp.addEnterpriseBean(new StatelessBean(RedBean.class));
-        assembler.createApplication(config.configureApplication(blackApp));
-
-
-        Red red = (Red) context.lookup("RedBeanLocal");
-        Black black = (Black) context.lookup("BlackBeanLocal");
-
-        assertNotNull(red);
-        assertNotNull(red.getBlack());
-
-        assertNotNull(black);
-        assertNotNull(black.getRed());
-
-        assertEquals(red, black.getRed());
-        assertEquals(black, red.getBlack());
-
-
-    }
-
 
     // ------------------------------------------------------- //
     // Ref not unique by interface alone
@@ -358,30 +388,6 @@ public class EjbRefTest extends TestCase {
     }
 
     // ------------------------------------------------------- //
-    // Uni-directional relationship
-    // ------------------------------------------------------- //
-
-    public static class CircleBean implements Circle {
-
-    }
-
-    public static interface Circle {
-    }
-
-    public static class SquareBean implements Square {
-        @EJB
-        Circle circle;
-
-        public Circle getCircle() {
-            return circle;
-        }
-    }
-
-    public static interface Square {
-        public Circle getCircle();
-    }
-
-    // ------------------------------------------------------- //
     // bi-directional relationship
     // ------------------------------------------------------- //
 
@@ -409,5 +415,31 @@ public class EjbRefTest extends TestCase {
 
     public static interface Black {
         public Red getRed();
+    }
+
+    public static class BlueBean implements Blue {
+        @EJB(beanName = "WhiteBean")
+        White white;
+
+        public White getWhite() {
+            return white;
+        }
+    }
+
+    public static interface Blue {
+        public White getWhite();
+    }
+
+    public static class WhiteBean implements White {
+        @EJB(beanName = "BlueBean")
+        Blue blue;
+
+        public Blue getBlue() {
+            return blue;
+        }
+    }
+
+    public static interface White {
+        public Blue getBlue();
     }
 }
