@@ -17,15 +17,14 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
 import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
-import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.PortRefInfo;
@@ -33,8 +32,9 @@ import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
 import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
 import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
+import org.apache.openejb.assembler.classic.EjbResolver;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
@@ -50,6 +50,7 @@ import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.EjbReference;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -60,7 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 /**
  * @version $Rev$ $Date$
@@ -71,45 +72,35 @@ public class JndiEncInfoBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncInfoBuilder.class);
     protected static final Messages messages = new Messages(JndiEncInfoBuilder.class);
 
-    private final Map<String,EnterpriseBeanInfo> allDeployments = new TreeMap<String,EnterpriseBeanInfo>();
-
-    private final LinkResolver<String> ejbLinkResolver = new LinkResolver<String>();
-    private final Map<Interfaces, String> remoteInterfaces = new TreeMap<Interfaces, String>();
-    private final Map<Interfaces, String> localInterfaces = new TreeMap<Interfaces, String>();
+    private final EjbResolver earResolver;
+    private final Map<String, EjbResolver> ejbJarResolvers = new HashMap<String, EjbResolver>();
 
     public JndiEncInfoBuilder(AppInfo appInfo) {
 
+        // Global-scoped EJB Resolver
+
+        EjbResolver globalResolver = SystemInstance.get().getComponent(EjbResolver.class);
+
+        // EAR-scoped EJB Resolver
+
+        earResolver = new EjbResolver(globalResolver, EjbResolver.Scope.EAR, appInfo.ejbJars);
+
+        // EJBJAR-scoped EJB Resolver(s)
+
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
-                index(ejbJarInfo.moduleId, bean);
-            }
+
+            EjbResolver ejbJarResolver = new EjbResolver(earResolver, EjbResolver.Scope.EJBJAR, ejbJarInfo);
+
+            ejbJarResolvers.put(ejbJarInfo.moduleId, ejbJarResolver);
         }
     }
 
-    private void index(String moduleId, EnterpriseBeanInfo bean) {
-        // All deployments: deploymentId -> bean
-        allDeployments.put(bean.ejbDeploymentId, bean);
-
-        // add to the link resolver
-        ejbLinkResolver.add(moduleId, bean.ejbName, bean.ejbDeploymentId);
-
-        // Remote: Interfaces(home,object) -> deploymentId
-        if (bean.remote != null) {
-            remoteInterfaces.put(new Interfaces(bean.home, bean.remote), bean.ejbDeploymentId);
-            remoteInterfaces.put(new Interfaces(bean.remote), bean.ejbDeploymentId);
+    private EjbResolver getEjbResolver(String moduleId) {
+        EjbResolver resolver = ejbJarResolvers.get(moduleId);
+        if (resolver == null){
+            resolver = earResolver;
         }
-        for (String businessRemote : bean.businessRemote) {
-            remoteInterfaces.put(new Interfaces(businessRemote), bean.ejbDeploymentId);
-        }
-
-        // Local: Interfaces(home,object) -> deploymentId
-        if (bean.local != null) {
-            localInterfaces.put(new Interfaces(bean.localHome, bean.local), bean.ejbDeploymentId);
-            localInterfaces.put(new Interfaces(bean.local), bean.ejbDeploymentId);
-        }
-        for (String businessLocal : bean.businessLocal) {
-            localInterfaces.put(new Interfaces(businessLocal), bean.ejbDeploymentId);
-        }
+        return resolver;
     }
 
     public JndiEncInfo build(JndiConsumer jndiConsumer, String ejbName, String moduleId) throws OpenEJBException {
@@ -133,11 +124,7 @@ public class JndiEncInfoBuilder {
         /* Build Resource Environment References *****************/
         jndi.resourceEnvRefs.addAll(buildResourceEnvRefInfos(jndiConsumer));
 
-        buildAmbiguousEjbRefInfos(jndiConsumer, moduleUri);
-
-        jndi.ejbReferences.addAll(buildEjbRefInfos(jndiConsumer, ejbName, moduleUri));
-
-        jndi.ejbLocalReferences.addAll(buildEjbLocalRefInfos(jndiConsumer, ejbName, moduleUri));
+        buildEjbRefs(jndiConsumer, moduleUri, moduleId, ejbName, jndi);
 
         jndi.persistenceUnitRefs.addAll(buildPersistenceUnitRefInfos(jndiConsumer, moduleUri));
 
@@ -148,6 +135,81 @@ public class JndiEncInfoBuilder {
         return jndi;
     }
 
+    private void buildEjbRefs(JndiConsumer jndiConsumer, URI moduleUri, String moduleId, String ejbName, JndiEncInfo jndi) throws OpenEJBException {
+
+        int size = jndiConsumer.getEjbRef().size() + jndiConsumer.getEjbLocalRef().size();
+
+        ArrayList<EjbReference> references = new ArrayList<EjbReference>(size);
+
+        references.addAll(jndiConsumer.getEjbRef());
+        references.addAll(jndiConsumer.getEjbLocalRef());
+
+        for (EjbReference ref : references) {
+
+            EjbReferenceInfo info = new EjbReferenceInfo();
+
+            info.homeType = ref.getHome();
+            info.interfaceType = ref.getInterface();
+            info.referenceName = ref.getName();
+            info.location = buildLocationInfo(ref);
+            info.targets.addAll(buildInjectionInfos(ref));
+
+
+            if (info.location != null) {
+                if (ref.getRefType() == EjbReference.Type.LOCAL){
+                    jndi.ejbLocalReferences.add(toLocal(info));
+                } else {
+                    jndi.ejbReferences.add(info);
+                }
+                continue;
+            }
+
+            EjbResolver ejbResolver = getEjbResolver(moduleId);
+
+            String deploymentId = ejbResolver.resolve(new Ref(ref), moduleUri);
+
+            info.ejbDeploymentId = deploymentId;
+            info.externalReference = ejbResolver.getScope(deploymentId) == EjbResolver.Scope.GLOBAL;
+
+
+            if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
+                EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
+                if (otherBean != null) {
+                    if (otherBean.businessRemote.contains(ref.getInterface())) {
+                        ref.setRefType(EjbReference.Type.REMOTE);
+                    } else {
+                        ref.setRefType(EjbReference.Type.LOCAL);
+                        jndiConsumer.getEjbRef().remove(ref);
+                        jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ref));
+                    }
+                }
+            }
+
+
+            if (ref.getRefType() == EjbReference.Type.LOCAL){
+                jndi.ejbLocalReferences.add(toLocal(info));
+            } else {
+                jndi.ejbReferences.add(info);
+            }
+
+            if (info.ejbDeploymentId==null){
+                logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
+            }
+        }
+    }
+
+    private EjbLocalReferenceInfo toLocal(EjbReferenceInfo r) {
+        EjbLocalReferenceInfo l = new EjbLocalReferenceInfo();
+        l.ejbDeploymentId = r.ejbDeploymentId;
+        l.externalReference = r.externalReference;
+        l.homeType = r.homeType;
+        l.interfaceType = r.interfaceType;
+        l.referenceName = r.referenceName;
+        l.location = r.location;
+        l.targets.addAll(r.targets);
+        return l;
+    }
+
     private List<ServiceReferenceInfo> buildServiceRefInfos(JndiConsumer jndiConsumer) {
         ArrayList<ServiceReferenceInfo> infos = new ArrayList<ServiceReferenceInfo>();
         for (ServiceRef ref : jndiConsumer.getServiceRef()) {
@@ -156,9 +218,9 @@ public class JndiEncInfoBuilder {
             info.location = buildLocationInfo(ref);
             info.targets.addAll(buildInjectionInfos(ref));
             infos.add(info);
-            
+
             if (System.getProperty("duct tape") != null) continue;
-            
+
             info.id = ref.getMappedName();
             info.serviceQName = ref.getServiceQname();
             info.serviceType = ref.getServiceInterface();
@@ -209,139 +271,6 @@ public class JndiEncInfoBuilder {
                 info.properties.setProperty(name, value);
             }
             info.targets.addAll(buildInjectionInfos(contextRef));
-            infos.add(info);
-        }
-        return infos;
-    }
-
-    private void buildAmbiguousEjbRefInfos(JndiConsumer jndiConsumer, URI moduleId) throws OpenEJBException {
-        ArrayList<EjbRef> ejbRefs = new ArrayList<EjbRef>(jndiConsumer.getEjbRef());
-        for (EjbRef ejb : ejbRefs) {
-            if (ejb.getRefType() != EjbRef.Type.UNKNOWN) continue;
-
-            String interfce = ejb.getRemote();
-
-            EnterpriseBeanInfo otherBean = null;
-            if (ejb.getEjbLink() != null) {
-                String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
-                if (deploymentId != null) {
-                    otherBean = allDeployments.get(deploymentId);
-                }
-            }
-
-            if (otherBean != null) {
-                if (otherBean.businessRemote.contains(interfce)) {
-                    ejb.setRefType(EjbRef.Type.REMOTE);
-                } else {
-                    ejb.setRefType(EjbRef.Type.LOCAL);
-                    jndiConsumer.getEjbRef().remove(ejb);
-                    jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
-                }
-            } else {
-                if (remoteInterfaces.containsKey(new Interfaces(ejb.getHome(), ejb.getRemote()))) {
-                    ejb.setRefType(EjbRef.Type.REMOTE);
-                } else {
-                    ejb.setRefType(EjbRef.Type.LOCAL);
-                    jndiConsumer.getEjbRef().remove(ejb);
-                    jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ejb));
-                }
-            }
-        }
-    }
-
-    private List<EjbLocalReferenceInfo> buildEjbLocalRefInfos(JndiConsumer item, String referringComponent, URI moduleId) throws OpenEJBException {
-        List<EjbLocalReferenceInfo> infos = new ArrayList<EjbLocalReferenceInfo>();
-        for (EjbLocalRef ejb : item.getEjbLocalRef()) {
-            EjbLocalReferenceInfo info = new EjbLocalReferenceInfo();
-
-            info.homeType = ejb.getLocalHome();
-            info.localType = ejb.getLocal();
-            info.referenceName = ejb.getEjbRefName();
-
-            // assign location to a global jndi name
-            info.location = buildLocationInfo(ejb);
-
-            if (info.location == null) {
-                // we didn't have a global ref, try mapped name, ejb link or auto interface matching
-                if (ejb.getMappedName() != null && !ejb.getMappedName().equals("")) {
-                    // mapped name is the deployment id
-                    info.ejbDeploymentId = ejb.getMappedName();
-                } else if (ejb.getEjbLink() != null && !ejb.getEjbLink().equals(""))  {
-                    String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
-
-                    // didn't find an ejb
-                    if (deploymentId == null) {
-                        String msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
-                        logger.fatal(msg);
-                        throw new OpenEJBException(msg);
-                    }
-                    info.ejbDeploymentId = deploymentId;
-                } else {
-                    String deploymentId = localInterfaces.get(new Interfaces(ejb.getLocalHome(), ejb.getLocal()));
-
-                    // didn't find an ejb
-                    if (deploymentId == null) {
-                        String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
-                        logger.fatal(msg);
-                        throw new OpenEJBException(msg);
-                    }
-                    info.ejbDeploymentId = deploymentId;
-                }
-            }
-
-            info.targets.addAll(buildInjectionInfos(ejb));
-            infos.add(info);
-        }
-        return infos;
-    }
-
-    private List<EjbReferenceInfo> buildEjbRefInfos(JndiConsumer jndi, String referringComponent, URI moduleId) throws OpenEJBException {
-        List<EjbReferenceInfo> infos = new ArrayList<EjbReferenceInfo>();
-        for (EjbRef ejb : jndi.getEjbRef()) {
-            EjbReferenceInfo info = new EjbReferenceInfo();
-
-            info.homeType = ejb.getHome();
-            info.remoteType = ejb.getRemote();
-            info.referenceName = ejb.getEjbRefName();
-
-            // assign location to a global jndi name
-            info.location = buildLocationInfo(ejb);
-
-            if (info.location == null) {
-                // we didn't have a global ref, try mapped name, ejb link or auto interface matching
-                if (ejb.getMappedName() != null && !ejb.getMappedName().equals("")) {
-                    // mapped name is the deployment id
-                    info.ejbDeploymentId = ejb.getMappedName();
-
-                    // if the deployment is not in the application, it is an external
-                    // reference and will need a cross class loader proxy
-                    if (!allDeployments.containsKey(info.ejbDeploymentId)) {
-                        info.externalReference = true;
-                    }
-                } else if (ejb.getEjbLink() != null && !ejb.getEjbLink().equals(""))  {
-                    String deploymentId = ejbLinkResolver.resolveLink(ejb.getEjbLink(), moduleId);
-
-                    // didn't find an ejb
-                    if (deploymentId == null) {
-                        String msg = messages.format("config.noBeanFoundEjbLink", ejb.getEjbRefName(), referringComponent, ejb.getEjbLink());
-                        logger.fatal(msg);
-                        throw new OpenEJBException(msg);
-                    }
-                    info.ejbDeploymentId = deploymentId;
-                } else {
-                    String deploymentId = remoteInterfaces.get(new Interfaces(ejb.getHome(), ejb.getRemote()));
-
-                    // didn't find an ejb
-                    if (deploymentId == null) {
-                        String msg = messages.format("config.noBeanFound", ejb.getEjbRefName(), referringComponent);
-                        logger.fatal(msg);
-                        throw new OpenEJBException(msg);
-                    }
-                    info.ejbDeploymentId = deploymentId;
-                }
-            }
-
-            info.targets.addAll(buildInjectionInfos(ejb));
             infos.add(info);
         }
         return infos;
@@ -410,7 +339,7 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private ReferenceLocationInfo buildLocationInfo(JndiReference reference) {
+    public ReferenceLocationInfo buildLocationInfo(JndiReference reference) {
         String mappedName = reference.getMappedName();
         if (mappedName == null || !mappedName.startsWith("jndi:")) {
             return null;
@@ -420,7 +349,7 @@ public class JndiEncInfoBuilder {
         return location;
     }
 
-    private Collection<? extends InjectionInfo> buildInjectionInfos(Injectable injectable) {
+    public Collection<? extends InjectionInfo> buildInjectionInfos(Injectable injectable) {
         ArrayList<InjectionInfo> infos = new ArrayList<InjectionInfo>();
         for (InjectionTarget target : injectable.getInjectionTarget()) {
             InjectionInfo info = new InjectionInfo();
@@ -431,48 +360,43 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
-    private static class Interfaces implements Comparable {
-        private final String homeInterface;
-        private final String objectInterface;
+    /**
+     * The assembler package cannot have a dependency on org.apache.openejb.jee
+     * so we simply have a trimmed down copy of the org.apache.openejb.jee.EjbReference interface
+     * and we adapt to it here.
+     */
+    private static class Ref implements EjbResolver.EjbReference {
+        private final EjbReference ref;
 
-        public Interfaces(String objectInterface) {
-            if (objectInterface == null) throw new NullPointerException("objectInterface is null");
-            this.homeInterface = "<none>";
-            this.objectInterface = objectInterface;
+        public Ref(EjbReference ref) {
+            this.ref = ref;
         }
 
-        public Interfaces(String homeInterface, String objectInterface) {
-            if (homeInterface == null) homeInterface = "<none>";
-            if (objectInterface == null) throw new NullPointerException("objectInterface is null");
-            this.homeInterface = homeInterface;
-            this.objectInterface = objectInterface;
+        public String getEjbLink() {
+            return ref.getEjbLink();
         }
 
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Interfaces that = (Interfaces) o;
-
-            return homeInterface.equals(that.homeInterface) && objectInterface.equals(that.objectInterface);
+        public String getHome() {
+            return ref.getHome();
         }
 
-        public int hashCode() {
-            int result;
-            result = homeInterface.hashCode();
-            result = 31 * result + objectInterface.hashCode();
-            return result;
+        public String getInterface() {
+            return ref.getInterface();
         }
 
-        public int compareTo(Object o) {
-            if (this == o) return 0;
-
-            Interfaces that = (Interfaces) o;
-            return toString().compareTo(that.toString());
+        public String getMappedName() {
+            return ref.getMappedName();
         }
 
-        public String toString() {
-            return homeInterface + ":" + objectInterface;
+        public EjbResolver.Type getRefType() {
+            // Could have used EjbResolver.Type.valueOf(..)
+            // but this protects against an renaming
+            switch(ref.getRefType()){
+                case LOCAL: return EjbResolver.Type.LOCAL;
+                case REMOTE: return EjbResolver.Type.REMOTE;
+                case UNKNOWN: return EjbResolver.Type.UNKNOWN;
+                default: return EjbResolver.Type.UNKNOWN;
+            }
         }
     }
 }

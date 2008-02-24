@@ -20,7 +20,7 @@ public class EjbReferenceInfo extends InjectableInfo {
 
     public String referenceName;
     public String homeType;
-    public String remoteType;
+    public String interfaceType;
     public String ejbDeploymentId;
     public boolean externalReference;
 

@@ -27,9 +27,12 @@ import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EjbReference;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.Interceptor;
@@ -47,6 +50,7 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.Property;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.RemoveMethod;
@@ -68,10 +72,7 @@ import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.PortComponent;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -111,18 +112,18 @@ import javax.ejb.TransactionManagementType;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
-import javax.jws.WebService;
 import javax.jws.HandlerChain;
+import javax.jws.WebService;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
+import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
-import javax.xml.ws.Service;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -1707,7 +1708,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // whether to use an EjbLocalRef or EjbRef (remote).
             // We flag it uknown and let the linking code take care of
             // figuring out what to do with it.
-            ejbRef.setRefType(EjbRef.Type.UNKNOWN);
+            ejbRef.setRefType(EjbReference.Type.UNKNOWN);
 
             if (member != null) {
                 // Set the member name where this will be injected
@@ -1732,7 +1733,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             break;
                         }
                     }
-                    ejbRef.setRefType(EjbRef.Type.REMOTE);
+                    ejbRef.setRefType(EjbReference.Type.REMOTE);
                 } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
                     ejbRef.setHome(interfce.getName());
                     Method[] methods = interfce.getMethods();
@@ -1742,13 +1743,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                             break;
                         }
                     }
-                    ejbRef.setRefType(EjbRef.Type.LOCAL);
+                    ejbRef.setRefType(EjbReference.Type.LOCAL);
                 } else {
                     ejbRef.setRemote(interfce.getName());
                     if (interfce.getAnnotation(Local.class) != null) {
-                        ejbRef.setRefType(EjbRef.Type.LOCAL);
+                        ejbRef.setRefType(EjbReference.Type.LOCAL);
                     } else if (interfce.getAnnotation(Remote.class) != null) {
-                        ejbRef.setRefType(EjbRef.Type.REMOTE);
+                        ejbRef.setRefType(EjbReference.Type.REMOTE);
                     }
                 }
             }

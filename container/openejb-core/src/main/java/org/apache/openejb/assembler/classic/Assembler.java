@@ -183,6 +183,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (appServer == null) {
             system.setComponent(ApplicationServer.class, new org.apache.openejb.core.ServerFederation());
         }
+
+        system.setComponent(EjbResolver.class, new EjbResolver(null, EjbResolver.Scope.GLOBAL));
     }
 
     private void setConfiguration(OpenEjbConfiguration config) {
@@ -569,11 +571,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
             }
 
+            SystemInstance systemInstance = SystemInstance.get();
+
             // WebApp
-            WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
+
+            WebAppBuilder webAppBuilder = systemInstance.getComponent(WebAppBuilder.class);
             if (webAppBuilder != null) {
                 webAppBuilder.deployWebApps(appInfo, classLoader);
             }
+
+            EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
+            globalEjbResolver.addAll(appInfo.ejbJars);
 
             logger.info("createApplication.success", appInfo.jarPath);
 
@@ -601,6 +609,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         logger.info("destroyApplication.start", appInfo.jarPath);
 
         fireBeforeApplicationDestroyed(appInfo);
+
+
+        EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
+        for (AppInfo info : deployedApplications.values()) {
+            globalResolver.addAll(info.ejbJars);
+        }
+        SystemInstance.get().setComponent(EjbResolver.class, globalResolver);
+
 
         Context globalContext = containerSystem.getJNDIContext();
         UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.jarPath));

@@ -48,7 +48,7 @@ public class InjectionBuilder {
             }
         }
 
-        for (EjbLocalReferenceInfo info : jndiEnc.ejbLocalReferences) {
+        for (EjbReferenceInfo info : jndiEnc.ejbLocalReferences) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className);
                 Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);

@@ -178,7 +178,7 @@ public class JndiEncBuilder {
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else {
-                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.remoteType;
+                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                     reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {
@@ -188,14 +188,14 @@ public class JndiEncBuilder {
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (EjbLocalReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
+        for (EjbReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
 
             Reference reference = null;
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else {
-                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.localType;
+                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
