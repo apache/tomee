@@ -30,8 +30,6 @@ import org.apache.openejb.spi.SecurityService;
 
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
-    private static Context ejbContext;
-
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
         if (!org.apache.openejb.OpenEJB.isInitialized()) {
             initializeOpenEJB(env);
@@ -56,14 +54,10 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
             }
         }
 
-        if (ejbContext == null){
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            Context context = containerSystem.getJNDIContext();
-            context = (Context) context.lookup("java:openejb/ejb");
-            ejbContext = context;
-        }
-
-        return ejbContext;
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        Context context = containerSystem.getJNDIContext();
+        context = (Context) context.lookup("java:openejb/ejb");
+        return context;
 
     }
 
