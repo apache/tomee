@@ -64,7 +64,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class EjbRef implements JndiReference {
+public class EjbRef implements EjbReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -84,10 +84,6 @@ public class EjbRef implements JndiReference {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    public static enum Type {
-        UNKNOWN, LOCAL, REMOTE;
-    }
 
     @XmlTransient
     protected Type refType = Type.REMOTE;
@@ -165,6 +161,10 @@ public class EjbRef implements JndiReference {
 
     public String getRemote() {
         return remote;
+    }
+
+    public String getInterface() {
+        return getRemote();
     }
 
     public void setRemote(String value) {

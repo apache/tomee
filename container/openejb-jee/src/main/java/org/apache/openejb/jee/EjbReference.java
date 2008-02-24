@@ -16,17 +16,28 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
-public interface JndiReference extends Injectable, Keyable<String> {
-    String getName();
-    void setName(String name);
+public interface EjbReference extends JndiReference {
 
-    String getType();
-    void setType(String type);
+    Type getRefType();
 
-    String getMappedName();
-    void setMappedName(String mappedName);
+    void setRefType(EjbRef.Type refType);
 
+    String getHome();
+
+    String getInterface();
+
+    EjbRefType getEjbRefType();
+
+    String getEjbLink();
+
+    List<Text> getDescription();
+
+    static enum Type {
+        UNKNOWN, LOCAL, REMOTE;
+    }
 }

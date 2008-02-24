@@ -62,7 +62,7 @@ import java.util.List;
         "mappedName",
         "injectionTarget"
         })
-public class EjbLocalRef implements JndiReference {
+public class EjbLocalRef implements EjbReference {
 
     @XmlElement(required = true)
     protected List<Text> description;
@@ -87,14 +87,14 @@ public class EjbLocalRef implements JndiReference {
     public EjbLocalRef() {
     }
 
-    public EjbLocalRef(EjbRef ref) {
-        this.ejbRefName = ref.getEjbRefName();
+    public EjbLocalRef(EjbReference ref) {
+        this.ejbRefName = ref.getName();
         this.ejbRefType = ref.getEjbRefType();
         this.ejbLink = ref.getEjbLink();
         this.mappedName = ref.getMappedName();
         this.description = ref.getDescription();
         this.injectionTarget = ref.getInjectionTarget();
-        this.local = ref.getRemote();
+        this.local = ref.getInterface();
         this.localHome = ref.getHome();
     }
 
@@ -156,6 +156,21 @@ public class EjbLocalRef implements JndiReference {
 
     public String getLocalHome() {
         return localHome;
+    }
+
+    public String getHome() {
+        return getLocalHome();
+    }
+
+    public String getInterface() {
+        return getLocal();
+    }
+
+    public Type getRefType() {
+        return Type.LOCAL;
+    }
+
+    public void setRefType(Type refType) {
     }
 
     public void setLocalHome(String value) {
