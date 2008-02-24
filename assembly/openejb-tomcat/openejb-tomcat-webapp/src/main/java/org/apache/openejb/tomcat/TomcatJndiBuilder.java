@@ -183,9 +183,9 @@ public class TomcatJndiBuilder {
         ejb.setProperty(Constants.FACTORY, EjbFactory.class.getName());
         ejb.setProperty(NAME, ref.referenceName);
         ejb.setHome(ref.homeType);
-        ejb.setRemote(ref.remoteType);
+        ejb.setRemote(ref.interfaceType);
         ejb.setLink(null);
-        ejb.setType(ref.remoteType);
+        ejb.setType(ref.interfaceType);
         if (useCrossClassLoaderRef) {
             ejb.setProperty(EXTERNAL, "" + ref.externalReference);
         }
@@ -225,9 +225,9 @@ public class TomcatJndiBuilder {
         ejb.setProperty(NAME, ref.referenceName);
         ejb.setHome(ref.homeType);
         ejb.setRemote(null);
-        ejb.setProperty(LOCAL, ref.localType);
+        ejb.setProperty(LOCAL, ref.interfaceType);
         ejb.setLink(null);
-        ejb.setType(ref.localType);
+        ejb.setType(ref.interfaceType);
 
         if (ref.ejbDeploymentId != null) {
             ejb.setProperty(DEPLOYMENT_ID, ref.ejbDeploymentId);
