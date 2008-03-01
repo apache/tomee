@@ -45,8 +45,7 @@ public class Installer {
 
     static {
         // is the OpenEJB listener installed
-        Boolean listener = (Boolean) org.apache.openejb.loader.OpenEJBListener.isListenerInstalled();
-//        Boolean listener = (Boolean) invokeStaticNoArgMethod("org.apache.openejb.loader.OpenEJBListener", "isListenerInstalled");
+        Boolean listener = (Boolean) invokeStaticNoArgMethod("org.apache.openejb.loader.OpenEJBListener", "isListenerInstalled");
         if (listener == null) listener = false;
         listenerInstalled = listener;
 
@@ -172,6 +171,30 @@ public class Installer {
         }
 
         //
+        // Copy openejb-javaagent.jar to lib
+        //
+        boolean copyJavaagentJar = true;
+        File javaagentJar = new File(paths.getCatalinaLibDir(), "openejb-javaagent.jar");
+        if (javaagentJar.exists()) {
+            if (paths.getOpenEJBJavaagentJar().length() != javaagentJar.length()) {
+                // md5 diff the files
+            } else {
+//                addInfo("OpenEJB javaagent jar already installed in Tomcat lib directory.");
+                copyJavaagentJar = false;
+            }
+        }
+
+        if (copyJavaagentJar) {
+            try {
+                copyFile(paths.getOpenEJBJavaagentJar(), javaagentJar);
+                addInfo("Copy " + paths.getOpenEJBJavaagentJar().getName() + " to lib");
+            } catch (IOException e) {
+                addError("Unable to copy OpenEJB javaagent jar to Tomcat lib directory.  This will need to be performed manually.", e);
+            }
+        }
+
+
+        //
         // bin/catalina.sh
         //
 
@@ -195,7 +218,7 @@ public class Installer {
         }
 
         // add our magic bits to the catalina sh file
-        String openejbJavaagentPath = paths.getCatalinaBaseDir().toURI().relativize(paths.getOpenEJBJavaagentJar().toURI()).getPath();
+        String openejbJavaagentPath = paths.getCatalinaBaseDir().toURI().relativize(javaagentJar.toURI()).getPath();
         String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
                 "# Add OpenEJB javaagent\n" +
                 "if [ -r \"$CATALINA_BASE\"/" + openejbJavaagentPath + " ]; then\n" +
@@ -253,7 +276,7 @@ public class Installer {
             // the core jar contains the config files
             return;
         }
-        JarFile coreJar = null;
+        JarFile coreJar;
         try {
             coreJar = new JarFile(paths.getOpenEJBCoreJar());
         } catch (IOException e) {
