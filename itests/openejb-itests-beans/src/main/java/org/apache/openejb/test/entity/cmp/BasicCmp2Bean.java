@@ -22,6 +22,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
+import javax.ejb.FinderException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Map;
@@ -44,7 +45,8 @@ public abstract class BasicCmp2Bean implements EntityBean {
 
     public abstract void setLastName(String lastName);
     
-
+    public abstract void ejbSelectRemoveById(Integer someId) throws FinderException;
+    
     //=============================
     // Home interface methods
     //
@@ -57,6 +59,10 @@ public abstract class BasicCmp2Bean implements EntityBean {
     public int ejbHomeSum(int x, int y) {
         testAllowedOperations("ejbHome");
         return x + y;
+    }
+
+    public void ejbHomeVoidSelect() throws FinderException {
+        ejbSelectRemoveById(999999);
     }
 
     /**

@@ -34,6 +34,13 @@ public class EjbSelect {
             throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
+        
+        // if the return type is void, assume we have an update query
+        if ("void".equals(returnType)) {
+            int result = cmpContainer.update(deploymentInfo, methodSignature, args);
+            return result;
+        }
+
         Object result = cmpContainer.select(deploymentInfo, methodSignature, returnType, args);
         if (result instanceof Number) {
             Number number = (Number) result;

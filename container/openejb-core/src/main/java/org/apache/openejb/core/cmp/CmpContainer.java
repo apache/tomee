@@ -114,7 +114,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) classLoader = getClass().getClassLoader();
 
-        CmpEngineFactory factory = null;
+        CmpEngineFactory factory;
         try {
             Class<?> cmpEngineFactoryClass = classLoader.loadClass(cmpEngineFactory);
             factory = (CmpEngineFactory) cmpEngineFactoryClass.newInstance();
@@ -540,7 +540,16 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
 
-                returnValue = runMethod.invoke(bean, args);
+                try {
+                    returnValue = runMethod.invoke(bean, args);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("********************************************************");
+                    System.out.println("callMethod = " + callMethod);
+                    System.out.println("runMethod = " + runMethod);
+                    System.out.println("bean = " + bean.getClass().getName());
+
+                    throw e;
+                }
             } finally {
                 unsetEntityContext(bean);
             }
@@ -801,6 +810,15 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         } catch (RuntimeException e) {
             throw new EJBException(e);
         }
+    }
+
+    public int update(DeploymentInfo di, String methodSignature, Object... args) throws FinderException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) di;
+        String signature = deploymentInfo.getAbstractSchemaName() + "." + methodSignature;
+
+        // exectue the update query
+        int result = cmpEngine.executeUpdateQuery(deploymentInfo, signature, args);
+        return result;
     }
 
     private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {

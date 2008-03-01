@@ -176,6 +176,15 @@
         <role-name>TheMan</role-name>
         <role-link>Executive</role-link>
       </security-role-ref>
+      <query>
+        <query-method>
+          <method-name>ejbSelectRemoveById</method-name>
+          <method-params>
+            <method-param>java.lang.Integer</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>DELETE FROM BasicCmp2Bean o WHERE o.id = ?1</ejb-ql>
+      </query>
     </entity>
 
     <entity>

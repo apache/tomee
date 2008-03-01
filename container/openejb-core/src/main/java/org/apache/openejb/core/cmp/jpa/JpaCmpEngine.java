@@ -237,7 +237,7 @@ public class JpaCmpEngine implements CmpEngine {
                 throw new FinderException("No query defined for method " + fullName);
             }
         }
-        return executeQuery(query, args);
+        return executeSelectQuery(query, args);
     }
 
     public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
@@ -254,10 +254,10 @@ public class JpaCmpEngine implements CmpEngine {
                 throw new FinderException("No query defined for method " + signature);
             }
         }
-        return executeQuery(query, args);
+        return executeSelectQuery(query, args);
     }
 
-    private List<Object> executeQuery(Query query, Object[] args) {
+    private List<Object> executeSelectQuery(Query query, Object[] args) {
         // process args
         if (args == null) {
             args = NO_ARGS;
@@ -287,6 +287,41 @@ public class JpaCmpEngine implements CmpEngine {
         }
         //noinspection unchecked
         return results;
+    }
+
+    public int executeUpdateQuery(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
+        EntityManager entityManager = getEntityManager(deploymentInfo);
+
+        Query query = createNamedQuery(entityManager, signature);
+        if (query == null) {
+            int parenIndex = signature.indexOf('(');
+            if (parenIndex > 0) {
+                String shortName = signature.substring(0, parenIndex);
+                query = createNamedQuery(entityManager, shortName);
+            }
+            if (query == null) {
+                throw new FinderException("No query defined for method " + signature);
+            }
+        }
+
+        // process args
+        if (args == null) {
+            args = NO_ARGS;
+        }
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            // ejb proxies need to be swapped out for real instance classes
+            if (arg instanceof EJBObject) {
+                arg = Cmp2Util.getEntityBean(((EJBObject) arg));
+            }
+            if (arg instanceof EJBLocalObject) {
+                arg = Cmp2Util.getEntityBean(((EJBLocalObject) arg));
+            }
+            query.setParameter(i + 1, arg);
+        }
+
+        int result = query.executeUpdate();
+        return result;
     }
 
     private Query createNamedQuery(EntityManager entityManager, String name) {

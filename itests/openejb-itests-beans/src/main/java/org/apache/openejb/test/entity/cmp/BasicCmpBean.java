@@ -61,6 +61,9 @@ public class BasicCmpBean implements javax.ejb.EntityBean{
         return x+y;
     }
     
+    public void ejbHomeVoidSelect() {
+    }
+
     /**
      * Maps to BasicCmpHome.create
      * 

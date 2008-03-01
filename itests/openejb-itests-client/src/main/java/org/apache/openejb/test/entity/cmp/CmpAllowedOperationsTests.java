@@ -180,7 +180,9 @@ public class CmpAllowedOperationsTests extends BasicCmpTestClient{
       ejbObject.remove();
 
       ejbObject = ejbHome.createObject("Fourth Bean");
-      ejbHome.findEmptyCollection(); 
+      ejbHome.findEmptyCollection();
+
+      ejbHome.voidSelect();  
     } 
 
     //=====================================

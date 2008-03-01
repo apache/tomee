@@ -696,11 +696,16 @@ public class Cmp2Generator implements Opcodes {
                 EJB_SELECT_EXECUTE.getName(),
                 Type.getMethodDescriptor(EJB_SELECT_EXECUTE));
 
-        // convert return type
-        Convert.fromObjectTo(mv, selectMethod.getReturnType());
+        if (!Void.TYPE.equals(selectMethod.getReturnType())) {
+            // convert return type
+            Convert.fromObjectTo(mv, selectMethod.getReturnType());
 
-        // return
-        mv.visitInsn(Type.getReturnType(selectMethod).getOpcode(IRETURN));
+            // return value;
+            mv.visitInsn(Type.getReturnType(selectMethod).getOpcode(IRETURN));
+        } else {
+            // return; 
+            mv.visitInsn(RETURN);
+        }
 
         // close method
         mv.visitMaxs(0, 0);
@@ -775,6 +780,7 @@ public class Cmp2Generator implements Opcodes {
                 mv.visitTypeInsn(CHECKCAST, Type.getInternalName(to));
             } else {
                 Convert conversion = getConversion(to);
+                if (conversion == null) throw new NullPointerException("unsupported conversion for EJB select return type " + to.getName());
                 conversion.objectToPrimitive(mv);
             }
         }

@@ -66,6 +66,9 @@ public class AllowedOperationsCmpBean implements EntityBean{
         return x+y;
     }
     
+    public void ejbHomeVoidSelect() {
+    }
+
     /**
      * Maps to BasicCmpHome.create
      */

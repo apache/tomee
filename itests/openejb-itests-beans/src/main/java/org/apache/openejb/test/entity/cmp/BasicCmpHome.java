@@ -36,4 +36,6 @@ public interface BasicCmpHome extends javax.ejb.EJBHome {
     Collection findByLastName(String lastName) throws FinderException, RemoteException;
     
     int sum(int x, int y) throws RemoteException;
+
+    void voidSelect() throws FinderException, RemoteException;
 }
