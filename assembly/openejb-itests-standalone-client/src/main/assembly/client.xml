@@ -47,14 +47,12 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory></outputDirectory>
+      <outputFileNameMapping></outputFileNameMapping>
+
       <unpack>true</unpack>
       <includes>
-          <include>org.apache.geronimo.specs:geronimo-ejb_3.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-interceptor_3.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
-          <include>org.apache.geronimo.specs:geronimo-jms_1.1_spec</include>
+          <include>org.apache.openejb:javaee-api</include>
           <include>org.apache.xbean:xbean-finder</include>
           <include>asm:asm</include>
           <include>junit:junit</include>
@@ -66,7 +64,6 @@
           <include>org.apache.activemq:activemq-core</include>
           <include>backport-util-concurrent:backport-util-concurrent</include>
           <include>commons-logging:commons-logging</include>
-          <include>org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec</include>
       </includes>
       <scope>test</scope>
     </dependencySet>
