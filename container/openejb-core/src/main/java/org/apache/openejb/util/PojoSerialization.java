@@ -16,28 +16,19 @@
  */
 package org.apache.openejb.util;
 
-import sun.reflect.ReflectionFactory;
-
-import java.io.Externalizable;
-import java.io.ObjectStreamException;
-import java.io.ObjectInput;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.lang.reflect.Field;
-import java.lang.reflect.Constructor;
-import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Collections;
-import java.util.WeakHashMap;
+import java.util.List;
 
-/**
- * @version $Rev$ $Date$
- */
-public class PojoSerialization implements Externalizable {
+public class PojoSerialization implements Serializable {
     private static final byte CLASS = (byte) 50;
     private static final byte FIELD = (byte) 51;
     private static final byte DONE = (byte) 52;
@@ -60,6 +51,9 @@ public class PojoSerialization implements Externalizable {
         });
     }
 
+    /**
+     * Constructor for externalization
+     */
     public PojoSerialization() {
     }
 
@@ -67,17 +61,30 @@ public class PojoSerialization implements Externalizable {
         this.object = object;
     }
 
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        write(out);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        read(in);
+    }
+
     protected Object readResolve() throws ObjectStreamException {
         return object;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    protected void read(ObjectInput in) throws IOException, ClassNotFoundException {
         byte b = in.readByte();
         if (b != CLASS) throw new IOException("Expected 'CLASS' byte " + CLASS + ", got: " + b);
 
         Class clazz = (Class) in.readObject();
 
-        Object object = newInstance(clazz);
+        Object object;
+        try {
+            object = unsafe.allocateInstance(clazz);
+        } catch (Exception e) {
+            throw (IOException) new IOException("Cannot construct " + clazz.getName()).initCause(e);
+        }
 
         while (b != DONE) {
             b = in.readByte();
@@ -104,7 +111,7 @@ public class PojoSerialization implements Externalizable {
         this.object = object;
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    protected void write(ObjectOutput out) throws IOException {
         List<Class> classes = new ArrayList<Class>();
         Class c = object.getClass();
         while (c != null && !c.equals(Object.class)) {
@@ -118,6 +125,8 @@ public class PojoSerialization implements Externalizable {
 
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers())) continue;
+                if (Modifier.isTransient(field.getModifiers())) continue;
                 field.setAccessible(true);
                 out.writeByte(FIELD);
                 out.writeUTF(field.getName());
@@ -131,31 +140,14 @@ public class PojoSerialization implements Externalizable {
         out.writeByte(DONE);
     }
 
-
-    private transient ReflectionFactory reflectionFactory = ReflectionFactory.getReflectionFactory();
-    private transient Map constructorCache = Collections.synchronizedMap(new WeakHashMap());
-
-    public Object newInstance(Class type) {
-        try {
-            Constructor customConstructor = getMungedConstructor(type);
-            return customConstructor.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot construct " + type.getName(), e);
-        }
-    }
-
-    private Constructor getMungedConstructor(Class type) throws NoSuchMethodException {
-        WeakReference ref = (WeakReference) constructorCache.get(type);
-        if (ref == null || ref.get() == null) {
-            Constructor javaLangObjectConstructor = Object.class.getDeclaredConstructor();
-            ref = new WeakReference(reflectionFactory.newConstructorForSerialization(type, javaLangObjectConstructor));
-            constructorCache.put(type, ref);
-        }
-        return (Constructor) ref.get();
-    }
-
     private void setValue(Field field, Object object, Object value) {
-        long offset = unsafe.objectFieldOffset(field);
+        long offset;
+        try {
+            offset = unsafe.objectFieldOffset(field);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed getting offset for: field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
+        }
+
         Class type = field.getType();
         if (type.isPrimitive()) {
             if (type.equals(Integer.TYPE)) {
@@ -175,9 +167,7 @@ public class PojoSerialization implements Externalizable {
             } else if (type.equals(Boolean.TYPE)) {
                 unsafe.putBoolean(object, offset, ((Boolean) value).booleanValue());
             } else {
-                throw new IllegalStateException("Could not set field " +
-                        object.getClass() + "." + field.getName() +
-                        ": Unknown type " + type);
+                throw new IllegalStateException("Unknown primitive type: " + type.getName());
             }
         } else {
             unsafe.putObject(object, offset, value);

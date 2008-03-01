@@ -18,18 +18,18 @@ package org.apache.openejb.util;
 
 import junit.framework.TestCase;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
-public class PojoSerializationTest extends TestCase {
+public class PojoExternalizationTest extends TestCase {
 
     public void _testSpeed() throws Exception {
         long start = System.currentTimeMillis();
@@ -76,9 +76,6 @@ public class PojoSerializationTest extends TestCase {
     }
 
     public static class Color {
-        private static final String skipStatic = "Don't serialize this";
-        private transient final String skipTransient = "Don't serialize this";
-
         private final double mydouble;
         private final double[] adouble = new double[]{10, 10};
         private float myfloat = 10;
@@ -146,7 +143,7 @@ public class PojoSerializationTest extends TestCase {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            final Color color = (Color) o;
+            final PojoExternalizationTest.Color color = (PojoExternalizationTest.Color) o;
 
             if (myboolean != color.myboolean) return false;
             if (mybyte != color.mybyte) return false;
@@ -190,7 +187,7 @@ public class PojoSerializationTest extends TestCase {
         }
     }
 
-    public static class Green extends Color {
+    public static class Green extends PojoExternalizationTest.Color {
         private double mydouble = 10;
         private final double[] adouble = new double[]{10, 10};
         private float myfloat = 10;

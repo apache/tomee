@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.ArrayList;
 
 /**
  * @version $Revision$ $Date$
@@ -153,10 +154,10 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public static enum Lifecycle {
-        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2,REMOVE, PRE_DESTROY, 
+        CONSTRUCTOR, INJECTION, POST_CONSTRUCT, PRE_PASSIVATE1, POST_ACTIVATE1, BUSINESS_METHOD, PRE_PASSIVATE2, POST_ACTIVATE2,REMOVE, PRE_DESTROY,
     }
 
-    public static class WidgetBean implements Widget, RemoteWidget, Serializable {
+    public static class WidgetBean implements Widget, RemoteWidget {
         private static final long serialVersionUID = -8499745487520955081L;
 
         private int activates = 0;

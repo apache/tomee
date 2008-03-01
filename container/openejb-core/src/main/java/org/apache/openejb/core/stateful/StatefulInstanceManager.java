@@ -35,6 +35,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.PojoSerialization;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.StaticRecipe;
@@ -58,6 +59,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.io.Serializable;
+import java.io.ObjectStreamException;
 
 public class StatefulInstanceManager {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -200,7 +202,7 @@ public class StatefulInstanceManager {
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
             interceptorStack.invoke();
-            
+
             bean = newInstance(primaryKey, bean, interceptorInstances);
 
         } catch (Throwable callbackException) {
@@ -231,7 +233,7 @@ public class StatefulInstanceManager {
     protected BeanEntry newBeanEntry(Object primaryKey, Object bean) {
         return new BeanEntry(bean, primaryKey, timeOut);
     }
-    
+
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
         for (Injection injection : deploymentInfo.getInjections()) {
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
@@ -425,7 +427,7 @@ public class StatefulInstanceManager {
             if (entry.beanTransaction == null) {
                 // add it to end of Queue; the most reciently used bean
                 lruQueue.add(entry);
-                
+
                 onPoolInstanceWithoutTransaction(callContext, entry);
             }
         }
@@ -448,7 +450,7 @@ public class StatefulInstanceManager {
         }
 
         onFreeBeanEntry(threadContext, entry);
-        
+
         return entry.bean;
     }
 
@@ -672,6 +674,40 @@ public class StatefulInstanceManager {
         public Instance(Object bean, Map<String, Object> interceptors) {
             this.bean = bean;
             this.interceptors = interceptors;
+        }
+
+        protected Object writeReplace() throws ObjectStreamException {
+            return new Serialization(this);
+        }
+
+        private static class Serialization implements Serializable {
+            public final Object bean;
+            public final Map<String,Object> interceptors;
+
+            public Serialization(Instance i) {
+                if (i.bean instanceof Serializable){
+                    bean = i.bean;
+                } else {
+                    bean = new PojoSerialization(i.bean);
+                }
+
+                interceptors = new HashMap(i.interceptors.size());
+                for (Map.Entry<String, Object> e : i.interceptors.entrySet()) {
+                    if (e.getValue() == i.bean){
+                        // need to use the same wrapped reference or well get two copies.
+                        interceptors.put(e.getKey(), bean);
+                    } else if (!(e.getValue() instanceof Serializable)){
+                        interceptors.put(e.getKey(), new PojoSerialization(e.getValue()));
+                    }
+                }
+            }
+
+            protected Object readResolve() throws ObjectStreamException {
+                // Anything wrapped with PojoSerialization will have been automatically
+                // unwrapped via it's own readResolve so passing in the raw bean
+                // and interceptors variables is totally fine.
+                return new Instance(bean, interceptors);
+            }
         }
     }
 }
