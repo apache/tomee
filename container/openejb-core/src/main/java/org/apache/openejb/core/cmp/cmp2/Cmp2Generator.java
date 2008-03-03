@@ -55,26 +55,26 @@ public class Cmp2Generator implements Opcodes {
     private final Class primKeyClass;
     private final List<Method> selectMethods = new ArrayList<Method>();
 
-    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmrFields) {
+    public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmpFields) {
         if (pkField == null && primKeyClass == null) throw new NullPointerException("Both pkField and primKeyClass are null");
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
         this.primKeyClass = primKeyClass;
 
-        for (String cmpFieldName : cmrFields) {
+        for (String cmpFieldName : cmpFields) {
             String getterName = getterName(cmpFieldName);
             try {
                 Method getter = beanClass.getMethod(getterName);
                 Type type = Type.getType(getter.getReturnType());
                 CmpField cmpField = new CmpField(cmpFieldName, type);
-                cmpFields.put(cmpFieldName, cmpField);
+                this.cmpFields.put(cmpFieldName, cmpField);
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName, e);
             }
         }
 
         if (pkField != null) {
-            this.pkField = cmpFields.get(pkField);
+            this.pkField = this.cmpFields.get(pkField);
             if (this.pkField == null) {
                 throw new IllegalArgumentException("No such property " + pkField + " defined on bean class " + beanClassName);
             }
@@ -92,6 +92,9 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public void addCmrField(CmrField cmrField) {
+        if (cmpFields.get(cmrField.getName()) != null) {
+            cmpFields.remove(cmrField.getName());
+        }
         cmrFields.add(cmrField);
     }
 
@@ -167,7 +170,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createConstructor() {
-        MethodVisitor mv = mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKESPECIAL, beanClassName, "<init>", "()V");
