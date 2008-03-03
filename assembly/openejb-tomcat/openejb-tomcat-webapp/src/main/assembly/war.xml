@@ -52,9 +52,6 @@
     <fileSet>
       <directory>target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
-      <includes>
-          <include>org/apache/openejb/tomcat/installer/**</include>
-      </includes>
     </fileSet>
     <fileSet>
       <directory>target</directory>
@@ -84,7 +81,7 @@
       <outputDirectory>WEB-INF/lib</outputDirectory>
       <scope>runtime</scope>
       <includes>
-          <include>org.apache.openejb:openejb-loader</include>
+          <include>org.apache.openejb:openejb-tomcat-loader</include>
           <include>org.codehaus.swizzle:swizzle-stream</include>
       </includes>
     </dependencySet>

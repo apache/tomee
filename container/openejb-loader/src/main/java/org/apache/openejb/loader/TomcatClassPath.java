@@ -54,7 +54,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             try {
                 addURLMethod = getAddURLMethod();
             } catch (Exception tomcat5Exception) {
-                throw new RuntimeException("Failed accessing classloader for Tomcat 4 or 5", tomcat5Exception);
+                throw new RuntimeException("Failed accessing classloader for Tomcat 5 or 6", tomcat5Exception);
             }
         }
 
@@ -110,8 +110,8 @@ public class TomcatClassPath extends BasicURLClassPath {
             return;
         }
 
-        for (int j = 0; j < jarNames.length; j++) {
-            this.addJarToPath(new File(dir, jarNames[j]).toURL());
+        for (String jarName : jarNames) {
+            this.addJarToPath(new File(dir, jarName).toURL());
         }
         rebuild();
     }
@@ -130,9 +130,9 @@ public class TomcatClassPath extends BasicURLClassPath {
 
         if (addRepositoryMethod != null) {
             String path = jar.toExternalForm();
-            addRepositoryMethod.invoke(classLoader, new Object[]{path});
+            addRepositoryMethod.invoke(classLoader, path);
         } else {
-            addURLMethod.invoke(classLoader, new Object[]{jar});
+            addURLMethod.invoke(classLoader, jar);
         }
     }
 
@@ -171,13 +171,13 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     }
 
-    private java.lang.reflect.Method getAddURLMethod() throws Exception {
-        return (java.lang.reflect.Method) AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                java.lang.reflect.Method method = null;
+    private Method getAddURLMethod() throws Exception {
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                Method method = null;
                 try {
                     Class clazz = URLClassLoader.class;
-                    method = clazz.getDeclaredMethod("addURL", new Class[]{URL.class});
+                    method = clazz.getDeclaredMethod("addURL", URL.class);
                     method.setAccessible(true);
                     return method;
                 } catch (Exception e2) {
@@ -189,12 +189,12 @@ public class TomcatClassPath extends BasicURLClassPath {
     }
 
     private Method getAddRepositoryMethod() throws Exception {
-        return (Method) AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                Method method = null;
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                Method method;
                 try {
                     Class clazz = getClassLoader().getClass();
-                    method = clazz.getDeclaredMethod("addRepository", new Class[]{String.class});
+                    method = clazz.getDeclaredMethod("addRepository", String.class);
                     method.setAccessible(true);
                     return method;
                 } catch (Exception e2) {
@@ -225,7 +225,7 @@ public class TomcatClassPath extends BasicURLClassPath {
             }
 
 
-            JarFile jarFile = null;
+            JarFile jarFile;
             try {
                 String protocol = currentUrl.getProtocol();
                 if (protocol.equals("jar")) {

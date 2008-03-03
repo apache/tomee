@@ -23,6 +23,7 @@ import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
+import org.apache.openejb.test.entity.cmr.CmrTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
 import org.apache.openejb.test.stateful.StatefulLocalTestSuite;
 import org.apache.openejb.test.stateless.StatelessLocalTestSuite;
@@ -76,6 +77,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         suite.addTest(BmpLocalTestSuite.suite());
         suite.addTest(CmpLocalTestSuite.suite());
         suite.addTest(Cmp2TestSuite.suite());
+        suite.addTest(new CmrTestSuite());
         suite.addTest(MdbTestSuite.suite());
         return suite;
     }

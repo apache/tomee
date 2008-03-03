@@ -220,7 +220,7 @@
           id="Tomcat Security Service"
           service="SecurityService"
           types="SecurityService"
-          class-name="org.apache.openejb.tomcat.TomcatSecurityService"/>
+          class-name="org.apache.openejb.tomcat.catalina.TomcatSecurityService"/>
 
   <ServiceProvider
           id="PseudoSecurityService"

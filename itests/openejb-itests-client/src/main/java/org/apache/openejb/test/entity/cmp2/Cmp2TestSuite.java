@@ -40,7 +40,6 @@ public class Cmp2TestSuite extends org.apache.openejb.test.FilteredTestSuite {
         this.addTest(new Cmp2AllowedOperationsTests());
         this.addTest(new Cmp2JndiEncTests());
         this.addTest(new Cmp2RmiIiopTests());
-        this.addTest(new CmrTestSuite());
 
         this.addTest(new Complex2HomeIntfcTests());
         this.addTest(new Complex2EjbHomeTests());

@@ -30,7 +30,9 @@
   <name>OpenEJB :: Assembly :: Tomcat</name>
 
   <modules>
-    <module>openejb-tomcat-naming</module>
+    <module>openejb-tomcat-loader</module>
+    <module>openejb-tomcat-catalina</module>
+    <module>openejb-tomcat-common</module>
     <module>openejb-tomcat-webapp</module>
   </modules>
 </project>

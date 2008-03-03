@@ -24,7 +24,7 @@ javax.servlet.http.HttpServletRequest,
 javax.servlet.jsp.JspWriter,
 java.io.File
 "%>
-<%@ page import="org.apache.openejb.tomcat.TomcatVersion"%>
+<%@ page import="org.apache.openejb.tomcat.common.TomcatVersion"%>
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">

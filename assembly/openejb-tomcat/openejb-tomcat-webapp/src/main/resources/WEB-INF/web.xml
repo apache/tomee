@@ -25,14 +25,14 @@
   <display-name>OpenEJB Loader Application</display-name>
 
   <servlet>
-    <servlet-name>ServerServlet</servlet-name>
-    <servlet-class>org.apache.openejb.tomcat.ServerServlet</servlet-class>
+    <servlet-name>LoaderServlet</servlet-name>
+    <servlet-class>org.apache.openejb.tomcat.loader.LoaderServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
   </servlet>
 
   <servlet>
-    <servlet-name>LoaderServlet</servlet-name>
-    <servlet-class>org.apache.openejb.loader.LoaderServlet</servlet-class>
-    <load-on-startup>0</load-on-startup>
+    <servlet-name>ServerServlet</servlet-name>
+    <servlet-class>org.apache.openejb.tomcat.common.ServerServlet</servlet-class>
   </servlet>
 
   <servlet>
