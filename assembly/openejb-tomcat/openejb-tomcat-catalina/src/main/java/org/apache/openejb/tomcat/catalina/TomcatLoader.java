@@ -56,6 +56,11 @@ public class TomcatLoader implements Loader {
     protected ServiceManager manager;
 
     public void init(Properties properties) throws Exception {
+        // Enable System EJBs like the MEJB and DeployerEJB
+        properties.setProperty("openejb.deployments.classpath", "true");
+        properties.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+        properties.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
+
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
         SystemInstance.init(properties);
@@ -82,13 +87,6 @@ public class TomcatLoader implements Loader {
         } catch (IOException e) {
             System.out.println("Processing conf/system.properties failed: "+e.getMessage());
         }
-
-
-        // initialize system instance before doing anything
-        System.setProperty("openejb.deployments.classpath", "true");
-        System.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
-        System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
-        SystemInstance.init(properties);
 
         System.setProperty("openejb.home", SystemInstance.get().getHome().getDirectory().getAbsolutePath());
         System.setProperty("openejb.base", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
