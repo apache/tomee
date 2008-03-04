@@ -37,10 +37,8 @@ javax.naming.InitialContext
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>XXXOpenEJB Tomcat Integration/1.0</title>
+    <title>OpenEJB/Tomcat</title>
     <link href="default.css" rel="stylesheet">
-    <!-- $Id: viewejb.jsp,v 1.1.2.2 2003/05/06 11:59:21 dblevins Exp $ -->
-    <!-- Author: David Blevins (david.blevins@visi.com) -->
 </head>
 <body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
 <a name="top"></a>

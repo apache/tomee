@@ -33,10 +33,8 @@ java.util.Properties
 <html>
 <head>
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OpenEJB Tomcat Integration/1.0</title>
+    <title>OpenEJB/Tomcat</title>
     <link href="default.css" rel="stylesheet">
-    <!-- $Id: testint.jsp,v 1.1.2.1 2003/05/05 02:42:52 dblevins Exp $ -->
-    <!-- Author: David Blevins (david.blevins@visi.com) -->
 </head>
 <body marginwidth="0" marginheight="0" leftmargin="0" bottommargin="0" topmargin="0" vlink="#6763a9" link="#6763a9" bgcolor="#ffffff">
 <a name="top"></a>
