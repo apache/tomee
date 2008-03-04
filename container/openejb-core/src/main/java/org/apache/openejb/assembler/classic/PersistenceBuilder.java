@@ -157,6 +157,8 @@ public class PersistenceBuilder {
         if (persistenceProviderClassName == null) {
             persistenceProviderClassName = DEFAULT_PERSISTENCE_PROVIDER;
         }
+        unitInfo.setPersistenceProviderClassName(persistenceProviderClassName);
+
         Class clazz = classLoader.loadClass(persistenceProviderClassName);
         PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
