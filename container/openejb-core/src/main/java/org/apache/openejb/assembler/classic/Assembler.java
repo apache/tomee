@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.naming.NameAlreadyBoundException;
 import javax.persistence.EntityManagerFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
@@ -459,6 +460,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 try {
                     EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
                     containerSystem.getJNDIContext().bind("java:openejb/PersistenceUnit/" + info.id, factory);
+                } catch (NameAlreadyBoundException e) {
+                    throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
                 } catch (Exception e) {
                     throw new OpenEJBException(e);
                 }
