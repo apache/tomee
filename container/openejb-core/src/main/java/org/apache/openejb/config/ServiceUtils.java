@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 public class ServiceUtils {
     public static final String ANY = ServiceUtils.class.getName() + "@ANY";
+    public static final String NONE = ServiceUtils.class.getName() + "@NONE";
 
     /**
      * Default service provider package.  This value is choosen as follows:
@@ -165,12 +166,13 @@ public class ServiceUtils {
         for (Map.Entry<Object, Object> entry : a.entrySet()) {
             Object value = b.get(entry.getKey());
 
-            // does b have the key?
-            if (value == null) return false;
-
-            // do the values match?
             Object expected = entry.getValue();
-            if (!expected.equals(ANY) && !expected.equals(value)) return false;
+
+            if (expected.equals(NONE)){
+                if (value != null) return false;
+            } else if (expected.equals(ANY)){
+                if (value == null) return false;
+            } else if (!expected.equals(value)) return false;
         }
         return true;
     }

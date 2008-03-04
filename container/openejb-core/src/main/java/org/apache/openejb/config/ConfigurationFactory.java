@@ -748,6 +748,26 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return resourceIds;
     }
 
+    protected ResourceInfo getResourceInfo(String id) {
+        OpenEjbConfiguration runningConfig = getRunningConfig();
+        if (runningConfig != null) {
+            for (ResourceInfo resourceInfo : runningConfig.facilities.resources) {
+                if (resourceInfo.id == id){
+                    return resourceInfo;
+                }
+            }
+        }
+
+        if (sys != null) {
+            for (ResourceInfo resourceInfo : sys.facilities.resources) {
+                if (resourceInfo.id == id){
+                    return resourceInfo;
+                }
+            }
+        }
+        return null;
+    }
+
     @SuppressWarnings({"UnusedDeclaration", "EmptyFinallyBlock"})
     private boolean isResourceType(String service, List<String> types, String type) {
         boolean b = false;

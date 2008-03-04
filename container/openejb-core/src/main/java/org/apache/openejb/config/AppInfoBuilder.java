@@ -426,7 +426,6 @@ class AppInfoBuilder {
                     }
                 }
 
-                logger.info("Configuring PersistenceUnit(name="+info.name+", provider="+info.provider+")");
                 // Persistence Unit Root Url
                 appInfo.persistenceUnits.add(info);
             }

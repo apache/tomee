@@ -17,6 +17,12 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.config.ServiceUtils.NONE;
+import static org.apache.openejb.config.ServiceUtils.ANY;
+
+import static java.util.Arrays.asList;
+
+import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -51,9 +57,9 @@ import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.util.SuperProperties;
 import static org.apache.openejb.util.Join.join;
 
-import javax.sql.DataSource;
 import javax.jms.Queue;
 import javax.jms.Topic;
 import java.util.List;
@@ -852,28 +858,359 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         Persistence persistence = persistenceModule.getPersistence();
-        for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+        for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+            if (unit.getProvider() != null){
+                logger.info("Configuring PersistenceUnit(name="+unit.getName()+", provider="+unit.getProvider()+")");
+            } else {
+                logger.info("Configuring PersistenceUnit(name="+unit.getName()+")");
+            }
+
             Properties required = new Properties();
 
+//            if (unit.getJtaDataSource() == null && unit.getNonJtaDataSource() == null){
+//                unit.setJtaDataSource("JtaDataSource");
+//                unit.setNonJtaDataSource("NonJtaDataSource");
+//            } else if (unit.getJtaDataSource() == null){
+//                unit.setJtaDataSource(unit.getNonJtaDataSource()+"Jta");
+//            } else if (unit.getNonJtaDataSource() == null){
+//                unit.setNonJtaDataSource(unit.getJtaDataSource()+"NonJta");
+//            }
+
+            unit.setJtaDataSource(normalizeResourceId(unit.getJtaDataSource()));
+            unit.setNonJtaDataSource(normalizeResourceId(unit.getNonJtaDataSource()));
+
             required.put("JtaManaged", "true");
-            String jtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getJtaDataSource(), DataSource.class.getName(), null, required);
-            if (jtaDataSourceId != null) {
-                persistenceUnit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
-            }
+            String jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
 
             required.put("JtaManaged", "false");
-            String nonJtaDataSourceId = getResourceId(persistenceUnit.getName(), persistenceUnit.getNonJtaDataSource(), DataSource.class.getName(), null, required);
-            if (nonJtaDataSourceId != null) {
-                persistenceUnit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+            String nonJtaDataSourceId = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+
+            if (jtaDataSourceId != null && nonJtaDataSourceId != null){
+                // Both DataSources were explicitly configured.
+                unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
+                unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                continue;
             }
+
+            //
+            //  If the jta-data-source or the non-jta-data-source link to
+            //  third party resources, then we can't do any auto config
+            //  for them.  We give them what they asked for and move on.
+            //
+            if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
+                required.put("JtaManaged", NONE);
+
+                jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+                nonJtaDataSourceId = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+
+                if (jtaDataSourceId != null || nonJtaDataSourceId != null) {
+                    if (jtaDataSourceId != null) unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
+                    if (nonJtaDataSourceId != null) unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                    continue;
+                }
+            }
+
+
+            //  We are done with the most optimal configuration.
+            //
+            //  If both the jta-data-source and non-jta-data-source
+            //  references were explicitly and correctly configured
+            //  to existing datasource, we wouldn't get this far.
+            //
+            //  At this point we see if either we can't figure out
+            //  if there's an issue with their configuration or
+            //  if we can't intelligently complete their configuration.
+
+
+
+            //
+            //  Do both the jta-data-source and non-jta-data-source references
+            //  point to the same datasource?
+            //
+            //  If so, then unlink the invalid one so defaulting rules can
+            //  possibly fill in a good value.
+            //
+
+            required.put("JtaManaged", ANY);
+            String possibleJta = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+            String possibleNonJta = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+            if (possibleJta != null && possibleJta == possibleNonJta){
+                ResourceInfo dataSource = configFactory.getResourceInfo(possibleJta);
+
+                String jtaManaged = (String) dataSource.properties.get("JtaManaged");
+
+                logger.warning("PeristenceUnit(name=" + unit.getName() + ") invalidly refers to Resource(id=" + dataSource.id + ") as both its <jta-data-source> and <non-jta-data-source>.");
+
+                if ("true".equalsIgnoreCase(jtaManaged)){
+                    nonJtaDataSourceId = null;
+                    unit.setNonJtaDataSource(null);
+
+                } else if ("false".equalsIgnoreCase(jtaManaged)){
+                    jtaDataSourceId = null;
+                    unit.setJtaDataSource(null);
+                }
+            }
+
+            //
+            //  Do the jta-data-source and non-jta-data-source references
+            //  point to innapropriately configured Resources?
+            //
+            checkUnitDataSourceRefs(unit);
+
+            //
+            //  Do either the jta-data-source and non-jta-data-source
+            //  references point to the explicit name of a ServiceProvider?
+            //
+            if (jtaDataSourceId == null && nonJtaDataSourceId == null){
+                jtaDataSourceId = findResourceProviderId(unit.getJtaDataSource());
+                nonJtaDataSourceId = findResourceProviderId(unit.getNonJtaDataSource());
+
+                // if one of them is not null we have a match on at least one
+                // we can just create the second resource using the first as a template
+                if (jtaDataSourceId != null || nonJtaDataSourceId != null){
+                    Resource jtaResource = new Resource(jtaDataSourceId, "DataSource", jtaDataSourceId);
+                    jtaResource.getProperties().setProperty("JtaManaged", "true");
+
+                    Resource nonJtaResource = new Resource(nonJtaDataSourceId, "DataSource", nonJtaDataSourceId);
+                    nonJtaResource.getProperties().setProperty("JtaManaged", "false");
+
+                    if (jtaDataSourceId == null){
+                        jtaResource.setId(nonJtaDataSourceId+"Jta");
+                        jtaResource.setProvider(nonJtaDataSourceId);
+                    } else if (nonJtaDataSourceId == null){
+                        nonJtaResource.setId(jtaDataSourceId+"NonJta");
+                        nonJtaResource.setProvider(jtaDataSourceId);
+                    }
+
+                    ResourceInfo jtaResourceInfo = configFactory.configureService(jtaResource, ResourceInfo.class);
+                    ResourceInfo nonJtaResourceInfo = configFactory.configureService(nonJtaResource, ResourceInfo.class);
+
+                    logAutoCreateResource(jtaResourceInfo, "DataSource", unit.getName());
+                    jtaDataSourceId = installResource(unit.getName(), jtaResourceInfo);
+
+                    logAutoCreateResource(nonJtaResourceInfo, "DataSource", unit.getName());
+                    nonJtaDataSourceId = installResource(unit.getName(), nonJtaResourceInfo);
+
+                    unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
+                    unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                    continue;
+                }
+            }
+
+            //
+            //  If neither of the references are valid yet, then let's take
+            //  the first valid datasource.
+            //
+            //  We won't fill in both jta-data-source and non-jta-data-source
+            //  this way as the following code does a great job at determining
+            //  if any of the existing data sources are a good match or if
+            //  one needs to be generated.
+            //
+            if (jtaDataSourceId == null && nonJtaDataSourceId == null){
+
+                required.clear();
+                required.put("JtaManaged", "true");
+                jtaDataSourceId = firstMatching("DataSource", required, null);
+
+                if (jtaDataSourceId == null){
+                    required.clear();
+                    required.put("JtaManaged", "false");
+                    nonJtaDataSourceId = firstMatching("DataSource", required, null);
+                }
+            }
+
+
+            //
+            //  Does the jta-data-source reference point an existing
+            //  Resource in the system with JtaManaged=true?
+            //
+            //  If so, we can search for an existing datasource
+            //  configured with identical properties and use it.
+            //
+            //  If that doesn't work, we can copy the jta-data-source
+            //  and auto-create the missing non-jta-data-source
+            //  using it as a template, applying the overrides,
+            //  and finally setting JtaManaged=false
+            //
+
+            if (jtaDataSourceId != null && nonJtaDataSourceId == null){
+
+                ResourceInfo jtaResourceInfo = configFactory.getResourceInfo(jtaDataSourceId);
+
+                Properties jtaProperties = jtaResourceInfo.properties;
+
+                if (jtaProperties.containsKey("JtaManaged")){
+
+                    // Strategy 1: Best match search
+
+                    required.clear();
+                    required.put("JtaManaged", "false");
+
+                    for (String key : asList("JdbcDriver", "JdbcUrl")) {
+                        if (jtaProperties.containsKey(key)) required.put(key, jtaProperties.get(key));
+                    }
+
+                    nonJtaDataSourceId = firstMatching("DataSource", required, null);
+
+                    // Strategy 2: Copy
+
+                    if (nonJtaDataSourceId == null) {
+                        ResourceInfo nonJtaResourceInfo = copy(jtaResourceInfo);
+                        nonJtaResourceInfo.id = jtaResourceInfo.id + "NonJta";
+
+                        Properties overrides = ConfigurationFactory.getSystemProperties(nonJtaResourceInfo.id, nonJtaResourceInfo.service);
+                        nonJtaResourceInfo.properties.putAll(overrides);
+                        nonJtaResourceInfo.properties.setProperty("JtaManaged", "false");
+
+                        logAutoCreateResource(nonJtaResourceInfo, "DataSource", unit.getName());
+                        logger.info("configureService.configuring", nonJtaResourceInfo.id, nonJtaResourceInfo.service, jtaResourceInfo.id);
+
+                        nonJtaDataSourceId = installResource(unit.getName(), nonJtaResourceInfo);
+                    }
+                }
+
+            }
+
+            //
+            //  Does the jta-data-source reference point an existing
+            //  Resource in the system with JtaManaged=false?
+            //
+            //  If so, we can search for an existing datasource
+            //  configured with identical properties and use it.
+            //
+            //  If that doesn't work, we can copy the jta-data-source
+            //  and auto-create the missing non-jta-data-source
+            //  using it as a template, applying the overrides,
+            //  and finally setting JtaManaged=false
+            //
+
+            if (nonJtaDataSourceId != null && jtaDataSourceId == null){
+
+                ResourceInfo nonJtaResourceInfo = configFactory.getResourceInfo(nonJtaDataSourceId);
+
+                Properties nonJtaProperties = nonJtaResourceInfo.properties;
+
+                if (nonJtaProperties.containsKey("JtaManaged")){
+
+                    // Strategy 1: Best match search
+
+                    required.clear();
+                    required.put("JtaManaged", "true");
+
+                    for (String key : asList("JdbcDriver", "JdbcUrl")) {
+                        if (nonJtaProperties.containsKey(key)) required.put(key, nonJtaProperties.get(key));
+                    }
+
+                    jtaDataSourceId = firstMatching("DataSource", required, null);
+
+                    // Strategy 2: Copy
+
+                    if (jtaDataSourceId == null) {
+                        ResourceInfo jtaResourceInfo = copy(nonJtaResourceInfo);
+                        jtaResourceInfo.id = nonJtaResourceInfo.id + "Jta";
+
+                        Properties overrides = ConfigurationFactory.getSystemProperties(jtaResourceInfo.id, jtaResourceInfo.service);
+                        jtaResourceInfo.properties.putAll(overrides);
+                        jtaResourceInfo.properties.setProperty("JtaManaged", "true");
+
+                        logAutoCreateResource(jtaResourceInfo, "DataSource", unit.getName());
+                        logger.info("configureService.configuring", jtaResourceInfo.id, jtaResourceInfo.service, nonJtaResourceInfo.id);
+
+                        jtaDataSourceId = installResource(unit.getName(), jtaResourceInfo);
+                    }
+                }
+
+            }
+
+            //
+            //  By this point if we've found anything at all, both
+            //  jta-data-source and non-jta-data-source should be
+            //  filled in (provided they aren't using a third party
+            //  data source).
+            //
+            //  Should both references still be null
+            //  we can just take a shot in the dark and auto-create
+            //  them them both using the built-in templates for jta
+            //  and non-jta default datasources.  These are supplied
+            //  via the service-jar.xml file.
+            //
+            if (jtaDataSourceId == null && nonJtaDataSourceId == null){
+                required.put("JtaManaged", "true");
+                jtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());
+
+                required.put("JtaManaged", "false");
+                nonJtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());
+            }
+
+            if (jtaDataSourceId != null) unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
+            if (nonJtaDataSourceId != null) unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
         }
     }
 
-    private String getResourceId(String beanName, String resourceId, String type, AppResources appResources) throws OpenEJBException {
-        return getResourceId(beanName, resourceId, type, appResources, null);
+    private ResourceInfo copy(ResourceInfo a) {
+        ResourceInfo b = new ResourceInfo();
+        b.id = a.id;
+        b.service = a.service;
+        b.className = a.className;
+        b.codebase = a.codebase;
+        b.displayName = a.displayName;
+        b.description = a.description;
+        b.factoryMethod = a.factoryMethod;
+        b.constructorArgs.addAll(a.constructorArgs);
+        b.types.addAll(a.types);
+        b.properties = new SuperProperties();
+        b.properties.putAll(a.properties);
+
+        return b;
     }
 
-    private String getResourceId(String beanName, String resourceId, String type, AppResources appResources, Properties required) throws OpenEJBException {
+    private void checkUnitDataSourceRefs(PersistenceUnit unit) throws OpenEJBException {
+        Properties required = new Properties();
+
+        // check that non-jta-data-source does NOT point to a JtaManaged=true datasource
+
+        required.put("JtaManaged", "true");
+
+        String invalidNonJta = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
+
+        if (invalidNonJta != null){
+            throw new OpenEJBException("PeristenceUnit "+unit.getName()+" <non-jta-data-source> points to a jta managed Resource.  Update Resource \""+invalidNonJta +"\" to \"JtaManaged=false\", use a different Resource, or delete the <non-jta-data-source> element and a default will be supplied if possible.");
+        }
+
+
+        // check that jta-data-source does NOT point to a JtaManaged=false datasource
+
+        required.put("JtaManaged", "false");
+
+        String invalidJta = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
+
+        if (invalidJta != null){
+            throw new OpenEJBException("PeristenceUnit "+unit.getName()+" <jta-data-source> points to a non jta managed Resource.  Update Resource \""+invalidJta +"\" to \"JtaManaged=true\", use a different Resource, or delete the <jta-data-source> element and a default will be supplied if possible.");
+        }
+    }
+
+    private String findResourceProviderId(String resourceId) throws OpenEJBException {
+        if (resourceId == null) return null;
+        
+        if (hasServiceProvider(resourceId)) {
+            return resourceId;
+        }
+
+        resourceId = toShortName(resourceId);
+        if (hasServiceProvider(resourceId)) {
+            return resourceId;
+        }
+
+        return null;
+    }
+
+    private String getResourceId(String beanName, String resourceId, String type, AppResources appResources) throws OpenEJBException {
+        return getResourceId(beanName, resourceId, type, null, appResources);
+    }
+
+    private String getResourceId(String beanName, String resourceId, String type, Properties required, AppResources appResources) throws OpenEJBException {
+        resourceId = normalizeResourceId(resourceId);
+
         if(resourceId == null){
             return null;
         }
@@ -885,37 +1222,18 @@ public class AutoConfig implements DynamicDeployer {
             return null;
         }
 
-        // strip off "java:comp/env"
-        if (resourceId.startsWith("java:comp/env")) {
-            resourceId = resourceId.substring("java:comp/env".length());
-        }
 
-        // check for existing resource with specified resourceId
-        List<String> resourceIds = new ArrayList<String>();
-        resourceIds.addAll(appResources.getResourceIds(type));
-        resourceIds.addAll(configFactory.getResourceIds(type, required));
-        for (String id : resourceIds) {
-            if (id.equalsIgnoreCase(resourceId)) return id;
-        }
-
-        // check for an existing resource using the short name (everything ever the final '/')
-        String shortName = resourceId.replaceFirst(".*/", "");
-        for (String id : resourceIds) {
-            if (id.equalsIgnoreCase(shortName)) return id;
-        }
+        // check for existing resource with specified resourceId and type and properties
+        String id = findResourceId(resourceId, type, required, appResources);
+        if (id != null) return id;
 
         // expand search to any type -- may be asking for a reference to a sub-type
-        List<String> allResourceIds = new ArrayList<String>();
-        allResourceIds.addAll(appResources.getResourceIds(null));
-        allResourceIds.addAll(configFactory.getResourceIds(null, required));
-        for (String id : allResourceIds) {
-            if (id.equalsIgnoreCase(resourceId)) return id;
-        }
-        for (String id : allResourceIds) {
-            if (id.equalsIgnoreCase(shortName)) return id;
-        }
+        id = findResourceId(resourceId, null, required, appResources);
+        if (id != null) return id;
+
 
         // throw an exception or log an error
+        String shortName = toShortName(resourceId);
         String message = "No existing resource found while attempting to Auto-link unmapped resource-ref '" + resourceId + "' of type '" + type  + "' for '" + beanName + "'.  Looked for Resource(id=" + resourceId + ") and Resource(id=" + shortName + ")";
         if (!autoCreateResources){
             throw new OpenEJBException(message);
@@ -923,28 +1241,99 @@ public class AutoConfig implements DynamicDeployer {
         logger.debug(message);
 
         // if there is a provider with the specified name. use it
-        if (ServiceUtils.hasServiceProvider(resourceId)) {
+        if (hasServiceProvider(resourceId)) {
             ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
             return installResource(beanName, resourceInfo);
-        } else if (ServiceUtils.hasServiceProvider(shortName)) {
+        } else if (hasServiceProvider(shortName)) {
             ResourceInfo resourceInfo = configFactory.configureService(shortName, ResourceInfo.class);
             return installResource(beanName, resourceInfo);
         }
 
         // if there are any resources of the desired type, use the first one
-        if (resourceIds.size() > 0) {
-            return resourceIds.get(0);
-        }
+        id = firstMatching(type, required, appResources);
+        if (id != null) return id;
 
         // Auto create a resource using the first provider that can supply a resource of the desired type
+        return autoCreateResource(type, required, beanName);
+    }
+
+    private String autoCreateResource(String type, Properties required, String beanName) throws OpenEJBException {
+        String resourceId;
         resourceId = ServiceUtils.getServiceProviderId(type, required);
         if (resourceId == null) {
             throw new OpenEJBException("No provider available for resource-ref '" + resourceId + "' of type '" + type + "' for '" + beanName + "'.");
         }
         ResourceInfo resourceInfo = configFactory.configureService(resourceId, ResourceInfo.class);
 
-        logger.info("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
+        logAutoCreateResource(resourceInfo, type, beanName);
         return installResource(beanName, resourceInfo);
+    }
+
+    private void logAutoCreateResource(ResourceInfo resourceInfo, String type, String beanName) {
+        logger.info("Auto-creating a Resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
+    }
+
+    private String firstMatching(String type, Properties required, AppResources appResources) {
+        List<String> resourceIds = getResourceIds(appResources, type, required);
+        String idd = null;
+        if (resourceIds.size() > 0) {
+            idd = resourceIds.get(0);
+        }
+        return idd;
+    }
+
+    private String findResourceId(String resourceId, String type, Properties required, AppResources appResources) {
+        if (resourceId == null) return null;
+
+        resourceId = normalizeResourceId(resourceId);
+
+        // check for existing resource with specified resourceId
+        List<String> resourceIds = getResourceIds(appResources, type, required);
+        for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(resourceId)) return id;
+        }
+
+        // check for existing resource with shortName
+        String shortName = toShortName(resourceId);
+        for (String id : resourceIds) {
+            if (id.equalsIgnoreCase(shortName)) return id;
+        }
+        return null;
+    }
+
+    private List<String> getResourceIds(AppResources appResources, String type, Properties required) {
+        List<String> resourceIds;
+        resourceIds = new ArrayList<String>();
+        if (appResources != null) resourceIds.addAll(appResources.getResourceIds(type));
+        resourceIds.addAll(configFactory.getResourceIds(type, required));
+        return resourceIds;
+    }
+
+    private String toShortName(String resourceId) {
+        // check for an existing resource using the short name (everything ever the final '/')
+        String shortName = resourceId.replaceFirst(".*/", "");
+        return shortName;
+    }
+
+    private String normalizeResourceId(String resourceId) {
+        if (resourceId == null) return null;
+
+        // strip off "java:comp/env"
+        if (resourceId.startsWith("java:comp/env")) {
+            resourceId = resourceId.substring("java:comp/env".length());
+        }
+
+        // strip off "java:openejb/Resource"
+        if (resourceId.startsWith("java:openejb/Resource")) {
+            resourceId = resourceId.substring("java:openejb/Resource".length());
+        }
+
+        // strip off "java:openejb/Connector"
+        if (resourceId.startsWith("java:openejb/Connector")) {
+            resourceId = resourceId.substring("java:openejb/Connector".length());
+        }
+
+        return resourceId;
     }
 
     private String installResource(String beanName, ResourceInfo resourceInfo) throws OpenEJBException {
@@ -978,15 +1367,10 @@ public class AutoConfig implements DynamicDeployer {
             return null;
         }
 
-        // strip off "java:comp/env"
-        if (resourceId.startsWith("java:comp/env")) {
-            resourceId = resourceId.substring("java:comp/env".length());
-        }
+        resourceId = normalizeResourceId(resourceId);
 
         // check for existing resource with specified resourceId
-        List<String> resourceEnvIds = new ArrayList<String>();
-        resourceEnvIds.addAll(appResources.getResourceIds(type));
-        resourceEnvIds.addAll(configFactory.getResourceIds(type));
+        List<String> resourceEnvIds = getResourceIds(appResources, type, null);
         for (String id : resourceEnvIds) {
             if (id.equalsIgnoreCase(resourceId)) return id;
         }
@@ -1013,7 +1397,7 @@ public class AutoConfig implements DynamicDeployer {
         resource.getProperties().setProperty("destination", resourceId);
 
         ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
-        logger.info("Auto-creating a resource with id '" + resourceInfo.id +  "' of type '" + type  + " for '" + beanName + "'.");
+        logAutoCreateResource(resourceInfo, type, beanName);
         return installResource(beanName, resourceInfo);
     }
 
