@@ -123,6 +123,10 @@ public class PersistenceUnit {
     public PersistenceUnit() {
     }
 
+    public PersistenceUnit(String unitName) {
+        this.name = unitName;
+    }
+
     public String getId() {
         return id;
     }

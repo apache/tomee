@@ -108,6 +108,15 @@ public class Persistence {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "1.0";
 
+    public Persistence() {
+    }
+
+    public Persistence(PersistenceUnit... persistenceUnit) {
+        for (PersistenceUnit unit : persistenceUnit) {
+            getPersistenceUnit().add(unit);
+        }
+    }
+
     /**
      * Gets the value of the persistenceUnit property.
      * 
