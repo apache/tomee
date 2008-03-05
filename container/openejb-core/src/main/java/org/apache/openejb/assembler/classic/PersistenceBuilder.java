@@ -23,6 +23,7 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import javax.naming.Context;
+import javax.naming.NamingException;
 
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
@@ -30,6 +31,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.OpenEJBException;
 
 public class PersistenceBuilder {
 
@@ -105,13 +107,20 @@ public class PersistenceBuilder {
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
         // JTA Datasource
-        String dataSource = info.jtaDataSource;
-        if (jtaDataSourceEnv != null) dataSource = jtaDataSourceEnv;
-        if (dataSource != null) {
+        String jtaDataSourceId = info.jtaDataSource;
+        if (jtaDataSourceEnv != null) jtaDataSourceId = jtaDataSourceEnv;
+        if (jtaDataSourceId != null) {
             if (System.getProperty("duct tape") == null){
-                Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-                DataSource jtaDataSource = (DataSource) context.lookup(dataSource);
-                unitInfo.setJtaDataSource(jtaDataSource);
+
+                try {
+                    if (!jtaDataSourceId.startsWith("java:openejb/Resource/")) jtaDataSourceId = "java:openejb/Resource/"+jtaDataSourceId;
+
+                    Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                    DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
+                    unitInfo.setJtaDataSource(jtaDataSource);
+                } catch (NamingException e) {
+                    throw new OpenEJBException("Could not lookup <jta-data-source> '" + jtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
+                }
             }
         }
 
@@ -139,13 +148,19 @@ public class PersistenceBuilder {
         }
 
         // Non JTA Datasource
-        String nonJta = info.nonJtaDataSource;
-        if (nonJtaDataSourceEnv != null) nonJta = nonJtaDataSourceEnv;
-        if (nonJta != null) {
+        String nonJtaDataSourceId = info.nonJtaDataSource;
+        if (nonJtaDataSourceEnv != null) nonJtaDataSourceId = nonJtaDataSourceEnv;
+        if (nonJtaDataSourceId != null) {
             if (System.getProperty("duct tape") == null){
-                Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-                DataSource nonJtaDataSource = (DataSource) context.lookup(nonJta);
-                unitInfo.setNonJtaDataSource(nonJtaDataSource);
+                try {
+                    if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) nonJtaDataSourceId = "java:openejb/Resource/"+nonJtaDataSourceId;
+
+                    Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                    DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
+                    unitInfo.setNonJtaDataSource(nonJtaDataSource);
+                } catch (NamingException e) {
+                    throw new OpenEJBException("Could not lookup <non-jta-data-source> '" + nonJtaDataSourceId + "' for unit '" + unitInfo.getPersistenceUnitName() + "'", e);
+                }
             }
         }
 

@@ -887,8 +887,8 @@ public class AutoConfig implements DynamicDeployer {
 
             if (jtaDataSourceId != null && nonJtaDataSourceId != null){
                 // Both DataSources were explicitly configured.
-                unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
-                unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                setJtaDataSource(unit, jtaDataSourceId);
+                setNonJtaDataSource(unit, nonJtaDataSourceId);
                 continue;
             }
 
@@ -904,8 +904,8 @@ public class AutoConfig implements DynamicDeployer {
                 nonJtaDataSourceId = findResourceId(unit.getNonJtaDataSource(), "DataSource", required, null);
 
                 if (jtaDataSourceId != null || nonJtaDataSourceId != null) {
-                    if (jtaDataSourceId != null) unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
-                    if (nonJtaDataSourceId != null) unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                    if (jtaDataSourceId != null) setJtaDataSource(unit, jtaDataSourceId);
+                    if (nonJtaDataSourceId != null) setNonJtaDataSource(unit, nonJtaDataSourceId);
                     continue;
                 }
             }
@@ -991,8 +991,8 @@ public class AutoConfig implements DynamicDeployer {
                     logAutoCreateResource(nonJtaResourceInfo, "DataSource", unit.getName());
                     nonJtaDataSourceId = installResource(unit.getName(), nonJtaResourceInfo);
 
-                    unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
-                    unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+                    setJtaDataSource(unit, jtaDataSourceId);
+                    setNonJtaDataSource(unit, nonJtaDataSourceId);
                     continue;
                 }
             }
@@ -1142,9 +1142,37 @@ public class AutoConfig implements DynamicDeployer {
                 nonJtaDataSourceId = autoCreateResource("DataSource", required, unit.getName());
             }
 
-            if (jtaDataSourceId != null) unit.setJtaDataSource("java:openejb/Resource/" + jtaDataSourceId);
-            if (nonJtaDataSourceId != null) unit.setNonJtaDataSource("java:openejb/Resource/" + nonJtaDataSourceId);
+            if (jtaDataSourceId != null) setJtaDataSource(unit, jtaDataSourceId);
+            if (nonJtaDataSourceId != null) setNonJtaDataSource(unit, nonJtaDataSourceId);
         }
+    }
+
+    private void setNonJtaDataSource(PersistenceUnit unit, String current) {
+
+
+        String previous = unit.getNonJtaDataSource();
+
+        if (!current.equals(previous)) {
+
+            logger.info("Adjusting " + unit.getName() + " <non-jta-data-source> to '" + current+"'");
+
+        }
+
+        unit.setNonJtaDataSource(current);
+    }
+
+    private void setJtaDataSource(PersistenceUnit unit, String current) {
+
+
+        String previous = unit.getJtaDataSource();
+
+        if (!current.equals(previous)) {
+
+            logger.info("Adjusting " + unit.getName() + " <jta-data-source> to '" + current+"'");
+
+        }
+
+        unit.setJtaDataSource(current);
     }
 
     private ResourceInfo copy(ResourceInfo a) {
@@ -1191,7 +1219,7 @@ public class AutoConfig implements DynamicDeployer {
 
     private String findResourceProviderId(String resourceId) throws OpenEJBException {
         if (resourceId == null) return null;
-        
+
         if (hasServiceProvider(resourceId)) {
             return resourceId;
         }

@@ -86,8 +86,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -115,8 +115,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
 
@@ -144,7 +144,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + dataSource.id, unitInfo.jtaDataSource);
+        assertEquals(dataSource.id, unitInfo.jtaDataSource);
         assertNull(unitInfo.nonJtaDataSource);
     }
 
@@ -173,7 +173,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
         assertNull(unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + dataSource.id, unitInfo.nonJtaDataSource);
+        assertEquals(dataSource.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -202,8 +202,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + dataSource.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + dataSource.id, unitInfo.nonJtaDataSource);
+        assertEquals(dataSource.id, unitInfo.jtaDataSource);
+        assertEquals(dataSource.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -238,8 +238,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.nonJtaDataSource);
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertEquals(generated.id, unitInfo.nonJtaDataSource);
 
 
         assertNotNull(generated);
@@ -285,8 +285,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.nonJtaDataSource);
+        assertEquals(generated.id, unitInfo.jtaDataSource);
+        assertEquals(supplied.id, unitInfo.nonJtaDataSource);
 
 
         assertNotNull(generated);
@@ -333,8 +333,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -371,8 +371,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -403,8 +403,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -435,8 +435,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertNotNull(unitInfo);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     // ---
@@ -584,8 +584,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.nonJtaDataSource);
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.jtaDataSource);
+        assertEquals(supplied.id, unitInfo.nonJtaDataSource);
+        assertEquals(generated.id, unitInfo.jtaDataSource);
 
 
         assertNotNull(generated);
@@ -622,8 +622,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.nonJtaDataSource);
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertEquals(generated.id, unitInfo.nonJtaDataSource);
 
 
         assertEquals(supplied.id + "NonJta", generated.id);
@@ -665,8 +665,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(2);
 
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.nonJtaDataSource);
+        assertEquals(generated.id, unitInfo.jtaDataSource);
+        assertEquals(supplied.id, unitInfo.nonJtaDataSource);
 
 
         assertEquals(supplied.id + "Jta", generated.id);
@@ -707,8 +707,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(2);
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.nonJtaDataSource);
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertEquals(generated.id, unitInfo.nonJtaDataSource);
 
 
         assertEquals(supplied.id + "NonJta", generated.id);
@@ -751,8 +751,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
 
-        assertEquals("java:openejb/Resource/" + goodMatch.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.nonJtaDataSource);
+        assertEquals(goodMatch.id, unitInfo.jtaDataSource);
+        assertEquals(supplied.id, unitInfo.nonJtaDataSource);
     }
 
     /**
@@ -785,8 +785,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertNotNull(unitInfo);
 
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + goodMatch.id, unitInfo.nonJtaDataSource);
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertEquals(goodMatch.id, unitInfo.nonJtaDataSource);
     }
 
     // ---
@@ -819,8 +819,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.nonJtaDataSource);
+        assertEquals(generated.id, unitInfo.jtaDataSource);
+        assertEquals(supplied.id, unitInfo.nonJtaDataSource);
 
 
         assertEquals(supplied.id + "Jta", generated.id);
@@ -860,8 +860,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         ResourceInfo generated = resources.get(1);
 
-        assertEquals("java:openejb/Resource/" + supplied.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + generated.id, unitInfo.nonJtaDataSource);
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertEquals(generated.id, unitInfo.nonJtaDataSource);
 
 
         assertEquals(supplied.id + "NonJta", generated.id);
@@ -904,8 +904,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertEquals("Default JDBC Database", jta.id);
         assertEquals("Default Unmanaged JDBC Database", nonJta.id);
 
-        assertEquals("java:openejb/Resource/" + jta.id, unitInfo.jtaDataSource);
-        assertEquals("java:openejb/Resource/" + nonJta.id, unitInfo.nonJtaDataSource);
+        assertEquals(jta.id, unitInfo.jtaDataSource);
+        assertEquals(nonJta.id, unitInfo.nonJtaDataSource);
     }
 
     // --------------------------------------------------------------------------------------------
