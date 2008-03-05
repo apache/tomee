@@ -31,6 +31,5 @@
   <name>OpenEJB :: Web Examples </name>
   <modules>
     <module>ejb-examples</module>
-    <module>moviefun</module>
   </modules>
 </project>
