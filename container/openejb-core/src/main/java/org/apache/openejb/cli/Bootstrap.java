@@ -21,12 +21,13 @@ import org.apache.openejb.loader.SystemClassPath;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * @version $Rev$ $Date$
  */
 public class Bootstrap {
-    
+
     private final static String OPENEJB_VERSION_PROPERTIES_FILE_NAME = "openejb-version.properties";
     private final static String OPENEJB_HOME_PROPERTY_NAME = "openejb.home";
     private final static String OPENEJB_BASE_PROPERTY_NAME = "openejb.base";
@@ -56,6 +57,8 @@ public class Bootstrap {
 
                 propsString = propsString.substring(0, propsString.indexOf("!"));
 
+                propsString = URLDecoder.decode(propsString);
+                
                 URI uri = new URI(propsString);
 
                 File jarFile = new File(uri);

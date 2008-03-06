@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core.security;
 
+import static org.apache.openejb.util.URLs.toFilePath;
 import junit.framework.TestCase;
 import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jaas.UserPrincipal;
@@ -41,7 +42,7 @@ public class PropertiesLoginModuleTest extends TestCase {
         if (path == null) {
             URL resource = PropertiesLoginModuleTest.class.getClassLoader().getResource("login.config");
             if (resource != null) {
-                path = resource.getFile();
+                path = toFilePath(resource);
                 System.setProperty("java.security.auth.login.config", path);
             }
         }

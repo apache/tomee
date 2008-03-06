@@ -170,7 +170,7 @@ public class UriResolver {
             try {
                 file = new File(uri);
             } catch (IllegalArgumentException iae) {
-                file = new File(uri.toURL().getPath());
+                file = org.apache.openejb.util.URLs.toFile(uri.toURL());
                 if (!file.exists()) {
                     file = null;
                 }

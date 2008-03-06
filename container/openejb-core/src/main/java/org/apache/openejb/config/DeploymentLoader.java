@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.util.URLs.toFile;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.TemporaryClassLoader;
@@ -36,6 +37,7 @@ import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
@@ -50,7 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +112,7 @@ public class DeploymentLoader {
 
             return appModule;
         } else if (ConnectorModule.class.equals(moduleClass)) {
-            ConnectorModule connectorModule = createConnectorModule(baseUrl.getPath(), OpenEJB.class.getClassLoader(), null);
+            ConnectorModule connectorModule = createConnectorModule(URLs.toFilePath(baseUrl), OpenEJB.class.getClassLoader(), null);
 
             // Wrap the resource module with an Application Module
             AppModule appModule = new AppModule(classLoader, connectorModule.getJarLocation());
@@ -119,8 +121,8 @@ public class DeploymentLoader {
             return appModule;
         } else if (WebModule.class.equals(moduleClass)) {
             // unpack the rar file
-            String moduleId = new File(baseUrl.getPath()).getName();
-            WebModule webModule = createWebModule(baseUrl.getPath(), OpenEJB.class.getClassLoader(), null, moduleId);
+            String moduleId = toFile(baseUrl).getName();
+            WebModule webModule = createWebModule(URLs.toFilePath(baseUrl), OpenEJB.class.getClassLoader(), null, moduleId);
 
             // Wrap the resource module with an Application Module
             AppModule appModule = new AppModule(classLoader, webModule.getJarLocation());
@@ -263,7 +265,7 @@ public class DeploymentLoader {
             for (Map.Entry<String, URL> entry : resouceModules.entrySet()) {
                 try {
                     // unpack the resource adapter archive
-                    File rarFile = new File(entry.getValue().getPath());
+                    File rarFile = toFile(entry.getValue());
                     rarFile = unpack(rarFile);
                     entry.setValue(rarFile.toURL());
 
@@ -296,14 +298,14 @@ public class DeploymentLoader {
             appModule.getAltDDs().putAll(appDescriptors);
             appModule.getWatchedResources().add(appDir.getAbsolutePath());
             if (applicationXmlUrl != null) {
-                appModule.getWatchedResources().add(applicationXmlUrl.getPath());
+                appModule.getWatchedResources().add(URLs.toFilePath(applicationXmlUrl));
             }
 
             // EJB modules
             for (String moduleName : ejbModules.keySet()) {
                 try {
                     URL ejbUrl = ejbModules.get(moduleName);
-                    File ejbFile = new File(ejbUrl.getPath());
+                    File ejbFile = toFile(ejbUrl);
                     String absolutePath = ejbFile.getAbsolutePath();
 
                     EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader, moduleName);
@@ -318,7 +320,7 @@ public class DeploymentLoader {
             for (String moduleName : clientModules.keySet()) {
                 try {
                     URL clientUrl = clientModules.get(moduleName);
-                    File clientFile = new File(clientUrl.getPath());
+                    File clientFile = toFile(clientUrl);
                     String absolutePath = clientFile.getAbsolutePath();
 
                     ClientModule clientModule = createClientModule(clientUrl, absolutePath, appClassLoader, moduleName);
@@ -333,7 +335,7 @@ public class DeploymentLoader {
             for (String moduleName : resouceModules.keySet()) {
                 try {
                     URL rarUrl = resouceModules.get(moduleName);
-                    ConnectorModule connectorModule = createConnectorModule(rarUrl.getPath(), appClassLoader, moduleName);
+                    ConnectorModule connectorModule = createConnectorModule(URLs.toFilePath(rarUrl), appClassLoader, moduleName);
 
                     appModule.getResourceModules().add(connectorModule);
                 } catch (OpenEJBException e) {
@@ -345,7 +347,7 @@ public class DeploymentLoader {
             for (String moduleName : webModules.keySet()) {
                 try {
                     URL warUrl = webModules.get(moduleName);
-                    WebModule webModule = createWebModule(warUrl.getPath(), appClassLoader, webContextRoots.get(moduleName), moduleName);
+                    WebModule webModule = createWebModule(URLs.toFilePath(warUrl), appClassLoader, webContextRoots.get(moduleName), moduleName);
 
                     appModule.getWebModules().add(webModule);
                 } catch (OpenEJBException e) {
@@ -386,7 +388,7 @@ public class DeploymentLoader {
         clientModule.getAltDDs().putAll(descriptors);
         clientModule.getWatchedResources().add(absolutePath);
         if (clientXmlUrl != null && "file".equals(clientXmlUrl.getProtocol())) {
-            clientModule.getWatchedResources().add(clientXmlUrl.getPath());
+            clientModule.getWatchedResources().add(URLs.toFilePath(clientXmlUrl));
         }
         return clientModule;
     }
@@ -406,7 +408,7 @@ public class DeploymentLoader {
         ejbModule.getAltDDs().putAll(descriptors);
         ejbModule.getWatchedResources().add(jarPath);
         if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
-            ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
+            ejbModule.getWatchedResources().add(URLs.toFilePath(ejbJarXmlUrl));
         }
 
         // load webservices descriptor
@@ -469,7 +471,7 @@ public class DeploymentLoader {
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
         if (webXmlUrl != null && "file".equals(webXmlUrl.getProtocol())) {
-            webModule.getWatchedResources().add(webXmlUrl.getPath());
+            webModule.getWatchedResources().add(URLs.toFilePath(webXmlUrl));
         }
 
         // find all tag libs
@@ -507,7 +509,7 @@ public class DeploymentLoader {
         Webservices webservices = ReadDescriptors.readWebservices(webservicesUrl);
         wsModule.setWebservices(webservices);
         if ("file".equals(webservicesUrl.getProtocol())) {
-            wsModule.getWatchedResources().add(webservicesUrl.getPath());
+            wsModule.getWatchedResources().add(URLs.toFilePath(webservicesUrl));
         }
 
         // parse any jaxrpc-mapping-files mentioned in the webservices.xml file
@@ -524,7 +526,7 @@ public class DeploymentLoader {
                     }
                     webserviceDescription.setJaxrpcMapping(jaxrpcMapping);
                     if ("file".equals(jaxrpcMappingUrl.getProtocol())) {
-                        wsModule.getWatchedResources().add(jaxrpcMappingUrl.getPath());
+                        wsModule.getWatchedResources().add(URLs.toFilePath(jaxrpcMappingUrl));
                     }
                 } catch (MalformedURLException e) {
                     logger.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
@@ -578,7 +580,7 @@ public class DeploymentLoader {
             TldTaglib taglib = ReadDescriptors.readTldTaglib(location);
             webModule.getTaglibs().add(taglib);
             if ("file".equals(location.getProtocol())) {
-                webModule.getWatchedResources().add(location.getPath());
+                webModule.getWatchedResources().add(URLs.toFilePath(location));
             }
         }
     }
@@ -617,13 +619,7 @@ public class DeploymentLoader {
                 continue;
             }
 
-            File file;
-            try {
-                file = new File(url.toURI());
-            } catch (URISyntaxException e) {
-                // Ignore, probably an unencoded char
-                file = new File(url.getFile());
-            }
+            File file = toFile(url);
             try {
                 file = file.getCanonicalFile().getAbsoluteFile();
             } catch (IOException e) {
@@ -743,7 +739,7 @@ public class DeploymentLoader {
         connectorModule.getWatchedResources().add(rarPath);
         connectorModule.getWatchedResources().add(rarFile.getAbsolutePath());
         if (rarXmlUrl != null && "file".equals(rarXmlUrl.getProtocol())) {
-            connectorModule.getWatchedResources().add(rarXmlUrl.getPath());
+            connectorModule.getWatchedResources().add(URLs.toFilePath(rarXmlUrl));
         }
 
         return connectorModule;
@@ -817,10 +813,12 @@ public class DeploymentLoader {
 
             // file path has trailing !/ that must be stripped off
             pathname = pathname.substring(0, pathname.lastIndexOf('!'));
+
+            pathname = URLDecoder.decode(pathname);
             return new File(pathname);
         } else if ("file".equals(warUrl.getProtocol())) {
             String pathname = warUrl.getPath();
-            return new File(pathname);
+            return new File(URLDecoder.decode(pathname));
         } else {
             return null;
         }
@@ -864,7 +862,7 @@ public class DeploymentLoader {
 
         String path = baseUrl.getPath();
         if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
-        
+
         if (descriptors.containsKey("application.xml") || path.endsWith(".ear")) {
             return AppModule.class;
         }

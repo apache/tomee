@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.util.URLs.toFile;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -179,7 +180,7 @@ class AppInfoBuilder {
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
-            File file = new File(url.getPath());
+            File file = toFile(url);
             try {
                 appInfo.libs.add(file.getCanonicalPath());
             } catch (IOException e) {
@@ -267,7 +268,7 @@ class AppInfoBuilder {
 
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {
-                File file = new File(url.getPath());
+                File file = toFile(url);
                 try {
                     connectorInfo.libs.add(file.getCanonicalPath());
                 } catch (IOException e) {

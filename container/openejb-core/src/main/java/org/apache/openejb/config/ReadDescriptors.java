@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.util.URLs.toFilePath;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.ServicesJar;
 import org.apache.openejb.config.sys.ServiceProvider;
@@ -104,7 +105,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if ("file".equals(persistenceUrl.getProtocol())) {
-                        persistenceModule.getWatchedResources().add(persistenceUrl.getPath());
+                        persistenceModule.getWatchedResources().add(toFilePath(persistenceUrl));
                     }
                     appModule.getPersistenceModules().add(persistenceModule);
                 } catch (Exception e1) {

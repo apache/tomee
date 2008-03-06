@@ -25,6 +25,8 @@ import java.net.JarURLConnection;
 import java.net.URLConnection;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import static java.net.URLDecoder.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.jar.JarFile;
@@ -155,13 +157,13 @@ public class TomcatClassPath extends BasicURLClassPath {
 
             StringBuffer path = new StringBuffer(urls.length * 32);
 
-            File s = new File(urls[0].getFile());
+            File s = new File(URLDecoder.decode(urls[0].getFile()));
             path.append(s.getPath());
 
             for (int i = 1; i < urls.length; i++) {
                 path.append(File.pathSeparator);
 
-                s = new File(urls[i].getFile());
+                s = new File(URLDecoder.decode(urls[i].getFile()));
 
                 path.append(s.getPath());
             }
@@ -289,7 +291,8 @@ public class TomcatClassPath extends BasicURLClassPath {
                     buf.append(fixedResName);
                     String filename = buf.toString();
                     File file = new File(filename);
-                    if (file.exists()) {
+                    File file2 = new File(decode(filename));
+                    if (file.exists() || file2.exists()) {
                         return targetURL(currentUrl, fixedResName);
                     }
                 } else {

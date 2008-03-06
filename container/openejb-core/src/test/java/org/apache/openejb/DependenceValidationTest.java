@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import static org.apache.openejb.util.URLs.toFile;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -45,7 +46,7 @@ public class DependenceValidationTest extends TestCase {
         DependencyVisitor dependencyVisitor = new DependencyVisitor();
 
         URL resource = DependenceValidationTest.class.getResource("/org/apache/openejb/OpenEJB.class");
-        File file = new File(resource.getPath());
+        File file = toFile(resource);
         dir(file.getParentFile(), dependencyVisitor);
 
         depsOfPackages = dependencyVisitor.groups;

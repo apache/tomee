@@ -18,6 +18,7 @@ package org.apache.openejb.loader;
 
 import java.net.URLClassLoader;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.io.File;
 
 /*-------------------------------------------------------*/
@@ -63,13 +64,13 @@ public class SystemClassPath extends BasicURLClassPath {
 
         StringBuffer path = new StringBuffer(urls.length * 32);
 
-        File s = new File(urls[0].getFile());
+        File s = new File(URLDecoder.decode(urls[0].getFile()));
         path.append(s.getPath());
 
         for (int i = 1; i < urls.length; i++) {
             path.append(File.pathSeparator);
 
-            s = new File(urls[i].getFile());
+            s = new File(URLDecoder.decode(urls[i].getFile()));
 
             path.append(s.getPath());
         }
