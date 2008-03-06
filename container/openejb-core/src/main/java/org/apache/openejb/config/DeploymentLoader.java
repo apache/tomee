@@ -71,7 +71,7 @@ import java.util.jar.JarEntry;
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
 
@@ -96,287 +96,10 @@ public class DeploymentLoader {
 
         if (AppModule.class.equals(moduleClass)) {
 
-            File appDir = unpack(jarFile);
-            try {
-                appDir = appDir.getCanonicalFile();
-            } catch (IOException e) {
-                throw new OpenEJBException("Invalid application directory " + appDir.getAbsolutePath());
-            }
-
-            URL appUrl = getFileUrl(appDir);
-
-            ClassLoader tmpClassLoader = new TemporaryClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
-
-            ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
-
-            Map<String, URL> appDescriptors;
-            try {
-                appDescriptors = finder.getResourcesMap("META-INF");
-            } catch (IOException e) {
-                throw new OpenEJBException("Unable to determine descriptors in jar: " + appUrl.toExternalForm(), e);
-            }
-
-            try {
-
-                //
-                // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
-                //
-
-                Map<String, URL> ejbModules = new HashMap<String, URL>();
-                Map<String, URL> clientModules = new HashMap<String, URL>();
-                Map<String, URL> resouceModules = new HashMap<String, URL>();
-                Map<String, URL> webModules = new HashMap<String, URL>();
-                Map<String, String> webContextRoots = new HashMap<String, String>();
-
-                URL applicationXmlUrl = appDescriptors.get("application.xml");
-
-                Application application;
-                if (applicationXmlUrl != null) {
-                    application = unmarshal(Application.class, "application.xml", applicationXmlUrl);
-                    for (Module module : application.getModule()) {
-                        try {
-                            if (module.getEjb() != null) {
-                                URL url = finder.find(module.getEjb().trim());
-                                ejbModules.put(module.getEjb(), url);
-                            } else if (module.getJava() != null) {
-                                URL url = finder.find(module.getJava().trim());
-                                clientModules.put(module.getConnector(), url);
-                            } else if (module.getConnector() != null) {
-                                URL url = finder.find(module.getConnector().trim());
-                                resouceModules.put(module.getConnector(), url);
-                            } else if (module.getWeb() != null) {
-                                URL url = finder.find(module.getWeb().getWebUri().trim());
-                                webModules.put(module.getWeb().getWebUri(), url);
-                                webContextRoots.put(module.getWeb().getWebUri(), module.getWeb().getContextRoot());
-                            }
-                        } catch (IOException e) {
-                            throw new OpenEJBException("Invalid path to module " + e.getMessage(), e);
-                        }
-                    }
-                } else {
-                    application = new Application();
-                    HashMap<String, URL> files = new HashMap<String, URL>();
-                    scanDir(appDir, files, "");
-                    files.remove("META-INF/MANIFEST.MF");
-                    for (Map.Entry<String, URL> entry : files.entrySet()) {
-                        if (entry.getKey().startsWith("lib/")) continue;
-                        if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
-
-                        try {
-                            ClassLoader moduleClassLoader = new TemporaryClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
-
-                            Class moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
-                            if (EjbModule.class.equals(moduleType)) {
-                                ejbModules.put(entry.getKey(), entry.getValue());
-                            } else if (ClientModule.class.equals(moduleType)) {
-                                clientModules.put(entry.getKey(), entry.getValue());
-                            } else if (ConnectorModule.class.equals(moduleType)) {
-                                resouceModules.put(entry.getKey(), entry.getValue());
-                            } else if (WebModule.class.equals(moduleType)) {
-                                webModules.put(entry.getKey(), entry.getValue());
-                            }
-                        } catch (UnsupportedOperationException e) {
-                            // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
-                        } catch (Exception e) {
-                            throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
-                        }
-                    }
-                }
-
-                //
-                // Create a class loader for the application
-                //
-
-                // lib/*
-                if (application.getLibraryDirectory() == null) {
-                    application.setLibraryDirectory("lib/");
-                } else {
-                    String dir = application.getLibraryDirectory();
-                    if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
-                }
-                List<URL> extraLibs = new ArrayList<URL>();
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
-                }
-
-                // APP-INF/lib/*
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
-                }
-
-                // META-INF/lib/*
-                try {
-                    Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
-                    extraLibs.addAll(libs.values());
-                } catch (IOException e) {
-                    logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
-                }
-
-                // All jars nested in the Resource Adapter
-                HashMap<String, URL> rarLibs = new HashMap<String, URL>();
-                for (Map.Entry<String, URL> entry : resouceModules.entrySet()) {
-                    try {
-                        // unpack the resource adapter archive
-                        File rarFile = new File(entry.getValue().getPath());
-                        rarFile = unpack(rarFile);
-                        entry.setValue(rarFile.toURL());
-
-                        scanDir(appDir, rarLibs, "");
-                    } catch (MalformedURLException e) {
-                        throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
-                    }
-                }
-                for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
-                    // remove all non jars from the rarLibs
-                    Map.Entry<String, URL> fileEntry = iterator.next();
-                    if (!fileEntry.getKey().endsWith(".jar")) continue;
-                    iterator.remove();
-                }
-
-                List<URL> classPath = new ArrayList<URL>();
-                classPath.addAll(ejbModules.values());
-                classPath.addAll(clientModules.values());
-                classPath.addAll(rarLibs.values());
-                classPath.addAll(extraLibs);
-                URL[] urls = classPath.toArray(new URL[classPath.size()]);
-                ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
-
-                //
-                // Create the AppModule and all nested module objects
-                //
-
-                AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
-                appModule.getAdditionalLibraries().addAll(extraLibs);
-                appModule.getAltDDs().putAll(appDescriptors);
-                appModule.getWatchedResources().add(appDir.getAbsolutePath());
-                if (applicationXmlUrl != null) {
-                    appModule.getWatchedResources().add(applicationXmlUrl.getPath());
-                }
-
-                // EJB modules
-                for (String moduleName : ejbModules.keySet()) {
-                    try {
-                        URL ejbUrl = ejbModules.get(moduleName);
-                        File ejbFile = new File(ejbUrl.getPath());
-
-                        Map<String, URL> descriptors = getDescriptors(ejbUrl);
-
-                        EjbJar ejbJar = null;
-                        URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
-                        if (ejbJarXmlUrl != null){
-                            ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
-                        }
-
-                        EjbModule ejbModule = new EjbModule(appClassLoader, moduleName, ejbFile.getAbsolutePath(), ejbJar, null);
-
-                        ejbModule.getAltDDs().putAll(descriptors);
-                        ejbModule.getWatchedResources().add(ejbFile.getAbsolutePath());
-                        if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
-                            ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
-                        }
-
-                        // load webservices descriptor
-                        addWebservices(ejbModule);
-
-                        appModule.getEjbModules().add(ejbModule);
-                    } catch (OpenEJBException e) {
-                        logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
-                    }
-                }
-
-                // Application Client Modules
-                for (String moduleName : clientModules.keySet()) {
-                    try {
-                        URL clientUrl = clientModules.get(moduleName);
-                        File clientFile = new File(clientUrl.getPath());
-                        ResourceFinder clientFinder = new ResourceFinder(clientUrl);
-
-                        URL manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
-                        InputStream is = manifestUrl.openStream();
-                        Manifest manifest = new Manifest(is);
-                        String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
-
-                        Map<String, URL> descriptors = getDescriptors(clientUrl);
-
-                        ApplicationClient applicationClient = null;
-                        URL clientXmlUrl = descriptors.get("application-client.xml");
-                        if (clientXmlUrl != null){
-                            applicationClient = ReadDescriptors.readApplicationClient(clientXmlUrl);
-                        }
-
-                        ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, clientFile.getAbsolutePath(), mainClass, moduleName);
-
-                        clientModule.getAltDDs().putAll(descriptors);
-                        clientModule.getWatchedResources().add(clientFile.getAbsolutePath());
-                        if (clientXmlUrl != null && "file".equals(clientXmlUrl.getProtocol())) {
-                            clientModule.getWatchedResources().add(clientXmlUrl.getPath());
-                        }
-
-                        appModule.getClientModules().add(clientModule);
-                    } catch (Exception e) {
-                        logger.error("Unable to load App Client from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
-                    }
-                }
-
-                // Resource modules
-                for (String moduleName : resouceModules.keySet()) {
-                    try {
-                        URL rarUrl = resouceModules.get(moduleName);
-                        ConnectorModule connectorModule = createConnectorModule(rarUrl.getPath(), appClassLoader, moduleName);
-
-                        appModule.getResourceModules().add(connectorModule);
-                    } catch (OpenEJBException e) {
-                        logger.error("Unable to load RAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
-                    }
-                }
-
-                // Web modules
-                for (String moduleName : webModules.keySet()) {
-                    try {
-                        URL warUrl = webModules.get(moduleName);
-                        WebModule webModule = createWebModule(warUrl.getPath(), appClassLoader, webContextRoots.get(moduleName), moduleName);
-
-                        appModule.getWebModules().add(webModule);
-                    } catch (OpenEJBException e) {
-                        logger.error("Unable to load WAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
-                    }
-                }
-
-                // Persistence Units
-                addPersistenceUnits(appModule, classLoader, urls);
-
-                return appModule;
-
-            } catch (OpenEJBException e) {
-                logger.error("Unable to load EAR: " + jarPath, e);
-                throw e;
-            }
+            return createAppModule(jarFile, jarPath, classLoader);
 
         } else if (EjbModule.class.equals(moduleClass)) {
-            // read the ejb-jar.xml file
-            Map<String, URL> descriptors = getDescriptors(baseUrl);
-            EjbJar ejbJar = null;
-            URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
-            if (ejbJarXmlUrl != null){
-                ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
-            }
-
-            // create the EJB Module
-            EjbModule ejbModule = new EjbModule(classLoader, jarPath, ejbJar, null);
-            ejbModule.getAltDDs().putAll(descriptors);
-            ejbModule.getWatchedResources().add(jarPath);
-            if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
-                ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
-            }
-
-            // load webservices descriptor
-            addWebservices(ejbModule);
+            EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
 
             // wrap the EJB Module with an Application Module
             AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
@@ -412,7 +135,286 @@ public class DeploymentLoader {
         }
     }
 
-    private WebModule createWebModule(String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+    protected static AppModule createAppModule(File jarFile, String jarPath, ClassLoader classLoader) throws OpenEJBException {
+        File appDir = unpack(jarFile);
+        try {
+            appDir = appDir.getCanonicalFile();
+        } catch (IOException e) {
+            throw new OpenEJBException("Invalid application directory " + appDir.getAbsolutePath());
+        }
+
+        URL appUrl = getFileUrl(appDir);
+
+        ClassLoader tmpClassLoader = new TemporaryClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
+
+        ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
+
+        Map<String, URL> appDescriptors;
+        try {
+            appDescriptors = finder.getResourcesMap("META-INF");
+        } catch (IOException e) {
+            throw new OpenEJBException("Unable to determine descriptors in jar: " + appUrl.toExternalForm(), e);
+        }
+
+        try {
+
+            //
+            // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
+            //
+
+            Map<String, URL> ejbModules = new HashMap<String, URL>();
+            Map<String, URL> clientModules = new HashMap<String, URL>();
+            Map<String, URL> resouceModules = new HashMap<String, URL>();
+            Map<String, URL> webModules = new HashMap<String, URL>();
+            Map<String, String> webContextRoots = new HashMap<String, String>();
+
+            URL applicationXmlUrl = appDescriptors.get("application.xml");
+
+            Application application;
+            if (applicationXmlUrl != null) {
+                application = unmarshal(Application.class, "application.xml", applicationXmlUrl);
+                for (Module module : application.getModule()) {
+                    try {
+                        if (module.getEjb() != null) {
+                            URL url = finder.find(module.getEjb().trim());
+                            ejbModules.put(module.getEjb(), url);
+                        } else if (module.getJava() != null) {
+                            URL url = finder.find(module.getJava().trim());
+                            clientModules.put(module.getConnector(), url);
+                        } else if (module.getConnector() != null) {
+                            URL url = finder.find(module.getConnector().trim());
+                            resouceModules.put(module.getConnector(), url);
+                        } else if (module.getWeb() != null) {
+                            URL url = finder.find(module.getWeb().getWebUri().trim());
+                            webModules.put(module.getWeb().getWebUri(), url);
+                            webContextRoots.put(module.getWeb().getWebUri(), module.getWeb().getContextRoot());
+                        }
+                    } catch (IOException e) {
+                        throw new OpenEJBException("Invalid path to module " + e.getMessage(), e);
+                    }
+                }
+            } else {
+                application = new Application();
+                HashMap<String, URL> files = new HashMap<String, URL>();
+                scanDir(appDir, files, "");
+                files.remove("META-INF/MANIFEST.MF");
+                for (Map.Entry<String, URL> entry : files.entrySet()) {
+                    if (entry.getKey().startsWith("lib/")) continue;
+                    if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
+
+                    try {
+                        ClassLoader moduleClassLoader = new TemporaryClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
+
+                        Class moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
+                        if (EjbModule.class.equals(moduleType)) {
+                            ejbModules.put(entry.getKey(), entry.getValue());
+                        } else if (ClientModule.class.equals(moduleType)) {
+                            clientModules.put(entry.getKey(), entry.getValue());
+                        } else if (ConnectorModule.class.equals(moduleType)) {
+                            resouceModules.put(entry.getKey(), entry.getValue());
+                        } else if (WebModule.class.equals(moduleType)) {
+                            webModules.put(entry.getKey(), entry.getValue());
+                        }
+                    } catch (UnsupportedOperationException e) {
+                        // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iiilogger.info("Ignoring unknown module type: "+entry.getKey());
+                    } catch (Exception e) {
+                        throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
+                    }
+                }
+            }
+
+            //
+            // Create a class loader for the application
+            //
+
+            // lib/*
+            if (application.getLibraryDirectory() == null) {
+                application.setLibraryDirectory("lib/");
+            } else {
+                String dir = application.getLibraryDirectory();
+                if (!dir.endsWith("/")) application.setLibraryDirectory(dir + "/");
+            }
+            List<URL> extraLibs = new ArrayList<URL>();
+            try {
+                Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
+                extraLibs.addAll(libs.values());
+            } catch (IOException e) {
+                logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
+            }
+
+            // APP-INF/lib/*
+            try {
+                Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
+                extraLibs.addAll(libs.values());
+            } catch (IOException e) {
+                logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
+            }
+
+            // META-INF/lib/*
+            try {
+                Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
+                extraLibs.addAll(libs.values());
+            } catch (IOException e) {
+                logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
+            }
+
+            // All jars nested in the Resource Adapter
+            HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+            for (Map.Entry<String, URL> entry : resouceModules.entrySet()) {
+                try {
+                    // unpack the resource adapter archive
+                    File rarFile = new File(entry.getValue().getPath());
+                    rarFile = unpack(rarFile);
+                    entry.setValue(rarFile.toURL());
+
+                    scanDir(appDir, rarLibs, "");
+                } catch (MalformedURLException e) {
+                    throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
+                }
+            }
+            for (Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext();) {
+                // remove all non jars from the rarLibs
+                Map.Entry<String, URL> fileEntry = iterator.next();
+                if (!fileEntry.getKey().endsWith(".jar")) continue;
+                iterator.remove();
+            }
+
+            List<URL> classPath = new ArrayList<URL>();
+            classPath.addAll(ejbModules.values());
+            classPath.addAll(clientModules.values());
+            classPath.addAll(rarLibs.values());
+            classPath.addAll(extraLibs);
+            URL[] urls = classPath.toArray(new URL[classPath.size()]);
+            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+
+            //
+            // Create the AppModule and all nested module objects
+            //
+
+            AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
+            appModule.getAdditionalLibraries().addAll(extraLibs);
+            appModule.getAltDDs().putAll(appDescriptors);
+            appModule.getWatchedResources().add(appDir.getAbsolutePath());
+            if (applicationXmlUrl != null) {
+                appModule.getWatchedResources().add(applicationXmlUrl.getPath());
+            }
+
+            // EJB modules
+            for (String moduleName : ejbModules.keySet()) {
+                try {
+                    URL ejbUrl = ejbModules.get(moduleName);
+                    File ejbFile = new File(ejbUrl.getPath());
+                    String absolutePath = ejbFile.getAbsolutePath();
+
+                    EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader, moduleName);
+
+                    appModule.getEjbModules().add(ejbModule);
+                } catch (OpenEJBException e) {
+                    logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                }
+            }
+
+            // Application Client Modules
+            for (String moduleName : clientModules.keySet()) {
+                try {
+                    URL clientUrl = clientModules.get(moduleName);
+                    File clientFile = new File(clientUrl.getPath());
+                    String absolutePath = clientFile.getAbsolutePath();
+
+                    ClientModule clientModule = createClientModule(clientUrl, absolutePath, appClassLoader, moduleName);
+
+                    appModule.getClientModules().add(clientModule);
+                } catch (Exception e) {
+                    logger.error("Unable to load App Client from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                }
+            }
+
+            // Resource modules
+            for (String moduleName : resouceModules.keySet()) {
+                try {
+                    URL rarUrl = resouceModules.get(moduleName);
+                    ConnectorModule connectorModule = createConnectorModule(rarUrl.getPath(), appClassLoader, moduleName);
+
+                    appModule.getResourceModules().add(connectorModule);
+                } catch (OpenEJBException e) {
+                    logger.error("Unable to load RAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                }
+            }
+
+            // Web modules
+            for (String moduleName : webModules.keySet()) {
+                try {
+                    URL warUrl = webModules.get(moduleName);
+                    WebModule webModule = createWebModule(warUrl.getPath(), appClassLoader, webContextRoots.get(moduleName), moduleName);
+
+                    appModule.getWebModules().add(webModule);
+                } catch (OpenEJBException e) {
+                    logger.error("Unable to load WAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                }
+            }
+
+            // Persistence Units
+            addPersistenceUnits(appModule, classLoader, urls);
+
+            return appModule;
+
+        } catch (OpenEJBException e) {
+            logger.error("Unable to load EAR: " + jarPath, e);
+            throw e;
+        }
+    }
+
+    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws IOException, OpenEJBException {
+        ResourceFinder clientFinder = new ResourceFinder(clientUrl);
+
+        URL manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
+        InputStream is = manifestUrl.openStream();
+        Manifest manifest = new Manifest(is);
+        String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+
+        if (mainClass == null) throw new IllegalStateException("No Main-Class defined in META-INF/MANIFEST.MF file");
+        Map<String, URL> descriptors = getDescriptors(clientUrl);
+
+        ApplicationClient applicationClient = null;
+        URL clientXmlUrl = descriptors.get("application-client.xml");
+        if (clientXmlUrl != null){
+            applicationClient = ReadDescriptors.readApplicationClient(clientXmlUrl);
+        }
+
+        ClientModule clientModule = new ClientModule(applicationClient, appClassLoader, absolutePath, mainClass, moduleName);
+
+        clientModule.getAltDDs().putAll(descriptors);
+        clientModule.getWatchedResources().add(absolutePath);
+        if (clientXmlUrl != null && "file".equals(clientXmlUrl.getProtocol())) {
+            clientModule.getWatchedResources().add(clientXmlUrl.getPath());
+        }
+        return clientModule;
+    }
+
+    protected static EjbModule createEjbModule(URL baseUrl, String jarPath, ClassLoader classLoader, String moduleId) throws OpenEJBException {
+        // read the ejb-jar.xml file
+        Map<String, URL> descriptors = getDescriptors(baseUrl);
+
+        EjbJar ejbJar = null;
+        URL ejbJarXmlUrl = descriptors.get("ejb-jar.xml");
+        if (ejbJarXmlUrl != null){
+            ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
+        }
+
+        // create the EJB Module
+        EjbModule ejbModule = new EjbModule(classLoader, moduleId, jarPath, ejbJar, null);
+        ejbModule.getAltDDs().putAll(descriptors);
+        ejbModule.getWatchedResources().add(jarPath);
+        if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
+            ejbModule.getWatchedResources().add(ejbJarXmlUrl.getPath());
+        }
+
+        // load webservices descriptor
+        addWebservices(ejbModule);
+        return ejbModule;
+    }
+
+    protected static WebModule createWebModule(String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
         File warFile = new File(warPath);
         warFile = unpack(warFile);
 
@@ -479,7 +481,7 @@ public class DeploymentLoader {
         return webModule;
     }
 
-    private void addWebservices(WsModule wsModule) throws OpenEJBException {
+    private static void addWebservices(WsModule wsModule) throws OpenEJBException {
         // get location of webservices.xml file
         Object webservicesObject = wsModule.getAltDDs().get("webservices.xml");
         if (webservicesObject == null || !(webservicesObject instanceof URL)) {
@@ -532,7 +534,7 @@ public class DeploymentLoader {
 
     }
 
-    private void addTagLibraries(WebModule webModule) throws OpenEJBException {
+    private static void addTagLibraries(WebModule webModule) throws OpenEJBException {
         Set<URL> tldLocations = new HashSet<URL>();
 
         // web.xml contains tag lib locations in nested jsp config elements
@@ -581,7 +583,7 @@ public class DeploymentLoader {
         }
     }
 
-    private Set<URL> scanClassLoaderForTagLibs(ClassLoader parentClassLoader) throws OpenEJBException {
+    private static Set<URL> scanClassLoaderForTagLibs(ClassLoader parentClassLoader) throws OpenEJBException {
         Set<URL> urls = new HashSet<URL>();
         if (parentClassLoader == null) return urls;
 
@@ -703,7 +705,7 @@ public class DeploymentLoader {
         return urls;
     }
 
-    private ConnectorModule createConnectorModule(String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
+    protected static ConnectorModule createConnectorModule(String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
         URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         rarFile = unpack(rarFile);
@@ -747,7 +749,7 @@ public class DeploymentLoader {
         return connectorModule;
     }
 
-    private void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
+    protected static void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
         try {
             ResourceFinder finder = new ResourceFinder("", classLoader, urls);
             List<URL> persistenceUrls = finder.findAll("META-INF/persistence.xml");
@@ -757,7 +759,7 @@ public class DeploymentLoader {
         }
     }
 
-    private Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
+    private static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
         try {
             ResourceFinder finder = new ResourceFinder(moduleUrl);
 
@@ -801,7 +803,7 @@ public class DeploymentLoader {
         return descriptors;
     }
 
-    private static File getFile(URL warUrl) {
+    protected static File getFile(URL warUrl) {
         if ("jar".equals(warUrl.getProtocol())) {
             String pathname = warUrl.getPath();
 
@@ -907,7 +909,7 @@ public class DeploymentLoader {
         throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
     }
 
-    private File unpack(File jarFile) throws OpenEJBException {
+    private static File unpack(File jarFile) throws OpenEJBException {
         if (jarFile.isDirectory()) {
             return jarFile;
         }
@@ -926,7 +928,7 @@ public class DeploymentLoader {
         }
     }
 
-    private URL getFileUrl(File jarFile) throws OpenEJBException {
+    protected static URL getFileUrl(File jarFile) throws OpenEJBException {
         URL baseUrl;
         try {
             baseUrl = jarFile.toURL();
