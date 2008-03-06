@@ -165,7 +165,7 @@ public class PersistenceBuilder {
         }
 
         // Persistence Unit Root Url
-        unitInfo.setRootUrlAndJarUrls(new File(info.persistenceUnitRootUrl).toURL(), info.jarFiles);
+        unitInfo.setRootUrlAndJarUrls(info.persistenceUnitRootUrl, info.jarFiles);
 
         // create the persistence provider
         String persistenceProviderClassName = unitInfo.getPersistenceProviderClassName();

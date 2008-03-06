@@ -90,7 +90,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions</argLine>
+          <argLine>"-javaagent:${basedir}/target/openejb-javaagent-${version}.jar" -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemProperties>
             <property>
@@ -341,7 +341,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <forkMode>pertest</forkMode>
-              <argLine>-javaagent:${basedir}/target/openejb-javaagent-${version}.jar -enableassertions
+              <argLine>"-javaagent:${basedir}/target/openejb-javaagent-${version}.jar" -enableassertions
                 -agentlib:jdwp=transport=dt_socket,server=y,address=5005</argLine>
               <workingDirectory>${basedir}/target</workingDirectory>
               <systemProperties>

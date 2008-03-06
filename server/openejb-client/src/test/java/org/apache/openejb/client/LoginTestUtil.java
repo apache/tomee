@@ -19,6 +19,7 @@ package org.apache.openejb.client;
 
 import java.rmi.RemoteException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 public class LoginTestUtil {
     public static Request serverRequest;
@@ -29,7 +30,7 @@ public class LoginTestUtil {
         if (path == null) {
             URL resource = ClientLoginTest.class.getClassLoader().getResource("client.login.conf");
             if (resource != null) {
-                path = resource.getFile();
+                path = URLDecoder.decode(resource.getFile());
                 System.setProperty("java.security.auth.login.config", path);
             }
         }

@@ -16,16 +16,22 @@
  */
 package org.apache.openejb.persistence;
 
+import org.apache.openejb.util.Join;
+
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
@@ -189,17 +195,41 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         return persistenceUnitRootUrl;
     }
 
-    public void setRootUrlAndJarUrls(URL persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
-        this.persistenceUnitRootUrl = persistenceUnitRootUrl;
+    public void setRootUrlAndJarUrls(String persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
+        File root = new File(persistenceUnitRootUrl);
+
+        this.persistenceUnitRootUrl = toUrl(root);
         try {
-            URI uri = persistenceUnitRootUrl.toURI();
+
             for (String path : jarFiles) {
-                URI jarURI = uri.resolve(path);
-                jarFileUrls.add(jarURI.toURL());
+                File file = new File(root, path);
+                file = file.getCanonicalFile();
+                jarFileUrls.add(toUrl(file));
             }
-        } catch (URISyntaxException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private URL toUrl(File root) throws MalformedURLException {
+        URL url = root.toURL();
+
+        try {
+            url.toURI();
+        } catch (URISyntaxException e) {
+            // Likely has spaces in it.
+            try {
+                String s = url.toExternalForm();
+                URL fixed = new URL(s.replaceAll(" ", "%20"));
+                fixed.toURI();
+                url = fixed;
+            } catch (MalformedURLException e1) {
+            } catch (URISyntaxException e1) {
+                // oh well, we tried.
+            }
+        }
+
+        return url;
     }
 
     public List<String> getManagedClassNames() {

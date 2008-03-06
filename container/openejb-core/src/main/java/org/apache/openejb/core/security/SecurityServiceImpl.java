@@ -18,11 +18,13 @@ package org.apache.openejb.core.security;
 
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.util.ConfUtils;
+import org.apache.openejb.util.URLs;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.UUID;
 
 /**
@@ -52,7 +54,7 @@ public class SecurityServiceImpl extends AbstractSecurityService {
 
         URL loginConfig = ConfUtils.getConfResource("login.config");
 
-        System.setProperty("java.security.auth.login.config", loginConfig.toExternalForm());
+        System.setProperty("java.security.auth.login.config", URLDecoder.decode(loginConfig.toExternalForm()));
     }
 
     public UUID login(String realmName, String username, String password) throws LoginException {

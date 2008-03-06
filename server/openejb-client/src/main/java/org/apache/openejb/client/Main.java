@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
@@ -142,7 +143,7 @@ public class Main {
         if (path == null) {
             URL resource = classLoader.getResource("client.login.conf");
             if (resource != null) {
-                System.setProperty("java.security.auth.login.config", resource.toExternalForm());
+                System.setProperty("java.security.auth.login.config", URLDecoder.decode(resource.toExternalForm()));
             }
         }
     }
