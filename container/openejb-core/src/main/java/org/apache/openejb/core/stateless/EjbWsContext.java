@@ -20,9 +20,11 @@ import java.security.Principal;
 
 import javax.ejb.SessionContext;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.openejb.core.ThreadContext;
+import org.w3c.dom.Element;
 
 public class EjbWsContext implements WebServiceContext {
     private SessionContext context;
@@ -46,5 +48,10 @@ public class EjbWsContext implements WebServiceContext {
 
     public boolean isUserInRole(String roleName) {
         return this.context.isCallerInRole(roleName);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 }

@@ -19,6 +19,7 @@ package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.w3c.dom.Element;
 
 import javax.xml.ws.spi.Provider;
 import javax.xml.ws.spi.ServiceDelegate;
@@ -27,6 +28,9 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.namespace.QName;
@@ -49,9 +53,39 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
+    private static final Method createW3CEndpointReference;
+    private static final Method createDispatch;
+
+    static {
+        Method method = null;
+        try {
+            method = Provider.class.getMethod("createW3CEndpointReference",
+                    String.class,
+                    QName.class,
+                    QName.class,
+                    List.class,
+                    String.class,
+                    List.class);
+        } catch (NoSuchMethodException e) {
+        }
+        createW3CEndpointReference = method;
+
+        method = null;
+        try {
+            method = Provider.class.getMethod("createDispatch",
+                    EndpointReference.class,
+                    JAXBContext.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        createDispatch = method;
+    }
 
     //
     // Magic to get our proider wrapper installed with the PortRefData
@@ -126,6 +160,34 @@ public class ProviderWrapper extends Provider {
         return delegate.createAndPublishEndpoint(address, implementor);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
+    public W3CEndpointReference createW3CEndpointReference(String address,
+            QName serviceName,
+            QName portName,
+            List<Element> metadata,
+            String wsdlDocumentLocation,
+            List<Element> referenceParameters) {
+        if (createW3CEndpointReference == null) {
+            throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+        }
+        try {
+            return (W3CEndpointReference) createW3CEndpointReference.invoke(delegate,
+                    address,
+                    serviceName,
+                    portName,
+                    metadata,
+                    wsdlDocumentLocation,
+                    referenceParameters);
+        } catch (IllegalAccessException e) {
+            throw new WebServiceException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() != null) {
+                throw new WebServiceException(e.getCause());
+            }
+            throw new WebServiceException(e);
+        }
+    }
+
     private class ServiceDelegateWrapper extends ServiceDelegate {
         private final ServiceDelegate serviceDelegate;
 
@@ -170,6 +232,31 @@ public class ProviderWrapper extends Provider {
             Dispatch<Object> dispatch = serviceDelegate.createDispatch(portName, context, mode);
             setProperties(dispatch, portName);
             return dispatch;
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public Dispatch<Object> createDispatch(
+                EndpointReference endpointReference,
+                JAXBContext context,
+                Service.Mode mode,
+                WebServiceFeature... features) {
+            if (createDispatch == null) {
+                throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+            }
+            try {
+                return (Dispatch<Object>) createDispatch.invoke(delegate,
+                        endpointReference,
+                        context,
+                        mode,
+                        features);
+            } catch (IllegalAccessException e) {
+                throw new WebServiceException(e);
+            } catch (InvocationTargetException e) {
+                if (e.getCause() != null) {
+                    throw new WebServiceException(e.getCause());
+                }
+                throw new WebServiceException(e);
+            }
         }
 
         public QName getServiceName() {
