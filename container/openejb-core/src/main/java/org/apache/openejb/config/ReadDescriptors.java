@@ -370,6 +370,10 @@ public class ReadDescriptors implements DynamicDeployer {
                 public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
                     if (!localName.equals("ejb-jar")) throw new SAXException(localName);
                 }
+
+                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+                    return new InputSource(new ByteArrayInputStream(new byte[0]));
+                }
             });
             return true;
         } catch (SAXException e) {
@@ -527,6 +531,17 @@ public class ReadDescriptors implements DynamicDeployer {
 
         InputStream get() throws IOException {
             return new ByteArrayInputStream(bytes);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        try {
+            URL url = new URL("file:/tmp/ejb-jar.xml");
+            isEmptyEjbJar(url);
+            System.out.println("SUCCESS");
+        } catch (Exception e) {
+            System.out.print("ERROR: ");
+            e.printStackTrace(System.out);
         }
     }
 
