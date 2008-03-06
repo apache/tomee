@@ -26,6 +26,7 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -856,7 +857,7 @@ public class ResourceFinder {
     }
 
     private static void readDirectoryEntries(URL location, Map<String, URL> resources) throws MalformedURLException {
-        File dir = new File(location.getPath());
+        File dir = new File(URLDecoder.decode(location.getPath()));
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             for (File file : files) {
@@ -1028,7 +1029,8 @@ public class ResourceFinder {
                     buf.append(fixedResName);
                     String filename = buf.toString();
                     File file = new File(filename);
-                    if (file.exists()) {
+                    File file2 = new File(URLDecoder.decode(filename));
+                    if (file.exists() || file2.exists()) {
                         return targetURL(currentUrl, fixedResName);
                     }
                 } else {
