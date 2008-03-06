@@ -19,6 +19,7 @@ package org.apache.openejb.loader;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * @version $Rev$ $Date$
@@ -47,7 +48,7 @@ public class JarLocation {
                 path = path.substring(0, path.length() - classFileName.length());
             }
 
-            return new File(path);
+            return new File(URLDecoder.decode(path));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
