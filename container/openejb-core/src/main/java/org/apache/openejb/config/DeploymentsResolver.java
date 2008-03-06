@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import static java.net.URLDecoder.decode;
+
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
@@ -26,6 +28,7 @@ import org.apache.xbean.finder.UrlSet;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -310,11 +313,11 @@ public class DeploymentsResolver {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {
                         url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                        File file = new File(url.getFile());
+                        File file = new File(decode(url.getFile()));
                         path = file.getAbsolutePath();
                         deployment.setJar(path);
                     } else if (url.getProtocol().equals("file")) {
-                        File file = new File(url.getFile());
+                        File file = new File(decode(url.getFile()));
                         path = file.getAbsolutePath();
                         deployment.setDir(path);
                     } else {
