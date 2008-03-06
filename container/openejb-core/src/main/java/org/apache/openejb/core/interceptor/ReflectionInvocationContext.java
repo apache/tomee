@@ -68,14 +68,26 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     public Object[] getParameters() {
         if (operation.isCallback()) {
-            throw new IllegalStateException("Callback methods cannot access parameters"); 
+            throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
         return parameters.clone();
     }
 
+    private String getIllegalParameterAccessMessage() {
+        String m = "Callback methods cannot access parameters.";
+        m += "  Callback Type: "+operation;
+        if (method!= null){
+            m += ", Target Method: " + method.getName();
+        }
+        if (target != null){
+            m += ", Target Bean: "+target.getClass().getName();
+        }
+        return m;
+    }
+
     public void setParameters(Object[] parameters) {
         if (operation.isCallback()) {
-            throw new IllegalStateException("Callback methods cannot access parameters");
+            throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
         if (parameters == null) throw new NullPointerException("parameters is null");
         if (parameters.length != this.parameters.length) {
