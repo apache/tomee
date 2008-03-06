@@ -38,9 +38,11 @@
     <module>injection-of-env-entry</module>
     <module>injection-of-datasource</module>
     <module>injection-of-entitymanager</module>
+    <module>testing-transactions</module>
     <module>interceptors</module>
     <module>expanded-env-entries</module>
     <module>helloworld-weblogic</module>
+    <module>jpa-hibernate</module>
     <module>telephone-stateful</module>
     <module>webapps</module>
   </modules>
