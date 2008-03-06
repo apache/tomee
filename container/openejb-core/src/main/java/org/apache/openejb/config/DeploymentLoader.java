@@ -120,17 +120,11 @@ public class DeploymentLoader {
 
             return appModule;
         } else if (WebModule.class.equals(moduleClass)) {
-            // unpack the rar file
             String moduleId = toFile(baseUrl).getName();
-            WebModule webModule = createWebModule(URLs.toFilePath(baseUrl), OpenEJB.class.getClassLoader(), null, moduleId);
+            String warPath = URLs.toFilePath(baseUrl);
 
-            // Wrap the resource module with an Application Module
-            AppModule appModule = new AppModule(classLoader, webModule.getJarLocation());
-            appModule.getWebModules().add(webModule);
-
-            // Persistence Units
-            addPersistenceUnits(appModule, classLoader);
-
+            AppModule appModule = new AppModule(classLoader, warPath);
+            addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
             return appModule;
         } else {
             throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
@@ -347,9 +341,7 @@ public class DeploymentLoader {
             for (String moduleName : webModules.keySet()) {
                 try {
                     URL warUrl = webModules.get(moduleName);
-                    WebModule webModule = createWebModule(URLs.toFilePath(warUrl), appClassLoader, webContextRoots.get(moduleName), moduleName);
-
-                    appModule.getWebModules().add(webModule);
+                    addWebModule(appModule, URLs.toFilePath(warUrl), appClassLoader, webContextRoots.get(moduleName), moduleName);
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load WAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
@@ -414,6 +406,56 @@ public class DeploymentLoader {
         // load webservices descriptor
         addWebservices(ejbModule);
         return ejbModule;
+    }
+
+    protected static void addWebModule(AppModule appModule, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+        WebModule webModule = createWebModule(warPath, parentClassLoader, contextRoot, moduleName);
+        appModule.getWebModules().add(webModule);
+
+        ClassLoader webClassLoader = webModule.getClassLoader();
+
+        // get urls in web application
+        List<URL> urls = null;
+        try {
+            UrlSet urlSet = new UrlSet(webClassLoader);
+            urlSet = urlSet.exclude(webClassLoader.getParent());
+            urls = urlSet.getUrls();
+        } catch (IOException e) {
+            logger.warning("Unable to determine URLs in classloader", e);
+        }
+
+        // clean jar URLs
+        for (int i = 0; i < urls.size(); i++) {
+            URL url = urls.get(i);
+            if (url.getProtocol().equals("jar")) {
+                try {
+                    url = new URL(url.getFile().replaceFirst("!.*$", ""));
+                    urls.set(i, url);
+                } catch (MalformedURLException ignored) {
+                }
+            }
+        }
+        
+        // check each url to determine if it is an ejb jar
+        for (URL ejbUrl : urls) {
+            try {
+                Class moduleType = DeploymentLoader.discoverModuleType(ejbUrl, webClassLoader, true);
+                if (EjbModule.class.isAssignableFrom(moduleType)) {
+                    File ejbFile = toFile(ejbUrl);
+                    String absolutePath = ejbFile.getAbsolutePath();
+
+                    EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, webClassLoader, null);
+
+                    appModule.getEjbModules().add(ejbModule);
+                }
+            } catch (IOException e) {
+            } catch (UnknownModuleTypeException ignore) {
+            }
+        }
+
+        // Persistence Units
+        addPersistenceUnits(appModule, webClassLoader);
+
     }
 
     protected static WebModule createWebModule(String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
@@ -745,11 +787,16 @@ public class DeploymentLoader {
         return connectorModule;
     }
 
+    @SuppressWarnings({"unchecked"})
     protected static void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
         try {
             ResourceFinder finder = new ResourceFinder("", classLoader, urls);
-            List<URL> persistenceUrls = finder.findAll("META-INF/persistence.xml");
-            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+            List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+            if (persistenceUrls == null) {
+                persistenceUrls = new ArrayList<URL>();
+                appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+            }
+            persistenceUrls.addAll(finder.findAll("META-INF/persistence.xml"));
         } catch (IOException e) {
             logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
         }

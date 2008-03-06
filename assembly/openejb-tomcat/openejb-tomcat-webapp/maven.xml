@@ -96,9 +96,9 @@
       </j:if>
 
       <!-- Copy conf files -->
-      <!--<copy todir="${tomcat.home}/conf">-->
-        <!--<fileset dir="${basedir}/src/test/conf"/>-->
-      <!--</copy>-->
+      <copy todir="${tomcat.home}/conf">
+        <fileset dir="${basedir}/src/test/conf"/>
+      </copy>
     </goal>
 
     <goal name="setup:tomcat-src">
@@ -224,7 +224,16 @@
 
     <goal name="setup:ejb-examples">
       <mkdir dir="${tomcat.home}/webapps/ejb-examples"/>
-      <unjar src="${user.home}/.m2/repository/org/apache/openejb/ejb-examples/1.0-SNAPSHOT/ejb-examples-1.0-SNAPSHOT.war" dest="${tomcat.home}/webapps/ejb-examples"/>
+      <unjar src="${user.home}/.m2/repository/org/superbiz/ejb-examples/1.0-SNAPSHOT/ejb-examples-1.0-SNAPSHOT.war" dest="${tomcat.home}/webapps/ejb-examples"/>
+    </goal>
+
+    <goal name="setup:ejb-examples.ear">
+      <jar destfile="${targetDir}/ejb-examples.ear">
+        <zipfileset dir="${user.home}/.m2/repository/org/superbiz/ejb-examples/1.0-SNAPSHOT/"
+                includes="ejb-examples-1.0-SNAPSHOT.war" 
+                fullpath="ejb-examples.war"/>
+      </jar>
+      <copy file="${targetDir}/ejb-examples.ear" todir="${tomcat.home}/webapps"/>
     </goal>
 
     <!--======================-->

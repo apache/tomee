@@ -122,23 +122,6 @@
     <env-entry-value>WebValue</env-entry-value>
   </env-entry>
 
-  <resource-env-ref>
-    <resource-env-ref-name>web.xml/resource-env-ref</resource-env-ref-name>
-    <resource-env-ref-type>org.superbiz.servlet.ResourceBean</resource-env-ref-type>
-  </resource-env-ref>
-
-  <resource-ref>
-    <res-ref-name>web.xml/resource-ref</res-ref-name>
-    <res-type>org.superbiz.servlet.ResourceBean</res-type>
-    <res-auth>Container</res-auth>
-  </resource-ref>
-
-  <resource-ref>
-    <res-ref-name>web.xml/resource-link</res-ref-name>
-    <res-type>org.superbiz.servlet.ResourceBean</res-type>
-    <res-auth>Container</res-auth>
-  </resource-ref>
-
   <resource-ref>
     <res-ref-name>web.xml/Data Source</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>

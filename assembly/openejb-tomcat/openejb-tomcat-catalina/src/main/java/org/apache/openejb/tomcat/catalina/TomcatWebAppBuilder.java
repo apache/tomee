@@ -574,6 +574,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     }
 
     private WebModule createWebModule(StandardContext standardContext) {
+        // todo replace this code with DeploymentLoader
         ServletContext servletContext = standardContext.getServletContext();
 
         // read the web.xml
