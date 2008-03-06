@@ -94,7 +94,7 @@ public class Paths {
 
         if (catalinaHomeDir == null) return null;
 
-        if (TomcatVersion.v6.equals(TomcatVersion.get())) {
+        if (TomcatVersion.v6.isTheVersion()) {
             return new File(catalinaHomeDir, "lib");
         } else {
             return new File(new File(catalinaHomeDir, "server"), "lib");

@@ -63,13 +63,25 @@ class TomcatHook {
         try {
             Properties tomcatServerInfo = new Properties();
             ClassLoader classLoader = TomcatHook.class.getClassLoader();
-            properties.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
+            tomcatServerInfo.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
 
-            String serverNumber = properties.getProperty("server.number");
-            System.setProperty("tomcat.version", serverNumber);
+            String serverNumber = tomcatServerInfo.getProperty("server.number");
+            if (serverNumber == null) {
+                // Tomcat5 only has server.info
+                String serverInfo = tomcatServerInfo.getProperty("server.info");
+                if (serverInfo != null) {
+                    int slash = serverInfo.indexOf('/');
+                    serverNumber = serverInfo.substring(slash + 1);
+                }
+            }
+            if (serverNumber != null) {
+                System.setProperty("tomcat.version", serverNumber);
+            }
 
-            String serverBuilt = properties.getProperty("server.built");
-            System.setProperty("tomcat.built", serverBuilt);
+            String serverBuilt = tomcatServerInfo.getProperty("server.built");
+            if (serverBuilt != null) {
+                System.setProperty("tomcat.built", serverBuilt);
+            }
         } catch (Throwable e) {
         }
 

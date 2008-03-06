@@ -72,6 +72,15 @@ public enum TomcatVersion {
                 properties.load(classLoader.getResourceAsStream("org/apache/catalina/util/ServerInfo.properties"));
 
                 serverNumber = properties.getProperty("server.number");
+                if (serverNumber == null) {
+                    // Tomcat 5.0 and earlier only has server.info
+                    String serverInfo = properties.getProperty("server.info");
+                    if (serverInfo != null) {
+                        int slash = serverInfo.indexOf('/');
+                        serverNumber = serverInfo.substring(slash + 1);
+                    }
+                }
+
                 serverBuilt = properties.getProperty("server.built");
             }
 

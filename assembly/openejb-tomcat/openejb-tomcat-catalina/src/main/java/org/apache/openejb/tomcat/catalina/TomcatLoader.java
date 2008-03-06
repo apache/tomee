@@ -28,6 +28,8 @@ import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.tomcat.installer.Paths;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
@@ -59,7 +61,7 @@ public class TomcatLoader implements Loader {
         // Enable System EJBs like the MEJB and DeployerEJB
         properties.setProperty("openejb.deployments.classpath", "true");
         properties.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
-        properties.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
+        System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
 
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
@@ -140,7 +142,10 @@ public class TomcatLoader implements Loader {
             try {
                 ServerService serverService = (ServerService) Class.forName("org.apache.openejb.server.cxf.CxfService").newInstance();
                 serverService.start();
-            } catch (Exception ignored) {
+            } catch (ClassNotFoundException ignored) {
+            } catch (Exception e) {
+                Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
+                logger.error("Webservices failed to start", e);
             }
         }
 
