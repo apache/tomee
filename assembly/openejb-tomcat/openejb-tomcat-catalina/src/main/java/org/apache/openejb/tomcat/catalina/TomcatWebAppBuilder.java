@@ -43,6 +43,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Injection;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.server.webservices.WsService;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.util.LinkResolver;
@@ -280,6 +281,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // if appInfo is null this is a failed deployment... just ignore
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo.appInfo == null) return;
+
+        WsService wsService = SystemInstance.get().getComponent(WsService.class);
+        if (wsService != null) {
+            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
+            for (WebAppInfo webApp : webApps) {
+                wsService.afterApplicationCreated(webApp);
+            }
+        }
 
         // replace any webservices with the webservice servlet
         // HACK: use a temp class loader because the class may have been loaded before

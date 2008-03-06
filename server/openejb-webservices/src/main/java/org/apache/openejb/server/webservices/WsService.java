@@ -77,6 +77,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     private String authMethod;
     private String virtualHost;
     private final Set<AppInfo> deployedApplications = new HashSet<AppInfo>();
+    private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
     private final Map<String,String> ejbLocations = new TreeMap<String,String>();
     private final Map<String,String> ejbAddresses = new TreeMap<String,String>();
     private final Map<String,String> servletAddresses = new TreeMap<String,String>();
@@ -161,6 +162,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         portAddressRegistry = SystemInstance.get().getComponent(PortAddressRegistry.class);
         assembler = SystemInstance.get().getComponent(Assembler.class);
+        SystemInstance.get().setComponent(WsService.class, this);
         if (assembler != null) {
             assembler.addDeploymentListener(this);
             for (AppInfo appInfo : assembler.getDeployedApplications()) {
@@ -176,6 +178,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 beforeApplicationDestroyed(appInfo);
             }
             assembler = null;
+            if (SystemInstance.get().getComponent(WsService.class) == this) {
+                SystemInstance.get().removeComponent(WsService.class);
+            }
         }
     }
 
@@ -257,51 +262,58 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
             }
             for (WebAppInfo webApp : appInfo.webApps) {
-                WebDeploymentInfo deploymentInfo = containerSystem.getWebDeploymentInfo(webApp.moduleId);
-                if (deploymentInfo == null) continue;
+                afterApplicationCreated(webApp);
+            }
+        }
+    }
 
-                Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
-                for (PortInfo port : webApp.portInfos) {
-                    ports.put(port.serviceLink, port);
+    public void afterApplicationCreated(WebAppInfo webApp) {
+        WebDeploymentInfo deploymentInfo = containerSystem.getWebDeploymentInfo(webApp.moduleId);
+        if (deploymentInfo == null) return;
+
+        // if already deployed skip this webapp
+        if (!deployedWebApps.add(webApp)) return;
+
+        Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
+        for (PortInfo port : webApp.portInfos) {
+            ports.put(port.serviceLink, port);
+        }
+
+        URL moduleBaseUrl = null;
+        try {
+            moduleBaseUrl = new File(webApp.codebase).toURL();
+        } catch (MalformedURLException e) {
+            logger.error("Invalid ejb jar location " + webApp.codebase, e);
+        }
+
+        for (ServletInfo servlet : webApp.servlets) {
+            PortInfo portInfo = ports.get(servlet.servletName);
+            if (portInfo == null) continue;
+
+            try {
+                ClassLoader classLoader = deploymentInfo.getClassLoader();
+                Collection<Injection> injections = deploymentInfo.getInjections();
+                Context context = deploymentInfo.getJndiEnc();
+                Class target = classLoader.loadClass(servlet.servletClass);
+
+                PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
+
+                HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink, target, context, webApp.contextRoot);
+
+                if (wsRegistry != null) {
+                    // give servlet a reference to the webservice container
+                    List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
+
+                    // one of the registered addresses to be the connonical address
+                    String address = selectSingleAddress(addresses);
+
+                    // add address to global registry
+                    portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                    logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                    servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                 }
-
-                URL moduleBaseUrl = null;
-                try {
-                    moduleBaseUrl = new File(webApp.codebase).toURL();
-                } catch (MalformedURLException e) {
-                    logger.error("Invalid ejb jar location " + webApp.codebase, e);
-                }
-
-                for (ServletInfo servlet : webApp.servlets) {
-                    PortInfo portInfo = ports.get(servlet.servletName);
-                    if (portInfo == null) continue;
-
-                    try {
-                        ClassLoader classLoader = deploymentInfo.getClassLoader();
-                        Collection<Injection> injections = deploymentInfo.getInjections();
-                        Context context = deploymentInfo.getJndiEnc();
-                        Class target = classLoader.loadClass(servlet.servletClass);
-
-                        PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);
-
-                        HttpListener container = createPojoWsContainer(moduleBaseUrl, port, portInfo.serviceLink, target, context, webApp.contextRoot);
-
-                        if (wsRegistry != null) {
-                            // give servlet a reference to the webservice container
-                            List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
-
-                            // one of the registered addresses to be the connonical address
-                            String address = selectSingleAddress(addresses);
-
-                            // add address to global registry
-                            portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                            logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
-                            servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
-                        }
-                    } catch (Throwable e) {
-                        logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
-                    }
-                }
+            } catch (Throwable e) {
+                logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
             }
         }
     }
@@ -339,6 +351,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
             }
             for (WebAppInfo webApp : appInfo.webApps) {
+                deployedWebApps.remove(webApp);
+
                 Map<String,PortInfo> ports = new TreeMap<String,PortInfo>();
                 for (PortInfo port : webApp.portInfos) {
                     ports.put(port.serviceLink, port);
