@@ -426,8 +426,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             File[] files = appBase.listFiles();
             for (File file : files) {
                 String name = file.getName();
+                // ignore war files
                 if (name.toLowerCase().endsWith(".war") || name.equals("ROOT") || name.equalsIgnoreCase("META-INF") || name.equalsIgnoreCase("WEB-INF")) continue;
+                // ignore unpacked web apps
                 if (file.isDirectory() && new File(file, "WEB-INF").exists()) continue;
+                // ignore unpacked apps where packed version is present (packed version is owner)
+                if (file.isDirectory() && (new File(file.getParent(), file.getName() + ".ear").exists() ||
+                        new File(file.getParent(), file.getName() + ".war").exists() ||
+                        new File(file.getParent(), file.getName() + ".rar").exists())) {
+                    continue;
+                }
+                // ignore already deployed apps
                 if (isDeployed(file, standardHost)) continue;
 
                 AppInfo appInfo = null;
