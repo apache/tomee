@@ -37,7 +37,7 @@ public class ConnectionManager {
     }
 
     public static Connection getConnection(URI uri) throws IOException {
-        if (uri.getScheme().equals("http")) {
+        if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
             return new HttpConnectionFactory().getConnection(uri);
         } else {
             return factory.getConnection(uri);
