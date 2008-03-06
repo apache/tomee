@@ -101,6 +101,10 @@ public class TomcatClassPath extends BasicURLClassPath {
 //        return commonLoader;
     }
 
+    public ClassLoader getCommonLoader() {
+        return commonLoader;
+    }
+
     public void addJarsToPath(File dir) throws Exception {
         String[] jarNames = dir.list(new java.io.FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -149,7 +153,7 @@ public class TomcatClassPath extends BasicURLClassPath {
 
     protected void rebuild() {
         try {
-            sun.misc.URLClassPath cp = getURLClassPath((URLClassLoader) getClassLoader());
+            sun.misc.URLClassPath cp = getURLClassPath((URLClassLoader) getCommonLoader());
             URL[] urls = cp.getURLs();
 
             if (urls.length < 1)
