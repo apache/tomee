@@ -534,15 +534,4 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        try {
-            URL url = new URL("file:/tmp/ejb-jar.xml");
-            isEmptyEjbJar(url);
-            System.out.println("SUCCESS");
-        } catch (Exception e) {
-            System.out.print("ERROR: ");
-            e.printStackTrace(System.out);
-        }
-    }
-
 }
