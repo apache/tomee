@@ -17,19 +17,16 @@
  */
 package org.apache.openejb.test.servlet;
 
-import junit.framework.TestSuite;
-import org.apache.openejb.test.FilteredTestSuite;
-
-public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
-        super(name);
+public class WebserviceServletTests extends ServletTestClient {
+    public WebserviceServletTests(){
+        super("WebserviceServlet");
     }
 
-    public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
-        suite.addTest(new AnnotatedServletTests());
-        suite.addTest(new EjbServletTests());
-        suite.addTest(new WebserviceServletTests());
-        return suite;
+    public void test01_invokePojoWebservice() {
+        invoke("invokePojoWebservice");
+    }
+
+    public void test02_invokeEJBWebservice() {
+        invoke("invokeEjbWebservice");
     }
 }

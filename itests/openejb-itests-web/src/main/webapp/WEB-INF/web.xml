@@ -38,6 +38,26 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>EjbServlet</servlet-name>
+    <servlet-class>org.apache.openejb.test.servlet.EjbServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>EjbServlet</servlet-name>
+    <url-pattern>/EjbServlet/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>WebserviceServlet</servlet-name>
+    <servlet-class>org.apache.openejb.test.servlet.WebserviceServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>WebserviceServlet</servlet-name>
+    <url-pattern>/WebserviceServlet/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>JndiServlet</servlet-name>
     <servlet-class>org.apache.openejb.test.servlet.JndiServlet</servlet-class>
   </servlet>
@@ -46,6 +66,16 @@
     <servlet-name>JndiServlet</servlet-name>
     <url-pattern>/JndiServlet/*</url-pattern>
   </servlet-mapping>
+
+    <servlet>
+      <servlet-name>HelloPojoService</servlet-name>
+      <servlet-class>org.apache.openejb.test.servlet.HelloPojoService</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>HelloPojoService</servlet-name>
+      <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
 
     <env-entry>
       <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/booolean</env-entry-name>

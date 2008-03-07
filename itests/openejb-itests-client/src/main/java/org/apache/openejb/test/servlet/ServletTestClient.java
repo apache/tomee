@@ -32,9 +32,11 @@ import org.apache.openejb.test.TestManager;
 
 public abstract class ServletTestClient extends TestClient {
     protected URL serverUrl;
+    private final String servletName;
 
-    public ServletTestClient(String name) {
-        super("Servlet." + name);
+    public ServletTestClient(String servletName) {
+        super("Servlet." + servletName + ".");
+        this.servletName = servletName;
         String serverUri = System.getProperty("openejb.server.uri", "http://127.0.0.1:8080/openejb/ejb");
         try {
             serverUrl = new URL(serverUri);
@@ -56,6 +58,42 @@ public abstract class ServletTestClient extends TestClient {
         initialContext = new InitialContext(properties);
     }
 
+    protected Object invoke(String methodName) {
+        InputStream in = null;
+        try {
+            URL url = new URL(serverUrl, "/itests/" + servletName + "?method=" + methodName);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+            in = connection.getInputStream();
+            String response = readAll(in);
+            if (response.startsWith("FAILED")) {
+                response = response.substring("FAILED".length()).trim();
+                fail(response);
+            }
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String readAll(InputStream in) throws IOException {
+        // SwizzleStream block read methods are broken so read byte at a time
+        StringBuilder sb = new StringBuilder();
+        int i = in.read();
+        while (i != -1) {
+            sb.append((char) i);
+            i = in.read();
+        }
+        return sb.toString();
+    }
+
     @SuppressWarnings({"unchecked"})
     protected <T> T newServletProxy(Class<T> clazz) {
         Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{clazz}, new ServletInvocationHandler());
@@ -65,40 +103,10 @@ public abstract class ServletTestClient extends TestClient {
     private class ServletInvocationHandler implements InvocationHandler {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (method.getParameterTypes().length != 0) throw new IllegalArgumentException("ServletProxy only supports no-argument methods: " + method);
-            
-            InputStream in = null;
-            try {
-                URL url = new URL(serverUrl, "/itests/AnnotatedServlet?method=" + method.getName());
-                URLConnection connection = url.openConnection();
-                connection.connect();
-                in = connection.getInputStream();
-                String response = readAll(in);
-                if (response.startsWith("FAILED")) {
-                    response = response.substring("FAILED".length()).trim();
-                    fail(response);
-                }
-            } catch (Exception e) {
-                fail("Received Exception " + e.getClass() + " : " + e.getMessage());
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
-            return null;
-        }
 
-        private String readAll(InputStream in) throws IOException {
-            // SwizzleStream block read methods are broken so read byte at a time
-            StringBuilder sb = new StringBuilder();
-            int i = in.read();
-            while (i != -1) {
-                sb.append((char) i);
-                i = in.read();
-            }
-            return sb.toString();
+            String methodName = method.getName();
+
+            return ServletTestClient.this.invoke(methodName);
         }
     }
 }

@@ -20,7 +20,7 @@ public class AnnotatedServletTests extends ServletTestClient {
     protected JndiTestServlet testServlet;
 
     public AnnotatedServletTests(){
-        super("AnnotatedServlet.");
+        super("AnnotatedServlet");
     }
 
     protected void setUp() throws Exception{

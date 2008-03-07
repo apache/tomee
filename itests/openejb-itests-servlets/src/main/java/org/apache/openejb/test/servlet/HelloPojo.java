@@ -17,19 +17,9 @@
  */
 package org.apache.openejb.test.servlet;
 
-import junit.framework.TestSuite;
-import org.apache.openejb.test.FilteredTestSuite;
+import javax.jws.WebService;
 
-public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
-        super(name);
-    }
-
-    public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
-        suite.addTest(new AnnotatedServletTests());
-        suite.addTest(new EjbServletTests());
-        suite.addTest(new WebserviceServletTests());
-        return suite;
-    }
+@WebService(targetNamespace="http://examples.org/wsdl")
+public interface HelloPojo {
+    String hello(String name);
 }

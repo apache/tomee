@@ -17,19 +17,19 @@
  */
 package org.apache.openejb.test.servlet;
 
-import junit.framework.TestSuite;
-import org.apache.openejb.test.FilteredTestSuite;
+import javax.ejb.Stateless;
+import javax.jws.WebService;
 
-public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
-        super(name);
-    }
-
-    public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
-        suite.addTest(new AnnotatedServletTests());
-        suite.addTest(new EjbServletTests());
-        suite.addTest(new WebserviceServletTests());
-        return suite;
+@WebService(
+    portName="HelloEjbPort",
+    serviceName="HelloEjbService",
+    targetNamespace="http://examples.org/wsdl",
+    endpointInterface="org.apache.openejb.test.servlet.HelloEjb"
+)
+@Stateless (name = "TestHelloEjbService")
+public class HelloEjbService implements HelloEjb {
+    public String hello(String name) {
+        if (name == null) name = "World";
+        return "Hello " + name + " from EJB Webservice!";
     }
 }
