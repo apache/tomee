@@ -174,7 +174,11 @@ public class JndiEncInfoBuilder {
             info.ejbDeploymentId = deploymentId;
 
             if (info.ejbDeploymentId == null) {
-                logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
+                if (info.link != null){
+                    logger.warning("config.noBeanFoundEjbLink", ref.getName(), ejbName, ref.getEjbLink());
+                } else {
+                    logger.warning("config.noBeanFound", ref.getName(), ejbName, ref.getEjbLink());
+                }
                 if (ref.getRefType() == EjbReference.Type.LOCAL) {
                     jndi.ejbLocalReferences.add(toLocal(info));
                 } else {
