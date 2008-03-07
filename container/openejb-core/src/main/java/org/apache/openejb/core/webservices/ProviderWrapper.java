@@ -228,13 +228,25 @@ public class ProviderWrapper extends Provider {
                 JAXBContext context,
                 Service.Mode mode,
                 WebServiceFeature... features) {
-            return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReference,
+            return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReferenceJaxB,
                     endpointReference,
                     context,
                     mode,
                     features);
         }
 
+        @SuppressWarnings({"unchecked"})
+        public <T> Dispatch<T> createDispatch(EndpointReference endpointReference,
+                                               java.lang.Class<T> type,
+                                               Service.Mode mode,
+                                               WebServiceFeature... features) {
+            return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchReferenceClass,
+                    endpointReference,
+                    type,
+                    mode,
+                    features);
+
+        }
         @SuppressWarnings({"unchecked"})
         public <T> T getPort(QName portName, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
             return (T) invoke21Delegate(serviceDelegate, serviceGetPortByQName,
@@ -493,7 +505,8 @@ public class ProviderWrapper extends Provider {
     private static final Method readEndpointReference;
 
     // ServiceDelegate methods
-    private static final Method createDispatchReference;
+    private static final Method createDispatchReferenceJaxB;
+    private static final Method createDispatchReferenceClass;
     private static final Method createDispatchInterface;
     private static final Method createDispatchJaxBContext;
     private static final Method serviceGetPortByEndpointReference;
@@ -541,7 +554,18 @@ public class ProviderWrapper extends Provider {
                     WebServiceFeature[].class);
         } catch (NoSuchMethodException e) {
         }
-        createDispatchReference = method;
+        createDispatchReferenceJaxB = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("createDispatch",
+                    EndpointReference.class,
+                    Class.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        createDispatchReferenceClass = method;
 
         method = null;
         try {
