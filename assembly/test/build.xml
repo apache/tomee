@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- $Revision: 579817 $ $Date: 2007-09-26 14:56:30 -0700 (Wed, 26 Sep 2007) $ -->
+
+<project name="Test OpenEJB" default="test" basedir=".">
+    <description>
+        Tests OpenEJB distribution using the OpenEJB iTest suite.
+    </description>
+
+    <property name="repo" location="${basedir}/repo"/>
+    <property name="maven.repo" value="file:${user.home}/.m2/repository"/>
+    <property name="target.dir" location="${basedir}/target"/>
+    <property name="windows.sleep" value="5"/>
+    <property name="unix.sleep" value="1"/>
+
+
+    <target name="clean">
+        <delete dir="${basedir}/activemq-data"/>
+        <delete dir="${target.dir}"/>
+    </target>
+
+    <target name="test">
+        <antcall target="openejb.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+        </antcall>
+
+        <antcall target="tomcat.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+            <param name="tomcat.version" value="6.0.14"/>
+        </antcall>
+    </target>
+
+    <target name="all">
+        <antcall target="openejb.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+        </antcall>
+      
+        <antcall target="tomcat.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+            <param name="tomcat.version" value="6.0.14"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+            <param name="tomcat.version" value="6.0.13"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+            <param name="tomcat.version" value="6.0.10"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="openejb.version" value="3.0-SNAPSHOT"/>
+            <param name="tomcat.version" value="6.0.9"/>
+        </antcall>
+    </target>
+
+    <target name="openejb.test" depends="openejb.test.setup">
+        <!-- unpack openejb -->
+        <antcall target="openejb.unpack"/>
+
+        <!-- copy openejb-itests-app.jar to apps dir -->
+        <copy file="${itests.app.file}" todir="${openejb.home}/apps"/>
+
+        <!-- start openejb -->
+        <antcall target="openejb.start"/>
+
+        <!-- run itests -->
+        <antcall target="itests.openejb.run"/>
+
+        <!-- stop openejb -->
+        <antcall target="openejb.stop"/>
+    </target>
+
+    <target name="openejb.unpack">
+        <delete dir="${openejb.home}"/>
+        <mkdir dir="${target.dir}"/>
+        <unjar src="${openejb.app.file}" dest="${target.dir}"/>
+        <chmod perm="u+x">
+            <fileset dir="${openejb.home}/bin">
+                <include name="openejb"/>
+                <include name="**/*.sh"/>
+            </fileset>
+        </chmod>
+    </target>
+
+    <target name="openejb.start">
+        <echo message="Starting OpenEJB ${openejb.version}..."/>
+        <exec executable="${openejb.home}/bin/openejb.bat" spawn="true" osfamily="windows">
+            <env key="OPENEJB_HOME" value="${openejb.home}"/>
+            <arg value="start"/>
+        </exec>
+        <exec executable="${openejb.home}/bin/openejb" spawn="true" osfamily="unix">
+            <arg value="start"/>
+        </exec>
+        <waitfor maxwait="1" maxwaitunit="minute">
+            <and>
+                <socket server="localhost" port="4200"/>
+                <socket server="localhost" port="4201"/>
+                <socket server="localhost" port="4202"/>
+                <socket server="localhost" port="4204"/>
+                <socket server="localhost" port="61616"/>
+            </and>
+        </waitfor>
+        <echo message="                 started"/>
+    </target>
+
+    <target name="openejb.stop">
+        <echo message="Stopping OpenEJB ${openejb.version}..."/>
+        <exec executable="${openejb.home}/bin/openejb.bat" osfamily="windows">
+            <env key="OPENEJB_HOME" value="${openejb.home}"/>
+            <arg value="stop"/>
+        </exec>
+        <exec executable="${openejb.home}/bin/openejb" osfamily="unix">
+            <arg value="stop"/>
+        </exec>
+        <waitfor maxwait="1" maxwaitunit="minute">
+            <not>
+                <or>
+                    <socket server="localhost" port="4200"/>
+                    <socket server="localhost" port="4201"/>
+                    <socket server="localhost" port="4202"/>
+                    <socket server="localhost" port="4204"/>
+                    <socket server="localhost" port="61616"/>
+                </or>
+            </not>
+        </waitfor>
+
+        <condition property="sleep" value="${unix.sleep}" else="${windows.sleep}">
+            <os family="unix"/>
+        </condition>
+        <echo message="                  sleeping for ${sleep} sec"/>
+        <sleep seconds="${sleep}"/>
+
+        <echo message="                  stopped"/>
+    </target>
+
+
+    <target name="tomcat.test" depends="tomcat.test.setup">
+        <!-- unpack tomcat -->
+        <antcall target="tomcat.unpack"/>
+
+        <!-- copy openejb.war to webapps dir -->
+        <copy file="${openejb.war.file}" todir="${tomcat.home}/webapps"/>
+
+        <!-- start tomcat -->
+        <antcall target="tomcat.start"/>
+
+        <!-- run installer -->
+        <get src="http://localhost:8080/openejb/installer?action=Install" dest="${target.dir}/installer.out"/>
+
+        <!-- stop tomcat -->
+        <antcall target="tomcat.stop"/>
+
+        <!-- install itests.war -->
+        <copy file="${itests.war.file}" todir="${tomcat.home}/webapps"/>
+
+        <!-- start tomcat -->
+        <antcall target="tomcat.start"/>
+
+        <!-- run itests -->
+        <antcall target="itests.tomcat.run"/>
+
+        <!-- stop tomcat -->
+        <antcall target="tomcat.stop"/>
+
+        <!-- Make sure all resources are collected on windows -->
+        <condition property="sleep" value="1" else="30">
+            <os family="unix"/>
+        </condition>
+        <echo message="Sleeping for ${sleep} sec to avoid Windows failures"/>
+        <sleep seconds="${sleep}"/>
+    </target>
+
+    <target name="tomcat.unpack">
+        <delete dir="${tomcat.home}"/>
+        <mkdir dir="${target.dir}"/>
+        <unjar src="${tomcat.file}" dest="${target.dir}"/>
+        <chmod dir="${tomcat.home}/bin" perm="u+x" includes="**/*.sh"/>
+    </target>
+
+    <target name="tomcat.start">
+        <echo message="Starting Tomcat ${tomcat.version}..."/>
+        <exec executable="${tomcat.home}/bin/startup.bat" spawn="true" osfamily="windows">
+            <env key="CATALINA_HOME" value="${tomcat.home}"/>
+        </exec>
+        <exec executable="${tomcat.home}/bin/startup.sh" osfamily="unix"/>
+        <waitfor maxwait="1" maxwaitunit="minute">
+            <and>
+                <socket server="localhost" port="8080"/>
+                <socket server="localhost" port="8005"/>
+                <socket server="localhost" port="8009"/>
+                <http url="http://localhost:8080/openejb/installer"/>
+            </and>
+        </waitfor>
+
+        <condition property="sleep" value="${unix.sleep}" else="${windows.sleep}">
+            <os family="unix"/>
+        </condition>
+        <echo message="                  sleeping for ${sleep} sec"/>
+        <sleep seconds="${sleep}"/>
+
+        <echo message="                  started"/>
+    </target>
+
+    <target name="tomcat.stop">
+        <echo message="Stopping Tomcat ${tomcat.version}..."/>
+        <exec executable="${tomcat.home}/bin/shutdown.bat" osfamily="windows">
+            <env key="CATALINA_HOME" value="${tomcat.home}"/>
+        </exec>
+        <exec executable="${tomcat.home}/bin/shutdown.sh" osfamily="unix"/>
+        <waitfor maxwait="1" maxwaitunit="minute">
+            <not>
+                <or>
+                    <http url="http://localhost:8080"/>
+                    <socket server="localhost" port="8080"/>
+                    <socket server="localhost" port="8005"/>
+                    <socket server="localhost" port="8009"/>
+                    <socket server="localhost" port="61616"/>
+                </or>
+            </not>
+        </waitfor>
+
+        <condition property="sleep" value="${unix.sleep}" else="${windows.sleep}">
+            <os family="unix"/>
+        </condition>
+        <echo message="                  sleeping for ${sleep} sec"/>
+        <sleep seconds="${sleep}"/>
+
+        <echo message="                  stopped"/>
+    </target>
+
+    <target name="itests.openejb.run">
+        <java jar="${itests.client.file}" fork="yes">
+            <sysproperty key="openejb.home" value="${openejb.home}"/>
+            <arg value="remote"/>
+        </java>
+    </target>
+
+    <target name="itests.tomcat.run">
+        <java jar="${itests.client.file}" fork="yes">
+            <sysproperty key="openejb.home" value="${openejb.home}"/>
+            <arg value="tomcat"/>
+        </java>
+    </target>
+
+    <target name="openejb.test.setup">
+        <property name="openejb.app.url" value="${maven.repo}/org/apache/openejb/openejb-standalone/${openejb.version}/openejb-standalone-${openejb.version}-bin.zip"/>
+        <property name="openejb.app.file" value="${repo}/openejb/distributions/${openejb.version}/openejb.zip"/>
+
+        <property name="itests.app.url" value="${maven.repo}/org/apache/openejb/openejb-itests-app/${openejb.version}/openejb-itests-app-${openejb.version}.jar"/>
+        <property name="itests.app.file" value="${repo}/openejb/distributions/${openejb.version}/openejb-itests-app.jar"/>
+
+        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/${openejb.version}/openejb-itests-standalone-client-${openejb.version}.jar"/>
+        <property name="itests.client.file" value="${repo}/openejb/distributions/${openejb.version}/openejb-itests-standalone-client.jar"/>
+
+        <property name="openejb.home" value="${target.dir}/openejb-${openejb.version}"/>
+
+        <antcall target="download.file">
+            <param name="download.url" value="${openejb.app.url}"/>
+            <param name="download.file" value="${openejb.app.file}"/>
+        </antcall>
+        <antcall target="download.file">
+            <param name="download.url" value="${itests.app.url}"/>
+            <param name="download.file" value="${itests.app.file}"/>
+        </antcall>
+        <antcall target="download.file">
+            <param name="download.url" value="${itests.client.url}"/>
+            <param name="download.file" value="${itests.client.file}"/>
+        </antcall>
+    </target>
+
+    <target name="tomcat.test.setup">
+        <property name="openejb.war.url" value="${maven.repo}/org/apache/openejb/openejb-tomcat-webapp/${openejb.version}/openejb-tomcat-webapp-${openejb.version}.war"/>
+        <property name="openejb.war.file" value="${repo}/openejb/distributions/${openejb.version}/openejb.war"/>
+
+        <property name="itests.war.url" value="${maven.repo}/org/apache/openejb/openejb-itests-web/${openejb.version}/openejb-itests-web-${openejb.version}.war"/>
+        <property name="itests.war.file" value="${repo}/openejb/distributions/${openejb.version}/itests.war"/>
+
+        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-client/${openejb.version}/openejb-itests-client-${openejb.version}.jar"/>
+        <property name="itests.client.file" value="${repo}/openejb/distributions/${openejb.version}/openejb-itests-standalone-client.jar"/>
+
+        <property name="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip"/>
+        <property name="tomcat.file" value="${repo}/tomcat/distributions/${tomcat.version}/tomcat.zip"/>
+
+        <property name="tomcat.home" value="${target.dir}/apache-tomcat-${tomcat.version}"/>
+
+        <antcall target="download.file">
+            <param name="download.url" value="${tomcat.url}"/>
+            <param name="download.file" value="${tomcat.file}"/>
+        </antcall>
+        <antcall target="download.file">
+            <param name="download.url" value="${openejb.war.url}"/>
+            <param name="download.file" value="${openejb.war.file}"/>
+        </antcall>
+        <antcall target="download.file">
+            <param name="download.url" value="${itests.war.url}"/>
+            <param name="download.file" value="${itests.war.file}"/>
+        </antcall>
+        <antcall target="download.file">
+            <param name="download.url" value="${itests.client.url}"/>
+            <param name="download.file" value="${itests.client.file}"/>
+        </antcall>
+    </target>
+
+    <target name="download.uptodate">
+        <available file="${download.file}" property="download.uptodate"/>
+    </target>
+
+    <target name="download.file" depends="download.uptodate" unless="download.uptodate">
+        <dirname property="download.dir" file="${download.file}"/>
+        <mkdir dir="${download.dir}"/>
+        <get src="${download.url}" dest="${download.file}"/>
+    </target>
+</project>
