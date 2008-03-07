@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
+import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -83,13 +85,13 @@ public class JndiEncInfoBuilder {
 
         // EAR-scoped EJB Resolver
 
-        earResolver = new EjbResolver(globalResolver, EjbResolver.Scope.EAR, appInfo.ejbJars);
+        earResolver = new EjbResolver(globalResolver, EAR, appInfo.ejbJars);
 
         // EJBJAR-scoped EJB Resolver(s)
 
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
 
-            EjbResolver ejbJarResolver = new EjbResolver(earResolver, EjbResolver.Scope.EJBJAR, ejbJarInfo);
+            EjbResolver ejbJarResolver = new EjbResolver(earResolver, EJBJAR, ejbJarInfo);
 
             ejbJarResolvers.put(ejbJarInfo.moduleId, ejbJarResolver);
         }
@@ -180,9 +182,10 @@ public class JndiEncInfoBuilder {
                 }
                 continue;
             }
-            
-            info.externalReference = ejbResolver.getScope(deploymentId) == EjbResolver.Scope.GLOBAL;
 
+            EjbResolver.Scope scope = ejbResolver.getScope(deploymentId);
+
+            info.externalReference = (scope != EAR && scope != EJBJAR);
 
             if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
                 EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
