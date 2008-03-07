@@ -55,7 +55,7 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>${basedir}src/main/conf</directory>
+      <directory>${basedir}/src/main/conf</directory>
       <includes>
         <include>README.txt</include>
       </includes>
