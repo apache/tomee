@@ -27,6 +27,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
+        <directory>${basedir}</directory>
       <includes>
         <include>README.txt</include>
       </includes>
@@ -36,7 +37,7 @@
          -  o the one below
          -  o pom.xml where MRRP is configured to output the files in the directory of our choice
          -->
-      <directory>target/maven-shared-archive-resources/META-INF</directory>
+      <directory>${basedir}/target/maven-shared-archive-resources/META-INF</directory>
       <outputDirectory>META-INF</outputDirectory>
       <includes>
         <include>LICENSE</include>

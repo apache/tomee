@@ -28,7 +28,7 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>README.txt</include>
@@ -37,7 +37,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>*.bat</include>
@@ -46,7 +46,7 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>openejb</include>
@@ -55,28 +55,28 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <directory>src/main/conf</directory>
+      <directory>${basedir}src/main/conf</directory>
       <includes>
         <include>README.txt</include>
       </includes>
       <outputDirectory>conf/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>logs/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>apps/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/classes/empty</directory>
+      <directory>${basedir}/target/classes/empty</directory>
       <outputDirectory>data/</outputDirectory>
     </fileSet>
   </fileSets>
   <files>
     <file>
-      <source>target/classes/DATA-README.txt</source>
+      <source>${basedir}/target/classes/DATA-README.txt</source>
       <outputDirectory>data/</outputDirectory>
       <destName>README.txt</destName>
       <!-- TODO Assembly 2.1 plugin takes a decimal permission instead of octal -->

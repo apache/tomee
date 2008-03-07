@@ -27,12 +27,13 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
+      <directory>${basedir}</directory>
       <includes>
         <include>README.txt</include>
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>README.txt</include>
@@ -41,7 +42,7 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
           <exclude>org/**</exclude>
@@ -50,11 +51,11 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>target/classes</directory>
+      <directory>${basedir}/target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target</directory>
+      <directory>${basedir}/target</directory>
       <outputDirectory>lib</outputDirectory>
       <includes>
         <include>openejb-tomcat*.jar</include>
