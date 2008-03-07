@@ -51,6 +51,11 @@ public class EjbWsContext implements WebServiceContext {
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
+    public EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");        
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
         throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }

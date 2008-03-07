@@ -35,6 +35,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.namespace.QName;
 import javax.xml.bind.JAXBContext;
+import javax.xml.transform.Source;
 import javax.jws.WebService;
 import java.net.URL;
 import java.util.Iterator;
@@ -58,34 +59,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
-    private static final Method createW3CEndpointReference;
-    private static final Method createDispatch;
-
-    static {
-        Method method = null;
-        try {
-            method = Provider.class.getMethod("createW3CEndpointReference",
-                    String.class,
-                    QName.class,
-                    QName.class,
-                    List.class,
-                    String.class,
-                    List.class);
-        } catch (NoSuchMethodException e) {
-        }
-        createW3CEndpointReference = method;
-
-        method = null;
-        try {
-            method = Provider.class.getMethod("createDispatch",
-                    EndpointReference.class,
-                    JAXBContext.class,
-                    Service.Mode.class,
-                    WebServiceFeature[].class);
-        } catch (NoSuchMethodException e) {
-        }
-        createDispatch = method;
-    }
 
     //
     // Magic to get our proider wrapper installed with the PortRefData
@@ -160,32 +133,29 @@ public class ProviderWrapper extends Provider {
         return delegate.createAndPublishEndpoint(address, implementor);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public W3CEndpointReference createW3CEndpointReference(String address,
             QName serviceName,
             QName portName,
             List<Element> metadata,
             String wsdlDocumentLocation,
             List<Element> referenceParameters) {
-        if (createW3CEndpointReference == null) {
-            throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
-        }
-        try {
-            return (W3CEndpointReference) createW3CEndpointReference.invoke(delegate,
-                    address,
-                    serviceName,
-                    portName,
-                    metadata,
-                    wsdlDocumentLocation,
-                    referenceParameters);
-        } catch (IllegalAccessException e) {
-            throw new WebServiceException(e);
-        } catch (InvocationTargetException e) {
-            if (e.getCause() != null) {
-                throw new WebServiceException(e.getCause());
-            }
-            throw new WebServiceException(e);
-        }
+
+        return (W3CEndpointReference) invoke21Delegate(delegate, createW3CEndpointReference,
+                address,
+                serviceName,
+                portName,
+                metadata,
+                wsdlDocumentLocation,
+                referenceParameters);
+    }
+
+    public EndpointReference readEndpointReference(Source source){
+        return (EndpointReference) invoke21Delegate(delegate, readEndpointReference, source);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        return (T) invoke21Delegate(delegate, providerGetPort, endpointReference, serviceEndpointInterface, features);
     }
 
     private class ServiceDelegateWrapper extends ServiceDelegate {
@@ -235,28 +205,57 @@ public class ProviderWrapper extends Provider {
         }
 
         @SuppressWarnings({"unchecked"})
+        public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode, WebServiceFeature... features) {
+            return (Dispatch<T>) invoke21Delegate(serviceDelegate, createDispatchInterface,
+                    portName,
+                    type,
+                    mode,
+                    features);
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode, WebServiceFeature... features) {
+            return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchJaxBContext,
+                    portName,
+                    context,
+                    mode,
+                    features);
+        }
+
+        @SuppressWarnings({"unchecked"})
         public Dispatch<Object> createDispatch(
                 EndpointReference endpointReference,
                 JAXBContext context,
                 Service.Mode mode,
                 WebServiceFeature... features) {
-            if (createDispatch == null) {
-                throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
-            }
-            try {
-                return (Dispatch<Object>) createDispatch.invoke(delegate,
-                        endpointReference,
-                        context,
-                        mode,
-                        features);
-            } catch (IllegalAccessException e) {
-                throw new WebServiceException(e);
-            } catch (InvocationTargetException e) {
-                if (e.getCause() != null) {
-                    throw new WebServiceException(e.getCause());
-                }
-                throw new WebServiceException(e);
-            }
+            return (Dispatch<Object>) invoke21Delegate(serviceDelegate, createDispatchReference,
+                    endpointReference,
+                    context,
+                    mode,
+                    features);
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public <T> T getPort(QName portName, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByQName,
+                    portName,
+                    serviceEndpointInterface,
+                    features);
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByEndpointReference,
+                    endpointReference,
+                    serviceEndpointInterface,
+                    features);
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+            return (T) invoke21Delegate(serviceDelegate, serviceGetPortByInterface,
+                    serviceEndpointInterface,
+                    features);
         }
 
         public QName getServiceName() {
@@ -465,5 +464,135 @@ public class ProviderWrapper extends Provider {
             }
             return super.getResource(name);
         }
+    }
+
+
+    //
+    // Delegate methods for JaxWS 2.1
+    //
+
+    private static Object invoke21Delegate(Object delegate, Method method, Object... args) {
+        if (method == null) {
+            throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+        }
+        try {
+            return method.invoke(delegate,args);
+        } catch (IllegalAccessException e) {
+            throw new WebServiceException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() != null) {
+                throw new WebServiceException(e.getCause());
+            }
+            throw new WebServiceException(e);
+        }
+    }
+
+    // Provider methods
+    private static final Method createW3CEndpointReference;
+    private static final Method providerGetPort;
+    private static final Method readEndpointReference;
+
+    // ServiceDelegate methods
+    private static final Method createDispatchReference;
+    private static final Method createDispatchInterface;
+    private static final Method createDispatchJaxBContext;
+    private static final Method serviceGetPortByEndpointReference;
+    private static final Method serviceGetPortByQName;
+    private static final Method serviceGetPortByInterface;
+
+    static {
+        Method method = null;
+        try {
+            method = Provider.class.getMethod("createW3CEndpointReference",
+                    String.class,
+                    QName.class,
+                    QName.class,
+                    List.class,
+                    String.class,
+                    List.class);
+        } catch (NoSuchMethodException e) {
+        }
+        createW3CEndpointReference = method;
+
+        method = null;
+        try {
+            method = Provider.class.getMethod("getPort",
+                    EndpointReference.class,
+                    Class.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        providerGetPort = method;
+
+        method = null;
+        try {
+            method = Provider.class.getMethod("readEndpointReference", Source.class);
+        } catch (NoSuchMethodException e) {
+        }
+        readEndpointReference = method;
+
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("createDispatch",
+                    EndpointReference.class,
+                    JAXBContext.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        createDispatchReference = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("createDispatch",
+                    QName.class,
+                    JAXBContext.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        createDispatchJaxBContext = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("createDispatch",
+                    QName.class,
+                    Class.class,
+                    Service.Mode.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        createDispatchInterface = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("getPort",
+                    EndpointReference.class,
+                    Class.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        serviceGetPortByEndpointReference = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("getPort",
+                    QName.class,
+                    Class.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        serviceGetPortByQName = method;
+
+        method = null;
+        try {
+            method = ServiceDelegate.class.getMethod("getPort",
+                    Class.class,
+                    WebServiceFeature[].class);
+        } catch (NoSuchMethodException e) {
+        }
+        serviceGetPortByInterface = method;
+
     }
 }
