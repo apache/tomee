@@ -19,9 +19,11 @@ package org.apache.openejb.client;
 import org.omg.CORBA.ORB;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.ConnectException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -48,6 +50,8 @@ import javax.sql.DataSource;
  * @version $Rev$ $Date$
  */
 public class JNDIContext implements Serializable, InitialContextFactory, Context {
+
+    public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
 
     private static final long serialVersionUID = 1L;
 
@@ -110,26 +114,35 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
-        Object serverURI = env.get(Context.PROVIDER_URL);
+        String serverURI = (String) env.get(Context.PROVIDER_URL);
         moduleId = (String) env.get("openejb.client.moduleId");
 
-        if (serverURI == null) serverURI = "ejbd://localhost:4201";
-        // if (userID == null) userID = "anonymous";
-        // if (psswrd == null) psswrd = "anon";
-
-        String uriString = (String) serverURI;
-        URI location = null;
+        URI location;
         try {
-            location = new URI(uriString);
-        } catch (Exception e) {
-            if (uriString.indexOf("://") == -1) {
-                try {
-                    location = new URI("foo://" + uriString);
-                } catch (URISyntaxException giveUp) {
-                    // Was worth a try, let's give up and throw the original exception.
-                    throw (ConfigurationException) new ConfigurationException("Context property value error for " + Context.PROVIDER_URL + " :" + e.getMessage()).initCause(e);
+            if (serverURI == null || serverURI.length() == 0) {
+                serverURI = DEFAULT_PROVIDER_URL;
+            } else {
+                URI serverURL = new URI(serverURI);
+
+                // very first check per URI's rules has passed
+                // let's check for common "mistakes"
+                // TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
+                //       This class doesn't really know what is required as far as connection details go
+
+                int colonIndex = serverURI.indexOf(":");
+                int slashesIndex = serverURI.indexOf("//");
+                // hostname only
+                if (colonIndex == -1 && slashesIndex == -1) {
+                    serverURI = "ejbd://" + serverURI + ":4201";
+                } else if (colonIndex == -1) {
+                    serverURI = serverURI + ":4201";                    
+                } else if (slashesIndex == -1) {
+                    serverURI = "ejbd://" + serverURI;
                 }
             }
+            location = new URI(serverURI);
+        } catch (URISyntaxException e) {
+            throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + serverURI + ":" + e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
         //TODO:1: Either aggressively initiate authentication or wait for the
@@ -142,7 +155,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         return this;
     }
-
+    
     public void authenticate(String userID, String psswrd) throws AuthenticationException {
 
         // May be null
