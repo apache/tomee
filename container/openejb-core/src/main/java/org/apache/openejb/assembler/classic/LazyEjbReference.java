@@ -63,7 +63,11 @@ public class LazyEjbReference extends Reference {
         String deploymentId = resolver.resolve(info, moduleUri);
 
         if (deploymentId == null) {
-            String message = messages.format("lazyEjbRefNotResolved", info.getName(), info.getEjbLink(), info.getHome(), info.getInterface());
+            String key = "lazyEjbRefNotResolved";
+            if (info.getHome() != null){
+                key += ".home";
+            }
+            String message = messages.format(key, info.getName(), info.getEjbLink(), info.getHome(), info.getInterface());
             throw new NameNotFoundException(message);
         }
 
