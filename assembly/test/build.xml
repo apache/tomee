@@ -23,6 +23,7 @@
         Tests OpenEJB distribution using the OpenEJB iTest suite.
     </description>
 
+    <property name="openejb.version" value="3.0-SNAPSHOT"/>
     <property name="repo" location="${basedir}/repo"/>
     <property name="maven.repo" value="file:${user.home}/.m2/repository"/>
     <property name="target.dir" location="${basedir}/target"/>
@@ -36,36 +37,56 @@
     </target>
 
     <target name="test">
-        <antcall target="openejb.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
-        </antcall>
+        <antcall target="openejb.test"/>
+        <antcall target="test:tomcat6"/>
+        <antcall target="test:tomcat55"/>
+    </target>
 
+    <target name="test:all">
+        <antcall target="openejb.test"/>
+        <antcall target="test:tomcat6:all"/>
+        <antcall target="test:tomcat55:all"/>
+    </target>
+
+    <target name="test:tomcat6">
         <antcall target="tomcat.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
             <param name="tomcat.version" value="6.0.14"/>
         </antcall>
     </target>
 
-    <target name="all">
-        <antcall target="openejb.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
-        </antcall>
-      
+    <target name="test:tomcat6:all">
         <antcall target="tomcat.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
             <param name="tomcat.version" value="6.0.14"/>
         </antcall>
         <antcall target="tomcat.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
             <param name="tomcat.version" value="6.0.13"/>
         </antcall>
         <antcall target="tomcat.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
             <param name="tomcat.version" value="6.0.10"/>
         </antcall>
         <antcall target="tomcat.test">
-            <param name="openejb.version" value="3.0-SNAPSHOT"/>
             <param name="tomcat.version" value="6.0.9"/>
+        </antcall>
+    </target>
+
+    <target name="test:tomcat55">
+        <antcall target="tomcat.test">
+            <param name="tomcat.version" value="5.5.26"/>
+        </antcall>
+    </target>
+
+    <target name="test:tomcat55:all">
+        <antcall target="tomcat.test">
+            <param name="tomcat.version" value="5.5.26"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="tomcat.version" value="5.5.25"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="tomcat.version" value="5.5.23"/>
+        </antcall>
+        <antcall target="tomcat.test">
+            <param name="tomcat.version" value="5.5.20"/>
         </antcall>
     </target>
 
@@ -157,8 +178,14 @@
         <!-- copy openejb.war to webapps dir -->
         <copy file="${openejb.war.file}" todir="${tomcat.home}/webapps"/>
 
+        <!-- install itests.war -->
+        <copy file="${itests.war.file}" todir="${tomcat.home}/webapps"/>
+
         <!-- start tomcat -->
         <antcall target="tomcat.start"/>
+
+        <!-- run itests (Servlet started mode) -->
+        <antcall target="itests.tomcat.run"/>
 
         <!-- run installer -->
         <get src="http://localhost:8080/openejb/installer?action=Install" dest="${target.dir}/installer.out"/>
@@ -166,10 +193,7 @@
         <!-- stop tomcat -->
         <antcall target="tomcat.stop"/>
 
-        <!-- install itests.war -->
-        <copy file="${itests.war.file}" todir="${tomcat.home}/webapps"/>
-
-        <!-- start tomcat -->
+        <!-- run itests (Listener started mode) -->
         <antcall target="tomcat.start"/>
 
         <!-- run itests -->
@@ -294,7 +318,13 @@
         <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-client/${openejb.version}/openejb-itests-client-${openejb.version}.jar"/>
         <property name="itests.client.file" value="${repo}/openejb/distributions/${openejb.version}/openejb-itests-standalone-client.jar"/>
 
-        <property name="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip"/>
+        <condition property="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip">
+            <matches pattern="^6\." string="${tomcat.version}"/>
+        </condition>
+        <condition property="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-5/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip">
+            <matches pattern="^5\.5" string="${tomcat.version}"/>
+        </condition>
+        <fail message="Unknown Tomcat version ${tomcat.version}" unless="tomcat.url"/>
         <property name="tomcat.file" value="${repo}/tomcat/distributions/${tomcat.version}/tomcat.zip"/>
 
         <property name="tomcat.home" value="${target.dir}/apache-tomcat-${tomcat.version}"/>
