@@ -123,6 +123,13 @@
                 </tstamp>
                 <replace file="target/classes/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
                 <replace file="target/classes/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
+                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <java classname="org.apache.openejb.util.MakeTxLookup">
+                  <arg value="${project.build.directory}"/>
+                  <classpath>
+                    <pathelement path="${compile_classpath}"/>
+                  </classpath>
+                </java>
               </tasks>
             </configuration>
           </execution>
