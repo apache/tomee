@@ -50,6 +50,7 @@
       <includes>
           <include>junit:junit</include>
           <include>org.apache.openejb:openejb-itests-beans</include>
+          <include>org.apache.openejb:openejb-itests-servlets</include>
       </includes>
       <scope>test</scope>
     </dependencySet>

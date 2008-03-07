@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev: 634170 $ $Date: 2008-03-05 21:30:10 -0800 (Wed, 05 Mar 2008) $ -->
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+        metadata-complete="false"
+        version="2.5">
+
+  <display-name>OpenEJB Servlet Examples</display-name>
+
+  <servlet>
+    <servlet-name>AnnotatedServlet</servlet-name>
+    <servlet-class>org.apache.openejb.test.servlet.AnnotatedServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>AnnotatedServlet</servlet-name>
+    <url-pattern>/AnnotatedServlet/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>JndiServlet</servlet-name>
+    <servlet-class>org.apache.openejb.test.servlet.JndiServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>JndiServlet</servlet-name>
+    <url-pattern>/JndiServlet/*</url-pattern>
+  </servlet-mapping>
+
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/booolean</env-entry-name>
+      <env-entry-type>java.lang.Boolean</env-entry-type>
+      <env-entry-value>true</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/striing</env-entry-name>
+      <env-entry-type>java.lang.String</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/doouble</env-entry-name>
+      <env-entry-type>java.lang.Double</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/loong</env-entry-name>
+      <env-entry-type>java.lang.Long</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/flooat</env-entry-name>
+      <env-entry-type>java.lang.Float</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/inteeger</env-entry-name>
+      <env-entry-type>java.lang.Integer</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/shoort</env-entry-name>
+      <env-entry-type>java.lang.Short</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/byyte</env-entry-name>
+      <env-entry-type>java.lang.Byte</env-entry-type>
+      <env-entry-value>1</env-entry-value>
+    </env-entry>
+    <env-entry>
+      <env-entry-name>org.apache.openejb.test.servlet.AnnotatedServlet/chaaracter</env-entry-name>
+      <env-entry-type>java.lang.Character</env-entry-type>
+      <env-entry-value>D</env-entry-value>
+    </env-entry>
+    <ejb-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/bmpHome</ejb-ref-name>
+      <ejb-ref-type>Entity</ejb-ref-type>
+      <home>org.apache.openejb.test.entity.bmp.BasicBmpHome</home>
+      <remote>org.apache.openejb.test.entity.bmp.BasicBmpObject</remote>
+      <ejb-link>BasicBmpBean</ejb-link>
+    </ejb-ref>
+    <ejb-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statefulHome</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <home>org.apache.openejb.test.stateful.BasicStatefulHome</home>
+      <remote>org.apache.openejb.test.stateful.BasicStatefulObject</remote>
+      <ejb-link>BasicStatefulBean</ejb-link>
+    </ejb-ref>
+    <ejb-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statelessHome</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <home>org.apache.openejb.test.stateless.BasicStatelessHome</home>
+      <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
+      <ejb-link>BasicStatelessBean</ejb-link>
+    </ejb-ref>
+    <ejb-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statelessBusinessRemote</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</remote>
+      <ejb-link>BasicStatelessPojoBean</ejb-link>
+    </ejb-ref>
+    <ejb-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statefulBusinessRemote</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</remote>
+      <ejb-link>BasicStatefulPojoBean</ejb-link>
+    </ejb-ref>
+    <ejb-local-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statelessBusinessLocal</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
+      <ejb-link>BasicStatelessPojoBean</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+      <ejb-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/statefulBusinessLocal</ejb-ref-name>
+      <ejb-ref-type>Session</ejb-ref-type>
+      <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+      <ejb-link>BasicStatefulPojoBean</ejb-link>
+    </ejb-local-ref>
+    <resource-ref>
+      <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/daataSource</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+      <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/coonnectionFactory</res-ref-name>
+      <res-type>javax.jms.ConnectionFactory</res-type>
+      <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+      <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/queueCoonnectionFactory</res-ref-name>
+      <res-type>javax.jms.QueueConnectionFactory</res-type>
+      <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+      <res-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/topicCoonnectionFactory</res-ref-name>
+      <res-type>javax.jms.TopicConnectionFactory</res-type>
+      <res-auth>Container</res-auth>
+    </resource-ref>
+    <persistence-context-ref>
+      <persistence-context-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/em</persistence-context-ref-name>
+      <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+    </persistence-context-ref>
+    <persistence-unit-ref>
+      <persistence-unit-ref-name>org.apache.openejb.test.servlet.AnnotatedServlet/emf</persistence-unit-ref-name>
+      <persistence-unit-name>openjpa-test-unit</persistence-unit-name>
+    </persistence-unit-ref>
+</web-app>

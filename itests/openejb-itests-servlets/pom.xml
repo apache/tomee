@@ -16,25 +16,34 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- $Rev$ $Date$ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.0-SNAPSHOT</version>
-    </parent>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>itests</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: iTests</name>
-  <modules>
-    <module>openejb-itests-client</module>
-    <module>openejb-itests-beans</module>
-    <module>openejb-itests-servlets</module>
-    <module>openejb-itests-interceptor-beans</module>
-    <module>openejb-itests-app</module>
-    <module>openejb-itests-web</module>
-  </modules>
+  <artifactId>openejb-itests-servlets</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: iTests Servlets</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-beans</artifactId>
+      <version>${version}</version>
+      <type>ejb</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>

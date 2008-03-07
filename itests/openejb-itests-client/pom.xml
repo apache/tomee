@@ -93,6 +93,12 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-servlets</artifactId>
+      <version>${pom.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
     </dependency>

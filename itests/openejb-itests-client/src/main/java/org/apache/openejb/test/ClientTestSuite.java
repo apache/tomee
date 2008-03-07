@@ -24,6 +24,7 @@ import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
+import org.apache.openejb.test.servlet.ServletTestSuite;
 
 /**
  * 
@@ -38,6 +39,9 @@ public class ClientTestSuite extends junit.framework.TestCase {
 
     public static junit.framework.Test suite() {
         TestSuite suite = new TestSuite();
+        if (Boolean.getBoolean("openejb.test.servlets")) {
+            suite.addTest(ServletTestSuite.suite());
+        }
         suite.addTest( StatelessTestSuite.suite() );
         suite.addTest( StatefulTestSuite.suite() );
         suite.addTest( BmpTestSuite.suite() );

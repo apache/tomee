@@ -27,34 +27,19 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-itests-web</artifactId>
-  <packaging>pom</packaging>
+  <packaging>war</packaging>
   <name>OpenEJB :: iTests Web</name>
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>attached</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptor>src/main/assembly/war.xml</descriptor>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${version}</version>
       <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-servlets</artifactId>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

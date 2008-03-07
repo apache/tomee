@@ -147,6 +147,7 @@ public class TestRunner extends junit.textui.TestRunner {
     private static void runTomcatRemoteHttpTests() {
         setDefault("openejb.test.server", TomcatRemoteTestServer.class.getName());
         setDefault("openejb.test.database", "org.apache.openejb.test.HsqldbTestDatabase");
+        setDefault("openejb.test.servlets", "true");
 
         System.out.println("_________________________________________________");
         System.out

@@ -57,6 +57,7 @@
           <include>asm:asm</include>
           <include>junit:junit</include>
           <include>org.apache.openejb:openejb-itests-beans</include>
+          <include>org.apache.openejb:openejb-itests-servlets</include>
           <include>org.apache.openejb:openejb-itests-client</include>
           <include>org.apache.openejb:openejb-client</include>
 
