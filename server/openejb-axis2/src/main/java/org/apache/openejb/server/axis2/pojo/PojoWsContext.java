@@ -21,7 +21,10 @@ import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.handler.MessageContext;
+
+import org.w3c.dom.Element;
 
 /**
  * Implementation of WebServiceContext for POJO WS to ensure that getUserPrincipal()
@@ -58,5 +61,15 @@ public class PojoWsContext implements WebServiceContext {
 
     public static void clear() {
         context.set(null);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 }
