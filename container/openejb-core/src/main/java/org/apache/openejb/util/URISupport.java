@@ -288,7 +288,7 @@ public class URISupport {
     }
 
     public static URI stripScheme(URI uri) throws URISyntaxException {
-        return new URI(stripPrefix(uri.getSchemeSpecificPart().trim(), "//"));
+        return new URI(stripPrefix(uri.getRawSchemeSpecificPart().trim(), "//"));
     }
 
     public static String createQueryString(Map options) throws URISyntaxException {

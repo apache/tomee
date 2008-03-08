@@ -78,7 +78,7 @@ public class TomcatEmbedder {
 
             URI uri = classURL.toURI();
             if (uri.getPath() == null){
-                uri = new URI(uri.getSchemeSpecificPart());
+                uri = new URI(uri.getRawSchemeSpecificPart());
             }
 
             String path = uri.getPath();
