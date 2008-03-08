@@ -28,10 +28,12 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
+import org.w3c.dom.Element;
 
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
@@ -148,6 +150,16 @@ public abstract class CxfEndpoint extends Endpoint {
     }
 
     public void setProperties(Map<String, Object> arg0) {
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public EndpointReference getEndpointReference(Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
     }
 
     private static class NoInitJaxWsServerFactoryBean extends JaxWsServerFactoryBean {
