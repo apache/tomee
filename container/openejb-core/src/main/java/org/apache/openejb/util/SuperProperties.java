@@ -534,7 +534,7 @@ public class SuperProperties extends Properties {
                     break;
             }
 
-            if (Character.isWhitespace(nextChar)) {
+            if (nextByte >= 0 && Character.isWhitespace(nextChar)) {
                 // count leading white space
                 if (key.length() == 0) {
                     if (nextChar == '\t') {
@@ -550,6 +550,28 @@ public class SuperProperties extends Properties {
                 }
             }
 
+            // Decode encoded separator characters
+            switch (nextByte) {
+                case ENCODED_EQUALS:
+                    nextChar = '=';
+                    break;
+                case ENCODED_COLON:
+                    nextChar = ':';
+                    break;
+                case ENCODED_SPACE:
+                    nextChar = ' ';
+                    break;
+                case ENCODED_TAB:
+                    nextChar = '\t';
+                    break;
+                case ENCODED_NEWLINE:
+                    nextChar = '\n';
+                    break;
+                case ENCODED_CARRIAGE_RETURN:
+                    nextChar = '\r';
+                    break;
+            }
+            
             inSeparator = false;
             if (value == null) {
                 key.append(nextChar);
@@ -577,10 +599,17 @@ public class SuperProperties extends Properties {
 
     private static final int EOF = -1;
     private static final int LINE_ENDING = -4200;
+    private static final int ENCODED_EQUALS = -5000;
+    private static final int ENCODED_COLON = -5001;
+    private static final int ENCODED_SPACE = -5002;
+    private static final int ENCODED_TAB = -5003;
+    private static final int ENCODED_NEWLINE = -5004;
+    private static final int ENCODED_CARRIAGE_RETURN = -5005;
 
     private int decodeNextCharacter(InputStream in) throws IOException {
         boolean lineContinuation = false;
         boolean carriageReturnLineContinuation  = false;
+        boolean encoded  = false;
         while (true) {
             // read character
             int nextByte = in.read();
@@ -621,6 +650,7 @@ public class SuperProperties extends Properties {
                         nextChar = readUnicode(in);
                         break;
                     default:
+                        encoded = true;
                         nextChar = decodeEscapeChar(nextChar);
                         break;
                 }
@@ -638,6 +668,22 @@ public class SuperProperties extends Properties {
                 continue;
             }
 
+            if (encoded) {
+                switch (nextChar) {
+                    case '=':
+                        return ENCODED_EQUALS;
+                    case ':':
+                        return ENCODED_COLON;
+                    case ' ':
+                        return ENCODED_SPACE;
+                    case '\t':
+                        return ENCODED_TAB;
+                    case '\n':
+                        return ENCODED_NEWLINE;
+                    case '\r':
+                        return ENCODED_CARRIAGE_RETURN;
+                }
+            }
             return nextChar;
         }
     }
@@ -647,7 +693,7 @@ public class SuperProperties extends Properties {
             case 'b':
                 return '\b';
             case 'f':
-                return'\f';
+                return '\f';
             case 'n':
                 return '\n';
             case 'r':

@@ -18,6 +18,8 @@
 package org.apache.openejb.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -303,6 +305,25 @@ public class PropertiesTest extends TestCase {
         assertEquals(properties("foo", "b", "ar", ""), properties);
     }
 
+    public void testEscapedKeyValueSeparators() throws Exception {
+        Properties properties = createProperties();
+
+        // test put and get
+        properties.put("\t\r\n my: \t\n\rkey=", "foo");
+        assertEquals("foo", properties.get("\t\r\n my: \t\n\rkey="));
+
+        // test store
+        String text = store(properties);
+        if (text.startsWith("#")) text = text.split("\\n", 2)[1];
+        text = text.trim();
+        assertEquals("\\t\\r\\n\\ my\\:\\ \\t\\n\\rkey\\==foo", text);
+
+        // test load
+        properties = createProperties();
+        properties.load(new ByteArrayInputStream("\\t\\r\\n\\ my\\:\\ \\t\\n\\rkey\\==foo".getBytes()));
+        assertEquals("foo", properties.get("\t\r\n my: \t\n\rkey="));
+    }
+
     protected Properties createProperties() {
         return new Properties();
     }
@@ -347,5 +368,11 @@ public class PropertiesTest extends TestCase {
         }
 
         fail(message.toString());
+    }
+
+    protected String store(Properties properties) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        properties.store(out, null);
+        return new String(out.toByteArray());
     }
 }

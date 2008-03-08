@@ -19,10 +19,8 @@ package org.apache.openejb.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 
 public class SuperPropertiesTest extends PropertiesTest {
 
@@ -349,12 +347,6 @@ public class SuperPropertiesTest extends PropertiesTest {
         assertEquals(singletonProperty("foo", "bar"), properties);
         assertEquals(4, properties.getIndent());
         assertEquals(2, properties.getCommentIndent());
-    }
-
-    protected String store(Properties properties) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        properties.store(out, null);
-        return new String(out.toByteArray());
     }
 
     protected SuperProperties createProperties() {
