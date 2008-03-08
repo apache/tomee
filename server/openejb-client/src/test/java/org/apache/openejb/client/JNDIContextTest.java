@@ -53,13 +53,13 @@ public class JNDIContextTest {
         env.put(Context.PROVIDER_URL, "");
         jndiContext.getInitialContext(env);
 
-        try {
-            env.put(Context.PROVIDER_URL, "ejbd:");
-            jndiContext.getInitialContext(env);
-            fail("ConfigurationException expected due to malformed " + Context.PROVIDER_URL);
-        } catch (ConfigurationException expected) {
-            // do nothing
-        }
+//        try {
+//            env.put(Context.PROVIDER_URL, "ejbd:");
+//            jndiContext.getInitialContext(env);
+//            fail("ConfigurationException expected due to malformed " + Context.PROVIDER_URL);
+//        } catch (ConfigurationException expected) {
+//            // do nothing
+//        }
     }
 
 }
