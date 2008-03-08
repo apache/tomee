@@ -22,8 +22,15 @@ import junit.framework.TestCase;
 import javax.xml.ws.spi.Provider;
 import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import java.net.URL;
+import java.util.List;
+
+import org.w3c.dom.Element;
 
 public class JaxWsProviderWrapperTest extends TestCase {
     public void test() throws Exception {
@@ -48,6 +55,7 @@ public class JaxWsProviderWrapperTest extends TestCase {
         }
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public static class MockProvider extends Provider {
         public ServiceDelegate createServiceDelegate(URL url, QName qName, Class aClass) {
             return null;
@@ -58,6 +66,18 @@ public class JaxWsProviderWrapperTest extends TestCase {
         }
 
         public Endpoint createAndPublishEndpoint(String string, Object object) {
+            return null;
+        }
+
+        public W3CEndpointReference createW3CEndpointReference(String address, QName serviceName, QName portName, List<Element> metadata, String wsdlDocumentLocation, List<Element> referenceParameters) {
+            return null;
+        }
+
+        public EndpointReference readEndpointReference(Source source){
+            return null;
+        }
+
+        public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
             return null;
         }
     }
