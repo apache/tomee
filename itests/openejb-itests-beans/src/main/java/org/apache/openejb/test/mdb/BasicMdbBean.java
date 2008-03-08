@@ -37,7 +37,7 @@ import java.util.Properties;
  */
 public class BasicMdbBean implements BasicMdbObject, MessageDrivenBean, MessageListener {
 	private MessageDrivenContext mdbContext = null;
-    private Hashtable allowedOperationsTable = new Hashtable();
+    private static Hashtable allowedOperationsTable = new Hashtable();
     protected MdbInvoker mdbInvoker;
 
 
