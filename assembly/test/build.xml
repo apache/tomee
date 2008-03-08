@@ -283,7 +283,7 @@
     </target>
 
     <target name="openejb.test.setup">
-        <property name="openejb.app.url" value="${maven.repo}/org/apache/openejb/openejb-standalone/${openejb.version}/openejb-standalone-${openejb.version}-bin.zip"/>
+        <property name="openejb.app.url" value="${maven.repo}/org/apache/openejb/openejb-standalone/${openejb.version}/openejb-standalone-${openejb.version}.zip"/>
         <property name="openejb.app.file" value="${repo}/openejb/distributions/${openejb.version}/openejb.zip"/>
 
         <property name="itests.app.url" value="${maven.repo}/org/apache/openejb/openejb-itests-app/${openejb.version}/openejb-itests-app-${openejb.version}.jar"/>
