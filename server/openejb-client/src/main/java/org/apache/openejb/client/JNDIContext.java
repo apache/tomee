@@ -122,7 +122,8 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             if (serverURI == null || serverURI.length() == 0) {
                 serverURI = DEFAULT_PROVIDER_URL;
             } else {
-                URI serverURL = new URI(serverURI);
+// TODO: disabled due to breakage of standalone iTests                
+//                URI serverURL = new URI(serverURI);
 
                 // very first check per URI's rules has passed
                 // let's check for common "mistakes"
