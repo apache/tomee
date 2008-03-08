@@ -40,7 +40,7 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
 
     private String name;
     private SessionContext ejbContext;
-    private Hashtable allowedOperationsTable = new Hashtable();
+    private static Hashtable allowedOperationsTable = new Hashtable();
 
     //=============================
     // Home interface methods
