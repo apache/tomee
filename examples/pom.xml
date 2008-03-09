@@ -39,6 +39,7 @@
     <module>injection-of-datasource</module>
     <module>injection-of-entitymanager</module>
     <module>testing-transactions</module>
+    <module>testing-security</module>
     <module>interceptors</module>
     <module>expanded-env-entries</module>
     <module>helloworld-weblogic</module>
