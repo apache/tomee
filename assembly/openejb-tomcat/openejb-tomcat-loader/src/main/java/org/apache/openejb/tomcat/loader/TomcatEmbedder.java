@@ -21,6 +21,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 public class TomcatEmbedder {
@@ -76,7 +77,13 @@ public class TomcatEmbedder {
 
             URL classURL = clazz.getClassLoader().getResource(classFileName);
 
-            URI uri = classURL.toURI();
+            URI uri = null;
+            String url = classURL.toExternalForm();
+            if (url.contains(" ")) {
+                url = url.replaceAll(" ", "%20");
+            }
+            uri = new URI(url);
+
             if (uri.getPath() == null){
                 uri = new URI(uri.getRawSchemeSpecificPart());
             }
@@ -88,7 +95,7 @@ public class TomcatEmbedder {
                 path = path.substring(0, path.length() - classFileName.length());
             }
 
-            return new File(path);
+            return new File(URLDecoder.decode(path));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
