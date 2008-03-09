@@ -21,6 +21,14 @@ import org.apache.openejb.server.ServerService;
 public class HttpServerFactory {
 
     public static ServerService createServerService() {
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            cl.loadClass("org.mortbay.jetty.Connector");
+            return new JettyHttpEjbServer();
+        } catch (Throwable e) {
+            // We don't have jetty
+        }
+        
         return new OpenEJBHttpEjbServer();
     }
 }
