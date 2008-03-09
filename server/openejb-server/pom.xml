@@ -70,7 +70,7 @@
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>xbean-finder</artifactId>
     </dependency>
     <dependency>
