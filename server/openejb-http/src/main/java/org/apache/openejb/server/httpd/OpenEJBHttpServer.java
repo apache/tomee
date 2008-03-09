@@ -44,7 +44,7 @@ public class OpenEJBHttpServer implements HttpServer {
         this(getHttpListenerRegistry());
     }
 
-    private static HttpListenerRegistry getHttpListenerRegistry() {
+    public static HttpListenerRegistry getHttpListenerRegistry() {
         SystemInstance systemInstance = SystemInstance.get();
         HttpListenerRegistry registry = systemInstance.getComponent(HttpListenerRegistry.class);
         if (registry == null){

@@ -45,7 +45,7 @@ public class JettyHttpServer implements HttpServer {
     private int port;
 
     public JettyHttpServer() {
-        this(null);
+        this(OpenEJBHttpServer.getHttpListenerRegistry());
     }
 
     public JettyHttpServer(HttpListener listener) {
