@@ -57,11 +57,9 @@ public class Bootstrap {
 
                 propsString = propsString.substring(0, propsString.indexOf("!"));
 
-                propsString = URLDecoder.decode(propsString);
-                
                 URI uri = new URI(propsString);
 
-                File jarFile = new File(uri);
+                File jarFile = new File(uri.getSchemeSpecificPart());
 
                 if (jarFile.getName().indexOf("openejb-core") > -1) {
                     File lib = jarFile.getParentFile();
