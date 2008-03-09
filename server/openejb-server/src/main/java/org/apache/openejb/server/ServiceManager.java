@@ -279,7 +279,7 @@ public class ServiceManager {
             ServerService d = daemons[i];
             try {
                 d.start();
-                if (display) {
+                if (display && d.getPort() != -1) {
                     printRow(d.getName(), d.getIP(), d.getPort() + "");
                 }
             } catch (Exception e) {
