@@ -36,7 +36,13 @@ public class JarLocation {
 
             URL classURL = clazz.getClassLoader().getResource(classFileName);
 
-            URI uri = classURL.toURI();
+            URI uri = null;
+            String url = classURL.toExternalForm();
+            if (url.contains(" ")) {
+                url = url.replaceAll(" ", "%20");
+            }
+            uri = new URI(url);
+
             if (uri.getPath() == null){
                 uri = new URI(uri.getRawSchemeSpecificPart());
             }
