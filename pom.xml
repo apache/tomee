@@ -794,7 +794,7 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>${xbeanVersion}</version>
+        <version>3.4-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>

@@ -181,10 +181,11 @@ public class ServiceManager {
 
                     ObjectRecipe recipe = new ObjectRecipe(serviceClass);
                     try {
-                        if (recipe.findFactoryMethod(serviceClass, "createServerService") != null){
+                        // Do not import.  This class is not available in xbean-reflect-3.3
+                        if (org.apache.xbean.recipe.ReflectionUtil.findStaticFactory(serviceClass, "createServerService", null, null) != null){
                             recipe = new ObjectRecipe(serviceClass, "createServerService");
                         }
-                    } catch (MissingFactoryMethodException e) {
+                    } catch (Throwable e) {
                     }
 
                     recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
