@@ -70,6 +70,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.omg.CORBA.ORB;
@@ -538,9 +539,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     File file;
                     if (url.getProtocol().equals("jar")) {
                         url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                        file = new File(url.getFile());
+                        file = URLs.toFile(url);
                     } else if (url.getProtocol().equals("file")) {
-                        file = new File(url.getFile());
+                        file = URLs.toFile(url);
                     } else {
                         logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
                         continue;
