@@ -26,7 +26,7 @@
   <artifactId>xbean-finder</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Dependencies :: XBean Finder</name>
-  <version>3.4-r635332</version>
+  <version>3.4-r635810-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder</artifactId>
-      <version>3.4-r635332</version>
+      <version>3.4-r635810</version>
     </dependency>
   </dependencies>
 </project>

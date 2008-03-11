@@ -72,7 +72,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.4-r635332</xbeanVersion>
+    <xbeanVersion>3.4-r635810</xbeanVersion>
 
 
     <!-- OSGi bundles properties -->
@@ -777,7 +777,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>xbean-finder</artifactId>
-        <version>3.4-r635332</version>
+        <version>3.4-r635810-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -787,7 +787,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>3.4-r635332</version>
+        <version>3.4-r635810-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>
