@@ -28,6 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -57,8 +60,10 @@ public class StratocasterTest extends TestCase {
         Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1954");
         assertEquals("Stratocaster.getMyDate()", date, stratocaster.getMyDate());
 
-        File file = new File("/tmp/play-history.txt");
-        assertEquals("Stratocaster.getMyFile()", file, stratocaster.getMyFile());
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("history", new File("/tmp/play-history.txt"));
+        files.put("artists", new File("/tmp/famous-artists.txt"));
+        assertEquals("Stratocaster.getMyFiles()", files, stratocaster.getMyFiles());
 
         InetAddress host = InetAddress.getByName("localhost");
         assertEquals("Stratocaster.getMyInetAddress()", host, stratocaster.getMyInetAddress());
@@ -77,7 +82,10 @@ public class StratocasterTest extends TestCase {
         map.put("pickups", "Texas Special");
         assertEquals("Stratocaster.getMyMap()", map, stratocaster.getMyMap());
 
-        assertEquals("Stratocaster.getMyURI()", new URI("game://guitarheroII/?mode=expert"), stratocaster.getMyURI());
+        List<URI> uris = new ArrayList<URI>();
+        uris.add(new URI("game://guitarheroII/?mode=expert"));
+        uris.add(new URI("game://guitarheroIII/?guitar=wireless"));
+        assertEquals("Stratocaster.getMyURIs()", uris, stratocaster.getMyURIs());
 
         assertEquals("Stratocaster.getMyURL()", new URL("http://www.fender.com/"), stratocaster.getMyURL());
 

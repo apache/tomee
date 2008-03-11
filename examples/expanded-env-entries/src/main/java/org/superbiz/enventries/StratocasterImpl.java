@@ -31,26 +31,31 @@ import java.util.Map;
  * OpenEJB supports many other types.
  *
  * This bean has just about every flavor of env-entry OpenEJB supports.
- *
- * @version $Rev$ $Date$
  */
 @Stateless
 public class StratocasterImpl implements Stratocaster {
 
     @Resource(name = "myClass")
     private Class myClass;
+
     @Resource(name = "myDate")
     private Date myDate;
-    @Resource(name = "myFile")
-    private File myFile;
+
+    @Resource(name = "myFiles")
+    private Map<String, File> myFiles;
+
     @Resource(name = "myInetAddress")
     private InetAddress myInetAddress;
+
     @Resource(name = "myList")
     private List myList;
+
     @Resource(name = "myMap")
     private Map myMap;
-    @Resource(name = "myURI")
-    private URI myURI;
+
+    @Resource(name = "myURIs")
+    private List<URI> myURIs;
+
     @Resource(name = "myURL")
     private URL myURL;
 
@@ -62,8 +67,8 @@ public class StratocasterImpl implements Stratocaster {
         return myDate;
     }
 
-    public File getMyFile() {
-        return myFile;
+    public Map<String, File> getMyFiles() {
+        return myFiles;
     }
 
     public InetAddress getMyInetAddress() {
@@ -78,8 +83,8 @@ public class StratocasterImpl implements Stratocaster {
         return myMap;
     }
 
-    public URI getMyURI() {
-        return myURI;
+    public List<URI> getMyURIs() {
+        return myURIs;
     }
 
     public URL getMyURL() {

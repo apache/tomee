@@ -16,31 +16,8 @@
  */
 package org.superbiz.enventries;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
-
 /**
- * @version $Rev$ $Date$
+ * @version $Revision$ $Date$
  */
-public interface Stratocaster {
-    Class getMyClass();
-
-    Date getMyDate();
-
-    Map<String, File> getMyFiles();
-
-    InetAddress getMyInetAddress();
-
-    List getMyList();
-
-    Map getMyMap();
-
-    List<URI> getMyURIs();
-
-    URL getMyURL();
+public enum Style {
 }
