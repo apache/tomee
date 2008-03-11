@@ -26,7 +26,7 @@ public enum Operation {
     AFTER_COMPLETION(true),
     BEFORE_COMPLETION(true),
     PRE_DESTROY(true),
-    REMOVE(true),
+    REMOVE(false),
     SET_CONTEXT(true),
     UNSET_CONTEXT(true),
     CREATE(true),
