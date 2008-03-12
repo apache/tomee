@@ -16,28 +16,20 @@
  */
 package org.superbiz.enventries;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
 
-/**
- * @version $Rev$ $Date$
- */
 //START SNIPPET: code
-public interface Stratocaster {
-    Date getDateCreated();
+import java.beans.PropertyEditorManager;
 
-    float getStringGuage(String string);
+public enum Pickup {
 
-    List<Pickup> getPickups();
+    HUMBUCKER,
+    SINGLE_COIL;
 
-    Style getStyle();
-
-    File getCertificateOfAuthenticity();
-
+    // Here's the little magic where we register the PickupEditor
+    // which knows how to create this object from a string.
+    // You can add any of your own Property Editors in the same way.
+    static {
+        PropertyEditorManager.registerEditor(Pickup.class, PickupEditor.class);
+    }
 }
 //END SNIPPET: code

@@ -16,6 +16,8 @@
  */
 package org.superbiz.enventries;
 
+import static java.util.Arrays.asList;
+
 import junit.framework.TestCase;
 
 import javax.naming.InitialContext;
@@ -28,9 +30,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Arrays;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -40,6 +43,7 @@ import java.text.DateFormat;
 /**
  * @version $Rev$ $Date$
  */
+//START SNIPPET: code
 public class StratocasterTest extends TestCase {
 
     private InitialContext initialContext;
@@ -52,43 +56,28 @@ public class StratocasterTest extends TestCase {
     }
 
     public void test() throws Exception {
-        Stratocaster stratocaster = (Stratocaster) initialContext.lookup("StratocasterImplLocal");
+        Stratocaster strat = (Stratocaster) initialContext.lookup("StratocasterImplLocal");
 
 
-        assertEquals("Stratocaster.getMyClass()", Stratocaster.class, stratocaster.getMyClass());
+        Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1962");
+        assertEquals("Strat.getDateCreated()", date, strat.getDateCreated());
 
-        Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1954");
-        assertEquals("Stratocaster.getMyDate()", date, stratocaster.getMyDate());
+        List<Pickup> pickups = asList(Pickup.SINGLE_COIL, Pickup.SINGLE_COIL, Pickup.SINGLE_COIL);
+        assertEquals("Strat.getPickups()", pickups, strat.getPickups());
 
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("history", new File("/tmp/play-history.txt"));
-        files.put("artists", new File("/tmp/famous-artists.txt"));
-        assertEquals("Stratocaster.getMyFiles()", files, stratocaster.getMyFiles());
+        assertEquals("Strat.getStyle()", Style.VINTAGE, strat.getStyle());
 
-        InetAddress host = InetAddress.getByName("localhost");
-        assertEquals("Stratocaster.getMyInetAddress()", host, stratocaster.getMyInetAddress());
+        assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, strat.getStringGuage("E1"));
+        assertEquals("Strat.getStringGuage(\"A\")", 0.042F, strat.getStringGuage("A"));
+        assertEquals("Strat.getStringGuage(\"D\")", 0.030F, strat.getStringGuage("D"));
+        assertEquals("Strat.getStringGuage(\"G\")", 0.017F, strat.getStringGuage("G"));
+        assertEquals("Strat.getStringGuage(\"B\")", 0.013F, strat.getStringGuage("B"));
+        assertEquals("Strat.getStringGuage(\"E\")", 0.010F, strat.getStringGuage("E"));
 
-        List<String> list = new LinkedList<String>();
-        list.add("Stevie Ray Vaughan");
-        list.add("Eric Johnson");
-        list.add("Mark Knopfler");
-        list.add("Buddy Guy");
-        assertEquals("Stratocaster.getMyList()", list, stratocaster.getMyList());
-
-        Map<String,String> map = new LinkedHashMap<String,String>();
-        map.put("color", "3-Color Sunburst");
-        map.put("neck", "maple");
-        map.put("fretboard", "African rosewood");
-        map.put("pickups", "Texas Special");
-        assertEquals("Stratocaster.getMyMap()", map, stratocaster.getMyMap());
-
-        List<URI> uris = new ArrayList<URI>();
-        uris.add(new URI("game://guitarheroII/?mode=expert"));
-        uris.add(new URI("game://guitarheroIII/?guitar=wireless"));
-        assertEquals("Stratocaster.getMyURIs()", uris, stratocaster.getMyURIs());
-
-        assertEquals("Stratocaster.getMyURL()", new URL("http://www.fender.com/"), stratocaster.getMyURL());
+        File file = new File("/tmp/strat-certificate.txt");
+        assertEquals("Strat.getCertificateOfAuthenticity()", file, strat.getCertificateOfAuthenticity());
 
 
     }
 }
+//END SNIPPET: code

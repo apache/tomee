@@ -30,65 +30,51 @@ import java.util.Map;
  * In addition to the standard env-entry types (String, Integer, Long, Short, Byte, Boolean, Double, Float, Character)
  * OpenEJB supports many other types.
  *
- * This bean has just about every flavor of env-entry OpenEJB supports.
  */
+//START SNIPPET: code
 @Stateless
 public class StratocasterImpl implements Stratocaster {
 
-    @Resource(name = "myClass")
-    private Class myClass;
 
-    @Resource(name = "myDate")
-    private Date myDate;
+    @Resource(name = "pickups")
+    private List<Pickup> pickups;
 
-    @Resource(name = "myFiles")
-    private Map<String, File> myFiles;
+    @Resource(name = "style")
+    private Style style;
 
-    @Resource(name = "myInetAddress")
-    private InetAddress myInetAddress;
+    @Resource(name = "dateCreated")
+    private Date dateCreated;
 
-    @Resource(name = "myList")
-    private List myList;
+    @Resource(name = "guitarStringGuages")
+    private Map<String, Float> guitarStringGuages;
 
-    @Resource(name = "myMap")
-    private Map myMap;
+    @Resource(name = "certificateOfAuthenticity")
+    private File certificateOfAuthenticity;
 
-    @Resource(name = "myURIs")
-    private List<URI> myURIs;
-
-    @Resource(name = "myURL")
-    private URL myURL;
-
-    public Class getMyClass() {
-        return myClass;
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
-    public Date getMyDate() {
-        return myDate;
+    /**
+     * Gets the guage of the electric guitar strings
+     * used in this guitar.
+     * @param string
+     * @return
+     */
+    public float getStringGuage(String string){
+        return guitarStringGuages.get(string);
     }
 
-    public Map<String, File> getMyFiles() {
-        return myFiles;
+    public List<Pickup> getPickups() {
+        return pickups;
     }
 
-    public InetAddress getMyInetAddress() {
-        return myInetAddress;
+    public Style getStyle() {
+        return style;
     }
 
-    public List getMyList() {
-        return myList;
+    public File getCertificateOfAuthenticity() {
+        return certificateOfAuthenticity;
     }
-
-    public Map getMyMap() {
-        return myMap;
-    }
-
-    public List<URI> getMyURIs() {
-        return myURIs;
-    }
-
-    public URL getMyURL() {
-        return myURL;
-    }
-
 }
+//END SNIPPET: code
