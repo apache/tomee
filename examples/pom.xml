@@ -41,7 +41,7 @@
     <module>testing-transactions</module>
     <module>testing-security</module>
     <module>interceptors</module>
-    <module>expanded-env-entries</module>
+    <module>custom-injection</module>
     <module>helloworld-weblogic</module>
     <module>jpa-hibernate</module>
     <module>telephone-stateful</module>
