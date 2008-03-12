@@ -19,11 +19,9 @@ package org.apache.openejb.client;
 import org.omg.CORBA.ORB;
 
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.ConnectException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -114,36 +112,15 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
 
         String userID = (String) env.get(Context.SECURITY_PRINCIPAL);
         String psswrd = (String) env.get(Context.SECURITY_CREDENTIALS);
-        String serverURI = (String) env.get(Context.PROVIDER_URL);
+        String providerUrl = (String) env.get(Context.PROVIDER_URL);
         moduleId = (String) env.get("openejb.client.moduleId");
 
         URI location;
         try {
-            if (serverURI == null || serverURI.length() == 0) {
-                serverURI = DEFAULT_PROVIDER_URL;
-            } else {
-// TODO: disabled due to breakage of standalone iTests                
-//                URI serverURL = new URI(serverURI);
-
-                // very first check per URI's rules has passed
-                // let's check for common "mistakes"
-                // TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
-                //       This class doesn't really know what is required as far as connection details go
-
-                int colonIndex = serverURI.indexOf(":");
-                int slashesIndex = serverURI.indexOf("//");
-                // hostname only
-                if (colonIndex == -1 && slashesIndex == -1) {
-                    serverURI = "ejbd://" + serverURI + ":4201";
-                } else if (colonIndex == -1) {
-                    serverURI = serverURI + ":4201";                    
-                } else if (slashesIndex == -1) {
-                    serverURI = "ejbd://" + serverURI;
-                }
-            }
-            location = new URI(serverURI);
+            providerUrl = addMissingParts(providerUrl);
+            location = new URI(providerUrl);
         } catch (URISyntaxException e) {
-            throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + serverURI + ":" + e.getMessage()).initCause(e);
+            throw (ConfigurationException) new ConfigurationException("Property value for " + Context.PROVIDER_URL + " invalid: " + providerUrl + " - " + e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
         //TODO:1: Either aggressively initiate authentication or wait for the
@@ -155,6 +132,34 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         }
 
         return this;
+    }
+
+    /**
+     * Add missing parts - expected only part of the required providerUrl
+     *  
+     * TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
+     * This method (class in general) doesn't really know what is required as far as connection details go
+     * Assuming that java.net.URI or java.net.URL are going to be used is overly stated
+     */
+    String addMissingParts(String providerUrl) throws URISyntaxException {
+        if (providerUrl == null || providerUrl.length() == 0) {
+            providerUrl = DEFAULT_PROVIDER_URL;
+        } else {
+            int colonIndex = providerUrl.indexOf(":");
+            int slashesIndex = providerUrl.indexOf("//");
+            if (colonIndex == -1 && slashesIndex == -1) {   // hostname or ip address only
+                providerUrl = "ejbd://" + providerUrl + ":4201";
+            } else if (colonIndex == -1) {
+                URI providerUri = new URI(providerUrl);                
+                String scheme = providerUri.getScheme();
+                if (!(scheme.equals("http") || scheme.equals("https"))) {
+                    providerUrl = providerUrl + ":4201";                        
+                }
+            } else if (slashesIndex == -1) {
+                providerUrl = "ejbd://" + providerUrl;
+            }
+        }
+        return providerUrl;
     }
     
     public void authenticate(String userID, String psswrd) throws AuthenticationException {
@@ -422,6 +427,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     private static class LazyBinding extends Binding {
+        private static final long serialVersionUID = 1L;
         private RuntimeException failed;
         private Context context;
 

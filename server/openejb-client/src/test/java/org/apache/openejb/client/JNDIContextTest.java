@@ -16,11 +16,8 @@
  */
 package org.apache.openejb.client;
 
-import static org.junit.Assert.*;
-
 import java.util.Hashtable;
 
-import javax.naming.ConfigurationException;
 import javax.naming.Context;
 
 import org.junit.Test;
@@ -35,31 +32,43 @@ public class JNDIContextTest {
         JNDIContext jndiContext = new JNDIContext();
         Hashtable<String, String> env = new Hashtable<String, String>();
 
-        env.put(Context.PROVIDER_URL, "ejbd://localhost:4201");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "ejbd://localhost:4201");
 
-        env.put(Context.PROVIDER_URL, "anything://localhost:4201");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "http://localhost");
 
-        env.put(Context.PROVIDER_URL, "//localhost:4201");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "anything://localhost:4201");
 
-        env.put(Context.PROVIDER_URL, "localhost:4201");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "//localhost:4201");
 
-        env.put(Context.PROVIDER_URL, "localhost");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "localhost", "ejbd://localhost:4201");
 
-        env.put(Context.PROVIDER_URL, "");
-        jndiContext.getInitialContext(env);
+        assertEquals(jndiContext, "localhost:4201", "ejbd://localhost:4201");
 
-//        try {
-//            env.put(Context.PROVIDER_URL, "ejbd:");
-//            jndiContext.getInitialContext(env);
-//            fail("ConfigurationException expected due to malformed " + Context.PROVIDER_URL);
-//        } catch (ConfigurationException expected) {
-//            // do nothing
-//        }
+        assertEquals(jndiContext, "", "ejbd://localhost:4201");
+
+        assertEquals(jndiContext, "ejbd://127.0.0.1:4201");
+
+        assertEquals(jndiContext, "http://127.0.0.1");
+
+        assertEquals(jndiContext, "anything://127.0.0.1:4201");
+
+        assertEquals(jndiContext, "//127.0.0.1:4201");
+
+        assertEquals(jndiContext, "127.0.0.1", "ejbd://127.0.0.1:4201");
+
+        assertEquals(jndiContext, "127.0.0.1:4201", "ejbd://127.0.0.1:4201");
+
     }
 
+    private void assertEquals(JNDIContext jndiContext, String providerUrl) throws Exception {
+        assertEquals(jndiContext, providerUrl, providerUrl);
+    }
+
+    private void assertEquals(JNDIContext jndiContext, String providerUrl, String expectedProviderUrl) throws Exception {
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put(Context.PROVIDER_URL, providerUrl);
+        JNDIContext ctx = (JNDIContext) jndiContext.getInitialContext(env);
+        String actualProviderUrl = ctx.addMissingParts(providerUrl);
+        assert expectedProviderUrl.equals(actualProviderUrl) : "Expected " + expectedProviderUrl + " but was " + actualProviderUrl;
+    }
 }
