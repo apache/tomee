@@ -24,7 +24,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-core</artifactId>
@@ -123,11 +123,11 @@
                 </tstamp>
                 <replace file="target/classes/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
                 <replace file="target/classes/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
-                <property name="compile_classpath" refid="maven.compile.classpath"/>
+                <property name="compile_classpath" refid="maven.compile.classpath" />
                 <java classname="org.apache.openejb.util.MakeTxLookup">
-                  <arg value="${project.build.directory}"/>
+                  <arg value="${project.build.directory}" />
                   <classpath>
-                    <pathelement path="${compile_classpath}"/>
+                    <pathelement path="${compile_classpath}" />
                   </classpath>
                 </java>
               </tasks>

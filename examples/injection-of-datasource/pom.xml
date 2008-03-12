@@ -3,7 +3,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>injection-of-datasource</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>OpenEJB :: Examples :: @Resource DataSource Injection</name>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>3.0</version>
       <scope>test</scope>
     </dependency>
 

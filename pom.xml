@@ -13,7 +13,7 @@
   <name>OpenEJB</name>
   <packaging>pom</packaging>
 
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0</version>
 
   <description>
     Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
@@ -65,9 +65,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://${maven.username}@svn.apache.org/repos/asf/openejb/tags/openejb-3.0-SNAPSHOT</developerConnection>
-    <url>http://svn.apache.org/viewvc/incubator/openejb/tags/openejb-3.0-SNAPSHOT</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0</connection>
+    <developerConnection>scm:svn:https://${maven.username}@svn.apache.org/repos/asf/openejb/tags/openejb-3.0</developerConnection>
+    <url>http://svn.apache.org/viewvc/incubator/openejb/tags/openejb-3.0</url>
   </scm>
 
   <properties>
@@ -777,7 +777,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>xbean-finder</artifactId>
-        <version>3.4-r636442-SNAPSHOT</version>
+        <version>3.4-r636442</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -787,7 +787,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>3.4-r636442-SNAPSHOT</version>
+        <version>3.4-r636442</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>
