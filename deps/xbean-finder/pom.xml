@@ -20,13 +20,13 @@
   <parent>
     <artifactId>deps</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>3.0</version>
+    <version>3.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xbean-finder</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Dependencies :: XBean Finder</name>
-  <version>3.4-r636442</version>
+  <version>3.4-r636443-SNAPSHOT</version>
 
   <build>
     <plugins>
