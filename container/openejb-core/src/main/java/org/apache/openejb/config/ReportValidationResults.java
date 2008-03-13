@@ -21,10 +21,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Join;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -57,8 +55,11 @@ public class ReportValidationResults implements DynamicDeployer {
             }
         }
 
+        boolean hasErrors = appModule.hasErrors();
+        boolean hasFailures = appModule.hasFailures();
+        boolean hasWarnings = appModule.hasWarnings();
 
-        if (!appModule.hasErrors() && !appModule.hasFailures()) return appModule;
+        if (!hasErrors && !hasFailures && !hasWarnings) return appModule;
 
         ValidationFailedException validationFailedException = null;
 
@@ -73,13 +74,15 @@ public class ReportValidationResults implements DynamicDeployer {
             for (ValidationError error : context.getErrors()) {
                 uberContext.addError(error);
             }
-            for (ValidationFailure error : context.getFailures()) {
-                uberContext.addFailure(error);
+            for (ValidationFailure failure : context.getFailures()) {
+                uberContext.addFailure(failure);
             }
-            for (ValidationWarning error : context.getWarnings()) {
-                uberContext.addWarning(error);
+            for (ValidationWarning warning : context.getWarnings()) {
+                uberContext.addWarning(warning);
             }
         }
+
+        if (!hasErrors && !hasFailures) return appModule;
 
         if (level != Level.VERBOSE){
             List<Level> levels = Arrays.asList(Level.values());
@@ -96,21 +99,20 @@ public class ReportValidationResults implements DynamicDeployer {
     }
 
     private void logResults(ValidationContext context, Level level) {
+
+        for (ValidationError e : context.getErrors()) {
+            logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
+        }
+
+        for (ValidationFailure e : context.getFailures()) {
+            logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
+        }
+
+        for (ValidationWarning e : context.getWarnings()) {
+            logger.warning(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
+        }
+
         if (context.hasErrors() || context.hasFailures()) {
-
-            ValidationError[] errors = context.getErrors();
-            ValidationFailure[] failures = context.getFailures();
-
-            for (int j = 0; j < errors.length; j++) {
-                ValidationError e = errors[j];
-                String ejbName = e.getComponentName();
-                logger.error(e.getPrefix() + " ... " + ejbName + ":\t" + e.getMessage(level.ordinal() + 1));
-            }
-
-            for (int j = 0; j < failures.length; j++) {
-                ValidationFailure e = failures[j];
-                logger.error(e.getPrefix() + " ... " + e.getComponentName() + ":\t" + e.getMessage(level.ordinal() + 1));
-            }
 
             logger.error("Invalid "+context.getModuleType()+"(path="+context.getJarPath()+")");
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");

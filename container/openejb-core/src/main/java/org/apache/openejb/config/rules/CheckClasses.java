@@ -22,14 +22,46 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBObject;
+import javax.jws.WebService;
+import static java.lang.reflect.Modifier.isAbstract;
+import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckClasses extends ValidationBase {
+
+    private static final List<Class<? extends Annotation>> beanOnlyAnnotations = new ArrayList<Class<? extends Annotation>>();
+
+    static {
+        beanOnlyAnnotations.add(javax.annotation.PostConstruct.class);
+        beanOnlyAnnotations.add(javax.annotation.PreDestroy.class);
+        beanOnlyAnnotations.add(javax.annotation.Resource.class);
+        beanOnlyAnnotations.add(javax.annotation.Resources.class);
+        beanOnlyAnnotations.add(javax.annotation.security.DeclareRoles.class);
+        beanOnlyAnnotations.add(javax.annotation.security.DenyAll.class);
+        beanOnlyAnnotations.add(javax.annotation.security.PermitAll.class);
+        beanOnlyAnnotations.add(javax.annotation.security.RolesAllowed.class);
+        beanOnlyAnnotations.add(javax.annotation.security.RunAs.class);
+
+        beanOnlyAnnotations.add(javax.ejb.EJB.class);
+        beanOnlyAnnotations.add(javax.ejb.EJBs.class);
+        beanOnlyAnnotations.add(javax.ejb.Init.class);
+        beanOnlyAnnotations.add(javax.ejb.PostActivate.class);
+        beanOnlyAnnotations.add(javax.ejb.PrePassivate.class);
+        beanOnlyAnnotations.add(javax.ejb.Remove.class);
+        beanOnlyAnnotations.add(javax.ejb.Timeout.class);
+        beanOnlyAnnotations.add(javax.ejb.TransactionAttribute.class);
+        beanOnlyAnnotations.add(javax.ejb.TransactionManagement.class);
+    }
 
     public void validate(EjbModule ejbModule) {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -41,6 +73,7 @@ public class CheckClasses extends ValidationBase {
 
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
+                check_hasInterface(b);
                 if (b.getHome() != null) {
                     check_hasHomeClass(b);
                     check_hasRemoteClass(b);
@@ -57,6 +90,16 @@ public class CheckClasses extends ValidationBase {
                     check_hasDependentClasses(b, b.getLocalHome(), "<local-home>");
                     check_hasDependentClasses(b, b.getLocal(), "<local>");
                 }
+
+                if (b instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) b;
+                    for (String interfce : sessionBean.getBusinessLocal()) {
+                        check_businessInterface(sessionBean, interfce, "<business-local>");
+                    }
+                    for (String interfce : sessionBean.getBusinessRemote()) {
+                        check_businessInterface(sessionBean, interfce, "<business-remote>");
+                    }
+                }
             } catch (RuntimeException e) {
                 throw new RuntimeException(bean.getEjbName(), e);
             }
@@ -65,6 +108,62 @@ public class CheckClasses extends ValidationBase {
         for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
             check_hasInterceptorClass(interceptor);
         }
+    }
+
+    private void check_businessInterface(SessionBean b, String interfaceName, String tagName) {
+        String ejbName = b.getEjbName();
+        Class interfce = lookForClass(interfaceName, tagName, b.getEjbName());
+
+        if (!interfce.isInterface()){
+            fail(b, "notAnInterface", interfce.getName(), tagName);
+        }
+
+        ClassFinder finder = new ClassFinder(interfce);
+
+        for (Class<? extends Annotation> annotation : beanOnlyAnnotations) {
+            if (interfce.getAnnotation(annotation) != null){
+                warn(b, "interface.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), b.getEjbClass());
+            }
+            for (Method method : finder.findAnnotatedMethods(annotation)) {
+                warn(b, "interfaceMethod.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), method.getName(), b.getEjbClass());
+            }
+        }
+
+        if (EJBHome.class.isAssignableFrom(interfce)){
+            fail(ejbName, "xml.remoteOrLocal.ejbHome", tagName, interfce.getName());
+        } else if (EJBObject.class.isAssignableFrom(interfce)){
+            fail(ejbName, "xml.remoteOrLocal.ejbObject", tagName, interfce.getName());
+        } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
+            fail(ejbName, "xml.remoteOrLocal.ejbLocalHome", tagName, interfce.getName());
+        } else if (EJBLocalObject.class.isAssignableFrom(interfce)){
+            fail(ejbName, "xml.remoteOrLocal.ejbLocalObject", tagName, interfce.getName());
+        }
+
+    }
+
+    private void check_hasInterface(RemoteBean b) {
+        if (b.getRemote() != null) return;
+        if (b.getLocal() != null) return;
+
+        Class beanClass = null;
+        try {
+            beanClass = loadClass(b.getEjbClass());
+        } catch (OpenEJBException e) {
+        }
+
+        if (b instanceof EntityBean){
+            fail(b, "noInterfaceDeclared.entity", beanClass.getSimpleName());
+            return;
+        }
+
+        if (b.getBusinessLocal().size() > 0) return;
+        if (b.getBusinessRemote().size() > 0) return;
+
+        if (((SessionBean) b).getServiceEndpoint() != null) return;
+
+        if (beanClass.getAnnotation(WebService.class) != null) return;
+
+        fail(b, "noInterfaceDeclared.session");
     }
 
     private void check_hasDependentClasses(RemoteBean b, String className, String type) {
@@ -107,8 +206,19 @@ public class CheckClasses extends ValidationBase {
 
     public void check_hasEjbClass(EnterpriseBean b) {
 
-        lookForClass(b.getEjbClass(), "<ejb-class>", b.getEjbName());
+        String ejbName = b.getEjbName();
 
+        Class beanClass = lookForClass(b.getEjbClass(), "<ejb-class>", ejbName);
+
+        if (beanClass.isInterface()){
+            fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
+        }
+
+        if (isCmp(b)) return;
+
+        if (isAbstract(beanClass.getModifiers())){
+            fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
+        }
     }
 
     public void check_hasInterceptorClass(Interceptor i) {
@@ -165,9 +275,9 @@ public class CheckClasses extends ValidationBase {
 
     }
 
-    private void lookForClass(String clazz, String type, String ejbName) {
+    private Class lookForClass(String clazz, String type, String ejbName) {
         try {
-            loadClass(clazz);
+            return loadClass(clazz);
         } catch (OpenEJBException e) {
             /*
             # 0 - Class name
@@ -189,6 +299,7 @@ public class CheckClasses extends ValidationBase {
             throw e;
         }
 
+        return null;
     }
 
     private void compareTypes(RemoteBean b, String clazz1, Class class2) {

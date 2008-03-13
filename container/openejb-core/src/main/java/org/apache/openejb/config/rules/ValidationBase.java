@@ -24,6 +24,8 @@ import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.config.ValidationContext;
 import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Join;
@@ -122,5 +124,15 @@ public abstract class ValidationBase implements ValidationRule {
         } catch (ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }
+    }
+
+    public boolean isCmp(EnterpriseBean b) {
+
+        if (b instanceof EntityBean) {
+            EntityBean entityBean = (EntityBean) b;
+            PersistenceType persistenceType = entityBean.getPersistenceType();
+            return persistenceType == PersistenceType.CONTAINER;
+        }
+        return false;
     }
 }
