@@ -213,7 +213,7 @@ public class MainImpl implements Main {
                 argsList.add(arg);
             }
         }
-
+        SystemInstance.get().getProperties().putAll(System.getProperties());
         args = (String[]) argsList.toArray(new String[argsList.size()]);
         return args;
     }
