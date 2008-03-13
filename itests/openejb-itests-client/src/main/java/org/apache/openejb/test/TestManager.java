@@ -53,13 +53,7 @@ public class TestManager {
         if (propertiesFileName == null) {
             try{
                 propertiesFileName = System.getProperty(TESTSUITE_PROPERTY_FILENAME);
-                if (propertiesFileName == null) {
-                    if (warn) {
-                        // TODO: Avoid using System.out
-                        // TODO: i18n
-                        System.out.println("WARNING: No test suite configuration file specified, assuming system properties contain all needed information.  To specify a test suite configuration file by setting its location using the system property \"" + TESTSUITE_PROPERTY_FILENAME + "\"");
-                    }
-                } else {
+                if (propertiesFileName != null) {
                     props.putAll( getProperties( propertiesFileName ) );
                 }
 
