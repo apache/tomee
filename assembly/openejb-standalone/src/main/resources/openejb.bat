@@ -34,7 +34,7 @@ goto EOF
 :openejbHomeSet
 set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
-java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
 :EOF
 ENDLOCAL
