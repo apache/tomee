@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class SuperPropertiesTest extends PropertiesTest {
 
@@ -187,7 +188,7 @@ public class SuperPropertiesTest extends PropertiesTest {
         assertEquals("    #  foo comment\n    #  @name=value\n\n    foo=bar\n\n    number=42\n", store(properties));
 
         properties.getAttributes("foo").put("name", null);
-        assertEquals("    #  foo comment\n    #  @name\n\n    foo=bar\n\n    number=42\n", store(properties));        
+        assertEquals("    #  foo comment\n    #  @name\n\n    foo=bar\n\n    number=42\n", store(properties));
 
         properties.getAttributes("foo").put("name", "");
         assertEquals("    #  foo comment\n    #  @name\n\n    foo=bar\n\n    number=42\n", store(properties));

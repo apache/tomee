@@ -831,7 +831,7 @@ public class SuperProperties extends Properties {
                     buffer.append("\\r");
                     break;
                 default:
-                    if ("\\#!=:".indexOf(ch) >= 0 || (key && ch == ' '))
+                    if ("\\".indexOf(ch) >= 0 || (key && "#!=: ".indexOf(ch) >= 0))
                     {
                         buffer.append('\\');
                     }

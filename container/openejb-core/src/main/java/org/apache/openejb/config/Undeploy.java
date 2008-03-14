@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.config.JarExtractor.delete;
+
 import java.util.Properties;
 import java.io.File;
 import java.io.IOException;
@@ -96,10 +98,10 @@ public class Undeploy {
         } catch (javax.naming.ServiceUnavailableException e) {
             System.out.println(e.getCause().getMessage());
             System.out.println(Undeploy.messages.format("cmd.deploy.serverOffline"));
-            throw new SystemExitException(1);
+            throw new SystemExitException(-1);
         } catch (javax.naming.NamingException e) {
             System.out.println("DeployerEjb does not exist in server '" + serverUrl + "', check the server logs to ensure it exists and has not been removed.");
-            throw new SystemExitException(2);
+            throw new SystemExitException(-2);
         }
 
         int exitCode = 0;
@@ -107,45 +109,59 @@ public class Undeploy {
             String moduleId = (String) obj;
 
             try {
-                boolean undeployed = false;
-
-                // Treat moduleId as a file path, and see if there is a matching app to undeploy
-                String path = null;
-                try {
-                    path = new File(moduleId).getCanonicalPath();
-                } catch (IOException e) {
-                }
-                if (path != null) {
-                    try {
-                        deployer.undeploy(path);
-                        undeployed = true;
-                    } catch (NoSuchApplicationException e) {
-                    }
-                }
-
-                // If that didn't work, undeploy using just the moduleId
-                if (!undeployed) {
-                    deployer.undeploy(moduleId);
-                }
-
-                // TODO make this message
-                System.out.println(messages.format("cmd.undeploy.successful", moduleId));
+                undeploy(moduleId, deployer);
+            } catch (DeploymentTerminatedException e) {
+                System.out.println(e.getMessage());
+                exitCode++;
             } catch (UndeployException e) {
-                // TODO make this message
-                // TODO Maybe brush up this excpetion handling
                 System.out.println(messages.format("cmd.undeploy.failed", moduleId));
                 e.printStackTrace(System.out);
-                exitCode += 100;
+                exitCode++;
             } catch (NoSuchApplicationException e) {
                 // TODO make this message
                 System.out.println(messages.format("cmd.undeploy.noSuchModule", moduleId));
-                exitCode += 100;
+                exitCode++;
             }
         }
 
         if (exitCode != 0){
             throw new SystemExitException(exitCode);
         }
+    }
+
+    public static void undeploy(String moduleId, Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
+        // Treat moduleId as a file path, and see if there is a matching app to undeploy
+        undeploy(moduleId, new File(moduleId), deployer);
+    }
+
+    public static void undeploy(String moduleId, File file, Deployer deployer) throws UndeployException, NoSuchApplicationException, DeploymentTerminatedException {
+        try {
+            file = file.getCanonicalFile();
+        } catch (IOException e) {
+        }
+
+        boolean undeployed = false;
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            try {
+                deployer.undeploy(path);
+                undeployed = true;
+                moduleId = path;
+                if (!delete(file)){
+                    throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantDelete", file.getAbsolutePath()));
+                }
+            } catch (NoSuchApplicationException e) {
+            }
+        }
+
+        // If that didn't work, undeploy using just the moduleId
+        if (!undeployed) {
+            deployer.undeploy(moduleId);
+            System.out.println(messages.format("cmd.undeploy.nothingToDelete", moduleId));
+        }
+
+        // TODO make this message
+        System.out.println(messages.format("cmd.undeploy.successful", moduleId));
     }
 
     private static void help(Options options) {
@@ -165,7 +181,8 @@ public class Undeploy {
         return Undeploy.messages.format(key);
     }
 
-    public static class DeploymentTerminatedException extends Exception {
+
+    public static class DeploymentTerminatedException extends Deploy.DeploymentTerminatedException {
 
         private static final long serialVersionUID = 1L;
 

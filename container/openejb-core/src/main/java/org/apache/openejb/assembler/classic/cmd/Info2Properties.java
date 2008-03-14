@@ -30,6 +30,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.util.SuperProperties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -227,7 +228,7 @@ public class Info2Properties {
             // TODO: the codebase value usually isn't filled in, we should do that.
             // comment("codebase: " + info.codebase);
             comment("");
-            Properties p = new Properties();
+            Properties p = new SuperProperties();
 
 
             String uri = "new://" + info.service;

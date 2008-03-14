@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.config.JarExtractor.delete;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +40,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.UndeployException;
+import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
@@ -75,6 +79,7 @@ public class Deploy {
         options.addOption(option("s", "server-url", "url", "cmd.deploy.opt.server"));
         options.addOption(option("d", "debug", "cmd.deploy.opt.debug"));
         options.addOption(option("q", "quiet", "cmd.deploy.opt.quiet"));
+        options.addOption(option("u", "undeploy", "cmd.deploy.opt.undeploy"));
         options.addOption(option(null, "dir", "cmd.deploy.opt.dir"));
 
         CommandLine line;
@@ -110,7 +115,7 @@ public class Deploy {
             } catch (DeploymentTerminatedException e) {
                 System.out.println(e.getMessage());
                 // TODO: What is it for?
-                throw new SystemExitException(100);
+                throw new SystemExitException(-100);
             }
         }
 
@@ -145,27 +150,36 @@ public class Deploy {
             } catch (javax.naming.ServiceUnavailableException e) {
                 System.out.println(e.getCause().getMessage());
                 System.out.println(messages.format("cmd.deploy.serverOffline"));
-                throw new SystemExitException(1);
+                throw new SystemExitException(-1);
             } catch (javax.naming.NamingException e) {
                 System.out.println("openejb/DeployerBusinessRemote does not exist in server '" + serverUrl
                         + "', check the server logs to ensure it exists and has not been removed.");
-                throw new SystemExitException(2);
+                throw new SystemExitException(-2);
             }
         }
 
+        boolean undeploy = line.hasOption("undeploy");
+
+        // We increment the exit code once for every failed deploy
         int exitCode = 0;
         for (Object obj : line.getArgList()) {
             String path = (String) obj;
 
+            File file = new File(path);
+
+            File destFile = new File(apps, file.getName());
+
             try {
-                File file = new File(path);
-
-                File destFile = new File(apps, file.getName());
-
-
                 if (shouldUnpack(file)) {
-                    destFile = unpack(file, apps);
+                    File unpacked = unpackedLocation(file, apps);
+                    if (undeploy) {
+                        undeploy(offline, unpacked, path, deployer);
+                    }
+                    destFile = unpack(file, unpacked);
                 } else {
+                    if (undeploy){
+                        undeploy(offline, destFile, path, deployer);
+                    }
                     checkDest(destFile, file);
                     copyFile(file, destFile);
                 }
@@ -189,41 +203,15 @@ public class Deploy {
                     continue;
                 }
 
-                System.out.println("App(id=" + appInfo.jarPath + ")");
+                print(appInfo);
 
-                for (EjbJarInfo info : appInfo.ejbJars) {
-                    System.out.println("    EjbJar(id=" + info.moduleId + ", path=" + info.jarPath + ")");
-                    for (EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
-                        System.out.println("        Ejb(ejb-name=" + beanInfo.ejbName + ", id=" + beanInfo.ejbDeploymentId + ")");
-                        for (String name : beanInfo.jndiNames) {
-                            System.out.println("            Jndi(name=" + name + ")");
-                        }
-                        System.out.println("");
-                    }
-                    for (InterceptorInfo interceptorInfo : info.interceptors) {
-                        System.out.println("        Interceptor(class=" + interceptorInfo.clazz + ")");
-                    }
-                    System.out.println("");
-                }
-                for (ClientInfo clientInfo : appInfo.clients) {
-                    System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.codebase + ")");
-                    System.out.println("");
-                }
-                for (ConnectorInfo connectorInfo : appInfo.connectors) {
-                    System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.codebase + ")");
-                    System.out.println("");
-                }
-                for (WebAppInfo webAppInfo : appInfo.webApps) {
-                    System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.codebase + ")");
-                    System.out.println("");
-                }
-                for (PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {
-                    System.out.println("    PersistenceUnit(name=" + persistenceUnitInfo.name + ", provider=" + persistenceUnitInfo.provider+ ")");
-                    System.out.println("");
-                }
+            } catch (UndeployException e) {
+                System.out.println(messages.format("cmd.undeploy.failed", path));
+                e.printStackTrace(System.out);
+                exitCode++;
             } catch (DeploymentTerminatedException e) {
                 System.out.println(e.getMessage());
-                exitCode += 100;
+                exitCode++;
             } catch (ValidationFailedException e) {
                 System.out.println(messages.format("cmd.deploy.validationFailed", path));
                 int level = 2;
@@ -232,16 +220,72 @@ public class Deploy {
                 }
                 AppValidator appValidator = new AppValidator(level, false, true, false);
                 appValidator.printResults(e);
-                exitCode += 100;
+                exitCode++;
+                if (!delete(destFile)){
+                    System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
+                }
             } catch (OpenEJBException e) {
                 System.out.println(messages.format("cmd.deploy.failed", path));
                 e.printStackTrace(System.out);
-                exitCode += 100;
+                exitCode++;
+                if (!delete(destFile)){
+                    System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
+                }
             }
         }
 
         if (exitCode != 0){
             throw new SystemExitException(exitCode);
+        }
+    }
+
+    private static void undeploy(boolean offline, File dest, String path, Deployer deployer) throws UndeployException, DeploymentTerminatedException {
+        if (offline) {
+            if (dest.exists()){
+                if (!delete(dest)){
+                    throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantDelete.undeploy", dest.getAbsolutePath()));
+                }
+            }
+        } else {
+            try {
+                Undeploy.undeploy(path, dest, deployer);
+            } catch (NoSuchApplicationException nothingToUndeploy) {
+            }
+        }
+    }
+
+    private static void print(AppInfo appInfo) {
+        System.out.println("App(id=" + appInfo.jarPath + ")");
+
+        for (EjbJarInfo info : appInfo.ejbJars) {
+            System.out.println("    EjbJar(id=" + info.moduleId + ", path=" + info.jarPath + ")");
+            for (EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
+                System.out.println("        Ejb(ejb-name=" + beanInfo.ejbName + ", id=" + beanInfo.ejbDeploymentId + ")");
+                for (String name : beanInfo.jndiNames) {
+                    System.out.println("            Jndi(name=" + name + ")");
+                }
+                System.out.println("");
+            }
+            for (InterceptorInfo interceptorInfo : info.interceptors) {
+                System.out.println("        Interceptor(class=" + interceptorInfo.clazz + ")");
+            }
+            System.out.println("");
+        }
+        for (ClientInfo clientInfo : appInfo.clients) {
+            System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.codebase + ")");
+            System.out.println("");
+        }
+        for (ConnectorInfo connectorInfo : appInfo.connectors) {
+            System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.codebase + ")");
+            System.out.println("");
+        }
+        for (WebAppInfo webAppInfo : appInfo.webApps) {
+            System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.codebase + ")");
+            System.out.println("");
+        }
+        for (PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {
+            System.out.println("    PersistenceUnit(name=" + persistenceUnitInfo.name + ", provider=" + persistenceUnitInfo.provider+ ")");
+            System.out.println("");
         }
     }
 
@@ -310,7 +354,18 @@ public class Deploy {
         return false;
     }
         
-    private static File unpack(File jarFile, File destDir) throws OpenEJBException, DeploymentTerminatedException {
+    private static File unpack(File jarFile, File destinationDir) throws OpenEJBException, DeploymentTerminatedException {
+
+        try {
+            checkDest(destinationDir, jarFile);
+            JarExtractor.extract(jarFile, destinationDir);
+            return destinationDir;
+        } catch (IOException e) {
+            throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
+        }
+    }
+
+    private static File unpackedLocation(File jarFile, File destDir) {
         if (jarFile.isDirectory()) {
             return jarFile;
         }
@@ -322,15 +377,8 @@ public class Deploy {
             name += ".unpacked";
         }
 
-
-        try {
-            File destinationDir = new File(destDir, name);
-            checkDest(destinationDir, jarFile);
-            JarExtractor.extract(jarFile, destinationDir);
-            return destinationDir;
-        } catch (IOException e) {
-            throw new OpenEJBException("Unable to extract jar. " + e.getMessage(), e);
-        }
+        File destinationDir = new File(destDir, name);
+        return destinationDir;
     }
 
 

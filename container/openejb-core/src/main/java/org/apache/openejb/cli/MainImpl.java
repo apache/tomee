@@ -152,7 +152,7 @@ public class MainImpl implements Main {
         } catch (Throwable e) {
             if (line.hasOption("errors")) {
                 e.printStackTrace();
-            }   
+            }
             System.exit(-10);
         }
     }
@@ -196,6 +196,7 @@ public class MainImpl implements Main {
                 InputStream in = new BufferedInputStream(fin);
                 systemProperties.load(in);
                 System.getProperties().putAll(systemProperties);
+                systemInstance.getProperties().putAll(systemProperties);
             }
         } catch (IOException e) {
             System.out.println("Processing conf/system.properties failed: "+e.getMessage());
@@ -209,11 +210,12 @@ public class MainImpl implements Main {
                 String val = arg.substring(arg.indexOf("=") + 1);
 
                 System.setProperty(prop, val);
+                systemInstance.setProperty(prop, val);
             } else {
                 argsList.add(arg);
             }
         }
-        SystemInstance.get().getProperties().putAll(System.getProperties());
+
         args = (String[]) argsList.toArray(new String[argsList.size()]);
         return args;
     }
