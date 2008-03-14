@@ -14,18 +14,6 @@ REM distributed under the License is distributed on an "AS IS" BASIS,
 REM WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 REM See the License for the specific language governing permissions and
 REM limitations under the License.
-REM================================================
-REM   Control script for OpenEJB
-REM   --------------------------
-REM    
-REM   This script is the central entry point to 
-REM   all of OpenEJB's functions.
-REM  
-REM   Tested on Windows 2000
-REM
-REM
-REM   Created by David Blevins 
-REM             <david.blevins@visi.com>
 REM _______________________________________________
 REM $Rev$ $Date$
 REM================================================
@@ -46,107 +34,7 @@ goto EOF
 :openejbHomeSet
 set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
 
-set P1=_%1
-set P2=_%2
-
-if /I %P1% EQU _TEST         goto TEST
-if /I %P1% EQU _VALIDATE     goto VALIDATE 
-if /I %P1% EQU _DEPLOY       goto DEPLOY 
-if /I %P1% EQU _START        goto START_SERVER
-if /I %P1% EQU _STOP         goto STOP_SERVER
-
-echo Unknown option: %1
-goto HELP
-
-goto EOF
-REM================================================
-:HELP
-   
-	java -jar %OPENEJB_CORE_JAR%
-
-goto EOF
-REM================================================
-:TEST
-   if /I %P2% EQU _LOCAL     goto TEST_INTRAVM
-   if /I %P2% EQU _REMOTE    goto TEST_SERVER
-   if /I %P2% EQU _--HELP    goto HELP_TEST
-   if /I %P2% EQU _          goto TEST_NOARGS
-
-   echo Unknown option: %2
-   goto HELP_TEST                                   
-
-goto EOF
-REM================================================
-:VALIDATE 
-   shift
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% validate %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-goto EOF
-REM================================================
-:DEPLOY 
-   shift
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% deploy %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-goto EOF
-REM================================================
-:START_SERVER
-   shift
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% start %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-goto EOF
-REM================================================
-:STOP_SERVER
-   shift
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% stop %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-goto EOF
-REM================================================
-:TEST_NOARGS
-   goto TEST_INTRAVM
-goto EOF
-REM================================================
-:TEST_INTRAVM
-
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test local
-         
-if /I %P2% EQU _ goto TEST_SERVER
-goto EOF
-REM================================================
-:TEST_SERVER
-
-   java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test remote
-   
-goto EOF
-REM================================================
-:HELP_TEST
-   
-	java %OPENEJB_OPTS%  -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% test --help
-
-goto EOF
-REM================================================
-:HELP_DEPLOY
-   
-	java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% deploy --help
-	
-goto EOF
-REM================================================
-:HELP_VALIDATE
-   
-	java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% validate --help
-
-goto EOF
-REM================================================
-:HELP_START
-   
-	java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% start --help
-
-goto EOF
-REM================================================
-:HELP_STOP
-   
-	java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% stop --help
-
-goto EOF
+java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% validate %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :EOF
 ENDLOCAL
