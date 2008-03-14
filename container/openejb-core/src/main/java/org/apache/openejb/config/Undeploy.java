@@ -148,7 +148,7 @@ public class Undeploy {
                 undeployed = true;
                 moduleId = path;
                 if (!delete(file)){
-                    throw new DeploymentTerminatedException(messages.format("cmd.deploy.cantDelete", file.getAbsolutePath()));
+                    throw new DeploymentTerminatedException(messages.format("cmd.undeploy.cantDelete", file.getAbsolutePath()));
                 }
             } catch (NoSuchApplicationException e) {
             }
