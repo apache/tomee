@@ -30,6 +30,7 @@ import javax.ejb.Remote;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -92,9 +93,10 @@ public class DeployerEjb implements Deployer {
             properties = new Properties();
         }
 
+        AppModule appModule = null;
         try {
             File file = new File(location);
-            AppModule appModule = deploymentLoader.load(file);
+            appModule = deploymentLoader.load(file);
 
             // Add any alternate deployment descriptors to the modules
             Map<String, DeploymentModule> modules = new TreeMap<String, DeploymentModule>();
@@ -142,11 +144,23 @@ public class DeployerEjb implements Deployer {
             assembler.createApplication(appInfo);
 
             return appInfo;
-        } catch (OpenEJBException e) {
+        } catch (Throwable e) {
+            // clean up the failed deployment
+            if (appModule != null) {
+                // destroy the temp class loader
+                ClassLoaderUtil.destroyClassLoader(appModule.getClassLoader());
+                // temp class loaders don't have an associated directory, so we need to clear the directory url cache by hand
+                ClassLoaderUtil.clearSunJarFileFactoryCache(appModule.getJarLocation());
+            }
+
             e.printStackTrace();
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            if (e instanceof OpenEJBException) {
+                throw (OpenEJBException) e;
+            }
+            if (e instanceof Error) {
+                throw (OpenEJBException) e;
+            }
             throw new OpenEJBException(e);
         }
     }

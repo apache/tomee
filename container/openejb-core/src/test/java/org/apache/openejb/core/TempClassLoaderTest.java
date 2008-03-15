@@ -19,13 +19,13 @@ package org.apache.openejb.core;
 
 import junit.framework.TestCase;
 
-public class TemporaryClassLoaderTest extends TestCase {
+public class TempClassLoaderTest extends TestCase {
     public void test() throws Exception {
-        ClassLoader tempCL = new TemporaryClassLoader(getClass().getClassLoader());
+        ClassLoader tempCL = new TempClassLoader(getClass().getClassLoader());
         Class<?> clazz;
 
         // normal classes should be loaded by the temp class loader
-        clazz = tempCL.loadClass(TemporaryClassLoaderTest.class.getName());
+        clazz = tempCL.loadClass(TempClassLoaderTest.class.getName());
         assertSame(tempCL, clazz.getClassLoader());
 
         // classes in java.* should not be loaded by the temp class loader

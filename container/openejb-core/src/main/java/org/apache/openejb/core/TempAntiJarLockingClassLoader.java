@@ -21,8 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLStreamHandlerFactory;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -42,21 +40,17 @@ import org.objectweb.asm.commons.EmptyVisitor;
  * @author Marc Prud'hommeaux
  */
 // Note: this class is a fork from OpenJPA
-public class TemporaryClassLoader extends URLClassLoader {
-    public TemporaryClassLoader(ClassLoader parent) {
-        super(new URL[0], parent);
+public class TempAntiJarLockingClassLoader extends AntiJarLockingClassLoader {
+    public TempAntiJarLockingClassLoader(ClassLoader parent) {
+        super("TemporaryClassLoader", new URL[0], parent);
     }
 
-    public TemporaryClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, parent);
+    public TempAntiJarLockingClassLoader(URL[] urls, ClassLoader parent) {
+        super("TemporaryClassLoader", urls, parent);
     }
 
-    public TemporaryClassLoader(URL[] urls) {
-        super(urls);
-    }
-
-    public TemporaryClassLoader(URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
-        super(urls, parent, factory);
+    public TempAntiJarLockingClassLoader(URL[] urls) {
+        super("TemporaryClassLoader", urls);
     }
 
     public Class loadClass(String name) throws ClassNotFoundException {
@@ -89,10 +83,10 @@ public class TemporaryClassLoader extends URLClassLoader {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(8 * 1024);
 
         // copy the input stream into a byte array
-        byte[] bytes = new byte[0];
+        byte[] bytes;
         try {
             byte[] buf = new byte[4 * 1024];
-            for (int count = -1; (count = in.read(buf)) >= 0;) {
+            for (int count; (count = in.read(buf)) >= 0;) {
                 bout.write(buf, 0, count);
             }
             bytes = bout.toByteArray();

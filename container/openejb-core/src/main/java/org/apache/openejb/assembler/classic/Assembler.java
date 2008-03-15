@@ -26,13 +26,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.Collections;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -69,7 +69,6 @@ import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
-import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
@@ -98,7 +97,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private final CoreContainerSystem containerSystem;
     private final PersistenceClassLoaderHandler persistenceClassLoaderHandler;
-    private final ClassLoaderRegistry classLoaderRegistry;
     private final JndiBuilder jndiBuilder;
     private TransactionManager transactionManager;
     private SecurityService securityService;
@@ -164,8 +162,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public Assembler() {
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
-
-        classLoaderRegistry = new ClassLoaderRegistry();
 
         installNaming();
 
@@ -443,14 +439,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            classLoaderRegistry.registerClassLoader(appInfo.jarPath, classLoader);
-
             // Generate the cmp2 concrete subclasses
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
             File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
-                classLoader = new URLClassLoader(new URL []{generatedJar.toURL()}, classLoader);
-                classLoaderRegistry.registerClassLoader(appInfo.jarPath, classLoader);
+                classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, new URL []{generatedJar.toURL()}, classLoader);
             }
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -715,8 +708,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        classLoaderRegistry.unregisterClassLoaders(appInfo.jarPath);
-        ClassLoaderUtil.clearClassLoaderCaches();
+        ClassLoaderUtil.destroyClassLoader(appInfo.jarPath);
 
         if (undeployException.getCauses().size() > 0) {
             throw undeployException;
@@ -743,7 +735,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // Create the class loader
-        ClassLoader classLoader = new URLClassLoader(jars.toArray(new URL[]{}), OpenEJB.class.getClassLoader());
+        ClassLoader classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
         return classLoader;
     }
 
@@ -1185,49 +1177,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
-            return new TemporaryClassLoader(classLoader);
-        }
-    }
-
-    // todo remove this when OpenJPA fixes it ClassLoader cache
-    private static class ClassLoaderRegistry {
-        private final Map<String,List<ClassLoader>> classLoadersByApp = new HashMap<String,List<ClassLoader>>();
-        private final Map<ClassLoader,List<String>> appsByClassLoader = new HashMap<ClassLoader,List<String>>();
-
-        public void registerClassLoader(String appId, ClassLoader classLoader) {
-            List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
-            if (classLoaders == null) {
-                classLoaders = new ArrayList<ClassLoader>(2);
-                classLoadersByApp.put(appId, classLoaders);
-            }
-            classLoaders.add(classLoader);
-
-            List<String> apps = appsByClassLoader.get(classLoader);
-            if (apps == null) {
-                apps = new ArrayList<String>(1);
-                appsByClassLoader.put(classLoader, apps);
-            }
-            apps.add(appId);
-        }
-
-        public void unregisterClassLoaders(String appId) {
-            List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
-            if (classLoaders != null) {
-                for (ClassLoader classLoader : classLoaders) {
-                    // get the apps using the class loader
-                    List<String> apps = appsByClassLoader.get(classLoader);
-                    if (apps == null) apps = Collections.emptyList();
-
-                    // this app is no longer using the class loader
-                    apps.remove(appId);
-
-                    // if no apps are using the class loader, clear the OpenJPA cache
-                    if (apps.isEmpty()) {
-                        appsByClassLoader.remove(classLoader);
-                        ClassLoaderUtil.cleanOpenJPACache(classLoader);
-                    }
-                }
-            }
+            return ClassLoaderUtil.createTempClassLoader(classLoader);
         }
     }
 

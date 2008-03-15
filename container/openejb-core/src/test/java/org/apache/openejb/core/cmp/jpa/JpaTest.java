@@ -43,7 +43,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 import junit.framework.TestCase;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
@@ -169,7 +169,7 @@ public class JpaTest extends TestCase {
             }
 
             public ClassLoader getNewTempClassLoader(ClassLoader classLoader) {
-                return new TemporaryClassLoader(classLoader);
+                return new TempClassLoader(classLoader);
             }
         };
 

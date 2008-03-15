@@ -26,11 +26,11 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Generator;
 import org.apache.openejb.core.cmp.cmp2.CmrField;
 import org.apache.openejb.core.cmp.cmp2.Cmp1Generator;
 import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.ClassLoaderUtil;
 
 /**
  * Creates a jar file which contains the CMP implementation classes and the cmp entity mappings xml file.
@@ -44,7 +44,7 @@ public class CmpJarBuilder {
 
     public CmpJarBuilder(AppInfo appInfo, ClassLoader classLoader) {
         this.appInfo = appInfo;
-        tempClassLoader = new TemporaryClassLoader(classLoader);
+        tempClassLoader = ClassLoaderUtil.createTempClassLoader(classLoader);
     }
 
     public File getJarFile() throws IOException {
@@ -127,7 +127,7 @@ public class CmpJarBuilder {
             }
         }
 
-        byte[] bytes = null;
+        byte[] bytes;
         if (entityBeanInfo.cmpVersion != 2) {
             Cmp1Generator cmp1Generator = new Cmp1Generator(cmpImplClass, beanClass);
             if ("java.lang.Object".equals(entityBeanInfo.primKeyClass)) {

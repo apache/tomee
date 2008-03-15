@@ -41,6 +41,7 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.Injection;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.openejb.server.webservices.WsService;
@@ -64,7 +65,6 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.CoreWebDeploymentInfo;
 import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.TemporaryClassLoader;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
@@ -295,7 +295,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // HACK: use a temp class loader because the class may have been loaded before
         // the openejb classes were added to the system class path so the WebService anntation
         // will not be present on the class
-        TemporaryClassLoader tempClassLoader = new TemporaryClassLoader(standardContext.getLoader().getClassLoader());
+        ClassLoader tempClassLoader = ClassLoaderUtil.createTempClassLoader(standardContext.getLoader().getClassLoader());
         for (Container container : standardContext.findChildren()) {
             if (container instanceof Wrapper) {
                 Wrapper wrapper = (Wrapper) container;
@@ -600,7 +600,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         // create the web module
         String basePath = new File(servletContext.getRealPath(".")).getParentFile().getAbsolutePath();
-        ClassLoader classLoader = new TemporaryClassLoader(standardContext.getLoader().getClassLoader());
+        ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(standardContext.getLoader().getClassLoader());
         String path = standardContext.getPath();
         System.out.println("context path = " + path);
         WebModule webModule = new WebModule(webApp, path, classLoader, basePath, getId(standardContext));

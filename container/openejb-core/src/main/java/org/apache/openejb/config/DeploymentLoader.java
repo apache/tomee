@@ -20,7 +20,7 @@ package org.apache.openejb.config;
 import static org.apache.openejb.util.URLs.toFile;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.TemporaryClassLoader;
+import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.Module;
 import org.apache.openejb.jee.JaxbJavaee;
@@ -141,7 +141,7 @@ public class DeploymentLoader {
 
         URL appUrl = getFileUrl(appDir);
 
-        ClassLoader tmpClassLoader = new TemporaryClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
+        ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
@@ -199,7 +199,7 @@ public class DeploymentLoader {
                     if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
 
                     try {
-                        ClassLoader moduleClassLoader = new TemporaryClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
+                        ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
 
                         Class moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
                         if (EjbModule.class.equals(moduleType)) {
@@ -281,7 +281,7 @@ public class DeploymentLoader {
             classPath.addAll(rarLibs.values());
             classPath.addAll(extraLibs);
             URL[] urls = classPath.toArray(new URL[classPath.size()]);
-            ClassLoader appClassLoader = new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+            ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(urls, OpenEJB.class.getClassLoader());
 
             //
             // Create the AppModule and all nested module objects
@@ -505,7 +505,7 @@ public class DeploymentLoader {
 
         // create the class loader
         URL[] webUrls = webClassPath.toArray(new URL[webClassPath.size()]);
-        ClassLoader warClassLoader = new TemporaryClassLoader(webUrls, parentClassLoader);
+        ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(webUrls, parentClassLoader);
 
         // create web module
         WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
@@ -772,7 +772,7 @@ public class DeploymentLoader {
         List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
         URL[] urls = classPath.toArray(new URL[classPath.size()]);
-        ClassLoader appClassLoader = new TemporaryClassLoader(urls, parentClassLoader);
+        ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(urls, parentClassLoader);
 
         // create the Resource Module
         ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarPath, moduleId);
@@ -986,10 +986,9 @@ public class DeploymentLoader {
     private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
         try {
             URL[] urls = new URL[]{jarFile.toURL()};
-            return new TemporaryClassLoader(urls, OpenEJB.class.getClassLoader());
+            return ClassLoaderUtil.createTempClassLoader(urls, OpenEJB.class.getClassLoader());
         } catch (MalformedURLException e) {
             throw new OpenEJBException(messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()), e);
         }
     }
-
 }
