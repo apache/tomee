@@ -33,23 +33,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.jar.JarFile;
 
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.core.AntiJarLockingClassLoader;
 import org.apache.openejb.core.TempAntiJarLockingClassLoader;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.xbean.classloader.JarFileClassLoader;
+import org.apache.xbean.classloader.NamedClassLoader;
 
 /**
  * @version $Revision$ $Date$
  */
 public class ClassLoaderUtil {
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, ClassLoaderUtil.class);
     private static final Map<String,List<ClassLoader>> classLoadersByApp = new HashMap<String,List<ClassLoader>>();
-    private static final Map<ClassLoader,List<String>> appsByClassLoader = new HashMap<ClassLoader,List<String>>();
+    private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader,Set<String>>();
 
-    private static boolean isAntiJarLocking() {
-        return Boolean.getBoolean("antiJarLocking");
+    private static final boolean antiJarLocking;
+    static {
+        String value = null;
+        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+            if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                if ("antiJarLocking".equalsIgnoreCase((String) entry.getKey())) {
+                    value = (String) entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (value != null) {
+            antiJarLocking = Boolean.valueOf(value);
+        } else {
+            antiJarLocking = System.getProperty("os.name", "unknown").toLowerCase().startsWith("windows");
+        }
+        if (antiJarLocking) {
+            log.error("AntiJarLockingClassLoader enabled");
+        }
     }
 
     public static ClassLoader getContextClassLoader() {
@@ -62,7 +86,7 @@ public class ClassLoaderUtil {
 
     public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
         URLClassLoader classLoader;
-        if (isAntiJarLocking()) {
+        if (antiJarLocking) {
             classLoader = new AntiJarLockingClassLoader(appId, urls, parent);
         } else {
             classLoader = new URLClassLoader(urls, parent);
@@ -75,9 +99,9 @@ public class ClassLoaderUtil {
         }
         classLoaders.add(classLoader);
 
-        List<String> apps = appsByClassLoader.get(classLoader);
+        Set<String> apps = appsByClassLoader.get(classLoader);
         if (apps == null) {
-            apps = new ArrayList<String>(1);
+            apps = new LinkedHashSet<String>(1);
             appsByClassLoader.put(classLoader, apps);
         }
         apps.add(appId);
@@ -86,8 +110,10 @@ public class ClassLoaderUtil {
     }
 
     public static void destroyClassLoader(ClassLoader classLoader) {
+        log.debug("Destroying classLoader " + toString(classLoader));
+
         // remove from the indexes
-        List<String> apps = appsByClassLoader.remove(classLoader);
+        Set<String> apps = appsByClassLoader.remove(classLoader);
         if (apps != null) {
             for (String app : apps) {
                 List<ClassLoader> classLoaders = classLoadersByApp.get(app);
@@ -111,12 +137,14 @@ public class ClassLoaderUtil {
     }
 
     public static void destroyClassLoader(String appId) {
+        log.debug("Destroying classLoaders for application " + appId);
+
         List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
         if (classLoaders != null) {
             for (ClassLoader classLoader : classLoaders) {
                 // get the apps using the class loader
-                List<String> apps = appsByClassLoader.get(classLoader);
-                if (apps == null) apps = Collections.emptyList();
+                Set<String> apps = appsByClassLoader.get(classLoader);
+                if (apps == null) apps = Collections.emptySet();
 
                 // this app is no longer using the class loader
                 apps.remove(appId);
@@ -125,13 +153,18 @@ public class ClassLoaderUtil {
                 if (apps.isEmpty()) {
                     appsByClassLoader.remove(classLoader);
                     destroyClassLoader(classLoader);
+                } else {
+                    log.debug("ClassLoader " + toString(classLoader) + " held open by the applications" + apps);
                 }
             }
+        } else {
+            log.debug("No class loaders found for application " + appId + ": Known applications are " + classLoadersByApp.keySet());
         }
+        ClassLoaderUtil.clearSunJarFileFactoryCache(appId);
     }
 
     public static URLClassLoader createTempClassLoader(ClassLoader parent) {
-        if (isAntiJarLocking()) {
+        if (antiJarLocking) {
             return new TempAntiJarLockingClassLoader(parent);
         } else {
             return new TempClassLoader(parent);
@@ -139,7 +172,7 @@ public class ClassLoaderUtil {
     }
 
     public static URLClassLoader createTempClassLoader(URL[] urls) {
-        if (isAntiJarLocking()) {
+        if (antiJarLocking) {
             return new TempAntiJarLockingClassLoader(urls);
         } else {
             return new TempClassLoader(urls);
@@ -147,7 +180,7 @@ public class ClassLoaderUtil {
     }
 
     public static URLClassLoader createTempClassLoader(URL[] urls, ClassLoader parent) {
-        if (isAntiJarLocking()) {
+        if (antiJarLocking) {
             return new TempAntiJarLockingClassLoader(urls, parent);
         } else {
             return new TempClassLoader(urls, parent);
@@ -168,6 +201,8 @@ public class ClassLoaderUtil {
     }
 
     public static void clearSunJarFileFactoryCache(String jarLocation) {
+        log.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
+
         try {
             Class jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
 
@@ -184,7 +219,7 @@ public class ClassLoaderUtil {
             for (Object item : fileCache.keySet()) {
                 URL url = (URL) item;
                 if (isParent(jarLocation, URLs.toFile(url))) {
-                    urls.add(url);                    
+                    urls.add(url);
                 }
             }
 
@@ -195,8 +230,12 @@ public class ClassLoaderUtil {
                 urlCache.remove(jarFile);
                 jarFile.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // not a sun vm
+        } catch (NoSuchFieldException e) {
+            // different version of sun vm?
+        } catch (Throwable e) {
+            log.error("Unable to clear Sun JarFileFactory cache", e);
         }
     }
 
@@ -242,6 +281,17 @@ public class ClassLoaderUtil {
             deRegisterMethod.invoke(null, classLoader);
         } catch (Throwable ignored) {
             // there is nothing a user could do about this anyway
+        }
+    }
+
+    private static String toString(ClassLoader classLoader) {
+        if (classLoader == null) {
+            return "null";
+        } else if (classLoader instanceof NamedClassLoader) {
+            NamedClassLoader namedClassLoader = (NamedClassLoader) classLoader;
+            return namedClassLoader.getName() + "@" + System.identityHashCode(classLoader);
+        } else {
+            return classLoader.getClass().getSimpleName() + "@" + System.identityHashCode(classLoader);
         }
     }
 
