@@ -639,7 +639,9 @@
     BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
 
     # Broker address
-    ServerUrl vm://localhost?async=true
+      # ServerUrl vm://localhost?async=true
+      ServerUrl tcp://localhost:61616
+
 
     # DataSource for persistence messages
     DataSource 

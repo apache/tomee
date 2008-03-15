@@ -19,6 +19,8 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.geronimo.transaction.manager.NamedXAResource;
+import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.ActivationSpec;
@@ -54,7 +56,8 @@ public class EndpointFactory implements MessageEndpointFactory {
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
-        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, xaResource);
+        NamedXAResource wrapper = new WrapperNamedXAResource(xaResource, container.getContainerID().toString());
+        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, wrapper);
         MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         return messageEndpoint;
     }

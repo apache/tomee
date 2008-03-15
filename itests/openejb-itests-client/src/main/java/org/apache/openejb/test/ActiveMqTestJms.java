@@ -30,6 +30,6 @@ public class ActiveMqTestJms implements TestJms {
     }
 
     public ConnectionFactory getConnectionFactory() {
-        return new ActiveMQConnectionFactory();
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
     }
 }
