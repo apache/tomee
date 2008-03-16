@@ -63,6 +63,7 @@ import org.apache.openejb.util.JarExtractor;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.UrlCache;
 import static org.apache.openejb.util.URLs.toFile;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.ResourceFinder;
@@ -94,10 +95,30 @@ public class DeploymentLoader {
         try {
             // determine the module type
             Class moduleClass;
+            File tmpFile = null;
             try {
-                moduleClass = discoverModuleType(baseUrl, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
+                // TODO: ClassFinder is leaking file locks, so copy the jar to a temp dir
+                // when we have a possible ejb-jar file (only ejb-jars result in a ClassFinder being used)
+                URL tempURL = baseUrl;
+                if (jarFile.isFile() && UrlCache.cacheDir != null &&
+                        !jarFile.getName().endsWith(".ear") &&
+                        !jarFile.getName().endsWith(".war") &&
+                        !jarFile.getName().endsWith(".rar") ) {
+                    try {
+                        tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
+                        JarExtractor.copy(URLs.toFile(baseUrl), tmpFile);
+                        tempURL = tmpFile.toURL();
+                    } catch (Exception e) {
+                        throw new OpenEJBException(e);
+                    }
+                }
+
+                moduleClass = discoverModuleType(tempURL, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
             } catch (Exception e) {
                 throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
+            } finally {
+                // most likely won't work but give it a try
+                if (tmpFile != null) tmpFile.delete();
             }
 
             if (AppModule.class.equals(moduleClass)) {
