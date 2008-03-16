@@ -173,6 +173,13 @@ public class UrlCache {
             return appCache.get(url);
         }
 
+        // if the file is already in the cache, don't recopy it to the cache dir
+        if (sourceFile.getParentFile().equals(cacheDir)) {
+            // mark it as part of the application, so it cleaned up when the application is undeployed
+            appCache.put(url, sourceFile);
+            return sourceFile;
+        }
+
         // generate a nice cache file name
         String name = sourceFile.getName();
         int dot = name.lastIndexOf(".");
