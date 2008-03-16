@@ -17,36 +17,6 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.URLs.toFile;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.Module;
-import org.apache.openejb.jee.JaxbJavaee;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.JspConfig;
-import org.apache.openejb.jee.Taglib;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.JavaWsdlMapping;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.URLs;
-import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.ResourceFinder;
-import org.apache.xbean.finder.UrlSet;
-import org.xml.sax.SAXException;
-
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
-import javax.ejb.MessageDriven;
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,41 +24,59 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.TreeMap;
 import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import javax.ejb.MessageDriven;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.xml.bind.JAXBException;
+
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.JavaWsdlMapping;
+import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.JspConfig;
+import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.Taglib;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.util.JarExtractor;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
+import static org.apache.openejb.util.URLs.toFile;
+import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
+import org.xml.sax.SAXException;
 
 /**
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    private static final Messages messages = new Messages("org.apache.openejb.util.resources");
-
 
     public AppModule load(File jarFile) throws OpenEJBException {
-        ClassLoader classLoader = getClassLoader(jarFile);
-
-        URL baseUrl = getFileUrl(jarFile);
-
-        Class moduleClass;
-        try {
-            moduleClass = discoverModuleType(baseUrl, classLoader, true);
-        } catch (Exception e) {
-            throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
-        }
-
+        // verify we have a valid file
         String jarPath;
         try {
             jarPath = jarFile.getCanonicalPath();
@@ -96,42 +84,65 @@ public class DeploymentLoader {
             throw new OpenEJBException("Invalid application file path " + jarFile);
         }
 
-        if (AppModule.class.equals(moduleClass)) {
+        URL baseUrl = getFileUrl(jarFile);
 
-            return createAppModule(jarFile, jarPath, classLoader);
+        // create a class loader to use for detection of module type
+        // do not use this class loader for any other purposes... it is
+        // non-temp class loader and usage will mess up JPA
+        ClassLoader doNotUseClassLoader = ClassLoaderUtil.createClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
 
-        } else if (EjbModule.class.equals(moduleClass)) {
-            EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
+        try {
+            // determine the module type
+            Class moduleClass;
+            try {
+                moduleClass = discoverModuleType(baseUrl, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
+            } catch (Exception e) {
+                throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
+            }
 
-            // wrap the EJB Module with an Application Module
-            AppModule appModule = new AppModule(classLoader, ejbModule.getJarLocation());
-            appModule.getEjbModules().add(ejbModule);
+            if (AppModule.class.equals(moduleClass)) {
 
-            // Persistence Units
-            addPersistenceUnits(appModule, classLoader, baseUrl);
+                return createAppModule(jarFile, jarPath);
 
-            return appModule;
-        } else if (ConnectorModule.class.equals(moduleClass)) {
-            ConnectorModule connectorModule = createConnectorModule(URLs.toFilePath(baseUrl), OpenEJB.class.getClassLoader(), null);
+            } else if (EjbModule.class.equals(moduleClass)) {
+                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+                EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
 
-            // Wrap the resource module with an Application Module
-            AppModule appModule = new AppModule(classLoader, connectorModule.getJarLocation());
-            appModule.getResourceModules().add(connectorModule);
+                // wrap the EJB Module with an Application Module
+                AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+                appModule.getEjbModules().add(ejbModule);
 
-            return appModule;
-        } else if (WebModule.class.equals(moduleClass)) {
-            String moduleId = toFile(baseUrl).getName();
-            String warPath = URLs.toFilePath(baseUrl);
+                // Persistence Units
+                addPersistenceUnits(appModule, baseUrl);
 
-            AppModule appModule = new AppModule(classLoader, warPath);
-            addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
-            return appModule;
-        } else {
-            throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
+                return appModule;
+            } else if (ConnectorModule.class.equals(moduleClass)) {
+                String jarLocation = URLs.toFilePath(baseUrl);
+                ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), null);
+
+                // Wrap the resource module with an Application Module
+                AppModule appModule = new AppModule(connectorModule.getClassLoader(), jarLocation);
+                appModule.getResourceModules().add(connectorModule);
+
+                return appModule;
+            } else if (WebModule.class.equals(moduleClass)) {
+                String moduleId = toFile(baseUrl).getName();
+                String warPath = URLs.toFilePath(baseUrl);
+
+                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), warPath);
+                addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
+                return appModule;
+            } else {
+                throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
+            }
+        } finally {
+            // if the application was unpacked appId used to create this class loader will be wrong
+            // We can safely destroy this class loader in either case, as it was not use by any modules
+            ClassLoaderUtil.destroyClassLoader(doNotUseClassLoader);
         }
     }
 
-    protected static AppModule createAppModule(File jarFile, String jarPath, ClassLoader classLoader) throws OpenEJBException {
+    protected static AppModule createAppModule(File jarFile, String jarPath) throws OpenEJBException {
         File appDir = unpack(jarFile);
         try {
             appDir = appDir.getCanonicalFile();
@@ -141,7 +152,8 @@ public class DeploymentLoader {
 
         URL appUrl = getFileUrl(appDir);
 
-        ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(new URL[]{appUrl}, OpenEJB.class.getClassLoader());
+        String appId = appDir.getAbsolutePath();
+        ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, OpenEJB.class.getClassLoader());
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
@@ -199,7 +211,7 @@ public class DeploymentLoader {
                     if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
 
                     try {
-                        ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(new URL[]{entry.getValue()}, tmpClassLoader);
+                        ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{entry.getValue()}, tmpClassLoader);
 
                         Class moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
                         if (EjbModule.class.equals(moduleType)) {
@@ -281,16 +293,16 @@ public class DeploymentLoader {
             classPath.addAll(rarLibs.values());
             classPath.addAll(extraLibs);
             URL[] urls = classPath.toArray(new URL[classPath.size()]);
-            ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(urls, OpenEJB.class.getClassLoader());
+            ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, OpenEJB.class.getClassLoader());
 
             //
             // Create the AppModule and all nested module objects
             //
 
-            AppModule appModule = new AppModule(appClassLoader, appDir.getAbsolutePath());
+            AppModule appModule = new AppModule(appClassLoader, appId);
             appModule.getAdditionalLibraries().addAll(extraLibs);
             appModule.getAltDDs().putAll(appDescriptors);
-            appModule.getWatchedResources().add(appDir.getAbsolutePath());
+            appModule.getWatchedResources().add(appId);
             if (applicationXmlUrl != null) {
                 appModule.getWatchedResources().add(URLs.toFilePath(applicationXmlUrl));
             }
@@ -306,7 +318,7 @@ public class DeploymentLoader {
 
                     appModule.getEjbModules().add(ejbModule);
                 } catch (OpenEJBException e) {
-                    logger.error("Unable to load EJBs from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -321,7 +333,7 @@ public class DeploymentLoader {
 
                     appModule.getClientModules().add(clientModule);
                 } catch (Exception e) {
-                    logger.error("Unable to load App Client from EAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -329,11 +341,11 @@ public class DeploymentLoader {
             for (String moduleName : resouceModules.keySet()) {
                 try {
                     URL rarUrl = resouceModules.get(moduleName);
-                    ConnectorModule connectorModule = createConnectorModule(URLs.toFilePath(rarUrl), appClassLoader, moduleName);
+                    ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
 
                     appModule.getResourceModules().add(connectorModule);
                 } catch (OpenEJBException e) {
-                    logger.error("Unable to load RAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -343,12 +355,12 @@ public class DeploymentLoader {
                     URL warUrl = webModules.get(moduleName);
                     addWebModule(appModule, URLs.toFilePath(warUrl), appClassLoader, webContextRoots.get(moduleName), moduleName);
                 } catch (OpenEJBException e) {
-                    logger.error("Unable to load WAR: " + appDir.getAbsolutePath() + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Persistence Units
-            addPersistenceUnits(appModule, classLoader, urls);
+            addPersistenceUnits(appModule, urls);
 
             return appModule;
 
@@ -409,7 +421,7 @@ public class DeploymentLoader {
     }
 
     protected static void addWebModule(AppModule appModule, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
-        WebModule webModule = createWebModule(warPath, parentClassLoader, contextRoot, moduleName);
+        WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
         appModule.getWebModules().add(webModule);
 
         ClassLoader webClassLoader = webModule.getClassLoader();
@@ -454,11 +466,11 @@ public class DeploymentLoader {
         }
 
         // Persistence Units
-        addPersistenceUnits(appModule, webClassLoader);
+        addPersistenceUnits(appModule);
 
     }
 
-    protected static WebModule createWebModule(String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+    protected static WebModule createWebModule(String appId, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
         File warFile = new File(warPath);
         warFile = unpack(warFile);
 
@@ -505,7 +517,7 @@ public class DeploymentLoader {
 
         // create the class loader
         URL[] webUrls = webClassPath.toArray(new URL[webClassPath.size()]);
-        ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(webUrls, parentClassLoader);
+        ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
 
         // create web module
         WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
@@ -743,7 +755,7 @@ public class DeploymentLoader {
         return urls;
     }
 
-    protected static ConnectorModule createConnectorModule(String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
+    protected static ConnectorModule createConnectorModule(String appId, String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
         URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         rarFile = unpack(rarFile);
@@ -772,7 +784,7 @@ public class DeploymentLoader {
         List<URL> classPath = new ArrayList<URL>();
         classPath.addAll(rarLibs.values());
         URL[] urls = classPath.toArray(new URL[classPath.size()]);
-        ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(urls, parentClassLoader);
+        ClassLoader appClassLoader = ClassLoaderUtil.createTempClassLoader(appId, urls, parentClassLoader);
 
         // create the Resource Module
         ConnectorModule connectorModule = new ConnectorModule(connector, appClassLoader, rarPath, moduleId);
@@ -788,9 +800,10 @@ public class DeploymentLoader {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected static void addPersistenceUnits(AppModule appModule, ClassLoader classLoader, URL... urls) {
+    protected static void addPersistenceUnits(AppModule appModule, URL... urls) {
         try {
-            ResourceFinder finder = new ResourceFinder("", classLoader, urls);
+            // any class loader will do here since we are not calling class loading methods of resource finder
+            ResourceFinder finder = new ResourceFinder("", ClassLoader.getSystemClassLoader(), urls);
             List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
             if (persistenceUrls == null) {
                 persistenceUrls = new ArrayList<URL>();
@@ -981,14 +994,5 @@ public class DeploymentLoader {
             throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
         }
         return baseUrl;
-    }
-
-    private ClassLoader getClassLoader(File jarFile) throws OpenEJBException {
-        try {
-            URL[] urls = new URL[]{jarFile.toURL()};
-            return ClassLoaderUtil.createTempClassLoader(urls, OpenEJB.class.getClassLoader());
-        } catch (MalformedURLException e) {
-            throw new OpenEJBException(messages.format("cl0001", jarFile.getAbsolutePath(), e.getMessage()), e);
-        }
     }
 }

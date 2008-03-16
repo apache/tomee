@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.config.JarExtractor.delete;
+import static org.apache.openejb.util.JarExtractor.delete;
 
 import java.util.Properties;
 import java.io.File;

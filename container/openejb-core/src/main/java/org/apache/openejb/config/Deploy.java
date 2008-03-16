@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.config.JarExtractor.delete;
+import static org.apache.openejb.util.JarExtractor.delete;
 
 import java.io.Closeable;
 import java.io.File;
@@ -55,6 +55,7 @@ import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.JarExtractor;
 
 /**
  * Deploy EJB beans

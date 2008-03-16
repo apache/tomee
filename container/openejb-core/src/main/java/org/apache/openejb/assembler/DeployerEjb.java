@@ -145,12 +145,9 @@ public class DeployerEjb implements Deployer {
 
             return appInfo;
         } catch (Throwable e) {
-            // clean up the failed deployment
+            // destroy the class loader for the failed application
             if (appModule != null) {
-                // destroy the temp class loader
-                ClassLoaderUtil.destroyClassLoader(appModule.getClassLoader());
-                // temp class loaders don't have an associated directory, so we need to clear the directory url cache by hand
-                ClassLoaderUtil.clearSunJarFileFactoryCache(appModule.getJarLocation());
+                ClassLoaderUtil.destroyClassLoader(appModule.getJarLocation());
             }
 
             e.printStackTrace();

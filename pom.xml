@@ -780,11 +780,6 @@
         <version>2.0.5</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-classloader</artifactId>
-        <version>3.3</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>xbean-finder</artifactId>
         <version>3.4-r636443-SNAPSHOT</version>

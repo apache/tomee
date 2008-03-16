@@ -339,6 +339,8 @@ public class WsDeployer implements DynamicDeployer {
     }
 
     private Definition getWsdl(DeploymentModule module, String wsdlFile) {
+        if (wsdlFile == null) return null;
+
         Object object = module.getAltDDs().get(wsdlFile);
         if (object instanceof Definition) {
             Definition definition = (Definition) object;

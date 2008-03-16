@@ -46,14 +46,6 @@ public class TempClassLoader extends URLClassLoader {
         super(new URL[0], parent);
     }
 
-    public TempClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, parent);
-    }
-
-    public TempClassLoader(URL[] urls) {
-        super(urls);
-    }
-
     public Class loadClass(String name) throws ClassNotFoundException {
         return loadClass(name, false);
     }

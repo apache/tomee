@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,6 +31,7 @@ import java.util.jar.JarFile;
  * @version $Rev$ $Date$
  */
 public class JarExtractor {
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
 
     /**
      * Extract the Jar file into an unpacked directory structure, and
@@ -62,7 +63,7 @@ public class JarExtractor {
             return;
         }
 
-        DeploymentLoader.logger.info("Extracting jar: " + file.getAbsolutePath());
+        logger.info("Extracting jar: " + file.getAbsolutePath());
 
         // Create the new document base directory
         destinationDir.mkdirs();
@@ -117,7 +118,7 @@ public class JarExtractor {
         }
 
         // Return the absolute path to our new document base directory
-        DeploymentLoader.logger.info("Extracted path: " + destinationDir.getAbsolutePath());
+        logger.info("Extracted path: " + destinationDir.getAbsolutePath());
     }
 
 
@@ -155,7 +156,7 @@ public class JarExtractor {
                     oc = (new FileOutputStream(fileDest)).getChannel();
                     ic.transferTo(0, ic.size(), oc);
                 } catch (IOException e) {
-                    DeploymentLoader.logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);
+                    logger.error("Copy failed: src: " + fileSrc + ", dest: " + fileDest, e);
                     result = false;
                 } finally {
                     if (ic != null) {
@@ -185,6 +186,8 @@ public class JarExtractor {
      * @param dir File object representing the directory to be deleted
      */
     public static boolean delete(File dir) {
+        if (dir == null) return true;
+
         if (dir.isDirectory()) {
             return deleteDir(dir);
         } else {
@@ -200,6 +203,7 @@ public class JarExtractor {
      * @param dir File object representing the directory to be deleted
      */
     public static boolean deleteDir(File dir) {
+        if (dir == null) return true;
 
         String fileNames[] = dir.list();
         if (fileNames == null) {
