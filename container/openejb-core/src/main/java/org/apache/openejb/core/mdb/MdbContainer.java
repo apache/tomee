@@ -67,10 +67,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private final Class messageListenerInterface;
     private final Class activationSpecClass;
     private final int instanceLimit;
+    private final boolean txRecovery;
 
     private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
+    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit, boolean txRecovery) {
         this.containerID = containerID;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
@@ -78,6 +79,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         this.messageListenerInterface = messageListenerInterface;
         this.activationSpecClass = activationSpecClass;
         this.instanceLimit = instanceLimit;
+        this.txRecovery = txRecovery;
     }
 
     public DeploymentInfo [] deployments() {
@@ -122,7 +124,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
         // create the message endpoint
         MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
-        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory);
+        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, txRecovery);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages

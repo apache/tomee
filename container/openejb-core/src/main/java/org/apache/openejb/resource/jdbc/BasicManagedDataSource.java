@@ -17,12 +17,13 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.loader.SystemInstance;
-
-import javax.sql.DataSource;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.openejb.loader.SystemInstance;
 
 public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.BasicManagedDataSource {
     public synchronized String getUserName() {
@@ -54,7 +55,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         int level = IsolationLevels.getIsolationLevel(s);
         super.setDefaultTransactionIsolation(level);
     }
-    
+
     protected synchronized DataSource createDataSource() throws SQLException {
         if (dataSource != null) {
             return dataSource;
@@ -68,7 +69,8 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             helper.configure(this);
         }
 
-        // creat the data source
+        wrapTransactionManager();
+        // create the data source
         if (helper == null || !helper.enableUserDirHack()) {
             return super.createDataSource();
         } else {
@@ -86,4 +88,8 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
             }
         }
     }
+
+    protected void wrapTransactionManager() {
+    }
+
 }

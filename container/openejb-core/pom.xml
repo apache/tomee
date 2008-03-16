@@ -275,6 +275,10 @@
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.objectweb.howl</groupId>
+      <artifactId>howl</artifactId>
+    </dependency>
     <!-- JavaMail -->
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>

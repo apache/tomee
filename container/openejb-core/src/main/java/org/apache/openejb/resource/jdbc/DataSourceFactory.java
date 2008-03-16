@@ -22,9 +22,13 @@ import javax.sql.DataSource;
  * @version $Rev$ $Date$
  */
 public class DataSourceFactory {
-    public static DataSource create(boolean managed){
+    public static DataSource create(boolean managed, boolean txRecovery){
         if (managed){
-            return new BasicManagedDataSource();
+            if (txRecovery) {
+                return new ManagedDataSourceWithRecovery();
+            } else {
+                return new BasicManagedDataSource();
+            }
         } else {
             return new BasicDataSource();
         }
