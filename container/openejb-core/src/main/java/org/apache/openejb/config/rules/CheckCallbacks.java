@@ -23,6 +23,8 @@ import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.OpenEJBException;
 
 import javax.interceptor.InvocationContext;
@@ -67,6 +69,11 @@ public class CheckCallbacks extends ValidationBase {
                     checkCallback(ejbClass, "PostActivate", callback, bean);
                 }
 
+            }
+
+            if (bean instanceof TimerConsumer) {
+                TimerConsumer timerConsumer = (TimerConsumer) bean;
+                checkTimeOut(ejbClass, timerConsumer.getTimeoutMethod(), bean);
             }
         }
 
@@ -174,6 +181,30 @@ public class CheckCallbacks extends ValidationBase {
                 fail("Interceptor", "interceptor.callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), interceptorClass.getName());
             } else {
                 fail("Interceptor", "interceptor.callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), interceptorClass.getName());
+            }
+        }
+    }
+
+
+    private void checkTimeOut(Class ejbClass, NamedMethod timeout, EnterpriseBean bean) {
+        if (timeout == null) return;
+        try {
+            Method method = getMethod(ejbClass, timeout.getMethodName(), javax.ejb.Timer.class);
+
+            Class<?> returnType = method.getReturnType();
+
+            if (!returnType.equals(Void.TYPE)) {
+                fail(bean, "timeout.badReturnType", timeout.getMethodName(), returnType.getName());
+            }
+        } catch (NoSuchMethodException e) {
+            List<Method> possibleMethods = getMethods(ejbClass, timeout.getMethodName());
+
+            if (possibleMethods.size() == 0) {
+                fail(bean, "timeout.missing", timeout.getMethodName());
+            } else if (possibleMethods.size() == 1) {
+                fail(bean, "timeout.invalidArguments", timeout.getMethodName(), getParameters(possibleMethods.get(0)));
+            } else {
+                fail(bean, "timeout.missing.possibleTypo", timeout.getMethodName(), possibleMethods.size());
             }
         }
     }

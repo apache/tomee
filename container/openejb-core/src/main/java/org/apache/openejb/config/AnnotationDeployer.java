@@ -640,8 +640,6 @@ public class AnnotationDeployer implements DynamicDeployer {
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
 
-            ValidationContext validation = ejbModule.getValidation();
-
             ClassLoader classLoader = ejbModule.getClassLoader();
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
             for (EnterpriseBean bean : enterpriseBeans) {
@@ -660,7 +658,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 processCallbacks(bean, inheritedClassFinder);
 
                 if (bean.getTransactionType() == null) {
-                    TransactionManagement tx = clazz.getAnnotation(TransactionManagement.class);
+                    TransactionManagement tx = getInheritableAnnotation(clazz, TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
                     if (tx != null) {
                         transactionType = tx.value();
@@ -682,105 +680,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 if (bean.getTransactionType() == TransactionType.CONTAINER) {
-                    Map<String, List<MethodTransaction>> methodTransactions = assemblyDescriptor.getMethodTransactions(ejbName);
-
-                    // SET THE DEFAULT
-                    if (!methodTransactions.containsKey("*")) {
-                        TransactionAttribute attribute = clazz.getAnnotation(TransactionAttribute.class);
-                        if (attribute != null) {
-                            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, "*");
-                            assemblyDescriptor.getContainerTransaction().add(ctx);
-                        }
-                    }
-
-                    List<Method> methods = classFinder.findAnnotatedMethods(TransactionAttribute.class);
-                    for (Method method : methods) {
-                        TransactionAttribute attribute = method.getAnnotation(TransactionAttribute.class);
-                        if (!methodTransactions.containsKey(method.getName())) {
-                            // no method with this name in descriptor
-                            addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
-                        } else {
-                            // method name already declared
-                            List<MethodTransaction> list = methodTransactions.get(method.getName());
-                            for (MethodTransaction mtx : list) {
-                                MethodParams methodParams = mtx.getMethodParams();
-                                if (methodParams == null) {
-                                    // params not specified, so this is more specific
-                                    addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
-                                } else {
-                                    List<String> params1 = methodParams.getMethodParam();
-                                    String[] params2 = asStrings(method.getParameterTypes());
-                                    if (params1.size() != params2.length) {
-                                        // params not the same
-                                        addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
-                                    } else {
-                                        for (int i = 0; i < params1.size(); i++) {
-                                            String a = params1.get(i);
-                                            String b = params2[i];
-                                            if (!a.equals(b)) {
-                                                // params not the same
-                                                addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    processTransactionAttributes(clazz, ejbName, assemblyDescriptor, inheritedClassFinder);
                 }
 
-                RolesAllowed rolesAllowed = clazz.getAnnotation(RolesAllowed.class);
-                if (rolesAllowed != null) {
-                    MethodPermission methodPermission = new MethodPermission();
-                    methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
-                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, "*"));
-                    assemblyDescriptor.getMethodPermission().add(methodPermission);
-                }
-
-                for (Method method : classFinder.findAnnotatedMethods(RolesAllowed.class)) {
-                    rolesAllowed = method.getAnnotation(RolesAllowed.class);
-                    MethodPermission methodPermission = new MethodPermission();
-                    methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
-                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
-                    assemblyDescriptor.getMethodPermission().add(methodPermission);
-                }
-
-                PermitAll permitAll = clazz.getAnnotation(PermitAll.class);
-                if (permitAll != null) {
-                    MethodPermission methodPermission = new MethodPermission();
-                    methodPermission.setUnchecked(true);
-                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, "*"));
-                    assemblyDescriptor.getMethodPermission().add(methodPermission);
-                }
-
-                for (Method method : classFinder.findAnnotatedMethods(PermitAll.class)) {
-                    MethodPermission methodPermission = new MethodPermission();
-                    methodPermission.setUnchecked(true);
-                    methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
-                    assemblyDescriptor.getMethodPermission().add(methodPermission);
-                }
-
-                for (Method method : classFinder.findAnnotatedMethods(DenyAll.class)) {
-                    ExcludeList excludeList = assemblyDescriptor.getExcludeList();
-                    excludeList.addMethod(new org.apache.openejb.jee.Method(ejbName, method));
-                }
-
-                RunAs runAs = clazz.getAnnotation(RunAs.class);
-                if (runAs != null && bean.getSecurityIdentity() == null) {
-                    SecurityIdentity securityIdentity = new SecurityIdentity();
-                    securityIdentity.setRunAs(runAs.value());
-                    bean.setSecurityIdentity(securityIdentity);
-                }
-
-                DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);
-                if (declareRoles != null && bean instanceof RemoteBean){
-                    RemoteBean remoteBean = (RemoteBean) bean;
-                    List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
-                    for (String role : declareRoles.value()) {
-                        securityRoleRefs.add(new SecurityRoleRef(role));
-                    }
-                }
+                processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
 
                 for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class)) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
@@ -799,7 +702,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                for (Method method : classFinder.findAnnotatedMethods(Interceptors.class)) {
+                for (Method method : inheritedClassFinder.findAnnotatedMethods(Interceptors.class)) {
                     Interceptors interceptors = method.getAnnotation(Interceptors.class);
                     if (interceptors != null) {
                         EjbJar ejbJar = ejbModule.getEjbJar();
@@ -848,7 +751,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     RemoteBean remoteBean = (RemoteBean) bean;
 
                     if (remoteBean.getHome() == null) {
-                        RemoteHome remoteHome = clazz.getAnnotation(RemoteHome.class);
+                        RemoteHome remoteHome = getInheritableAnnotation(clazz, RemoteHome.class);
                         if (remoteHome != null) {
                             Class<?> homeClass = remoteHome.value();
                             try {
@@ -871,7 +774,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (remoteBean.getLocalHome() == null) {
-                        LocalHome localHome = clazz.getAnnotation(LocalHome.class);
+                        LocalHome localHome = getInheritableAnnotation(clazz, LocalHome.class);
                         if (localHome != null) {
                             Class<?> homeClass = localHome.value();
                             try {
@@ -896,117 +799,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remoteBean instanceof SessionBean) {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
-                        // Anything declared in the xml is also not eligable
-                        List<String> declared = new ArrayList<String>();
-                        declared.addAll(sessionBean.getBusinessLocal());
-                        declared.addAll(sessionBean.getBusinessRemote());
-                        declared.add(sessionBean.getHome());
-                        declared.add(sessionBean.getRemote());
-                        declared.add(sessionBean.getLocalHome());
-                        declared.add(sessionBean.getLocal());
-                        declared.add(sessionBean.getServiceEndpoint());
-
-                        List<Class<?>> interfaces = new ArrayList<Class<?>>();
-                        for (Class<?> interfce : clazz.getInterfaces()) {
-                            String name = interfce.getName();
-                            if (!name.equals("java.io.Serializable") &&
-                                    !name.equals("java.io.Externalizable") &&
-                                    !name.startsWith("javax.ejb.") &&
-                                    !declared.contains(interfce.getName())) {
-                                interfaces.add(interfce);
-                            }
-                        }
-
-                        List<Class> remotes = new ArrayList<Class>();
-                        Remote remote = clazz.getAnnotation(Remote.class);
-                        if (remote != null) {
-                            if (remote.value().length == 0) {
-                                if (interfaces.size() != 1) {
-                                    validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
-                                } else if (clazz.getAnnotation(Local.class) != null) {
-                                    validation.fail(ejbName, "ann.remoteLocal.ambiguous", join(", ", interfaces));
-                                } else if (interfaces.get(0).getAnnotation(Local.class) != null) {
-                                    validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
-                                } else {
-                                    if (validateRemoteInterface(interfaces.get(0), validation, ejbName)){
-                                        remotes.add(interfaces.get(0));
-                                    }
-                                    interfaces.remove(0);
-                                }
-                            } else for (Class interfce : remote.value()) {
-                                if (validateRemoteInterface(interfce, validation, ejbName)){
-                                    remotes.add(interfce);
-                                }
-                                interfaces.remove(interfce);
-                            }
-                        }
-
-                        List<Class> locals = new ArrayList<Class>();
-                        Local local = clazz.getAnnotation(Local.class);
-                        if (local != null) {
-                            if (local.value().length == 0) {
-                                if (interfaces.size() != 1) {
-                                    validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
-                                } else if (clazz.getAnnotation(Remote.class) != null) {
-                                    validation.fail(ejbName, "ann.localRemote.ambiguous", join(", ", interfaces));
-                                } else if (interfaces.get(0).getAnnotation(Remote.class) != null) {
-                                    validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
-                                } else {
-                                    if (validateLocalInterface(interfaces.get(0), validation, ejbName)){
-                                        locals.add(interfaces.get(0));
-                                    }
-                                    interfaces.remove(0);
-                                }
-                            } else for (Class interfce : local.value()) {
-                                if (validateLocalInterface(interfce, validation, ejbName)){
-                                    locals.add(interfce);
-                                }
-                                interfaces.remove(interfce);
-                            }
-                        }
-
-                        if (sessionBean.getServiceEndpoint() == null) {
-                            WebService webService = clazz.getAnnotation(WebService.class);
-                            if (webService != null) {
-                                String endpointInterfaceName = webService.endpointInterface();
-                                if (!endpointInterfaceName.equals("")){
-                                    try {
-                                        sessionBean.setServiceEndpoint(endpointInterfaceName);
-                                        Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
-                                        interfaces.remove(endpointInterface);
-                                    } catch (ClassNotFoundException e) {
-                                        throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
-                                    }
-                                } else {
-                                    sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
-                                }
-                            } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
-                                sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
-                            }
-                        }
-
-                        for (Class interfce : copy(interfaces)) {
-                            if (interfce.isAnnotationPresent(WebService.class)) {
-                                if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
-                                    sessionBean.setServiceEndpoint(interfce.getName());
-                                }
-                                interfaces.remove(interfce);
-                            } else if (interfce.isAnnotationPresent(Remote.class)) {
-                                remotes.add(interfce);
-                                interfaces.remove(interfce);
-                            } else {
-                                locals.add(interfce);
-                                interfaces.remove(interfce);
-                            }
-                        }
-
-                        for (Class interfce : remotes) {
-                            sessionBean.addBusinessRemote(interfce.getName());
-                        }
-
-                        for (Class interfce : locals) {
-                            sessionBean.addBusinessLocal(interfce.getName());
-                        }
+                        processSessionInterfaces(sessionBean, clazz, ejbModule);
                     }
                 }
 
@@ -1014,13 +807,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     MessageDrivenBean mdb = (MessageDrivenBean) bean;
                     MessageDriven messageDriven = clazz.getAnnotation(MessageDriven.class);
                     if (messageDriven != null) {
-                        Class<?> interfce = messageDriven.messageListenerInterface();
-                        if (interfce != null && !interfce.equals(Object.class)) {
-                            if (!interfce.isInterface()) {
-                                throw new OpenEJBException("MessageListenerInterface property of @MessageDriven is not an interface");
-                            }
-                            mdb.setMessagingType(interfce.getName());
-                        }
                         javax.ejb.ActivationConfigProperty[] configProperties = messageDriven.activationConfig();
                         if (configProperties != null) {
                             ActivationConfig activationConfig = mdb.getActivationConfig();
@@ -1037,27 +823,38 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         if (mdb.getMessagingType() == null) {
-                            List<Class<?>> interfaces = new ArrayList<Class<?>>();
-                            for (Class<?> intf : clazz.getInterfaces()) {
-                                String name = intf.getName();
-                                if (!name.equals("java.io.Serializable") &&
-                                        !name.equals("java.io.Externalizable") &&
-                                        !name.startsWith("javax.ejb.")) {
-                                    interfaces.add(intf);
+                            Class<?> interfce = messageDriven.messageListenerInterface();
+                            if (interfce != null && !interfce.equals(Object.class)) {
+                                if (!interfce.isInterface()) {
+                                    // TODO: Move this check to o.a.o.c.rules.CheckClasses and do it for all MDBs, annotated or not
+                                    throw new OpenEJBException("MessageListenerInterface property of @MessageDriven is not an interface");
                                 }
+                                mdb.setMessagingType(interfce.getName());
                             }
-
-                            if (interfaces.size() != 1) {
-                                String msg = "When annotating a bean class as @MessageDriven without declaring messageListenerInterface, the bean must implement exactly one interface, no more and no less. beanClass=" + clazz.getName() + " interfaces=";
-                                for (Class<?> intf : interfaces) {
-                                    msg += intf.getName() + ", ";
-                                }
-                                throw new IllegalStateException(msg);
-                            }
-                            mdb.setMessagingType(interfaces.get(0).getName());
                         }
                     }
 
+                    if (mdb.getMessagingType() == null) {
+                        List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                        for (Class<?> intf : clazz.getInterfaces()) {
+                            String name = intf.getName();
+                            if (!name.equals("java.io.Serializable") &&
+                                    !name.equals("java.io.Externalizable") &&
+                                    !name.startsWith("javax.ejb.")) {
+                                interfaces.add(intf);
+                            }
+                        }
+
+                        if (interfaces.size() != 1) {
+                            String msg = "When annotating a bean class as @MessageDriven without declaring messageListenerInterface, the bean must implement exactly one interface, no more and no less. beanClass=" + clazz.getName() + " interfaces=";
+                            for (Class<?> intf : interfaces) {
+                                msg += intf.getName() + ", ";
+                            }
+                            // TODO: Make this a validation failure, not an exception
+                            throw new IllegalStateException(msg);
+                        }
+                        mdb.setMessagingType(interfaces.get(0).getName());
+                    }
                 }
 
                 // add webservice handler classes to the class finder used in annotation processing
@@ -1124,14 +921,340 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbModule;
         }
 
+        private void processSessionInterfaces(SessionBean sessionBean, Class<?> beanClass, EjbModule ejbModule) {
+
+            ValidationContext validation = ejbModule.getValidation();
+            String ejbName = sessionBean.getEjbName();
+
+            for (Class<?> clazz : ancestors(beanClass)) {
+                // Anything declared in the xml is also not eligable
+                List<String> declared = new ArrayList<String>();
+                declared.addAll(sessionBean.getBusinessLocal());
+                declared.addAll(sessionBean.getBusinessRemote());
+                declared.add(sessionBean.getHome());
+                declared.add(sessionBean.getRemote());
+                declared.add(sessionBean.getLocalHome());
+                declared.add(sessionBean.getLocal());
+                declared.add(sessionBean.getServiceEndpoint());
+
+                List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                for (Class<?> interfce : clazz.getInterfaces()) {
+                    String name = interfce.getName();
+                    if (!name.equals("java.io.Serializable") &&
+                            !name.equals("java.io.Externalizable") &&
+                            !name.startsWith("javax.ejb.") &&
+                            !declared.contains(interfce.getName())) {
+                        interfaces.add(interfce);
+                    }
+                }
+
+                List<Class> remotes = new ArrayList<Class>();
+                Remote remote = clazz.getAnnotation(Remote.class);
+                if (remote != null) {
+                    if (remote.value().length == 0) {
+                        if (interfaces.size() != 1) {
+                            validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
+                        } else if (clazz.getAnnotation(Local.class) != null) {
+                            validation.fail(ejbName, "ann.remoteLocal.ambiguous", join(", ", interfaces));
+                        } else if (interfaces.get(0).getAnnotation(Local.class) != null) {
+                            validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
+                        } else {
+                            if (validateRemoteInterface(interfaces.get(0), validation, ejbName)){
+                                remotes.add(interfaces.get(0));
+                            }
+                            interfaces.remove(0);
+                        }
+                    } else for (Class interfce : remote.value()) {
+                        if (validateRemoteInterface(interfce, validation, ejbName)){
+                            remotes.add(interfce);
+                        }
+                        interfaces.remove(interfce);
+                    }
+                }
+
+                List<Class> locals = new ArrayList<Class>();
+                Local local = clazz.getAnnotation(Local.class);
+                if (local != null) {
+                    if (local.value().length == 0) {
+                        if (interfaces.size() != 1) {
+                            validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
+                        } else if (clazz.getAnnotation(Remote.class) != null) {
+                            validation.fail(ejbName, "ann.localRemote.ambiguous", join(", ", interfaces));
+                        } else if (interfaces.get(0).getAnnotation(Remote.class) != null) {
+                            validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
+                        } else {
+                            if (validateLocalInterface(interfaces.get(0), validation, ejbName)){
+                                locals.add(interfaces.get(0));
+                            }
+                            interfaces.remove(0);
+                        }
+                    } else for (Class interfce : local.value()) {
+                        if (validateLocalInterface(interfce, validation, ejbName)){
+                            locals.add(interfce);
+                        }
+                        interfaces.remove(interfce);
+                    }
+                }
+
+                if (sessionBean.getServiceEndpoint() == null) {
+                    WebService webService = clazz.getAnnotation(WebService.class);
+                    if (webService != null) {
+                        String endpointInterfaceName = webService.endpointInterface();
+                        if (!endpointInterfaceName.equals("")){
+                            try {
+                                sessionBean.setServiceEndpoint(endpointInterfaceName);
+                                Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
+                                interfaces.remove(endpointInterface);
+                            } catch (ClassNotFoundException e) {
+                                throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
+                            }
+                        } else {
+                            sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
+                        }
+                    } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
+                        sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
+                    }
+                }
+
+                for (Class interfce : copy(interfaces)) {
+                    if (interfce.isAnnotationPresent(WebService.class)) {
+                        if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
+                            sessionBean.setServiceEndpoint(interfce.getName());
+                        }
+                        interfaces.remove(interfce);
+                    } else if (interfce.isAnnotationPresent(Remote.class)) {
+                        remotes.add(interfce);
+                        interfaces.remove(interfce);
+                    } else {
+                        locals.add(interfce);
+                        interfaces.remove(interfce);
+                    }
+                }
+
+                for (Class interfce : remotes) {
+                    sessionBean.addBusinessRemote(interfce.getName());
+                }
+
+                for (Class interfce : locals) {
+                    sessionBean.addBusinessLocal(interfce.getName());
+                }
+            }
+        }
+
+        private void processSecurityAnnotations(Class<?> beanClass, String ejbName, EjbModule ejbModule, ClassFinder classFinder, EnterpriseBean bean) {
+            AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
+
+            List<String> classPermissions = getDeclaredClassPermissions(assemblyDescriptor, ejbName);
+
+            for (Class<?> clazz : ancestors(beanClass)) {
+
+                if (!classPermissions.contains("*") || !classPermissions.contains(clazz.getName())){
+
+                    RolesAllowed rolesAllowed = clazz.getAnnotation(RolesAllowed.class);
+                    PermitAll permitAll = clazz.getAnnotation(PermitAll.class);
+
+                    if (rolesAllowed != null && permitAll != null){
+                        ejbModule.getValidation().fail(ejbName, "permitAllAndRolesAllowedOnClass", clazz.getName());
+                    }
+
+                    if (rolesAllowed != null) {
+                        MethodPermission methodPermission = new MethodPermission();
+                        methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
+                        methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
+                        assemblyDescriptor.getMethodPermission().add(methodPermission);
+                    }
+
+                    if (permitAll != null) {
+                        MethodPermission methodPermission = new MethodPermission();
+                        methodPermission.setUnchecked(true);
+                        methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
+                        assemblyDescriptor.getMethodPermission().add(methodPermission);
+                    }
+                }
+
+                RunAs runAs = clazz.getAnnotation(RunAs.class);
+                if (runAs != null && bean.getSecurityIdentity() == null) {
+                    SecurityIdentity securityIdentity = new SecurityIdentity();
+                    securityIdentity.setRunAs(runAs.value());
+                    bean.setSecurityIdentity(securityIdentity);
+                }
+
+                DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);
+                if (declareRoles != null && bean instanceof RemoteBean){
+                    RemoteBean remoteBean = (RemoteBean) bean;
+                    List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
+                    for (String role : declareRoles.value()) {
+                        securityRoleRefs.add(new SecurityRoleRef(role));
+                    }
+                }
+            }
+
+            List<Method> seen = new ArrayList<Method>();
+
+            for (Method method : classFinder.findAnnotatedMethods(RolesAllowed.class)) {
+                checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
+                RolesAllowed rolesAllowed = method.getAnnotation(RolesAllowed.class);
+                MethodPermission methodPermission = new MethodPermission();
+                methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
+                methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
+                assemblyDescriptor.getMethodPermission().add(methodPermission);
+            }
+
+            for (Method method : classFinder.findAnnotatedMethods(PermitAll.class)) {
+                checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
+                MethodPermission methodPermission = new MethodPermission();
+                methodPermission.setUnchecked(true);
+                methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
+                assemblyDescriptor.getMethodPermission().add(methodPermission);
+            }
+
+            for (Method method : classFinder.findAnnotatedMethods(DenyAll.class)) {
+                checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
+                ExcludeList excludeList = assemblyDescriptor.getExcludeList();
+                excludeList.addMethod(new org.apache.openejb.jee.Method(ejbName, method));
+            }
+
+        }
+
+        private void checkConflictingSecurityAnnotations(Method method, String ejbName, EjbModule ejbModule, List<Method> seen) {
+            if (seen.contains(method)) return;
+            seen.add(method);
+
+            List<String> annotations = new ArrayList<String>();
+            for (Class<? extends Annotation> annotation : asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
+                if (method.getAnnotation(annotation) != null){
+                    annotations.add("@"+annotation.getSimpleName());
+                }
+            }
+
+            if (annotations.size() > 1){
+                ejbModule.getValidation().fail(ejbName, "conflictingSecurityAnnotations", method.getName(), join(" and ", annotations), method.getDeclaringClass());
+            }
+        }
+
+
+        private List<String> getDeclaredClassPermissions(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+            List<MethodPermission> permissions = assemblyDescriptor.getMethodPermission();
+            List<String> classPermissions = new ArrayList<String>();
+            for (MethodPermission permission : permissions) {
+                for (org.apache.openejb.jee.Method method : permission.getMethod()) {
+                    if (!method.getEjbName().equals(ejbName)) continue;
+                    if (!"*".equals(method.getMethodName())) continue;
+
+                    String className = method.getClassName();
+                    if (className == null){
+                        className = "*";
+                    }
+                    classPermissions.add(className);
+                }
+            }
+            return classPermissions;
+        }
+
+        private void processTransactionAttributes(Class<?> clazz, String ejbName, AssemblyDescriptor assemblyDescriptor, ClassFinder classFinder) {
+
+            Map<String, List<MethodTransaction>> methodTransactions = assemblyDescriptor.getMethodTransactions(ejbName);
+
+            // SET THE DEFAULT
+            if (!hasMethodTransaction("*", null, methodTransactions)) {
+                for (Class<?> type : ancestors(clazz)) {
+                    if (!hasMethodTransaction("*", type, methodTransactions)){
+                        TransactionAttribute attribute = type.getAnnotation(TransactionAttribute.class);
+                        if (attribute != null) {
+                            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), type.getName(), ejbName, "*");
+                            assemblyDescriptor.getContainerTransaction().add(ctx);
+                        }
+                    }
+                }
+
+            }
+
+
+            List<Method> methods = classFinder.findAnnotatedMethods(TransactionAttribute.class);
+            for (Method method : methods) {
+                TransactionAttribute attribute = method.getAnnotation(TransactionAttribute.class);
+                if (!methodTransactions.containsKey(method.getName())) {
+                    // no method with this name in descriptor
+                    addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                } else {
+                    // method name already declared
+                    List<MethodTransaction> list = methodTransactions.get(method.getName());
+                    for (MethodTransaction mtx : list) {
+                        MethodParams methodParams = mtx.getMethodParams();
+                        if (methodParams == null) {
+                            // params not specified, so this is more specific
+                            addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                        } else {
+                            List<String> params1 = methodParams.getMethodParam();
+                            String[] params2 = asStrings(method.getParameterTypes());
+                            if (params1.size() != params2.length) {
+                                // params not the same
+                                addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                            } else {
+                                for (int i = 0; i < params1.size(); i++) {
+                                    String a = params1.get(i);
+                                    String b = params2[i];
+                                    if (!a.equals(b)) {
+                                        // params not the same
+                                        addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void main(String[] args) {
+            System.out.println(null + "");
+        }
+
+        private boolean hasMethodTransaction(String methodName, Class clazz, Map<String, List<MethodTransaction>> map){
+            return getMethodTransaction(methodName, clazz, map) != null;
+        }
+
+        private MethodTransaction getMethodTransaction(String methodName, Class clazz, Map<String, List<MethodTransaction>> map) {
+            List<MethodTransaction> methodTransactions = map.get(methodName);
+            if (methodTransactions == null) return null;
+
+            for (MethodTransaction methodTransaction : methodTransactions) {
+                String className = (clazz != null) ? clazz.getName() : null + "";
+
+                if (className.equals(methodTransaction.getClassName() + "")) {
+                    return methodTransaction;
+                }
+            }
+            return null;
+        }
+
+        private <A extends Annotation> A getInheritableAnnotation(Class clazz, Class<A> annotationClass) {
+            if (clazz == null || clazz.equals(Object.class)) return null;
+
+            Annotation annotation = clazz.getAnnotation(annotationClass);
+            if (annotation != null) {
+                return (A) annotation;
+            }
+
+            return getInheritableAnnotation(clazz.getSuperclass(), annotationClass);
+        }
+
+        private List<Class<?>> ancestors(Class clazz){
+            ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
+
+            while (clazz != null && !clazz.equals(Object.class)) {
+                ancestors.add(clazz);
+                clazz = clazz.getSuperclass();
+            }
+
+            return ancestors;
+        }
+
         private ClassFinder createInheritedClassFinder(Class<?>... classes) {
             List<Class> parents = new ArrayList<Class>();
             for (Class<?> clazz : classes) {
-                parents.add(clazz);
-                Class parent = clazz;
-                while ((parent = parent.getSuperclass()) != null) {
-                    parents.add(parent);
-                }
+                parents.addAll(ancestors(clazz));
             }
 
             return new ClassFinder(parents);
@@ -1883,7 +2006,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void addContainerTransaction(TransactionAttribute attribute, String ejbName, Method method, AssemblyDescriptor assemblyDescriptor) {
-            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method.getName(), asStrings(method.getParameterTypes()));
+            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method);
             assemblyDescriptor.getContainerTransaction().add(ctx);
         }
 

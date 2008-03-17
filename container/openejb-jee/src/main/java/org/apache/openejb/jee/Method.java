@@ -217,6 +217,10 @@ public class Method {
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
+
+    @XmlTransient
+    protected String className;
+
     @XmlElement(name = "method-intf")
     protected MethodIntf methodIntf;
     @XmlElement(name = "method-name", required = true)
@@ -242,8 +246,13 @@ public class Method {
     }
 
     public Method(String ejbName, String methodName, String... parameters) {
+        this(ejbName, null, methodName, parameters);
+    }
+
+    public Method(String ejbName, String className, String methodName, String... parameters) {
         this.ejbName = ejbName;
         this.methodName = methodName;
+        this.className = className;
 
         if (parameters.length > 0){
             MethodParams params = new MethodParams();
@@ -254,17 +263,26 @@ public class Method {
         }
     }
 
-    @XmlElement(name = "description", required = true)
-    public Text[] getDescriptions() {
-        return description.toArray();
-    }
-
     public Method() {
     }
 
     public Method(String ejbName, String methodName) {
+        this(ejbName, null, methodName);
+    }
+
+    public Method(String ejbName, String className, String methodName) {
         this.ejbName = ejbName;
         this.methodName = methodName;
+        this.className = className;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
     public void setDescriptions(Text[] text) {

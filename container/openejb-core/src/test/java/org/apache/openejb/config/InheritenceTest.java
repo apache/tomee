@@ -19,12 +19,15 @@ package org.apache.openejb.config;
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.StatefulBeanInfo;
+import org.apache.openejb.assembler.classic.CallbackInfo;
+import org.apache.openejb.assembler.classic.RemoveMethodInfo;
+import org.apache.openejb.assembler.classic.NamedMethodInfo;
+import org.apache.openejb.assembler.classic.InitMethodInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
 
@@ -38,29 +41,35 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.Init;
 import javax.ejb.Local;
 import javax.ejb.LocalHome;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
 import javax.ejb.RemoteHome;
+import javax.ejb.Remove;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.ejb.Init;
-import javax.ejb.Remove;
-import javax.ejb.PrePassivate;
-import javax.ejb.PostActivate;
 import javax.sql.DataSource;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Comparator;
 
 /**
  * @version $Rev$ $Date$
  */
 public class InheritenceTest extends TestCase {
 
-    public void testNoTest(){}
+    public void testNoTest() {
+    }
 
-    public void _test() throws Exception {
+    public void test() throws Exception {
         Assembler assembler = new Assembler();
         ConfigurationFactory config = new ConfigurationFactory();
 
@@ -85,14 +94,16 @@ public class InheritenceTest extends TestCase {
         assertEquals("remote", expected.remote, actual.remote);
         assertEquals("home", expected.home, actual.home);
 
-        assertEquals("removeMethods", expected.removeMethods, actual.removeMethods);
-        assertEquals("initMethods", expected.initMethods, actual.initMethods);
+        assertCallbackInfos("postActivate", expected.postActivate, actual.postActivate);
+        assertCallbackInfos("prePassivate", expected.prePassivate, actual.prePassivate);
 
-        assertEquals("postActivate", expected.postActivate, actual.postActivate);
-        assertEquals("prePassivate", expected.prePassivate, actual.prePassivate);
+        assertCallbackInfos("postConstruct", expected.postConstruct, actual.postConstruct);
+        assertCallbackInfos("preDestroy", expected.preDestroy, actual.preDestroy);
+        assertCallbackInfos("preDestroy", expected.aroundInvoke, actual.aroundInvoke);
 
-        assertEquals("postConstruct", expected.postConstruct, actual.postConstruct);
-        assertEquals("preDestroy", expected.preDestroy, actual.preDestroy);
+        assertRemoveMethodInfos("removeMethods", expected.removeMethods, actual.removeMethods);
+        assertInitMethodInfos("initMethods", expected.initMethods, actual.initMethods);
+
 
     }
 
@@ -154,6 +165,11 @@ public class InheritenceTest extends TestCase {
         public void methodFour() {
         }
 
+        @AroundInvoke
+        public Object invoke(InvocationContext context) throws Exception {
+            return null;
+        }
+
         @PostConstruct
         private void colorPostConstruct() {
 
@@ -164,24 +180,111 @@ public class InheritenceTest extends TestCase {
         }
 
         @Init
-        public void colorInit(){
+        public void colorInit() {
         }
 
         @Remove
-        public void colorRemove(){
+        public void colorRemove() {
 
         }
 
         @PrePassivate
-        public void colorPrePassivate(){
+        public void colorPrePassivate() {
         }
 
         @PostActivate
-        public void colorPostActivate(){
+        public void colorPostActivate() {
 
         }
     }
 
     public static class Red extends Color {
     }
+
+
+
+    // ------------------------------------------------------------------------------------------------------
+    //
+    //     Assert methods
+    //
+    // ------------------------------------------------------------------------------------------------------
+
+
+    public void assertCallbackInfos(String s, List<CallbackInfo> expected, List<CallbackInfo> actual){
+        assertTrue(s, compare(expected, actual, new Comparator<CallbackInfo>(){
+            public int compare(CallbackInfo a, CallbackInfo b) {
+                if (a.className != null ? !a.className.equals(b.className) : b.className != null) return -1;
+                if (a.method != null ? !a.method.equals(b.method) : b.method != null) return -1;
+                return 0;
+            }
+        }));
+    }
+
+    public void assertRemoveMethodInfos(String s, List<RemoveMethodInfo> expected, List<RemoveMethodInfo> actual){
+        assertTrue(s, compare(expected, actual, new Comparator<RemoveMethodInfo>(){
+            public int compare(RemoveMethodInfo a, RemoveMethodInfo b) {
+                if (a.retainIfException != b.retainIfException) return -1;
+
+                NamedMethodInfo am = a.beanMethod;
+                NamedMethodInfo bm = b.beanMethod;
+
+                if (am != bm){
+                    if (am == null || bm == null) return -1;
+                    if (am.id != null ? !am.id.equals(bm.id) : bm.id != null) return -1;
+                    if (am.methodName != null ? !am.methodName.equals(bm.methodName) : bm.methodName != null) return -1;
+                    if (am.methodParams != null ? !am.methodParams.equals(bm.methodParams) : bm.methodParams != null) return -1;
+                }
+                return 0;
+            }
+        }));
+    }
+
+    public void assertInitMethodInfos(String s, List<InitMethodInfo> expected, List<InitMethodInfo> actual){
+        assertTrue(s, compare(expected, actual, new Comparator<InitMethodInfo>(){
+            public int compare(InitMethodInfo a, InitMethodInfo b) {
+
+                {
+                    NamedMethodInfo am = a.beanMethod;
+                    NamedMethodInfo bm = b.beanMethod;
+
+                    if (am != bm){
+                        if (am == null || bm == null) return -1;
+                        if (am.id != null ? !am.id.equals(bm.id) : bm.id != null) return -1;
+                        if (am.methodName != null ? !am.methodName.equals(bm.methodName) : bm.methodName != null) return -1;
+                        if (am.methodParams != null ? !am.methodParams.equals(bm.methodParams) : bm.methodParams != null) return -1;
+                    }
+                }
+
+                {
+                    NamedMethodInfo am = a.createMethod;
+                    NamedMethodInfo bm = b.createMethod;
+
+                    if (am != bm){
+                        if (am == null || bm == null) return -1;
+                        if (am.id != null ? !am.id.equals(bm.id) : bm.id != null) return -1;
+                        if (am.methodName != null ? !am.methodName.equals(bm.methodName) : bm.methodName != null) return -1;
+                        if (am.methodParams != null ? !am.methodParams.equals(bm.methodParams) : bm.methodParams != null) return -1;
+                    }
+                }
+                return 0;
+            }
+        }));
+    }
+
+
+    public boolean compare(List listA, List listB, Comparator comparator) {
+        if (listA == listB) return true;
+
+        ListIterator iA = listA.listIterator();
+        ListIterator iB = listB.listIterator();
+        while(iA.hasNext() && iB.hasNext()) {
+            Object a = iA.next();
+            Object b = iB.next();
+            if (!(a ==null ? b ==null : comparator.compare(a, b) == 0)){
+                return false;
+            }
+        }
+        return !(iA.hasNext() || iB.hasNext());
+    }
+
 }

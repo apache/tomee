@@ -68,9 +68,13 @@ public class ContainerTransaction {
     }
 
 
-    public ContainerTransaction(TransAttribute transAttribute, String ejbName, String methodName, String... parameters) {
-        this(transAttribute, new Method(ejbName, methodName, parameters));
+    public ContainerTransaction(TransAttribute transAttribute, String className, String ejbName, String methodName) {
+        this(transAttribute, new Method(ejbName, className, methodName));
     }
+    public ContainerTransaction(TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
+        this(transAttribute, new Method(ejbName, method));
+    }
+
     public ContainerTransaction(TransAttribute transAttribute, Method method) {
         this.transAttribute = transAttribute;
         getMethod().add(method);
@@ -106,5 +110,6 @@ public class ContainerTransaction {
     public void setId(String value) {
         this.id = value;
     }
+
 
 }

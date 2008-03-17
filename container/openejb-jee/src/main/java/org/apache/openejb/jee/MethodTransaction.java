@@ -51,4 +51,8 @@ public class MethodTransaction {
     public Method getMethod() {
         return method;
     }
+
+    public String getClassName() {
+        return method.getClassName();
+    }
 }

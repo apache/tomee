@@ -175,9 +175,11 @@ public class StatelessInterceptorTest extends TestCase {
         // 3. Assert that appropriate interceptors were executed
         assertCalls(
                 Call.Bean_PostConstruct,
+                Call.Method_ann_Invoke_BEFORE,
                 Call.Bean_Invoke_BEFORE,
                 Call.Bean_Invoke,
-                Call.Bean_Invoke_AFTER);
+                Call.Bean_Invoke_AFTER,
+                Call.Method_ann_Invoke_AFTER);
 
         // 4. Clean up after yourself
         calls.clear();
