@@ -25,12 +25,13 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
-import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 
 import java.util.Properties;
+
+import javax.naming.Context;
 
 /**
  * To run from intellij or another IDE add
@@ -101,8 +102,8 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
 
         public Properties getContextEnvironment() {
             Properties props = new Properties();
-            props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
+            props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+            props.put(Context.PROVIDER_URL, "ejbd://localhost:" + port);
             return props;
         }
     }

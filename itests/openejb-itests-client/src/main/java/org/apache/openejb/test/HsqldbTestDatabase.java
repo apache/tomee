@@ -23,7 +23,6 @@ import org.apache.openejb.test.beans.DatabaseHome;
 import javax.naming.InitialContext;
 import java.rmi.RemoteException;
 import java.util.Properties;
-import java.util.Map;
 
 public class HsqldbTestDatabase implements TestDatabase {
 
@@ -178,14 +177,16 @@ public class HsqldbTestDatabase implements TestDatabase {
             throw (IllegalStateException) new IllegalStateException("Cannot create initial context: " + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
 
+        final String databaseHomeJndiName = "client/tools/DatabaseHome";
+        
         Object obj = null;
         DatabaseHome databaseHome = null;
         try {
             /* Create database */
-            obj = initialContext.lookup("client/tools/DatabaseHome");
+            obj = initialContext.lookup(databaseHomeJndiName);
             databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': " + e.getClass().getName() + " " + e.getMessage());
+            throw new IllegalStateException("Cannot find " + databaseHomeJndiName + ": " + e.getClass().getName() + " " + e.getMessage());
         }
         try {
             database = databaseHome.create();

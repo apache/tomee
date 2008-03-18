@@ -162,6 +162,7 @@
             <exclude>src/main/resources/META-INF/org.apache.openejb.cli/validate.help</exclude>
             <exclude>src/main/resources/META-INF/org.apache.openejb.resource.jdbc.DataSourcePlugin/*</exclude>
             <exclude>src/main/resources/schema/ejb-jar_1_1.xsd</exclude>
+            <exclude>src/main/resources/META-INF/services/org/apache/activemq/broker/openejb</exclude>
           </excludes>
         </configuration>
       </plugin>
