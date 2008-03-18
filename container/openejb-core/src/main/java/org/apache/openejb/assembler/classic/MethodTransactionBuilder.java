@@ -16,15 +16,18 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.lang.reflect.Method;
 
 /**
@@ -32,89 +35,26 @@ import java.lang.reflect.Method;
  */
 public class MethodTransactionBuilder {
 
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodTransactionBuilder.class);
+
     public void build(HashMap<String, DeploymentInfo> deployments, List<MethodTransactionInfo> methodTransactions) throws OpenEJBException {
         for (DeploymentInfo deploymentInfo : deployments.values()) {
             applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, methodTransactions);
         }
     }
 
-    public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> mtis) throws OpenEJBException {
-        /*TODO: Add better exception handling.  This method doesn't throws any exceptions!!
-        there is a lot of complex code here, I'm sure something could go wrong the user
-        might want to know about.
-        */
+    public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
 
-        mtis = normalize(mtis);
+        methodTransactionInfos = normalize(methodTransactionInfos);
 
-        for (MethodTransactionInfo transInfo : mtis) {
-            for (MethodInfo methodInfo : transInfo.methods) {
+        Map<Method, MethodAttributeInfo> attributes = resolveAttributes(methodTransactionInfos, deploymentInfo);
 
-                if (methodInfo.ejbDeploymentId == null || methodInfo.ejbDeploymentId.equals(deploymentInfo.getDeploymentID())) {
-                    if (!deploymentInfo.isBeanManagedTransaction()) {
+        for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+            MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
 
-                        List<Method> methods = new ArrayList<Method>();
-
-                        if (methodInfo.methodIntf == null) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getBeanClass(), methodInfo);
-                            if (deploymentInfo.getRemoteInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
-                            }
-                            if (deploymentInfo.getHomeInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
-                            }
-                            if (deploymentInfo.getLocalInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getLocalInterface(), methodInfo);
-                            }
-                            if (deploymentInfo.getLocalHomeInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getLocalHomeInterface(), methodInfo);
-                            }
-                            if(deploymentInfo.getMdbInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getMdbInterface(), methodInfo);
-                            }
-                            if(deploymentInfo.getServiceEndpointInterface() != null) {
-                                AssemblerTool.resolveMethods(methods, deploymentInfo.getServiceEndpointInterface(), methodInfo);
-                            }
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                AssemblerTool.resolveMethods(methods, intf, methodInfo);
-                            }
-                            for (Class intf : deploymentInfo.getBusinessLocalInterfaces()) {
-                                AssemblerTool.resolveMethods(methods, intf, methodInfo);
-                            }
-                        } else if (methodInfo.methodIntf.equals("Home")) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getHomeInterface(), methodInfo);
-                        } else if (methodInfo.methodIntf.equals("Remote")) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getRemoteInterface(), methodInfo);
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                AssemblerTool.resolveMethods(methods, intf, methodInfo);
-                            }
-                        } else if (methodInfo.methodIntf.equals("LocalHome")) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getLocalHomeInterface(), methodInfo);
-                        } else if (methodInfo.methodIntf.equals("Local")) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getLocalInterface(), methodInfo);
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                AssemblerTool.resolveMethods(methods, intf, methodInfo);
-                            }
-                        } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
-                            AssemblerTool.resolveMethods(methods, deploymentInfo.getServiceEndpointInterface(), methodInfo);
-                        }
-
-                        for (Method method : methods) {
-                            if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
-                                    method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
-                                    !method.getName().equals("remove")) {
-                                continue;
-                            }
-                            deploymentInfo.setMethodTransactionAttribute(method, transInfo.transAttribute);
-                        }
-                    }
-                }
-            }
+//            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
+            deploymentInfo.setMethodTransactionAttribute(entry.getKey(), value.transAttribute);
         }
-
-    }
-
-    public static enum Level {
-        PACKAGE, CLASS, OVERLOADED_METHOD, EXACT_METHOD
     }
 
     /**
@@ -141,26 +81,15 @@ public class MethodTransactionBuilder {
             }
         }
 
+        Collections.reverse(normalized);
         Collections.sort(normalized, new MethodTransactionComparator());
 
         return normalized;
     }
 
-    public static class MethodTransactionComparator implements Comparator<MethodTransactionInfo> {
+    public static class MethodTransactionComparator extends MethodInfoUtil.BaseComparator<MethodTransactionInfo> {
         public int compare(MethodTransactionInfo a, MethodTransactionInfo b) {
-            Level levelA = level(a);
-            Level levelB = level(b);
-
-            return levelA.ordinal() - levelB.ordinal();
+            return compare(a.methods.get(0), b.methods.get(0));
         }
     }
-
-    private static Level level(MethodTransactionInfo info) {
-        MethodInfo methodInfo = info.methods.get(0);
-        if (methodInfo.ejbName.equals("*")) return Level.PACKAGE;
-        if (methodInfo.methodName == null || methodInfo.methodName.equals("*")) return Level.CLASS;
-        if (methodInfo.methodParams == null) return Level.OVERLOADED_METHOD;
-        return Level.EXACT_METHOD;
-    }
-
 }

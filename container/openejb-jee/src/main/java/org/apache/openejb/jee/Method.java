@@ -238,6 +238,7 @@ public class Method {
     public Method(String ejbName, java.lang.reflect.Method method) {
         this.ejbName = ejbName;
         this.methodName = method.getName();
+        this.className = method.getDeclaringClass().getName();
         MethodParams methodParams = new MethodParams();
         for (Class<?> type : method.getParameterTypes()) {
             methodParams.getMethodParam().add(type.getCanonicalName());

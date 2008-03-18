@@ -16,13 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.List;
-import java.util.ArrayList;
-
-public class MethodTransactionInfo extends InfoObject {
+public class MethodTransactionInfo extends MethodAttributeInfo {
 
     public String description;
     public String transAttribute;
-    public final List<MethodInfo> methods = new ArrayList<MethodInfo>();
 
 }

@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 public class AssemblerTool {
@@ -51,79 +50,10 @@ public class AssemblerTool {
         System.setProperty("noBanner", "true");
     }
 
-    protected static void resolveMethods(List<Method> methods, Class intrface, MethodInfo mi)
-            throws SecurityException {
-        /*TODO: Add better exception handling. There is a lot of complex code here, I'm sure something could go wrong the user
-         might want to know about.
-         At the very least, log a warning or two.
-         */
-
-        // todo local permissions cause exception
-        if (intrface == null) return;
-
-        if (mi.methodName.equals("*")) {
-            Method[] mthds = intrface.getMethods();
-            for (int i = 0; i < mthds.length; i++)
-                methods.add(mthds[i]);
-        } else if (mi.methodParams != null) {// there are paramters specified
-            try {
-                List<Class> params = new ArrayList<Class>();
-                ClassLoader cl = intrface.getClassLoader();
-                for (String methodParam : mi.methodParams) {
-                    try {
-                        params.add(getClassForParam(methodParam, cl));
-                    } catch (ClassNotFoundException cnfe) {
-
-                    }
-                }
-                Method m = intrface.getMethod(mi.methodName, params.toArray(new Class[params.size()]));
-                methods.add(m);
-            } catch (NoSuchMethodException nsme) {
-                /*
-                Do nothing.  Exceptions are not only possible they are expected to be a part of normall processing.
-                Normally exception handling should not be a part of business logic, but server start up doesn't need to be
-                as peformant as server runtime, so its allowed.
-                */
-            }
-        } else {// no paramters specified so may be several methods
-            Method[] ms = intrface.getMethods();
-            for (int i = 0; i < ms.length; i++) {
-                if (ms[i].getName().equals(mi.methodName))
-                    methods.add(ms[i]);
-            }
-        }
-
-    }
-
     protected static void checkImplementation(Class intrfce, Class factory, String serviceType, String serviceName) throws OpenEJBException {
         if (!intrfce.isAssignableFrom(factory)) {
             throw new OpenEJBException(messages.format("init.0100", serviceType, serviceName, factory.getName(), intrfce.getName()));
         }
     }
 
-    private static java.lang.Class getClassForParam(java.lang.String className, ClassLoader cl) throws ClassNotFoundException {
-        if (cl == null) {
-            cl = ClassLoader.getSystemClassLoader();
-        }
-
-        if (className.equals("int")) {
-            return java.lang.Integer.TYPE;
-        } else if (className.equals("double")) {
-            return java.lang.Double.TYPE;
-        } else if (className.equals("long")) {
-            return java.lang.Long.TYPE;
-        } else if (className.equals("boolean")) {
-            return java.lang.Boolean.TYPE;
-        } else if (className.equals("float")) {
-            return java.lang.Float.TYPE;
-        } else if (className.equals("char")) {
-            return java.lang.Character.TYPE;
-        } else if (className.equals("short")) {
-            return java.lang.Short.TYPE;
-        } else if (className.equals("byte")) {
-            return java.lang.Byte.TYPE;
-        } else
-            return cl.loadClass(className);
-
-    }
 }

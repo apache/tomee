@@ -39,6 +39,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         info.transAttribute = "Required";
         method = new MethodInfo();
         method.ejbName = "*";
+        method.className = "*";
         info.methods.add(method);
 
         // Class Interceptors ////////////////////////////////////////////
@@ -46,6 +47,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         info.transAttribute = "Required";
         method = new MethodInfo();
         method.ejbName = "PingEJB";
+        method.className = "*";
         method.methodName = "*";
         info.methods.add(method);
 
@@ -54,6 +56,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         info.transAttribute = "Required";
         method = new MethodInfo();
         method.ejbName = "PingEJB";
+        method.className = "*";
         method.methodName = "ping";
         info.methods.add(method);
 
@@ -62,6 +65,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
         info.transAttribute = "Required";
         method = new MethodInfo();
         method.ejbName = "PingEJB";
+        method.className = "*";
         method.methodName = "ping";
         method.methodParams = new ArrayList<String>();
         method.methodParams.add("java.lang.String");

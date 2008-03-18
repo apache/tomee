@@ -73,7 +73,7 @@ public class CheckClasses extends ValidationBase {
 
                 check_isEjbClass(b);
                 check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
-//                check_hasInterface(b);
+                check_hasInterface(b);
                 if (b.getHome() != null) {
                     check_hasHomeClass(b);
                     check_hasRemoteClass(b);

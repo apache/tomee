@@ -407,10 +407,17 @@ public class EjbJarInfoBuilder {
         EjbDeployment d = (EjbDeployment) ejbds.get(method.getEjbName());
 
         methodInfo.description = method.getDescription();
-        methodInfo.ejbDeploymentId = d.getDeploymentId();
+        methodInfo.ejbDeploymentId = (d == null)?null:d.getDeploymentId();
         methodInfo.ejbName = method.getEjbName();
         methodInfo.methodIntf = (method.getMethodIntf() == null) ? null : method.getMethodIntf().toString();
         methodInfo.methodName = method.getMethodName();
+        if (methodInfo.methodName == null || methodInfo.methodName.equals("")){
+            methodInfo.methodName = "*";
+        }
+        methodInfo.className = method.getClassName();
+        if (methodInfo.className == null || methodInfo.className.equals("")){
+            methodInfo.className = "*";
+        }
 
         MethodParams mp = method.getMethodParams();
         if (mp != null) {
@@ -611,6 +618,9 @@ public class EjbJarInfoBuilder {
                 query.queryStatement = q.getEjbQl().trim();
 
                 MethodInfo method = new MethodInfo();
+                method.ejbName = bean.ejbName;
+                method.className = "*";
+
                 QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
                 if (qm.getMethodParams() != null) {
@@ -630,6 +640,8 @@ public class EjbJarInfoBuilder {
                 query.queryStatement = q.getObjectQl().trim();
 
                 MethodInfo method = new MethodInfo();
+                method.ejbName = bean.ejbName;
+                method.className = "*";
                 org.apache.openejb.jee.oejb3.QueryMethod qm = q.getQueryMethod();
                 method.methodName = qm.getMethodName();
                 if (qm.getMethodParams() != null) {

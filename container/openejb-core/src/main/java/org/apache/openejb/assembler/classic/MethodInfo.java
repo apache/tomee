@@ -26,4 +26,5 @@ public class MethodInfo extends InfoObject {
     public String methodIntf;
     public String methodName;
     public List<String> methodParams;
+    public String className;
 }
