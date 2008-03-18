@@ -31,6 +31,8 @@ import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.NotSupportedException;
+import javax.ejb.EJBException;
+
 import java.rmi.RemoteException;
 
 public abstract class TransactionPolicy {
@@ -145,15 +147,18 @@ public abstract class TransactionPolicy {
         } catch (RollbackException e) {
 
             txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
+            throw new EJBException(e);
 
         } catch (HeuristicMixedException e) {
 
             txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
+            throw new EJBException(e);
 
         } catch (HeuristicRollbackException e) {
 
             txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
-
+            throw new EJBException(e);
+ 
         } catch (SecurityException e) {
 
             txLogger.error("The current thread is not allowed to commit the transaction: " + e.getMessage());
