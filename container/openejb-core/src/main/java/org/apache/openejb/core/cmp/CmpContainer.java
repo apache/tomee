@@ -103,7 +103,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
     };
 
-    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory, String engine, String connectorName) throws OpenEJBException {
+    public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory) throws OpenEJBException {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.containerID = id;
@@ -123,10 +123,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
         factory.setTransactionManager(transactionManager);
         factory.setTransactionSynchronizationRegistry(synchronizationRegistry);
-        factory.setConnectorName(connectorName);
         factory.setCmpCallback(new ContainerCmpCallback());
-        factory.setEngine(engine);
-        factory.setClassLoader(classLoader);
         cmpEngine = factory.create();
     }
 

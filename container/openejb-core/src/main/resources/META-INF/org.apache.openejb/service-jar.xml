@@ -46,22 +46,10 @@
   <ServiceProvider id="Default CMP Container"
                    service="Container"
                    types="CMP_ENTITY"
-                   constructor="id, transactionManager, securityService, CmpEngineFactory, Engine, ConnectorName"
+                   constructor="id, transactionManager, securityService, CmpEngineFactory"
                    class-name="org.apache.openejb.core.cmp.CmpContainer">
 
     CmpEngineFactory org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
-
-    # Engine  derby
-    # @hidden
-
-    Engine  instantdb
-
-
-    # ConnectorName is he id of the Connector element which
-    # should provide connectivity for this CMP Container
-    # @hidden
-
-    ConnectorName  Default JDBC Database
   </ServiceProvider>
 
   <!--

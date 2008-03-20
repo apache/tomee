@@ -23,9 +23,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 public interface CmpEngineFactory {
-    String getJarPath();
-
-    void setJarPath(String jarPath);
 
     TransactionManager getTransactionManager();
 
@@ -35,21 +32,9 @@ public interface CmpEngineFactory {
 
     void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry synchronizationRegistry);
 
-    String getEngine();
-
-    void setEngine(String engine);
-
-    String getConnectorName();
-
-    void setConnectorName(String connectorName);
-
     CmpCallback getCmpCallback();
 
     void setCmpCallback(CmpCallback cmpCallback);
-
-    ClassLoader getClassLoader();
-
-    void setClassLoader(ClassLoader classLoader);
 
     CmpEngine create() throws OpenEJBException;
 }

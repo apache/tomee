@@ -26,21 +26,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 public class JpaCmpEngineFactory implements CmpEngineFactory {
-    private String jarPath;
     private TransactionManager transactionManager;
     private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
-    private String engine;
-    private String connectorName;
     private CmpCallback cmpCallback;
-    private ClassLoader classLoader;
-
-    public String getJarPath() {
-        return jarPath;
-    }
-
-    public void setJarPath(String jarPath) {
-        this.jarPath = jarPath;
-    }
 
     public TransactionManager getTransactionManager() {
         return transactionManager;
@@ -58,36 +46,12 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
         this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
     }
 
-    public String getEngine() {
-        return engine;
-    }
-
-    public void setEngine(String engine) {
-        this.engine = engine;
-    }
-
-    public String getConnectorName() {
-        return connectorName;
-    }
-
-    public void setConnectorName(String connectorName) {
-        this.connectorName = connectorName;
-    }
-
     public CmpCallback getCmpCallback() {
         return cmpCallback;
     }
 
     public void setCmpCallback(CmpCallback cmpCallback) {
         this.cmpCallback = cmpCallback;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     public CmpEngine create() throws OpenEJBException {
