@@ -195,7 +195,7 @@
 
     # Specifies whether to use NamedXAResource wrappers to allow the geronimo tm
     # to log and recover in doubt transactions.
-    TxRecovery true
+    TxRecovery false
 
 
   </ServiceProvider>
@@ -290,7 +290,7 @@
 
     # Specifies whether to use NamedXAResource wrappers to allow the geronimo tm
     # to log and recover in doubt transactions.
-    TxRecovery true
+    TxRecovery false
 
     # Driver class name
 
@@ -670,8 +670,7 @@
     BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
 
     # Broker address
-    # ServerUrl vm://localhost?async=true
-    ServerUrl tcp://localhost:61616
+    ServerUrl vm://localhost?async=true
 
     # DataSource for persistence messages
     DataSource Default Unmanaged JDBC Database
