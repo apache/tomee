@@ -45,7 +45,7 @@ public class InterceptorBuilder {
 
         // check for a method level interceptor
         for (MethodInterceptorInfo methodInterceptorInfo : methodInterceptors) {
-            if (matches(method, methodInterceptorInfo.methodInfo)) {
+            if (MethodInfoUtil.matches(method, methodInterceptorInfo.methodInfo)) {
                 if (!methodInterceptorInfo.excludeDefaultInterceptors) {
                     for (InterceptorData interceptorData : defaultInterceptors) {
                         interceptors.add(interceptorData);
@@ -85,43 +85,6 @@ public class InterceptorBuilder {
 //            interceptorDatas.add(new InterceptorData(interceptorInfo.clazz, interceptorInfo.methodName));
 //        }
         return interceptorDatas;
-    }
-
-    private static boolean matches(Method method, MethodInfo methodInfo) throws SecurityException {
-        if (methodInfo.methodName.equals(method.getName())) {
-            return false;
-        }
-
-        // do we have parameters?
-        List<String> methodParams = methodInfo.methodParams;
-        if (methodParams == null) {
-            return true;
-        }
-
-        // do we have the same number of parameters?
-        if (methodParams.size() != method.getParameterTypes().length) {
-            return false;
-        }
-
-        // match parameters names
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> parameterType = parameterTypes[i];
-            String methodParam = methodParams.get(i);
-            if (methodParam.equals(getName(parameterType))) {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    private static String getName(Class<?> type) {
-        if (type.isArray()) {
-            return getName(type.getComponentType()) + "[]";
-        } else {
-            return type.getName();
-        }
     }
 
     public static final MethodInterceptorInfoComparator METHOD_INTERCEPTOR_INFO_COMPARATOR = new MethodInterceptorInfoComparator();

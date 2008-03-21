@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.lang.reflect.Method;
 
 /**
@@ -32,27 +32,74 @@ import java.lang.reflect.Method;
  */
 public class MethodInfoUtil {
 
-    public static List<Method> matchingMethods(MethodInfo mi, Class clazz) {
+    public static List<Method> matchingMethods(Method signature, Class clazz) {
+        List<Method> list = new ArrayList<Method>();
+        METHOD: for (Method method : clazz.getMethods()) {
+            if (!method.getName().equals(signature.getName())) continue;
 
+            Class<?>[] methodTypes = method.getParameterTypes();
+            Class<?>[] signatureTypes = signature.getParameterTypes();
+
+            if (methodTypes.length != signatureTypes.length) continue;
+
+            for (int i = 0; i < methodTypes.length; i++) {
+                if (!methodTypes[i].equals(signatureTypes[i])) continue METHOD;
+            }
+            list.add(method);
+        }
+        return list;
+    }
+
+    public static List<Method> matchingMethods(MethodInfo mi, Class clazz) {
+        Method[] methods = clazz.getMethods();
+
+        return matchingMethods(mi, methods);
+    }
+
+    public static List<Method> matchingMethods(MethodInfo mi, Method[] methods) {
+
+        List<Method> filtered = filterByLevel(mi, methods);
+
+        filtered = filterByView(mi, filtered);
+
+        return filtered;
+    }
+
+    private static List<Method> filterByView(MethodInfo mi, List<Method> filtered) {
+        View view = view(mi);
+        switch(view){
+            case CLASS:{
+                return filterByClass(mi, filtered);
+            }
+        }
+
+        return filtered;
+    }
+
+    private static List<Method> filterByClass(MethodInfo mi, List<Method> methods) {
+        ArrayList<Method> list = new ArrayList<Method>();
+        for (Method method : methods) {
+            String className = method.getDeclaringClass().getName();
+            if (mi.className.equals(className)){
+                list.add(method);
+            }
+        }
+        return list;
+    }
+
+    private static List<Method> filterByLevel(MethodInfo mi, Method[] methods) {
         Level level = level(mi);
 
         switch(level){
             case BEAN:
             case PACKAGE: {
-                return asList(clazz.getMethods());
+                return asList(methods);
             }
-            case CLASS: {
-                return filterByClass(clazz.getMethods(), mi.className);
-            }
-            case OVERLOADED_METHOD_BEAN:{
-                return filterByName(clazz.getMethods(), mi.methodName);
-            }
-            case OVERLOADED_METHOD_CLASS:{
-                return filterByNameAndClass(clazz.getMethods(), mi.className, mi.methodName);
+            case OVERLOADED_METHOD:{
+                return filterByName(methods, mi.methodName);
             }
             case EXACT_METHOD:{
-                Method method = getMethod(clazz, mi);
-                if (method != null) return asList(method);
+                return filterByNameAndParams(methods, mi);
             }
         }
 
@@ -84,16 +131,6 @@ public class MethodInfoUtil {
         return method;
     }
 
-    private static List<Method> filterByClass(Method[] methods, String className) {
-        List<Method> list = new ArrayList<Method>();
-        for (Method method : methods) {
-            if (method.getDeclaringClass().getName().equals(className)){
-                list.add(method);
-            }
-        }
-        return list;
-    }
-
     private static List<Method> filterByName(Method[] methods, String methodName) {
         List<Method> list = new ArrayList<Method>();
         for (Method method : methods) {
@@ -104,10 +141,10 @@ public class MethodInfoUtil {
         return list;
     }
 
-    private static List<Method> filterByNameAndClass(Method[] methods, String className, String methodName) {
+    private static List<Method> filterByNameAndParams(Method[] methods, MethodInfo mi) {
         List<Method> list = new ArrayList<Method>();
         for (Method method : methods) {
-            if (method.getName().equals(methodName) && method.getDeclaringClass().getName().equals(className) ){
+            if (matches(method, mi)){
                 list.add(method);
             }
         }
@@ -144,24 +181,7 @@ public class MethodInfoUtil {
         return normalized;
     }
 
-    public static Level level(MethodInfo methodInfo) {
-        if (methodInfo.ejbName.equals("*")) return Level.PACKAGE;
-        if (methodInfo.methodName.equals("*")) {
-            if (methodInfo.className.equals("*")) return Level.BEAN;
-            else return Level.CLASS;
-        }
-        if (methodInfo.methodParams == null){
-            if (methodInfo.className.equals("*")) return Level.OVERLOADED_METHOD_BEAN;
-            else return Level.OVERLOADED_METHOD_CLASS;
-        }
-        return Level.EXACT_METHOD;
-    }
-
-
     private static Class getClassForParam(String className, ClassLoader cl) throws ClassNotFoundException {
-        if (cl == null) {
-            cl = ClassLoader.getSystemClassLoader();
-        }
 
         if (className.equals("int")) {
             return Integer.TYPE;
@@ -180,76 +200,50 @@ public class MethodInfoUtil {
         } else if (className.equals("byte")) {
             return Byte.TYPE;
         } else
-            return cl.loadClass(className);
+            return Class.forName(className, false, cl);
 
     }
 
     public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, CoreDeploymentInfo deploymentInfo) {
-        Map<Method, MethodAttributeInfo> attributes = new HashMap<Method, MethodAttributeInfo>();
+        Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
+
+        Method[] wildCardView = getWildCardView(deploymentInfo).toArray(new Method[]{});
 
         for (MethodAttributeInfo attributeInfo : infos) {
             for (MethodInfo methodInfo : attributeInfo.methods) {
 
-                if (methodInfo.ejbDeploymentId == null || methodInfo.ejbDeploymentId.equals(deploymentInfo.getDeploymentID())) {
-                    if (!deploymentInfo.isBeanManagedTransaction()) {
+                if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(deploymentInfo.getEjbName())) {
 
-                        List<Method> methods = new ArrayList<Method>();
+                    List<Method> methods = new ArrayList<Method>();
 
-                        if (methodInfo.methodIntf == null) {
+                    if (methodInfo.methodIntf == null) {
+                        methods.addAll(matchingMethods(methodInfo, wildCardView));
+                    } else if (methodInfo.methodIntf.equals("Home")) {
+                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getHomeInterface()));
+                    } else if (methodInfo.methodIntf.equals("Remote")) {
+                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getRemoteInterface()));
+                        for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                            methods.addAll(matchingMethods(methodInfo, intf));
+                        }
+                    } else if (methodInfo.methodIntf.equals("LocalHome")) {
+                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalHomeInterface()));
+                    } else if (methodInfo.methodIntf.equals("Local")) {
+                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalInterface()));
+                        for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                            methods.addAll(matchingMethods(methodInfo, intf));
+                        }
+                    } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
+                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getServiceEndpointInterface()));
+                    }
 
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getBeanClass()));
-
-                            if (deploymentInfo.getRemoteInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getRemoteInterface()));
-                            }
-                            if (deploymentInfo.getHomeInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getHomeInterface()));
-                            }
-                            if (deploymentInfo.getLocalInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalInterface()));
-                            }
-                            if (deploymentInfo.getLocalHomeInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalHomeInterface()));
-                            }
-                            if(deploymentInfo.getMdbInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getMdbInterface()));
-                            }
-                            if(deploymentInfo.getServiceEndpointInterface() != null) {
-                                methods.addAll(matchingMethods(methodInfo, deploymentInfo.getServiceEndpointInterface()));
-                            }
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                methods.addAll(matchingMethods(methodInfo, intf));
-                            }
-                            for (Class intf : deploymentInfo.getBusinessLocalInterfaces()) {
-                                methods.addAll(matchingMethods(methodInfo, intf));
-                            }
-                        } else if (methodInfo.methodIntf.equals("Home")) {
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getHomeInterface()));
-                        } else if (methodInfo.methodIntf.equals("Remote")) {
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getRemoteInterface()));
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                methods.addAll(matchingMethods(methodInfo, intf));
-                            }
-                        } else if (methodInfo.methodIntf.equals("LocalHome")) {
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalHomeInterface()));
-                        } else if (methodInfo.methodIntf.equals("Local")) {
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalInterface()));
-                            for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
-                                methods.addAll(matchingMethods(methodInfo, intf));
-                            }
-                        } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
-                            methods.addAll(matchingMethods(methodInfo, deploymentInfo.getServiceEndpointInterface()));
+                    for (Method method : methods) {
+                        if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
+                                method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
+                                !method.getName().equals("remove")) {
+                            continue;
                         }
 
-                        for (Method method : methods) {
-                            if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
-                                    method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
-                                    !method.getName().equals("remove")) {
-                                continue;
-                            }
-
-                            attributes.put(method, attributeInfo);
-                        }
+                        attributes.put(method, attributeInfo);
                     }
                 }
             }
@@ -257,9 +251,137 @@ public class MethodInfoUtil {
         return attributes;
     }
 
-    public static enum Level {
-        PACKAGE, CLASS, BEAN, OVERLOADED_METHOD_CLASS, OVERLOADED_METHOD_BEAN, EXACT_METHOD
+    private static List<Method> getWildCardView(CoreDeploymentInfo info) {
+        List<Method> methods = new ArrayList<Method>();
+
+        List<Method> beanMethods = asList(info.getBeanClass().getMethods());
+        methods.addAll(beanMethods);
+
+        if (info.getRemoteInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getRemoteInterface().getMethods()));
+        }
+        if (info.getHomeInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getHomeInterface().getMethods()));
+        }
+        if (info.getLocalInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getLocalInterface().getMethods()));
+        }
+        if (info.getLocalHomeInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getLocalHomeInterface().getMethods()));
+        }
+        if(info.getMdbInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getMdbInterface().getMethods()));
+        }
+        if(info.getServiceEndpointInterface() != null) {
+            methods.addAll(exclude(beanMethods, info.getServiceEndpointInterface().getMethods()));
+        }
+        for (Class intf : info.getBusinessRemoteInterfaces()) {
+            methods.addAll(exclude(beanMethods, intf.getMethods()));
+        }
+        for (Class intf : info.getBusinessLocalInterfaces()) {
+            methods.addAll(exclude(beanMethods, intf.getMethods()));
+        }
+
+
+        return methods;
     }
+
+    private static List<Method> exclude(List<Method> excludes, Method[] methods) {
+        ArrayList<Method> list = new ArrayList<Method>();
+
+        for (Method method : methods) {
+            if (!matches(excludes, method)){
+                list.add(method);
+            }
+        }
+        return list;
+    }
+
+    private static boolean matches(List<Method> excludes, Method method) {
+        for (Method excluded : excludes) {
+            boolean match = match(method, excluded);
+            if (match){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean match(Method methodA, Method methodB) {
+        if (!methodA.getName().equals(methodB.getName())) return false;
+
+        if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
+            return false;
+        }
+
+        for (int i = 0; i < methodA.getParameterTypes().length; i++) {
+            Class<?> a = methodA.getParameterTypes()[i];
+            Class<?> b = methodB.getParameterTypes()[i];
+            if (!a.equals(b)) return false;
+        }
+        return true;
+    }
+
+    public static boolean matches(Method method, MethodInfo methodInfo) {
+
+        if (!methodInfo.methodName.equals(method.getName())) {
+            return false;
+        }
+
+        // do we have parameters?
+        List<String> methodParams = methodInfo.methodParams;
+        if (methodParams == null) {
+            return true;
+        }
+
+        // do we have the same number of parameters?
+        if (methodParams.size() != method.getParameterTypes().length) {
+            return false;
+        }
+
+        // match parameters names
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class<?> parameterType = parameterTypes[i];
+            String methodParam = methodParams.get(i);
+            if (!methodParam.equals(getName(parameterType))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static String getName(Class<?> type) {
+        if (type.isArray()) {
+            return getName(type.getComponentType()) + "[]";
+        } else {
+            return type.getName();
+        }
+    }
+
+
+    public static enum Level {
+        PACKAGE, BEAN, OVERLOADED_METHOD, EXACT_METHOD
+    }
+
+    public static enum View {
+        CLASS, ANY, INTERFACE;
+    }
+
+    public static View view(MethodInfo methodInfo) {
+        if (!methodInfo.className.equals("*")) return View.CLASS;
+        if (methodInfo.methodIntf != null && !methodInfo.methodIntf.equals("*")) return View.INTERFACE;
+        else return View.ANY;
+    }
+
+    public static Level level(MethodInfo methodInfo) {
+        if (methodInfo.ejbName.equals("*")) return Level.PACKAGE;
+        if (methodInfo.methodName.equals("*")) return Level.BEAN;
+        if (methodInfo.methodParams == null) return Level.OVERLOADED_METHOD;
+        return Level.EXACT_METHOD;
+    }
+
 
     public static class MethodPermissionComparator extends BaseComparator<MethodPermissionInfo> {
         public int compare(MethodPermissionInfo a, MethodPermissionInfo b) {
@@ -272,7 +394,11 @@ public class MethodInfoUtil {
             Level levelA = level(am);
             Level levelB = level(bm);
 
-            return levelA.ordinal() - levelB.ordinal();
+            // Primary sort
+            if (levelA != levelB) return levelA.ordinal() - levelB.ordinal();
+
+            // Secondary sort
+            return view(am).ordinal() - view(bm).ordinal();
         }
     }
 

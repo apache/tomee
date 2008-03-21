@@ -43,6 +43,7 @@ public class TxNever extends TransactionPolicy {
     }
 
     public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
+        context.callContext.set(Type.class, getPolicyType());
 
         try {
 

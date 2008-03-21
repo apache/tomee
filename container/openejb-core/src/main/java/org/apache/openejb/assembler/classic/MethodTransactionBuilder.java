@@ -45,6 +45,8 @@ public class MethodTransactionBuilder {
 
     public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
 
+        if (deploymentInfo.isBeanManagedTransaction()) return;
+
         methodTransactionInfos = normalize(methodTransactionInfos);
 
         Map<Method, MethodAttributeInfo> attributes = resolveAttributes(methodTransactionInfos, deploymentInfo);

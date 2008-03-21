@@ -49,6 +49,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.transaction.TransactionContainer;
@@ -69,7 +70,7 @@ public class EntityContainer implements org.apache.openejb.RpcContainer, Transac
 
     private Object containerID = null;
 
-    public Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
