@@ -59,7 +59,7 @@ public class EntityInstanceManager {
     * by using an instance of the inner Key class. The Key class is a compound key composed
     * of the tx, deployment, and primary key identifiers.
     */
-    protected Hashtable<Object,SyncronizationWrapper> txReadyPool = new Hashtable<Object,SyncronizationWrapper>();
+    protected Hashtable<Object, SynchronizationWrapper> txReadyPool = new Hashtable<Object, SynchronizationWrapper>();
     /*
     * contains a collection of LinkListStacks indexed by deployment id. Each indexed stack
     * represents the method ready pool of for that class.
@@ -80,8 +80,7 @@ public class EntityInstanceManager {
         poolMap = new HashMap<Object,LinkedListStack>();// put size in later
 
         DeploymentInfo[] deploymentInfos = this.container.deployments();
-        for (int i = 0; i < deploymentInfos.length; i++) {
-            DeploymentInfo deploymentInfo = deploymentInfos[i];
+        for (DeploymentInfo deploymentInfo : deploymentInfos) {
             deploy(deploymentInfo);
         }
     }
@@ -107,7 +106,7 @@ public class EntityInstanceManager {
         if (currentTx != null && primaryKey != null) {// primkey is null if create operation is called
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Key key = new Key(currentTx, deploymentInfo.getDeploymentID(), primaryKey);
-            SyncronizationWrapper wrapper = txReadyPool.get(key);
+            SynchronizationWrapper wrapper = txReadyPool.get(key);
 
             if (wrapper != null) {// if true, the requested bean instance is already enrolled in a transaction
 
@@ -153,7 +152,7 @@ public class EntityInstanceManager {
                 * so it needs to be enrolled in the transaction.
                 */
                 EntityBean bean = getPooledInstance(callContext);
-                wrapper = new SyncronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, false, key);
+                wrapper = new SynchronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, false, key);
 
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
@@ -181,10 +180,12 @@ public class EntityInstanceManager {
                 try {
                     bean.ejbLoad();
                 } catch (NoSuchEntityException e) {
+                    wrapper.disassociate();
                     throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey).initCause(e));
                 } catch (Exception e) {
                     logger.error("Exception encountered during ejbLoad():", e);
-
+                    //djencks not sure about this dissociate call
+                    wrapper.disassociate();
                     throw new OpenEJBException(e);
                 } finally {
                     callContext.setCurrentOperation(orginalOperation);
@@ -307,7 +308,7 @@ public class EntityInstanceManager {
         if (bean == null) {
             return;
         }
-        Transaction currentTx = null;
+        Transaction currentTx;
         try {
             currentTx = getTransactionManager().getTransaction();
         } catch (javax.transaction.SystemException se) {
@@ -316,7 +317,7 @@ public class EntityInstanceManager {
         }
         if (currentTx != null && primaryKey != null) {// primary key is null for find and home methods
             Key key = new Key(currentTx, callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
-            SyncronizationWrapper wrapper = txReadyPool.get(key);
+            SynchronizationWrapper wrapper = txReadyPool.get(key);
             if (wrapper != null) {
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
@@ -347,7 +348,7 @@ public class EntityInstanceManager {
                 tx ready pool
                 */
 
-                wrapper = new SyncronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, true, key);
+                wrapper = new SynchronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, true, key);
 
                 try {
                     currentTx.registerSynchronization(wrapper);
@@ -470,7 +471,7 @@ public class EntityInstanceManager {
                in the txReadyPool is indicative of an entity bean that has been removed via
                ejbRemove() rather than freed because of an error condition as is the case here.
             */
-            SyncronizationWrapper wrapper = txReadyPool.remove(key);
+            SynchronizationWrapper wrapper = txReadyPool.remove(key);
 
             if (wrapper != null) {
                 /*
@@ -538,7 +539,7 @@ public class EntityInstanceManager {
     * to the method ready pool. Instances of this class are not recycled anymore, because modern VMs
     * (JDK1.3 and above) perform better for objects that are short lived.
     */
-    protected class SyncronizationWrapper implements Synchronization {
+    protected class SynchronizationWrapper implements Synchronization {
         private EntityBean bean;
         /*
         * <tt>isAvailable<tt> determines if the wrapper is still associated with a bean.  If the bean identity is removed (ejbRemove)
@@ -551,7 +552,7 @@ public class EntityInstanceManager {
         private final CoreDeploymentInfo deploymentInfo;
         private final Object primaryKey;
 
-        public SyncronizationWrapper(CoreDeploymentInfo deploymentInfo, Object primaryKey, EntityBean bean, boolean available, Key readyPoolIndex) {
+        public SynchronizationWrapper(CoreDeploymentInfo deploymentInfo, Object primaryKey, EntityBean bean, boolean available, Key readyPoolIndex) {
             if (bean == null) throw new IllegalArgumentException("bean is null");
             if (readyPoolIndex == null) throw new IllegalArgumentException("key is null");
             if (deploymentInfo == null) throw new IllegalArgumentException("deploymentInfo is null");
