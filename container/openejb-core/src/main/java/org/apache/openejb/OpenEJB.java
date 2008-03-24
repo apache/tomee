@@ -245,13 +245,8 @@ public final class OpenEJB {
             }
             SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
 
-            logger.info("startup.ready");
+            logger.debug("startup.ready");
 
-            String loader = initProps.getProperty("openejb.loader");
-            String nobanner = initProps.getProperty("openejb.nobanner");
-            if (nobanner == null && (loader == null || (loader != null && loader.startsWith("tomcat")))) {
-                System.out.println(messages.message("startup.ready"));
-            }
         }
 
         public Throwable getInitialized() {
