@@ -106,6 +106,12 @@ public class DeploymentsResolver {
                 if (jarList.contains(file.getAbsolutePath())) continue;
                 jarList.add(file.getAbsolutePath());
                 hasNestedArchives = true;
+            } else if (new File(file, "META-INF").exists()){ // Unpacked ear or jar
+                jarList.add(file.getAbsolutePath());
+                hasNestedArchives = true;
+            } else if (new File(file, "WEB-INF").exists()){  // Unpacked webapp
+                jarList.add(file.getAbsolutePath());
+                hasNestedArchives = true;
             }
         }
 
