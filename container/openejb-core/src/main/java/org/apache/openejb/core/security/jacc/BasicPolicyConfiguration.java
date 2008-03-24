@@ -41,11 +41,11 @@ public class BasicPolicyConfiguration implements PolicyConfiguration {
 
     private final String contextID;
     private int state;
-    private final Map<String, Permissions> rolePermissionsMap = new LinkedHashMap<String, Permissions>();
-    private Permissions unchecked = null;
-    private Permissions excluded = null;
+    protected final Map<String, Permissions> rolePermissionsMap = new LinkedHashMap<String, Permissions>();
+    protected Permissions unchecked = null;
+    protected Permissions excluded = null;
 
-    BasicPolicyConfiguration(String contextID) {
+    protected BasicPolicyConfiguration(String contextID) {
         this.contextID = contextID;
         this.state = OPEN;
     }

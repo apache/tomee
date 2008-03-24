@@ -17,6 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.util.Join;
 
 import static java.util.Arrays.asList;
 import java.util.Comparator;
@@ -171,6 +173,7 @@ public class MethodInfoUtil {
                 newInfo.methods.add(methodInfo);
                 newInfo.roleNames.addAll(oldInfo.roleNames);
                 newInfo.unchecked = oldInfo.unchecked;
+                newInfo.excluded = oldInfo.excluded;
 
                 normalized.add(newInfo);
             }
@@ -204,7 +207,7 @@ public class MethodInfoUtil {
 
     }
 
-    public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, CoreDeploymentInfo deploymentInfo) {
+    public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, DeploymentInfo deploymentInfo) {
         Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
 
         Method[] wildCardView = getWildCardView(deploymentInfo).toArray(new Method[]{});
@@ -251,7 +254,7 @@ public class MethodInfoUtil {
         return attributes;
     }
 
-    private static List<Method> getWildCardView(CoreDeploymentInfo info) {
+    private static List<Method> getWildCardView(DeploymentInfo info) {
         List<Method> methods = new ArrayList<Method>();
 
         List<Method> beanMethods = asList(info.getBeanClass().getMethods());
@@ -400,6 +403,43 @@ public class MethodInfoUtil {
             // Secondary sort
             return view(am).ordinal() - view(bm).ordinal();
         }
+    }
+
+
+    public static String toString(MethodInfo i) {
+        String s = i.ejbName;
+        s += " : ";
+        s += (i.methodIntf == null) ? "*" : i.methodIntf;
+        s += " : ";
+        s += i.className;
+        s += " : ";
+        s += i.methodName;
+        s += "(";
+        if (i.methodParams != null) {
+            s += Join.join(", ", i.methodParams);
+        } else {
+            s += "*";
+        }
+        s += ")";
+        return s;
+    }
+
+    public static String toString(MethodPermissionInfo i) {
+        String s = toString(i.methods.get(0));
+        if (i.unchecked){
+            s += " Unchecked";
+        } else if (i.excluded){
+            s += " Excluded";
+        } else {
+            s += " " + Join.join(", ", i.roleNames);
+        }
+        return s;
+    }
+
+    public static String toString(MethodTransactionInfo i) {
+        String s = toString(i.methods.get(0));
+        s += " " + i.transAttribute;
+        return s;
     }
 
 }

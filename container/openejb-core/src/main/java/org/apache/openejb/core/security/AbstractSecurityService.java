@@ -66,7 +66,11 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     private String realmName = "PropertiesLogin";
 
     public AbstractSecurityService() {
-        System.setProperty(JaccProvider.class.getName(), BasicJaccProvider.class.getName());
+        this(BasicJaccProvider.class.getName());
+    }
+
+    public AbstractSecurityService(String jaccProvider) {
+        System.setProperty(JaccProvider.class.getName(), jaccProvider);
 
         installJacc();
 
@@ -77,7 +81,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         SystemInstance.get().setComponent(BasicPolicyConfiguration.RoleResolver.class, this);
     }
-
 
     public String getRealmName() {
         return realmName;

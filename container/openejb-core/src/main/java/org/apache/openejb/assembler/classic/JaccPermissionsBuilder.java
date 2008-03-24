@@ -19,6 +19,9 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
 import javax.security.jacc.EJBMethodPermission;
@@ -33,6 +36,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.lang.reflect.Method;
 
 /**
  * @version $Rev$ $Date$
@@ -65,8 +70,65 @@ public class JaccPermissionsBuilder {
         }
     }
 
+    private static Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), JaccPermissionsBuilder.class);
 
     public PolicyContext build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+
+        List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+
+        List<MethodPermissionInfo> perms = ejbJar.methodPermissions;
+
+        for (MethodInfo info : ejbJar.excludeList) {
+            MethodPermissionInfo perm = new MethodPermissionInfo();
+            perm.excluded = true;
+            perm.methods.add(info);
+            perms.add(perm);
+        }
+
+        perms = MethodInfoUtil.normalizeMethodPermissionInfos(perms);
+
+        for (DeploymentInfo deploymentInfo : deployments.values()) {
+            Map<Method, MethodAttributeInfo> attributes = resolveAttributes(perms, deploymentInfo);
+
+            if (log.isDebugEnabled()) {
+                for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+                    Method method = entry.getKey();
+                    MethodPermissionInfo value = (MethodPermissionInfo) entry.getValue();
+                    log.debug("Security Attribute: " + method + " -- " + MethodInfoUtil.toString(value));
+                }
+            }
+
+            for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+                Method method = entry.getKey();
+
+                MethodPermissionInfo a = (MethodPermissionInfo) entry.getValue();
+                MethodPermissionInfo b = new MethodPermissionInfo();
+                b.excluded = a.excluded;
+                b.unchecked = a.unchecked;
+                b.roleNames.addAll(a.roleNames);
+
+                MethodInfo am = a.methods.get(0);
+                MethodInfo bm = new MethodInfo();
+
+                bm.ejbName = deploymentInfo.getEjbName();
+                bm.ejbDeploymentId = deploymentInfo.getDeploymentID() + "";
+                bm.methodIntf = am.methodIntf;
+
+                bm.className = method.getDeclaringClass().getName();
+                bm.methodName = method.getName();
+                bm.methodParams = new ArrayList<String>();
+                for (Class<?> type : method.getParameterTypes()) {
+                    bm.methodParams.add(type.getName());
+                }
+                b.methods.add(bm);
+
+                normalized.add(b);
+            }
+        }
+
+        ejbJar.methodPermissions.clear();
+        ejbJar.methodPermissions.addAll(normalized);
+        ejbJar.excludeList.clear();
 
         PolicyContext policyContext = new PolicyContext(ejbJar.moduleId);
 
@@ -109,6 +171,7 @@ public class JaccPermissionsBuilder {
         for (MethodPermissionInfo methodPermission : ejbJar.methodPermissions) {
             List<String> roleNames = methodPermission.roleNames;
             boolean unchecked = methodPermission.unchecked;
+            boolean excluded = methodPermission.excluded;
 
             for (MethodInfo method : methodPermission.methods) {
 
@@ -142,6 +205,11 @@ public class JaccPermissionsBuilder {
                 // if this is unchecked, mark it as unchecked; otherwise assign the roles
                 if (unchecked) {
                     uncheckedPermissions.add(permission);
+                } else if (excluded) {
+                    /**
+                     * JACC v1.0 section 3.1.5.2
+                     */
+                    excludedPermissions.add(permission);
                 } else {
                     for (String roleName : roleNames) {
                         Permissions permissions = (Permissions) rolePermissions.get(roleName);
@@ -154,35 +222,6 @@ public class JaccPermissionsBuilder {
                 }
             }
 
-        }
-
-        /**
-         * JACC v1.0 section 3.1.5.2
-         */
-        for (MethodInfo method : ejbJar.excludeList) {
-            if (!ejbName.equals(method.ejbName)) {
-                continue;
-            }
-
-            // method name
-            String methodName = method.methodName;
-            // method interface
-            String methodIntf = method.methodIntf;
-
-            // method parameters
-            String[] methodParams;
-            if (method.methodParams != null) {
-                List<String> paramList = method.methodParams;
-                methodParams = paramList.toArray(new String[paramList.size()]);
-            } else {
-                methodParams = null;
-            }
-
-            // create the permission object
-            EJBMethodPermission permission = new EJBMethodPermission(ejbName, methodName, methodIntf, methodParams);
-
-            excludedPermissions.add(permission);
-            notAssigned = cullPermissions(notAssigned, permission);
         }
 
         /**

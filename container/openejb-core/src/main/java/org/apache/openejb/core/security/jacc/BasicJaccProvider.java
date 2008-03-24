@@ -46,13 +46,17 @@ public class BasicJaccProvider extends JaccProvider {
         BasicPolicyConfiguration configuration = (BasicPolicyConfiguration) configurations.get(contextID);
 
         if (configuration == null) {
-            configuration = new BasicPolicyConfiguration(contextID);
+            configuration = createPolicyConfiguration(contextID);
             configurations.put(contextID, configuration);
         } else {
             configuration.open(remove);
         }
 
         return configuration;
+    }
+
+    protected BasicPolicyConfiguration createPolicyConfiguration(String contextID) {
+        return new BasicPolicyConfiguration(contextID);
     }
 
     public boolean inService(String contextID) throws PolicyContextException {

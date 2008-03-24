@@ -17,8 +17,8 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
+import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.util.ConfUtils;
-import org.apache.openejb.util.URLs;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -31,7 +31,13 @@ import java.util.UUID;
  * @version $Rev$ $Date$
  */
 public class SecurityServiceImpl extends AbstractSecurityService {
+
     public SecurityServiceImpl() {
+        this(BasicJaccProvider.class.getName());
+    }
+    
+    public SecurityServiceImpl(String jaccProviderClass) {
+        super(jaccProviderClass);
         installJaas();
 
         try {

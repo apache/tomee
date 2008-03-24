@@ -67,6 +67,30 @@ public class MethodPermission {
     @XmlTransient
     protected TextMap description = new TextMap();
 
+    public MethodPermission() {
+    }
+
+    public MethodPermission(String className, String ejbName, String methodName, String... roles) {
+        this(new Method(ejbName, className, methodName), roles);
+    }
+
+    public MethodPermission(String ejbName, java.lang.reflect.Method method, String... roles) {
+        this(new Method(ejbName, method), roles);
+    }
+
+    public MethodPermission(Method method, String... roles) {
+        getMethod().add(method);
+        for (String role : roles) {
+            getRoleName().add(role);
+        }
+    }
+
+    public MethodPermission setUnchecked() {
+        this.unchecked = new EmptyType();
+        return this;
+    }
+
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();

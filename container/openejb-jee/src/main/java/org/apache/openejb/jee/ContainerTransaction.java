@@ -67,10 +67,10 @@ public class ContainerTransaction {
     public ContainerTransaction() {
     }
 
-
     public ContainerTransaction(TransAttribute transAttribute, String className, String ejbName, String methodName) {
         this(transAttribute, new Method(ejbName, className, methodName));
     }
+
     public ContainerTransaction(TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
         this(transAttribute, new Method(ejbName, method));
     }
