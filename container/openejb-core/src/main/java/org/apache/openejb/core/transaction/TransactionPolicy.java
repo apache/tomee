@@ -154,12 +154,12 @@ public abstract class TransactionPolicy {
         } catch (HeuristicMixedException e) {
 
             txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
-            throw new EJBException(e);
+            throw new ApplicationException(new EJBException(e));
 
         } catch (HeuristicRollbackException e) {
 
             txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
-            throw new EJBException(e);
+            throw new ApplicationException(new EJBException(e));
  
         } catch (SecurityException e) {
 
