@@ -32,6 +32,7 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
 import javax.transaction.NotSupportedException;
 import javax.ejb.EJBException;
+import javax.ejb.EJBTransactionRolledbackException;
 
 import java.rmi.RemoteException;
 
@@ -133,7 +134,7 @@ public abstract class TransactionPolicy {
         }
     }
 
-    protected void commitTransaction(TransactionContext context, Transaction tx) throws SystemException {
+    protected void commitTransaction(TransactionContext context, Transaction tx) throws SystemException, ApplicationException {
         try {
             if (txLogger.isInfoEnabled()) {
                 txLogger.info("TX " + policyToString() + ": Committing transaction " + tx);
@@ -147,7 +148,8 @@ public abstract class TransactionPolicy {
         } catch (RollbackException e) {
 
             txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
-            throw new EJBException(e);
+            Exception txe = new EJBTransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization", e);
+            throw new ApplicationException(txe);
 
         } catch (HeuristicMixedException e) {
 

@@ -39,6 +39,7 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 import javax.ejb.NoSuchEJBException;
+import javax.ejb.EJBTransactionRolledbackException;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
@@ -224,6 +225,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             } else {
                 return new AccessException(e.getMessage());
             }
+        }
+        if (!remote && e instanceof EJBTransactionRolledbackException) {
+            return new TransactionRolledbackLocalException(e.getMessage()).initCause(getCause(e));
         }
         return e;
     }
