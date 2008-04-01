@@ -335,7 +335,7 @@ class EnterpriseBeanBuilder {
         }
 
         try {
-            method = clazz.getMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
+            method = clazz.getDeclaredMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
         }

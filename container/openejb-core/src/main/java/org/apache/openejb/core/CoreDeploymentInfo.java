@@ -351,6 +351,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public byte getTransactionAttribute(Method method) {
         Byte byteWrapper = methodTransactionAttributes.get(method);
+
+        if (byteWrapper == null){
+            Method beanMethod = getMatchingBeanMethod(method);
+            byteWrapper = methodTransactionAttributes.get(beanMethod);
+        }
+
         if (byteWrapper == null) {
             return TX_NOT_SUPPORTED;// non remote or home interface method
         } else {
