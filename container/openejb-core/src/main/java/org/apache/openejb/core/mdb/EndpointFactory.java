@@ -58,7 +58,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     }
 
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
-        if (txRecovery) {
+        if (txRecovery && xaResource != null) {
             xaResource = new WrapperNamedXAResource(xaResource, container.getContainerID().toString());
         }
         EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, xaResource);
