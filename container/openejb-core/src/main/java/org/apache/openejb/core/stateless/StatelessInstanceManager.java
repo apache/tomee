@@ -100,7 +100,7 @@ public class StatelessInstanceManager {
         Stack pool = data.getPool();
         Object bean = pool.pop();
         if(strictPooling){
-            synchronized(this){
+            synchronized(pool){
                 while (bean == null && pool.size() >= poolLimit) {
                     poolQueue.waitForAvailableInstance();
                     bean = pool.pop();                    
@@ -279,7 +279,7 @@ public class StatelessInstanceManager {
         Stack pool = data.getPool();
 
         if (strictPooling) {
-            synchronized (this) {
+            synchronized (pool) {
                 if (pool.size() < poolLimit) {
                     pool.push(bean);
                     poolQueue.notifyWaitingThreads();
