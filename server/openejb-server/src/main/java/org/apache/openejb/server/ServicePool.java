@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.server;
 
+import static org.apache.openejb.server.ServiceDaemon.getInt;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,8 +39,12 @@ public class ServicePool implements ServerService {
     private final ServerService next;
     private final Executor executor;
 
-    public ServicePool(ServerService next, final String name, final int threads, final long keepAliveTime) {
+    public ServicePool(ServerService next, final String name, Properties properties) {
         this.next = next;
+
+        final int threads = getInt(properties, "threads", 100);
+
+        final int keepAliveTime = (1000 * 60 * 5);
 
         ThreadPoolExecutor p = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
         p.setThreadFactory(new ThreadFactory() {

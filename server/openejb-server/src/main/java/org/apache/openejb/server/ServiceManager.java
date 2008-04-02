@@ -194,6 +194,7 @@ public class ServiceManager {
                     service = (ServerService) recipe.create(serviceClass.getClassLoader());
 
                     if (!(service instanceof SelfManaging)) {
+                        service = new ServicePool(service, serviceName, serviceProperties);
                         service = new ServiceLogger(service);
                         service = new ServiceAccessController(service);
                         service = new ServiceDaemon(service);

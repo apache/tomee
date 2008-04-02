@@ -34,6 +34,7 @@ public class ServiceDaemon implements ServerService, Runnable {
     ServerSocket serverSocket;
 
     boolean stop = true;
+    private int backlog;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -45,14 +46,27 @@ public class ServiceDaemon implements ServerService, Runnable {
         this.next = next;
     }
 
+    public static int getInt(Properties p, String property, int defaultValue){
+        String value = p.getProperty(property);
+        try {
+            if (value != null) return Integer.parseInt(value);
+            else return defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     public void init(Properties props) throws Exception {
 
         this.props = props;
 
-        String p = props.getProperty("port");
         ip = props.getProperty("bind");
 
-        port = Integer.parseInt(p);
+        port = getInt(props, "port", 0);
+
+        int threads = getInt(props, "threads", 100);
+
+        backlog = getInt(props, "backlog", threads);
 
         next.init(props);
     }
@@ -67,7 +81,7 @@ public class ServiceDaemon implements ServerService, Runnable {
 
             try {
                 InetAddress address = InetAddress.getByName(ip);
-                serverSocket = new ServerSocket(port, 20, address);
+                serverSocket = new ServerSocket(port, backlog, address);
 //                serverSocket = new ServerSocket(port, 20);
                 port = serverSocket.getLocalPort();
                 ip = serverSocket.getInetAddress().getHostAddress();
