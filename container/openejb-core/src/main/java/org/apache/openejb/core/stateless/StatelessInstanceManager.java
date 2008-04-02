@@ -99,12 +99,14 @@ public class StatelessInstanceManager {
         Data data = (Data) deploymentInfo.getContainerData();
         Stack pool = data.getPool();
         Object bean = pool.pop();
-
-        while (strictPooling && bean == null && pool.size() >= poolLimit) {
-            poolQueue.waitForAvailableInstance();
-            bean = pool.pop();
-        }
-
+        if(strictPooling){
+            synchronized(this){
+                while (bean == null && pool.size() >= poolLimit) {
+                    poolQueue.waitForAvailableInstance();
+                    bean = pool.pop();                    
+                }
+            }
+        }        
         if (bean == null) {
 
             Class beanClass = deploymentInfo.getBeanClass();
@@ -277,8 +279,14 @@ public class StatelessInstanceManager {
         Stack pool = data.getPool();
 
         if (strictPooling) {
-            pool.push(bean);
-            poolQueue.notifyWaitingThreads();
+            synchronized (this) {
+                if (pool.size() < poolLimit) {
+                    pool.push(bean);
+                    poolQueue.notifyWaitingThreads();
+                } else {
+                    freeInstance(callContext, (Instance) bean);
+                }
+            }
         } else {
             if (pool.size() >= poolLimit) {
                 freeInstance(callContext, (Instance)bean);
