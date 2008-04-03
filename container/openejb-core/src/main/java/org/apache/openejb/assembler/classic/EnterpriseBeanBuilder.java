@@ -321,7 +321,6 @@ class EnterpriseBeanBuilder {
     }
 
     private Method toMethod(Class clazz, NamedMethodInfo info) {
-        Method method = null;
         List<Class> parameterTypes = new ArrayList<Class>();
 
         if (info.methodParams != null){
@@ -334,12 +333,21 @@ class EnterpriseBeanBuilder {
             }
         }
 
-        try {
-            method = clazz.getDeclaredMethod(info.methodName, parameterTypes.toArray(new Class[parameterTypes.size()]));
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
+        Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
+
+        IllegalStateException noSuchMethod = null;
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredMethod(info.methodName, parameters);
+            } catch (NoSuchMethodException e) {
+                if (noSuchMethod == null) {
+                    noSuchMethod = new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
+                }
+                clazz = clazz.getSuperclass();
+            }
         }
-        return method;
+
+        throw noSuchMethod;
     }
 
 
