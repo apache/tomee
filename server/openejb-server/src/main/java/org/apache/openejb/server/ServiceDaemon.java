@@ -16,25 +16,36 @@
  */
 package org.apache.openejb.server;
 
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 /**
- * @version $Rev$ $Date$
  */
-public class ServiceDaemon implements ServerService, Runnable {
+public class ServiceDaemon implements ServerService {
 
-    ServerService next;
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER, ServiceDaemon.class);
 
-    Properties props;
-    String ip;
-    int port;
+    private ServerService next;
 
-    ServerSocket serverSocket;
+    private SocketListener socketListener;
+
+    private int timeout;
+
+    private InetAddress address;
+
+    private int port;
+
+    private String name;
 
     boolean stop = true;
+
     private int backlog;
+    private String ip;
+
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -43,7 +54,16 @@ public class ServiceDaemon implements ServerService, Runnable {
     public ServiceDaemon(ServerService next, int port, String ip) {
         this.port = port;
         this.ip = ip;
+        this.address = getAddress(ip);
         this.next = next;
+    }
+
+    private static InetAddress getAddress(String host){
+        try {
+            return InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new IllegalArgumentException(host);
+        }
     }
 
     public static int getInt(Properties p, String property, int defaultValue){
@@ -56,11 +76,31 @@ public class ServiceDaemon implements ServerService, Runnable {
         }
     }
 
+   public void setSoTimeout(int timeout) throws SocketException {
+        this.timeout = timeout;
+        if (socketListener != null) {
+            socketListener.setSoTimeout(timeout);
+        }
+    }
+
+    public int getSoTimeout() throws IOException {
+        if (socketListener == null) return 0;
+        return socketListener.getSoTimeout();
+    }
+
+    /**
+     * Gets the inetAddress number that the
+     * daemon is listening on.
+     */
+    public InetAddress getAddress() {
+        return address;
+    }
+
     public void init(Properties props) throws Exception {
 
-        this.props = props;
-
         ip = props.getProperty("bind");
+
+        address = getAddress(ip);
 
         port = getInt(props, "port", 0);
 
@@ -73,108 +113,119 @@ public class ServiceDaemon implements ServerService, Runnable {
 
     public void start() throws ServiceException {
         synchronized (this) {
-
-            if (!stop)
+            // Don't bother if we are already started/starting
+            if (socketListener != null) {
                 return;
-
-            stop = false;
-
-            try {
-                InetAddress address = InetAddress.getByName(ip);
-                serverSocket = new ServerSocket(port, backlog, address);
-//                serverSocket = new ServerSocket(port, 20);
-                port = serverSocket.getLocalPort();
-                ip = serverSocket.getInetAddress().getHostAddress();
-
-                Thread d = new Thread(this);
-                d.setName("service." + next.getName() + "@" + d.hashCode());
-                d.setDaemon(true);
-                d.start();
-            } catch (Exception e) {
-                throw new ServiceException("Service failed to start.", e);
-
             }
 
             next.start();
+
+            ServerSocket serverSocket;
+            try {
+                serverSocket = new ServerSocket(port, backlog, address);
+                port = serverSocket.getLocalPort();
+                serverSocket.setSoTimeout(timeout);
+            } catch (Exception e) {
+                throw new ServiceException("Service failed to open socket", e);
+            }
+
+            socketListener = new SocketListener(next, serverSocket);
+            Thread thread = new Thread(socketListener);
+            thread.setName("service." + name + "@" + socketListener.hashCode());
+            thread.setDaemon(true);
+            thread.start();
+
         }
     }
 
     public void stop() throws ServiceException {
 
         synchronized (this) {
-
-            if (stop)
-                return;
-
-            stop = true;
-            try {
-                this.notifyAll();
-            } catch (Throwable t) {
-                t.printStackTrace();
-
-                // Received exception: "+t.getClass().getName()+" :
-                // "+t.getMessage());
+            if (socketListener != null) {
+                socketListener.stop();
+                socketListener = null;
             }
-
             next.stop();
         }
-    }
-
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-        throw new UnsupportedOperationException("service(in,out)");
-    }
-
-    public synchronized void service(final Socket socket)
-            throws ServiceException, IOException {
-        Thread d = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    next.service(socket);
-                } catch (SecurityException e) {
-
-                } catch (Throwable e) {
-
-                } finally {
-                    try {
-                        if (socket != null)
-                            socket.close();
-                    } catch (Throwable t) {
-
-                        // connection with client: "+t.getMessage());
-                    }
-                }
-            }
-        });
-        d.setDaemon(true);
-        d.start();
-    }
-
-    public String getName() {
-        return next.getName();
     }
 
     public String getIP() {
         return ip;
     }
 
+    /**
+     * Gets the port number that the
+     * daemon is listening on.
+     */
     public int getPort() {
         return port;
     }
 
-    public void run() {
+    public void service(Socket socket) throws ServiceException, IOException {
+    }
 
-        Socket socket = null;
+    public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
+    }
 
-        while (!stop) {
-            try {
-                socket = serverSocket.accept();
-                socket.setTcpNoDelay(true);
-                if (!stop) service(socket);
-            } catch (SecurityException e) {
+    public String getName() {
+        return next.getName();
+    }
 
-            } catch (Throwable e) {
-                e.printStackTrace();
+    private static class SocketListener implements Runnable {
+        private ServerService serverService;
+        private ServerSocket serverSocket;
+        private boolean stopped;
+
+        public SocketListener(ServerService serverService, ServerSocket serverSocket) {
+            this.serverService = serverService;
+            this.serverSocket = serverSocket;
+            stopped = false;
+        }
+
+        public synchronized void stop() {
+            stopped = true;
+        }
+
+        private synchronized boolean shouldStop() {
+            return stopped;
+        }
+
+        public void run() {
+            while (!shouldStop()) {
+                Socket socket = null;
+                try {
+                    socket = serverSocket.accept();
+                    socket.setTcpNoDelay(true);
+                    if (!shouldStop()) {
+                        // the server service is responsible
+                        // for closing the socket.
+                        serverService.service(socket);
+                    }
+                } catch (SocketTimeoutException e) {
+                    // we don't really care
+                    // log.debug("Socket timed-out",e);
+                } catch (Throwable e) {
+                    log.error("Unexpected error", e);
+                }
             }
+
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException ioException) {
+                    log.debug("Error cleaning up socked", ioException);
+                }
+                serverSocket = null;
+            }
+            serverService = null;
+        }
+
+        public void setSoTimeout(int timeout) throws SocketException {
+            serverSocket.setSoTimeout(timeout);
+        }
+
+        public int getSoTimeout() throws IOException {
+            return serverSocket.getSoTimeout();
         }
     }
 }
