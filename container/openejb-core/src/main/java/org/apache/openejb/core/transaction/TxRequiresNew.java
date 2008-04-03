@@ -27,7 +27,7 @@ import javax.transaction.Status;
  * The Container must invoke an enterprise Bean method whose transaction
  * attribute is set to RequiresNew with a new transaction context.
  *
- * If the client invokes the enterprise Bean’s method while the client is not
+ * If the client invokes the enterprise Bean's method while the client is not
  * associated with a transaction context, the container automatically starts a
  * new transaction before delegating a method call to the enterprise Bean
  * business method. The Container automatically enlists all the resource

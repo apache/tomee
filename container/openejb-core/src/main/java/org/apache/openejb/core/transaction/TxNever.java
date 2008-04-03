@@ -28,13 +28,14 @@ import java.rmi.RemoteException;
  * is set to Never without a transaction context defined by the EJB spec.
  *
  * The client is required to call without a transaction context.
- *
- * ¥ If the client calls with a transaction context, the Container throws the
- *   java.rmi.RemoteException exception if the client is a remote client, or
- *   the javax.ejb.EJBException if the client is a local client.
- * ¥ If the client calls without a transaction context, the Container performs
- *   the same steps as described in the NotSupported case.
- *
+ * 
+ * If the client calls with a transaction context, the Container throws:<ul>
+ * <li>java.rmi.RemoteException exception if the client is a remote client</li>
+ * <li>javax.ejb.EJBException if the client is a local client</li>
+ * </ul>
+ * 
+ * If the client calls without a transaction context, the Container performs
+ * the same steps as described in the NotSupported case.
  */
 public class TxNever extends TransactionPolicy {
 

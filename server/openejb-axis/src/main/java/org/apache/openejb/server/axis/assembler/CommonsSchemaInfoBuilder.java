@@ -177,7 +177,7 @@ public class CommonsSchemaInfoBuilder {
             } else {
                 // Anonymous type, so we need to declare it
 
-                // Rule 2.b: Anonymous element absolute name ÒT>NÓ
+                // Rule 2.b: Anonymous element absolute name "T>N"
                 String anonymoustName = enclosingType.qname.getLocalPart() + ">" + elementQName.getLocalPart();
                 QName anonymousQName = new QName(elementNamespace, anonymoustName);
 
