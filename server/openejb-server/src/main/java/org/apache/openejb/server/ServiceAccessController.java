@@ -81,28 +81,40 @@ public class ServiceAccessController implements ServerService {
         if (ipString == null) {
             permissions.add(new PermitAllPermission());
         } else {
-            try {
-                InetAddress[] localIps = InetAddress.getAllByName("localhost");
-                for (int i = 0; i < localIps.length; i++) {
-                    if (localIps[i] instanceof Inet4Address) {
-                        permissions.add(new ExactIPAddressPermission(localIps[i].getAddress()));
-                    } else {
-                        permissions.add(new ExactIPv6AddressPermission(localIps[i].getAddress()));
-                    }
-                }
-            } catch (UnknownHostException e) {
-                throw new ServiceException("Could not get localhost inet address", e);
-            }
+        	String hostname = "localhost";
+            addIPAddressPermissions(permissions, hostname);
 
             StringTokenizer st = new StringTokenizer(ipString, " ");
             while (st.hasMoreTokens()) {
                 String mask = st.nextToken();
-                permissions.add(IPAddressPermissionFactory.getIPAddressMask(mask));
+                try {
+                	permissions.add(IPAddressPermissionFactory.getIPAddressMask(mask));
+                } catch (IllegalArgumentException iae) {
+                	// it could be that it is a hostname not ip address
+                	addIPAddressPermissions(permissions, mask);
+                }
             }
         }
 
         hostPermissions = (IPAddressPermission[]) permissions.toArray(new IPAddressPermission[permissions.size()]);
     }
+
+	private void addIPAddressPermissions(
+			LinkedList<IPAddressPermission> permissions, String hostname)
+			throws ServiceException {
+		try {
+		    InetAddress[] localIps = InetAddress.getAllByName(hostname);
+		    for (int i = 0; i < localIps.length; i++) {
+		        if (localIps[i] instanceof Inet4Address) {
+		            permissions.add(new ExactIPAddressPermission(localIps[i].getAddress()));
+		        } else {
+		            permissions.add(new ExactIPv6AddressPermission(localIps[i].getAddress()));
+		        }
+		    }
+		} catch (UnknownHostException e) {
+		    throw new ServiceException("Could not get " + hostname + " inet address", e);
+		}
+	}
 
     public void init(Properties props) throws Exception {
         parseAdminIPs(props);
