@@ -142,7 +142,8 @@ public abstract class TransactionPolicy {
         } catch (RollbackException e) {
 
             txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
-            Throwable txe = new javax.transaction.TransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization").initCause(e);
+            // TODO can't set initCause on a TransactionRolledbackException, update the convertException and related code to handle something else 
+            Throwable txe = new javax.transaction.TransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization: "+e.getMessage());
             throw new ApplicationException(txe);
 
         } catch (HeuristicMixedException e) {
@@ -154,7 +155,7 @@ public abstract class TransactionPolicy {
 
             txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
             throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back").initCause(e));
- 
+
         } catch (SecurityException e) {
 
             txLogger.error("The current thread is not allowed to commit the transaction: " + e.getMessage());
