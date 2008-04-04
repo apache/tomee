@@ -24,13 +24,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
-import javax.transaction.NotSupportedException;
+import javax.transaction.*;
 import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRolledbackException;
 
@@ -148,18 +142,18 @@ public abstract class TransactionPolicy {
         } catch (RollbackException e) {
 
             txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
-            Exception txe = new EJBTransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization", e);
+            Throwable txe = new javax.transaction.TransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization").initCause(e);
             throw new ApplicationException(txe);
 
         } catch (HeuristicMixedException e) {
 
             txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
-            throw new ApplicationException(new EJBException(e));
+            throw new ApplicationException(new RemoteException("A heuristic decision was made, some relevant updates have been committed while others have been rolled back").initCause(e));
 
         } catch (HeuristicRollbackException e) {
 
             txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
-            throw new ApplicationException(new EJBException(e));
+            throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back").initCause(e));
  
         } catch (SecurityException e) {
 
