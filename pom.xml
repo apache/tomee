@@ -549,6 +549,10 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>activemq</groupId>
+            <artifactId>jmdns</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
