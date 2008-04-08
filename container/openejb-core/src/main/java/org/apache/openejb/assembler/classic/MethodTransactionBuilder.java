@@ -55,7 +55,7 @@ public class MethodTransactionBuilder {
         if (log.isDebugEnabled()) {
             for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
                 Method method = entry.getKey();
-                MethodPermissionInfo value = (MethodPermissionInfo) entry.getValue();
+                MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
                 log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(value));
             }
         }
