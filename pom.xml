@@ -176,7 +176,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.0-alpha-5</version>
+        <version>1.0</version>
         <executions>
           <execution>
             <goals>
@@ -184,7 +184,7 @@
             </goals>
             <configuration>
               <resourceBundles>
-                <resourceBundle>org.apache:apache-jar-resource-bundle:1.2</resourceBundle>
+                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
               </resourceBundles>
               <appendedResourcesDirectory>${basedir}/../../src/main/appended-resources</appendedResourcesDirectory>
               <properties>
