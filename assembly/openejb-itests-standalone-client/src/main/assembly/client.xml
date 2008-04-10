@@ -54,7 +54,7 @@
       <unpack>true</unpack>
       <includes>
           <include>org.apache.openejb:javaee-api</include>
-          <include>org.apache.xbean:xbean-finder</include>
+          <include>org.apache.openejb:xbean-finder</include>
           <include>asm:asm</include>
           <include>junit:junit</include>
           <include>org.apache.openejb:openejb-itests-beans</include>
