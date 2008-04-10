@@ -3,7 +3,7 @@
 ==  Version 2.0, in this case for the Apache OpenEJB distribution.     ==
 =========================================================================
 
-Apache OpenEJB 
+Apache OpenEJB
 Copyright 2006-2007 The Apache Software Foundation
 
 This product includes software developed by
@@ -14,30 +14,10 @@ The Apache Software Foundation (http://www.apache.org/).
 ## APACHE OPENEJB DEPENDENCIES                                         ##
 #########################################################################
 
-A binary distribution of Apache OpenEJB, or an Apache OpenEJB server 
-which is built from source, includes a number of dependent packages 
+A binary distribution of Apache OpenEJB, or an Apache OpenEJB server
+which is built from source, includes a number of dependent packages
 with separate copyright notices and license terms. The following notices
 apply to these dependencies.
-
-=========================================================================
-==  Apache Derby Notice                                                ==
-=========================================================================
-
-This product includes software developed by
-The Apache Software Foundation (http://www.apache.org/).
-
-Portions of Derby were orginally developed by
-International Business Machines Corporation and are
-licensed to the Apache Software Foundation under the
-"Software Grant and Corporate Contribution License Agreement",
-informally known as the "Derby CLA".
-
-The portion of the functionTests under 'nist' was originally 
-developed by the National Institute of Standards and Technology (NIST), 
-an agency of the United States Department of Commerce, and adapted by
-International Business Machines Corporation in accordance with the NIST
-Software Acknowledgment and Redistribution document at
-http://www.itl.nist.gov/div897/ctg/sql_form.htm
 
 =========================================================================
 ==  Apache OpenJPA Notice                                              ==
@@ -50,10 +30,6 @@ COPYRIGHT NOTICES
 
 * OpenJPA includes software developed by the SERP project
     Copyright (c) 2002-2006, A. Abram White. All rights reserved.
-
-* OpenJPA is bundled with the binaries from the JPA specification, by
-    Sun Microsystems and licensed under the CDDL 1.0. The source code is
-    available at: https://glassfish.dev.java.net/source/browse/glassfish/
 
 =========================================================================
 ==  ASM Notice                                                         ==
@@ -73,12 +49,12 @@ All rights reserved.
 ==  Backport Util Concurrent Notice                                    ==
 =========================================================================
 
-The backport-util-concurrent software has been released to the public domain, 
+The backport-util-concurrent software has been released to the public domain,
 as explained at: http://creativecommons.org/licenses/publicdomain.
 
-Acknowledgements: backport-util-concurrent is based in large part on the public 
-domain sources from: 
-1) JSR166, 
+Acknowledgements: backport-util-concurrent is based in large part on the public
+domain sources from:
+1) JSR166,
 2) package dl.util.concurrent,
 3) Doug Lea's "collections" package.
 
@@ -93,8 +69,9 @@ All rights reserved.
 ==  JAXB Notice                                                        ==
 =========================================================================
 
-This product includes software developed for the JAXB Reference 
+This product includes software developed for the JAXB Reference
 Implementation project. (https://jaxb.dev.java.net/)
+License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
 
 =========================================================================
 ==  HSQL Notice                                                        ==
@@ -108,4 +85,85 @@ All rights reserved.
 
 Copyright (c) 2001-2005, The HSQL Development Group
 All rights reserved.
+
+=========================================================================
+==  Howl Notice                                                        ==
+=========================================================================
+
+Copyright (c) 2004, Bull S.A.
+All rights reserved.
+
+=========================================================================
+==  SL4J Notice                                                        ==
+=========================================================================
+
+Copyright (c) 2004-2005 SLF4J.ORG
+Copyright (c) 2004-2005 QOS.ch
+All rights reserved.
+
+=========================================================================
+==  Apache CXF                                                         ==
+=========================================================================
+
+Apache CXF
+Copyright 2006-2007 Apache Software Foundation
+
+This product includes software developed at
+Apache Software Foundation (http://www.apache.org/).
+
+This product includes/uses software, Woodstox (http://woodstox.codehaus.org),
+developed by Codehaus  (http://www.codehaus.org/)
+License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+This product includes/uses software, StAX API (http://stax.codehaus.org/)
+License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+This product includes/uses software, WSDL4J (http://sf.net/projects/wsdl4j)
+License: CPL  (http://www.opensource.org/licenses/cpl1.0.txt)
+
+This product includes/uses software, Neethi,
+developed by The Apache Software Foundation  (http://www.apache.org/)
+License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+This product includes/uses software, Java Architecture for XML Binding (JAXB API),
+developed by Sun Microsystems  (http://www.sun.com/)
+License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
+
+This product includes software developed for SOAP with Attachments
+API for Java (SAAJ). The software is available from the GlassFish project
+(https://saaj.dev.java.net/)
+License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
+
+=========================================================================
+==  Woodstox Notice                                                    ==
+=========================================================================
+
+This product currently only contains code developed by authors
+of specific components, as identified by the source code files.
+
+Since product implements StAX API, it has dependencies to StAX API
+classes.
+
+For additional credits (generally to people who reported problems)
+see CREDITS file.
+
+=========================================================================
+==  WSDL4J Notice                                                      ==
+=========================================================================
+
+The Program includes all or portions of the following software which is
+subject to the Common Public License ("CPL Code").  This software
+consists of voluntary contributions made by many individuals on behalf of
+the WSDL4J project.
+
+You may download the source version of the WSDL4J component at
+http://sourceforge.net/projects/wsdl4j
+
+=========================================================================
+==  Apache WS Commons Notice                                           ==
+=========================================================================
+
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+Portions Copyright 2006 International Business Machines Corp.
 
