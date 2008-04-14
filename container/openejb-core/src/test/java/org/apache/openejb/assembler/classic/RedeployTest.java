@@ -89,7 +89,7 @@ public class RedeployTest extends TestCase {
         EncStatefulObject ejbObject = home.create("foo");
         ejbObject.lookupStringEntry();
 
-        assembler.destroyApplication(file.getAbsolutePath());
+        assembler.destroyApplication(file.getCanonicalPath());
 
         try {
             ejbObject.lookupStringEntry();
