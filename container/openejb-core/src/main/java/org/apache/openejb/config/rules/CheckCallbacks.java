@@ -230,6 +230,7 @@ public class CheckCallbacks extends ValidationBase {
                     methods.add(method);
                 }
             }
+            clazz = clazz.getSuperclass();
         }
         return methods;
     }
