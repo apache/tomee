@@ -16,25 +16,24 @@
  */
 package org.superbiz.injection;
 
+import javax.annotation.Resource;
+import javax.ejb.Stateful;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.Remote;
 
 /**
  * This example demostrates the use of the injection of environment entries
  * using <b>Resource</b> annotation.
- * 
+ * <p/>
  * "EJB Core Contracts and Requirements" specification section 16.4.1.1.
- * 
+ *
  * @version $Rev$ $Date$
  */
 //START SNIPPET: code
-@Remote
+@Stateful
 public class InvoiceBean implements Invoice {
 
-    int maxLineItems;
+    private int maxLineItems;
 
     private List<LineItem> items = new ArrayList<LineItem>();
 
@@ -43,16 +42,16 @@ public class InvoiceBean implements Invoice {
     /**
      * Injects the <b>maxLineItems</b> simple environment entry through bean
      * method.
-     * 
+     *
      * The JavaBeans property name (not the method name) is used as the default
      * JNDI name. By default, the JavaBeans propery name is combined with the
      * name of the class in which the annotation is used and is used directly as
      * the name in the bean's naming context. JNDI name for this entry would
      * be
      * java:comp/env/org.apache.openejb.examples.resource.InvoiceBean/maxLineItems
-     * 
+     *
      * Refer "EJB Core Contracts and Requirements" specification section 16.2.2.
-     * 
+     *
      * @param maxLineItems
      */
     @Resource

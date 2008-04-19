@@ -16,9 +16,12 @@
  */
 package org.superbiz.injection;
 
+import javax.ejb.Remote;
+
 /**
  * @version $Rev$ $Date$
  */
+@Remote
 public interface Invoice {
 
     void addLineItem(LineItem item) throws TooManyItemsException;
