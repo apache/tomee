@@ -16,15 +16,12 @@
  */
 package org.superbiz.injection.jpa;
 
-import org.superbiz.injection.jpa.Movie;
-import org.superbiz.injection.jpa.Movies;
-
-import javax.ejb.Stateless;
+//START SNIPPET: code
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import java.util.List;
 
 @Stateful(name = "Movies")
@@ -47,3 +44,4 @@ public class MoviesImpl implements Movies {
     }
 
 }
+//END SNIPPET: code

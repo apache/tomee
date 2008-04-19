@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 package org.superbiz.injection.jpa;
-
+//START SNIPPET: code
 import javax.persistence.Entity;
 
 @Entity
@@ -57,6 +57,5 @@ public class Movie {
     public void setYear(int year) {
         this.year = year;
     }
-
-
 }
+//END SNIPPET: code
