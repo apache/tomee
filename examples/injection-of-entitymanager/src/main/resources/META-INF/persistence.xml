@@ -16,11 +16,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: code -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
-    <jta-data-source>java:openejb/Resource/movieDatabase</jta-data-source>
-    <non-jta-data-source>java:openejb/Resource/movieDatabaseUnmanaged</non-jta-data-source>
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
     <class>org.superbiz.injection.jpa.Movie</class>
 
     <properties>
@@ -28,3 +29,4 @@
     </properties>
   </persistence-unit>
 </persistence>
+<!-- END SNIPPET: code -->
