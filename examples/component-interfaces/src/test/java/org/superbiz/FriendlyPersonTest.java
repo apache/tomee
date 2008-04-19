@@ -42,6 +42,7 @@ public class FriendlyPersonTest extends TestCase {
      *
      * @throws Exception
      */
+    //START SNIPPET: remotehome
     public void testEjbHomeAndEjbObject() throws Exception {
         Object object = initialContext.lookup("FriendlyPersonRemoteHome");
         FriendlyPersonEjbHome home = (FriendlyPersonEjbHome) object;
@@ -71,6 +72,7 @@ public class FriendlyPersonTest extends TestCase {
 
         assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
     }
+    //END SNIPPET: remotehome
 
 
     /**
@@ -113,6 +115,7 @@ public class FriendlyPersonTest extends TestCase {
      *
      * @throws Exception
      */
+    //START SNIPPET: remote
     public void testBusinessRemote() throws Exception {
         Object object = initialContext.lookup("FriendlyPersonRemote");
 
@@ -142,6 +145,7 @@ public class FriendlyPersonTest extends TestCase {
 
         assertEquals("Ola David!", friendlyPerson.greet("pt", "David"));
     }
+    //START SNIPPET: remote
 
     /**
      * Here we lookup and test the FriendlyPerson bean via its EJB 3.0 business local interface

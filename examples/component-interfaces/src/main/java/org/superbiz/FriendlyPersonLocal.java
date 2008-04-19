@@ -16,6 +16,7 @@
  */
 package org.superbiz;
 
+//START SNIPPET: code
 import javax.ejb.Local;
 
 @Local
@@ -33,3 +34,4 @@ public interface FriendlyPersonLocal {
     void setDefaultLanguage(String defaultLanguage);
 
 }
+//END SNIPPET: code

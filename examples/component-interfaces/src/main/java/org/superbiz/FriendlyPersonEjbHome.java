@@ -16,13 +16,12 @@
  */
 package org.superbiz;
 
+//START SNIPPET: code
 import javax.ejb.CreateException;
 import javax.ejb.EJBHome;
 import java.rmi.RemoteException;
 
-/**
- * @version $Revision$ $Date$
- */
 public interface FriendlyPersonEjbHome extends EJBHome {
     FriendlyPersonEjbObject create() throws CreateException, RemoteException;
 }
+//END SNIPPET: code

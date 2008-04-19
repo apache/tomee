@@ -16,10 +16,8 @@
  */
 package org.superbiz;
 
-import javax.ejb.Remote;
 import javax.ejb.EJBLocalObject;
 
-@Remote
 public interface FriendlyPersonEjbLocalObject extends EJBLocalObject {
     String greet(String friend);
 

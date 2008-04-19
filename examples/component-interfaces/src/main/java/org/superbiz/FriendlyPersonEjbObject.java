@@ -16,11 +16,10 @@
  */
 package org.superbiz;
 
-import javax.ejb.Remote;
+//START SNIPPET: code
 import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
 
-@Remote
 public interface FriendlyPersonEjbObject extends EJBObject {
     String greet(String friend) throws RemoteException;
 
@@ -35,3 +34,4 @@ public interface FriendlyPersonEjbObject extends EJBObject {
     void setDefaultLanguage(String defaultLanguage) throws RemoteException;
 
 }
+//END SNIPPET: code

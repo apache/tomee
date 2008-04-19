@@ -34,7 +34,7 @@ import java.util.Properties;
  *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  */
-
+//START SNIPPET: code
 // EJB 3.0 Style business interfaces
 // Each of these interfaces are already annotated in the classes
 // themselves with @Remote and @Local, so annotating them here
@@ -122,3 +122,4 @@ public class FriendlyPersonImpl implements FriendlyPersonLocal, FriendlyPersonRe
         this.defaultLanguage = defaultLanguage;
     }
 }
+//END SNIPPET: code

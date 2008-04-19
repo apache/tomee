@@ -18,6 +18,7 @@ package org.superbiz;
 
 import javax.ejb.Remote;
 
+//START SNIPPET: code
 @Remote
 public interface FriendlyPersonRemote {
     String greet(String friend);
@@ -33,3 +34,4 @@ public interface FriendlyPersonRemote {
     void setDefaultLanguage(String defaultLanguage);
 
 }
+//END SNIPPET: code
