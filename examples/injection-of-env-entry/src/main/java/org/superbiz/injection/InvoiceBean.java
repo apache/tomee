@@ -30,7 +30,7 @@ import javax.ejb.Remote;
  * 
  * @version $Rev$ $Date$
  */
-
+//START SNIPPET: code
 @Remote
 public class InvoiceBean implements Invoice {
 
@@ -78,3 +78,4 @@ public class InvoiceBean implements Invoice {
     }
 
 }
+//END SNIPPET: code

@@ -17,15 +17,12 @@
 package org.superbiz.injection;
 
 import java.util.Properties;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
 
-/**
- * @version $Rev$ $Date$
- */
+//START SNIPPET: code
 public class InvoiceBeanTest extends TestCase {
 
     private InitialContext initialContext;
@@ -58,3 +55,7 @@ public class InvoiceBeanTest extends TestCase {
         assertEquals(15, maxLineItems);
     }
 }
+//END SNIPPET: code
+ 
+
+

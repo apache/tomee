@@ -19,6 +19,7 @@
 
 <!-- $Rev$ $Date$ -->
 
+<!-- START SNIPPET: code -->
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
   <enterprise-beans>
     <session>
@@ -35,3 +36,4 @@
     </session>
   </enterprise-beans>
 </ejb-jar>
+<!-- END SNIPPET: code -->
