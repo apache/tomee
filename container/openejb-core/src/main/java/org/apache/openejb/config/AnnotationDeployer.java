@@ -367,6 +367,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
+                    // TODO: We might be stepping on an xml override here
                     sessionBean.setSessionType(SessionType.STATEFUL);
                 }
             }
