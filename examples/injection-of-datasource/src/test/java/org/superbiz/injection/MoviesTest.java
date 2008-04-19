@@ -23,9 +23,7 @@ import javax.naming.InitialContext;
 import java.util.Properties;
 import java.util.List;
 
-/**
- * @version $Revision$ $Date$
- */
+//START SNIPPET: code
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
@@ -53,3 +51,4 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
+//END SNIPPET: code

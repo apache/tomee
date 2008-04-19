@@ -14,6 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+//START SNIPPET: code
 package org.superbiz.injection;
 
 import javax.annotation.PostConstruct;
@@ -102,3 +103,4 @@ public class MoviesImpl implements Movies {
     }
 
 }
+//END SNIPPET: code
