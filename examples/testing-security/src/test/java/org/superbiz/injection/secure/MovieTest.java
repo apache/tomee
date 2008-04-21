@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-/**
- * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
- */
+//START SNIPPET: code
 public class MovieTest extends TestCase {
     private Context context;
 
@@ -164,3 +162,4 @@ public class MovieTest extends TestCase {
     }
 
 }
+//END SNIPPET: code
