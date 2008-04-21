@@ -26,8 +26,8 @@ import java.util.Properties;
 
 public class CalculatorTest extends TestCase {
 
-	//START SNIPPET: setup	
-	private InitialContext initialContext;
+    //START SNIPPET: setup	
+    private InitialContext initialContext;
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
@@ -45,12 +45,12 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(new URL("http://localhost:4204/CalculatorImpl?wsdl"), null);
+        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"), null);
         assertNotNull(calcService);
 
         CalculatorWs calc = calcService.getPort(CalculatorWs.class);
         assertEquals(10, calc.sum(4,6));
-		assertEquals(12, calc.multiply(3,4));
+	assertEquals(12, calc.multiply(3,4));
     }
     //END SNIPPET: webservice
 
