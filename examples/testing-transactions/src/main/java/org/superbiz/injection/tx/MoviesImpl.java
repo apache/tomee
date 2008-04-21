@@ -25,6 +25,7 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
 
+//START SNIPPET: code
 @Stateful(name = "Movies")
 @TransactionAttribute(MANDATORY)
 public class MoviesImpl implements Movies {
@@ -45,3 +46,4 @@ public class MoviesImpl implements Movies {
         return query.getResultList();
     }
 }
+//END SNIPPET: code
