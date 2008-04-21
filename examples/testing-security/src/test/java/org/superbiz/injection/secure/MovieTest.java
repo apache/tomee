@@ -134,7 +134,7 @@ public class MovieTest extends TestCase {
 
     /**
      * This little bit of magic allows our test code to execute in
-     * the scope.
+     * the desired security scope.
      * <p/>
      * The src/test/resource/META-INF/ejb-jar.xml will cause this
      * EJB to be automatically discovered and deployed when
