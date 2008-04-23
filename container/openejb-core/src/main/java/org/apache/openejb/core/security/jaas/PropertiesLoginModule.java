@@ -106,7 +106,7 @@ public class PropertiesLoginModule implements LoginModule {
 
         String password = users.getProperty(user);
 
-        if (password == null) throw new FailedLoginException("User does exist");
+        if (password == null) throw new FailedLoginException("User does not exist");
         if (!password.equals(new String(tmpPassword))) throw new FailedLoginException("Password does not match");
 
         users.clear();
