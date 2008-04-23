@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.client.EJBRequest;
@@ -29,7 +30,7 @@ public class DeploymentIndex {
 
     DeploymentInfo[] deployments = null;
 
-    HashMap index = null;
+    Map index = null;
 
     public DeploymentIndex(DeploymentInfo[] deploymentInfos) {
         DeploymentInfo[] ds = deploymentInfos;
@@ -48,36 +49,28 @@ public class DeploymentIndex {
 
         DeploymentInfo info = null;
 
-        if (req.getDeploymentCode() > 0 && req.getDeploymentCode() < deployments.length) {
-            info = deployments[req.getDeploymentCode()];
-            if (info == null) {
-                throw new RemoteException("The deployement with this ID is null");
-            }
+        int deploymentCode = req.getDeploymentCode();
+        if (deploymentCode > 0 && deploymentCode < deployments.length) {
+            info = deployments[deploymentCode];
             req.setDeploymentId((String) info.getDeploymentID());
             return info;
         }
 
         if (req.getDeploymentId() == null) {
-            throw new RemoteException("Invalid deployment id and code: id=" + req.getDeploymentId() + ": code=" + req.getDeploymentCode());
+            throw new RemoteException(messages.format("invalidDeploymentIdAndCode", req.getDeploymentId(), req.getDeploymentCode()));
         }
 
         int idCode = getDeploymentIndex(req.getDeploymentId());
-
         if (idCode == -1) {
-            throw new RemoteException("No such deployment id and code: id=" + req.getDeploymentId() + ": code=" + req.getDeploymentCode());
+            throw new RemoteException(messages.format("noSuchDeploymentIdAndCode", req.getDeploymentId(), req.getDeploymentCode()));
         }
 
         req.setDeploymentCode(idCode);
 
         if (req.getDeploymentCode() < 0 || req.getDeploymentCode() >= deployments.length) {
-            throw new RemoteException("Invalid deployment id and code: id=" + req.getDeploymentId() + ": code=" + req.getDeploymentCode());
+            throw new RemoteException(messages.format("invalidDeploymentIdAndCode", req.getDeploymentId(), req.getDeploymentCode()));
         }
-
-        info = deployments[req.getDeploymentCode()];
-        if (info == null) {
-            throw new RemoteException("The deployement with this ID is null");
-        }
-        return info;
+        return deployments[req.getDeploymentCode()];
     }
 
     public int getDeploymentIndex(DeploymentInfo deployment) {

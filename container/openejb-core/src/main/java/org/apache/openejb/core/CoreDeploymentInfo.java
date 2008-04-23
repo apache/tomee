@@ -178,7 +178,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType
     ) throws SystemException {
-
+        if (context == null || beanClass == null) {
+            throw new NullPointerException("context or beanClass input parameter is null");
+        }
         this.context = context;
         this.pkClass = pkClass;
 

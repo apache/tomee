@@ -144,6 +144,9 @@ public class EJBRequest implements ClusterableRequest {
         }
 
         public void setMethodInstance(Method methodInstance) {
+            if (methodInstance == null) {
+                throw new NullPointerException("methodInstance input parameter is null");
+            }
             this.methodInstance = methodInstance;
             this.methodName = methodInstance.getName();
             this.methodParamTypes = methodInstance.getParameterTypes();
