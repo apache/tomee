@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -57,7 +58,7 @@ public class StatelessInstanceManager {
     protected int beanCount = 0;
     protected boolean strictPooling = false;
 
-    protected PoolQueue poolQueue = null;
+    protected HashMap<Object,Semaphore> semaphores;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private TransactionManager transactionManager;
@@ -74,7 +75,7 @@ public class StatelessInstanceManager {
         }
 
         if (this.strictPooling) {
-            poolQueue = new PoolQueue(timeout);
+            this.semaphores = new HashMap();
         }
     }
 
@@ -98,12 +99,14 @@ public class StatelessInstanceManager {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
         Stack pool = data.getPool();
-        Object bean = pool.pop();
-
-        while (strictPooling && bean == null && pool.size() >= poolLimit) {
-            poolQueue.waitForAvailableInstance();
-            bean = pool.pop();
+        if(strictPooling){
+            try {
+                semaphores.get(deploymentInfo.getDeploymentID()).acquire();
+            } catch (InterruptedException e2) {
+                throw new OpenEJBException("Unexpected Interruption of current thread: ",e2);
+            }
         }
+        Object bean = pool.pop();
 
         if (bean == null) {
 
@@ -278,7 +281,7 @@ public class StatelessInstanceManager {
 
         if (strictPooling) {
             pool.push(bean);
-            poolQueue.notifyWaitingThreads();
+            semaphores.get(deploymentInfo.getDeploymentID()).release();
         } else {
             if (pool.size() >= poolLimit) {
                 freeInstance(callContext, (Instance)bean);
@@ -320,37 +323,23 @@ public class StatelessInstanceManager {
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
         Data data = new Data(poolLimit);
-        deploymentInfo.setContainerData(data);
+        deploymentInfo.setContainerData(data);      
+        if (this.strictPooling) {
+            this.semaphores.put(deploymentInfo.getDeploymentID(), new Semaphore(poolLimit));
+        }
+
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
+        if (this.strictPooling) {
+            semaphores.remove(deploymentInfo.getDeploymentID());
+        }
         if (data == null) return;
         Stack pool = data.getPool();
         //TODO ejbRemove on each bean in pool.
         //clean pool
         deploymentInfo.setContainerData(null);
-    }
-
-    static class PoolQueue {
-        private final long waitPeriod;
-
-        public PoolQueue(long time) {
-            waitPeriod = time;
-        }
-
-        public synchronized void waitForAvailableInstance()
-                throws org.apache.openejb.InvalidateReferenceException {
-            try {
-                wait(waitPeriod);
-            } catch (InterruptedException ie) {
-                throw new org.apache.openejb.InvalidateReferenceException(new RemoteException("No instance available to service request", ie));
-            }
-        }
-
-        public synchronized void notifyWaitingThreads() {
-            notify();
-        }
     }
 
     private static final class Data {
