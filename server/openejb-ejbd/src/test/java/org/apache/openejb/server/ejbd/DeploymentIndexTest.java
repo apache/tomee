@@ -39,7 +39,7 @@ public class DeploymentIndexTest {
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
         dc = new DeploymentContext("aDeploymentId", null, null);
-        deploymentInfo = new CoreDeploymentInfo(dc, null, null, null, null, null, null, null, null, null, null);
+        deploymentInfo = new CoreDeploymentInfo(dc, DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null);
         deploymentIndex = new DeploymentIndex(new DeploymentInfo[] { deploymentInfo, deploymentInfo });
     }
 
