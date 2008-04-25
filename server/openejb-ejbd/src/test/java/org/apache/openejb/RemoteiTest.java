@@ -76,7 +76,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
 
-                serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
+                serviceDaemon = new ServiceDaemon(ejbServer, 0, "0.0.0.0");
 
             } catch (Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
