@@ -76,7 +76,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
 
-                serviceDaemon = new ServiceDaemon(ejbServer, 0, "0.0.0.0");
+                serviceDaemon = new ServiceDaemon(ejbServer, 0, "127.0.0.1");
 
             } catch (Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
@@ -103,7 +103,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         public Properties getContextEnvironment() {
             Properties props = new Properties();
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put(Context.PROVIDER_URL, "ejbd://localhost:" + port);
+            props.put(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port);
             return props;
         }
     }
