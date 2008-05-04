@@ -72,11 +72,16 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         public void init(Properties props) {
             try {
                 EjbServer ejbServer = new EjbServer();
+                // classpath should be scanned...
                 props.put("openejb.deployments.classpath", "true");
+                // ...and only the openejb-itests-beans should be considered as a deployment
+                props.put("openejb.deployments.classpath.include", ".*openejb-itests-beans.*");
+                // ...and have the openejb-itests-beans included in the deployments (it's a system app)
+                props.put("openejb.deployments.classpath.filter.systemapps", "false");
                 OpenEJB.init(props, new ServerFederation());
                 ejbServer.init(props);
 
-                serviceDaemon = new ServiceDaemon(ejbServer, 0, "127.0.0.1");
+                serviceDaemon = new ServiceDaemon(ejbServer, 0, "localhost");
 
             } catch (Exception e) {
                 throw new RuntimeException("Unable to initialize Test Server.", e);
@@ -103,7 +108,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         public Properties getContextEnvironment() {
             Properties props = new Properties();
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-            props.put(Context.PROVIDER_URL, "ejbd://127.0.0.1:" + port);
+            props.put(Context.PROVIDER_URL, "ejbd://localhost:" + port);
             return props;
         }
     }

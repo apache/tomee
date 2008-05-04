@@ -19,6 +19,8 @@ package org.apache.openejb.config;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,13 +83,17 @@ import org.apache.openejb.util.URISupport;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
+    static final String CONFIGURATION_PROPERTY = "openejb.configuration";
+    static final String CONF_FILE_PROPERTY = "openejb.conf.file";
+    private static final String DEBUGGABLE_VM_HACKERY_PROPERTY = "openejb.debuggable-vm-hackery";
+    private static final String DUCT_TAPE_PROPERTY = "duct tape";
+    protected static final String VALIDATION_SKIP_PROPERTY = "openejb.validation.skip";
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
     private static final Messages messages = new Messages(ConfigurationFactory.class);
 
-    private String configLocation = "";
+    private String configLocation;
 
     private OpenEjbConfiguration sys;
-
 
     private Openejb openejb;
 
@@ -99,9 +105,71 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this(false);
     }
 
-    public ConfigurationFactory(boolean offline, OpenEjbConfiguration configuration) {
+    public ConfigurationFactory(boolean offline) {
         this(offline, (DynamicDeployer) null);
-        sys = configuration;
+    }
+    
+    public ConfigurationFactory(boolean offline, DynamicDeployer preAutoConfigDeployer) {
+        this.offline = offline;
+        deploymentLoader = new DeploymentLoader();
+
+        Chain chain = new Chain();
+
+        chain.add(new ReadDescriptors());
+
+        chain.add(new AnnotationDeployer());
+
+        chain.add(new ClearEmptyMappedName());
+
+        boolean shouldValidate = !Boolean.parseBoolean(SystemInstance.get().getProperty(VALIDATION_SKIP_PROPERTY, "false"));
+        if (shouldValidate) {
+            chain.add(new ValidateModules());
+        } else {
+            DeploymentLoader.logger.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
+        }
+
+        chain.add(new InitEjbDeployments());
+
+        String debuggableVmHackery = SystemInstance.get().getProperty(DEBUGGABLE_VM_HACKERY_PROPERTY, "false");
+        if (Boolean.parseBoolean(debuggableVmHackery)){
+            chain.add(new DebuggableVmHackery());
+        }
+
+        chain.add(new WsDeployer());
+
+        chain.add(new CmpJpaConversion());
+        chain.add(new OpenEjb2Conversion());
+        chain.add(new SunConversion());
+        chain.add(new WlsConversion());
+
+        if (System.getProperty(DUCT_TAPE_PROPERTY) != null){
+            // must be after CmpJpaConversion since it adds new persistence-context-refs
+            chain.add(new GeronimoMappedName());
+        }
+        
+        if (null != preAutoConfigDeployer) {
+            chain.add(preAutoConfigDeployer);
+        }
+
+        if (offline) {
+            AutoConfig autoConfig = new AutoConfig(this);
+            autoConfig.autoCreateResources(false);
+            autoConfig.autoCreateContainers(false);
+            chain.add(autoConfig);
+        } else {
+            chain.add(new AutoConfig(this));
+        }
+
+        chain.add(new ApplyOpenejbJar());
+
+        // TODO: How do we want this plugged in?
+        chain.add(new OutputGeneratedDescriptors());
+
+        this.deployer = chain;
+    }
+
+    public ConfigurationFactory(boolean offline, OpenEjbConfiguration configuration) {
+        this(offline, (DynamicDeployer) null, configuration);
     }
 
     public ConfigurationFactory(boolean offline,
@@ -151,80 +219,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
-    public ConfigurationFactory(boolean offline) {
-        this(offline, (DynamicDeployer) null);
-    }
-    
-    public ConfigurationFactory(boolean offline, DynamicDeployer preAutoConfigDeployer) {
-        this.offline = offline;
-        deploymentLoader = new DeploymentLoader();
-
-        Chain chain = new Chain();
-
-        chain.add(new ReadDescriptors());
-
-        chain.add(new AnnotationDeployer());
-
-        chain.add(new ClearEmptyMappedName());
-
-        boolean shouldValidate = !SystemInstance.get().getProperty("openejb.validation.skip", "false").equalsIgnoreCase("true");
-        if (shouldValidate) {
-            chain.add(new ValidateModules());
-        } else {
-            DeploymentLoader.logger.info("Validation is disabled.");
-        }
-
-        chain.add(new InitEjbDeployments());
-
-        String debuggableVmHackery = SystemInstance.get().getProperty("openejb.debuggable-vm-hackery", "false");
-        if (debuggableVmHackery.equalsIgnoreCase("true")){
-            chain.add(new DebuggableVmHackery());
-        }
-
-        chain.add(new WsDeployer());
-
-        chain.add(new CmpJpaConversion());
-        chain.add(new OpenEjb2Conversion());
-        chain.add(new SunConversion());
-        chain.add(new WlsConversion());
-
-        if (System.getProperty("duct tape") != null){
-            // must be after CmpJpaConversion since it adds new persistence-context-refs
-            chain.add(new GeronimoMappedName());
-        }
-        
-        if (null != preAutoConfigDeployer) {
-            chain.add(preAutoConfigDeployer);
-        }
-
-        if (offline) {
-            AutoConfig autoConfig = new AutoConfig(this);
-            autoConfig.autoCreateResources(false);
-            autoConfig.autoCreateContainers(false);
-            chain.add(autoConfig);
-        } else {
-            chain.add(new AutoConfig(this));
-        }
-
-        chain.add(new ApplyOpenejbJar());
-
-        // TODO: How do we want this plugged in?
-        chain.add(new OutputGeneratedDescriptors());
-
-        this.deployer = chain;
-    }
-
     public void init(Properties props) throws OpenEJBException {
 
-        configLocation = props.getProperty("openejb.conf.file");
-
+        configLocation = props.getProperty(CONF_FILE_PROPERTY);
         if (configLocation == null) {
-            configLocation = props.getProperty("openejb.configuration");
+            configLocation = props.getProperty(CONFIGURATION_PROPERTY);
         }
 
         configLocation = ConfigUtils.searchForConfiguration(configLocation, props);
         if (configLocation != null) {
-            props.setProperty("openejb.configuration", configLocation);
+            props.setProperty(CONFIGURATION_PROPERTY, configLocation);
         }
 
     }
@@ -289,9 +293,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         for (Container declaration : openejb.getContainer()) {
             Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getType());
-
             if (infoClass == null) {
-                throw new OpenEJBException("Unrecognized container type " + declaration.getType());
+                throw new OpenEJBException(messages.format("unrecognizedContainerType", declaration.getType()));
             }
 
             ContainerInfo info = configureService(declaration, infoClass);
@@ -360,13 +363,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             } catch (URISyntaxException e) {
                 throw new OpenEJBException("Unable to parse URI parameters '" + uri + "'. URISyntaxException: " + e.getMessage());
             }
-
             if (object instanceof AbstractService) {
                 AbstractService service = (AbstractService) object;
-
                 service.setId(id);
-
-
                 service.setType(map.remove("type"));
                 service.setProvider(map.remove("provider"));
                 service.getProperties().putAll(map);
@@ -374,6 +373,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 Deployments deployments = (Deployments) object;
                 deployments.setDir(map.remove("dir"));
                 deployments.setJar(map.remove("jar"));
+                String cp = map.remove("classpath");
+                if (cp != null) {
+                    String[] paths = cp.split(File.pathSeparator);
+                    List<URL> urls = new ArrayList<URL>();
+                    for (String path : paths) {
+                        urls.add(new File(path).toURI().normalize().toURL());
+                    }
+                    deployments.setClasspath(new URLClassLoader(urls.toArray(new URL[0])));
+                }
             }
 
             return object;
@@ -552,11 +560,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             T info;
-
             try {
                 info = infoType.newInstance();
             } catch (Exception e) {
-                throw new OpenEJBException("Cannot instantiate class " + infoType.getName(), e);
+                throw new OpenEJBException(messages.format("configureService.cannotInstantiateClass", infoType.getName()), e);
             }
 
             info.service = provider.getService();
@@ -635,7 +642,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         try {
             service = serviceClass.newInstance();
         } catch (Exception e) {
-            throw new OpenEJBException("Cannot instantiate service class '" + serviceClass.getName() + "'", e);
+            throw new OpenEJBException(messages.format("configureService.cannotInstantiateClass", serviceClass.getName()), e);
         }
         service.setId(serviceId);
         service.setProvider(providerId);
@@ -768,18 +775,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return null;
     }
 
-    @SuppressWarnings({"UnusedDeclaration", "EmptyFinallyBlock"})
     private boolean isResourceType(String service, List<String> types, String type) {
-        boolean b = false;
-        try {
-            if (type == null) return b = true;
-            if (service == null) return b = false;
-            return b = types.contains(type);
-        } finally {
-//            System.out.println("isResourceType: "+b+" ["+service +"] ["+type+"] ["+ Join.join(",", types)+"]");
-//            Throwable throwable = new Exception().fillInStackTrace();
-//            throwable.printStackTrace(System.out);
-        }
+        if (type == null) return true;
+        if (service == null) return false;
+        return types.contains(type);
     }
 
     protected List<String> getContainerIds() {

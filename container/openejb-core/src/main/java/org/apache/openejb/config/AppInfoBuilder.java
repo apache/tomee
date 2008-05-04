@@ -91,14 +91,12 @@ class AppInfoBuilder {
         //
         //  Persistence Units
         //
-
         buildPersistenceModules(appModule, appInfo);
 
 
         //
         //  EJB Jars
         //
-
         Map<String,EjbJarInfo> ejbJarInfos = new TreeMap<String,EjbJarInfo>();
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             try {
@@ -156,26 +154,22 @@ class AppInfoBuilder {
         //
         //  Application Clients
         //
-
         buildClientModules(appModule, appInfo, jndiEncInfoBuilder);
 
         //
         //  J2EE Connectors
         //
-
         buildConnectorModules(appModule, appInfo);
 
         //
         //  Webapps
         //
-
         buildWebModules(appModule, jndiEncInfoBuilder, appInfo);
 
 
         //
         //  Final AppInfo creation
         //
-
         appInfo.jarPath = appModule.getJarLocation();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
@@ -200,7 +194,7 @@ class AppInfoBuilder {
         ReportValidationResults reportValidationResults = new ReportValidationResults();
         reportValidationResults.deploy(appModule);
 
-        logger.info("Loaded Module: " + appInfo.jarPath);
+        logger.info("config.appLoaded", appInfo.jarPath);
         return appInfo;
 
     }

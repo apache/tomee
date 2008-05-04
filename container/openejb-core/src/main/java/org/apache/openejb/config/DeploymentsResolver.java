@@ -18,8 +18,6 @@ package org.apache.openejb.config;
 
 import static org.apache.openejb.util.URLs.toFile;
 
-import static java.net.URLDecoder.decode;
-
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
@@ -30,7 +28,6 @@ import org.apache.xbean.finder.UrlSet;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +38,8 @@ import java.util.List;
  */
 public class DeploymentsResolver {
 
+    static final String DEPLOYMENTS_CLASSPATH_PROPERTY = "openejb.deployments.classpath";
+    static final String SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY = DEPLOYMENTS_CLASSPATH_PROPERTY;
     private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
@@ -139,8 +138,8 @@ public class DeploymentsResolver {
         deployments = new ArrayList<Deployments>(deployments);
 
         //// getOption /////////////////////////////////  BEGIN  ////////////////////
-        String flag = SystemInstance.get().getProperty("openejb.deployments.classpath", "true").toLowerCase();
-        boolean searchClassPath = flag.equals("true");
+        String flag = SystemInstance.get().getProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "true");
+        boolean searchClassPath = Boolean.parseBoolean(flag);
         //// getOption /////////////////////////////////  END  ////////////////////
 
         if (searchClassPath) {
@@ -316,7 +315,7 @@ public class DeploymentsResolver {
         String path;
         for (URL url : urls) {
             try {
-                Class moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
+                Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {

@@ -62,6 +62,7 @@
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
           <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar"</argLine>
+          <!-- 
           <systemProperties>
             <property>
               <name>openejb.home</name>
@@ -69,6 +70,7 @@
             </property>
           </systemProperties>
           <basedir>${project.build.directory}</basedir>
+           -->
         </configuration>
       </plugin>
     </plugins>
@@ -107,6 +109,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-client</artifactId>
+      <version>${version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-itests-beans</artifactId>
       <version>${version}</version>
       <scope>test</scope>
     </dependency>

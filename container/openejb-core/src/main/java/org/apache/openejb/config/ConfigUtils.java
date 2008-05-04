@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -48,6 +49,14 @@ public class ConfigUtils {
         return ConfigUtils.searchForConfiguration(path, SystemInstance.get().getProperties());
     }
 
+    /**
+     * TODO: It should always be assumed that the path input param is a URL or URL-convertible
+     * 
+     * @param path
+     * @param props
+     * @return
+     * @throws OpenEJBException
+     */
     public static String searchForConfiguration(String path, Properties props) throws OpenEJBException {
         File file = null;
         if (path != null) {
@@ -84,6 +93,17 @@ public class ConfigUtils {
             } catch (IOException ignored) {
             }
 
+            /*
+             * [4] Consider path as a URL resource - file: and jar: accepted by JaxbOpenejb.readConfig(String configFile)
+             */
+            try {
+                // verify if it's parseable according to URL rules
+                new URL(path);
+                // it's so return it unchanged
+                return path;
+            } catch (MalformedURLException ignored) {
+            }
+            
             logger.warning("Cannot find the configuration file [" + path + "], Trying conf/openejb.xml instead.");
         }
 

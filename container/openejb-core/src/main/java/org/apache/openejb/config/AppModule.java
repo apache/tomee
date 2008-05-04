@@ -51,8 +51,8 @@ public class AppModule implements DeploymentModule {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
         File file = new File(jarLocation);
-        moduleId = file.getName();
-        validation = new ValidationContext(AppModule.class, jarLocation);
+        this.moduleId = file.getName();
+        this.validation = new ValidationContext(AppModule.class, jarLocation);
     }
 
     public ValidationContext getValidation() {
