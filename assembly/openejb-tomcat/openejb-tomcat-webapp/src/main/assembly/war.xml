@@ -42,6 +42,10 @@
       </includes>
     </fileSet>
     <fileSet>
+      <directory>${basedir}/src/main/webapp</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
@@ -60,10 +64,6 @@
       <includes>
         <include>openejb-tomcat*.jar</include>
       </includes>
-      <excludes>
-        <!-- TODO: Fix the exclusion to pick up the proper version -->
-        <exclude>openejb-tomcat-3.0-incubating-SNAPSHOT-test.*</exclude>
-      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
@@ -75,7 +75,6 @@
           <exclude>org.apache.tomcat:annotations-api</exclude>
           <exclude>org.apache.tomcat:juli</exclude>
           <exclude>org.apache.tomcat:servlet-api</exclude>
-          <exclude>org.apache.geronimo.specs:geronimo-servlet_2.5_spec</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

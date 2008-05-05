@@ -95,7 +95,6 @@
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>3.4-r636442</xbeanVersion>
 
-
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
@@ -104,6 +103,9 @@
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.symbolic.name>${groupId}.${artifactId}</openejb.osgi.symbolic.name>
+    
+    <!-- Used in assembly/openejb-tomcat* projects  -->
+    <tomcatVersion>6.0.16</tomcatVersion>
   </properties>
 
   <build>
@@ -856,27 +858,28 @@
         <artifactId>commons-collections</artifactId>
         <version>3.2</version>
       </dependency>
-
       <dependency>
         <groupId>axis</groupId>
         <artifactId>axis</artifactId>
         <version>1.4</version>
       </dependency>
-
-
       <dependency>
           <groupId>wsdl4j</groupId>
           <artifactId>wsdl4j</artifactId>
           <version>1.6.1</version>
       </dependency>
-
       <dependency>
         <groupId>xmlunit</groupId>
         <artifactId>xmlunit</artifactId>
         <version>1.1</version>
         <scope>test</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>catalina</artifactId>
+        <version>${tomcatVersion}</version>
+        <optional>true</optional>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <distributionManagement>
