@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class WebAppInfo extends InfoObject {
     public String codebase;

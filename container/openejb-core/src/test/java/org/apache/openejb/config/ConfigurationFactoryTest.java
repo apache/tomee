@@ -27,8 +27,10 @@ import java.util.Properties;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
 
@@ -50,6 +52,20 @@ public class ConfigurationFactoryTest {
         EjbJarInfo info = factory.configureApplication(ejbJar);
         // not much to assert
         assertEquals(id, info.jarPath);
+    }
+
+    @Test
+    public void testConfigureApplicationWebModule() throws OpenEJBException {
+        SystemInstance.get().setProperty(ConfigurationFactory.VALIDATION_SKIP_PROPERTY, "false");
+        SystemInstance.get().setProperty(DeploymentsResolver.SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY, "false");
+        ConfigurationFactory factory = new ConfigurationFactory();
+        final String moduleId = "testConfigureApplicationWebModule";
+        WebApp webApp = new WebApp();
+        // no real classes engaged so disable metadata (annotation) processing
+        webApp.setMetadataComplete(true);
+        WebModule webModule = new WebModule(webApp, null, null, "/some/where.war", moduleId);
+        WebAppInfo info = factory.configureApplication(webModule);
+        assertEquals(moduleId, info.moduleId);
     }
 
     @Test
@@ -78,22 +94,22 @@ public class ConfigurationFactoryTest {
         assertEquals(0, openEjbConfig.containerSystem.applications.size());
     }
 
-//    @Test
-//    public void testConfigurationFactoryBooleanOpenEjbConfiguration() throws OpenEJBException {
-//        final boolean offline = false;
-//        final OpenEjbConfiguration openEjbConfiguration = new OpenEjbConfiguration();
-//        ConfigurationFactory factory = new ConfigurationFactory(offline, openEjbConfiguration);
-//        assertEquals(openEjbConfiguration, factory.getOpenEjbConfiguration());
-//    }
+    @Test
+    public void testConfigurationFactoryBooleanOpenEjbConfiguration() throws OpenEJBException {
+        final boolean offline = false;
+        final OpenEjbConfiguration openEjbConfiguration = new OpenEjbConfiguration();
+        ConfigurationFactory factory = new ConfigurationFactory(offline, openEjbConfiguration);
+        assertEquals(openEjbConfiguration, factory.getOpenEjbConfiguration());
+    }
 
-//    @Test
-//    public void testConfigurationFactoryBooleanDynamicDeployerOpenEjbConfiguration() throws OpenEJBException {
-//        final boolean offline = false;
-//        final DynamicDeployer dynamicDeployer = null;
-//        final OpenEjbConfiguration openEjbConfiguration = new OpenEjbConfiguration();
-//        ConfigurationFactory factory = new ConfigurationFactory(offline, dynamicDeployer, openEjbConfiguration);
-//        assertEquals(openEjbConfiguration, factory.getOpenEjbConfiguration());
-//    }
+    @Test
+    public void testConfigurationFactoryBooleanDynamicDeployerOpenEjbConfiguration() throws OpenEJBException {
+        final boolean offline = false;
+        final DynamicDeployer dynamicDeployer = null;
+        final OpenEjbConfiguration openEjbConfiguration = new OpenEjbConfiguration();
+        ConfigurationFactory factory = new ConfigurationFactory(offline, dynamicDeployer, openEjbConfiguration);
+        assertEquals(openEjbConfiguration, factory.getOpenEjbConfiguration());
+    }
 
     @Test
     public void testToConfigDeclaration() throws Exception {

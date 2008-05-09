@@ -253,6 +253,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
+        if (sys != null) {
+            return sys;
+        }
+        
         if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
