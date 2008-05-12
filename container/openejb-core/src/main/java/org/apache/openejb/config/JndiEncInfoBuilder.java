@@ -344,6 +344,11 @@ public class JndiEncInfoBuilder {
                 continue;
             }
 
+            if (env.getEnvEntryType() == null){
+                // TODO: Maybe Move this into the EnvEntry class
+                env.setEnvEntryType("java.lang.String");
+            }
+            
             EnvEntryInfo info = new EnvEntryInfo();
 
             info.name = env.getEnvEntryName();
