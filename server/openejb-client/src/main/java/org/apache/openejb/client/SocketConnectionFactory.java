@@ -24,6 +24,8 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.ConnectException;
 import java.util.Properties;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 public class SocketConnectionFactory implements ConnectionFactory {
 
@@ -45,11 +47,24 @@ public class SocketConnectionFactory implements ConnectionFactory {
         InputStream socketIn = null;
 
         protected void open(URI uri) throws IOException {
+
             /*-----------------------*/
             /* Open socket to server */
             /*-----------------------*/
             try {
-                socket = new Socket(uri.getHost(), uri.getPort());
+                if (uri.getScheme().equalsIgnoreCase("ejbds")) {
+                    SSLSocket sslSocket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(uri.getHost(), uri.getPort());
+                    // use an anonymous cipher suite so that a KeyManager or
+                    // TrustManager is not needed
+                    // NOTE: this assumes that the cipher suite is known. A check
+                    // -should- be done first.
+                    final String[] enabledCipherSuites = {"SSL_DH_anon_WITH_RC4_128_MD5"};
+                    sslSocket.setEnabledCipherSuites(enabledCipherSuites);
+                    socket = sslSocket;
+                } else {
+                    socket = new Socket(uri.getHost(), uri.getPort());
+                }
+
                 socket.setTcpNoDelay(true);
             } catch (ConnectException e) {
                 throw new ConnectException("Cannot connect to server '"+uri.toString()+"'.  Check that the server is started and that the specified serverURL is correct.");

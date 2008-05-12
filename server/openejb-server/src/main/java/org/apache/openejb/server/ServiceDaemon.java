@@ -16,12 +16,22 @@
  */
 package org.apache.openejb.server;
 
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.Properties;
 
 /**
  */
@@ -44,8 +54,10 @@ public class ServiceDaemon implements ServerService {
     boolean stop = true;
 
     private int backlog;
+
     private String ip;
 
+    private boolean secure;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -70,6 +82,16 @@ public class ServiceDaemon implements ServerService {
         String value = p.getProperty(property);
         try {
             if (value != null) return Integer.parseInt(value);
+            else return defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static boolean getBoolean(Properties p, String property, boolean defaultValue){
+        String value = p.getProperty(property);
+        try {
+            if (value != null) return Boolean.parseBoolean(value);
             else return defaultValue;
         } catch (NumberFormatException e) {
             return defaultValue;
@@ -108,6 +130,8 @@ public class ServiceDaemon implements ServerService {
 
         backlog = getInt(props, "backlog", threads);
 
+        secure = getBoolean(props, "secure", false);
+
         next.init(props);
     }
 
@@ -122,7 +146,15 @@ public class ServiceDaemon implements ServerService {
 
             ServerSocket serverSocket;
             try {
-                serverSocket = new ServerSocket(port, backlog, address);
+                if (secure) {
+                    ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
+                    serverSocket = factory.createServerSocket(port, backlog, address);
+                    final String[] enabledCipherSuites = { "SSL_DH_anon_WITH_RC4_128_MD5" };
+                    ((SSLServerSocket) serverSocket).setEnabledCipherSuites(enabledCipherSuites);
+                } else {
+                    serverSocket = new ServerSocket(port, backlog, address);
+                }
+
                 port = serverSocket.getLocalPort();
                 serverSocket.setSoTimeout(timeout);
             } catch (Exception e) {
