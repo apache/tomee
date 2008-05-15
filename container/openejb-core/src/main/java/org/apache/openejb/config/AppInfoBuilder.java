@@ -415,9 +415,30 @@ class AppInfoBuilder {
 
                 // Handle Properties
                 org.apache.openejb.jee.jpa.unit.Properties puiProperties = persistenceUnit.getProperties();
+
                 if (puiProperties != null) {
                     for (Property property : puiProperties.getProperty()) {
                         info.properties.put(property.getName(), property.getValue());
+                    }
+                }
+
+                if (info.provider.equals("org.hibernate.ejb.HibernatePersistence")){
+
+                    // The result is that OpenEJB-specific configuration can be avoided when
+                    // using OpenEJB + Hibernate.  A second benefit is that if another vendor
+                    // is used in production, the value will automatically be reset for using
+                    // OpenEJB in the test environment.  Ensuring the strategy starts with
+                    // "org.hibernate.transaction" allows for a custom lookup strategy to be
+                    // used and not overridden.
+
+                    String lookupProperty = "hibernate.transaction.manager_lookup_class";
+                    String openejbLookupClass = "org.apache.openejb.hibernate.TransactionManagerLookup";
+
+                    String className = info.properties.getProperty(lookupProperty);
+
+                    if (className == null || className.startsWith("org.hibernate.transaction")){
+                        info.properties.setProperty(lookupProperty, openejbLookupClass);
+                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                     }
                 }
 
