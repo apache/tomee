@@ -17,13 +17,27 @@
 package org.apache.openejb.core.ivm;
 
 public class IntraVmCopyMonitor {
+    public static enum State {
+        NONE, COPY(true), CLASSLOADER_COPY(true), PASSIVATION;
+
+        private final boolean copy;
+
+        State() {
+           this.copy = false;
+        }
+
+        State(boolean copy) {
+           this.copy = copy;
+        }
+
+        public boolean isCopy() {
+            return copy;
+        }
+    }
+
     private static final ThreadLocal<IntraVmCopyMonitor> threadMonitor = new ThreadLocal<IntraVmCopyMonitor>();
 
-    private boolean intraVmCopyOperation = false;
-
-    private boolean statefulPassivationOperation = false;
-
-    private boolean crossClassLoaderOperation = false;
+    private State state = State.NONE;
 
     private IntraVmCopyMonitor() {
     }
@@ -45,48 +59,51 @@ public class IntraVmCopyMonitor {
         return monitor;
     }
 
-    public static void preCopyOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.intraVmCopyOperation = true;
+    public static void pre(State state){
+        getMonitor().state = state;
     }
 
-    public static void postCopyOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.intraVmCopyOperation = false;
+    public static void post() {
+        pre(State.NONE);
+    }
+
+    public static State state(){
+        return getMonitor().state;
     }
 
     public static void prePassivationOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.statefulPassivationOperation = true;
+        pre(State.PASSIVATION);
     }
 
     public static void postPassivationOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.statefulPassivationOperation = false;
+        post();
     }
 
     public static void preCrossClassLoaderOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.crossClassLoaderOperation = true;
+        pre(State.CLASSLOADER_COPY);
     }
 
     public static void postCrossClassLoaderOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        monitor.crossClassLoaderOperation = false;
+        post();
+    }
+
+    public static void preCopyOperation() {
+        pre(State.COPY);
+    }
+
+    public static void postCopyOperation() {
+        post();
     }
 
     public static boolean isIntraVmCopyOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        return monitor.intraVmCopyOperation;
+        return state() == State.COPY;
     }
 
     public static boolean isStatefulPassivationOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        return monitor.statefulPassivationOperation;
+        return state() == State.PASSIVATION;
     }
 
     public static boolean isCrossClassLoaderOperation() {
-        IntraVmCopyMonitor monitor = getMonitor();
-        return monitor.crossClassLoaderOperation;
+        return state() == State.CLASSLOADER_COPY;
     }
 }
