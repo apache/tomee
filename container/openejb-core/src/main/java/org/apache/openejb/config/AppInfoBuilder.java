@@ -422,7 +422,7 @@ class AppInfoBuilder {
                     }
                 }
 
-                if (info.provider.equals("org.hibernate.ejb.HibernatePersistence")){
+                if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider)){
 
                     // The result is that OpenEJB-specific configuration can be avoided when
                     // using OpenEJB + Hibernate.  A second benefit is that if another vendor
