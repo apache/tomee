@@ -653,7 +653,7 @@
           class-name="org.apache.openejb.resource.activemq.ActiveMQResourceAdapter">
 
     # Broker configuration
-    BrokerXmlConfig broker:(tcp://localhost:61616)?useJmx=false
+    BrokerXmlConfig broker:()/localhost?persistent=false
 
     # Broker address (vm transport may not work with TxRecovery on)
     ServerUrl vm://localhost?async=true
