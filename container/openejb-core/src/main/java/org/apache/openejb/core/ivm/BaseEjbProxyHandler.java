@@ -16,6 +16,10 @@
  */
 package org.apache.openejb.core.ivm;
 
+import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.COPY;
+import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.CLASSLOADER_COPY;
+import static org.apache.openejb.core.ivm.IntraVmCopyMonitor.State.NONE;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -60,6 +64,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializable {
     private static final String OPENEJB_LOCALCOPY = "openejb.localcopy";
+    private IntraVmCopyMonitor.State strategy = NONE;
 
     private static class ProxyRegistry {
 
@@ -91,8 +96,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     * or a property of the Property argument when invoking OpenEJB.init(props).  This variable is set to that
     * property in the static block for this class.
     */
-    protected boolean doIntraVmCopy;
-    protected boolean doCrossClassLoaderCopy;
+    private boolean doIntraVmCopy;
+    private boolean doCrossClassLoaderCopy;
     private static final boolean REMOTE_COPY_ENABLED = parseRemoteCopySetting();
     protected final InterfaceType interfaceType;
     private transient WeakHashMap<Class,Object> interfaces;
@@ -110,10 +115,10 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
         }
 
-        this.doIntraVmCopy = !interfaceType.isLocal();
+        this.setDoIntraVmCopy(!interfaceType.isLocal());
 
         if (!interfaceType.isLocal()){
-            doIntraVmCopy = REMOTE_COPY_ENABLED;
+            setDoIntraVmCopy(REMOTE_COPY_ENABLED);
         }
 
         setInterfaces(interfaces);
@@ -124,6 +129,22 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             // Then arbitrarily pick the first interface
             setMainInterface(interfaces.get(0));
         }
+    }
+
+    protected void setDoIntraVmCopy(boolean doIntraVmCopy) {
+        this.doIntraVmCopy = doIntraVmCopy;
+        setStrategy();
+    }
+
+    protected void setDoCrossClassLoaderCopy(boolean doCrossClassLoaderCopy) {
+        this.doCrossClassLoaderCopy = doCrossClassLoaderCopy;
+        setStrategy();
+    }
+
+    private void setStrategy() {
+        if (!doIntraVmCopy) strategy = NONE;
+        else if (doCrossClassLoaderCopy) strategy = CLASSLOADER_COPY;
+        else strategy = COPY;
     }
 
     /**
@@ -196,20 +217,11 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public void setIntraVmCopyMode(boolean on) {
-        doIntraVmCopy = on;
+        setDoIntraVmCopy(on);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (isInvalidReference) {
-            if (interfaceType.isComponent() && interfaceType.isLocal()){
-                throw new NoSuchObjectLocalException("reference is invalid");
-            } else if (interfaceType.isComponent() || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
-                throw new NoSuchObjectException("reference is invalid");
-            } else {
-                throw new javax.ejb.NoSuchEJBException("reference is invalid");
-            }
-        }
-        getDeploymentInfo(); // will throw an exception if app has been undeployed.
+        isValidReference(method);
 
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
@@ -217,56 +229,19 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             if (methodName.equals("toString")) return toString();
             else if (methodName.equals("equals")) return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
             else if (methodName.equals("hashCode")) return new Integer(hashCode());
-            else
-                throw new UnsupportedOperationException("Unkown method: " + method);
+            else throw new UnsupportedOperationException("Unkown method: " + method);
         } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
 
             if (methodName.equals("writeReplace")) return _writeReplace(proxy);
-            else
-                throw new UnsupportedOperationException("Unkown method: " + method);
+            else throw new UnsupportedOperationException("Unkown method: " + method);
         }
 
         Class interfce = getInvokedInterface(method);
 
-        // Should we copy arguments as required by the specification?
-        if (doIntraVmCopy && !doCrossClassLoaderCopy) {
+        if (strategy == CLASSLOADER_COPY) {
 
-            if (args != null && args.length > 0) {
-                IntraVmCopyMonitor.preCopyOperation();
-                try {
-                    args = copyArgs(args);
-                } finally {
-                    IntraVmCopyMonitor.postCopyOperation();
-                }
-            }
-            Object returnObj = null;
-            try {
-                returnObj = _invoke(proxy, interfce, method, args);
-            } catch (Throwable throwable) {
-                // exceptions are return values and must be coppied
-                IntraVmCopyMonitor.preCopyOperation();
-                try {
-                    throwable = (Throwable) copyObj(throwable);
-                    throw convertException(throwable, method, interfce);
-                } finally {
-                    IntraVmCopyMonitor.postCopyOperation();
-                }
-            }
-
-            if (returnObj != null) {
-                IntraVmCopyMonitor.preCopyOperation();
-                try {
-                    returnObj = copyObj(returnObj);
-                } finally {
-                    IntraVmCopyMonitor.postCopyOperation();
-                }
-            }
-            return returnObj;
-
-        } else if (doIntraVmCopy) {
-            // copy method and arguments to EJB's class loader
-            IntraVmCopyMonitor.preCrossClassLoaderOperation();
+            IntraVmCopyMonitor.pre(strategy);
             ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
             try {
@@ -274,55 +249,57 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     args = copyArgs(args);
                 }
                 method = copyMethod(method);
-                interfce = (Class) copyObj(interfce);
+                interfce = copyObj(interfce);
             } finally {
                 Thread.currentThread().setContextClassLoader(oldClassLoader);
-                IntraVmCopyMonitor.postCrossClassLoaderOperation();
+                IntraVmCopyMonitor.post();
             }
 
-            // invoke method
-            Object returnObj = null;
-            try {
-                returnObj = _invoke(proxy, interfce, method, args);
-            } catch (Throwable throwable) {
-                // exceptions are return values and must be coppied
-                IntraVmCopyMonitor.preCrossClassLoaderOperation();
+        } else if (strategy == COPY) {
+
+            if (args != null && args.length > 0) {
+                IntraVmCopyMonitor.pre(strategy);
                 try {
-                    throwable = (Throwable) copyObj(throwable);
-                    throw convertException(throwable, method, interfce);
+                    args = copyArgs(args);
                 } finally {
-                    IntraVmCopyMonitor.postCrossClassLoaderOperation();
+                    IntraVmCopyMonitor.post();
                 }
-            }
-
-            if (returnObj != null) {
-                IntraVmCopyMonitor.preCrossClassLoaderOperation();
-                try {
-                    returnObj = copyObj(returnObj);
-                } finally {
-                    IntraVmCopyMonitor.postCrossClassLoaderOperation();
-                }
-            }
-            return returnObj;
-        } else {
-            try {
-                /*
-                     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
-                     * Java RMI copy semantics which requires that the all arguments be passed by value (copied) and
-                     * never passed as references.  However, it is possible for the system administrator to turn off the
-                     * copy operation so that arguments and return values are passed by reference as a performance optimization.
-                     * Simply setting the org.apache.openejb.core.EnvProps.INTRA_VM_COPY property to FALSE will cause
-                     * IntraVM to bypass the copy operations; arguments and return values will be passed by reference not value.
-                     * This property is, by default, always TRUE but it can be changed to FALSE by setting it as a System property
-                     * or a property of the Property argument when invoking OpenEJB.init(props).  The doIntraVmCopy variable is set to that
-                     * property in the static block for this class.
-                     */
-
-                return _invoke(proxy, interfce, method, args);
-            } catch (Throwable t) {
-                throw convertException(t, method, interfce);
             }
         }
+
+        try {
+
+            Object returnValue = _invoke(proxy, interfce, method, args);
+
+            return copy(strategy, returnValue);
+        } catch (Throwable throwable) {
+            throwable = copy(strategy, throwable);
+            throw convertException(throwable, method, interfce);
+        }
+    }
+
+    private <T> T copy(IntraVmCopyMonitor.State strategy, T object) throws IOException, ClassNotFoundException {
+        if (object == null || !strategy.isCopy()) return object;
+
+        IntraVmCopyMonitor.pre(strategy);
+        try {
+            return (T) copyObj(object);
+        } finally {
+            IntraVmCopyMonitor.post();
+        }
+    }
+
+    private void isValidReference(Method method) throws NoSuchObjectException {
+        if (isInvalidReference) {
+            if (interfaceType.isComponent() && interfaceType.isLocal()){
+                throw new NoSuchObjectLocalException("reference is invalid");
+            } else if (interfaceType.isComponent() || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())) {
+                throw new NoSuchObjectException("reference is invalid");
+            } else {
+                throw new NoSuchEJBException("reference is invalid");
+            }
+        }
+        getDeploymentInfo(); // will throw an exception if app has been undeployed.
     }
 
     /**
@@ -475,7 +452,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     /* change dereference to copy */
-    protected Object copyObj(Object object) throws IOException, ClassNotFoundException {
+    protected <T> T copyObj(T object) throws IOException, ClassNotFoundException {
     	// Check for primitive and other known class types that are immutable.  If detected
     	// we can safely return them.
     	if (object == null) return null;
@@ -514,7 +491,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ObjectInputStream in = new EjbObjectInputStream(bais);
         Object obj = in.readObject();
-        return obj;
+        return (T) obj;
     }
 
     public void invalidateReference() {
@@ -589,7 +566,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         container = (RpcContainer) getDeploymentInfo().getContainer();
 
         if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
-            doCrossClassLoaderCopy = true;
+            setDoCrossClassLoaderCopy(true);
         }
 
         setInterfaces((List<Class>) in.readObject());
