@@ -38,6 +38,7 @@
     <module>injection-of-env-entry</module>
     <module>injection-of-datasource</module>
     <module>injection-of-entitymanager</module>
+    <module>injection-of-connectionfactory</module>
     <module>testing-transactions</module>
     <module>testing-security</module>
     <module>interceptors</module>
