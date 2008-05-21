@@ -245,9 +245,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
             try {
-                if (args != null && args.length > 0) {
-                    args = copyArgs(args);
-                }
+                args = copyArgs(args);
                 method = copyMethod(method);
                 interfce = copyObj(interfce);
             } finally {
@@ -255,15 +253,13 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 IntraVmCopyMonitor.post();
             }
 
-        } else if (strategy == COPY) {
+        } else if (strategy == COPY && args != null && args.length > 0) {
 
-            if (args != null && args.length > 0) {
-                IntraVmCopyMonitor.pre(strategy);
-                try {
-                    args = copyArgs(args);
-                } finally {
-                    IntraVmCopyMonitor.post();
-                }
+            IntraVmCopyMonitor.pre(strategy);
+            try {
+                args = copyArgs(args);
+            } finally {
+                IntraVmCopyMonitor.post();
             }
         }
 
@@ -437,6 +433,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     protected abstract Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable;
 
     protected Object[] copyArgs(Object[] objects) throws IOException, ClassNotFoundException {
+        if (objects == null) return objects;
         /* 
             while copying the arguments is necessary. Its not necessary to copy the array itself,
             because they array is created by the Proxy implementation for the sole purpose of 
