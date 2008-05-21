@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 public class ProxyManager {
 
-    private static volatile ProxyFactory defaultFactory;
+    private static volatile ProxyFactory defaultFactory = new Jdk13ProxyFactory();
     private static final HashMap factories = new HashMap();
     private static volatile String defaultFactoryName;
 
@@ -64,11 +64,6 @@ public class ProxyManager {
         return defaultFactory.getInvocationHandler(proxy);
     }
 
-    public static Object setInvocationHandler(Object proxy, InvocationHandler handler) {
-        checkDefaultFactory();
-        return defaultFactory.setInvocationHandler(proxy, handler);
-    }
-
     public static Class getProxyClass(Class interfaceType) throws IllegalAccessException {
         return getProxyClass(new Class[]{interfaceType});
     }
@@ -90,11 +85,6 @@ public class ProxyManager {
     public static boolean isProxyClass(Class cl) {
         checkDefaultFactory();
         return defaultFactory.isProxyClass(cl);
-    }
-
-    public static Object newProxyInstance(Class proxyClass) throws IllegalAccessException {
-        checkDefaultFactory();
-        return defaultFactory.newProxyInstance(proxyClass);
     }
 
 }

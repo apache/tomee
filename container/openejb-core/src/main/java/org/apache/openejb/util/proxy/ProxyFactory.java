@@ -26,8 +26,6 @@ public interface ProxyFactory {
 
     public InvocationHandler getInvocationHandler(Object proxy) throws IllegalArgumentException;
 
-    public Object setInvocationHandler(Object proxy, InvocationHandler handler) throws IllegalArgumentException;
-
     public Class getProxyClass(Class interfce) throws IllegalArgumentException;
 
     public Class getProxyClass(Class[] interfaces) throws IllegalArgumentException;
@@ -49,6 +47,5 @@ public interface ProxyFactory {
      */
     public Object newProxyInstance(Class[] interfaces, InvocationHandler h) throws IllegalArgumentException;
 
-    public Object newProxyInstance(Class proxyClass) throws IllegalArgumentException;
 }
 

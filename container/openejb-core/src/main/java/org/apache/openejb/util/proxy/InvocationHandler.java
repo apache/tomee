@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.util.proxy;
 
-import java.lang.reflect.Method;
+public interface InvocationHandler extends java.lang.reflect.InvocationHandler {
 
-public interface InvocationHandler {
+    public InvocationHandler getInvocationHandler();
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable;
 }

@@ -220,9 +220,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         setDoIntraVmCopy(on);
     }
 
+    public InvocationHandler getInvocationHandler() {
+        return this;
+    }
+
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         isValidReference(method);
 
+        if (args == null) args = new Object[]{};
+        
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
 
