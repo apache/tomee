@@ -48,6 +48,8 @@ public class iTest extends org.apache.openejb.test.TestSuite {
         System.setProperty("openejb.test.server", org.apache.openejb.test.IvmTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
+        System.setProperty("openejb.test.jms", org.apache.openejb.test.ActiveMqLocalTestJms.class.getName());
+
         System.setProperty("openejb.deployments.classpath", "true");
 
         // m2 executes tests in a module home directory (e.g. container/openejb-persistence)
