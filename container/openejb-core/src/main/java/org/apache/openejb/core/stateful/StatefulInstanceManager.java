@@ -543,9 +543,11 @@ public class StatefulInstanceManager {
             return new InvalidateReferenceException(new TransactionRolledbackException(t));
         } else if (t instanceof RemoteException) {
             return new InvalidateReferenceException(t);
-        } else {
+        } else if (t instanceof EJBException) {
             EJBException e = (EJBException) t;
             return new InvalidateReferenceException(new RemoteException(e.getMessage(), e.getCausedByException()));
+        } else {
+            return new InvalidateReferenceException(new RemoteException().initCause(t));
         }
 
     }

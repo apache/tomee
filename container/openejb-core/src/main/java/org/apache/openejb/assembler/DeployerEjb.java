@@ -155,9 +155,6 @@ public class DeployerEjb implements Deployer {
             if (e instanceof OpenEJBException) {
                 throw (OpenEJBException) e;
             }
-            if (e instanceof Error) {
-                throw (OpenEJBException) e;
-            }
             throw new OpenEJBException(e);
         }
     }
