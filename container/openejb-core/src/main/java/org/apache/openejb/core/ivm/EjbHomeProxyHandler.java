@@ -200,7 +200,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             */
         } catch (RemoteException re) {
             if (interfaceType.isLocal()) {
-                throw new EJBException(re.getMessage(), (Exception) re.detail);
+                throw new EJBException(re.getMessage()).initCause(re.detail);
             } else {
                 throw re;
             }
@@ -210,7 +210,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             if (cause instanceof RemoteException && interfaceType.isLocal()) {
                 RemoteException re = (RemoteException) cause;
                 Throwable detail = (re.detail != null) ? re.detail : re;
-                cause = new EJBException(re.getMessage(), (Exception) detail);
+                cause = new EJBException(re.getMessage()).initCause(detail);
             }
             throw cause;
             /*
@@ -226,7 +226,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     if (interfaceType.isLocal()) {
                         throw (AccessLocalException)new AccessLocalException(exc.getMessage()).initCause(exc);
                     } else {
-                        throw new AccessException(exc.getMessage(), (Exception)exc);
+                        throw new AccessException(exc.getMessage()).initCause(exc);
                     }
                 }
 
@@ -238,13 +238,13 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             */
         } catch (org.apache.openejb.SystemException se) {
             if (interfaceType.isLocal()) {
-                throw new EJBException("Container has suffered a SystemException", (Exception) se.getRootCause());
+                throw new EJBException("Container has suffered a SystemException").initCause(se.getRootCause());
             } else {
                 throw new RemoteException("Container has suffered a SystemException", se.getRootCause());
             }
         } catch (org.apache.openejb.OpenEJBException oe) {
             if (interfaceType.isLocal()) {
-                throw new EJBException("Unknown Container Exception", (Exception) oe.getRootCause());
+                throw new EJBException("Unknown Container Exception").initCause(oe.getRootCause());
             } else {
                 throw new RemoteException("Unknown Container Exception", oe.getRootCause());
             }
