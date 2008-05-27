@@ -32,7 +32,7 @@
 
   <servlet>
     <servlet-name>ServerServlet</servlet-name>
-    <servlet-class>org.apache.openejb.tomcat.common.ServerServlet</servlet-class>
+    <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
   </servlet>
 
   <servlet>

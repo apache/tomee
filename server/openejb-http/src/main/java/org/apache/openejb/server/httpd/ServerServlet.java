@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.tomcat.common;
+package org.apache.openejb.server.httpd;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceException;
