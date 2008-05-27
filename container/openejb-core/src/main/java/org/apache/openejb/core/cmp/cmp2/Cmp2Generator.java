@@ -24,6 +24,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import javax.ejb.EntityContext;
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -54,6 +55,7 @@ public class Cmp2Generator implements Opcodes {
     private final CmpField pkField;
     private final Class primKeyClass;
     private final List<Method> selectMethods = new ArrayList<Method>();
+    private final Class beanClass;
 
     public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmpFields) {
         if (pkField == null && primKeyClass == null) throw new NullPointerException("Both pkField and primKeyClass are null");
@@ -87,6 +89,8 @@ public class Cmp2Generator implements Opcodes {
                 addSelectMethod(method);
             }
         }
+
+        this.beanClass = beanClass;
 
         cw = new ClassWriter(true);
     }
@@ -164,9 +168,26 @@ public class Cmp2Generator implements Opcodes {
             createSelectMethod(selectMethod);
         }
 
+        if (!hasMethod(beanClass, "ejbActivate")) createEjbActivate();
+        if (!hasMethod(beanClass, "ejbPassivate")) createEjbPassivate();
+        if (!hasMethod(beanClass, "ejbLoad")) createEjbLoad();
+        if (!hasMethod(beanClass, "ejbStore")) createEjbStore();
+        if (!hasMethod(beanClass, "ejbRemove")) createEjbRemove();
+        if (!hasMethod(beanClass, "setEntityContext", EntityContext.class)) createSetEntityContext();
+        if (!hasMethod(beanClass, "unsetEntityContext")) createUnsetEntityContext();
+
         cw.visitEnd();
 
         return cw.toByteArray();
+    }
+
+    private boolean hasMethod(Class beanClass, String name, Class... args) {
+        try {
+            Method method = beanClass.getMethod(name, args);
+            return !Modifier.isAbstract(method.getModifiers());
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     private void createConstructor() {
@@ -832,5 +853,69 @@ public class Cmp2Generator implements Opcodes {
             mv.visitMethodInsn(INVOKEVIRTUAL, objectType.getInternalName(), toPrimitive.getName(), Type.getMethodDescriptor(toPrimitive));
         }
 
+    }
+
+//    public void createEjbPostCreate() {
+//        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbPostCreate", "(Ljava/lang/String;Ljava/lang/String;I)V", null, null);
+//        mv.visitCode();
+//        mv.visitInsn(RETURN);
+//        mv.visitMaxs(0, 4);
+//        mv.visitEnd();
+//    }
+
+    public void createEjbActivate() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbActivate", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
+    }
+
+    public void createEjbLoad() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbLoad", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
+    }
+
+    public void createEjbPassivate() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbPassivate", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
+    }
+
+    public void createEjbRemove() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbRemove", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
+    }
+
+    public void createEjbStore() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbStore", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
+    }
+
+    public void createSetEntityContext() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "setEntityContext", "(Ljavax/ejb/EntityContext;)V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 2);
+        mv.visitEnd();
+    }
+
+    public void createUnsetEntityContext() {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "unsetEntityContext", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 1);
+        mv.visitEnd();
     }
 }
