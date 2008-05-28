@@ -27,12 +27,15 @@ public class Cmp1Generator implements Opcodes {
     private String beanClassName;
     private ClassWriter cw;
     private boolean unknownPk;
+    private final PostCreateGenerator postCreateGenerator;
 
     public Cmp1Generator(String cmpImplClass, Class beanClass) {
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
 
         cw = new ClassWriter(true);
+
+        postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
 
     public byte[] generate() {
@@ -47,6 +50,8 @@ public class Cmp1Generator implements Opcodes {
 
         createConstructor();
 
+        postCreateGenerator.generate();
+        
         cw.visitEnd();
 
         return cw.toByteArray();

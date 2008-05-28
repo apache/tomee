@@ -849,7 +849,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     */
                     if (this.componentType == BeanType.BMP_ENTITY || this.componentType == BeanType.CMP_ENTITY) {
                         ejbCreateName.insert(3, "Post");
-                        Method postCreateMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
+                        Class clazz = beanClass;
+                        if (cmpImplClass != null) clazz = cmpImplClass;
+                        Method postCreateMethod = clazz.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                         postCreateMethodMap.put(createMethod, postCreateMethod);
                     }
                     /*

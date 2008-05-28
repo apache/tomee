@@ -17,11 +17,11 @@
 package org.apache.openejb.config.rules;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.SessionBean;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Method;
@@ -42,6 +42,10 @@ public class CheckMethods extends ValidationBase {
                 check_localInterfaceMethods(b);
                 check_localHomeInterfaceMethods(b);
             }
+
+            check_unusedCreateMethods(b);
+            check_unusedPostCreateMethods(b);
+
         }
     }
 
@@ -57,10 +61,8 @@ public class CheckMethods extends ValidationBase {
 
         if (check_hasCreateMethod(b, bean, home)) {
             check_createMethodsAreImplemented(b, bean, home);
-            check_postCreateMethodsAreImplemented(b, bean, home);
+//            check_postCreateMethodsAreImplemented(b, bean, home);
         }
-
-        check_unusedCreateMethods(b, bean, home);
     }
 
     private void check_localInterfaceMethods(RemoteBean b) {
@@ -131,21 +133,15 @@ public class CheckMethods extends ValidationBase {
 
         if (check_hasCreateMethod(b, bean, home)) {
             check_createMethodsAreImplemented(b, bean, home);
-            check_postCreateMethodsAreImplemented(b, bean, home);
+            // ejbPostCreate methods are now automatically generated
+//            check_postCreateMethodsAreImplemented(b, bean, home);
         }
-
-        check_unusedCreateMethods(b, bean, home);
     }
 
     public boolean check_hasCreateMethod(RemoteBean b, Class bean, Class home) {
 
-        if (b instanceof SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)){
+        if (b instanceof SessionBean && !javax.ejb.SessionBean.class.isAssignableFrom(bean)) {
             // This is a pojo-style bean
-            return false;
-        }
-
-        if (b instanceof EntityBean) {
-            // entity beans are not required to have a create method
             return false;
         }
 
@@ -157,7 +153,7 @@ public class CheckMethods extends ValidationBase {
             hasCreateMethod = homeMethods[i].getName().startsWith("create");
         }
 
-        if (!hasCreateMethod) {
+        if (!hasCreateMethod && !(b instanceof EntityBean)) {
 
             fail(b, "no.home.create", b.getHome(), b.getRemote());
 
@@ -177,7 +173,7 @@ public class CheckMethods extends ValidationBase {
             Method create = homeMethods[i];
 
             StringBuilder ejbCreateName = new StringBuilder(create.getName());
-            ejbCreateName.replace(0,1, "ejbC");
+            ejbCreateName.replace(0, 1, "ejbC");
 
             try {
                 if (EnterpriseBean.class.isAssignableFrom(bean)) {
@@ -218,7 +214,7 @@ public class CheckMethods extends ValidationBase {
             if (!homeMethods[i].getName().startsWith("create")) continue;
             Method create = homeMethods[i];
             StringBuilder ejbPostCreateName = new StringBuilder(create.getName());
-            ejbPostCreateName.replace(0,1, "ejbPostC");
+            ejbPostCreateName.replace(0, 1, "ejbPostC");
             try {
                 bean.getMethod(ejbPostCreateName.toString(), create.getParameterTypes());
             } catch (NoSuchMethodException e) {
@@ -234,31 +230,86 @@ public class CheckMethods extends ValidationBase {
         return result;
     }
 
-    public boolean check_unusedCreateMethods(RemoteBean b, Class bean, Class home) {
-        boolean result = true;
+    public void check_unusedCreateMethods(RemoteBean b) {
 
-        Method[] homeMethods = home.getMethods();
-        Method[] beanMethods = bean.getMethods();
+        Class home = null;
+        Class localHome = null;
+        Class bean = null;
+        try {
+            if (b.getLocalHome() != null) {
+                localHome = loadClass(b.getLocalHome());
+            }
 
-        for (int i = 0; i < homeMethods.length; i++) {
-            if (!beanMethods[i].getName().startsWith("ejbCreate")) continue;
-            Method ejbCreate = beanMethods[i];
+            if (b.getHome() != null) {
+                home = loadClass(b.getHome());
+            }
+
+            bean = loadClass(b.getEjbClass());
+        } catch (OpenEJBException e) {
+            return;
+        }
+
+        for (Method ejbCreate : bean.getMethods()) {
+
+            if (!ejbCreate.getName().startsWith("ejbCreate")) continue;
+
             StringBuilder create = new StringBuilder(ejbCreate.getName());
-            create.replace(0,4, "c");
-            try {
-                // TODO, don't just check the remote home interface, there is a local too
-                home.getMethod(create.toString(), ejbCreate.getParameterTypes());
-            } catch (NoSuchMethodException e) {
-                result = false;
+            create.replace(0, "ejbC".length(), "c");
 
+
+            boolean inLocalHome = false;
+            boolean inHome = false;
+
+            try {
+                if (localHome != null) {
+                    localHome.getMethod(create.toString(), ejbCreate.getParameterTypes());
+                    inLocalHome = true;
+                }
+            } catch (NoSuchMethodException e) {
+            }
+
+            try {
+                if (home != null) {
+                    home.getMethod(create.toString(), ejbCreate.getParameterTypes());
+                    inHome = true;
+                }
+            } catch (NoSuchMethodException e) {
+            }
+
+            if (!inLocalHome && !inHome){
                 String paramString = getParameters(ejbCreate);
 
-                warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(), create.toString(), paramString, home.getName());
+                warn(b, "unused.ejb.create", b.getEjbClass(), ejbCreate.getName(),  paramString, create.toString());
+            }
+        }
+    }
+
+    public void check_unusedPostCreateMethods(RemoteBean b) {
+
+        Class bean = null;
+        try {
+            bean = loadClass(b.getEjbClass());
+        } catch (OpenEJBException e) {
+            return;
+        }
+
+        for (Method postCreate : bean.getMethods()) {
+
+            if (!postCreate.getName().startsWith("ejbPostCreate")) continue;
+
+            StringBuilder ejbCreate = new StringBuilder(postCreate.getName());
+            ejbCreate.replace(0, "ejbPostCreate".length(), "ejbCreate");
+
+            try {
+                bean.getMethod(ejbCreate.toString(), postCreate.getParameterTypes());
+            } catch (NoSuchMethodException e) {
+
+                String paramString = getParameters(postCreate);
+
+                warn(b, "unused.ejbPostCreate", b.getEjbClass(), postCreate.getName(), paramString, ejbCreate.toString());
 
             }
         }
-
-        return result;
     }
 
 /// public void check_findMethods(){

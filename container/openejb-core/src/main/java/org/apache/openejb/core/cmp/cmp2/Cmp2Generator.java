@@ -56,6 +56,7 @@ public class Cmp2Generator implements Opcodes {
     private final Class primKeyClass;
     private final List<Method> selectMethods = new ArrayList<Method>();
     private final Class beanClass;
+    private final PostCreateGenerator postCreateGenerator;
 
     public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmpFields) {
         if (pkField == null && primKeyClass == null) throw new NullPointerException("Both pkField and primKeyClass are null");
@@ -93,6 +94,8 @@ public class Cmp2Generator implements Opcodes {
         this.beanClass = beanClass;
 
         cw = new ClassWriter(true);
+
+        postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
 
     public void addCmrField(CmrField cmrField) {
@@ -175,6 +178,8 @@ public class Cmp2Generator implements Opcodes {
         if (!hasMethod(beanClass, "ejbRemove")) createEjbRemove();
         if (!hasMethod(beanClass, "setEntityContext", EntityContext.class)) createSetEntityContext();
         if (!hasMethod(beanClass, "unsetEntityContext")) createUnsetEntityContext();
+
+        postCreateGenerator.generate();
 
         cw.visitEnd();
 
@@ -854,14 +859,6 @@ public class Cmp2Generator implements Opcodes {
         }
 
     }
-
-//    public void createEjbPostCreate() {
-//        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbPostCreate", "(Ljava/lang/String;Ljava/lang/String;I)V", null, null);
-//        mv.visitCode();
-//        mv.visitInsn(RETURN);
-//        mv.visitMaxs(0, 4);
-//        mv.visitEnd();
-//    }
 
     public void createEjbActivate() {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "ejbActivate", "()V", null, null);
