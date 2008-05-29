@@ -33,6 +33,7 @@
     <module>simple-stateful</module>
     <module>simple-stateless</module>
     <module>simple-mdb</module>
+    <module>simple-cmp2</module>
     <module>simple-webservice</module>
     <module>component-interfaces</module>
     <module>injection-of-ejbs</module>
