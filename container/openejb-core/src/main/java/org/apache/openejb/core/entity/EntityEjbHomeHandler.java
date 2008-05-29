@@ -26,7 +26,13 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.proxy.InvocationHandler;
+
+import javax.ejb.EJBLocalObject;
+import javax.ejb.RemoveException;
+import javax.ejb.EJBObject;
 
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
@@ -95,6 +101,35 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
     protected Object removeByPrimaryKey(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         Object primKey = args[0];
+
+        // Check for the common mistake of passing the ejbObject instead of ejbObject.getPrimaryKey()
+        if (primKey instanceof EJBLocalObject) {
+            Class ejbObjectProxyClass = primKey.getClass();
+
+            String ejbObjectName = null;
+            for (Class clazz : ejbObjectProxyClass.getInterfaces()) {
+                if (EJBLocalObject.class.isAssignableFrom(clazz)) {
+                    ejbObjectName = clazz.getSimpleName();
+                    break;
+                }
+            }
+
+            throw new RemoveException("Invalid argument '" + ejbObjectName + "', expected primary key.  Update to ejbLocalHome.remove(" + lcfirst(ejbObjectName) + ".getPrimaryKey())");
+
+        } else if (primKey instanceof EJBObject) {
+            Class ejbObjectProxyClass = primKey.getClass();
+
+            String ejbObjectName = null;
+            for (Class clazz : ejbObjectProxyClass.getInterfaces()) {
+                if (EJBObject.class.isAssignableFrom(clazz)) {
+                    ejbObjectName = clazz.getSimpleName();
+                    break;
+                }
+            }
+
+            throw new RemoveException("Invalid argument '" + ejbObjectName + "', expected primary key.  Update to ejbHome.remove(" + lcfirst(ejbObjectName) + ".getPrimaryKey())");
+        }
+
         container.invoke(deploymentID, interfce, method, args, primKey);
 
         /* 
@@ -103,6 +138,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         */
         invalidateAllHandlers(EntityEjbObjectHandler.getRegistryId(container, deploymentID, primKey));
         return null;
+    }
+
+    private static String lcfirst(String s){
+        if (s == null || s.length() < 1) return s;
+
+        StringBuilder sb = new StringBuilder(s);
+        sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));
+        return sb.toString();
     }
 
     protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
