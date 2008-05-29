@@ -155,6 +155,8 @@ public class NamespaceFilter extends XMLFilterImpl {
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
         } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+        } else if (uri.startsWith("http://www.openejb.org/xml/ns/pkgen-2")){
+            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
         }
 
         String previousNs = visibleNamespaces.peek();
