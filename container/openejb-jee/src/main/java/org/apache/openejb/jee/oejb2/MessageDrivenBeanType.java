@@ -84,7 +84,7 @@ public class MessageDrivenBeanType implements EnterpriseBean {
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
 
-    @XmlElement(name = "persistence-contenxt-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
+    @XmlElement(name = "persistence-context-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
     protected List<PersistenceContextRefType> persistenceContextRef;
 
     @XmlElement(name = "persistence-unit-ref", namespace="http://geronimo.apache.org/xml/ns/naming-1.2")
