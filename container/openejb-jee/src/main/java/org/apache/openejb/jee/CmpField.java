@@ -51,6 +51,13 @@ public class CmpField {
     @XmlID
     protected String id;
 
+    public CmpField() {
+    }
+
+    public CmpField(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();

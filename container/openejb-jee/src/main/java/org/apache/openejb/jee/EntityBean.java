@@ -406,6 +406,16 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         return this.cmpField;
     }
 
+    public void addCmpField(String fieldName) {
+        if (fieldName == null) return;
+
+        for (CmpField field : cmpField) {
+            if (fieldName.equals(field.getFieldName())) return;
+        }
+        
+        cmpField.add(new CmpField(fieldName));
+    }
+
     public String getPrimkeyField() {
         return primkeyField;
     }

@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.util.Strings;
 import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.jee.CmpField;
@@ -69,6 +70,7 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.TreeMap;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 
 public class CmpJpaConversion implements DynamicDeployer {
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
@@ -185,7 +187,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         for (Entity entity : entityMappings.getEntity()) {
             entitiesByName.put(entity.getName(), entity);
         }
-        
+
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
             if (!(enterpriseBean instanceof EntityBean) || ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
@@ -457,6 +459,33 @@ public class CmpJpaConversion implements DynamicDeployer {
         Set<String> allFields = new TreeSet<String>();
         for (CmpField cmpField : bean.getCmpField()) {
             allFields.add(cmpField.getFieldName());
+        }
+
+        // Add the cmp-field declarations for all the cmp fields that
+        // weren't explicitly declared in the ejb-jar.xml
+        try {
+            Class<?> beanClass = classLoader.loadClass(bean.getEjbClass());
+            for (Method method : beanClass.getMethods()) {
+                if (!Modifier.isAbstract(method.getModifiers())) continue;
+                if (method.getParameterTypes().length != 0) continue;
+                if (method.getReturnType().equals(Void.TYPE)) continue;
+
+                String name = method.getName();
+
+                if (name.startsWith("get")){
+                    name = name.substring("get".length(), name.length());
+                } else if (name.startsWith("is")){
+                    name = name.substring("is".length(), name.length());
+                } else continue;
+
+                name = Strings.lcfirst(name);
+                if (!allFields.contains(name)){
+                    allFields.add(name);
+                    bean.addCmpField(name);
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            // class was already loaded in validation phase
         }
 
         //

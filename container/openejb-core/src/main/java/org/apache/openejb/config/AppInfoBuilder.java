@@ -185,6 +185,7 @@ class AppInfoBuilder {
         if (appModule.getCmpMappings() != null) {
             try {
                 String cmpMappingsXml = JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings());
+                System.out.println(cmpMappingsXml);
                 appInfo.cmpMappingsXml = cmpMappingsXml;
             } catch (JAXBException e) {
                 throw new OpenEJBException("Unable to marshal cmp entity mappings", e);
