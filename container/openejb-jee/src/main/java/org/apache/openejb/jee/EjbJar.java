@@ -149,7 +149,7 @@ public class EjbJar {
     @XmlElement(name = "session", required = true, type = SessionBean.class),
     @XmlElement(name = "entity", required = true, type = EntityBean.class)})
     public EnterpriseBean[] getEnterpriseBeans() {
-        return enterpriseBeans.values().toArray(new EnterpriseBean[]{});
+        return enterpriseBeans.values().toArray(new EnterpriseBean[enterpriseBeans.size()]);
     }
 
     public void setEnterpriseBeans(EnterpriseBean[] v) {

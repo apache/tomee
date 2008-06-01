@@ -66,8 +66,7 @@
             <ns4:name>SpecificFactoryName</ns4:name>
         </ns3:backing-strategy-factory>
     </ns3:openejb-clustering-wadi>
-    <ns6:openejb-jar xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
-	</ns6:openejb-jar>
+    <ns6:openejb-jar xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2"></ns6:openejb-jar>
     <ns4:persistence-context-ref>
         <ns4:persistence-context-ref-name>String</ns4:persistence-context-ref-name>
         <ns4:persistence-unit-name>String</ns4:persistence-unit-name>

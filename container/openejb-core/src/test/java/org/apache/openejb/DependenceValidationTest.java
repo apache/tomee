@@ -59,7 +59,7 @@ public class DependenceValidationTest extends TestCase {
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);
 
         // Nothing may depend on the JAXB Tree except the Config code
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys");
 
         // Nothing may depend on the Config code except it's subpackages
         assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler",  dynamicAssembler);

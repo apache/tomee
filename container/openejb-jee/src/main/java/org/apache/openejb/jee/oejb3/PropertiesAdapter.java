@@ -33,6 +33,8 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
     }
 
     public String marshal(Properties properties) throws Exception {
+        if (properties == null) return null;
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
         return new String(out.toByteArray());

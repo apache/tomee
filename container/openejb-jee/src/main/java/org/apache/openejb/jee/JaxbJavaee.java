@@ -70,7 +70,7 @@ public class JaxbJavaee {
     private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = jaxbContexts.get(type);
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(type);
+            jaxbContext = JAXBContextFactory.newInstance(type);
             jaxbContexts.put(type, jaxbContext);
         }
         return jaxbContext;

@@ -17,10 +17,13 @@
 package org.apache.openejb.jee.wls;
 
 import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 
 import javax.xml.bind.JAXBElement;
 
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.DetailedDiff;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -53,8 +56,14 @@ public class JaxbWlsTest extends TestCase {
 
         String actual = JaxbWls.marshal(WeblogicEjbJar.class, element);
 
-        Diff myDiff = new Diff(expected, actual);
-        assertTrue("Files are similar " + myDiff, myDiff.similar());
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            assertTrue("Files are not similar " + myDiff, myDiff.similar());
+        } catch (AssertionFailedError e) {
+            assertEquals(expected, actual);
+            throw e;
+        }
     }
 
     private String readContent(InputStream in) throws IOException {

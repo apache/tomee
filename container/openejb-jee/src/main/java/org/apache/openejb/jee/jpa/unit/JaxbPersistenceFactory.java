@@ -21,6 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -45,7 +46,7 @@ public class JaxbPersistenceFactory {
 
             persistenceDescriptor = url.openStream();
 
-            JAXBContext jc = JAXBContext.newInstance(Persistence.class);
+            JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
             Unmarshaller u = jc.createUnmarshaller();
             UnmarshallerHandler uh = u.getUnmarshallerHandler();
 

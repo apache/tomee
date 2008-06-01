@@ -47,14 +47,17 @@
     <ns2:persistence-context-ref>
         <ns2:persistence-context-ref-name>persistence/TestContext</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>transaction-scoped</ns2:persistence-context-type>
     </ns2:persistence-context-ref>
     <ns2:persistence-context-ref>
         <ns2:persistence-context-ref-name>persistence/ExtendedTestContext</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>openjpa-test-unit</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>extended</ns2:persistence-context-type>
     </ns2:persistence-context-ref>
     <ns2:persistence-context-ref>
         <ns2:persistence-context-ref-name>openejb/cmp</ns2:persistence-context-ref-name>
         <ns2:persistence-unit-name>cmp</ns2:persistence-unit-name>
+        <ns2:persistence-context-type>transaction-scoped</ns2:persistence-context-type>
     </ns2:persistence-context-ref>
     <ns2:persistence-unit-ref>
         <ns2:persistence-unit-ref-name>persistence/TestUnit</ns2:persistence-unit-ref-name>

@@ -30,14 +30,18 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.Entity;
 import org.apache.openejb.jee.jpa.GeneratedValue;
 import org.apache.openejb.jee.jpa.GenerationType;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.DetailedDiff;
 
 /**
  * @version $Rev$ $Date$
@@ -126,8 +130,15 @@ public class SunCmpConversionTest extends TestCase {
                 }
             }
             String actual = toString(cmpMappings);
-            Diff myDiff = new Diff(expected, actual);
-            assertTrue("Files are similar " + myDiff, myDiff.similar());
+
+            XMLUnit.setIgnoreWhitespace(true);
+            try {
+                Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+                assertTrue("Files are not similar " + myDiff, myDiff.similar());
+            } catch (AssertionFailedError e) {
+                e.printStackTrace();
+                throw e;
+            }
         }
 
         return appModule.getCmpMappings();
@@ -135,7 +146,7 @@ public class SunCmpConversionTest extends TestCase {
 
 
     private String toString(EntityMappings entityMappings) throws JAXBException {
-        JAXBContext entityMappingsContext = JAXBContext.newInstance(EntityMappings.class);
+        JAXBContext entityMappingsContext = JAXBContextFactory.newInstance(EntityMappings.class);
 
         Marshaller marshaller = entityMappingsContext.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);

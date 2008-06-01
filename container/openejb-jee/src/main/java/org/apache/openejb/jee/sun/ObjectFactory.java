@@ -166,6 +166,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SunEjbJar }
+     *
+     */
+    public SunEjbJar createSunEjbJar() {
+        return new SunEjbJar();
+    }
+
+    /**
      * Create an instance of {@link None }
      * 
      */

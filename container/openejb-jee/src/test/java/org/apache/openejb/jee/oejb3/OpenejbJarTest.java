@@ -18,6 +18,7 @@
 package org.apache.openejb.jee.oejb3;
 
 import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -26,6 +27,9 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
 
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -39,7 +43,7 @@ import java.io.BufferedInputStream;
 public class OpenejbJarTest extends TestCase {
 
     public void testAll() throws Exception {
-        JAXBContext ctx = JAXBContext.newInstance(OpenejbJar.class);
+        JAXBContext ctx = JAXBContextFactory.newInstance(OpenejbJar.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("openejb-jar.xml");
@@ -58,8 +62,15 @@ public class OpenejbJarTest extends TestCase {
 
         String actual = new String(baos.toByteArray());
 
-        Diff myDiff = new Diff(expected, actual);
-        assertTrue("Files are similar " + myDiff, myDiff.similar());
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            Diff myDiff = new DetailedDiff(new Diff(expected, actual));
+            assertTrue("Files are not similar " + myDiff, myDiff.similar());
+        } catch (AssertionFailedError e) {
+            e.printStackTrace();
+            assertEquals(expected, actual);
+            throw e;
+        }
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {

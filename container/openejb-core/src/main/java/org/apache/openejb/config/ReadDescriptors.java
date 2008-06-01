@@ -18,10 +18,6 @@ package org.apache.openejb.config;
 
 import static org.apache.openejb.util.URLs.toFilePath;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.sys.ServicesJar;
-import org.apache.openejb.config.sys.ServiceProvider;
-import org.apache.openejb.config.sys.ListAdapter;
-import org.apache.openejb.config.sys.PropertiesAdapter;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
@@ -63,7 +59,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 public class ReadDescriptors implements DynamicDeployer {
@@ -382,7 +377,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static Webservices readWebservices(URL url) throws OpenEJBException {
-        Webservices webservices = null;
+        Webservices webservices;
         try {
             webservices = (Webservices) JaxbJavaee.unmarshal(Webservices.class, url.openStream());
         } catch (SAXException e) {
@@ -398,7 +393,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static HandlerChains readHandlerChains(URL url) throws OpenEJBException {
-        HandlerChains handlerChains = null;
+        HandlerChains handlerChains;
         try {
             handlerChains = (HandlerChains) JaxbJavaee.unmarshal(HandlerChains.class, url.openStream());
         } catch (SAXException e) {
@@ -414,7 +409,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static JavaWsdlMapping readJaxrpcMapping(URL url) throws OpenEJBException {
-        JavaWsdlMapping wsdlMapping = null;
+        JavaWsdlMapping wsdlMapping;
         try {
             wsdlMapping = (JavaWsdlMapping) JaxbJavaee.unmarshal(JavaWsdlMapping.class, url.openStream());
         } catch (SAXException e) {
@@ -430,7 +425,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static Definition readWsdl(URL url) throws OpenEJBException {
-        Definition definition = null;
+        Definition definition;
         try {
             WSDLFactory factory = WSDLFactory.newInstance();
             WSDLReader reader = factory.newWSDLReader();
@@ -447,7 +442,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static Connector readConnector(URL url) throws OpenEJBException {
-        Connector connector = null;
+        Connector connector;
         try {
             connector = (Connector) JaxbJavaee.unmarshal(Connector.class, url.openStream());
         } catch (SAXException e) {
@@ -463,7 +458,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static WebApp readWebApp(URL url) throws OpenEJBException {
-        WebApp webApp = null;
+        WebApp webApp;
         try {
             webApp = (WebApp) JaxbJavaee.unmarshal(WebApp.class, url.openStream());
         } catch (SAXException e) {
@@ -479,7 +474,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
-        TldTaglib tldTaglib = null;
+        TldTaglib tldTaglib;
         try {
             tldTaglib = (TldTaglib) JaxbJavaee.unmarshal(TldTaglib.class, url.openStream());
         } catch (SAXException e) {

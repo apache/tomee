@@ -42,6 +42,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _Application_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "application");
+    private final static QName _ApplicationClient_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "application-client");
     private final static QName _EjbJar_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-jar");
     private final static QName _EjbRelationTypeEjbRelationName_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-relation-name");
     private final static QName _EjbRelationTypeEjbRelationshipRole_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "ejb-relationship-role");
@@ -57,6 +59,22 @@ public class ObjectFactory {
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee2
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Application }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "application")
+    public JAXBElement<Application> createApplication(Application value) {
+        return new JAXBElement<Application>(_Application_QNAME, Application.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ApplicationClient }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "application-client")
+    public JAXBElement<ApplicationClient> createApplicationClient(ApplicationClient value) {
+        return new JAXBElement<ApplicationClient>(_ApplicationClient_QNAME, ApplicationClient.class, null, value);
     }
 
     /**

@@ -21,6 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.XMLFilterImpl;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
@@ -63,7 +64,7 @@ public class JaxbOpenejbJar3 {
 
     private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(type);
+            jaxbContext = JAXBContextFactory.newInstance(type);
         }
         return jaxbContext;
     }

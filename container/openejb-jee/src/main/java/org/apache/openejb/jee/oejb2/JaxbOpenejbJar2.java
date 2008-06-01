@@ -33,6 +33,7 @@ import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 /**
  * @version $Rev$ $Date$
@@ -44,7 +45,7 @@ public class JaxbOpenejbJar2 {
     private static JAXBContext getContext(Class<?> type) throws JAXBException {
         JAXBContext jaxbContext = contexts.get(type);
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(type);
+            jaxbContext = JAXBContextFactory.newInstance(type);
             contexts.put(type, jaxbContext);
         }
         return jaxbContext;
@@ -101,6 +102,6 @@ public class JaxbOpenejbJar2 {
 
         SAXSource source = new SAXSource(xmlFilter, inputSource);
 
-        return unmarshaller.unmarshal(source);
+        return unmarshaller.unmarshal(source, type);
     }
 }

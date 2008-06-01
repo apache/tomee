@@ -96,17 +96,17 @@
     <n:persistence-context-ref>
         <n:persistence-context-ref-name>persistence/TestContext</n:persistence-context-ref-name>
         <n:persistence-unit-name>openjpa-test-unit</n:persistence-unit-name>
-        <n:persistence-context-type>Transactional</n:persistence-context-type>
+        <n:persistence-context-type>transaction-scoped</n:persistence-context-type>
     </n:persistence-context-ref>
     <n:persistence-context-ref>
         <n:persistence-context-ref-name>persistence/ExtendedTestContext</n:persistence-context-ref-name>
         <n:persistence-unit-name>openjpa-test-unit</n:persistence-unit-name>
-        <n:persistence-context-type>Extended</n:persistence-context-type>
+        <n:persistence-context-type>extended</n:persistence-context-type>
     </n:persistence-context-ref>
     <n:persistence-context-ref>
         <n:persistence-context-ref-name>openejb/cmp</n:persistence-context-ref-name>
         <n:persistence-unit-name>cmp</n:persistence-unit-name>
-        <n:persistence-context-type>Transactional</n:persistence-context-type>
+        <n:persistence-context-type>transaction-scoped</n:persistence-context-type>
     </n:persistence-context-ref>
     <n:persistence-unit-ref>
         <n:persistence-unit-ref-name>persistence/TestUnit</n:persistence-unit-ref-name>

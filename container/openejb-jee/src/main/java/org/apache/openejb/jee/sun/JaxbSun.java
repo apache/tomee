@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 /**
  * @version $Rev$ $Date$
@@ -42,7 +43,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 public class JaxbSun {
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
-        JAXBContext ctx2 = JAXBContext.newInstance(type);
+        JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -65,7 +66,7 @@ public class JaxbSun {
         SAXParser parser = factory.newSAXParser();
 
         // Get the JAXB context -- this should be cached
-        JAXBContext ctx = JAXBContext.newInstance(type);
+        JAXBContext ctx = JAXBContextFactory.newInstance(type);
 
         // get the unmarshaller
         Unmarshaller unmarshaller = ctx.createUnmarshaller();

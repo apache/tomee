@@ -48,7 +48,6 @@ public class ObjectFactory {
     private final static QName _GbeanTypeXmlAttribute_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "xml-attribute");
     private final static QName _ResourceEnvRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "resource-env-ref");
     private final static QName _ResourceRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "resource-ref");
-    private final static QName _PersistenceContextRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "persistence-context-ref");
     private final static QName _EntityManagerFactoryRef_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "entity-manager-factory-ref");
     private final static QName _AbstractNamingEntry_QNAME = new QName("http://geronimo.apache.org/xml/ns/naming-1.2", "abstract-naming-entry");
     private final static QName _Dependencies_QNAME = new QName("http://geronimo.apache.org/xml/ns/deployment-1.2", "dependencies");
@@ -641,15 +640,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "resource-ref")
     public JAXBElement<ResourceRefType> createResourceRef(ResourceRefType value) {
         return new JAXBElement<ResourceRefType>(_ResourceRef_QNAME, ResourceRefType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link PersistenceContextRefType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", name = "persistence-context-ref", substitutionHeadNamespace = "http://geronimo.apache.org/xml/ns/naming-1.2", substitutionHeadName = "abstract-naming-entry")
-    public JAXBElement<PersistenceContextRefType> createPersistenceContextRef(PersistenceContextRefType value) {
-        return new JAXBElement<PersistenceContextRefType>(_PersistenceContextRef_QNAME, PersistenceContextRefType.class, null, value);
     }
 
     /**

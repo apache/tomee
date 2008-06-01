@@ -75,9 +75,9 @@ public class ServiceProvider {
     @XmlAttribute(name = "service", required = true)
     protected String service;
     @XmlAttribute(name = "types", required = false)
-    @XmlJavaTypeAdapter(ListAdapter.class)
+//    @XmlJavaTypeAdapter(ListAdapter.class)
     // for some reason when this field is type List JaxB gives us a List<List<String>>
-    protected Object types;
+    protected List<String> types;
 
     /**
      * Gets the value of the properties property.

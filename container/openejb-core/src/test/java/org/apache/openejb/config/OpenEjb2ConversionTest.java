@@ -29,6 +29,7 @@ import javax.xml.bind.Marshaller;
 import junit.framework.TestCase;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.custommonkey.xmlunit.Diff;
@@ -119,7 +120,7 @@ public class OpenEjb2ConversionTest extends TestCase {
 
 
     private String toString(EntityMappings entityMappings) throws JAXBException {
-        JAXBContext entityMappingsContext = JAXBContext.newInstance(EntityMappings.class);
+        JAXBContext entityMappingsContext = JAXBContextFactory.newInstance(EntityMappings.class);
 
         Marshaller marshaller = entityMappingsContext.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);

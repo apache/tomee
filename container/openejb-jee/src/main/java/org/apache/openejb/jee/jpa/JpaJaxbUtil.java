@@ -18,6 +18,7 @@ package org.apache.openejb.jee.jpa;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBContext;
@@ -27,7 +28,6 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.SAXParser;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
@@ -37,7 +37,7 @@ import java.io.InputStream;
 public class JpaJaxbUtil {
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
-        JAXBContext ctx2 = JAXBContext.newInstance(type);
+        JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
@@ -55,7 +55,7 @@ public class JpaJaxbUtil {
         factory.setNamespaceAware(true);
         factory.setValidating(false);
 
-        JAXBContext ctx = JAXBContext.newInstance(type);
+        JAXBContext ctx = JAXBContextFactory.newInstance(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler(){
             public boolean handleEvent(ValidationEvent validationEvent) {

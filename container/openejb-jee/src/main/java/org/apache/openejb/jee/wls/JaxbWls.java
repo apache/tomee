@@ -21,6 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.XMLFilterImpl;
+import org.apache.openejb.jee.JAXBContextFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -70,7 +71,7 @@ public class JaxbWls {
     private static <T>JAXBContext getContext(Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = JaxbWls.jaxbContexts.get(type);
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(type);
+            jaxbContext = JAXBContextFactory.newInstance(type);
             JaxbWls.jaxbContexts.put(type, jaxbContext);
         }
         return jaxbContext;
@@ -101,7 +102,7 @@ public class JaxbWls {
 
         JaxbWls.currentPublicId.set(new TreeSet<String>());
         try {
-            return unmarshaller.unmarshal(source);
+            return unmarshaller.unmarshal(source, type);
         } finally {
             JaxbWls.currentPublicId.set(null);
         }

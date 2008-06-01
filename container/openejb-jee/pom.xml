@@ -40,6 +40,30 @@
       <!--</configuration>-->
       <!--</plugin>-->
       <plugin>
+        <groupId>com.envoisolutions.sxc</groupId>
+        <artifactId>sxc-jaxb-maven-plugin</artifactId>
+        <version>0.7-SNAPSHOT</version>
+        <executions>
+          <execution>
+              <configuration>
+                <classes>
+                  <class>org.apache.openejb.jee</class>
+                  <class>org.apache.openejb.jee.jba</class>
+                  <class>org.apache.openejb.jee.jba.cmp</class>
+                  <class>org.apache.openejb.jee.jpa</class>
+                  <class>org.apache.openejb.jee.oejb2</class>
+                  <class>org.apache.openejb.jee.oejb3</class>
+                  <class>org.apache.openejb.jee.sun</class>
+                  <class>org.apache.openejb.jee.wls</class>
+                </classes>
+              </configuration>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>rat-maven-plugin</artifactId>
         <configuration>
@@ -51,6 +75,22 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>com.envoisolutions.sxc</groupId>
+      <artifactId>sxc-jaxb</artifactId>
+      <version>0.7-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>stax</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>wstx-asl</artifactId>
+      <version>3.2.0</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>

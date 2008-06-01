@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.JAXBContextFactory;
 import org.custommonkey.xmlunit.Diff;
 
 /**
@@ -72,7 +73,7 @@ public class PersistenceXmlTest extends TestCase {
 //        persistenceUnit.setProperties(properties);
 //        persistence.getPersistenceUnit().add(persistenceUnit);
 
-        JAXBContext ctx = JAXBContext.newInstance(Persistence.class);
+        JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         URL resource = this.getClass().getClassLoader().getResource("persistence-example.xml");
