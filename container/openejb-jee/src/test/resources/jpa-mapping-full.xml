@@ -29,7 +29,7 @@
             <access>PROPERTY</access>
             <cascade-persist/>
             <entity-listeners>
-                <entity-listener class="String">
+                <entity-listener class="MyClass">
                     <pre-persist method-name="String"/>
                     <post-persist method-name="String"/>
                     <pre-remove method-name="String"/>
@@ -38,7 +38,7 @@
                     <post-update method-name="String"/>
                     <post-load method-name="String"/>
                 </entity-listener>
-                <entity-listener class="String">
+                <entity-listener class="MyClass1">
                     <pre-persist method-name="String"/>
                     <post-persist method-name="String"/>
                     <pre-remove method-name="String"/>
@@ -120,13 +120,13 @@
         <column-result name="String"/>
         <column-result name="String"/>
     </sql-result-set-mapping>
-    <mapped-superclass metadata-complete="true" class="String" access="PROPERTY">
+    <mapped-superclass metadata-complete="true" class="MyClass2" access="PROPERTY">
         <description>String</description>
         <id-class class="String"/>
         <exclude-default-listeners/>
         <exclude-superclass-listeners/>
         <entity-listeners>
-            <entity-listener class="String">
+            <entity-listener class="MyClass3">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -135,7 +135,7 @@
                 <post-update method-name="String"/>
                 <post-load method-name="String"/>
             </entity-listener>
-            <entity-listener class="String">
+            <entity-listener class="MyClass4">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -365,13 +365,13 @@
             <transient name="String"/>
         </attributes>
     </mapped-superclass>
-    <mapped-superclass metadata-complete="true" class="String" access="PROPERTY">
+    <mapped-superclass metadata-complete="true" class="MyClass5" access="PROPERTY">
         <description>String</description>
         <id-class class="String"/>
         <exclude-default-listeners/>
         <exclude-superclass-listeners/>
         <entity-listeners>
-            <entity-listener class="String">
+            <entity-listener class="MyClass6">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -380,7 +380,7 @@
                 <post-update method-name="String"/>
                 <post-load method-name="String"/>
             </entity-listener>
-            <entity-listener class="String">
+            <entity-listener class="MyClass7">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -610,7 +610,7 @@
             <transient name="String"/>
         </attributes>
     </mapped-superclass>
-    <entity name="String" metadata-complete="true" class="String" access="PROPERTY">
+    <entity name="String" metadata-complete="true" class="MyClass8" access="PROPERTY">
         <description>String</description>
         <table schema="String" name="String" catalog="String">
             <unique-constraint>
@@ -710,7 +710,7 @@
         <exclude-default-listeners/>
         <exclude-superclass-listeners/>
         <entity-listeners>
-            <entity-listener class="String">
+            <entity-listener class="MyClass9">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -719,7 +719,7 @@
                 <post-update method-name="String"/>
                 <post-load method-name="String"/>
             </entity-listener>
-            <entity-listener class="String">
+            <entity-listener class="MyClass10">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -963,7 +963,7 @@
             <transient name="String"/>
         </attributes>
     </entity>
-    <entity name="String" metadata-complete="true" class="String" access="PROPERTY">
+    <entity name="String" metadata-complete="true" class="MyClass11" access="PROPERTY">
         <description>String</description>
         <table schema="String" name="String" catalog="String">
             <unique-constraint>
@@ -1063,7 +1063,7 @@
         <exclude-default-listeners/>
         <exclude-superclass-listeners/>
         <entity-listeners>
-            <entity-listener class="String">
+            <entity-listener class="MyClass12">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>
@@ -1072,7 +1072,7 @@
                 <post-update method-name="String"/>
                 <post-load method-name="String"/>
             </entity-listener>
-            <entity-listener class="String">
+            <entity-listener class="MyClass13">
                 <pre-persist method-name="String"/>
                 <post-persist method-name="String"/>
                 <pre-remove method-name="String"/>

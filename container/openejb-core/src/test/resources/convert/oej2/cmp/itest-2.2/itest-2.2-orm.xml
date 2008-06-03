@@ -192,6 +192,7 @@
             <basic name="lastName">
                 <column name="last_name"/>
             </basic>
+            <basic name="number"/>
         </attributes>
     </entity>
     <entity name="EncCmp2" class="openejb.org.apache.openejb.test.entity.cmp.EncCmp2">
@@ -232,7 +233,7 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
+    <entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean">
         <description>TestModule#OneOwningSideBean</description>
         <table name="OneOwning"/>
         <attributes>
@@ -247,7 +248,7 @@
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
+    <entity name="OneInverseSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean">
         <description>TestModule#OneInverseSideBean</description>
         <table name="OneInverse"/>
         <attributes>
@@ -258,11 +259,11 @@
             <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
         </attributes>
     </entity>
-    <entity name="Order" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.Order">
+    <entity name="ManyOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean">
         <description>TestModule#ManyOwningSideBean</description>
         <table name="ManyOwning"/>
-        <named-query name="Order.ejbSelectSomething(java.lang.Integer)">
-            <query>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</query>
+        <named-query name="ManyOwningSideBean.ejbSelectSomething(java.lang.Integer)">
+            <query>SELECT m.oneInverseSide FROM ManyOwningSideBean m WHERE m.id = ?1</query>
         </named-query>
         <attributes>
             <basic name="id">

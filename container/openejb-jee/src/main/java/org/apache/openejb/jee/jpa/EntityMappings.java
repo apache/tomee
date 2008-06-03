@@ -17,8 +17,12 @@
 
 package org.apache.openejb.jee.jpa;
 
+import org.apache.openejb.jee.KeyedCollection;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -130,8 +134,8 @@ public class EntityMappings {
     @XmlElement(name = "sql-result-set-mapping")
     protected List<SqlResultSetMapping> sqlResultSetMapping;
     @XmlElement(name = "mapped-superclass")
-    protected List<MappedSuperclass> mappedSuperclass;
-    protected List<Entity> entity;
+    protected KeyedCollection<String, MappedSuperclass> mappedSuperclass;
+    protected KeyedCollection<String, Entity> entity;
     protected List<Embeddable> embeddable;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -448,11 +452,15 @@ public class EntityMappings {
      * 
      * 
      */
-    public List<MappedSuperclass> getMappedSuperclass() {
+    public Collection<MappedSuperclass> getMappedSuperclass() {
         if (mappedSuperclass == null) {
-            mappedSuperclass = new ArrayList<MappedSuperclass>();
+            mappedSuperclass = new KeyedCollection<String, MappedSuperclass>();
         }
         return this.mappedSuperclass;
+    }
+
+    public Map<String, MappedSuperclass> getMappedSuperclassMap() {
+        return ((KeyedCollection)getMappedSuperclass()).toMap();
     }
 
     /**
@@ -477,11 +485,15 @@ public class EntityMappings {
      * 
      * 
      */
-    public List<Entity> getEntity() {
+    public Collection<Entity> getEntity() {
         if (entity == null) {
-            entity = new ArrayList<Entity>();
+            entity = new KeyedCollection<String, Entity>();
         }
         return this.entity;
+    }
+
+    public Map<String, Entity> getEntityMap() {
+        return ((KeyedCollection)getEntity()).toMap();
     }
 
     /**

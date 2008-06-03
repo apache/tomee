@@ -17,6 +17,8 @@
 
 package org.apache.openejb.jee.jpa;
 
+import org.apache.openejb.jee.Keyable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -88,7 +90,7 @@ import javax.xml.bind.annotation.XmlType;
     "postLoad",
     "attributes"
 })
-public class MappedSuperclass implements Mapping {
+public class MappedSuperclass implements Mapping, Keyable<String> {
 
     protected String description;
     @XmlElement(name = "id-class")
@@ -529,5 +531,9 @@ public class MappedSuperclass implements Mapping {
         } else {
             throw new IllegalArgumentException("Unknown field type " + field.getClass());
         }
+    }
+
+    public String getKey() {
+        return this.clazz;
     }
 }

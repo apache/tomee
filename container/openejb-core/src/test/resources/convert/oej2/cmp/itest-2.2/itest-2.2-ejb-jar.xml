@@ -408,6 +408,9 @@
             <cmp-field>
                 <field-name>lastName</field-name>
             </cmp-field>
+            <cmp-field>
+                <field-name>number</field-name>
+            </cmp-field>
             <primkey-field>id</primkey-field>
             <env-entry>
                 <env-entry-name>entity/references/JNDI_access_to_java_comp_env</env-entry-name>
@@ -1377,7 +1380,7 @@
             <prim-key-class>org.apache.openejb.test.entity.cmp2.cmrmapping.CompoundPK</prim-key-class>
             <reentrant>false</reentrant>
             <cmp-version>2.x</cmp-version>
-            <abstract-schema-name>Order</abstract-schema-name>
+            <abstract-schema-name>OneOwningSideBean</abstract-schema-name>
             <cmp-field>
                 <field-name>id</field-name>
             </cmp-field>
@@ -1395,7 +1398,7 @@
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
             <cmp-version>2.x</cmp-version>
-            <abstract-schema-name>Order</abstract-schema-name>
+            <abstract-schema-name>OneInverseSideBean</abstract-schema-name>
             <cmp-field>
                 <field-name>id</field-name>
             </cmp-field>
@@ -1411,7 +1414,7 @@
             <prim-key-class>org.apache.openejb.test.entity.cmp2.cmrmapping.CompoundPK</prim-key-class>
             <reentrant>false</reentrant>
             <cmp-version>2.x</cmp-version>
-            <abstract-schema-name>Order</abstract-schema-name>
+            <abstract-schema-name>ManyOwningSideBean</abstract-schema-name>
             <cmp-field>
                 <field-name>id</field-name>
             </cmp-field>
@@ -1425,7 +1428,7 @@
                         <method-param>java.lang.Integer</method-param>
                     </method-params>
                 </query-method>
-                <ejb-ql>SELECT m.oneInverseSide FROM Order m WHERE m.id = ?1</ejb-ql>
+                <ejb-ql>SELECT m.oneInverseSide FROM ManyOwningSideBean m WHERE m.id = ?1</ejb-ql>
             </query>
         </entity>
 

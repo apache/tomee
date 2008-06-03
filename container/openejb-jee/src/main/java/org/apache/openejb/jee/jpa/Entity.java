@@ -17,6 +17,8 @@
 
 package org.apache.openejb.jee.jpa;
 
+import org.apache.openejb.jee.Keyable;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -120,7 +122,7 @@ import javax.xml.bind.annotation.XmlType;
     "associationOverride",
     "attributes"
 })
-public class Entity implements Mapping {
+public class Entity implements Mapping, Keyable<String> {
 
     protected String description;
     protected Table table;
@@ -951,5 +953,9 @@ public class Entity implements Mapping {
         } else {
             throw new IllegalArgumentException("Unknown field type " + field.getClass());
         }
+    }
+
+    public String getKey() {
+        return this.clazz;
     }
 }
