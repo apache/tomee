@@ -93,19 +93,6 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         if (!hasCmpEntities(appModule)) return appModule;
 
-        // search for the cmp persistence unit
-        PersistenceUnit persistenceUnit = null;
-        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            Persistence persistence = persistenceModule.getPersistence();
-            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
-                if (CMP_PERSISTENCE_UNIT_NAME.equals(unit.getName())) {
-                    persistenceUnit = unit;
-                    break;
-                }
-
-            }
-        }
-
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
 
@@ -122,28 +109,8 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
-            // if not found create one
-            if (persistenceUnit == null) {
-                persistenceUnit = new PersistenceUnit();
-                persistenceUnit.setName(CMP_PERSISTENCE_UNIT_NAME);
-                persistenceUnit.setTransactionType(TransactionType.JTA);
-                // Don't set default values here, let the autoconfig do that
-                // persistenceUnit.setJtaDataSource("java:openejb/Resource/Default JDBC Database");
-                // persistenceUnit.setNonJtaDataSource("java:openejb/Resource/Default Unmanaged JDBC Database");
-                // todo paramterize this
-                Properties properties = new Properties();
-                properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
-                // properties.setProperty("openjpa.DataCache", "false");
-                // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
-                persistenceUnit.setProperties(properties);
+            PersistenceUnit persistenceUnit = getCmpPersistenceUnit(appModule);
 
-                Persistence persistence = new Persistence();
-                persistence.setVersion("1.0");
-                persistence.getPersistenceUnit().add(persistenceUnit);
-
-                PersistenceModule persistenceModule = new PersistenceModule(appModule.getModuleId(), persistence);
-                appModule.getPersistenceModules().add(persistenceModule);
-            }
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
             for (Entity entity : cmpMappings.getEntity()) {
                 persistenceUnit.getClazz().add(entity.getClazz());
@@ -153,16 +120,55 @@ public class CmpJpaConversion implements DynamicDeployer {
         return appModule;
     }
 
+    private PersistenceUnit getCmpPersistenceUnit(AppModule appModule) {
+        // search for the cmp persistence unit
+        PersistenceUnit persistenceUnit = null;
+        for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            Persistence persistence = persistenceModule.getPersistence();
+            for (PersistenceUnit unit : persistence.getPersistenceUnit()) {
+                if (CMP_PERSISTENCE_UNIT_NAME.equals(unit.getName())) {
+                    persistenceUnit = unit;
+                    break;
+                }
+
+            }
+        }
+        // if not found create one
+        if (persistenceUnit == null) {
+            persistenceUnit = new PersistenceUnit();
+            persistenceUnit.setName(CMP_PERSISTENCE_UNIT_NAME);
+            persistenceUnit.setTransactionType(TransactionType.JTA);
+            // Don't set default values here, let the autoconfig do that
+            // persistenceUnit.setJtaDataSource("java:openejb/Resource/Default JDBC Database");
+            // persistenceUnit.setNonJtaDataSource("java:openejb/Resource/Default Unmanaged JDBC Database");
+            // todo paramterize this
+            Properties properties = new Properties();
+            properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
+            // properties.setProperty("openjpa.DataCache", "false");
+            // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+            persistenceUnit.setProperties(properties);
+
+            Persistence persistence = new Persistence();
+            persistence.setVersion("1.0");
+            persistence.getPersistenceUnit().add(persistenceUnit);
+
+            PersistenceModule persistenceModule = new PersistenceModule(appModule.getModuleId(), persistence);
+            appModule.getPersistenceModules().add(persistenceModule);
+        }
+        return persistenceUnit;
+    }
+
     private boolean hasCmpEntities(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                if (bean instanceof EntityBean) {
-                    EntityBean entityBean = (EntityBean) bean;
-                    if (entityBean.getPersistenceType() == PersistenceType.CONTAINER) return true;
-                }
+                if (isCmpEntity(bean)) return true;
             }
         }
         return false;
+    }
+
+    private static boolean isCmpEntity(EnterpriseBean bean) {
+        return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
 
     public EntityMappings generateEntityMappings(EjbModule ejbModule) throws OpenEJBException {
@@ -179,11 +185,6 @@ public class CmpJpaConversion implements DynamicDeployer {
         OpenejbJar openejbJar = ejbModule.getOpenejbJar();
         ClassLoader classLoader = ejbModule.getClassLoader();
 
-        Map<String, MappedSuperclass> mappedSuperclassByClass = new TreeMap<String,MappedSuperclass>();
-        for (MappedSuperclass mappedSuperclass : entityMappings.getMappedSuperclass()) {
-            mappedSuperclassByClass.put(mappedSuperclass.getClazz(), mappedSuperclass);
-        }
-
         Map<String, Entity> entitiesByName = new TreeMap<String,Entity>();
         for (Entity entity : entityMappings.getEntity()) {
             entitiesByName.put(entity.getName(), entity);
@@ -191,23 +192,9 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             // skip all non-CMP beans
-            if (!(enterpriseBean instanceof EntityBean) || ((EntityBean) enterpriseBean).getPersistenceType() != PersistenceType.CONTAINER) {
-                continue;
-            }
-            EntityBean bean = (EntityBean) enterpriseBean;
+            if (!isCmpEntity(enterpriseBean)) continue;
 
-            // Always set the abstract schema name
-            if (bean.getAbstractSchemaName() == null) {
-                String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
-                if (entitiesByName.containsKey(abstractSchemaName)) {
-                    int i = 2;
-                    while (entitiesByName.containsKey(abstractSchemaName + i)) {
-                         i++;
-                    }
-                    abstractSchemaName = abstractSchemaName + i;
-                }
-                bean.setAbstractSchemaName(abstractSchemaName);
-            }
+            EntityBean bean = (EntityBean) enterpriseBean;
 
             // try to add a new persistence-context-ref for cmp
             if (!addPersistenceContextRef(bean)) {
@@ -239,7 +226,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                 // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
                 Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
                 for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
-                    mappedSuperclassByClass.put(mappedSuperclass.getClazz(), mappedSuperclass);
+                    entityMappings.getMappedSuperclass().add(mappedSuperclass);
                 }
             }
 
@@ -293,7 +280,6 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
             }
         }
-        entityMappings.getMappedSuperclass().addAll(mappedSuperclassByClass.values());
 
         Relationships relationships = ejbJar.getRelationships();
         if (relationships != null) {

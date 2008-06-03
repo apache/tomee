@@ -27,6 +27,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.PersistenceType;
 import org.codehaus.swizzle.stream.StringTemplate;
 
 public class InitEjbDeployments implements DynamicDeployer {
@@ -88,10 +90,24 @@ public class InitEjbDeployments implements DynamicDeployer {
                     logger.info("Auto-assigning deployment-id for ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
                 }
             }
+
+            if (isCmpEntity(bean)){
+                EntityBean entity = (EntityBean) bean;
+                if (entity.getAbstractSchemaName() == null){
+                    String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
+                    // The AbstractSchemaName must be unique, we should check that it is 
+                    entity.setAbstractSchemaName(abstractSchemaName);
+                }
+            }
         }
 
         return ejbModule;
     }
+
+    private static boolean isCmpEntity(EnterpriseBean bean) {
+        return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
+    }
+
 
     private String autoAssignDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
