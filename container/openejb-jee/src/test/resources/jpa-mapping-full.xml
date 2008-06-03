@@ -16,7 +16,6 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev$ $Date$ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">

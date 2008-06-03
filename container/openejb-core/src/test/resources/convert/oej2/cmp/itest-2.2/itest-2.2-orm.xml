@@ -15,10 +15,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev$ $Date$ -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
+        <attributes>
+            <id name="primaryKey"/>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <transient name="nextId"/>
+            <transient name="ejbContext"/>
+            <transient name="allowedOperationsTable"/>
+        </attributes>
+    </mapped-superclass>
     <mapped-superclass class="org.apache.openejb.test.entity.cmp.AllowedOperationsCmpBean">
         <attributes>
             <id name="primaryKey"/>
@@ -26,16 +35,6 @@
             <basic name="lastName"/>
             <transient name="nextId"/>
             <transient name="number"/>
-            <transient name="ejbContext"/>
-            <transient name="allowedOperationsTable"/>
-        </attributes>
-    </mapped-superclass>
-    <mapped-superclass class="org.apache.openejb.test.entity.cmp.BasicCmpBean">
-        <attributes>
-            <id name="primaryKey"/>
-            <basic name="firstName"/>
-            <basic name="lastName"/>
-            <transient name="nextId"/>
             <transient name="ejbContext"/>
             <transient name="allowedOperationsTable"/>
         </attributes>
