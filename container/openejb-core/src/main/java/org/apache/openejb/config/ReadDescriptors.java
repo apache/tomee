@@ -30,6 +30,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
@@ -73,6 +74,8 @@ public class ReadDescriptors implements DynamicDeployer {
             if (ejbModule.getOpenejbJar() == null) {
                 readOpenejbJar(ejbModule);
             }
+
+            readCmpOrm(ejbModule);
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
@@ -289,6 +292,27 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
+    private void readCmpOrm(EjbModule ejbModule) throws OpenEJBException {
+        Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
+        if (data == null || data instanceof EntityMappings) {
+            return;
+        } else if (data instanceof URL) {
+            URL url = (URL) data;
+            try {
+                EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, url.openStream());
+                ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
+            } catch (SAXException e) {
+                throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+            } catch (JAXBException e) {
+                throw new OpenEJBException("Cannot unmarshall the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+            } catch (IOException e) {
+                throw new OpenEJBException("Cannot read the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+            } catch (Exception e) {
+                throw new OpenEJBException("Encountered unknown error parsing the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);
+            }
+        }
+    }
+
     private void readConnector(ConnectorModule connectorModule, AppModule appModule) throws OpenEJBException {
         if (connectorModule.getConnector() != null) return;
 
@@ -446,13 +470,13 @@ public class ReadDescriptors implements DynamicDeployer {
         try {
             connector = (Connector) JaxbJavaee.unmarshal(Connector.class, url.openStream());
         } catch (SAXException e) {
-            throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
-            throw new OpenEJBException("Cannot unmarshall the web.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot unmarshall the ra.xml file: " + url.toExternalForm(), e);
         } catch (IOException e) {
-            throw new OpenEJBException("Cannot read the web.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Cannot read the ra.xml file: " + url.toExternalForm(), e);
         } catch (Exception e) {
-            throw new OpenEJBException("Encountered unknown error parsing the web.xml file: " + url.toExternalForm(), e);
+            throw new OpenEJBException("Encountered unknown error parsing the ra.xml file: " + url.toExternalForm(), e);
         }
         return connector;
     }
