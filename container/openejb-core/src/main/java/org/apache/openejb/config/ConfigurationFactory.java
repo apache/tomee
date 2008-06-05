@@ -108,7 +108,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public ConfigurationFactory(boolean offline) {
         this(offline, (DynamicDeployer) null);
     }
-    
+
     public ConfigurationFactory(boolean offline, DynamicDeployer preAutoConfigDeployer) {
         this.offline = offline;
         deploymentLoader = new DeploymentLoader();
@@ -146,7 +146,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // must be after CmpJpaConversion since it adds new persistence-context-refs
             chain.add(new GeronimoMappedName());
         }
-        
+
         if (null != preAutoConfigDeployer) {
             chain.add(preAutoConfigDeployer);
         }
@@ -178,7 +178,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this(offline, preAutoConfigDeployer);
         sys = configuration;
     }
-    
+
     public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
         List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
         if (chains == null) return handlerChains;
@@ -669,23 +669,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         Properties sysProps = new Properties(System.getProperties());
         sysProps.putAll(SystemInstance.get().getProperties());
         for (Map.Entry<Object, Object> entry : sysProps.entrySet()) {
+
             String name = (String) entry.getKey();
-            Object value = entry.getValue();
-            if (value instanceof String) {
-                if (name.startsWith(fullPrefix)) {
-                    name = name.substring(fullPrefix.length());
-                    serviceProperties.setProperty(name, (String) value);
-                } else if (name.startsWith(fullPrefix2)) {
-                    name = name.substring(fullPrefix2.length());
-                    serviceProperties.setProperty(name, (String) value);
-                } else if (name.startsWith(shortPrefix)) {
-                    name = name.substring(shortPrefix.length());
-                    serviceProperties.setProperty(name, (String) value);
-                } else if (name.startsWith(shortPrefix2)) {
-                    name = name.substring(shortPrefix2.length());
-                    serviceProperties.setProperty(name, (String) value);
+
+            for (String prefix : Arrays.asList(fullPrefix, fullPrefix2, shortPrefix, shortPrefix2)) {
+                if (name.toLowerCase().startsWith(prefix.toLowerCase())){
+
+                    name = name.substring(prefix.length());
+
+                    // TODO: Maybe use xbean-reflect to get the string value
+                    String value = entry.getValue().toString();
+
+                    serviceProperties.setProperty(name, value);
+                    break;
                 }
             }
+
         }
         return serviceProperties;
     }
