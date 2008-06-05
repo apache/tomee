@@ -384,7 +384,6 @@
           <releases>
             <enabled>false</enabled>
           </releases>
-          <snapshots />
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </repository>
@@ -394,7 +393,6 @@
           <releases>
             <enabled>false</enabled>
           </releases>
-          <snapshots />
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </pluginRepository>
@@ -469,6 +467,16 @@
       <id>apache-m2-snapshot</id>
       <name>Apache Software Foundation M2 Snapshot Repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
