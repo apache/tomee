@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
@@ -179,6 +180,9 @@ public class Entity implements Mapping, Keyable<String> {
     protected Boolean metadataComplete;
     @XmlAttribute
     protected String name;
+
+    @XmlTransient
+    protected String ejbName;
 
     /**
      * Gets the value of the description property.
@@ -935,6 +939,13 @@ public class Entity implements Mapping, Keyable<String> {
         this.name = value;
     }
 
+    public String getEjbName() {
+        return ejbName;
+    }
+
+    public void setEjbName(String ejbName) {
+        this.ejbName = ejbName;
+    }
 
     public void addField(Field field) {
         if (field == null) throw new NullPointerException("field is null");

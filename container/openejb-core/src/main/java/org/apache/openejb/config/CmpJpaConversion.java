@@ -105,7 +105,27 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            generateEntityMappings(ejbModule, cmpMappings);
+            EjbJar ejbJar = ejbModule.getEjbJar();
+
+            for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+                if (isCmpEntity(enterpriseBean)) {
+                    processEntityBean(ejbModule, cmpMappings, (EntityBean) enterpriseBean);
+                }
+            }
+
+
+            Relationships relationships = ejbJar.getRelationships();
+            if (relationships != null) {
+
+                Map<String, Entity> entitiesByEjbName = new TreeMap<String,Entity>();
+                for (Entity entity : cmpMappings.getEntity()) {
+                    entitiesByEjbName.put(entity.getEjbName(), entity);
+                }
+
+                for (EjbRelation relation : relationships.getEjbRelation()) {
+                    processRelationship(entitiesByEjbName, relation);
+                }
+            }
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
@@ -171,69 +191,229 @@ public class CmpJpaConversion implements DynamicDeployer {
         return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
 
-    public EntityMappings generateEntityMappings(EjbModule ejbModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
-        appModule.getEjbModules().add(ejbModule);
-
-        EntityMappings entityMappings = new EntityMappings();
-        generateEntityMappings(ejbModule, entityMappings);
-        return entityMappings;
-    }
-
-    public void generateEntityMappings(EjbModule ejbModule, EntityMappings entityMappings) throws OpenEJBException {
-        EjbJar ejbJar = ejbModule.getEjbJar();
-        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
-        ClassLoader classLoader = ejbModule.getClassLoader();
-
-        Map<String, Entity> entitiesByName = new TreeMap<String,Entity>();
-        for (Entity entity : entityMappings.getEntity()) {
-            entitiesByName.put(entity.getName(), entity);
+    private void processRelationship(Map<String, Entity> entitiesByEjbName, EjbRelation relation) throws OpenEJBException {
+        List<EjbRelationshipRole> roles = relation.getEjbRelationshipRole();
+        // if we don't have two roles, the relation is bad so we skip it
+        if (roles.size() != 2) {
+            return;
         }
 
-        for (org.apache.openejb.jee.EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
-            // skip all non-CMP beans
-            if (!isCmpEntity(enterpriseBean)) continue;
+        // get left entity
+        EjbRelationshipRole leftRole = roles.get(0);
+        RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
+        String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
+        Entity leftEntity = entitiesByEjbName.get(leftEjbName);
 
-            EntityBean bean = (EntityBean) enterpriseBean;
+        // get right entity
+        EjbRelationshipRole rightRole = roles.get(1);
+        RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
+        String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
+        Entity rightEntity = entitiesByEjbName.get(rightEjbName);
 
-            // try to add a new persistence-context-ref for cmp
-            if (!addPersistenceContextRef(bean)) {
-                // Bean already has a persistence-context-ref for cmp
-                // which means it has a mapping, so skip this bean
-                continue;
+        // neither left or right have a mapping which is fine
+        if (leftEntity == null && rightEntity == null) {
+            return;
+        }
+        // left not found?
+        if (leftEntity == null) {
+            throw new OpenEJBException("Role source " + leftEjbName + " defined in relationship role " +
+                    relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
+        }
+        // right not found?
+        if (rightEntity == null) {
+            throw new OpenEJBException("Role source " + rightEjbName + " defined in relationship role " +
+                    relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
+        }
+
+        String leftFieldName = null;
+        boolean leftSynthetic = false;
+        if (leftRole.getCmrField() != null) {
+            leftFieldName = leftRole.getCmrField().getCmrFieldName();
+        } else {
+            leftFieldName = rightEntity.getName() + "_" + rightRole.getCmrField().getCmrFieldName();
+            leftSynthetic = true;
+        }
+        boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
+
+        String rightFieldName = null;
+        boolean rightSynthetic = false;
+        if (rightRole.getCmrField() != null) {
+            rightFieldName = rightRole.getCmrField().getCmrFieldName();
+        } else {
+            rightFieldName = leftEntity.getName() + "_" + leftRole.getCmrField().getCmrFieldName();
+            rightSynthetic = true;
+        }
+        boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
+
+        if (leftIsOne && rightIsOne) {
+            //
+            // one-to-one
+            //
+
+            // left
+            OneToOne leftOneToOne = null;
+            leftOneToOne = new OneToOne();
+            leftOneToOne.setName(leftFieldName);
+            leftOneToOne.setSyntheticField(leftSynthetic);
+            setCascade(rightRole, leftOneToOne);
+            leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
+
+            // right
+            OneToOne rightOneToOne = null;
+            rightOneToOne = new OneToOne();
+            rightOneToOne.setName(rightFieldName);
+            rightOneToOne.setSyntheticField(rightSynthetic);
+            rightOneToOne.setMappedBy(leftFieldName);
+            setCascade(leftRole, rightOneToOne);
+            rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
+
+            // link
+            leftOneToOne.setRelatedField(rightOneToOne);
+            rightOneToOne.setRelatedField(leftOneToOne);
+        } else if (leftIsOne && !rightIsOne) {
+            //
+            // one-to-many
+            //
+
+            // left
+            OneToMany leftOneToMany = null;
+            leftOneToMany = new OneToMany();
+            leftOneToMany.setName(leftFieldName);
+            leftOneToMany.setSyntheticField(leftSynthetic);
+            leftOneToMany.setMappedBy(rightFieldName);
+            setCascade(rightRole, leftOneToMany);
+            leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
+
+            // right
+            ManyToOne rightManyToOne = null;
+            rightManyToOne = new ManyToOne();
+            rightManyToOne.setName(rightFieldName);
+            rightManyToOne.setSyntheticField(rightSynthetic);
+            setCascade(leftRole, rightManyToOne);
+            rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
+
+            // link
+            leftOneToMany.setRelatedField(rightManyToOne);
+            rightManyToOne.setRelatedField(leftOneToMany);
+        } else if (!leftIsOne && rightIsOne) {
+            //
+            // many-to-one
+            //
+
+            // left
+            ManyToOne leftManyToOne = null;
+            leftManyToOne = new ManyToOne();
+            leftManyToOne.setName(leftFieldName);
+            leftManyToOne.setSyntheticField(leftSynthetic);
+            setCascade(rightRole, leftManyToOne);
+            leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
+
+            // right
+            OneToMany rightOneToMany = null;
+            rightOneToMany = new OneToMany();
+            rightOneToMany.setName(rightFieldName);
+            rightOneToMany.setSyntheticField(rightSynthetic);
+            rightOneToMany.setMappedBy(leftFieldName);
+            setCascade(leftRole, rightOneToMany);
+            rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
+
+            // link
+            leftManyToOne.setRelatedField(rightOneToMany);
+            rightOneToMany.setRelatedField(leftManyToOne);
+        } else if (!leftIsOne && !rightIsOne) {
+            //
+            // many-to-many
+            //
+
+            // left
+            ManyToMany leftManyToMany = null;
+            leftManyToMany = new ManyToMany();
+            leftManyToMany.setName(leftFieldName);
+            leftManyToMany.setSyntheticField(leftSynthetic);
+            setCascade(rightRole, leftManyToMany);
+            leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
+
+            // right
+            ManyToMany rightManyToMany = null;
+            rightManyToMany = new ManyToMany();
+            rightManyToMany.setName(rightFieldName);
+            rightManyToMany.setSyntheticField(rightSynthetic);
+            rightManyToMany.setMappedBy(leftFieldName);
+            setCascade(leftRole, rightManyToMany);
+            rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
+
+            // link
+            leftManyToMany.setRelatedField(rightManyToMany);
+            rightManyToMany.setRelatedField(leftManyToMany);
+        }
+    }
+
+    private void processEntityBean(EjbModule ejbModule, EntityMappings entityMappings, EntityBean bean) {
+        // try to add a new persistence-context-ref for cmp
+        if (!addPersistenceContextRef(bean)) {
+            // Bean already has a persistence-context-ref for cmp
+            // which means it has a mapping, so skip this bean
+            return;
+        }
+
+        Entity entity = new Entity();
+
+        // description: contains the name of the entity bean
+        entity.setDescription(ejbModule.getModuleId() + "#" + bean.getEjbName());
+
+        // name: the name of the entity in queries
+        String entityName = bean.getAbstractSchemaName();
+        entity.setName(entityName);
+        entity.setEjbName(bean.getEjbName());
+
+        // class: impl class name
+        String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
+        entity.setClazz(cmpImplClassName);
+
+        // add the entity
+        entityMappings.getEntity().add(entity);
+
+        ClassLoader classLoader = ejbModule.getClassLoader();
+        if (bean.getCmpVersion() == CmpVersion.CMP2) {
+            mapClass2x(entity, bean, classLoader);
+        } else {
+            // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
+            Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
+            for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
+                entityMappings.getMappedSuperclass().add(mappedSuperclass);
             }
+        }
 
-            Entity entity = new Entity();
+        // process queries
+        for (Query query : bean.getQuery()) {
+            NamedQuery namedQuery = new NamedQuery();
+            QueryMethod queryMethod = query.getQueryMethod();
 
-            // description: contains the name of the entity bean
-            entity.setDescription(ejbModule.getModuleId() + "#" + bean.getEjbName());
-
-            // name: the name of the entity in queries
-            String entityName = bean.getAbstractSchemaName();
-            entity.setName(entityName);
-
-            // class: impl class name
-            String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
-            entity.setClazz(cmpImplClassName);
-
-            // add the entity
-            entityMappings.getEntity().add(entity);
-            entitiesByName.put(bean.getEjbName(), entity);
-
-            if (bean.getCmpVersion() == CmpVersion.CMP2) {
-                mapClass2x(entity, bean, classLoader);
-            } else {
-                // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
-                Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
-                for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
-                    entityMappings.getMappedSuperclass().add(mappedSuperclass);
+            // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
+            StringBuilder name = new StringBuilder();
+            name.append(entityName).append(".").append(queryMethod.getMethodName());
+            if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
+                name.append('(');
+                boolean first = true;
+                for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
+                    if (!first) name.append(",");
+                    name.append(methodParam);
+                    first = false;
                 }
+                name.append(')');
             }
+            namedQuery.setName(name.toString());
 
-            // process queries
-            for (Query query : bean.getQuery()) {
+            namedQuery.setQuery(query.getEjbQl());
+            entity.getNamedQuery().add(namedQuery);
+        }
+        // todo: there should be a common interface between ejb query object and openejb query object
+        OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+        EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
+        if (ejbDeployment != null) {
+            for (org.apache.openejb.jee.oejb3.Query query : ejbDeployment.getQuery()) {
                 NamedQuery namedQuery = new NamedQuery();
-                QueryMethod queryMethod = query.getQueryMethod();
+                org.apache.openejb.jee.oejb3.QueryMethod queryMethod = query.getQueryMethod();
 
                 // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
                 StringBuilder name = new StringBuilder();
@@ -250,194 +430,8 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
                 namedQuery.setName(name.toString());
 
-                namedQuery.setQuery(query.getEjbQl());
+                namedQuery.setQuery(query.getObjectQl());
                 entity.getNamedQuery().add(namedQuery);
-            }
-            // todo: there should be a common interface between ejb query object and openejb query object
-            EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
-            if (ejbDeployment != null) {
-                for (org.apache.openejb.jee.oejb3.Query query : ejbDeployment.getQuery()) {
-                    NamedQuery namedQuery = new NamedQuery();
-                    org.apache.openejb.jee.oejb3.QueryMethod queryMethod = query.getQueryMethod();
-
-                    // todo deployment id could change in one of the later conversions... use entity name instead, but we need to save it off
-                    StringBuilder name = new StringBuilder();
-                    name.append(entityName).append(".").append(queryMethod.getMethodName());
-                    if (queryMethod.getMethodParams() != null && !queryMethod.getMethodParams().getMethodParam().isEmpty()) {
-                        name.append('(');
-                        boolean first = true;
-                        for (String methodParam : queryMethod.getMethodParams().getMethodParam()) {
-                            if (!first) name.append(",");
-                            name.append(methodParam);
-                            first = false;
-                        }
-                        name.append(')');
-                    }
-                    namedQuery.setName(name.toString());
-
-                    namedQuery.setQuery(query.getObjectQl());
-                    entity.getNamedQuery().add(namedQuery);
-                }
-            }
-        }
-
-        Relationships relationships = ejbJar.getRelationships();
-        if (relationships != null) {
-            for (EjbRelation relation : relationships.getEjbRelation()) {
-                List<EjbRelationshipRole> roles = relation.getEjbRelationshipRole();
-                // if we don't have two roles, the relation is bad so we skip it
-                if (roles.size() != 2) {
-                    continue;
-                }
-
-                // get left entity
-                EjbRelationshipRole leftRole = roles.get(0);
-                RelationshipRoleSource leftRoleSource = leftRole.getRelationshipRoleSource();
-                String leftEjbName = leftRoleSource == null ? null : leftRoleSource.getEjbName();
-                Entity leftEntity = entitiesByName.get(leftEjbName);
-
-                // get right entity
-                EjbRelationshipRole rightRole = roles.get(1);
-                RelationshipRoleSource rightRoleSource = rightRole.getRelationshipRoleSource();
-                String rightEjbName = rightRoleSource == null ? null : rightRoleSource.getEjbName();
-                Entity rightEntity = entitiesByName.get(rightEjbName);
-
-                // neither left or right have a mapping which is fine
-                if (leftEntity == null && rightEntity == null) {
-                    continue;
-                }
-                // left not found?
-                if (leftEntity == null) {
-                    throw new OpenEJBException("Role source " + leftEjbName + " defined in relationship role " +
-                            relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
-                }
-                // right not found?
-                if (rightEntity == null) {
-                    throw new OpenEJBException("Role source " + rightEjbName + " defined in relationship role " +
-                            relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
-                }
-
-                String leftFieldName = null;
-                boolean leftSynthetic = false;
-                if (leftRole.getCmrField() != null) {
-                    leftFieldName = leftRole.getCmrField().getCmrFieldName();
-                } else {
-                    leftFieldName = rightEntity.getName() + "_" + rightRole.getCmrField().getCmrFieldName();
-                    leftSynthetic = true;
-                }
-                boolean leftIsOne = leftRole.getMultiplicity() == Multiplicity.ONE;
-
-                String rightFieldName = null;
-                boolean rightSynthetic = false;
-                if (rightRole.getCmrField() != null) {
-                    rightFieldName = rightRole.getCmrField().getCmrFieldName();
-                } else {
-                    rightFieldName = leftEntity.getName() + "_" + leftRole.getCmrField().getCmrFieldName();
-                    rightSynthetic = true;
-                }
-                boolean rightIsOne = rightRole.getMultiplicity() == Multiplicity.ONE;
-
-                if (leftIsOne && rightIsOne) {
-                    //
-                    // one-to-one
-                    //
-
-                    // left
-                    OneToOne leftOneToOne = null;
-                    leftOneToOne = new OneToOne();
-                    leftOneToOne.setName(leftFieldName);
-                    leftOneToOne.setSyntheticField(leftSynthetic);
-                    setCascade(rightRole, leftOneToOne);
-                    leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
-
-                    // right
-                    OneToOne rightOneToOne = null;
-                    rightOneToOne = new OneToOne();
-                    rightOneToOne.setName(rightFieldName);
-                    rightOneToOne.setSyntheticField(rightSynthetic);
-                    rightOneToOne.setMappedBy(leftFieldName);
-                    setCascade(leftRole, rightOneToOne);
-                    rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
-
-                    // link
-                    leftOneToOne.setRelatedField(rightOneToOne);
-                    rightOneToOne.setRelatedField(leftOneToOne);
-                } else if (leftIsOne && !rightIsOne) {
-                    //
-                    // one-to-many
-                    //
-
-                    // left
-                    OneToMany leftOneToMany = null;
-                    leftOneToMany = new OneToMany();
-                    leftOneToMany.setName(leftFieldName);
-                    leftOneToMany.setSyntheticField(leftSynthetic);
-                    leftOneToMany.setMappedBy(rightFieldName);
-                    setCascade(rightRole, leftOneToMany);
-                    leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
-
-                    // right
-                    ManyToOne rightManyToOne = null;
-                    rightManyToOne = new ManyToOne();
-                    rightManyToOne.setName(rightFieldName);
-                    rightManyToOne.setSyntheticField(rightSynthetic);
-                    setCascade(leftRole, rightManyToOne);
-                    rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
-
-                    // link
-                    leftOneToMany.setRelatedField(rightManyToOne);
-                    rightManyToOne.setRelatedField(leftOneToMany);
-                } else if (!leftIsOne && rightIsOne) {
-                    //
-                    // many-to-one
-                    //
-
-                    // left
-                    ManyToOne leftManyToOne = null;
-                    leftManyToOne = new ManyToOne();
-                    leftManyToOne.setName(leftFieldName);
-                    leftManyToOne.setSyntheticField(leftSynthetic);
-                    setCascade(rightRole, leftManyToOne);
-                    leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
-
-                    // right
-                    OneToMany rightOneToMany = null;
-                    rightOneToMany = new OneToMany();
-                    rightOneToMany.setName(rightFieldName);
-                    rightOneToMany.setSyntheticField(rightSynthetic);
-                    rightOneToMany.setMappedBy(leftFieldName);
-                    setCascade(leftRole, rightOneToMany);
-                    rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
-
-                    // link
-                    leftManyToOne.setRelatedField(rightOneToMany);
-                    rightOneToMany.setRelatedField(leftManyToOne);
-                } else if (!leftIsOne && !rightIsOne) {
-                    //
-                    // many-to-many
-                    //
-
-                    // left
-                    ManyToMany leftManyToMany = null;
-                    leftManyToMany = new ManyToMany();
-                    leftManyToMany.setName(leftFieldName);
-                    leftManyToMany.setSyntheticField(leftSynthetic);
-                    setCascade(rightRole, leftManyToMany);
-                    leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
-
-                    // right
-                    ManyToMany rightManyToMany = null;
-                    rightManyToMany = new ManyToMany();
-                    rightManyToMany.setName(rightFieldName);
-                    rightManyToMany.setSyntheticField(rightSynthetic);
-                    rightManyToMany.setMappedBy(leftFieldName);
-                    setCascade(leftRole, rightManyToMany);
-                    rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
-
-                    // link
-                    leftManyToMany.setRelatedField(rightManyToMany);
-                    rightManyToMany.setRelatedField(leftManyToMany);
-                }
             }
         }
     }
