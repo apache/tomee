@@ -110,7 +110,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     public byte[] generate() {
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"org/apache/openejb/core/cmp/cmp2/Cmp2Entity"});
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"org/apache/openejb/core/cmp/cmp2/Cmp2Entity", "javax/ejb/EntityBean"});
 
         // public static Object deploymentInfo;
         {

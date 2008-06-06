@@ -39,7 +39,7 @@ public class Cmp1Generator implements Opcodes {
     }
 
     public byte[] generate() {
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[0]);
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, implClassName, null, beanClassName, new String[]{"javax/ejb/EntityBean"});
 
         // if we have an unknown pk, we need to add a field for the pk
         if (unknownPk) {
