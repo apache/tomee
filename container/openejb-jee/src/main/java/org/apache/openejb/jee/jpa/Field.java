@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.jee.jpa;
 
-public interface Field {
+import org.apache.openejb.jee.Keyable;
+
+public interface Field extends Keyable {
     Column getColumn();
 
     void setColumn(Column value);

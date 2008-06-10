@@ -260,4 +260,7 @@ public class Basic implements Field {
         this.optional = value;
     }
 
+    public Object getKey() {
+        return name;
+    }
 }

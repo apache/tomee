@@ -307,4 +307,8 @@ public class ManyToOne implements RelationField {
     public void setSyntheticField(boolean syntheticField) {
         this.syntheticField = syntheticField;
     }
+
+    public Object getKey() {
+        return name;
+    }
 }

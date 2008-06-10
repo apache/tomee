@@ -1372,11 +1372,11 @@
 
         <entity>
             <ejb-name>OneOwningSideBean</ejb-name>
-            <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideLocalHome</local-home>
-            <local>org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean</ejb-class>
             <persistence-type>Container</persistence-type>
-            <prim-key-class>org.apache.openejb.test.entity.cmp2.cmrmapping.CompoundPK</prim-key-class>
+            <prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>
             <reentrant>false</reentrant>
             <cmp-version>2.x</cmp-version>
             <abstract-schema-name>OneOwningSideBean</abstract-schema-name>
@@ -1390,9 +1390,9 @@
 
         <entity>
             <ejb-name>OneInverseSideBean</ejb-name>
-            <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideLocalHome</local-home>
-            <local>org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -1406,11 +1406,11 @@
 
         <entity>
             <ejb-name>ManyOwningSideBean</ejb-name>
-            <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideLocalHome</local-home>
-            <local>org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideLocal</local>
-            <ejb-class>org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocalHome</local-home>
+            <local>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocal</local>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean</ejb-class>
             <persistence-type>Container</persistence-type>
-            <prim-key-class>org.apache.openejb.test.entity.cmp2.cmrmapping.CompoundPK</prim-key-class>
+            <prim-key-class>org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK</prim-key-class>
             <reentrant>false</reentrant>
             <cmp-version>2.x</cmp-version>
             <abstract-schema-name>ManyOwningSideBean</abstract-schema-name>
@@ -1433,30 +1433,30 @@
 
         <session>
             <ejb-name>CMRMappingFacadeBean</ejb-name>
-            <home>org.apache.openejb.test.entity.cmp2.cmrmapping.CMRMappingFacadeHome</home>
-            <remote>org.apache.openejb.test.entity.cmp2.cmrmapping.CMRMappingFacadeRemote</remote>
-            <ejb-class>org.apache.openejb.test.entity.cmp2.cmrmapping.CMRMappingFacadeBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmr.cmrmapping.CMRMappingFacadeHome</home>
+            <remote>org.apache.openejb.test.entity.cmr.cmrmapping.CMRMappingFacadeRemote</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmr.cmrmapping.CMRMappingFacadeBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Bean</transaction-type>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/OneOwningSideLocalHome</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideLocalHome</local-home>
-                <local>org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideLocal</local>
+                <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome</local-home>
+                <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal</local>
                 <ejb-link>OneOwningSideBean</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/OneInverseSideLocalHome</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideLocalHome</local-home>
-                <local>org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideLocal</local>
+                <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome</local-home>
+                <local>org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal</local>
                 <ejb-link>OneInverseSideBean</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/ManyOwningSideLocalHome</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideLocalHome</local-home>
-                <local>org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideLocal</local>
+                <local-home>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocalHome</local-home>
+                <local>org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocal</local>
                 <ejb-link>ManyOwningSideBean</ejb-link>
             </ejb-local-ref>
         </session>

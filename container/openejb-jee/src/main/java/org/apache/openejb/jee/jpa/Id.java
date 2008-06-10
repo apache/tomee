@@ -232,4 +232,7 @@ public class Id implements Field {
         this.name = value;
     }
 
+    public Object getKey() {
+        return name;
+    }
 }

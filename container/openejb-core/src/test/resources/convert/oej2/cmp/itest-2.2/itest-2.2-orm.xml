@@ -232,22 +232,23 @@
             </basic>
         </attributes>
     </entity>
-    <entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.OneOwningSideBean">
+    <entity name="OneOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideBean">
         <description>TestModule#OneOwningSideBean</description>
         <table name="OneOwning"/>
+        <id-class class="org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK"/>
         <attributes>
-            <basic name="id">
+            <id name="id">
                 <column name="col_id"/>
-            </basic>
-            <basic name="field1">
+            </id>
+            <id name="field1">
                 <column name="col_field1"/>
-            </basic>
+            </id>
             <one-to-one name="oneInverseSide">
                 <join-column referenced-column-name="col_id" name="col_field1"/>
             </one-to-one>
         </attributes>
     </entity>
-    <entity name="OneInverseSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.OneInverseSideBean">
+    <entity name="OneInverseSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideBean">
         <description>TestModule#OneInverseSideBean</description>
         <table name="OneInverse"/>
         <attributes>
@@ -258,19 +259,20 @@
             <one-to-one name="oneOwningSide" mapped-by="oneInverseSide"/>
         </attributes>
     </entity>
-    <entity name="ManyOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmp2.cmrmapping.ManyOwningSideBean">
+    <entity name="ManyOwningSideBean" class="openejb.org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideBean">
         <description>TestModule#ManyOwningSideBean</description>
         <table name="ManyOwning"/>
+        <id-class class="org.apache.openejb.test.entity.cmr.cmrmapping.CompoundPK"/>
         <named-query name="ManyOwningSideBean.ejbSelectSomething(java.lang.Integer)">
             <query>SELECT m.oneInverseSide FROM ManyOwningSideBean m WHERE m.id = ?1</query>
         </named-query>
         <attributes>
-            <basic name="id">
+            <id name="id">
                 <column name="col_id"/>
-            </basic>
-            <basic name="field1">
+            </id>
+            <id name="field1">
                 <column name="col_field1"/>
-            </basic>
+            </id>
             <many-to-one name="oneInverseSide">
                 <join-column referenced-column-name="col_id" name="col_field1"/>
             </many-to-one>

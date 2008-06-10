@@ -369,11 +369,11 @@
             <ns6:provider>org.apache.openjpa.persistence.PersistenceProviderImpl</ns6:provider>
             <ns6:jta-data-source>?name=jdbc/TradeDataSource</ns6:jta-data-source>
             <ns6:non-jta-data-source>?name=jdbc/NoTxTradeDataSource</ns6:non-jta-data-source>
-            <ns6:class>org.apache.geronimo.samples.daytrader.AccountDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.AccountProfileDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.HoldingDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.OrderDataBean</ns6:class>
-            <ns6:class>org.apache.geronimo.samples.daytrader.QuoteDataBean</ns6:class>
+            <ns6:class>org.apache.openejb.test.entity.cmp2.daytrader.AccountDataBean</ns6:class>
+            <ns6:class>org.apache.openejb.test.entity.cmp2.daytrader.AccountProfileDataBean</ns6:class>
+            <ns6:class>org.apache.openejb.test.entity.cmp2.daytrader.HoldingDataBean</ns6:class>
+            <ns6:class>org.apache.openejb.test.entity.cmp2.daytrader.OrderDataBean</ns6:class>
+            <ns6:class>org.apache.openejb.test.entity.cmp2.daytrader.QuoteDataBean</ns6:class>
             <ns6:exclude-unlisted-classes>false</ns6:exclude-unlisted-classes>
             <ns6:properties>
                 <ns6:property value="org.apache.openjpa.jdbc.sql.DerbyDictionary" name="openjpa.jdbc.DBDictionary"/>

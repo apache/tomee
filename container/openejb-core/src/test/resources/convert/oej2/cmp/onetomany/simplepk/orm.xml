@@ -56,6 +56,7 @@
             <basic name="field3">
                 <column name="fka1"/>
             </basic>
+            <basic name="field4"/>
             <many-to-one name="a">
                 <join-column referenced-column-name="a1" name="fka1"/>
             </many-to-one>

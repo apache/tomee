@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.jee.jpa;
 
+import org.apache.openejb.jee.Keyable;
+
 import java.util.List;
 
-public interface RelationField {
+public interface RelationField extends Keyable {
     List<JoinColumn> getJoinColumn();
 
     JoinTable getJoinTable();

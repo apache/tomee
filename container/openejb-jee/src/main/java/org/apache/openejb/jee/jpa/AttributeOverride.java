@@ -127,4 +127,7 @@ public class AttributeOverride implements Field {
         this.name = value;
     }
 
+    public Object getKey() {
+        return name;
+    }
 }

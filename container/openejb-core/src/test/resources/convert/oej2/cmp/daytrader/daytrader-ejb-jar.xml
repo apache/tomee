@@ -28,9 +28,9 @@
             <description>Trade Session EJB manages all Trading services</description>
             <display-name>TradeEJB</display-name>
             <ejb-name>TradeEJB</ejb-name>
-            <home>org.apache.geronimo.samples.daytrader.ejb.TradeHome</home>
-            <remote>org.apache.geronimo.samples.daytrader.ejb.Trade</remote>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.TradeBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeHome</home>
+            <remote>org.apache.openejb.test.entity.cmp2.daytrader.ejb.Trade</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
             <env-entry>
@@ -51,50 +51,50 @@
             <ejb-ref>
                 <ejb-ref-name>ejb/Trade</ejb-ref-name>
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.apache.geronimo.samples.daytrader.ejb.TradeHome</home>
-                <remote>org.apache.geronimo.samples.daytrader.ejb.Trade</remote>
+                <home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeHome</home>
+                <remote>org.apache.openejb.test.entity.cmp2.daytrader.ejb.Trade</remote>
                 <ejb-link>TradeEJB</ejb-link>
             </ejb-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/Quote</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalQuoteHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalQuote</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalQuoteHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalQuote</local>
                 <ejb-link>QuoteEJB</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/Account</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccount</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccount</local>
                 <ejb-link>AccountEJB</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/Holding</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalHoldingHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalHolding</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalHoldingHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalHolding</local>
                 <ejb-link>HoldingEJB</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/Order</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalOrderHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalOrder</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalOrderHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalOrder</local>
                 <ejb-link>OrderEJB</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/KeySequence</ejb-ref-name>
                 <ejb-ref-type>Session</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalKeySequenceHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalKeySequence</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeySequenceHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeySequence</local>
                 <ejb-link>KeySequenceEJB</ejb-link>
             </ejb-local-ref>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/AccountProfile</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfileHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfile</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfileHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfile</local>
                 <ejb-link>AccountProfileEJB</ejb-link>
             </ejb-local-ref>
             <resource-ref>
@@ -136,9 +136,9 @@
             <description>Trade JPA Session EJB manages all Trading services</description>
             <display-name>TradeJPA</display-name>
             <ejb-name>TradeJPA</ejb-name>
-            <home>org.apache.geronimo.samples.daytrader.ejb.TradeHome</home>
-            <remote>org.apache.geronimo.samples.daytrader.ejb.Trade</remote>
-            <ejb-class>org.apache.geronimo.samples.daytrader.TradeJPA</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeHome</home>
+            <remote>org.apache.openejb.test.entity.cmp2.daytrader.ejb.Trade</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.TradeJPA</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
             <env-entry>
@@ -189,9 +189,9 @@
             <description>Trade JDBC Session EJB manages all Trading services</description>
             <display-name>TradeJDBC</display-name>
             <ejb-name>TradeJDBC</ejb-name>
-            <home>org.apache.geronimo.samples.daytrader.session.TradeJDBCHome</home>
-            <remote>org.apache.geronimo.samples.daytrader.session.TradeJDBC</remote>
-            <ejb-class>org.apache.geronimo.samples.daytrader.session.TradeJDBCBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp2.daytrader.session.TradeJDBCHome</home>
+            <remote>org.apache.openejb.test.entity.cmp2.daytrader.session.TradeJDBC</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.session.TradeJDBCBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
             <security-identity>
@@ -202,9 +202,9 @@
         <entity>
             <display-name>HoldingEJB</display-name>
             <ejb-name>HoldingEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalHoldingHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalHolding</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.HoldingBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalHoldingHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalHolding</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.HoldingBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -286,7 +286,7 @@
         <message-driven>
             <display-name>TradeBrokerMDB</display-name>
             <ejb-name>TradeBrokerMDB</ejb-name>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.TradeBrokerMDB</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeBrokerMDB</ejb-class>
             <transaction-type>Container</transaction-type>
             <message-destination-type>javax.jms.Queue</message-destination-type>
             <message-destination-link>TradeBrokerQueue</message-destination-link>
@@ -298,17 +298,17 @@
             <ejb-ref>
                 <ejb-ref-name>ejb/Trade</ejb-ref-name>
                 <ejb-ref-type>Session</ejb-ref-type>
-                <home>org.apache.geronimo.samples.daytrader.ejb.TradeHome</home>
-                <remote>org.apache.geronimo.samples.daytrader.ejb.Trade</remote>
+                <home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeHome</home>
+                <remote>org.apache.openejb.test.entity.cmp2.daytrader.ejb.Trade</remote>
                 <ejb-link>TradeEJB</ejb-link>
             </ejb-ref>
         </message-driven>
         <entity>
             <display-name>AccountProfileEJB</display-name>
             <ejb-name>AccountProfileEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfileHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfile</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.AccountProfileBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfileHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfile</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.AccountProfileBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.String</prim-key-class>
             <reentrant>false</reentrant>
@@ -363,11 +363,11 @@
             <description>Stock price quotes including current, open, high, low, etc.</description>
             <display-name>QuoteEJB</display-name>
             <ejb-name>QuoteEJB</ejb-name>
-            <home>org.apache.geronimo.samples.daytrader.ejb.QuoteHome</home>
-            <remote>org.apache.geronimo.samples.daytrader.ejb.Quote</remote>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalQuoteHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalQuote</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.QuoteBean</ejb-class>
+            <home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.QuoteHome</home>
+            <remote>org.apache.openejb.test.entity.cmp2.daytrader.ejb.Quote</remote>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalQuoteHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalQuote</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.QuoteBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.String</prim-key-class>
             <reentrant>false</reentrant>
@@ -470,16 +470,16 @@
         <session>
             <display-name>KeySequenceEJB</display-name>
             <ejb-name>KeySequenceEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalKeySequenceHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalKeySequence</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.KeySequenceBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeySequenceHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeySequence</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.KeySequenceBean</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
             <ejb-local-ref>
                 <ejb-ref-name>ejb/KeyGen</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalKeyGenHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalKeyGen</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeyGenHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeyGen</local>
                 <ejb-link>KeyGenEJB</ejb-link>
             </ejb-local-ref>
             <security-identity>
@@ -490,9 +490,9 @@
         <entity>
             <display-name>KeyGenEJB</display-name>
             <ejb-name>KeyGenEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalKeyGenHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalKeyGen</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.KeyGenBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeyGenHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalKeyGen</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.KeyGenBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.String</prim-key-class>
             <reentrant>false</reentrant>
@@ -524,9 +524,9 @@
         <entity>
             <display-name>AccountEJB</display-name>
             <ejb-name>AccountEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccount</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.AccountBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccount</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.AccountBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -557,8 +557,8 @@
             <ejb-local-ref>
                 <ejb-ref-name>ejb/AccountProfile</ejb-ref-name>
                 <ejb-ref-type>Entity</ejb-ref-type>
-                <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfileHome</local-home>
-                <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccountProfile</local>
+                <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfileHome</local-home>
+                <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalAccountProfile</local>
                 <ejb-link>AccountProfileEJB</ejb-link>
             </ejb-local-ref>
             <security-identity>
@@ -620,9 +620,9 @@
         <entity>
             <display-name>OrderEJB</display-name>
             <ejb-name>OrderEJB</ejb-name>
-            <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalOrderHome</local-home>
-            <local>org.apache.geronimo.samples.daytrader.ejb.LocalOrder</local>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.OrderBean</ejb-class>
+            <local-home>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalOrderHome</local-home>
+            <local>org.apache.openejb.test.entity.cmp2.daytrader.ejb.LocalOrder</local>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.OrderBean</ejb-class>
             <persistence-type>Container</persistence-type>
             <prim-key-class>java.lang.Integer</prim-key-class>
             <reentrant>false</reentrant>
@@ -716,7 +716,7 @@
         </entity>
         <message-driven>
             <ejb-name>TradeStreamerMDB</ejb-name>
-            <ejb-class>org.apache.geronimo.samples.daytrader.ejb.TradeStreamerMDB</ejb-class>
+            <ejb-class>org.apache.openejb.test.entity.cmp2.daytrader.ejb.TradeStreamerMDB</ejb-class>
             <transaction-type>Container</transaction-type>
             <message-destination-type>javax.jms.Topic</message-destination-type>
             <message-destination-link>TradeStreamerTopic</message-destination-link>
@@ -916,7 +916,7 @@
                 <method-intf>Remote</method-intf>
                 <method-name>publishQuotePriceChange</method-name>
                 <method-params>
-                    <method-param>org.apache.geronimo.samples.daytrader.QuoteDataBean</method-param>
+                    <method-param>org.apache.openejb.test.entity.cmp2.daytrader.QuoteDataBean</method-param>
                     <method-param>java.math.BigDecimal</method-param>
                     <method-param>java.math.BigDecimal</method-param>
                     <method-param>double</method-param>
@@ -951,7 +951,7 @@
                 <method-intf>Remote</method-intf>
                 <method-name>publishQuotePriceChange</method-name>
                 <method-params>
-                    <method-param>org.apache.geronimo.samples.daytrader.QuoteDataBean</method-param>
+                    <method-param>org.apache.openejb.test.entity.cmp2.daytrader.QuoteDataBean</method-param>
                     <method-param>java.math.BigDecimal</method-param>
                     <method-param>java.math.BigDecimal</method-param>
                     <method-param>double</method-param>

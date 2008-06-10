@@ -52,6 +52,7 @@
             <basic name="field3">
                 <column name="fka1"/>
             </basic>
+            <basic name="field4"/>
             <one-to-one name="a">
                 <join-column referenced-column-name="a1" name="fka1"/>
                 <cascade>

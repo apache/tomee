@@ -92,4 +92,8 @@ public class Transient implements Field {
     public void setColumn(Column value) {
         throw new UnsupportedOperationException("Transient fields don't have column mappings");
     }
+
+    public Object getKey() {
+        return name;
+    }
 }

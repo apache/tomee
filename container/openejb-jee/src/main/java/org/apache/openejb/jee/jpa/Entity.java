@@ -184,6 +184,16 @@ public class Entity implements Mapping, Keyable<String> {
     @XmlTransient
     protected String ejbName;
 
+    @XmlTransient
+    protected boolean xmlMetadataComplete;
+
+    public Entity() {
+    }
+
+    public Entity(String clazz) {
+        this.clazz = clazz;
+    }
+
     /**
      * Gets the value of the description property.
      * 
@@ -945,6 +955,14 @@ public class Entity implements Mapping, Keyable<String> {
 
     public void setEjbName(String ejbName) {
         this.ejbName = ejbName;
+    }
+
+    public boolean isXmlMetadataComplete() {
+        return xmlMetadataComplete;
+    }
+
+    public void setXmlMetadataComplete(boolean xmlMetadataComplete) {
+        this.xmlMetadataComplete = xmlMetadataComplete;
     }
 
     public void addField(Field field) {

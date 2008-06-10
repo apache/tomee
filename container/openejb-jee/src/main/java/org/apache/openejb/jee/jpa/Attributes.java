@@ -17,8 +17,11 @@
 
 package org.apache.openejb.jee.jpa;
 
+import org.apache.openejb.jee.KeyedCollection;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -324,6 +327,15 @@ public class Attributes {
         return this.manyToMany;
     }
 
+    public Map<String, RelationField> getRelationshipFieldMap() {
+        KeyedCollection<String, RelationField> fields = new KeyedCollection<String, RelationField>();
+        if (oneToOne != null) fields.addAll(oneToOne);
+        if (oneToMany != null) fields.addAll(oneToMany);
+        if (manyToMany != null) fields.addAll(manyToMany);
+        if (manyToOne != null) fields.addAll(manyToOne);
+        return fields.toMap();
+    }
+
     /**
      * Gets the value of the embedded property.
      * 
@@ -382,4 +394,20 @@ public class Attributes {
         return this._transient;
     }
 
+
+    // TODO: This should not be necessary, but having an empty <attributes/> tag
+    // causes some of the unit tests to fail.  Not sure why.  Should be fixed.
+    public boolean isEmpty(){
+        if (id != null) return false;
+        if (embeddedId != null) return false;
+        if (basic != null) return false;
+        if (version != null) return false;
+        if (manyToOne != null) return false;
+        if (oneToMany != null) return false;
+        if (oneToOne != null) return false;
+        if (manyToMany != null) return false;
+        if (embedded != null) return false;
+        if (_transient != null) return false;
+        return true;
+    }
 }

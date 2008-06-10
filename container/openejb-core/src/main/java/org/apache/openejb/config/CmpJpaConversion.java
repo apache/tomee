@@ -18,6 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.util.Strings;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.jee.CmpField;
@@ -55,11 +57,13 @@ import org.apache.openejb.jee.jpa.NamedQuery;
 import org.apache.openejb.jee.jpa.IdClass;
 import org.apache.openejb.jee.jpa.GeneratedValue;
 import org.apache.openejb.jee.jpa.GenerationType;
+import org.apache.openejb.jee.jpa.Attributes;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.jpa.unit.Properties;
 
+import javax.ejb.EJBLocalObject;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,6 +77,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Method;
 
 public class CmpJpaConversion implements DynamicDeployer {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, CmpJpaConversion.class);
+
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
 
     private static final Set<String> ENHANCEED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
@@ -126,6 +133,18 @@ public class CmpJpaConversion implements DynamicDeployer {
                     processRelationship(entitiesByEjbName, relation);
                 }
             }
+
+            // Let's warn the user about any declarations we didn't end up using
+            // so there can be no misunderstandings.
+            EntityMappings userMappings = getUserEntityMappings(ejbModule);
+            for (Entity mapping : userMappings.getEntity()) {
+                logger.warning("openejb-cmp-orm.xml mapping ignored: module="+ejbModule.getModuleId()+":  <entity class=\""+mapping.getClazz()+"\">");
+            }
+
+            for (MappedSuperclass mapping : userMappings.getMappedSuperclass()) {
+                logger.warning("openejb-cmp-orm.xml mapping ignored: module="+ejbModule.getModuleId()+":  <mapped-superclass class=\""+mapping.getClazz()+"\">");
+            }
+
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
@@ -137,6 +156,13 @@ public class CmpJpaConversion implements DynamicDeployer {
             }
         }
 
+        // TODO: This should not be necessary, but having an empty <attributes/> tag
+        // causes some of the unit tests to fail.  Not sure why.  Should be fixed.
+        for (Entity entity : appModule.getCmpMappings().getEntity()) {
+            if (entity.getAttributes().isEmpty()){
+                entity.setAttributes(null);
+            }
+        }
         return appModule;
     }
 
@@ -225,6 +251,11 @@ public class CmpJpaConversion implements DynamicDeployer {
                     relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
         }
 
+        final Attributes rightAttributes = rightEntity.getAttributes();
+        Map<String, RelationField> rightRelationships = rightAttributes.getRelationshipFieldMap();
+        final Attributes leftAttributes = leftEntity.getAttributes();
+        Map<String, RelationField> leftRelationships = leftAttributes.getRelationshipFieldMap();
+
         String leftFieldName = null;
         boolean leftSynthetic = false;
         if (leftRole.getCmrField() != null) {
@@ -256,7 +287,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             leftOneToOne.setName(leftFieldName);
             leftOneToOne.setSyntheticField(leftSynthetic);
             setCascade(rightRole, leftOneToOne);
-            leftEntity.getAttributes().getOneToOne().add(leftOneToOne);
+            addRelationship(leftOneToOne, leftRelationships, leftAttributes.getOneToOne());
 
             // right
             OneToOne rightOneToOne = null;
@@ -265,7 +296,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             rightOneToOne.setSyntheticField(rightSynthetic);
             rightOneToOne.setMappedBy(leftFieldName);
             setCascade(leftRole, rightOneToOne);
-            rightEntity.getAttributes().getOneToOne().add(rightOneToOne);
+            addRelationship(rightOneToOne, rightRelationships, rightAttributes.getOneToOne());
 
             // link
             leftOneToOne.setRelatedField(rightOneToOne);
@@ -282,7 +313,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             leftOneToMany.setSyntheticField(leftSynthetic);
             leftOneToMany.setMappedBy(rightFieldName);
             setCascade(rightRole, leftOneToMany);
-            leftEntity.getAttributes().getOneToMany().add(leftOneToMany);
+            addRelationship(leftOneToMany, leftRelationships, leftAttributes.getOneToMany());
 
             // right
             ManyToOne rightManyToOne = null;
@@ -290,7 +321,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             rightManyToOne.setName(rightFieldName);
             rightManyToOne.setSyntheticField(rightSynthetic);
             setCascade(leftRole, rightManyToOne);
-            rightEntity.getAttributes().getManyToOne().add(rightManyToOne);
+            addRelationship(rightManyToOne, rightRelationships, rightAttributes.getManyToOne());
 
             // link
             leftOneToMany.setRelatedField(rightManyToOne);
@@ -306,7 +337,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             leftManyToOne.setName(leftFieldName);
             leftManyToOne.setSyntheticField(leftSynthetic);
             setCascade(rightRole, leftManyToOne);
-            leftEntity.getAttributes().getManyToOne().add(leftManyToOne);
+            addRelationship(leftManyToOne, leftRelationships, leftAttributes.getManyToOne());
 
             // right
             OneToMany rightOneToMany = null;
@@ -315,7 +346,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             rightOneToMany.setSyntheticField(rightSynthetic);
             rightOneToMany.setMappedBy(leftFieldName);
             setCascade(leftRole, rightOneToMany);
-            rightEntity.getAttributes().getOneToMany().add(rightOneToMany);
+            addRelationship(rightOneToMany, rightRelationships, rightAttributes.getOneToMany());
 
             // link
             leftManyToOne.setRelatedField(rightOneToMany);
@@ -331,7 +362,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             leftManyToMany.setName(leftFieldName);
             leftManyToMany.setSyntheticField(leftSynthetic);
             setCascade(rightRole, leftManyToMany);
-            leftEntity.getAttributes().getManyToMany().add(leftManyToMany);
+            addRelationship(leftManyToMany, leftRelationships, leftAttributes.getManyToMany());
 
             // right
             ManyToMany rightManyToMany = null;
@@ -340,12 +371,29 @@ public class CmpJpaConversion implements DynamicDeployer {
             rightManyToMany.setSyntheticField(rightSynthetic);
             rightManyToMany.setMappedBy(leftFieldName);
             setCascade(leftRole, rightManyToMany);
-            rightEntity.getAttributes().getManyToMany().add(rightManyToMany);
+            addRelationship(rightManyToMany, rightRelationships, rightAttributes.getManyToMany());
 
             // link
             leftManyToMany.setRelatedField(rightManyToMany);
             rightManyToMany.setRelatedField(leftManyToMany);
         }
+    }
+
+    private <R extends RelationField> R addRelationship(R relationship, Map<String, RelationField> existing, List<R> relationships) {
+        R r = null;
+
+        try {
+            r = (R) existing.get(relationship.getKey());
+        } catch (ClassCastException e) {
+            return relationship;
+        }
+
+        if (r == null){
+            r = relationship;
+            relationships.add(relationship);
+        }
+
+        return r;
     }
 
     private void processEntityBean(EjbModule ejbModule, EntityMappings entityMappings, EntityBean bean) {
@@ -356,22 +404,91 @@ public class CmpJpaConversion implements DynamicDeployer {
             return;
         }
 
-        Entity entity = new Entity();
+        Class ejbClass = loadClass(ejbModule.getClassLoader(), bean.getEjbClass());
 
-        // description: contains the name of the entity bean
+        String jpaEntityClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), ejbClass.getName());
+
+        // We don't use this mapping directly, instead we pull entries from it
+        // the reason being is that we intend to support mappings that aren't
+        // exactly correct.  i.e. users should be able to write mappings completely
+        // ignorant of the fact that we subclass.  The fact that we subclass means
+        // these user supplied mappings might need to be adjusted as the jpa orm.xml
+        // file is extremely subclass/supperclass aware and mappings specified in it
+        // need to be spot on.
+        EntityMappings userMappings = getUserEntityMappings(ejbModule);
+
+        // Look for any existing mapped superclass mappings
+        for (Class clazz = ejbClass; clazz != null; clazz = clazz.getSuperclass()){
+
+            MappedSuperclass mappedSuperclass = removeMappedSuperclass(userMappings, clazz.getName());
+
+            // We're going to assume that if they bothered to map a superclass
+            // that the mapping is correct.  Copy it from their mappings to ours
+            if (mappedSuperclass != null){
+                entityMappings.getMappedSuperclass().add(mappedSuperclass);
+            }
+        }
+
+        // Look for an existing mapping using the openejb generated subclass name
+        Entity entity = removeEntity(userMappings, jpaEntityClassName);
+
+        // DMB: For the first iteration, we're not going to allow
+        // anything other than the ugly mapping file we generate.
+        // So if they supplied an entity, it better be correct
+        // because we are going to ignore all other xml metadata.
+        if (entity != null) {
+            // XmlMetadataComplete is an OpenEJB specific flag that
+            // tells all other legacy descriptor converters to keep
+            // their hands off.
+            entity.setXmlMetadataComplete(true);
+
+            entityMappings.getEntity().add(entity);
+
+            return;
+        }
+
+// This section is an in progress TODO
+//        if (entity == null){
+//            entity = removeEntity(userMappings, ejbClass.getName());
+//            // OVERWRITE: class: impl class name
+//            if (entity != null) {
+//                entity.setClazz(jpaEntityClassName);
+//
+//                if (Modifier.isAbstract(ejbClass.getModifiers())){
+//                    // This is a CMP2 bean and we allowed the user to
+//                    // define it via the orm.xml file as an <entity>
+//                    // We need to split this definition.  We need
+//                    // an <entity> definition for the generated subclass
+//                    // and a <mapped-superclass> for the bean class
+//
+//
+//                }
+//            }
+//        }
+
+        if (entity == null){
+            entity = new Entity(jpaEntityClassName);
+        }
+
+        // Aggressively add an "Attributes" instance so we don't
+        // have to check for null everywhere.
+        if (entity.getAttributes() == null){
+            entity.setAttributes(new Attributes());
+        }
+
+        // add the entity
+        entityMappings.getEntity().add(entity);
+
+        // OVERWRITE: description: contains the name of the entity bean
         entity.setDescription(ejbModule.getModuleId() + "#" + bean.getEjbName());
 
-        // name: the name of the entity in queries
+
+        // PRESERVE has queries: name: the name of the entity in queries
         String entityName = bean.getAbstractSchemaName();
         entity.setName(entityName);
         entity.setEjbName(bean.getEjbName());
 
-        // class: impl class name
-        String cmpImplClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), bean.getEjbClass());
-        entity.setClazz(cmpImplClassName);
 
-        // add the entity
-        entityMappings.getEntity().add(entity);
 
         ClassLoader classLoader = ejbModule.getClassLoader();
         if (bean.getCmpVersion() == CmpVersion.CMP2) {
@@ -379,6 +496,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         } else {
             // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
             Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
+
             for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
                 entityMappings.getMappedSuperclass().add(mappedSuperclass);
             }
@@ -436,6 +554,34 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
     }
 
+    private Entity removeEntity(EntityMappings userMappings, String className) {
+        Entity entity;
+
+        entity = userMappings.getEntityMap().get(className);
+        if (entity != null){
+            userMappings.getEntityMap().remove(entity.getKey());
+        }
+        return entity;
+    }
+
+    private MappedSuperclass removeMappedSuperclass(EntityMappings userMappings, String className) {
+        MappedSuperclass mappedSuperclass;
+
+        mappedSuperclass = userMappings.getMappedSuperclassMap().get(className);
+        if (mappedSuperclass != null){
+            userMappings.getMappedSuperclassMap().remove(mappedSuperclass.getKey());
+        }
+        return mappedSuperclass;
+    }
+
+    private EntityMappings getUserEntityMappings(EjbModule ejbModule) {
+        Object o = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
+        if (o instanceof EntityMappings) {
+            return (EntityMappings) o;
+        }
+        return new EntityMappings();
+    }
+
     private void mapClass2x(Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         Set<String> allFields = new TreeSet<String>();
         for (CmpField cmpField : bean.getCmpField()) {
@@ -451,7 +597,13 @@ public class CmpJpaConversion implements DynamicDeployer {
                 if (method.getParameterTypes().length != 0) continue;
                 if (method.getReturnType().equals(Void.TYPE)) continue;
 
+                // Skip relationships: anything of type EJBLocalObject or Collection
+                if (EJBLocalObject.class.isAssignableFrom(method.getReturnType())) continue;
+                if (Collection.class.isAssignableFrom(method.getReturnType())) continue;
+                if (Map.class.isAssignableFrom(method.getReturnType())) continue;
+
                 String name = method.getName();
+
 
                 if (name.startsWith("get")){
                     name = name.substring("get".length(), name.length());
@@ -515,12 +667,7 @@ public class CmpJpaConversion implements DynamicDeployer {
     }
 
     private Collection<MappedSuperclass> mapClass1x(String ejbClassName, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
-        Class ejbClass = null;
-        try {
-            ejbClass = classLoader.loadClass(ejbClassName);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
+        Class ejbClass = loadClass(classLoader, ejbClassName);
 
         // build a set of all field names
         Set<String> allFields = new TreeSet<String>();
@@ -592,6 +739,16 @@ public class CmpJpaConversion implements DynamicDeployer {
         return new HashSet<MappedSuperclass>(superclassByField.values());
     }
 
+    private static Class loadClass(ClassLoader classLoader, String className) {
+        Class ejbClass = null;
+        try {
+            ejbClass = classLoader.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+        return ejbClass;
+    }
+
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
         persistantFields = new TreeSet<String>(persistantFields);
         Map<String,MappedSuperclass> fields = new TreeMap<String,MappedSuperclass>();
@@ -632,4 +789,69 @@ public class CmpJpaConversion implements DynamicDeployer {
             field.setCascade(cascadeType);
         }
     }
+
+    public static interface Member {
+        Class getDeclaringClass();
+
+        String getName();
+
+        Class getType();
+    }
+
+    public static class MethodMember implements Member {
+        private final Method setter;
+
+        public MethodMember(Method method) {
+            this.setter = method;
+        }
+
+        public Class getType() {
+            return setter.getParameterTypes()[0];
+        }
+
+        public Class getDeclaringClass() {
+            return setter.getDeclaringClass();
+        }
+
+        public String getName() {
+            StringBuilder name = new StringBuilder(setter.getName());
+
+            // remove 'set'
+            name.delete(0, 3);
+
+            // lowercase first char
+            name.setCharAt(0, Character.toLowerCase(name.charAt(0)));
+
+            return name.toString();
+        }
+
+        public String toString() {
+            return setter.toString();
+        }
+    }
+
+    public static class FieldMember implements Member {
+        private final java.lang.reflect.Field field;
+
+        public FieldMember(java.lang.reflect.Field field) {
+            this.field = field;
+        }
+
+        public Class getType() {
+            return field.getType();
+        }
+
+        public String toString() {
+            return field.toString();
+        }
+
+        public Class getDeclaringClass() {
+            return field.getDeclaringClass();
+        }
+
+        public String getName() {
+            return field.getName();
+        }
+    }
+
 }
