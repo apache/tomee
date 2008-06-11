@@ -25,6 +25,8 @@ import org.apache.openejb.jee.SessionBean;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CheckMethods extends ValidationBase {
 
@@ -76,17 +78,32 @@ public class CheckMethods extends ValidationBase {
         }
 
         Method[] interfaceMethods = intrface.getMethods();
-        Method[] beanClassMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
             if (interfaceMethods[i].getDeclaringClass() == EJBLocalObject.class) continue;
+            String name = interfaceMethods[i].getName();
             try {
-                String name = interfaceMethods[i].getName();
                 Class[] params = interfaceMethods[i].getParameterTypes();
                 Method beanMethod = beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
+                List<Method> differentArgs = new ArrayList<Method>();
+                List<Method> differentCase = new ArrayList<Method>();
 
-                fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
+                for (Method method : beanClass.getMethods()) {
+                    if (method.getName().equals(name)){
+                        differentArgs.add(method);
+                    } else if (method.getName().equalsIgnoreCase(name)){
+                        differentCase.add(method);
+                    }
+                }
+
+                if (differentArgs.size() > 0) {
+                    fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentArgs.size());
+                } else if (differentCase.size() > 0){
+                    fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentCase.size());
+                } else {
+                    fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
+                }
             }
         }
 
@@ -104,18 +121,32 @@ public class CheckMethods extends ValidationBase {
         }
 
         Method[] interfaceMethods = intrface.getMethods();
-        Method[] beanClassMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
             if (interfaceMethods[i].getDeclaringClass() == javax.ejb.EJBObject.class) continue;
+            String name = interfaceMethods[i].getName();
             try {
-                String name = interfaceMethods[i].getName();
                 Class[] params = interfaceMethods[i].getParameterTypes();
                 Method beanMethod = beanClass.getMethod(name, params);
             } catch (NoSuchMethodException nsme) {
+                List<Method> differentArgs = new ArrayList<Method>();
+                List<Method> differentCase = new ArrayList<Method>();
 
-                fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
+                for (Method method : beanClass.getMethods()) {
+                    if (method.getName().equals(name)){
+                        differentArgs.add(method);
+                    } else if (method.getName().equalsIgnoreCase(name)){
+                        differentCase.add(method);
+                    }
+                }
 
+                if (differentArgs.size() > 0) {
+                    fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentArgs.size());
+                } else if (differentCase.size() > 0){
+                    fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentCase.size());
+                } else {
+                    fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
+                }
             }
         }
     }
