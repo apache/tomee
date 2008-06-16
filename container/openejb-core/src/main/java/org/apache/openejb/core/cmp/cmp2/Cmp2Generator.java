@@ -17,6 +17,18 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EntityContext;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
@@ -24,28 +36,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import javax.ejb.EntityContext;
-import java.lang.reflect.Method;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Collection;
-
+/**
+ * Code generate for CMP level 2 beans.  This will 
+ * generate the concrete class used to instantiate 
+ * the bean instance. 
+ */
 public class Cmp2Generator implements Opcodes {
     private static final String UNKNOWN_PK_NAME = "OpenEJB_pk";
     private static final Type UNKNOWN_PK_TYPE = Type.getType(Long.class);
-    private static final Method EJB_SELECT_EXECUTE;
-    static {
-        try {
-            EJB_SELECT_EXECUTE = EjbSelect.class.getMethod("execute", Object.class, String.class, String.class, Object[].class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final String implClassName;
     private final String beanClassName;
@@ -681,6 +679,10 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private void createSelectMethod(Method selectMethod) {
+        Class<?> returnType = selectMethod.getReturnType(); 
+        
+        Method executeMethod = EjbSelect.getSelectMethod(returnType); 
+        
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, selectMethod.getName(), Type.getMethodDescriptor(selectMethod), null, getExceptionTypes(selectMethod));
         mv.visitCode();
 
@@ -690,8 +692,11 @@ public class Cmp2Generator implements Opcodes {
         // push method signature
         mv.visitLdcInsn(getSelectMethodSignature(selectMethod));
 
-        // push return type
-        mv.visitLdcInsn(selectMethod.getReturnType().getName());
+        // push return type, but only if the executeMethod is not going to be for void or 
+        // one of the primitives. 
+        if (!returnType.isPrimitive()) {
+            mv.visitLdcInsn(returnType.getName());
+        }
 
         // new Object[]
         mv.visitIntInsn(BIPUSH, selectMethod.getParameterTypes().length);
@@ -719,20 +724,28 @@ public class Cmp2Generator implements Opcodes {
             }
         }
 
-        // EjbSelect.execute(deploymentInfo, signature, args[]);
+        // EjbSelect.execute_xxxx(deploymentInfo, signature, [returnType.] args[]);
         mv.visitMethodInsn(INVOKESTATIC,
-                Type.getInternalName(EJB_SELECT_EXECUTE.getDeclaringClass()),
-                EJB_SELECT_EXECUTE.getName(),
-                Type.getMethodDescriptor(EJB_SELECT_EXECUTE));
+                Type.getInternalName(executeMethod.getDeclaringClass()),
+                executeMethod.getName(),
+                Type.getMethodDescriptor(executeMethod));
 
-        if (!Void.TYPE.equals(selectMethod.getReturnType())) {
-            // convert return type
-            Convert.fromObjectTo(mv, selectMethod.getReturnType());
-
-            // return value;
+        // if this is a void type, we just return.  Otherwise, the return type 
+        // needs to match the type returned from the method call 
+        if (!Void.TYPE.equals(returnType)) {
+            // if this is a non-primitive return type, then the returned 
+            // object will need to be cast to the appropriate return type for 
+            // the verifier.  The primitive types all have the proper type on the 
+            // stack already 
+            if (!returnType.isPrimitive()) {
+                // convert return type
+                Convert.fromObjectTo(mv, returnType);
+            }
+            
+            // And generate the appropriate return for the type 
             mv.visitInsn(Type.getReturnType(selectMethod).getOpcode(IRETURN));
         } else {
-            // return; 
+            // void return is just a RETURN. 
             mv.visitInsn(RETURN);
         }
 

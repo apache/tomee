@@ -745,7 +745,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         String signature = deploymentInfo.getAbstractSchemaName() + "." + methodSignature;
 
         try {
-            // exectue the select query
+            // execute the select query
             Collection<Object> results = cmpEngine.queryBeans(deploymentInfo, signature, args);
 
             //
@@ -801,7 +801,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 throw new ObjectNotFoundException();
             }
 
-            // return the single item.... multpile return values was handled in for loop above
+            // return the single item.... multiple return values was handled in for loop above
             Object returnValue = proxies.iterator().next();
             return returnValue;
         } catch (RuntimeException e) {
