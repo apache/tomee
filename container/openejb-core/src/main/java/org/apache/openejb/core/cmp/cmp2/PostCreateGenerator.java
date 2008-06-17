@@ -25,31 +25,69 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
+ * Generate concrete implementations of EjbPostCreatexxx
+ * methods for a bean class. 
  * @version $Rev$ $Date$
  */
 public class PostCreateGenerator {
     private final Class beanClass;
     private final ClassWriter cw;
 
+    /**
+     * Constructor for a PostCreateGenerator.
+     * 
+     * @param beanClass The source EJB implementation class (the user
+     *                  provided class).
+     * @param cw        The ClassWriter instance used for constructing the
+     *                  instantiation class.  This has already gone through
+     *                  other generation steps, we're implementing additional
+     *                  stages of the process.
+     */
     public PostCreateGenerator(Class beanClass, ClassWriter cw) {
         this.beanClass = beanClass;
         this.cw = cw;
     }
 
+    
+    /**
+     * Generate the ejbPostCreatexxxx methods.  Inorder to 
+     * be considered for generation, there must A) be a 
+     * corresponding ejbCreatexxxx method and B) the 
+     * target method must either not exist or exist but be
+     * abstract.
+     */
     public void generate() {
+        // ok, scan the class for the ejbCreate methods and check to see if 
+        // we need to provide an ejbPostCreate implementation. 
         for (Method ejbCreate : beanClass.getMethods()) {
-
-            if (!ejbCreate.getName().startsWith("ejbCreate")) continue;
+            if (!ejbCreate.getName().startsWith("ejbCreate")) 
+            {
+                continue;
+            }
 
             StringBuilder ejbPostCreateName = new StringBuilder(ejbCreate.getName());
             ejbPostCreateName.replace(0, "ejbC".length(), "ejbPostC");
 
-            if (hasMethod(beanClass, ejbPostCreateName.toString(), ejbCreate.getParameterTypes())) continue;
-
+            // if there is a concrete method here, we just skip this. 
+            if (hasMethod(beanClass, ejbPostCreateName.toString(), ejbCreate.getParameterTypes())) {
+                continue;
+            }
+            // we need to generate this method 
             createEjbPostCreate(ejbPostCreateName.toString(), ejbCreate);
         }
     }
 
+    /**
+     * Test whether a class provides a concrete implementation 
+     * of a class with the given name and parameter types. 
+     * 
+     * @param beanClass The source implementation class.
+     * @param name      The required method name.
+     * @param args      The list of argument types.
+     * 
+     * @return true if the method exists and is NOT abstract.  Returns 
+     *         false if the method is not found or IS abstract.
+     */
     private boolean hasMethod(Class beanClass, String name, Class... args) {
         try {
             Method method = beanClass.getMethod(name, args);
@@ -59,6 +97,16 @@ public class PostCreateGenerator {
         }
     }
 
+    /**
+     * Generate an ejbPostCreatexxxx method corresponding 
+     * to an ejbCreatexxxx method definition.  These provided 
+     * methods are just empty stubs. 
+     * 
+     * @param ejbPostCreateName
+     *                  The name we're creating under.
+     * @param ejbCreate The matching ejbCreate method.  The post create method
+     *                  will match this one in terms of method signature.
+     */
     public void createEjbPostCreate(String ejbPostCreateName, Method ejbCreate) {
         String methodDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getArgumentTypes(ejbCreate));
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, ejbPostCreateName, methodDescriptor, null, null);
