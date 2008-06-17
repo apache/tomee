@@ -20,6 +20,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.jpa.JpaJaxbUtil;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.util.LogCategory;
@@ -29,16 +31,19 @@ import javax.xml.bind.JAXBException;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-/**
- * @version $Rev$ $Date$
- */
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         boolean output = SystemInstance.get().getProperty(OUTPUT_DESCRIPTORS, "false").equalsIgnoreCase("true");
+
+        if (output && appModule.getCmpMappings() != null){
+
+            writeGenratedCmpMappings(appModule);
+        }
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -56,6 +61,22 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         }
 
         return appModule;
+    }
+
+    private void writeGenratedCmpMappings(AppModule appModule) {
+        try {
+            File tempFile = File.createTempFile("openejb-cmp-generated-orm-", ".xml");
+            FileOutputStream fout = new FileOutputStream(tempFile);
+            BufferedOutputStream out = new BufferedOutputStream(fout);
+
+            try {
+                JpaJaxbUtil.marshal(EntityMappings.class, appModule.getCmpMappings(), out);
+            } catch (JAXBException e) {
+            } finally{
+                out.close();
+            }
+        } catch (IOException e) {
+        }
     }
 
     private void writeOpenejbJar(EjbModule ejbModule) {
