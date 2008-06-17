@@ -66,6 +66,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -491,7 +492,7 @@ public class JndiEncBuilder {
         return name;
     }
 
-    private static class Ref implements EjbResolver.Reference {
+    private static class Ref implements EjbResolver.Reference, Serializable {
         private final EjbReferenceInfo info;
 
         public Ref(EjbReferenceInfo info) {
