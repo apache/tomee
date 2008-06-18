@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @version $Rev$ $Date$
@@ -46,6 +47,16 @@ public class JpaJaxbUtil {
         marshaller.marshal(object, baos);
 
         return new String(baos.toByteArray());
+    }
+
+    public static <T> void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
+        JAXBContext ctx2 = JAXBContextFactory.newInstance(type);
+        Marshaller marshaller = ctx2.createMarshaller();
+
+        marshaller.setProperty("jaxb.formatted.output", true);
+
+        marshaller.marshal(object, out);
+
     }
 
     public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
