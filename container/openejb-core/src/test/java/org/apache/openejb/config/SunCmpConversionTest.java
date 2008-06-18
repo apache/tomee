@@ -47,7 +47,7 @@ import org.custommonkey.xmlunit.DetailedDiff;
  * @version $Rev$ $Date$
  */
 public class SunCmpConversionTest extends TestCase {
-    public void _testItests22() throws Exception {
+    public void testItests22() throws Exception {
         convert("convert/oej2/cmp/itest-2.2/itest-2.2-");
     }
 

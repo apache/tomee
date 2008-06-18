@@ -1126,6 +1126,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         public boolean hasPkColumnMapping(String column) {
+            if (ids.size() > 1) return false;
             for (Id id : ids.values()) {
                 if (column.equals(id.getColumn().getName())) {
                     return true;
