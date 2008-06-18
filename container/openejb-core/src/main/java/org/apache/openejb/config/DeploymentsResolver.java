@@ -47,7 +47,7 @@ public class DeploymentsResolver {
     private static final String CLASSPATH_FILTER_SYSTEMAPPS = "openejb.deployments.classpath.filter.systemapps";
     private static final Logger logger = DeploymentLoader.logger;
 
-    private static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
+    public static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
 
         ////////////////////////////////
         //
@@ -133,39 +133,6 @@ public class DeploymentsResolver {
         }
     }
 
-    public static List<String> resolveAppLocations(List<Deployments> deployments) {
-        // make a copy of the list because we update it
-        deployments = new ArrayList<Deployments>(deployments);
-
-        //// getOption /////////////////////////////////  BEGIN  ////////////////////
-        String flag = SystemInstance.get().getProperty(DEPLOYMENTS_CLASSPATH_PROPERTY, "true");
-        boolean searchClassPath = Boolean.parseBoolean(flag);
-        //// getOption /////////////////////////////////  END  ////////////////////
-
-        if (searchClassPath) {
-            Deployments deployment = JaxbOpenejb.createDeployments();
-            deployment.setClasspath(Thread.currentThread().getContextClassLoader());
-            deployments.add(deployment);
-        }
-        // resolve jar locations //////////////////////////////////////  BEGIN  ///////
-
-        FileUtils base = SystemInstance.get().getBase();
-
-        List<String> jarList = new ArrayList<String>(deployments.size());
-        try {
-            for (Deployments deployment : deployments) {
-                if (deployment.getClasspath() != null) {
-                    loadFromClasspath(base, jarList, deployment.getClasspath());
-                } else {
-                    loadFrom(deployment, base, jarList);
-                }
-            }
-        } catch (SecurityException ignored) {
-        }
-
-        return jarList;
-    }
-
     /**
      * The algorithm of OpenEJB deployments class-path inclusion and exclusion is implemented as follows:
      * 1- If the string value of the resource URL matches the include class-path pattern
@@ -182,7 +149,7 @@ public class DeploymentsResolver {
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      * This appears in step 3 of the above algorithm.
      */
-    private static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
+    public static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
 
         String include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
         String exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
@@ -283,7 +250,7 @@ public class DeploymentsResolver {
             }
 
             if (urls.size() == 0) return;
-            
+
             if (time < 1000) {
                 logger.debug("Searched " + urls.size() + " classpath urls in " + time + " milliseconds.  Average " + (time / urls.size()) + " milliseconds per url.");
             } else if (time < 4000 || urls.size() < 3) {

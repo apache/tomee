@@ -17,38 +17,39 @@
     limitations under the License.
 -->
 
-<!-- $Rev$ $Date$ -->
+<!-- $Rev: 661532 $ $Date: 2008-05-29 16:46:42 -0700 (Thu, 29 May 2008) $ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.1-SNAPSHOT</version>
-  </parent>
+
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>examples</artifactId>
+  <groupId>org.superbiz</groupId>
+  <artifactId>myear</artifactId>
+  <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Examples</name>
+  <name>OpenEJB :: Examples :: Ear Testing</name>
+
   <modules>
-    <module>simple-stateful</module>
-    <module>simple-stateless</module>
-    <module>simple-mdb</module>
-    <module>simple-cmp2</module>
-    <module>simple-webservice</module>
-    <module>component-interfaces</module>
-    <module>injection-of-ejbs</module>
-    <module>injection-of-env-entry</module>
-    <module>injection-of-datasource</module>
-    <module>injection-of-entitymanager</module>
-    <module>injection-of-connectionfactory</module>
-    <module>testing-transactions</module>
-    <module>testing-security</module>
-    <module>ear-testing</module>
-    <module>interceptors</module>
-    <module>custom-injection</module>
-    <module>helloworld-weblogic</module>
-    <module>jpa-hibernate</module>
-    <module>telephone-stateful</module>
-    <module>webapps</module>
+    <module>business-model</module>
+    <module>business-logic</module>
   </modules>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+    </repository>
+  </repositories>
 </project>

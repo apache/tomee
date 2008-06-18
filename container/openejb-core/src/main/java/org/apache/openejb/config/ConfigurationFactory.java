@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Collection;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -75,6 +78,7 @@ import org.apache.openejb.jee.HandlerChain;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -100,6 +104,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private DynamicDeployer deployer;
     private final DeploymentLoader deploymentLoader;
     private final boolean offline;
+    private static final String CLASSPATH_AS_EAR = "openejb.deployments.classpath.ear";
 
     public ConfigurationFactory() {
         this(false);
@@ -307,9 +312,23 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        List<String> jarList = DeploymentsResolver.resolveAppLocations(openejb.getDeployments());
-        for (String pathname : jarList) {
+        List<Deployments> deployments = openejb.getDeployments();
+        // make a copy of the list because we update it
+        deployments = new ArrayList<Deployments>(deployments);
 
+        // resolve jar locations //////////////////////////////////////  BEGIN  ///////
+
+        FileUtils base = SystemInstance.get().getBase();
+
+        List<String> declaredApps = new ArrayList<String>(deployments.size());
+        try {
+            for (Deployments deployment : deployments) {
+                DeploymentsResolver.loadFrom(deployment, base, declaredApps);
+            }
+        } catch (SecurityException ignored) {
+        }
+
+        for (String pathname : declaredApps) {
             try {
                 File jarFile = new File(pathname);
 
@@ -320,7 +339,47 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
+        if (getBooleanOption(DEPLOYMENTS_CLASSPATH_PROPERTY, true)) {
+            List<String> classpathApps = new ArrayList<String>();
+
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+            DeploymentsResolver.loadFromClasspath(base, classpathApps, classLoader);
+
+            ArrayList<File> jarFiles = new ArrayList<File>();
+            for (String path : classpathApps) {
+                if (declaredApps.contains(path)) continue;
+
+                jarFiles.add(new File(path));
+            }
+
+            try {
+                if (getBooleanOption(CLASSPATH_AS_EAR, false)) {
+
+                    AppInfo appInfo = configureApplication(classLoader, "classpath.ear", jarFiles);
+
+                    sys.containerSystem.applications.add(appInfo);
+
+                } else for (File jarFile : jarFiles) {
+
+                    AppInfo appInfo = configureApplication(jarFile);
+
+                    sys.containerSystem.applications.add(appInfo);
+                }
+
+
+            } catch (OpenEJBException alreadyHandled) {
+            }
+
+        }
+
+
         return sys;
+    }
+
+    private static boolean getBooleanOption(String name, boolean defaultValue) {
+        String flag = SystemInstance.get().getProperty(name, defaultValue + "");
+        return Boolean.parseBoolean(flag);
     }
 
     private void loadPropertiesDeclaredConfiguration(Openejb openejb) {
@@ -410,6 +469,70 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
             throw e;
         }
+        return appInfo;
+    }
+
+    public AppInfo configureApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
+        AppModule collection = new AppModule(classLoader, id);
+        Map<String, Object> altDDs = collection.getAltDDs();
+
+        for (File jarFile : jarFiles) {
+            logger.info("Beginning load: " + jarFile.getAbsolutePath());
+
+            try {
+                AppModule module = deploymentLoader.load(jarFile);
+
+                collection.getAdditionalLibraries().addAll(module.getAdditionalLibraries());
+                collection.getClientModules().addAll(module.getClientModules());
+                collection.getEjbModules().addAll(module.getEjbModules());
+                collection.getPersistenceModules().addAll(module.getPersistenceModules());
+                collection.getResourceModules().addAll(module.getResourceModules());
+                collection.getWebModules().addAll(module.getWebModules());
+                collection.getWatchedResources().addAll(module.getWatchedResources());
+
+                // Merge altDDs
+                for (Map.Entry<String, Object> entry : module.getAltDDs().entrySet()) {
+                    Object existingValue = altDDs.get(entry.getKey());
+
+                    if (existingValue == null){
+                        altDDs.put(entry.getKey(), entry.getValue());
+                    } else if (entry.getValue() instanceof Collection){
+                        if (existingValue instanceof Collection){
+                            Collection values = (Collection) existingValue;
+                            values.addAll((Collection) entry.getValue());
+                        }
+                    } else if (entry.getValue() instanceof Map){
+                        if (existingValue instanceof Map){
+                            Map values = (Map) existingValue;
+                            values.putAll((Map) entry.getValue());
+                        }
+                    }
+                }
+
+            } catch (ValidationFailedException e) {
+                logger.warning("configureApplication.loadFailed", jarFile.getAbsolutePath(), e.getMessage()); // DO not include the stacktrace in the message
+                throw e;
+            } catch (OpenEJBException e) {
+                // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+                // removing this message causes NO messages to be printed when embedded
+                logger.warning("configureApplication.loadFailed", e, jarFile.getAbsolutePath(), e.getMessage());
+                throw e;
+            }
+        }
+
+        AppInfo appInfo;
+        try {
+            appInfo = configureApplication(collection);
+        } catch (ValidationFailedException e) {
+            logger.warning("configureApplication.loadFailed", id, e.getMessage()); // DO not include the stacktrace in the message
+            throw e;
+        } catch (OpenEJBException e) {
+            // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+            // removing this message causes NO messages to be printed when embedded
+            logger.warning("configureApplication.loadFailed", e, id, e.getMessage());
+            throw e;
+        }
+
         return appInfo;
     }
 

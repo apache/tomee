@@ -17,38 +17,32 @@
     limitations under the License.
 -->
 
-<!-- $Rev$ $Date$ -->
+<!-- $Rev: 638272 $ $Date: 2008-03-18 01:59:59 -0700 (Tue, 18 Mar 2008) $ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.1-SNAPSHOT</version>
+    <groupId>org.superbiz</groupId>
+    <artifactId>myear</artifactId>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>examples</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Examples</name>
-  <modules>
-    <module>simple-stateful</module>
-    <module>simple-stateless</module>
-    <module>simple-mdb</module>
-    <module>simple-cmp2</module>
-    <module>simple-webservice</module>
-    <module>component-interfaces</module>
-    <module>injection-of-ejbs</module>
-    <module>injection-of-env-entry</module>
-    <module>injection-of-datasource</module>
-    <module>injection-of-entitymanager</module>
-    <module>injection-of-connectionfactory</module>
-    <module>testing-transactions</module>
-    <module>testing-security</module>
-    <module>ear-testing</module>
-    <module>interceptors</module>
-    <module>custom-injection</module>
-    <module>helloworld-weblogic</module>
-    <module>jpa-hibernate</module>
-    <module>telephone-stateful</module>
-    <module>webapps</module>
-  </modules>
+  <artifactId>business-model</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: Examples :: Ear Testing :: Business Model</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.1</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 </project>

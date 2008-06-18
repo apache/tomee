@@ -118,7 +118,7 @@ class AppInfoBuilder {
 
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
 
-                ejbJarInfos.put(ejbJarInfo.moduleId, ejbJarInfo);
+                ejbJarInfos.put(ejbJarInfo.jarPath, ejbJarInfo);
 
                 appInfo.ejbJars.add(ejbJarInfo);
 
@@ -135,7 +135,7 @@ class AppInfoBuilder {
         // Build the JNDI tree for each ejb
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule.getModuleId());
+            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule.getJarLocation());
 
             Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
