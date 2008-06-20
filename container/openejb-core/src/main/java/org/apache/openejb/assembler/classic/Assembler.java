@@ -1128,11 +1128,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private ObjectRecipe createRecipe(ServiceInfo info) {
-        logger.getChildLogger("service").info("createService", info.service, info.id, info.className);
+        Logger serviceLogger = logger.getChildLogger("service");
+        serviceLogger.info("createService", info.service, info.id, info.className);
         ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, info.constructorArgs.toArray(new String[0]), null);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         serviceRecipe.setAllProperties(info.properties);
+
+        if (serviceLogger.isDebugEnabled()){
+            for (Map.Entry<String, Object> entry : serviceRecipe.getProperties().entrySet()) {
+                serviceLogger.debug("createService.props", entry.getKey(), entry.getValue());
+            }
+        }
         return serviceRecipe;
     }
 
