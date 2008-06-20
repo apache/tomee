@@ -32,7 +32,7 @@ import org.apache.geronimo.transaction.manager.XidFactoryImpl;
 import org.apache.openejb.loader.SystemInstance;
 
 /**
- * @version $Rev:$ $Date:$
+ * @version $Rev$ $Date$
  */
 public class GeronimoTransactionManagerFactory {
 
@@ -40,6 +40,7 @@ public class GeronimoTransactionManagerFactory {
     private static final int DEFAULT_BUFFER_SIZE = 32;
 
     public static GeronimoTransactionManager create(int defaultTransactionTimeoutSeconds,
+                                                    boolean txRecovery,
                                                     byte[] tmId,
                                                     String bufferClassName,
                                                     int bufferSizeKb,
@@ -56,7 +57,7 @@ public class GeronimoTransactionManagerFactory {
                                                     int threadsWaitingForceThreshold) throws Exception {
         XidFactory xidFactory = null;
         TransactionLog txLog = null;
-        if (maxLogFiles > 0) {
+        if (txRecovery) {
             xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID: tmId);
             txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
                     bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,

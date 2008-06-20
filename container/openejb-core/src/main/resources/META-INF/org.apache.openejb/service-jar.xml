@@ -233,9 +233,10 @@
             service="TransactionManager"
             types="TransactionManager"
             factory-name="create"
-            constructor="defaultTransactionTimeoutSeconds, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
+            constructor="defaultTransactionTimeoutSeconds, TxRecovery, tmId, bufferClassName, bufferSizeKb, checksumEnabled, adler32Checksum, flushSleepTimeMilliseconds, logFileDir, logFileExt, logFileName, maxBlocksPerFile, maxBuffers, maxLogFiles, minBuffers, threadsWaitingForceThreshold"
             class-name="org.apache.openejb.resource.GeronimoTransactionManagerFactory">
            defaultTransactionTimeoutSeconds 600
+           TxRecovery false
            bufferSizeKb 32
            checksumEnabled true
            adler32Checksum true
@@ -245,7 +246,6 @@
            logFileName howl
            maxBlocksPerFile -1
            maxBuffers 0
-        # set to 0 or less to disable transaction logging and recovery
            maxLogFiles 2
            minBuffers 4
            threadsWaitingForceThreshold -1
