@@ -314,6 +314,16 @@ public class EjbRefTest extends TestCase {
         assertEquals(black, red.getBlack());
     }
 
+    public void testSameInterfaceDifferentName() throws Exception {
+        ear(ejbjar(Yellow.class, Green.class, YellowGreenBean.class));
+
+        YellowGreen bean = get(YellowGreenBean.class, YellowGreen.class);
+
+        assertNotNull(bean);
+        assertEquals("Yellow", bean.getYellow());
+        assertEquals("Green", bean.getGreen());
+    }
+
 
     public void ear(Class ... beans) throws Exception {
         EjbJar ejbJar = ejbjar(beans);
@@ -442,4 +452,40 @@ public class EjbRefTest extends TestCase {
     public static interface White {
         public Blue getBlue();
     }
+
+
+    public interface Color {
+        String getColor();
+    }
+
+    public static class Yellow implements Color {
+        public String getColor() {
+            return "Yellow";
+        }
+    }
+
+    public static class Green implements Color {
+        public String getColor() {
+            return "Green";
+        }
+    }
+
+    public static class YellowGreenBean implements YellowGreen {
+        @EJB Color yellow;
+        @EJB Color green;
+
+        public String getGreen() {
+            return green.getColor();
+        }
+
+        public String getYellow() {
+            return yellow.getColor();
+        }
+    }
+
+    public static interface YellowGreen {
+        String getYellow();
+        String getGreen();
+    }
+
 }
