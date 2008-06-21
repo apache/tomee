@@ -167,7 +167,7 @@
           id="Default MDB Container"
           service="Container"
           types="MESSAGE"
-          constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, TxRecovery"
+          constructor="id, transactionManager, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
@@ -186,10 +186,6 @@
     # allowed to exist for each MDB deployment.
 
     InstanceLimit 10
-
-    # Specifies whether to use NamedXAResource wrappers to allow the geronimo tm
-    # to log and recover in doubt transactions.
-    TxRecovery false
 
   </ServiceProvider>
 
@@ -259,7 +255,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, TxRecovery"
+          constructor="JtaManaged"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
 
     # Determines wether or not this data source should be JTA managed
@@ -273,10 +269,6 @@
     # "JtaManaged=false" can be used as a 'non-jta-data-source'
 
     JtaManaged = true
-
-    # Specifies whether to use NamedXAResource wrappers to allow the geronimo tm
-    # to log and recover in doubt transactions.
-    TxRecovery false
 
     # Driver class name
 
@@ -457,11 +449,10 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged, TxRecovery"
+          constructor="JtaManaged"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
 
     JtaManaged = false
-    TxRecovery = false
 
     # Driver class name
 

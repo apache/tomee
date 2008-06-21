@@ -14,27 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.resource.jdbc;
+package org.apache.openejb.resource;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.XAResourceWrapper;
-
-import javax.sql.DataSource;
+import javax.transaction.xa.XAResource;
 
 /**
  * @version $Rev$ $Date$
  */
-public class DataSourceFactory {
-    public static DataSource create(boolean managed){
-        if (managed){
-            XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
-            if (xaResourceWrapper != null) {
-                return new ManagedDataSourceWithRecovery(xaResourceWrapper);
-            } else {
-                return new BasicManagedDataSource();
-            }
-        } else {
-            return new BasicDataSource();
-        }
-    }
+public interface XAResourceWrapper {
+    XAResource wrap(XAResource resource, String name);
 }

@@ -17,11 +17,6 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -33,11 +28,15 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
-import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.XAResourceWrapper;
 
 public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
     private TransactionManager suppliedTransactionManager;
+    private final XAResourceWrapper xaResourceWrapper;
+
+    public ManagedDataSourceWithRecovery(XAResourceWrapper xaResourceWrapper) {
+        this.xaResourceWrapper = xaResourceWrapper;
+    }
 
     @Override
     public void setTransactionManager(TransactionManager transactionManager) {
@@ -46,7 +45,7 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
 
     protected void wrapTransactionManager() {
         if (suppliedTransactionManager != null) {
-            super.setTransactionManager(new TransactionManagerWrapper(suppliedTransactionManager, getUrl()));
+            super.setTransactionManager(new TransactionManagerWrapper(suppliedTransactionManager, getUrl(), xaResourceWrapper));
         }
     }
 
@@ -54,10 +53,12 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
 
         private final TransactionManager transactionManager;
         private final String name;
+        private final XAResourceWrapper xaResourceWrapper;
 
-        private TransactionManagerWrapper(TransactionManager transactionManager, String name) {
+        private TransactionManagerWrapper(TransactionManager transactionManager, String name, XAResourceWrapper xaResourceWrapper) {
             this.transactionManager = transactionManager;
             this.name = name;
+            this.xaResourceWrapper = xaResourceWrapper;
         }
 
         public void begin() throws NotSupportedException, SystemException {
@@ -74,7 +75,7 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
 
         public Transaction getTransaction() throws SystemException {
             Transaction tx = transactionManager.getTransaction();
-            return tx == null? null: new TransactionWrapper(transactionManager.getTransaction(), name);
+            return tx == null? null: new TransactionWrapper(transactionManager.getTransaction(), name, xaResourceWrapper);
         }
 
         public void resume(Transaction transaction) throws IllegalStateException, InvalidTransactionException, SystemException {
@@ -94,7 +95,7 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
         }
 
         public Transaction suspend() throws SystemException {
-            return new TransactionWrapper(transactionManager.suspend(), name);
+            return new TransactionWrapper(transactionManager.suspend(), name, xaResourceWrapper);
         }
     }
 
@@ -102,10 +103,12 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
 
         private final Transaction transaction;
         private final String name;
+        private final XAResourceWrapper xaResourceWrapper;
 
-        private TransactionWrapper(Transaction transaction, String name) {
+        private TransactionWrapper(Transaction transaction, String name, XAResourceWrapper xaResourceWrapper) {
             this.transaction = transaction;
             this.name = name;
+            this.xaResourceWrapper = xaResourceWrapper;
         }
 
         public void commit() throws HeuristicMixedException, HeuristicRollbackException, RollbackException, SecurityException, SystemException {
@@ -113,12 +116,12 @@ public class ManagedDataSourceWithRecovery extends BasicManagedDataSource {
         }
 
         public boolean delistResource(XAResource xaResource, int i) throws IllegalStateException, SystemException {
-            XAResource wrapper = new WrapperNamedXAResource(xaResource, name);
+            XAResource wrapper = xaResourceWrapper.wrap(xaResource, name);
             return transaction.delistResource(wrapper, i);
         }
 
         public boolean enlistResource(XAResource xaResource) throws IllegalStateException, RollbackException, SystemException {
-            XAResource wrapper = new WrapperNamedXAResource(xaResource, name);
+            XAResource wrapper = xaResourceWrapper.wrap(xaResource, name);
             return transaction.enlistResource(wrapper);
         }
 

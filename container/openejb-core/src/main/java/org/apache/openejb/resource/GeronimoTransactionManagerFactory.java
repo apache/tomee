@@ -20,16 +20,15 @@
 
 package org.apache.openejb.resource;
 
-import java.io.IOException;
-
-import javax.transaction.xa.XAException;
-
 import org.apache.geronimo.transaction.log.HOWLLog;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.geronimo.transaction.manager.TransactionLog;
 import org.apache.geronimo.transaction.manager.XidFactory;
 import org.apache.geronimo.transaction.manager.XidFactoryImpl;
+import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
 import org.apache.openejb.loader.SystemInstance;
+
+import javax.transaction.xa.XAResource;
 
 /**
  * @version $Rev$ $Date$
@@ -58,6 +57,8 @@ public class GeronimoTransactionManagerFactory {
         XidFactory xidFactory = null;
         TransactionLog txLog = null;
         if (txRecovery) {
+            SystemInstance.get().setComponent(XAResourceWrapper.class, new GeronimoXAResourceWrapper());
+            
             xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID: tmId);
             txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
                     bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
@@ -76,6 +77,13 @@ public class GeronimoTransactionManagerFactory {
                     SystemInstance.get().getBase().getDirectory("."));
             ((HOWLLog)txLog).doStart();
         }
+
         return new GeronimoTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
+    }
+
+    public static class GeronimoXAResourceWrapper implements XAResourceWrapper {
+        public XAResource wrap(XAResource xaResource, String name) {
+            return new WrapperNamedXAResource(xaResource, name);
+        }
     }
 }

@@ -23,6 +23,8 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.resource.XAResourceWrapper;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -67,11 +69,11 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private final Class messageListenerInterface;
     private final Class activationSpecClass;
     private final int instanceLimit;
-    private final boolean txRecovery;
 
     private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
+    private final XAResourceWrapper xaResourceWrapper;
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit, boolean txRecovery) {
+    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
         this.transactionManager = transactionManager;
         this.securityService = securityService;
@@ -79,7 +81,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         this.messageListenerInterface = messageListenerInterface;
         this.activationSpecClass = activationSpecClass;
         this.instanceLimit = instanceLimit;
-        this.txRecovery = txRecovery;
+        xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
     }
 
     public DeploymentInfo [] deployments() {
@@ -124,7 +126,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
         // create the message endpoint
         MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
-        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, txRecovery);
+        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, xaResourceWrapper);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
