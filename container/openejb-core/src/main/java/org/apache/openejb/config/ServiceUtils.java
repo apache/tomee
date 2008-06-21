@@ -53,9 +53,7 @@ public class ServiceUtils {
         String defaultValue = "org.apache.openejb";
         try {
             SystemInstance system = SystemInstance.get();
-            FileUtils base = system.getBase();
-            File confDir = base.getDirectory("conf");
-            if (!confDir.exists()) {
+            if (system.getProperty("openejb.embedded") != null){
                 defaultValue = "org.apache.openejb.embedded";
             }
         } catch (Exception ignored) {
