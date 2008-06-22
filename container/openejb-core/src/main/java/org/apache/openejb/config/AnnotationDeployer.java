@@ -1063,6 +1063,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
                         methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, clazz.getName(), "*"));
                         assemblyDescriptor.getMethodPermission().add(methodPermission);
+
+                        // Automatically add a role ref for any role listed in RolesAllowed
+                        RemoteBean remoteBean = (RemoteBean) bean;
+                        List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
+                        for (String role : rolesAllowed.value()) {
+                            securityRoleRefs.add(new SecurityRoleRef(role));
+                        }
                     }
 
                     if (permitAll != null) {
@@ -1099,6 +1106,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                 methodPermission.getRoleName().addAll(asList(rolesAllowed.value()));
                 methodPermission.getMethod().add(new org.apache.openejb.jee.Method(ejbName, method));
                 assemblyDescriptor.getMethodPermission().add(methodPermission);
+
+                // Automatically add a role ref for any role listed in RolesAllowed
+                RemoteBean remoteBean = (RemoteBean) bean;
+                List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
+                for (String role : rolesAllowed.value()) {
+                    securityRoleRefs.add(new SecurityRoleRef(role));
+                }
             }
 
             for (Method method : classFinder.findAnnotatedMethods(PermitAll.class)) {
