@@ -298,7 +298,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 //        ConnectionManagerInfo service = configureService(openejb.getConnectionManager(), ConnectionManagerInfo.class);
 //        sys.facilities.connectionManagers.add(service);
 
-        sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
+        if (openejb.getProxyFactory() != null){
+            sys.facilities.intraVmServer = configureService(openejb.getProxyFactory(), ProxyFactoryInfo.class);
+        }
 
         for (Container declaration : openejb.getContainer()) {
             Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getType());

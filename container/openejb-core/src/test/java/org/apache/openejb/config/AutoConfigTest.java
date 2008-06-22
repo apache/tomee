@@ -80,6 +80,48 @@ public class AutoConfigTest extends TestCase {
 
     }
 
+    public void testCaseInsensitive() throws Exception {
+
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("DeFAultDataSource", "DataSource", null), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("YeLLowDataSource", "DataSource", null), ResourceInfo.class));
+        assembler.createResource(config.configureService(new org.apache.openejb.config.sys.Resource("PurpLEDataSource", "DataSource", null), ResourceInfo.class));
+
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(WidgetBean.class));
+
+        EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
+
+        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+
+        Map<String, ResourceReferenceInfo> refs = new HashMap<String, ResourceReferenceInfo>();
+        for (ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
+            refs.put(ref.referenceName.replaceAll(".*/", ""), ref);
+        }
+
+        ResourceReferenceInfo info;
+        info = refs.get("yellowDataSource");
+        assertNotNull(info);
+        assertEquals("YeLLowDataSource", info.resourceID);
+
+        info = refs.get("orangeDataSource");
+        assertNotNull(info);
+        assertEquals("DeFAultDataSource", info.resourceID);
+
+        info = refs.get("purpleDataSource");
+        assertNotNull(info);
+        assertEquals("PurpLEDataSource", info.resourceID);
+
+    }
+
     public static interface Widget {
     }
 

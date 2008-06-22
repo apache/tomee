@@ -314,15 +314,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         ContainerSystemInfo containerSystemInfo = configInfo.containerSystem;
 
-        /*[1] Assemble ProxyFactory //////////////////////////////////////////
 
-            This operation must take place first because of interdependencies.
-            As DeploymentInfo objects are registered with the ContainerSystem using the
-            ContainerSystem.addDeploymentInfo() method, they are also added to the JNDI
-            Naming Service for OpenEJB.  This requires that a proxy for the deployed bean's
-            EJBHome be created. The proxy requires that the default proxy factory is set.
-        */
-        createProxyFactory(configInfo.facilities.intraVmServer);
+        if (configInfo.facilities.intraVmServer != null) {
+            createProxyFactory(configInfo.facilities.intraVmServer);
+        }
 
         for (JndiContextInfo contextInfo : configInfo.facilities.remoteJndiContexts) {
             createExternalContext(contextInfo);
