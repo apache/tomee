@@ -153,6 +153,16 @@ public class DeploymentLoader {
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), warPath);
                 addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
                 return appModule;
+            } else if (PersistenceModule.class.equals(moduleClass)) {
+                ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
+
+                // wrap the EJB Module with an Application Module
+                AppModule appModule = new AppModule(classLoader, jarPath);
+
+                // Persistence Units
+                addPersistenceUnits(appModule, baseUrl);
+
+                return appModule;
             } else {
                 throw new UnsupportedModuleTypeException("Unsupported module type: "+moduleClass.getSimpleName());
             }
@@ -983,6 +993,10 @@ public class DeploymentLoader {
                     classFinder.isAnnotationPresent(MessageDriven.class)) {
                 return EjbModule.class;
             }
+        }
+
+        if (descriptors.containsKey("persistence.xml")) {
+            return PersistenceModule.class;
         }
 
         throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());

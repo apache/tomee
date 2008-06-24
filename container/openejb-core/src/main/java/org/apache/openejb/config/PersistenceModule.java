@@ -20,8 +20,9 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map;
 
-public class PersistenceModule {
+public class PersistenceModule implements DeploymentModule {
     private String rootUrl;
     private Persistence persistence;
     private final Set<String> watchedResources = new TreeSet<String>();
@@ -49,5 +50,25 @@ public class PersistenceModule {
 
     public Set<String> getWatchedResources() {
         return watchedResources;
+    }
+
+    public Map<String, Object> getAltDDs() {
+        return null;
+    }
+
+    public ClassLoader getClassLoader() {
+        return null;
+    }
+
+    public String getJarLocation() {
+        return null;
+    }
+
+    public String getModuleId() {
+        return null;
+    }
+
+    public ValidationContext getValidation() {
+        return null;
     }
 }
