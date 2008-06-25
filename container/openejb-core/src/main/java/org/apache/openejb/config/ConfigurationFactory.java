@@ -105,6 +105,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     private final DeploymentLoader deploymentLoader;
     private final boolean offline;
     private static final String CLASSPATH_AS_EAR = "openejb.deployments.classpath.ear";
+    static final String WEBSERVICES_ENABLED = "openejb.webservices.enabled";
 
     public ConfigurationFactory() {
         this(false);
@@ -140,7 +141,12 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new DebuggableVmHackery());
         }
 
-        chain.add(new WsDeployer());
+        String webservicesEnabled = SystemInstance.get().getProperty(WEBSERVICES_ENABLED, "true");
+        if (Boolean.parseBoolean(webservicesEnabled)){
+            chain.add(new WsDeployer());
+        } else {
+            chain.add(new RemoveWebServices());
+        }
 
         chain.add(new CmpJpaConversion());
         chain.add(new OpenEjb2Conversion());

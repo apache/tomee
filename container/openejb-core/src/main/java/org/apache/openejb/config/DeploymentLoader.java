@@ -46,6 +46,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
@@ -569,6 +570,13 @@ public class DeploymentLoader {
     }
 
     private static void addWebservices(WsModule wsModule) throws OpenEJBException {
+        String webservicesEnabled = SystemInstance.get().getProperty(ConfigurationFactory.WEBSERVICES_ENABLED, "true");
+        if (!Boolean.parseBoolean(webservicesEnabled)) {
+            wsModule.getAltDDs().remove("webservices.xml");
+            wsModule.setWebservices(null); // should be null already, but just for good measure
+            return;
+        }
+
         // get location of webservices.xml file
         Object webservicesObject = wsModule.getAltDDs().get("webservices.xml");
         if (webservicesObject == null || !(webservicesObject instanceof URL)) {
