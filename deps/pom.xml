@@ -28,7 +28,5 @@
   <name>OpenEJB :: Dependencies</name>
 
   <modules>
-    <module>xbean-finder</module>
-    <module>xbean-reflect</module>
   </modules>
 </project>
