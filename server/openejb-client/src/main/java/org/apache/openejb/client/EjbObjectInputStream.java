@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.client;
 
-import java.io.IOException;
+import java.io.*;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
@@ -32,7 +32,21 @@ public class EjbObjectInputStream extends ObjectInputStream {
     }
 
     protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        return Class.forName(classDesc.getName(), false, getClassloader());
+        try {
+            return Class.forName(classDesc.getName(), false, getClassloader());
+        } catch (ClassNotFoundException e) {
+            String n = classDesc.getName();
+            if (n.equals("boolean")) return boolean.class;
+            if (n.equals("byte")) return byte.class;
+            if (n.equals("char")) return char.class;
+            if (n.equals("short")) return short.class;
+            if (n.equals("int")) return int.class;
+            if (n.equals("long")) return long.class;
+            if (n.equals("float")) return float.class;
+            if (n.equals("double")) return double.class;
+
+            throw e;
+        }
     }
 
     protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
@@ -49,6 +63,19 @@ public class EjbObjectInputStream extends ObjectInputStream {
 
     ClassLoader getClassloader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    public static void main(String[] args) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(baos);
+
+        out.writeObject(boolean.class);
+        out.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream in = new EjbObjectInputStream(bais);
+        Class clazz = (Class) in.readObject();
+        if (clazz != boolean.class) throw new Exception(clazz.toString());
     }
 
 }
