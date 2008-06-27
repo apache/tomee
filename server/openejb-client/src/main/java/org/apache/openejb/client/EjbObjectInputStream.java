@@ -65,17 +65,4 @@ public class EjbObjectInputStream extends ObjectInputStream {
         return Thread.currentThread().getContextClassLoader();
     }
 
-    public static void main(String[] args) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(baos);
-
-        out.writeObject(boolean.class);
-        out.close();
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new EjbObjectInputStream(bais);
-        Class clazz = (Class) in.readObject();
-        if (clazz != boolean.class) throw new Exception(clazz.toString());
-    }
-
 }
