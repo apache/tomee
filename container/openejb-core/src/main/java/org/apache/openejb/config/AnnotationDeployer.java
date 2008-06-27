@@ -329,8 +329,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
-            List<Class> classes = finder.findAnnotatedClasses(Stateless.class);
-            for (Class<?> beanClass : classes) {
+            for (Class<?> beanClass : finder.findAnnotatedClasses(Stateless.class)) {
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = getEjbName(stateless, beanClass);
 
@@ -350,8 +349,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            classes = finder.findAnnotatedClasses(Stateful.class);
-            for (Class<?> beanClass : classes) {
+            for (Class<?> beanClass : finder.findAnnotatedClasses(Stateful.class)) {
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 String ejbName = getEjbName(stateful, beanClass);
 
@@ -372,7 +370,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            classes = finder.findAnnotatedClasses(MessageDriven.class);
+            List<Class> classes = finder.findAnnotatedClasses(MessageDriven.class);
             for (Class<?> beanClass : classes) {
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = getEjbName(mdb, beanClass);
@@ -389,16 +387,17 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            classes = finder.findAnnotatedClasses(ApplicationException.class);
-            if (!classes.isEmpty()) {
-                if (ejbJar.getAssemblyDescriptor() == null) {
-                    ejbJar.setAssemblyDescriptor(new AssemblyDescriptor());
-                }
+            AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
+            if (assemblyDescriptor == null) {
+                assemblyDescriptor = new AssemblyDescriptor();
+                ejbModule.getEjbJar().setAssemblyDescriptor(assemblyDescriptor);
             }
-            for (Class<?> exceptionClass : classes) {
-                ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
-                org.apache.openejb.jee.ApplicationException exception = new org.apache.openejb.jee.ApplicationException(exceptionClass.getName(), annotation.rollback());
-                ejbJar.getAssemblyDescriptor().getApplicationException().add(exception);
+
+            for (Class<?> exceptionClass : finder.findAnnotatedClasses(ApplicationException.class)) {
+                if (assemblyDescriptor.getApplicationException(exceptionClass) != null){
+                    ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
+                    assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
+                }
             }
 
             return ejbModule;
@@ -675,10 +674,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
-                if (assemblyDescriptor == null) {
-                    assemblyDescriptor = new AssemblyDescriptor();
-                    ejbModule.getEjbJar().setAssemblyDescriptor(assemblyDescriptor);
-                }
+
+                processApplicationExceptions(clazz, assemblyDescriptor);
 
                 if (bean.getTransactionType() == TransactionType.CONTAINER) {
                     processTransactionAttributes(clazz, ejbName, assemblyDescriptor, inheritedClassFinder);
@@ -902,6 +899,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 processCallbacks(interceptor, inheritedClassFinder);
 
+                processApplicationExceptions(clazz, ejbModule.getEjbJar().getAssemblyDescriptor());
+
                 buildAnnotatedRefs(interceptor, inheritedClassFinder, classLoader);
                 processWebServiceClientHandlers(interceptor, classLoader);
 
@@ -920,6 +919,17 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
+        }
+
+        private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
+            for (Method method : clazz.getMethods()) {
+                for (Class<?> exception : method.getExceptionTypes()) {
+                    ApplicationException annotation = exception.getAnnotation(ApplicationException.class);
+                    if (annotation == null) continue;
+                    if (assemblyDescriptor.getApplicationException(exception) != null) continue;
+                    assemblyDescriptor.addApplicationException(exception, annotation.rollback());
+                }
+            }
         }
 
         private void processSessionInterfaces(SessionBean sessionBean, Class<?> beanClass, EjbModule ejbModule) {

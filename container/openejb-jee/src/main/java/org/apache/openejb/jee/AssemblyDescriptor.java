@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Collection;
 
 
 /**
@@ -76,7 +77,7 @@ public class AssemblyDescriptor {
     @XmlElement(name = "exclude-list")
     protected ExcludeList excludeList;
     @XmlElement(name = "application-exception", required = true)
-    protected List<ApplicationException> applicationException;
+    protected KeyedCollection<String, ApplicationException> applicationException;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -133,7 +134,7 @@ public class AssemblyDescriptor {
         getInterceptorBinding().add(binding);
         return binding;
     }
-    
+
     public List<MessageDestination> getMessageDestination() {
         if (messageDestination == null) {
             messageDestination = new ArrayList<MessageDestination>();
@@ -152,11 +153,27 @@ public class AssemblyDescriptor {
         this.excludeList = value;
     }
 
-    public List<ApplicationException> getApplicationException() {
+    public Collection<ApplicationException> getApplicationException() {
         if (applicationException == null) {
-            applicationException = new ArrayList<ApplicationException>();
+            applicationException = new KeyedCollection<String, ApplicationException>();
         }
         return this.applicationException;
+    }
+
+    public Map<String, ApplicationException> getApplicationExceptionMap() {
+        return ((KeyedCollection<String, ApplicationException>) getApplicationException()).toMap();
+    }
+
+    public ApplicationException getApplicationException(String className) {
+        return this.getApplicationExceptionMap().get(className);
+    }
+
+    public ApplicationException getApplicationException(Class clazz) {
+        return getApplicationException(clazz.getName());
+    }
+
+    public void addApplicationException(Class clazz, boolean rollback) {
+        getApplicationException().add(new ApplicationException(clazz, rollback));
     }
 
     public String getId() {

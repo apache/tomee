@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "exceptionClass",
         "rollback"
         })
-public class ApplicationException {
+public class ApplicationException implements Keyable<String> {
 
     @XmlElement(name = "exception-class", required = true)
     protected String exceptionClass;
@@ -63,6 +63,10 @@ public class ApplicationException {
     public ApplicationException(String exceptionClass, boolean rollback) {
         this.exceptionClass = exceptionClass;
         this.rollback = rollback;
+    }
+
+    public ApplicationException(Class exceptionClass, boolean rollback) {
+        this(exceptionClass.getName(), rollback);
     }
 
     public String getExceptionClass() {
@@ -89,4 +93,7 @@ public class ApplicationException {
         this.id = value;
     }
 
+    public String getKey() {
+        return exceptionClass;
+    }
 }
