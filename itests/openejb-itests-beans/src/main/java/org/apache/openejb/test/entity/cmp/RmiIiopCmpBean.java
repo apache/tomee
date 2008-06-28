@@ -421,6 +421,19 @@ public class RmiIiopCmpBean implements javax.ejb.EntityBean{
         return data;
     }
     
+
+    /*-------------------------------------------------*/
+    /*  Class                                         */
+    /*-------------------------------------------------*/
+
+    public Class returnClass(Class data) {
+        return data;
+    }
+
+    public Class[] returnClassArray(Class[] data) {
+        return data;
+    }
+
     /*-------------------------------------------------*/
     /*  ObjectGraph                                         */  
     /*-------------------------------------------------*/

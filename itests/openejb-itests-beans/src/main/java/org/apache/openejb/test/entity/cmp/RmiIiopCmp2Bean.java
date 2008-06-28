@@ -418,6 +418,19 @@ public abstract class RmiIiopCmp2Bean implements EntityBean {
         return data;
     }
 
+
+    /*-------------------------------------------------*/
+    /*  Class                                         */
+    /*-------------------------------------------------*/
+
+    public Class returnClass(Class data) {
+        return data;
+    }
+
+    public Class[] returnClassArray(Class[] data) {
+        return data;
+    }
+
     /*-------------------------------------------------*/
     /*  ObjectGraph                                         */
     /*-------------------------------------------------*/

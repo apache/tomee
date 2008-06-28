@@ -24,6 +24,8 @@ import javax.rmi.PortableRemoteObject;
 
 import org.apache.openejb.test.object.ObjectGraph;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -899,5 +901,55 @@ public class StatelessRmiIiopTests extends StatelessTestClient{
     }
     public void test56_returnObjectGraphArray() {
     }
+
+/*-------------------------------------------------*/
+/*  Class                                          */
+/*-------------------------------------------------*/
+
+    public void test57_returnClass() {
+        Class[] primitives = {boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
+        for (Class expected : primitives) {
+            try {
+                Class actual = ejbObject.returnClass(expected);
+                assertEquals(expected, actual);
+            } catch (Exception e) {
+                fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        }
+    }
+
+    public void test58_returnClassArray() {
+        try {
+            Class[] expected = {boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
+            Class[] actual = ejbObject.returnClassArray(expected);
+
+            assertEquals(expected.length, actual.length);
+            for (int i = 0; i < expected.length; i++) {
+                assertEquals(expected[i], actual[i]);
+            }
+        } catch (RemoteException e) {
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test59_returnClassObjectGraph() {
+        try {
+            Class[] primitives = {boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
+            ObjectGraph expectedGraph = new ObjectGraph(primitives);
+
+            ObjectGraph actualGraph = ejbObject.returnObjectGraph(expectedGraph);
+
+            Class[] expected = (Class[]) expectedGraph.getObject();
+            Class[] actual = (Class[]) actualGraph.getObject();
+
+            assertEquals(expected.length, actual.length);
+            for (int i = 0; i < expected.length; i++) {
+                assertEquals(expected[i], actual[i]);
+            }
+        } catch (RemoteException e) {
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
 }
 

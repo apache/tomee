@@ -100,7 +100,7 @@ public interface RmiIiopBmpObject extends javax.ejb.EJBObject{
 
     public double[] returnDoublePrimitiveArray(double[] data) throws RemoteException; 
 
-    public EJBHome returnEJBHome(EJBHome data) throws RemoteException; 
+    public EJBHome returnEJBHome(EJBHome data) throws RemoteException;
 
     public EJBHome returnEJBHome() throws RemoteException; 
 
@@ -135,5 +135,9 @@ public interface RmiIiopBmpObject extends javax.ejb.EJBObject{
     public ObjectGraph returnObjectGraph(ObjectGraph data) throws RemoteException; 
 
     public ObjectGraph[] returnObjectGraphArray(ObjectGraph[] data) throws RemoteException; 
+
+    public Class returnClass(Class data) throws RemoteException;
+
+    public Class[] returnClassArray(Class[] data) throws RemoteException;
 
 }
