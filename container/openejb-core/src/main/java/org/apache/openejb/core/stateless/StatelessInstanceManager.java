@@ -115,6 +115,7 @@ public class StatelessInstanceManager {
             objectRecipe.allow(Option.FIELD_INJECTION);
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            objectRecipe.allow(Option.NAMED_PARAMETERS);
 
             Operation originalOperation = callContext.getCurrentOperation();
             BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
@@ -170,6 +171,7 @@ public class StatelessInstanceManager {
                     interceptorRecipe.allow(Option.FIELD_INJECTION);
                     interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
                     interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                    interceptorRecipe.allow(Option.NAMED_PARAMETERS);
 
                     fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
 
@@ -224,18 +226,35 @@ public class StatelessInstanceManager {
     }
 
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
+        boolean usePrefix = true;
+
+        try {
+            clazz.getConstructor();
+        } catch (NoSuchMethodException e) {
+            // Using constructor injection
+            // xbean can't handle the prefix yet
+            usePrefix = false;
+        }
+
         for (Injection injection : deploymentInfo.getInjections()) {
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
             try {
                 String jndiName = injection.getJndiName();
                 Object object = context.lookup("java:comp/env/" + jndiName);
+                String prefix;
+                if (usePrefix) {
+                    prefix = injection.getTarget().getName() + "/";
+                } else {
+                    prefix = "";
+                }
+
                 if (object instanceof String) {
                     String string = (String) object;
                     // Pass it in raw so it could be potentially converted to
                     // another data type by an xbean-reflect property editor
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), string);
+                    objectRecipe.setProperty(prefix + injection.getName(), string);
                 } else {
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), new StaticRecipe(object));
+                    objectRecipe.setProperty(prefix + injection.getName(), new StaticRecipe(object));
                 }
             } catch (NamingException e) {
                 logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());

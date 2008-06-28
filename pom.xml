@@ -93,7 +93,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.4-r636442</xbeanVersion>
+    <xbeanVersion>3.4.1</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
@@ -831,19 +831,19 @@
         <version>2.0.5</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder</artifactId>
-        <version>3.4-r636443-SNAPSHOT</version>
+        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-naming</artifactId>
-        <version>3.3</version>
+        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>3.4-r636443-SNAPSHOT</version>
+        <version>${xbeanVersion}</version>
         <exclusions>
           <exclusion>
             <groupId>mx4j</groupId>

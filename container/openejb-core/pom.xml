@@ -304,11 +304,11 @@
     </dependency>
     <!-- End: JavaMail -->
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder</artifactId>
     </dependency>
     <dependency>
