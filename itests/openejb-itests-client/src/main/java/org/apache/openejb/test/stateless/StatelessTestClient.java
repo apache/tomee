@@ -16,40 +16,32 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
-import javax.ejb.EJB;
-import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
-
 import org.apache.openejb.test.TestClient;
 import org.apache.openejb.test.TestManager;
-import org.apache.xbean.finder.ClassFinder;
+
+import javax.naming.InitialContext;
+import java.util.Properties;
 
 /**
- * 
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public abstract class StatelessTestClient extends TestClient {
-    
-    public StatelessTestClient(String name){
-        super("Stateless."+name);
+
+    public StatelessTestClient(String name) {
+        super("Stateless." + name);
     }
-    
+
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
     protected void setUp() throws Exception {
-        
+
         Properties properties = TestManager.getServer().getContextEnvironment();
         //properties.put(Context.SECURITY_PRINCIPAL, "STATELESS_test00_CLIENT");
         //properties.put(Context.SECURITY_CREDENTIALS, toString() );
         initialContext = new InitialContext(properties);
     }
-    
+
 }
