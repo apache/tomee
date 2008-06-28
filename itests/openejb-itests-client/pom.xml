@@ -89,6 +89,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>ejb31-api-experimental</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
       <version>${pom.version}</version>
     </dependency>

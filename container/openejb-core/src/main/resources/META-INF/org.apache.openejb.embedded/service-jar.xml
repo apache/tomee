@@ -112,6 +112,20 @@
 
   </ServiceProvider>
 
+  <!--
+  # ==========================================================
+  # Default Singleton SessinBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default Singleton Container"
+          service="Container"
+          types="SINGLETON"
+          constructor="id, transactionManager, securityService"
+          class-name="org.apache.openejb.core.singleton.SingletonContainer">
+
+  </ServiceProvider>
+
 
   <!--
   # ==========================================================

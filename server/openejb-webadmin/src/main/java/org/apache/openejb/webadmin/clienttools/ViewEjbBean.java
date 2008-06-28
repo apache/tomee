@@ -124,6 +124,9 @@ public class ViewEjbBean extends WebAdminBean implements Constants {
             case STATELESS :
                 type = "Stateless SessionBean";
                 break;
+            case SINGLETON:
+                type = "Singleton SessionBean";
+                break;
             default :
                 type = "Unkown Bean Type";
                 break;

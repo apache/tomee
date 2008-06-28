@@ -29,6 +29,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public static final int MESSAGE = 3;
 
+    public static final int SINGLETON = 4;
+
     public int type;
 
     public String codebase;

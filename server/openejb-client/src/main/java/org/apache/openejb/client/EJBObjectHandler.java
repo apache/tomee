@@ -78,8 +78,13 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             case EJBMetaDataImpl.STATELESS:
 
                 return new StatelessEJBObjectHandler(ejb, server, client, primaryKey);
+
+            case EJBMetaDataImpl.SINGLETON:
+
+                return new SingletonEJBObjectHandler(ejb, server, client, primaryKey);
         }
-        return null;
+
+        throw new IllegalStateException("Uknown bean type code '"+ejb.type +"' : "+ejb.toString());
     }
 
     public abstract Object getRegistryId();

@@ -60,6 +60,7 @@ import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.singleton.SingletonBeanManagedTxPolicy;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -384,6 +385,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     policy = new StatefulBeanManagedTxPolicy((TransactionContainer) container);
                 } else if (componentType == BeanType.STATELESS) {
                     policy = new StatelessBeanManagedTxPolicy((TransactionContainer) container);
+                } else if (componentType == BeanType.SINGLETON) {
+                    policy = new SingletonBeanManagedTxPolicy((TransactionContainer) container);
                 } else if (componentType == BeanType.MESSAGE_DRIVEN) {
                     policy = new MessageDrivenBeanManagedTxPolicy((TransactionContainer) container);
                 }

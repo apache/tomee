@@ -156,6 +156,9 @@ public class DeploymentListBean extends WebAdminBean {
             case STATELESS :
                 type = "Stateless SessionBean";
                 break;
+            case SINGLETON:
+                type = "Singleton SessionBean";
+                break;
             default :
                 type = "Unkown Bean Type";
                 break;

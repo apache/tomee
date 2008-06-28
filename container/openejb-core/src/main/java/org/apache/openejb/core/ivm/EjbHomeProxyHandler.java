@@ -34,6 +34,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
@@ -87,6 +88,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 return new StatefulEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
             case STATELESS:
                 return  new StatelessEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
+            case SINGLETON:
+                return  new SingletonEjbHomeHandler(deploymentInfo, interfaceType, interfaces);
             case CMP_ENTITY:
             case BMP_ENTITY:
                 return  new EntityEjbHomeHandler(deploymentInfo, interfaceType, interfaces);

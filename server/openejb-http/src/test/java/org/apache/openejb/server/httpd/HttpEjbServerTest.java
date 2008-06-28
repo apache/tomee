@@ -28,6 +28,7 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.singleton.SingletonTestSuite;
 import org.apache.openejb.test.entity.bmp.BmpTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpTestSuite;
 import org.apache.openejb.test.stateful.StatefulTestSuite;
@@ -63,6 +64,7 @@ public class HttpEjbServerTest extends org.apache.openejb.test.TestSuite {
 
     public static Test suite() {
         TestSuite suite = new HttpEjbServerTest();
+        suite.addTest(SingletonTestSuite.suite());
         suite.addTest(StatelessTestSuite.suite());
         suite.addTest(StatefulTestSuite.suite());
         suite.addTest(BmpTestSuite.suite());

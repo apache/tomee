@@ -60,6 +60,8 @@ class EnterpriseBeanBuilder {
             ejbType = BeanType.STATEFUL;
         } else if (bean.type == EnterpriseBeanInfo.STATELESS) {
             ejbType = BeanType.STATELESS;
+        } else if (bean.type == EnterpriseBeanInfo.SINGLETON) {
+            ejbType = BeanType.SINGLETON;
         } else if (bean.type == EnterpriseBeanInfo.MESSAGE) {
             ejbType = BeanType.MESSAGE_DRIVEN;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {
@@ -99,7 +101,7 @@ class EnterpriseBeanBuilder {
         }
 
         Class serviceEndpoint = null;
-        if (BeanType.STATELESS == ejbType){
+        if (BeanType.STATELESS == ejbType || BeanType.SINGLETON == ejbType ){
             if(bean.serviceEndpoint != null){
                 serviceEndpoint = loadClass(bean.serviceEndpoint, "classNotFound.sei");
             }

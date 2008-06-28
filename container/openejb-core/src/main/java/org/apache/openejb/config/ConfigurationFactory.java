@@ -59,6 +59,7 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import static org.apache.openejb.config.ServiceUtils.implies;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.ConnectionManager;
@@ -604,6 +605,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         defaultProviders.put(MdbContainerInfo.class, new DefaultService("MESSAGE", Container.class));
         defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService("STATEFUL", Container.class));
         defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService("STATELESS", Container.class));
+        defaultProviders.put(SingletonSessionContainerInfo.class, new DefaultService("SINGLETON", Container.class));
         defaultProviders.put(CmpEntityContainerInfo.class, new DefaultService("CMP_ENTITY", Container.class));
         defaultProviders.put(BmpEntityContainerInfo.class, new DefaultService("BMP_ENTITY", Container.class));
         defaultProviders.put(SecurityServiceInfo.class, new DefaultService("SecurityService", SecurityService.class));
@@ -823,6 +825,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static Map<String, Class<? extends ContainerInfo>> containerTypes = new HashMap<String, Class<? extends ContainerInfo>>();
 
     static {
+        containerTypes.put(BeanTypes.SINGLETON, SingletonSessionContainerInfo.class);
         containerTypes.put(BeanTypes.STATELESS, StatelessSessionContainerInfo.class);
         containerTypes.put(BeanTypes.STATEFUL, StatefulSessionContainerInfo.class);
         containerTypes.put(BeanTypes.BMP_ENTITY, BmpEntityContainerInfo.class);

@@ -99,9 +99,9 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         try {
             return c.getMethod(method, params);
         } catch (NoSuchMethodException nse) {
+            throw new IllegalStateException("Cannot find method: "+c.getName()+"."+method, nse);
 
         }
-        return null;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

@@ -25,6 +25,7 @@ import org.apache.openejb.test.stateful.StatefulTestSuite;
 import org.apache.openejb.test.stateless.StatelessTestSuite;
 import org.apache.openejb.test.mdb.MdbTestSuite;
 import org.apache.openejb.test.servlet.ServletTestSuite;
+import org.apache.openejb.test.singleton.SingletonTestSuite;
 
 /**
  * 
@@ -32,7 +33,7 @@ import org.apache.openejb.test.servlet.ServletTestSuite;
  * @author <a href="mailto:Richard@Monson-Haefel.com">Richard Monson-Haefel</a>
  */
 public class ClientTestSuite extends junit.framework.TestCase {
-    
+
     public ClientTestSuite(String name){
         super(name);
     }
@@ -42,6 +43,7 @@ public class ClientTestSuite extends junit.framework.TestCase {
         if (Boolean.getBoolean("openejb.test.servlets")) {
             suite.addTest(ServletTestSuite.suite());
         }
+        suite.addTest( SingletonTestSuite.suite() );
         suite.addTest( StatelessTestSuite.suite() );
         suite.addTest( StatefulTestSuite.suite() );
         suite.addTest( BmpTestSuite.suite() );

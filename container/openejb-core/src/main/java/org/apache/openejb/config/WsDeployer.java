@@ -238,7 +238,7 @@ public class WsDeployer implements DynamicDeployer {
             // skip if this is not a webservices endpoint
             if (!(enterpriseBean instanceof SessionBean)) continue;
             SessionBean sessionBean = (SessionBean) enterpriseBean;
-            if (sessionBean.getSessionType() != SessionType.STATELESS) continue;
+            if (sessionBean.getSessionType() == SessionType.STATEFUL) continue;
             if (sessionBean.getServiceEndpoint() == null) continue;
 
 

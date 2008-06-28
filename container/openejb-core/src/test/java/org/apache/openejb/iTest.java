@@ -20,6 +20,7 @@ package org.apache.openejb;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.singleton.SingletonLocalTestSuite;
 import org.apache.openejb.test.entity.bmp.BmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp.CmpLocalTestSuite;
 import org.apache.openejb.test.entity.cmp2.Cmp2TestSuite;
@@ -74,6 +75,7 @@ public class iTest extends org.apache.openejb.test.TestSuite {
 
     public static Test suite() {
         TestSuite suite = new iTest();
+        suite.addTest(SingletonLocalTestSuite.suite());
         suite.addTest(StatelessLocalTestSuite.suite());
         suite.addTest(StatefulLocalTestSuite.suite());
         suite.addTest(BmpLocalTestSuite.suite());

@@ -45,7 +45,6 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
     }
 
     public static EJBHomeHandler createEJBHomeHandler(EJBMetaDataImpl ejb, ServerMetaData server, ClientMetaData client) {
-
         switch (ejb.type) {
             case EJBMetaDataImpl.BMP_ENTITY:
             case EJBMetaDataImpl.CMP_ENTITY:
@@ -59,8 +58,13 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             case EJBMetaDataImpl.STATELESS:
 
                 return new StatelessEJBHomeHandler(ejb, server, client);
+
+            case EJBMetaDataImpl.SINGLETON:
+
+                return new SingletonEJBHomeHandler(ejb, server, client);
         }
-        return null;
+
+        throw new IllegalStateException("Uknown bean type code '"+ejb.type +"' : "+ejb.toString());
 
     }
 
@@ -74,10 +78,8 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
             Class[] interfaces = new Class[]{ejb.homeClass, EJBHomeProxy.class};
             return (EJBHomeProxy) ProxyManager.newProxyInstance(interfaces, this);
         } catch (IllegalAccessException e) {
-
-            e.printStackTrace();
+            throw new RuntimeException("Unable to create proxy for "+ ejb.homeClass, e);
         }
-        return null;
     }
 
     protected Object _invoke(Object proxy, Method method, Object[] args) throws Throwable {

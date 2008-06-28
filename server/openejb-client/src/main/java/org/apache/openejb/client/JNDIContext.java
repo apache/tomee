@@ -190,7 +190,6 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
     }
 
     public EJBHomeProxy createEJBHomeProxy(EJBMetaDataImpl ejbData) {
-
         EJBHomeHandler handler = EJBHomeHandler.createEJBHomeHandler(ejbData, server, client);
         EJBHomeProxy proxy = handler.createEJBHomeProxy();
         handler.ejb.ejbHomeProxy = proxy;
@@ -240,6 +239,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
 
+        System.out.println(res.toString());
         switch (res.getResponseCode()) {
             case ResponseCodes.JNDI_EJBHOME:
                 return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());

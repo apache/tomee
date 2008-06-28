@@ -31,7 +31,7 @@ public class StatefulEJBHomeHandler extends EJBHomeHandler {
     }
 
     protected Object findX(Method method, Object[] args, Object proxy) throws Throwable {
-        throw new SystemException(new UnsupportedOperationException("Stateful beans may not have find methods"));
+        throw new SystemException(new UnsupportedOperationException("Session beans may not have find methods"));
     }
 
     protected Object removeByPrimaryKey(Method method, Object[] args, Object proxy) throws Throwable {

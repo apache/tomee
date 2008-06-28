@@ -172,6 +172,9 @@ javax.naming.InitialContext
             case STATELESS:
                 type = "Stateless SessionBean";
                 break;
+            case SINGLETON:
+                type = "Singleton SessionBean";
+                break;
             default:
                 type = "Unkown Bean Type";
                 break;

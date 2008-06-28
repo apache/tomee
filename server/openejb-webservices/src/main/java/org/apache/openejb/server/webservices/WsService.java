@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
 import org.apache.openejb.core.webservices.PortAddressRegistry;
@@ -218,13 +219,12 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 contextData.put("ejbJarId", ejbJar.moduleId);
 
                 for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
-                    if (bean instanceof StatelessBeanInfo) {
-                        StatelessBeanInfo statelessBeanInfo = (StatelessBeanInfo) bean;
+                    if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
 
-                        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(statelessBeanInfo.ejbDeploymentId);
+                        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(bean.ejbDeploymentId);
                         if (deploymentInfo == null) continue;
 
-                        PortInfo portInfo = ports.get(statelessBeanInfo.ejbName);
+                        PortInfo portInfo = ports.get(bean.ejbName);
                         if (portInfo == null) continue;
 
                         try {
@@ -238,7 +238,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 location = autoAssignWsLocation(bean, port, contextData, deploymentIdTemplate);
                             }
                             if (!location.startsWith("/")) location = "/" + location;
-                            ejbLocations.put(statelessBeanInfo.ejbDeploymentId, location);
+                            ejbLocations.put(bean.ejbDeploymentId, location);
 
                             ClassLoader classLoader = deploymentInfo.getClassLoader();
                             if (wsRegistry != null) {
@@ -327,10 +327,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
 
                 for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
-                    if (enterpriseBean instanceof StatelessBeanInfo) {
-                        StatelessBeanInfo statelessBeanInfo = (StatelessBeanInfo) enterpriseBean;
+                    if (enterpriseBean instanceof StatelessBeanInfo || enterpriseBean instanceof SingletonBeanInfo) {
 
-                        PortInfo portInfo = ports.get(statelessBeanInfo.ejbName);
+                        PortInfo portInfo = ports.get(enterpriseBean.ejbName);
                         if (portInfo == null) continue;
 
                         // remove wsdl addresses from global registry
@@ -340,13 +339,13 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                         }
 
                         // remove container from web server
-                        String location = ejbLocations.get(statelessBeanInfo.ejbDeploymentId);
+                        String location = ejbLocations.get(enterpriseBean.ejbDeploymentId);
                         if (this.wsRegistry != null && location != null) {
                             this.wsRegistry.removeWsContainer(location);
                         }
 
                         // destroy webservice container
-                        destroyEjbWsContainer(statelessBeanInfo.ejbDeploymentId);
+                        destroyEjbWsContainer(enterpriseBean.ejbDeploymentId);
                     }
                 }
             }

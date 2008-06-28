@@ -22,5 +22,6 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 public enum SessionType {
     @XmlEnumValue("Stateful") STATEFUL,
-    @XmlEnumValue("Stateless") STATELESS
+    @XmlEnumValue("Stateless") STATELESS,
+    @XmlEnumValue("Singleton") SINGLETON
 }

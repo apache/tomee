@@ -39,6 +39,7 @@ import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.JndiNameInfo;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -450,6 +451,8 @@ public class EjbJarInfoBuilder {
                 stateful.removeMethods.add(remove);
             }
 
+        } else if (s.getSessionType() == SessionType.SINGLETON) {
+            bean = new SingletonBeanInfo();
         } else {
             bean = new StatelessBeanInfo();
         }

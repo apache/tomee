@@ -25,5 +25,6 @@ public interface BeanTypes {
     String CMP_ENTITY = "CMP_ENTITY";
     String STATEFUL = "STATEFUL";
     String STATELESS = "STATELESS";
+    String SINGLETON = "SINGLETON";
     String MESSAGE = "MESSAGE";
 }

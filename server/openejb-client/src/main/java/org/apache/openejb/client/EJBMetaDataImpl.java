@@ -34,6 +34,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     public static final byte CMP_ENTITY = (byte) 9;
 
+    public static final byte SINGLETON = (byte) 10;
+
     protected transient byte type;
 
     protected transient String deploymentID;
@@ -61,6 +63,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
             this.type = STATEFUL;
         } else if ("STATELESS".equalsIgnoreCase(typeOfBean)){
             this.type = STATELESS;
+        } else if ("SINGLETON".equalsIgnoreCase(typeOfBean)){
+            this.type = SINGLETON;
         } else if ("BMP_ENTITY".equalsIgnoreCase(typeOfBean)){
             this.type = BMP_ENTITY;
         } else if ("CMP_ENTITY".equalsIgnoreCase(typeOfBean)){
@@ -110,12 +114,20 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return type == STATELESS;
     }
 
+    public boolean isStatefulSession() {
+        return type == STATEFUL;
+    }
+
+    public boolean isSingletonSession() {
+        return type == SINGLETON;
+    }
+
     public Class getRemoteInterfaceClass() {
         return remoteClass;
     }
 
     public boolean isSession() {
-        return (type == STATEFUL || type == STATELESS);
+        return (type == STATEFUL || type == STATELESS || type == SINGLETON);
     }
 
     protected void setEJBHomeProxy(EJBHomeProxy home) {
@@ -186,6 +198,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         switch(type){
             case STATEFUL: sb.append("STATEFUL:"); break;
             case STATELESS: sb.append("STATELESS:");break;
+            case SINGLETON: sb.append("SINGLETON:");break;
             case CMP_ENTITY: sb.append("CMP_ENTITY:");break;
             case BMP_ENTITY: sb.append("BMP_ENTITY:");break;
         }

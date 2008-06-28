@@ -76,6 +76,7 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.SingletonBean;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -112,6 +113,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.ejb.Singleton;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -329,6 +331,26 @@ public class AnnotationDeployer implements DynamicDeployer {
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
+            for (Class<?> beanClass : finder.findAnnotatedClasses(Singleton.class)) {
+                Singleton singleton = beanClass.getAnnotation(Singleton.class);
+                String ejbName = getEjbName(singleton, beanClass);
+
+                if (!isValidAnnotationUsage(Singleton.class, beanClass, ejbName, ejbModule)) continue;
+
+                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
+                if (enterpriseBean == null) {
+                    enterpriseBean = new SingletonBean(ejbName, beanClass.getName());
+                    ejbJar.addEnterpriseBean(enterpriseBean);
+                }
+                if (enterpriseBean.getEjbClass() == null) {
+                    enterpriseBean.setEjbClass(beanClass.getName());
+                }
+                if (enterpriseBean instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) enterpriseBean;
+                    sessionBean.setSessionType(SessionType.SINGLETON);
+                }
+            }
+
             for (Class<?> beanClass : finder.findAnnotatedClasses(Stateless.class)) {
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = getEjbName(stateless, beanClass);
@@ -415,6 +437,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private String getEjbName(Stateless stateless, Class<?> beanClass) {
             String ejbName = stateless.name().length() == 0 ? beanClass.getSimpleName() : stateless.name();
+            return ejbName;
+        }
+
+        private String getEjbName(Singleton singleton, Class<?> beanClass) {
+            String ejbName = singleton.name().length() == 0 ? beanClass.getSimpleName() : singleton.name();
             return ejbName;
         }
 
