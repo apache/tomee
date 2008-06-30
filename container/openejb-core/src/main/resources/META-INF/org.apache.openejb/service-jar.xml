@@ -127,6 +127,8 @@
           constructor="id, transactionManager, securityService"
           class-name="org.apache.openejb.core.singleton.SingletonContainer">
 
+    AccessTimeout = 30 seconds
+    
   </ServiceProvider>
 
 

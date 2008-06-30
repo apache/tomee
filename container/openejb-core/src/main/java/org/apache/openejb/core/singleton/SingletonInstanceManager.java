@@ -22,7 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -33,7 +37,6 @@ import javax.xml.ws.WebServiceContext;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -41,11 +44,9 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Stack;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -54,12 +55,6 @@ import org.apache.xbean.recipe.StaticRecipe;
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    protected int poolLimit = 0;
-    protected int beanCount = 0;
-    protected boolean strictPooling = false;
-
-    protected HashMap<Object,Semaphore> semaphores;
-
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("SingletonInstanceManager");
     private TransactionManager transactionManager;
     private SecurityService securityService;
@@ -67,12 +62,6 @@ public class SingletonInstanceManager {
     public SingletonInstanceManager(TransactionManager transactionManager, SecurityService securityService) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
-        this.poolLimit = 1;
-        this.strictPooling = true;
-
-        if (this.strictPooling) {
-            this.semaphores = new HashMap();
-        }
     }
 
     /**
@@ -90,21 +79,12 @@ public class SingletonInstanceManager {
      * @return
      * @throws OpenEJBException
      */
-    public Object getInstance(ThreadContext callContext)
+    public Instance getInstance(ThreadContext callContext)
             throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
-        Stack pool = data.getPool();
-        if(strictPooling){
-            try {
-                semaphores.get(deploymentInfo.getDeploymentID()).acquire();
-            } catch (InterruptedException e2) {
-                throw new OpenEJBException("Unexpected Interruption of current thread: ",e2);
-            }
-        }
-        Object bean = pool.pop();
 
-        if (bean == null) {
+        if (data.instance == null) {
 
             Class beanClass = deploymentInfo.getBeanClass();
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
@@ -150,7 +130,7 @@ public class SingletonInstanceManager {
 
                 fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
 
-                bean = objectRecipe.create(beanClass.getClassLoader());
+                Object bean = objectRecipe.create(beanClass.getClassLoader());
                 Map unsetProperties = objectRecipe.getUnsetProperties();
                 if (unsetProperties.size() > 0) {
                     for (Object property : unsetProperties.keySet()) {
@@ -205,12 +185,21 @@ public class SingletonInstanceManager {
                     throw e;
                 }
 
-                bean = new Instance(bean, interceptorInstances);
+                ReadWriteLock lock;
+                if (false){ // TODO: Get metadata from DeploymentInfo
+                    // Bean-Managed Concurrency
+                    lock = new BeanManagedLock();
+                } else {
+                    // Container-Managed Concurrency
+                    lock = new ReentrantReadWriteLock();
+                }
+
+                data.instance = new Instance(bean, interceptorInstances, lock);
             } catch (Throwable e) {
                 if (e instanceof java.lang.reflect.InvocationTargetException) {
                     e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
                 }
-                String t = "The bean instance " + bean + " threw a system exception:" + e;
+                String t = "The bean instance threw a system exception:" + e;
                 logger.error(t, e);
                 throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
             } finally {
@@ -218,7 +207,8 @@ public class SingletonInstanceManager {
                 callContext.setCurrentAllowedStates(originalAllowedStates);
             }
         }
-        return bean;
+
+        return data.instance;
     }
 
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
@@ -271,41 +261,7 @@ public class SingletonInstanceManager {
         return new SingletonContext(transactionManager, securityService);
     }
 
-    /**
-     * All instances are removed from the pool in getInstance(...).  They are only
-     * returned by the StatelessContainer via this method under two circumstances.
-     *
-     * 1.  The business method returns normally
-     * 2.  The business method throws an application exception
-     *
-     * Instances are not returned to the pool if the business method threw a system
-     * exception.
-     *
-     * @param callContext
-     * @param bean
-     * @throws OpenEJBException
-     */
-    public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
-        if (bean == null) {
-            throw new SystemException("Invalid arguments");
-        }
-
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Data data = (Data) deploymentInfo.getContainerData();
-        Stack pool = data.getPool();
-
-        if (strictPooling) {
-            pool.push(bean);
-            semaphores.get(deploymentInfo.getDeploymentID()).release();
-        } else {
-            if (pool.size() >= poolLimit) {
-                freeInstance(callContext, (Instance)bean);
-            } else {
-                pool.push(bean);
-            }
-        }
-    }
-
+    // TODO: Call on system shutdown
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
@@ -337,36 +293,51 @@ public class SingletonInstanceManager {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
-        Data data = new Data(poolLimit);
+        Data data = new Data();
         deploymentInfo.setContainerData(data);      
-        if (this.strictPooling) {
-            this.semaphores.put(deploymentInfo.getDeploymentID(), new Semaphore(poolLimit));
-        }
-
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
-        if (this.strictPooling) {
-            semaphores.remove(deploymentInfo.getDeploymentID());
-        }
         if (data == null) return;
-        Stack pool = data.getPool();
-        //TODO ejbRemove on each bean in pool.
-        //clean pool
         deploymentInfo.setContainerData(null);
     }
 
     private static final class Data {
-        private final Stack pool;
-
-        public Data(int poolLimit) {
-            pool = new LinkedListStack(poolLimit);
-        }
-
-        public Stack getPool() {
-            return pool;
-        }
+        private Instance instance;
     }
 
+
+    private static class BeanManagedLock implements ReadWriteLock {
+        private final Lock lock =  new Lock(){
+            public void lock() {
+            }
+
+            public void lockInterruptibly() {
+            }
+
+            public Condition newCondition() {
+                throw new java.lang.UnsupportedOperationException("newCondition()");
+            }
+
+            public boolean tryLock() {
+                return true;
+            }
+
+            public boolean tryLock(long time, TimeUnit unit) {
+                return true;
+            }
+
+            public void unlock() {
+            }
+        };
+
+        public Lock readLock() {
+            return lock;
+        }
+
+        public Lock writeLock() {
+            return lock;
+        }
+    }
 }

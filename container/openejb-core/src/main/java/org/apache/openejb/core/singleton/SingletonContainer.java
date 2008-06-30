@@ -21,12 +21,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.interceptor.AroundInvoke;
 import javax.transaction.TransactionManager;
 
@@ -35,6 +38,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -60,6 +64,9 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
     private Object containerID = null;
     private TransactionManager transactionManager;
     private SecurityService securityService;
+    private long wait = 30;
+    private TimeUnit unit = TimeUnit.SECONDS;
+
 
     public SingletonContainer(Object id, TransactionManager transactionManager, SecurityService securityService) throws OpenEJBException {
         this.containerID = id;
@@ -72,6 +79,11 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;
             di.setContainer(this);
         }
+    }
+
+    public void setAccessTimeout(Duration duration){
+        this.unit = duration.getUnit();
+        this.wait = duration.getTime();
     }
 
     public synchronized DeploymentInfo [] deployments() {
@@ -153,7 +165,7 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
                 return null;// EJBObject.remove( ) and other EJBObject methods are not process by the container
             }
 
-            Object bean = instanceManager.getInstance(callContext);
+            Instance instance = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(Operation.BUSINESS);
             callContext.setCurrentAllowedStates(SingletonContext.getStates());
@@ -162,8 +174,7 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
 
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            Object retValue = _invoke(callInterface, callMethod, runMethod, args, bean, callContext);
-            instanceManager.poolInstance(callContext, bean);
+            Object retValue = _invoke(callInterface, callMethod, runMethod, args, instance, callContext);
 
             return retValue;
 
@@ -196,52 +207,79 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
         txContext.callContext = callContext;
 
-        txPolicy.beforeInvoke(instance, txContext);
 
-        Object returnValue = null;
+        boolean read = false; // TODO: get meta data from DeploymentInfo
+        final Lock lock = aquireLock(read, instance);
+
+        Object returnValue;
         try {
-            InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
-            if (type == InterfaceType.SERVICE_ENDPOINT){
-                callContext.setCurrentOperation(Operation.BUSINESS_WS);
-                returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);
-            } else {
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
-                returnValue = interceptorStack.invoke(args);
-            }
-        } catch (Throwable re) {// handle reflection exception
-            ExceptionType type = deploymentInfo.getExceptionType(re);
-            if (type == ExceptionType.SYSTEM) {
-                /* System Exception ****************************/
+            txPolicy.beforeInvoke(instance, txContext);
 
-                /**
-                 * The bean instance is not put into the pool via instanceManager.poolInstance
-                 * and therefore the instance will be garbage collected and destroyed.
-                 * For this reason the discardInstance method of the StatelessInstanceManager
-                 * does nothing.
-                 */
+            returnValue = null;
+            try {
+                InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
+                if (type == InterfaceType.SERVICE_ENDPOINT){
+                    callContext.setCurrentOperation(Operation.BUSINESS_WS);
+                    returnValue = invokeWebService(args, deploymentInfo, runMethod, instance);
+                } else {
+                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+                    returnValue = interceptorStack.invoke(args);
+                }
+            } catch (Throwable re) {// handle reflection exception
+                ExceptionType type = deploymentInfo.getExceptionType(re);
+                if (type == ExceptionType.SYSTEM) {
+                    /* System Exception ****************************/
 
-                txPolicy.handleSystemException(re, instance, txContext);
-            } else {
-                /* Application Exception ***********************/
+                    /**
+                     * The bean instance is not put into the pool via instanceManager.poolInstance
+                     * and therefore the instance will be garbage collected and destroyed.
+                     * For this reason the discardInstance method of the StatelessInstanceManager
+                     * does nothing.
+                     */
 
-                txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                    txPolicy.handleSystemException(re, instance, txContext);
+                } else {
+                    /* Application Exception ***********************/
+
+                    txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                }
+            } finally {
+                txPolicy.afterInvoke(instance, txContext);
             }
         } finally {
-            instanceManager.poolInstance(callContext, instance);
-
-            txPolicy.afterInvoke(instance, txContext);
+            lock.unlock();
         }
 
         return returnValue;
     }
 
-    private Object invokeWebService(Object[] args, CoreDeploymentInfo deploymentInfo, Method runMethod, Instance instance, Object returnValue) throws Exception {
+    private Lock aquireLock(boolean read, Instance instance) {
+        final Lock lock;
+        if (read) {
+            lock = instance.lock.readLock();
+        } else {
+            lock = instance.lock.writeLock();
+        }
+
+        try {
+            if (!lock.tryLock(wait, unit)){
+                throw new ConcurrentAccessTimeoutException();
+            }
+        } catch (InterruptedException e) {
+            throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException().initCause(e);
+        }
+        return lock;
+    }
+
+    private Object invokeWebService(Object[] args, CoreDeploymentInfo deploymentInfo, Method runMethod, Instance instance) throws Exception {
         if (args.length != 2){
             throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor}.");
         }
 
         Object messageContext = args[0];
+
+        if (messageContext == null) throw new IllegalArgumentException("MessageContext is null.");
 
         // This object will be used as an interceptor in the stack and will be responsible
         // for unmarshalling the soap message parts into an argument list that will be
@@ -251,6 +289,7 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         // of our stack.
         Object interceptor = args[1];
 
+        if (interceptor == null) throw new IllegalArgumentException("Interceptor instance is null.");
 
         //  Add the webservice interceptor to the list of interceptor instances
         Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
@@ -271,12 +310,12 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         Object[] params = new Object[runMethod.getParameterTypes().length];
         if (messageContext instanceof javax.xml.rpc.handler.MessageContext) {
             ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
-            returnValue = interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
+            return interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
         } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
             ThreadContext.getThreadContext().set(javax.xml.ws.handler.MessageContext.class, (javax.xml.ws.handler.MessageContext) messageContext);
-            returnValue = interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
+            return interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
         }
-        return returnValue;
+        throw new IllegalArgumentException("Uknown MessageContext type: " + messageContext.getClass().getName());
     }
 
     private TransactionManager getTransactionManager() {

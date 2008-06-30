@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.core.singleton;
 
-import java.util.List;
-import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * @version $Rev$ $Date$
@@ -26,9 +25,11 @@ import java.util.Map;
 public class Instance {
     public final Object bean;
     public final Map<String,Object> interceptors;
+    public final ReadWriteLock lock;
 
-    public Instance(Object bean, Map<String, Object> interceptors) {
+    public Instance(Object bean, Map<String, Object> interceptors, ReadWriteLock lock) {
         this.bean = bean;
         this.interceptors = interceptors;
+        this.lock = lock;
     }
 }
