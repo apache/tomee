@@ -96,7 +96,6 @@ public class Duration {
         // get the number
         for (; i < text.length(); i++) {
             char c = text.charAt(i);
-            System.out.println("a "+c);
             if (Character.isDigit(c) || i == 0 && c == '-') {
                 t.append(c);
             } else {
@@ -111,7 +110,6 @@ public class Duration {
         // skip whitespace
         for (; i < text.length(); i++) {
             char c = text.charAt(i);
-            System.out.println("b "+c);
             if (Character.isWhitespace(c)) {
             } else {
                 break;
@@ -121,7 +119,6 @@ public class Duration {
         // get time unit text part
         for (; i < text.length(); i++) {
             char c = text.charAt(i);
-            System.out.println("c "+c);
             if (Character.isLetter(c)) {
                 u.append(c);
             } else {

@@ -239,7 +239,6 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
 
-        System.out.println(res.toString());
         switch (res.getResponseCode()) {
             case ResponseCodes.JNDI_EJBHOME:
                 return createEJBHomeProxy((EJBMetaDataImpl) res.getResult());
