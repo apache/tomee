@@ -113,6 +113,7 @@ import java.util.Map;
         "initMethod",
         "removeMethod",
         "transactionType",
+        "concurrencyType",
         "aroundInvoke",
         "envEntry",
         "ejbRef",
@@ -165,6 +166,8 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
     protected List<RemoveMethod> removeMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
+    @XmlElement(name = "concurrency-type")
+    protected ConcurrencyType concurrencyType;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "env-entry", required = true)
@@ -420,8 +423,16 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         return transactionType;
     }
 
+    public ConcurrencyType getConcurrencyType() {
+        return concurrencyType;
+    }
+
     public void setTransactionType(TransactionType value) {
         this.transactionType = value;
+    }
+
+    public void setConcurrencyType(ConcurrencyType value) {
+        this.concurrencyType = value;
     }
 
     public List<AroundInvoke> getAroundInvoke() {

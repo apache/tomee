@@ -208,7 +208,8 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         txContext.callContext = callContext;
 
 
-        boolean read = false; // TODO: get meta data from DeploymentInfo
+        boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == DeploymentInfo.READ_LOCK;
+        
         final Lock lock = aquireLock(read, instance);
 
         Object returnValue;

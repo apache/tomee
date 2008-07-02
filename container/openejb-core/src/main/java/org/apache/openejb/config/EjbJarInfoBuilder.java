@@ -40,6 +40,7 @@ import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.JndiNameInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
+import org.apache.openejb.assembler.classic.MethodConcurrencyInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -74,6 +75,8 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.ApplicationException;
+import org.apache.openejb.jee.ConcurrencyType;
+import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.Jndi;
@@ -172,6 +175,7 @@ public class EjbJarInfoBuilder {
             initMethodPermissions(jar, ejbds, ejbJar);
             initExcludesList(jar, ejbds, ejbJar);
             initMethodTransactions(jar, ejbds, ejbJar);
+            initMethodConcurrency(jar, ejbds, ejbJar);
             initApplicationExceptions(jar, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -315,6 +319,19 @@ public class EjbJarInfoBuilder {
         }
     }
 
+    private void initMethodConcurrency(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
+
+        List<ContainerConcurrency> containerConcurrency = jar.getEjbJar().getAssemblyDescriptor().getContainerConcurrency();
+        for (ContainerConcurrency att : containerConcurrency) {
+            MethodConcurrencyInfo info = new MethodConcurrencyInfo();
+
+            info.description = att.getDescription();
+            info.concurrencyAttribute = att.getConcurrencyAttribute().toString();
+            info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));
+            ejbJarInfo.methodConcurrency.add(info);
+        }
+    }
+
     private void initApplicationExceptions(EjbModule jar, EjbJarInfo ejbJarInfo) {
         for (ApplicationException applicationException : jar.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
             ApplicationExceptionInfo info = new ApplicationExceptionInfo();
@@ -453,6 +470,8 @@ public class EjbJarInfoBuilder {
 
         } else if (s.getSessionType() == SessionType.SINGLETON) {
             bean = new SingletonBeanInfo();
+            ConcurrencyType type = s.getConcurrencyType();
+            bean.concurrencyType = (type != null) ? type.toString() : ConcurrencyType.CONTAINER.toString();
         } else {
             bean = new StatelessBeanInfo();
         }

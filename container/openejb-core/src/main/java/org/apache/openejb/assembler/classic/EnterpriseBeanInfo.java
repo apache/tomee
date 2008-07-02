@@ -49,6 +49,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String ejbName;
 
     public String transactionType;
+    public String concurrencyType;
     public JndiEncInfo jndiEnc;
     public NamedMethodInfo timeoutMethod;
 

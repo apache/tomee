@@ -501,6 +501,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
                 methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
 
+                MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
+                methodConcurrencyBuilder.build(deployments, ejbJar.methodConcurrency);
+
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     containerSystem.addDeployment(deploymentInfo);
                 }

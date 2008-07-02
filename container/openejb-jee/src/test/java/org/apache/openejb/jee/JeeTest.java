@@ -45,7 +45,7 @@ import java.io.InputStream;
  * @version $Revision$ $Date$
  */
 public class JeeTest extends TestCase {
-    public void XtestEjbJar() throws Exception {
+    public void testEjbJar() throws Exception {
         String fileName = "ejb-jar-example1.xml";
 //        String fileName = "ejb-jar-empty.xml";
 

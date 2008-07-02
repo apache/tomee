@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,42 +14,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import java.util.List;
+import java.util.ArrayList;
 
-
-/**
- * The container-transactionType specifies how the container
- * must manage transaction scopes for the enterprise bean's
- * method invocations. It defines an optional description, a
- * list of method elements, and a transaction attribute. The
- * transaction attribute is to be applied to all the specified
- * methods.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "container-transactionType", propOrder = {
+@XmlType(name = "container-concurrencyType", propOrder = {
         "descriptions",
         "method",
-        "transAttribute"
+        "concurrencyAttribute"
         })
-public class ContainerTransaction implements AttributeBinding<TransAttribute> {
+public class ContainerConcurrency implements AttributeBinding<ConcurrencyAttribute>{
 
     @XmlElement(required = true)
     protected List<Method> method;
-    @XmlElement(name = "trans-attribute", required = true)
-    protected TransAttribute transAttribute;
+    @XmlElement(name = "concurrency-attribute", required = true)
+    protected ConcurrencyAttribute concurrencyAttribute;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -64,19 +53,19 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
         return description.toArray();
     }
 
-    public ContainerTransaction() {
+    public ContainerConcurrency() {
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, String className, String ejbName, String methodName) {
-        this(transAttribute, new Method(ejbName, className, methodName));
+    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, String className, String ejbName, String methodName) {
+        this(concurrencyAttribute, new Method(ejbName, className, methodName));
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, String ejbName, java.lang.reflect.Method method) {
-        this(transAttribute, new Method(ejbName, method));
+    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, String ejbName, java.lang.reflect.Method method) {
+        this(concurrencyAttribute, new Method(ejbName, method));
     }
 
-    public ContainerTransaction(TransAttribute transAttribute, Method method) {
-        this.transAttribute = transAttribute;
+    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, Method method) {
+        this.concurrencyAttribute = concurrencyAttribute;
         getMethod().add(method);
     }
 
@@ -95,16 +84,16 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
         return this.method;
     }
 
-    public TransAttribute getAttribute() {
-        return transAttribute;
+    public ConcurrencyAttribute getAttribute() {
+        return concurrencyAttribute;
     }
 
-    public TransAttribute getTransAttribute() {
-        return transAttribute;
+    public ConcurrencyAttribute getConcurrencyAttribute() {
+        return concurrencyAttribute;
     }
 
-    public void setTransAttribute(TransAttribute value) {
-        this.transAttribute = value;
+    public void setConcurrencyAttribute(ConcurrencyAttribute value) {
+        this.concurrencyAttribute = value;
     }
 
     public String getId() {
@@ -114,6 +103,4 @@ public class ContainerTransaction implements AttributeBinding<TransAttribute> {
     public void setId(String value) {
         this.id = value;
     }
-
-
 }

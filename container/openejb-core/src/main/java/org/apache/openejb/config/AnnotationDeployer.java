@@ -48,7 +48,7 @@ import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.MethodTransaction;
+import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
@@ -77,6 +77,9 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.ConcurrencyAttribute;
+import org.apache.openejb.jee.ContainerConcurrency;
+import org.apache.openejb.jee.ConcurrencyType;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -114,6 +117,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.ejb.Singleton;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -705,7 +710,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 processApplicationExceptions(clazz, assemblyDescriptor);
 
                 if (bean.getTransactionType() == TransactionType.CONTAINER) {
-                    processTransactionAttributes(clazz, ejbName, assemblyDescriptor, inheritedClassFinder);
+                    processAttributes(new TransactionAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
                 }
 
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
@@ -825,6 +830,30 @@ public class AnnotationDeployer implements DynamicDeployer {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
                         processSessionInterfaces(sessionBean, clazz, ejbModule);
+
+                        if (sessionBean.getSessionType() == SessionType.SINGLETON) {
+
+                            if (sessionBean.getConcurrencyType() == null) {
+                                ConcurrencyManagement tx = getInheritableAnnotation(clazz, ConcurrencyManagement.class);
+                                ConcurrencyManagementType concurrencyType = ConcurrencyManagementType.CONTAINER;
+                                if (tx != null) {
+                                    concurrencyType = tx.value();
+                                }
+                                switch (concurrencyType) {
+                                    case BEAN:
+                                        sessionBean.setConcurrencyType(ConcurrencyType.BEAN);
+                                        break;
+                                    case CONTAINER:
+                                        sessionBean.setConcurrencyType(ConcurrencyType.CONTAINER);
+                                        break;
+                                }
+                            }
+
+
+                            if (sessionBean.getConcurrencyType() == ConcurrencyType.CONTAINER) {
+                                processAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
+                            }
+                        }
                     }
                 }
 
@@ -1203,52 +1232,127 @@ public class AnnotationDeployer implements DynamicDeployer {
             return classPermissions;
         }
 
-        private void processTransactionAttributes(Class<?> clazz, String ejbName, AssemblyDescriptor assemblyDescriptor, ClassFinder classFinder) {
+        public interface AnnotationHandler<A extends Annotation> {
+            public Class<A> getAnnotationClass();
 
-            Map<String, List<MethodTransaction>> methodTransactions = assemblyDescriptor.getMethodTransactions(ejbName);
+            public Map<String, List<MethodAttribute>> getExistingDeclarations();
+
+            public void addClassLevelDeclaration(A annotation, Class clazz);
+
+            public void addMethodLevelDeclaration(A annotation, Method method);
+        }
+
+        public static class TransactionAttributeHandler implements AnnotationHandler<TransactionAttribute> {
+
+            private final AssemblyDescriptor assemblyDescriptor;
+            private final String ejbName;
+
+            public TransactionAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+                this.assemblyDescriptor = assemblyDescriptor;
+                this.ejbName = ejbName;
+            }
+
+            public Map<String, List<MethodAttribute>> getExistingDeclarations(){
+                return assemblyDescriptor.getMethodTransactionMap(ejbName);
+            }
+
+            public void addClassLevelDeclaration(TransactionAttribute attribute, Class type) {
+                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), type.getName(), ejbName, "*");
+                assemblyDescriptor.getContainerTransaction().add(ctx);
+            }
+
+            public void addMethodLevelDeclaration(TransactionAttribute attribute, Method method) {
+                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method);
+                assemblyDescriptor.getContainerTransaction().add(ctx);
+            }
+
+            public Class<TransactionAttribute> getAnnotationClass() {
+                return TransactionAttribute.class;
+            }
+
+            private TransAttribute cast(TransactionAttributeType transactionAttributeType) {
+                return TransAttribute.valueOf(transactionAttributeType.toString());
+            }
+        }
+
+        public static class ConcurrencyAttributeHandler implements AnnotationHandler<javax.ejb.Lock> {
+
+            private final AssemblyDescriptor assemblyDescriptor;
+            private final String ejbName;
+
+            public ConcurrencyAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+                this.assemblyDescriptor = assemblyDescriptor;
+                this.ejbName = ejbName;
+            }
+
+            public Map<String, List<MethodAttribute>> getExistingDeclarations(){
+                return assemblyDescriptor.getMethodConcurrencyMap(ejbName);
+            }
+
+            public void addClassLevelDeclaration(javax.ejb.Lock attribute, Class type) {
+                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), type.getName(), ejbName, "*");
+                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            }
+
+            public void addMethodLevelDeclaration(javax.ejb.Lock attribute, Method method) {
+                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), ejbName, method);
+                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            }
+
+            public Class<javax.ejb.Lock> getAnnotationClass() {
+                return javax.ejb.Lock.class;
+            }
+
+            private ConcurrencyAttribute cast(javax.ejb.LockType lockType) {
+                return ConcurrencyAttribute.valueOf(lockType.toString());
+            }
+        }
+
+        private <A extends Annotation> void processAttributes(AnnotationHandler<A> handler, Class<?> clazz, ClassFinder classFinder) {
+            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
 
             // SET THE DEFAULT
-            if (!hasMethodTransaction("*", null, methodTransactions)) {
+            final Class<A> annotationClass = handler.getAnnotationClass();
+
+            if (!hasMethodAttribute("*", null, existingDeclarations)) {
                 for (Class<?> type : ancestors(clazz)) {
-                    if (!hasMethodTransaction("*", type, methodTransactions)){
-                        TransactionAttribute attribute = type.getAnnotation(TransactionAttribute.class);
+                    if (!hasMethodAttribute("*", type, existingDeclarations)){
+                        A attribute = type.getAnnotation(annotationClass);
                         if (attribute != null) {
-                            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), type.getName(), ejbName, "*");
-                            assemblyDescriptor.getContainerTransaction().add(ctx);
+                            handler.addClassLevelDeclaration(attribute, type);
                         }
                     }
                 }
-
             }
 
 
-            List<Method> methods = classFinder.findAnnotatedMethods(TransactionAttribute.class);
+            List<Method> methods = classFinder.findAnnotatedMethods(annotationClass);
             for (Method method : methods) {
-                TransactionAttribute attribute = method.getAnnotation(TransactionAttribute.class);
-                if (!methodTransactions.containsKey(method.getName())) {
+                A attribute = method.getAnnotation(annotationClass);
+                if (!existingDeclarations.containsKey(method.getName())) {
                     // no method with this name in descriptor
-                    addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                    handler.addMethodLevelDeclaration(attribute, method);
                 } else {
                     // method name already declared
-                    List<MethodTransaction> list = methodTransactions.get(method.getName());
-                    for (MethodTransaction mtx : list) {
+                    List<MethodAttribute> list = existingDeclarations.get(method.getName());
+                    for (MethodAttribute mtx : list) {
                         MethodParams methodParams = mtx.getMethodParams();
                         if (methodParams == null) {
                             // params not specified, so this is more specific
-                            addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                            handler.addMethodLevelDeclaration(attribute, method);
                         } else {
                             List<String> params1 = methodParams.getMethodParam();
                             String[] params2 = asStrings(method.getParameterTypes());
                             if (params1.size() != params2.length) {
                                 // params not the same
-                                addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                                handler.addMethodLevelDeclaration(attribute, method);
                             } else {
                                 for (int i = 0; i < params1.size(); i++) {
                                     String a = params1.get(i);
                                     String b = params2[i];
                                     if (!a.equals(b)) {
                                         // params not the same
-                                        addContainerTransaction(attribute, ejbName, method, assemblyDescriptor);
+                                        handler.addMethodLevelDeclaration(attribute, method);
                                         break;
                                     }
                                 }
@@ -1259,23 +1363,19 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        public static void main(String[] args) {
-            System.out.println(null + "");
+        private boolean hasMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map){
+            return getMethodAttribute(methodName, clazz, map) != null;
         }
 
-        private boolean hasMethodTransaction(String methodName, Class clazz, Map<String, List<MethodTransaction>> map){
-            return getMethodTransaction(methodName, clazz, map) != null;
-        }
+        private MethodAttribute getMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map) {
+            List<MethodAttribute> methodAttributes = map.get(methodName);
+            if (methodAttributes == null) return null;
 
-        private MethodTransaction getMethodTransaction(String methodName, Class clazz, Map<String, List<MethodTransaction>> map) {
-            List<MethodTransaction> methodTransactions = map.get(methodName);
-            if (methodTransactions == null) return null;
-
-            for (MethodTransaction methodTransaction : methodTransactions) {
+            for (MethodAttribute methodAttribute : methodAttributes) {
                 String className = (clazz != null) ? clazz.getName() : null + "";
 
-                if (className.equals(methodTransaction.getClassName() + "")) {
-                    return methodTransaction;
+                if (className.equals(methodAttribute.getClassName() + "")) {
+                    return methodAttribute;
                 }
             }
             return null;
@@ -2057,21 +2157,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             return new ArrayList<Class<?>>(classes);
         }
 
-        private void addContainerTransaction(TransactionAttribute attribute, String ejbName, Method method, AssemblyDescriptor assemblyDescriptor) {
-            ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method);
-            assemblyDescriptor.getContainerTransaction().add(ctx);
-        }
-
         private String[] asStrings(Class[] types) {
             List<String> names = new ArrayList<String>();
             for (Class clazz : types) {
                 names.add(clazz.getName());
             }
             return names.toArray(new String[names.size()]);
-        }
-
-        private TransAttribute cast(TransactionAttributeType transactionAttributeType) {
-            return TransAttribute.valueOf(transactionAttributeType.toString());
         }
 
         private <T> T getFirst(List<T> list) {

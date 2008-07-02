@@ -186,7 +186,7 @@ public class SingletonInstanceManager {
                 }
 
                 ReadWriteLock lock;
-                if (false){ // TODO: Get metadata from DeploymentInfo
+                if (deploymentInfo.isBeanManagedConcurrency()){
                     // Bean-Managed Concurrency
                     lock = new BeanManagedLock();
                 } else {

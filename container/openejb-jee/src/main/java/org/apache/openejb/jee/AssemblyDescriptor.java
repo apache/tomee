@@ -57,6 +57,7 @@ import java.util.Collection;
         "securityRole",
         "methodPermission",
         "containerTransaction",
+        "containerConcurrency",
         "interceptorBinding",
         "messageDestination",
         "excludeList",
@@ -70,6 +71,8 @@ public class AssemblyDescriptor {
     protected List<MethodPermission> methodPermission;
     @XmlElement(name = "container-transaction", required = true)
     protected List<ContainerTransaction> containerTransaction;
+    @XmlElement(name = "container-concurrency", required = true)
+    protected List<ContainerConcurrency> containerConcurrency;
     @XmlElement(name = "interceptor-binding", required = true)
     protected List<InterceptorBinding> interceptorBinding;
     @XmlElement(name = "message-destination", required = true)
@@ -104,19 +107,36 @@ public class AssemblyDescriptor {
         return this.containerTransaction;
     }
 
-    public Map<String,List<MethodTransaction>> getMethodTransactions(String ejbName) {
-        Map<String,List<MethodTransaction>> methods = new LinkedHashMap<String,List<MethodTransaction>>();
-        for (ContainerTransaction transaction : getContainerTransaction()) {
+    public List<ContainerConcurrency> getContainerConcurrency() {
+        if (containerConcurrency == null) {
+            containerConcurrency = new ArrayList<ContainerConcurrency>();
+        }
+        return this.containerConcurrency;
+    }
 
-            for (Method method : transaction.getMethod()) {
+    public Map<String,List<MethodAttribute>> getMethodTransactionMap(String ejbName) {
+        return getMethodAttributes(ejbName, getContainerTransaction());
+    }
+
+    public Map<String,List<MethodAttribute>> getMethodConcurrencyMap(String ejbName) {
+        return getMethodAttributes(ejbName, getContainerConcurrency());
+    }
+
+    private Map<String, List<MethodAttribute>> getMethodAttributes(String ejbName, List<? extends AttributeBinding> bindings) {
+
+        Map<String,List<MethodAttribute>> methods = new LinkedHashMap<String,List<MethodAttribute>>();
+
+        for (AttributeBinding<?> binding : bindings) {
+
+            for (Method method : binding.getMethod()) {
                 if (method.getEjbName().equals(ejbName)){
                     String methodName = method.getMethodName();
-                    List<MethodTransaction> list = methods.get(methodName);
+                    List<MethodAttribute> list = methods.get(methodName);
                     if (list == null){
-                        list = new ArrayList<MethodTransaction>();
+                        list = new ArrayList<MethodAttribute>();
                         methods.put(methodName, list);
                     }
-                    list.add(new MethodTransaction(transaction.getTransAttribute(), method));
+                    list.add(new MethodAttribute(binding.getAttribute(), method));
                 }
             }
         }

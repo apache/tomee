@@ -209,6 +209,10 @@ class EnterpriseBeanBuilder {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));
         }
 
+        if (ejbType == BeanType.SINGLETON) {
+            deployment.setBeanManagedConcurrency("Bean".equalsIgnoreCase(bean.concurrencyType));
+        }
+
         if (ejbType.isEntity()) {
             EntityBeanInfo entity = (EntityBeanInfo) bean;
 

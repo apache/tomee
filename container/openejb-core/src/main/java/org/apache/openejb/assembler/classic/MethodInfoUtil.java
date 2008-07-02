@@ -442,4 +442,10 @@ public class MethodInfoUtil {
         return s;
     }
 
+    public static String toString(MethodConcurrencyInfo i) {
+        String s = toString(i.methods.get(0));
+        s += " " + i.concurrencyAttribute;
+        return s;
+    }
+
 }

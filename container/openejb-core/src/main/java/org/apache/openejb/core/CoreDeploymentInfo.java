@@ -96,6 +96,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EjbTimerService ejbTimerService;
 
     private boolean isBeanManagedTransaction;
+    private boolean isBeanManagedConcurrency;
     private boolean isReentrant;
     private Container container;
     private EJBHome ejbHomeRef;
@@ -120,6 +121,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
     private final Map<Method, Byte> methodTransactionAttributes = new HashMap<Method, Byte>();
+    private final Map<Method, Byte> methodConcurrencyAttributes = new HashMap<Method, Byte>();
     private final Map<Method, TransactionPolicy> methodTransactionPolicies = new HashMap<Method, TransactionPolicy>();
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
@@ -367,6 +369,21 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
+    public byte getConcurrencyAttribute(Method method) {
+        Byte byteWrapper = methodConcurrencyAttributes.get(method);
+
+        if (byteWrapper == null){
+            Method beanMethod = getMatchingBeanMethod(method);
+            byteWrapper = methodConcurrencyAttributes.get(beanMethod);
+        }
+
+        if (byteWrapper == null) {
+            return WRITE_LOCK;
+        } else {
+            return byteWrapper;
+        }
+    }
+
     public TransactionPolicy getTransactionPolicy(Method method) {
         TransactionPolicy policy = methodTransactionPolicies.get(method);
         if (policy == null && !isBeanManagedTransaction) {
@@ -431,6 +448,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public boolean isBeanManagedTransaction() {
         return isBeanManagedTransaction;
+    }
+
+    public boolean isBeanManagedConcurrency() {
+        return isBeanManagedConcurrency;
     }
 
     public Class getHomeInterface() {
@@ -563,6 +584,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         isBeanManagedTransaction = value;
     }
 
+    public void setBeanManagedConcurrency(boolean beanManagedConcurrency) {
+        isBeanManagedConcurrency = beanManagedConcurrency;
+    }
+
     public Context getJndiEnc() {
         return context.getJndiContext();
     }
@@ -602,6 +627,17 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public void addSecurityRoleReference(String securityRoleReference, String linkedRoleName) {
         securityRoleReferenceMap.put(securityRoleReference, linkedRoleName);
     }
+
+    public void setMethodConcurrencyAttribute(Method method, String concurrencyAttribute) {
+        if ("Read".equals(concurrencyAttribute)){
+            this.methodConcurrencyAttributes.put(method, READ_LOCK);
+        } else if ("Write".equals(concurrencyAttribute)){
+            this.methodConcurrencyAttributes.put(method, WRITE_LOCK);
+        } else {
+            throw new IllegalArgumentException("Unsupported MethodConcurrencyAttribute '"+concurrencyAttribute+"'");
+        }
+    }
+
 
     public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {
         Byte byteValue = null;

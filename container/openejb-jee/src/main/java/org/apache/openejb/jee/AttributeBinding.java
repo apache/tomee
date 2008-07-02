@@ -16,43 +16,15 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
-public class MethodTransaction {
-    private final Method method;
-    private final TransAttribute attribute;
+public interface AttributeBinding<A> {
 
-    public MethodTransaction(TransAttribute attribute, Method method) {
-        this.attribute = attribute;
-        this.method = method;
-    }
+    public A getAttribute();
 
-    public TransAttribute getAttribute() {
-        return attribute;
-    }
+    public List<Method> getMethod();
 
-    public String getEjbName() {
-        return method.getEjbName();
-    }
-
-    public MethodIntf getMethodIntf() {
-        return method.getMethodIntf();
-    }
-
-    public String getMethodName() {
-        return method.getMethodName();
-    }
-
-    public MethodParams getMethodParams() {
-        return method.getMethodParams();
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public String getClassName() {
-        return method.getClassName();
-    }
 }
