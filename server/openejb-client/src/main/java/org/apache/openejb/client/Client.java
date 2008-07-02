@@ -46,11 +46,7 @@ public class Client {
         if (server == null)
             throw new IllegalArgumentException("Server instance cannot be null");
 
-        OutputStream out = null;
-        ObjectOutput objectOut = null;
-        ObjectInput objectIn = null;
         Connection conn = null;
-
         try {
             /*----------------------------*/
             /* Get a connection to server */
@@ -60,6 +56,7 @@ public class Client {
             /*----------------------------------*/
             /* Get output streams */
             /*----------------------------------*/
+            OutputStream out;
             try {
 
                 out = conn.getOuputStream();
@@ -99,6 +96,7 @@ public class Client {
             /*----------------------------------*/
             /* Get output streams */
             /*----------------------------------*/
+            ObjectOutput objectOut;
             try {
 
                 objectOut = new ObjectOutputStream(out);
@@ -132,7 +130,7 @@ public class Client {
             /*----------------------------------*/
             /* Get input streams               */
             /*----------------------------------*/
-            InputStream in = null;
+            InputStream in;
             try {
 
                 in = conn.getInputStream();
@@ -151,6 +149,7 @@ public class Client {
                 throw new RemoteException("Cannot deternmine server protocol version: Received "+protocolMetaData.getSpec() , e );
             }
 
+            ObjectInput objectIn;
             try{
 
                 objectIn = new EjbObjectInputStream(in);

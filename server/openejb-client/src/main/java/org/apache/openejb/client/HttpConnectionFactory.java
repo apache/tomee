@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.NoRouteToHostException;
 import java.util.Properties;
 
 /**
@@ -40,11 +41,10 @@ public class HttpConnectionFactory implements ConnectionFactory {
     public static class HttpConnection implements Connection {
 
         private HttpURLConnection httpURLConnection;
+        private InputStream inputStream;
+        private OutputStream outputStream;
 
         public HttpConnection(URI uri) throws IOException {
-            String host = "localhost";
-//            String host = server.getLocation().getHost();
-            // TODO: Use the URI for making the URL
             URL url = uri.toURL();
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setDoOutput(true);
@@ -52,15 +52,45 @@ public class HttpConnectionFactory implements ConnectionFactory {
         }
 
         public void close() throws IOException {
-            httpURLConnection.disconnect();
-        }
+            IOException exception = null;
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    exception = e;
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    if (exception == null) {
+                        exception = e;
+                    }
+                }
+            }
 
-        public InputStream getInputStream() throws IOException {
-            return httpURLConnection.getInputStream();
+            inputStream = null;
+            outputStream = null;
+            httpURLConnection = null;
+
+            if (exception != null) {
+                throw exception;
+            }
         }
 
         public OutputStream getOuputStream() throws IOException {
-            return httpURLConnection.getOutputStream();
+            if (outputStream == null) {
+                outputStream = httpURLConnection.getOutputStream();
+            }
+            return outputStream;
+        }
+
+        public InputStream getInputStream() throws IOException {
+            if (inputStream == null) {
+                inputStream = httpURLConnection.getInputStream();
+            }
+            return inputStream;
         }
     }
 }
