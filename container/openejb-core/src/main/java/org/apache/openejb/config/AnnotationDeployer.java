@@ -711,6 +711,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (bean.getTransactionType() == TransactionType.CONTAINER) {
                     processAttributes(new TransactionAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
+                } else {
+                    checkAttributes(new TransactionAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidTransactionAttribute");
                 }
 
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
@@ -852,6 +854,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                             if (sessionBean.getConcurrencyType() == ConcurrencyType.CONTAINER) {
                                 processAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
+                            } else {
+                                checkAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidConcurrencyAttribute");
                             }
                         }
                     }
@@ -1306,6 +1310,28 @@ public class AnnotationDeployer implements DynamicDeployer {
             private ConcurrencyAttribute cast(javax.ejb.LockType lockType) {
                 return ConcurrencyAttribute.valueOf(lockType.toString());
             }
+        }
+
+        private <A extends Annotation> void checkAttributes(AnnotationHandler<A> handler, String ejbName, EjbModule ejbModule, ClassFinder classFinder, String messageKey) {
+            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
+
+            int xml = 0;
+            for (List<MethodAttribute> methodAttributes : existingDeclarations.values()) {
+                xml += methodAttributes.size();
+            }
+
+            if (xml > 0){
+                ejbModule.getValidation().warn(ejbName, "xml."+messageKey, xml);
+            }
+
+            int ann = classFinder.findAnnotatedClasses(handler.getAnnotationClass()).size();
+            ann += classFinder.findAnnotatedMethods(handler.getAnnotationClass()).size();
+
+            if (ann > 0){
+                ejbModule.getValidation().warn(ejbName, "ann."+messageKey, ann);
+            }
+
+
         }
 
         private <A extends Annotation> void processAttributes(AnnotationHandler<A> handler, Class<?> clazz, ClassFinder classFinder) {
