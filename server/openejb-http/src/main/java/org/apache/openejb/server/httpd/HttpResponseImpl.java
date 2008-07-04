@@ -202,7 +202,8 @@ public class HttpResponseImpl implements HttpResponse {
      * @throws java.io.IOException if an exception is thrown
      */
     protected void writeMessage(OutputStream output) throws IOException{
-        DataOutput out = new DataOutputStream(output);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	DataOutputStream out = new DataOutputStream(baos);
         //DataOutput log = new DataOutputStream(System.out);
         //System.out.println("\nRESPONSE");
         closeMessage();
@@ -212,6 +213,9 @@ public class HttpResponseImpl implements HttpResponse {
         writeResponseLine(out);
         writeHeaders(out);
         writeBody(out);
+        out.flush();
+        output.write(baos.toByteArray());
+        output.flush();
     }
 
      /** initalizes the body */
