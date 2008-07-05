@@ -37,6 +37,9 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class CheckClasses extends ValidationBase {
 
     private static final List<Class<? extends Annotation>> beanOnlyAnnotations = new ArrayList<Class<? extends Annotation>>();
@@ -112,7 +115,7 @@ public class CheckClasses extends ValidationBase {
 
     private void check_businessInterface(SessionBean b, String interfaceName, String tagName) {
         String ejbName = b.getEjbName();
-        Class interfce = lookForClass(interfaceName, tagName, b.getEjbName());
+        Class<?> interfce = lookForClass(interfaceName, tagName, b.getEjbName());
 
         if (!interfce.isInterface()){
             fail(b, "notAnInterface", interfce.getName(), tagName);
@@ -121,7 +124,7 @@ public class CheckClasses extends ValidationBase {
         ClassFinder finder = new ClassFinder(interfce);
 
         for (Class<? extends Annotation> annotation : beanOnlyAnnotations) {
-            if (interfce.getAnnotation(annotation) != null){
+            if (interfce.isAnnotationPresent(annotation)){
                 warn(b, "interface.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), b.getEjbClass());
             }
             for (Method method : finder.findAnnotatedMethods(annotation)) {
@@ -145,7 +148,7 @@ public class CheckClasses extends ValidationBase {
         if (b.getRemote() != null) return;
         if (b.getLocal() != null) return;
 
-        Class beanClass = null;
+        Class<?> beanClass = null;
         try {
             beanClass = loadClass(b.getEjbClass());
         } catch (OpenEJBException e) {
@@ -161,7 +164,7 @@ public class CheckClasses extends ValidationBase {
 
         if (((SessionBean) b).getServiceEndpoint() != null) return;
 
-        if (beanClass.getAnnotation(WebService.class) != null) return;
+        if (beanClass.isAnnotationPresent(WebService.class)) return;
 
         fail(b, "noInterfaceDeclared.session");
     }
@@ -169,7 +172,7 @@ public class CheckClasses extends ValidationBase {
     private void check_hasDependentClasses(RemoteBean b, String className, String type) {
         try {
             ClassLoader cl = module.getClassLoader();
-            Class clazz = cl.loadClass(className);
+            Class<?> clazz = cl.loadClass(className);
             for (Object item : clazz.getFields()) { item.toString(); }
             for (Object item : clazz.getMethods()) { item.toString(); }
             for (Object item : clazz.getConstructors()) { item.toString(); }
@@ -208,7 +211,7 @@ public class CheckClasses extends ValidationBase {
 
         String ejbName = b.getEjbName();
 
-        Class beanClass = lookForClass(b.getEjbClass(), "<ejb-class>", ejbName);
+        Class<?> beanClass = lookForClass(b.getEjbClass(), "<ejb-class>", ejbName);
 
         if (beanClass.isInterface()){
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
@@ -275,7 +278,7 @@ public class CheckClasses extends ValidationBase {
 
     }
 
-    private Class lookForClass(String clazz, String type, String ejbName) {
+    private Class<?> lookForClass(String clazz, String type, String ejbName) {
         try {
             return loadClass(clazz);
         } catch (OpenEJBException e) {
@@ -302,8 +305,8 @@ public class CheckClasses extends ValidationBase {
         return null;
     }
 
-    private void compareTypes(RemoteBean b, String clazz1, Class class2) {
-        Class class1 = null;
+    private void compareTypes(RemoteBean b, String clazz1, Class<?> class2) {
+        Class<?> class1 = null;
         try {
             class1 = loadClass(clazz1);
         } catch (OpenEJBException e) {
@@ -315,7 +318,7 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    protected Class loadClass(String clazz) throws OpenEJBException {
+    protected Class<?> loadClass(String clazz) throws OpenEJBException {
         ClassLoader cl = module.getClassLoader();
         try {
             return Class.forName(clazz, false, cl);
