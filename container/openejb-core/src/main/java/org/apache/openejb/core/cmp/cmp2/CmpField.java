@@ -17,15 +17,19 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
+import java.lang.reflect.Method; 
+
 import org.objectweb.asm.Type;
 
 public class CmpField {
     private final String name;
     private final Type type;
+    private final Method getter; 
 
-    public CmpField(String name, Type type) {
+    public CmpField(String name, Type type, Method getter) {
         this.name = name;
         this.type = type;
+        this.getter = getter; 
     }
 
     public String getName() {
@@ -38,5 +42,9 @@ public class CmpField {
 
     public String getDescriptor() {
         return type.getDescriptor();
+    }
+    
+    public Method getGetterMethod() {
+        return getter; 
     }
 }

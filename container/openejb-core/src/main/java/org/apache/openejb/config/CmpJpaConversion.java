@@ -102,8 +102,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
-
-        // create mappings
+        // create mappings if no mappings currently exist 
         EntityMappings cmpMappings = appModule.getCmpMappings();
         if (cmpMappings == null) {
             cmpMappings = new EntityMappings();
@@ -111,9 +110,12 @@ public class CmpJpaConversion implements DynamicDeployer {
             appModule.setCmpMappings(cmpMappings);
         }
 
+        // we process this one jar-file at a time...each contributing to the 
+        // app mapping data 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             EjbJar ejbJar = ejbModule.getEjbJar();
 
+            // scan for CMP entity beans and merge the data into the collective set 
             for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
                 if (isCmpEntity(enterpriseBean)) {
                     processEntityBean(ejbModule, cmpMappings, (EntityBean) enterpriseBean);
@@ -404,8 +406,10 @@ public class CmpJpaConversion implements DynamicDeployer {
             return;
         }
 
+        // get the real bean class 
         Class ejbClass = loadClass(ejbModule.getClassLoader(), bean.getEjbClass());
-
+        // and generate a name for the subclass that will be generated and handed to the JPA 
+        // engine as the managed class. 
         String jpaEntityClassName = CmpUtil.getCmpImplClassName(bean.getAbstractSchemaName(), ejbClass.getName());
 
         // We don't use this mapping directly, instead we pull entries from it
@@ -604,11 +608,18 @@ public class CmpJpaConversion implements DynamicDeployer {
 
                 String name = method.getName();
 
-
                 if (name.startsWith("get")){
                     name = name.substring("get".length(), name.length());
                 } else if (name.startsWith("is")){
-                    name = name.substring("is".length(), name.length());
+                    // Only add this if the return type from an "is" method 
+                    // boolean. 
+                    if (method.getReturnType() == Boolean.TYPE) {
+                        name = name.substring("is".length(), name.length());
+                    }
+                    else { 
+                        // not an acceptable "is" method. 
+                        continue; 
+                    }
                 } else continue;
 
                 name = Strings.lcfirst(name);

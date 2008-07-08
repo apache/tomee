@@ -73,7 +73,8 @@ public class Cmp2Generator implements Opcodes {
      * @param cmpFields The list of fields that are managed using cmp.
      */
     public Cmp2Generator(String cmpImplClass, Class beanClass, String pkField, Class<?> primKeyClass, String[] cmpFields) {
-            
+
+        this.beanClass = beanClass;
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
         
@@ -89,15 +90,14 @@ public class Cmp2Generator implements Opcodes {
         // a getter defined and b) that we know the field return type.  The created CmpField 
         // list will feed into the generation process. 
         for (String cmpFieldName : cmpFields) {
-            String getterName = getterName(cmpFieldName);
-            try {
-                Method getter = beanClass.getMethod(getterName);
-                Type type = Type.getType(getter.getReturnType());
-                CmpField cmpField = new CmpField(cmpFieldName, type);
-                this.cmpFields.put(cmpFieldName, cmpField);
-            } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName, e);
+            Method getter = getterMethod(cmpFieldName);
+            if (getter == null) {
+                throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
             }
+            
+            Type type = Type.getType(getter.getReturnType());
+            CmpField cmpField = new CmpField(cmpFieldName, type, getter); 
+            this.cmpFields.put(cmpFieldName, cmpField);
         }
 
         // if a pkField is defined, it MUST be a CMP field.  Make sure it really exists 
@@ -117,8 +117,6 @@ public class Cmp2Generator implements Opcodes {
                 addSelectMethod(method);
             }
         }
-
-        this.beanClass = beanClass;
 
         // The class writer will be used for all generator activies, while the 
         // postCreateGenerator will be used to add the ejbPostCreatexxxx methods as a 
@@ -448,7 +446,7 @@ public class Cmp2Generator implements Opcodes {
      * @param cmpField The CMP field backing this getter method.
      */
     private void createGetter(CmpField cmpField) {
-        String methodName = getterName(cmpField.getName());
+        String methodName = cmpField.getGetterMethod().getName();
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodName, "()" + cmpField.getDescriptor(), null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
@@ -458,8 +456,55 @@ public class Cmp2Generator implements Opcodes {
         mv.visitEnd();
     }
 
+    /**
+     * Generate the getter name for a CMR property. 
+     * 
+     * @param propertyName
+     *               The name of the CMR property.
+     * 
+     * @return The string name of the getter method for the 
+     *         property.
+     */
     private static String getterName(String propertyName) {
         return "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+    }
+
+    
+    /**
+     * Get the getter method for this CMP field.  This 
+     * will be either get<Name> or is<Name> depending on 
+     * what abstract method is defined on the base bean
+     * class. 
+     * 
+     * @param propertyName The name of the CMP field. 
+     * 
+     * @return The name to be used for generating this method. 
+     */
+    private Method getterMethod(String propertyName) {
+        String getterName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        try {
+            // check to see if we have the getter as an abstract class.  This might be an "is" method. 
+            Method method = beanClass.getMethod(getterName, new Class[0]); 
+            if (Modifier.isAbstract(method.getModifiers())) {
+                // this is a getter 
+                return method;     
+            }
+        } catch (NoSuchMethodException e) {
+        }
+        
+        // we're just going to assume this is the valid name.  Other validation should already have been 
+        // performed prior to this. 
+        getterName = "is" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        try {
+            // check to see if we have the getter as an abstract class.  This might be an "is" method. 
+            Method method = beanClass.getMethod(getterName, new Class[0]); 
+            if (Modifier.isAbstract(method.getModifiers())) {
+                // this is a getter 
+                return method;     
+            }
+        } catch (NoSuchMethodException e) {
+        }
+        return null; 
     }
 
     

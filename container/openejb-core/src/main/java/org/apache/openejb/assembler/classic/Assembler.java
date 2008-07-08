@@ -424,6 +424,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         logger.info("createApplication.start", appInfo.jarPath);
 
+        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This 
+        // is a conflict we can't handle. 
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -443,7 +445,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            // Generate the cmp2 concrete subclasses
+            // Generate the cmp2/cmp1 concrete subclasses
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
             File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {

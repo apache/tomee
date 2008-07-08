@@ -26,7 +26,8 @@ import java.lang.reflect.Modifier;
 
 /**
  * Generate concrete implementations of EjbPostCreatexxx
- * methods for a bean class. 
+ * methods for a bean class.  This is implemented in a separate  
+ * class because it is used by both the CMP1 and CMP2 generators. 
  * @version $Rev$ $Date$
  */
 public class PostCreateGenerator {
