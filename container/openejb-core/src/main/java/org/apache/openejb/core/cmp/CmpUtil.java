@@ -18,13 +18,16 @@ package org.apache.openejb.core.cmp;
 
 public class CmpUtil {
     public static String getCmpImplClassName(String abstractSchemaName, String ejbClass) {
-        String cmpImplClass = ejbClass.substring(0, ejbClass.lastIndexOf('.'));
-        if (cmpImplClass.length() > 0) {
-            cmpImplClass = "openejb." + cmpImplClass;
-        } else {
-            cmpImplClass = "openejb";
+        // locate the end of the package portion 
+        int packageEnd = ejbClass.lastIndexOf('.'); 
+        String cmpImplClass;
+        // we have a package, pull that out and add "openejb." in front of the package 
+        if (packageEnd != -1) {
+            return "openejb." + ejbClass.substring(0, packageEnd + 1) + abstractSchemaName;
         }
-        cmpImplClass += "." + abstractSchemaName;
-        return cmpImplClass;
+        else {
+            // no package, construct this from just "openejb." and the schema name 
+            return "openejb." + abstractSchemaName; 
+        }
     }
 }

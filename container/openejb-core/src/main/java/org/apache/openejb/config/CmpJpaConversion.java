@@ -398,6 +398,15 @@ public class CmpJpaConversion implements DynamicDeployer {
         return r;
     }
 
+    /**
+     * Generate the CMP mapping data for an individual 
+     * EntityBean.  
+     * 
+     * @param ejbModule The module containing the bean.
+     * @param entityMappings
+     *                  The accumulated set of entity mappings.
+     * @param bean      The been we're generating the mapping for.
+     */
     private void processEntityBean(EjbModule ejbModule, EntityMappings entityMappings, EntityBean bean) {
         // try to add a new persistence-context-ref for cmp
         if (!addPersistenceContextRef(bean)) {
@@ -421,14 +430,15 @@ public class CmpJpaConversion implements DynamicDeployer {
         // need to be spot on.
         EntityMappings userMappings = getUserEntityMappings(ejbModule);
 
-        // Look for any existing mapped superclass mappings
+        // Look for any existing mapped superclass mappings.  We check the entire inheritance 
+        // chain of the bean looking for any that have user defined mappings. 
         for (Class clazz = ejbClass; clazz != null; clazz = clazz.getSuperclass()){
 
             MappedSuperclass mappedSuperclass = removeMappedSuperclass(userMappings, clazz.getName());
 
             // We're going to assume that if they bothered to map a superclass
             // that the mapping is correct.  Copy it from their mappings to ours
-            if (mappedSuperclass != null){
+            if (mappedSuperclass != null) {
                 entityMappings.getMappedSuperclass().add(mappedSuperclass);
             }
         }
@@ -568,6 +578,19 @@ public class CmpJpaConversion implements DynamicDeployer {
         return entity;
     }
 
+    /**
+     * Check the user-defined entity mappings for a superclass 
+     * mapping for a given named class. If the user mappings exist, 
+     * remove them from the user list and return them 
+     * for inclusion in our generated mappings. 
+     * 
+     * @param userMappings
+     *                  The current user mapping set.
+     * @param className The name of the class of interest.
+     * 
+     * @return Returns the superclass mapping for the named class, or 
+     *         null if the class is not in the mapping set.
+     */
     private MappedSuperclass removeMappedSuperclass(EntityMappings userMappings, String className) {
         MappedSuperclass mappedSuperclass;
 
@@ -782,6 +805,17 @@ public class CmpJpaConversion implements DynamicDeployer {
         return fields;
     }
 
+    
+    /**
+     * Add a persistence context reference for the CMP 
+     * persistence contexts to this EntityBean definition. 
+     * 
+     * @param bean   The bean we're updating.
+     * 
+     * @return Returns true if the context was added.  Returns false if 
+     *         the bean already is associated with the CMP persistence
+     *         context.
+     */
     private boolean addPersistenceContextRef(EntityBean bean) {
         // if a ref is already defined, skip this bean
         if (bean.getPersistenceContextRefMap().containsKey(JpaCmpEngine.CMP_PERSISTENCE_CONTEXT_REF_NAME)) return false;
