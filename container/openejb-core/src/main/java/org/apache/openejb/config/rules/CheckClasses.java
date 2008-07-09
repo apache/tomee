@@ -133,13 +133,13 @@ public class CheckClasses extends ValidationBase {
         }
 
         if (EJBHome.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.remoteOrLocal.ejbHome", tagName, interfce.getName());
+            fail(ejbName, "xml.businessRemoteOrLocal.ejbHome", tagName, interfce.getName());
         } else if (EJBObject.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.remoteOrLocal.ejbObject", tagName, interfce.getName());
+            fail(ejbName, "xml.businessRemoteOrLocal.ejbObject", tagName, interfce.getName());
         } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
-            fail(ejbName, "xml.remoteOrLocal.ejbLocalHome", tagName, interfce.getName());
+            fail(ejbName, "xml.businessRemoteOrLocal.ejbLocalHome", tagName, interfce.getName());
         } else if (EJBLocalObject.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.remoteOrLocal.ejbLocalObject", tagName, interfce.getName());
+            fail(ejbName, "xml.businessRemoteOrLocal.ejbLocalObject", tagName, interfce.getName());
         }
 
     }
