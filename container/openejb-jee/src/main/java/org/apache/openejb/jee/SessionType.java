@@ -21,7 +21,17 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 public enum SessionType {
-    @XmlEnumValue("Stateful") STATEFUL,
-    @XmlEnumValue("Stateless") STATELESS,
-    @XmlEnumValue("Singleton") SINGLETON
+    @XmlEnumValue("Stateful") STATEFUL("Stateful"),
+    @XmlEnumValue("Stateless") STATELESS("Stateless"),
+    @XmlEnumValue("Singleton") SINGLETON("Singleton");
+
+    private final String name;
+
+    SessionType(String name) {
+       this.name = name;
+   }
+
+    public String getName() {
+        return name;
+    }
 }

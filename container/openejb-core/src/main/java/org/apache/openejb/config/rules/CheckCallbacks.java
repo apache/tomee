@@ -25,9 +25,18 @@ import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.OpenEJBException;
+import org.apache.xbean.finder.ClassFinder;
 
 import javax.interceptor.InvocationContext;
+import javax.ejb.PrePassivate;
+import javax.ejb.PostActivate;
+import javax.ejb.Remove;
+import javax.ejb.Init;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
@@ -58,17 +67,53 @@ public class CheckCallbacks extends ValidationBase {
                 checkCallback(ejbClass, "PreDestroy", callback, bean);
             }
 
-            if (bean instanceof Session) {
-                Session session = (Session) bean;
+            if (bean instanceof Session ) {
+                SessionBean session = (SessionBean) bean;
 
-                for (LifecycleCallback callback : session.getPrePassivate()) {
-                    checkCallback(ejbClass, "PrePassivate", callback, bean);
+                if (session.getSessionType() == SessionType.STATEFUL ) {
+
+                    for (LifecycleCallback callback : session.getPrePassivate()) {
+                        checkCallback(ejbClass, "PrePassivate", callback, bean);
+                    }
+
+                    for (LifecycleCallback callback : session.getPostActivate()) {
+                        checkCallback(ejbClass, "PostActivate", callback, bean);
+                    }
+                } else {
+                    for (LifecycleCallback callback : session.getPrePassivate()) {
+                        ignoredStatefulAnnotation("PrePassivate", bean, callback.getMethodName(), session.getSessionType().getName());
+                    }
+
+                    for (LifecycleCallback callback : session.getPostActivate()) {
+                        ignoredStatefulAnnotation("PostActivate", bean, callback.getMethodName(), session.getSessionType().getName());
+                    }
+
+                    for (RemoveMethod method : session.getRemoveMethod()) {
+                        ignoredStatefulAnnotation("Remove", bean, method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                    }
+
+                    for (InitMethod method : session.getInitMethod()) {
+                        ignoredStatefulAnnotation("Init", bean, method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                    }
+                }
+            } else {
+                ClassFinder finder = new ClassFinder(ejbClass);
+
+                for (Method method : finder.findAnnotatedMethods(PrePassivate.class)) {
+                    ignoredStatefulAnnotation("PrePassivate", bean, method.getName(), bean.getClass().getSimpleName());
                 }
 
-                for (LifecycleCallback callback : session.getPostActivate()) {
-                    checkCallback(ejbClass, "PostActivate", callback, bean);
+                for (Method method : finder.findAnnotatedMethods(PostActivate.class)) {
+                    ignoredStatefulAnnotation("PostActivate", bean, method.getName(), bean.getClass().getSimpleName());
                 }
 
+                for (Method method : finder.findAnnotatedMethods(Remove.class)) {
+                    ignoredStatefulAnnotation("Remove", bean, method.getName(), bean.getClass().getSimpleName());
+                }
+
+                for (Method method : finder.findAnnotatedMethods(Init.class)) {
+                    ignoredStatefulAnnotation("Init", bean, method.getName(), bean.getClass().getSimpleName());
+                }
             }
 
             if (bean instanceof TimerConsumer) {
@@ -139,6 +184,10 @@ public class CheckCallbacks extends ValidationBase {
                 fail(componentName, "aroundInvoke.missing.possibleTypo", aroundInvoke.getMethodName(), possibleMethods.size(), aroundInvoke.getClassName());
             }
         }
+    }
+
+    private void ignoredStatefulAnnotation(String annotationType, EnterpriseBean bean, String methodName, String beanType) {
+        warn(bean, "ignoredStatefulAnnotation", annotationType, beanType, methodName);
     }
 
     private void checkCallback(Class ejbClass, String type, CallbackMethod callback, EnterpriseBean bean) {
