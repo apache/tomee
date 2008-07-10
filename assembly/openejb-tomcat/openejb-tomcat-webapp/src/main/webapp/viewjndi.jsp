@@ -83,7 +83,7 @@ java.util.Properties
             selected = "";
         } 
 
-        ctxID = request.getParameter("ctx");
+        ctxID = request.getParameter("ctxID");
         ctx = null;
 
         if (ctxID == null) {
@@ -92,7 +92,6 @@ java.util.Properties
             p.put("openejb.loader", "embed");
             try {
                 ctx = new InitialContext( p );
-                ctxID = null;
                 out.print("<b>OpenEJB Global JNDI Namespace</b><br><br>");
             } catch(Exception e) {
                 out.print("<b>OpenEJB Not Installed</b><br><br>");                
@@ -113,7 +112,6 @@ This is the private namespace of an Enterprise JavaBean.
         if (ctx != null) {
             Node root = new RootNode();
             buildNode(root,ctx);
-
             printNodes(root, out, "",selected);
         }
     } catch (Exception e) {
@@ -146,7 +144,7 @@ This is the private namespace of an Enterprise JavaBean.
         Node[] children = new Node[0];
         String name;
         int type = 0;
-
+		// returns the JNDI name
         public String getID() {
             if (parent instanceof RootNode) {
                 return name;
@@ -199,7 +197,7 @@ This is the private namespace of an Enterprise JavaBean.
             if (obj instanceof Context) {
                 node.type = Node.CONTEXT;
                 buildNode(node, (Context) obj);
-            } else if (obj instanceof java.rmi.Remote) {
+            } else if (obj instanceof java.rmi.Remote || obj instanceof org.apache.openejb.core.ivm.IntraVmProxy) {
                 node.type = Node.BEAN;
             } else {
                 node.type = Node.OTHER;
@@ -219,10 +217,10 @@ This is the private namespace of an Enterprise JavaBean.
                 printContextNode(node, out, tabs, selected);
                 break;
             case Node.BEAN:
-                printBeanNode(node, out, tabs, selected);
+                printBeanNode(node, out, tabs);
                 break;
             default:
-                printOtherNode(node, out, tabs, selected);
+                printOtherNode(node, out, tabs);
                 break;
         }
 
@@ -232,7 +230,7 @@ This is the private namespace of an Enterprise JavaBean.
         String id = node.getID();
         if (selected.startsWith(id)) {
             if (ctxID != null) {
-                out.print(tabs + "<a href='viewjndi.jsp?ctx=" + ctxID + "&selected=" + id + "'>" + openImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
+                out.print(tabs + "<a href='viewjndi.jsp?ctxID=" + ctxID + "&selected=" + id + "'>" + openImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
             } else {
                 out.print(tabs + "<a href='viewjndi.jsp?selected=" + id + "'>" + openImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
             }
@@ -242,30 +240,36 @@ This is the private namespace of an Enterprise JavaBean.
             }
         } else {
             if (ctxID != null) {
-                out.print(tabs + "<a href='viewjndi.jsp?ctx=" + ctxID + "&selected=" + id + "'>" + closedImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
+                out.print(tabs + "<a href='viewjndi.jsp?ctxID=" + ctxID + "&selected=" + id + "'>" + closedImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
             } else {
                 out.print(tabs + "<a href='viewjndi.jsp?selected=" + id + "'>" + closedImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
             }
         }
     }
 
-    public void printBeanNode(Node node, javax.servlet.jsp.JspWriter out, String tabs, String selected) throws Exception {
+    public void printBeanNode(Node node, javax.servlet.jsp.JspWriter out, String tabs) throws Exception {
         String id = node.getID();
         if (ctxID != null && ctxID.startsWith("enc")) {
             // HACK!
             try {
                 Object ejb = lookup(ctx, id);
                 Object deploymentID = getDeploymentId(ejb);
-                out.print(tabs + "<a href='viewejb.jsp?ejb=" + deploymentID + "'>" + ejbImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
+                out.print(tabs + "<a href='viewejb.jsp?ejb=" + deploymentID +"&jndiName="+id +"&ctxID="+ctxID+"'>" + ejbImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
             } catch (Exception e) {
                 out.print(tabs + ejbImg + "&nbsp;&nbsp;" + node.getName() + "<br>");
             }
         } else {
-            out.print(tabs + "<a href='viewejb.jsp?ejb=" + id + "'>" + ejbImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
+            try {
+                Object ejb = lookup(ctx, id);
+                Object deploymentID = getDeploymentId(ejb);
+                out.print(tabs + "<a href='viewejb.jsp?ejb=" + deploymentID +"&jndiName="+id +"'>" + ejbImg + "&nbsp;&nbsp;" + node.getName() + "</a><br>");
+            } catch (Exception e) {
+                out.print(tabs + ejbImg + "&nbsp;&nbsp;" + node.getName() + "<br>");
+            }
         }
     }
 
-    public void printOtherNode(Node node, javax.servlet.jsp.JspWriter out, String tabs, String selected) throws Exception {
+    public void printOtherNode(Node node, javax.servlet.jsp.JspWriter out, String tabs) throws Exception {
         String id = node.getID();
         Object obj = lookup(ctx, id);
         String clazz = obj.getClass().getName();
@@ -273,14 +277,9 @@ This is the private namespace of an Enterprise JavaBean.
     }
 
     private Object getDeploymentId(Object ejb) throws Exception {
-        Class<?> proxyManagerClass = Class.forName("org.apache.openejb.util.proxy.ProxyManager");
-        Method getInvocationHandlerMethod = proxyManagerClass.getMethod("getInvocationHandler", Object.class);
-        Object handler = getInvocationHandlerMethod.invoke(null, ejb);
-
-        Class<?> baseEjbProxyHandler = Class.forName("org.apache.openejb.core.ivm.BaseEjbProxyHandler");
-        Field field = baseEjbProxyHandler.getField("deploymentID");
-        Object deploymentID = field.get(handler);
-        return deploymentID;
+        org.apache.openejb.core.ivm.BaseEjbProxyHandler handler = (org.apache.openejb.core.ivm.BaseEjbProxyHandler)org.apache.openejb.util.proxy.ProxyManager.getInvocationHandler(ejb);
+        return handler.deploymentID;
+        
     }
 
     private Object lookup(Context ctx, String name) throws NamingException {

@@ -94,12 +94,14 @@ java.lang.reflect.Modifier
             out.print(tab+getClassRef("javax.naming.Context")+"<br>");
 
         } else {
-            Class clazz = Class.forName(className);
+            Class clazz = Class.forName(className); // TODO: Classloader issue here. 
+            //Above code throws a ClassNotFoundException because it cannot load classes from jar in another webapps lib directory
             printClass(clazz,out);
         }
     } catch (Exception e){
         out.println("FAIL");
-        return;
+        //throw e;
+        //return;
     }
 %>
 <BR><BR>

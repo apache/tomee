@@ -31,6 +31,7 @@ javax.naming.InitialContext
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <%@ page import="java.util.Properties" %>
 <%@ page import="java.lang.reflect.Field" %>
 <%@ page import="java.lang.reflect.Method" %>
@@ -84,10 +85,12 @@ javax.naming.InitialContext
                 <%
     try{
         String ejb = request.getParameter("ejb");
+        String jndiName = request.getParameter("jndiName");
+        String contextID = request.getParameter("ctxID");
         if (ejb == null) {
             out.print("No EJB specified");
         } else {
-            printEjb(ejb,out, session);
+            printEjb(ejb,jndiName,contextID,out, session);
         }
     } catch (Exception e){
         
@@ -112,35 +115,10 @@ javax.naming.InitialContext
 </html>
 
 <%!
-    private DeploymentInfo getDeployment(String id, javax.servlet.jsp.JspWriter out) {
-        // due to crazy class loader stuff, we need to use reflection
+    private DeploymentInfo getDeployment(String deploymentID) {
         try {
-            Class<?> clazz = getClass().getClassLoader().getParent().getParent().loadClass("org.apache.openejb.loader.SystemInstance");
-//            out.print("clazz=" + clazz + "<br><br>");
-//            out.print("resource=" + clazz.getClassLoader().getResource("") + "<br><br>");
-
-            Method getMethod = clazz.getMethod("get");
-//            out.print("getMethod=" + getMethod + "<br><br>");
-
-            Object systemInstance = getMethod.invoke(null);
-//            out.print("systemInstance=" + systemInstance + "<br><br>");
-
-            Method getComponentMethod = clazz.getMethod("getComponent", Class.class);
-//            out.print("getComponentMethod=" + getComponentMethod + "<br><br>");
-
-//            Field field = clazz.getDeclaredField("components");
-//            field.setAccessible(true);
-//            Object components = field.get(systemInstance);
-//            out.print("components=" + components + "<br><br>");
-
-            ContainerSystem containerSystem = (ContainerSystem) getComponentMethod.invoke(systemInstance, ContainerSystem.class);
-//            out.print("containerSystem=" + containerSystem + "<br><br>");
-            if (containerSystem == null) {
-                return null;
-            }
-
-            DeploymentInfo ejb = containerSystem.getDeploymentInfo(id);
-//            out.print("ejb=" + ejb + "<br><br>");
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            DeploymentInfo ejb = containerSystem.getDeploymentInfo(deploymentID);
             return ejb;
         } catch (Exception e) {
             return null;
@@ -149,9 +127,9 @@ javax.naming.InitialContext
 
     String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
-    public void printEjb(String name, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
+    public void printEjb(String name,String jndiName, String contextID, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
         String id = (name.startsWith("/")) ? name.substring(1, name.length()) : name;
-        DeploymentInfo ejb = getDeployment(id, out);
+        DeploymentInfo ejb = getDeployment(id);
 
         if (ejb == null) {
             out.print("No such EJB: " + id);
@@ -181,10 +159,17 @@ javax.naming.InitialContext
         }
         out.print("<b>" + type + "</b><br>");
         out.print("<table>");
-        printRow("JNDI Name", name, out);
+        printRow("JNDI Name", jndiName, out);
+        if(ejb.getRemoteInterface() != null)
         printRow("Remote Interface", getClassRef(ejb.getRemoteInterface()), out);
+        if(ejb.getHomeInterface() != null)
         printRow("Home Interface", getClassRef(ejb.getHomeInterface()), out);
+        if(ejb.getBeanClass() != null)
         printRow("Bean Class", getClassRef(ejb.getBeanClass()), out);
+        if(ejb.getBusinessLocalInterfaces().size() > 0)
+        printRow("Business Local Interfaces", getClassRefs(ejb.getBusinessLocalInterfaces()), out);
+        if(ejb.getBusinessRemoteInterfaces().size() > 0)
+        printRow("Business Remote Interfaces", getClassRefs(ejb.getBusinessRemoteInterfaces()), out);        
         if (ejb.getComponentType() == BeanType.BMP_ENTITY || ejb.getComponentType() == BeanType.CMP_ENTITY) {
             printRow("Primary Key", getClassRef(ejb.getPrimaryKeyClass()), out);
         }
@@ -201,16 +186,22 @@ javax.naming.InitialContext
             objects = new HashMap<String, Object>();
             session.setAttribute("objects", objects);
         }
-
-        InitialContext ctx;
+        
+        
+        Context ctx;
+        if(contextID == null){
         Properties p = new Properties();
 
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         p.put("openejb.loader", "embed");
 
         ctx = new InitialContext(p);
-        Object obj = ctx.lookup(name);
-        String objID = ejb.getHomeInterface().getName() + "@" + obj.hashCode();
+        }else{
+          ctx = (Context)session.getAttribute(contextID);
+        }
+        Object obj = ctx.lookup(jndiName);
+ //       String objID = ejb.getHomeInterface().getName() + "@" + obj.hashCode(); 
+        String objID = ""+obj.hashCode(); //TODO: Not the best of the ID's, more meaningful ID would be better. Right now hashcode would suffice
         objects.put(objID, obj);
         String invokerURL = "<a href='invokeobj.jsp?obj=" + objID + "'>Invoke this EJB</a>";
         printRow(pepperImg, invokerURL, out);
@@ -218,7 +209,7 @@ javax.naming.InitialContext
         Context enc = ejb.getJndiEnc();
         String ctxID = "enc" + enc.hashCode();
         session.setAttribute(ctxID, enc);
-        String jndiURL = "<a href='viewjndi.jsp?ctx=" + ctxID + "'>Browse this EJB's private JNDI namespace</a>";
+        String jndiURL = "<a href='viewjndi.jsp?ctxID=" + ctxID + "'>Browse this EJB's private JNDI namespace</a>";
         printRow(pepperImg, jndiURL, out);
         out.print("</table>");
 
@@ -236,7 +227,13 @@ javax.naming.InitialContext
         String name = clazz.getName();
         return "<a href='viewclass.jsp?class=" + name + "'>" + name + "</a>";
     }
-
+    public String getClassRefs(List<Class> classes) throws Exception{
+        String refs = "";
+        for(Class clazz: classes){
+           refs += getClassRef(clazz)+"<br/>";
+        }
+        return refs;
+    }
     public String getShortClassRef(Class clazz) throws Exception {
         if (clazz.isPrimitive()) {
             return "<font color='gray'>" + clazz.getName() + "</font>";
