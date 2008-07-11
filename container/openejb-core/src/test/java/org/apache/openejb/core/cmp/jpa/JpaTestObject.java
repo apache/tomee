@@ -173,8 +173,8 @@ public class JpaTestObject extends junit.framework.Assert {
 
         // Find and verify
         dain = entityManager.find(Person.class, "dain");
-        // assertNotNull(dain); // <<<<<<< FAILS
-        // assertEquals("dain", dain.getName());
+        assertNotNull(dain); // <<<<<<< FAILS
+        assertEquals("dain", dain.getName());
 
         commitTx();
     }

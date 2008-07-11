@@ -82,7 +82,8 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private static final String CMP_PERSISTENCE_UNIT_NAME = "cmp";
 
-    private static final Set<String> ENHANCEED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
+    // A specific set of fields that get marked as transient in the superclass mappings 
+    private static final Set<String> ENHANCED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
             "pcInheritedFieldCount",
             "pcFieldNames",
             "pcFieldTypes",
@@ -685,7 +686,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                     }
                 }
             } catch (ClassNotFoundException e) {
-                // todo throw exception
+                throw (IllegalStateException)new IllegalStateException("Could not find entity primary key class " + bean.getPrimKeyClass()).initCause(e);
             }
         }
 
@@ -725,11 +726,16 @@ public class CmpJpaConversion implements DynamicDeployer {
             mapping.addField(new AttributeOverride(fieldName));
             primaryKeyFields.add(fieldName);
         } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
+            // a primary field type of Object is an automatically generated 
+            // pk field.  Mark it as such and add it to the mapping.  
             String fieldName = "OpenEJB_pk";
             Id field = new Id(fieldName);
             field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
             mapping.addField(field);
         } else if (bean.getPrimKeyClass() != null) {
+            // we have a primary key class.  We need to define the mappings between the key class fields 
+            // and the bean's managed fields. 
+            
             Class<?> pkClass = null;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
@@ -737,6 +743,8 @@ public class CmpJpaConversion implements DynamicDeployer {
                 for (java.lang.reflect.Field pkField : pkClass.getFields()) {
                     String fieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
+                    // the primary key fields must be public, non-static, must be defined as a CMP field, 
+                    // AND must also exist in the class hierarchy (not enforced by mapFields()); 
                     if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(fieldName)) {
                         superclass = superclassByField.get(fieldName);
                         if (superclass == null) {
@@ -751,7 +759,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                     superclass.setIdClass(new IdClass(bean.getPrimKeyClass()));
                 }
             } catch (ClassNotFoundException e) {
-                // todo throw exception
+                throw (IllegalStateException)new IllegalStateException("Could not find entity primary key class " + bean.getPrimKeyClass()).initCause(e);
             }
         }
 
@@ -783,25 +791,41 @@ public class CmpJpaConversion implements DynamicDeployer {
         return ejbClass;
     }
 
+    /**
+     * Build a mapping between a bean's CMP fields and the 
+     * particular subclass in the inheritance hierarchy that 
+     * defines the field. 
+     * 
+     * @param clazz  The bean implementation class.
+     * @param persistantFields
+     *               The set of container-managed fields.
+     * 
+     * @return A map of fieldname-to-defining class relationships. 
+     */
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
         persistantFields = new TreeSet<String>(persistantFields);
         Map<String,MappedSuperclass> fields = new TreeMap<String,MappedSuperclass>();
 
+        // spin down the class hierarchy until we've either processed all of the fields
+        // or we've reached the Object class. 
         while (!persistantFields.isEmpty() && !clazz.equals(Object.class)) {
+            // This is a single target for the relationship mapping for each 
+            // class in the hierarchy. 
             MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
             for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
                 String fieldName = field.getName();
+                // if this is one of bean's persistence fields, create the mapping 
                 if (persistantFields.contains(fieldName)) {
                     fields.put(fieldName, superclass);
                     persistantFields.remove(fieldName);
-                } else if (!ENHANCEED_FIELDS.contains(fieldName)){
+                } else if (!ENHANCED_FIELDS.contains(fieldName)){
+                    // these are fields we need to identify as transient for the persistence engine. 
                     Transient transientField = new Transient(fieldName);
                     superclass.addField(transientField);
                 }
             }
             clazz = clazz.getSuperclass();
         }
-
         return fields;
     }
 

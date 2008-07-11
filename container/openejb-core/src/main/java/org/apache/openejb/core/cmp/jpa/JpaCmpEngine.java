@@ -143,9 +143,6 @@ public class JpaCmpEngine implements CmpEngine {
             KeyGenerator kg = deploymentInfo.getKeyGenerator();
             Object primaryKey = kg.getPrimaryKey(bean);
 
-            // add to transaction cache
-            getTransactionCache().put(deploymentInfo.getCmpImplClass(), primaryKey, bean);
-
             return primaryKey;
         } finally {
             creating.get().remove(bean);
@@ -159,14 +156,9 @@ public class JpaCmpEngine implements CmpEngine {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
-            // First check the transaction cache
-            Object bean = getTransactionCache().get(beanClass, primaryKey);
-            if (bean == null) {
-                // Try to load it from the entity manager
-                EntityManager entityManager = getEntityManager(deploymentInfo);
-                bean = entityManager.find(beanClass, primaryKey);
-            }
-            return bean;
+            // Try to load it from the entity manager
+            EntityManager entityManager = getEntityManager(deploymentInfo);
+            return entityManager.find(beanClass, primaryKey);
         } finally {
             commitTransaction(startedTx, "load");
         }
@@ -195,16 +187,10 @@ public class JpaCmpEngine implements CmpEngine {
             EntityManager entityManager = getEntityManager(deploymentInfo);
             Object primaryKey = callContext.getPrimaryKey();
 
-            // First check the transaction cache
-            Object bean = getTransactionCache().get(beanClass, primaryKey);
-            if (bean == null) {
                 // Try to load it from the entity manager
-                bean = entityManager.find(beanClass, primaryKey);
-            }
-
+            Object bean = entityManager.find(beanClass, primaryKey);
             // remove the bean
             entityManager.remove(bean);
-            getTransactionCache().remove(beanClass, primaryKey);
         } finally {
             commitTransaction(startedTx, "remove");
         }
@@ -370,16 +356,6 @@ public class JpaCmpEngine implements CmpEngine {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }
         }
-    }
-
-    // todo remove when OpenJPA fixes the new-remove-new-find bug
-    private TransactionCache getTransactionCache() {
-        TransactionCache transactionCache = (TransactionCache) synchronizationRegistry.getResource(TransactionCache.class);
-        if (transactionCache == null) {
-            transactionCache = new TransactionCache();
-            synchronizationRegistry.putResource(TransactionCache.class, transactionCache);
-        }
-        return transactionCache;
     }
 
     private static class TransactionCache {
