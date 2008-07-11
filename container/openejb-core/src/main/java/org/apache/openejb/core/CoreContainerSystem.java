@@ -32,7 +32,17 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
     Map<String, WebDeploymentInfo> webDeployments = new ConcurrentHashMap<String, WebDeploymentInfo>();
     IvmContext jndiRootContext = null;
-
+    /**
+     * Constructs a CoreContainerSystem and initializes the root JNDI context.
+     * It also creates three sub contexts, namely
+     * <ul>
+     *  <li>java:openejb/ejb</li>
+     *  <li>java:openejb/client</li>
+     *  <li>java:openejb/Deployment</li>
+     * </ul>
+     *
+     *@throws RuntimeException if there is a problem during initialization of the root context
+     */
     public CoreContainerSystem() {
 
         try {
@@ -53,9 +63,13 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         // todo this should be in a start method because publishing an external reference in the constructor is very dangerous
         SystemInstance.get().setComponent(org.apache.openejb.spi.ContainerSystem.class, this);
     }
-
-    public DeploymentInfo getDeploymentInfo(Object id) {
-        return deployments.get(id);
+    /**
+     * Returns the DeploymentInfo for an EJB with the given deploymentID.
+     * 
+     * @param deploymentID The deployment ID of an EJB
+     */
+    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+        return deployments.get(deploymentID);
     }
 
     public DeploymentInfo [] deployments() {
