@@ -27,6 +27,7 @@ org.apache.openejb.spi.ContainerSystem,
 javax.naming.Context,
 javax.naming.InitialContext
 "%>
+<%@ page import="javax.servlet.http.HttpServletRequest" %>
 <%@ page import="javax.servlet.http.HttpSession" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.util.HashMap" %>
@@ -161,17 +162,17 @@ javax.naming.InitialContext
         out.print("<table>");
         printRow("JNDI Name", jndiName, out);
         if(ejb.getRemoteInterface() != null)
-        printRow("Remote Interface", getClassRef(ejb.getRemoteInterface()), out);
+        printRow("Remote Interface", getClassRef(ejb.getRemoteInterface(),session), out);
         if(ejb.getHomeInterface() != null)
-        printRow("Home Interface", getClassRef(ejb.getHomeInterface()), out);
+        printRow("Home Interface", getClassRef(ejb.getHomeInterface(),session), out);
         if(ejb.getBeanClass() != null)
-        printRow("Bean Class", getClassRef(ejb.getBeanClass()), out);
+        printRow("Bean Class", getClassRef(ejb.getBeanClass(),session), out);
         if(ejb.getBusinessLocalInterfaces().size() > 0)
-        printRow("Business Local Interfaces", getClassRefs(ejb.getBusinessLocalInterfaces()), out);
+        printRow("Business Local Interfaces", getClassRefs(ejb.getBusinessLocalInterfaces(),session), out);
         if(ejb.getBusinessRemoteInterfaces().size() > 0)
-        printRow("Business Remote Interfaces", getClassRefs(ejb.getBusinessRemoteInterfaces()), out);        
+        printRow("Business Remote Interfaces", getClassRefs(ejb.getBusinessRemoteInterfaces(),session), out);        
         if (ejb.getComponentType() == BeanType.BMP_ENTITY || ejb.getComponentType() == BeanType.CMP_ENTITY) {
-            printRow("Primary Key", getClassRef(ejb.getPrimaryKeyClass()), out);
+            printRow("Primary Key", getClassRef(ejb.getPrimaryKeyClass(),session), out);
         }
         String pepperImg = "<img src='images/pepper.gif' border='0'>";
         out.print("</table>");
@@ -223,14 +224,15 @@ javax.naming.InitialContext
         out.print("</font></td></tr>");
     }
 
-    public String getClassRef(Class clazz) throws Exception {
+    public String getClassRef(Class clazz, HttpSession session) throws Exception {
         String name = clazz.getName();
+        session.setAttribute(name,clazz);
         return "<a href='viewclass.jsp?class=" + name + "'>" + name + "</a>";
     }
-    public String getClassRefs(List<Class> classes) throws Exception{
+    public String getClassRefs(List<Class> classes, HttpSession session) throws Exception{
         String refs = "";
         for(Class clazz: classes){
-           refs += getClassRef(clazz)+"<br/>";
+           refs += getClassRef(clazz,session)+"<br/>";
         }
         return refs;
     }

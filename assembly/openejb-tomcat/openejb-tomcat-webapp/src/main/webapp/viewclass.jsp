@@ -21,7 +21,8 @@
 
 <%@ page import="
 java.lang.reflect.Method,
-java.lang.reflect.Modifier
+java.lang.reflect.Modifier,
+java.util.Map
 "%>
 <html>
 <head>
@@ -72,9 +73,11 @@ java.lang.reflect.Modifier
             <FONT SIZE="2">
 
                 <%
+               
+     String className = request.getParameter("class");
     try{
-        String className = request.getParameter("class");
-        if (className == null) {
+       
+        if (className == null || className.trim().length() == 0) {
             out.print("<b>Enter a class name to browse:</b>");
             out.print("<FORM NAME='view' METHOD='GET' ACTION='viewclass.jsp'>");
             out.print("<INPUT type='text' NAME='class' size='40' VALUE=''>");
@@ -94,13 +97,15 @@ java.lang.reflect.Modifier
             out.print(tab+getClassRef("javax.naming.Context")+"<br>");
 
         } else {
-            Class clazz = Class.forName(className); // TODO: Classloader issue here. 
-            //Above code throws a ClassNotFoundException because it cannot load classes from jar in another webapps lib directory
-            printClass(clazz,out);
+            Class clazz = (Class)session.getAttribute(className); 
+            if(clazz == null)
+            clazz = Class.forName(className);
+            printClass(clazz,out,session);
         }
     } catch (Exception e){
-        out.println("FAIL");
-        //throw e;
+        out.println("Could not find class "+className+" <br/>");
+        out.println("<a href='viewclass.jsp'>Back</a>");
+      //  throw e;
         //return;
     }
 %>
@@ -129,7 +134,7 @@ java.lang.reflect.Modifier
     String tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
     boolean hasMethods;
 
-    public void printClass(Class clazz, javax.servlet.jsp.JspWriter out) throws Exception {
+    public void printClass(Class clazz, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
         out.print("<b>"+clazz.getName()+"</b><br>");
         Method[] methods = clazz.getDeclaredMethods();
         hasMethods = (methods.length > 0);
@@ -163,14 +168,14 @@ java.lang.reflect.Modifier
         Class sup = clazz.getSuperclass();
         if (sup != null) {
             out.print("<br><b>Extends:</b><br>");
-            out.print(tab+getClassRef(sup)+"<br>");
+            out.print(tab+getClassRef(sup,session)+"<br>");
         }
 
         Class[] intf = clazz.getInterfaces();
         if (intf.length > 0) {
             out.print("<br><b>Implements:</b><br>");
             for (int i=0; i < intf.length; i++){
-                out.print(tab+getClassRef(intf[i])+"<br>");
+                out.print(tab+getClassRef(intf[i],session)+"<br>");
             }
         }
     }
@@ -220,15 +225,21 @@ java.lang.reflect.Modifier
         return "<font color='"+color+"'>*</font>";
     }
 
-    public String getClassRef(Class clazz) throws Exception {
+/*    public String getClassRef(Class clazz) throws Exception {
             String name = clazz.getName();
             return "<a href='viewclass.jsp?class="+name+"'>"+name+"</a>";
     }
-    
+  */    
     public String getClassRef(String name) throws Exception {
             return "<a href='viewclass.jsp?class="+name+"'>"+name+"</a>";
     }
-    
+
+   public String getClassRef(Class clazz, HttpSession session) throws Exception {
+        String name = clazz.getName();
+        session.setAttribute(name,clazz);
+        return "<a href='viewclass.jsp?class=" + name + "'>" + name + "</a>";
+    }
+
     public String getShortClassRef(Class clazz) throws Exception {
         if (clazz.isPrimitive()) {
             return "<font color='gray'>"+clazz.getName()+"</font>";
@@ -246,6 +257,7 @@ java.lang.reflect.Modifier
             return "<a href='viewclass.jsp?class="+name+"'>"+shortName+"</a>";
         }
     }
+
 
 %>
 
