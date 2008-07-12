@@ -52,8 +52,8 @@ public final class LogCategory {
 	public static final LogCategory AXIS2 = new LogCategory( "axis");
 	public static final LogCategory CXF = new LogCategory( "cxf");
 	public static final LogCategory TIMER = new LogCategory( "Timer");
-	public static final LogCategory HTTPSERVER = new LogCategory( "HttpServer");
-	public static final LogCategory SERVICEPOOL = new LogCategory( "ServicePool");
+	public static final LogCategory HTTPSERVER = OPENEJB_SERVER.createChild("http");
+	public static final LogCategory SERVICEPOOL = OPENEJB_SERVER.createChild("pool");
 	private LogCategory(String name){
 		this.name = name;
 	}

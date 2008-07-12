@@ -24,17 +24,49 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.ConnectException;
 import java.util.Properties;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 public class SocketConnectionFactory implements ConnectionFactory {
 
+    private static Map<URI, SocketConnection> connections = new ConcurrentHashMap<URI, SocketConnection>();
+
     public void init(Properties props) {
     }
 
     public Connection getConnection(URI uri) throws java.io.IOException {
-        SocketConnection conn = new SocketConnection();
-        conn.open(uri);
+
+        SocketConnection conn = connections.get(uri);
+        if (conn == null) {
+            conn = new SocketConnection();
+            conn.open(uri);
+            SocketConnection old = connections.put(uri, conn);
+            if (old != null) {
+                try {
+                    old.lock.lock();
+                } catch (Exception e) {
+                } finally {
+                    try {
+                        old.socket.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+        try {
+            conn.lock.tryLock(60, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new IOException("Connection busy");
+        }
+
+        OutputStream ouputStream = conn.getOuputStream();
+        ouputStream.write(30);
+        ouputStream.flush();
         return conn;
     }
 
@@ -45,6 +77,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
         OutputStream socketOut = null;
 
         InputStream socketIn = null;
+
+        private final Lock lock = new ReentrantLock();
 
         protected void open(URI uri) throws IOException {
 
@@ -82,13 +116,14 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
 
         public void close() throws IOException {
+            lock.unlock();
             try {
                 if (socketOut != null)
                     socketOut.close();
                 if (socketIn != null)
                     socketIn.close();
-                if (socket != null)
-                    socket.close();
+//                if (socket != null)
+//                    socket.close();
             } catch (Throwable t) {
                 throw new IOException("Error closing connection with server: " + t.getMessage());
             }
@@ -99,7 +134,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Open input streams */
             /*----------------------------------*/
             try {
-                socketIn = socket.getInputStream();
+                socketIn = new Input(socket.getInputStream());
             } catch (StreamCorruptedException e) {
                 throw new IOException("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName() + " : " + e.getMessage());
 
@@ -117,7 +152,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Openning output streams */
             /*----------------------------------*/
             try {
-                socketOut = socket.getOutputStream();
+                socketOut = new Output(socket.getOutputStream());
             } catch (IOException e) {
                 throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
 
@@ -127,5 +162,25 @@ public class SocketConnectionFactory implements ConnectionFactory {
             return socketOut;
         }
 
+    }
+
+    public class Input extends java.io.FilterInputStream {
+
+        public Input(InputStream in) {
+            super(in);
+        }
+
+        public void close() throws IOException {
+        }
+    }
+
+    public class Output extends java.io.FilterOutputStream {
+        public Output(OutputStream out) {
+            super(out);
+        }
+
+        public void close() throws IOException {
+            flush();
+        }
     }
 }

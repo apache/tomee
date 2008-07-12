@@ -34,7 +34,12 @@ import javax.ejb.EJBHome;
 
 public class EjbServer implements org.apache.openejb.server.ServerService, org.apache.openejb.spi.ApplicationServer {
 
-    EjbDaemon server;
+    private final KeepAliveServer keepAlive;
+    private EjbDaemon server;
+
+    public EjbServer() {
+        keepAlive = new KeepAliveServer(this);
+    }
 
     public void init(Properties props) throws Exception {
         server = EjbDaemon.getEjbDaemon();
@@ -56,8 +61,7 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
-        ServerFederation.setApplicationServer(server);
-        server.service(socket);
+        keepAlive.service(socket);
     }
 
     public void service(InputStream inputStream, OutputStream outputStream) throws ServiceException, IOException {

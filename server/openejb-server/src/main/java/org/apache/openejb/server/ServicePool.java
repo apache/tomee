@@ -39,10 +39,12 @@ public class ServicePool implements ServerService {
     private final ServerService next;
     private final Executor executor;
 
-    public ServicePool(ServerService next, final String name, Properties properties) {
-        this.next = next;
+    public ServicePool(ServerService next, String name, Properties properties) {
+        this(next, name, getInt(properties, "threads", 100));
+    }
 
-        final int threads = getInt(properties, "threads", 100);
+    public ServicePool(ServerService next, final String name, int threads) {
+        this.next = next;
 
         final int keepAliveTime = (1000 * 60 * 5);
 
