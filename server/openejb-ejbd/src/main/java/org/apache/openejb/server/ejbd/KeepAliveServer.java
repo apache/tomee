@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.Map;
@@ -38,7 +40,7 @@ import java.text.SimpleDateFormat;
  */
 public class KeepAliveServer implements ServerService {
     private final ServerService service;
-    private final long timeout = (1000 * 2);
+    private final long timeout = (1000 * 3);
     private final KeepAliveTimer keepAliveTimer = new KeepAliveTimer(timeout);
 
     public KeepAliveServer() {
@@ -132,13 +134,15 @@ public class KeepAliveServer implements ServerService {
 
 
     public void service(Socket socket) throws ServiceException, IOException {
-        InputStream in = socket.getInputStream();
-        OutputStream out = socket.getOutputStream();
+        InputStream in = new BufferedInputStream(socket.getInputStream());
+        OutputStream out = new BufferedOutputStream(socket.getOutputStream());
 
         try {
             while (true) {
                 keepAliveTimer.setStatus(new Status(true, in));
-                if (in.read() == 30){
+                int i = in.read();
+                char c = (char) i;
+                if (i == 30){
                     keepAliveTimer.setStatus(new Status(false, null));
                     service.service(new Input(in), new Output(out));
                     out.flush();

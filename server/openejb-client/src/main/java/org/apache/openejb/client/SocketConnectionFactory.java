@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.net.Socket;
 import java.net.URI;
 import java.net.ConnectException;
@@ -59,26 +61,24 @@ public class SocketConnectionFactory implements ConnectionFactory {
             }
         }
         try {
-            conn.lock.tryLock(60, TimeUnit.SECONDS);
+            conn.lock.tryLock(60*5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             throw new IOException("Connection busy");
         }
 
         OutputStream ouputStream = conn.getOuputStream();
         ouputStream.write(30);
-        ouputStream.flush();
+//        ouputStream.flush();
         return conn;
     }
 
     class SocketConnection implements Connection {
 
-        Socket socket = null;
-
-        OutputStream socketOut = null;
-
-        InputStream socketIn = null;
+        private Socket socket = null;
 
         private final Lock lock = new ReentrantLock();
+        private OutputStream out;
+        private BufferedInputStream in;
 
         protected void open(URI uri) throws IOException {
 
@@ -117,16 +117,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         public void close() throws IOException {
             lock.unlock();
-            try {
-                if (socketOut != null)
-                    socketOut.close();
-                if (socketIn != null)
-                    socketIn.close();
-//                if (socket != null)
-//                    socket.close();
-            } catch (Throwable t) {
-                throw new IOException("Error closing connection with server: " + t.getMessage());
-            }
         }
 
         public InputStream getInputStream() throws IOException {
@@ -134,7 +124,11 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Open input streams */
             /*----------------------------------*/
             try {
-                socketIn = new Input(socket.getInputStream());
+                if (in==null){
+                    in = new BufferedInputStream(socket.getInputStream());
+                }
+
+                return new Input(in);
             } catch (StreamCorruptedException e) {
                 throw new IOException("Cannot open input stream to server, the stream has been corrupted: " + e.getClass().getName() + " : " + e.getMessage());
 
@@ -144,7 +138,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
             } catch (Throwable e) {
                 throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
             }
-            return socketIn;
         }
 
         public OutputStream getOuputStream() throws IOException {
@@ -152,14 +145,16 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Openning output streams */
             /*----------------------------------*/
             try {
-                socketOut = new Output(socket.getOutputStream());
+                if (out == null){
+                    out = new BufferedOutputStream(socket.getOutputStream());
+                }
+                return new Output(out);
             } catch (IOException e) {
                 throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (Throwable e) {
                 throw new IOException("Cannot open output stream to server: " + e.getClass().getName() + " : " + e.getMessage());
             }
-            return socketOut;
         }
 
     }

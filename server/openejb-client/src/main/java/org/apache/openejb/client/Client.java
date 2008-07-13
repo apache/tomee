@@ -115,6 +115,7 @@ public class Client {
 
                 req.writeExternal(objectOut);
                 objectOut.flush();
+                out.flush();
 
             } catch (java.io.NotSerializableException e) {
 

@@ -52,7 +52,7 @@ public class MultithreadTest extends TestCase {
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 
-        ServicePool pool = new ServicePool(keepAliveServer, "ejbd", 22);
+        ServicePool pool = new ServicePool(keepAliveServer, "ejbd", 10);
         ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
         serviceDaemon.start();
 
@@ -78,7 +78,7 @@ public class MultithreadTest extends TestCase {
                 thread(client, false);
             }
 
-            assertTrue(latch.await(600, TimeUnit.SECONDS));
+            assertTrue(latch.await(60, TimeUnit.SECONDS));
         } finally {
             serviceDaemon.stop();
             OpenEJB.destroy();
