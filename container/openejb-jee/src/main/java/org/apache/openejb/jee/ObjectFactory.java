@@ -54,6 +54,7 @@ public class ObjectFactory {
     private final static QName _Connector_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "connector");
     private final static QName _JavaWsdlMapping_QNAME = new QName("http://java.sun.com/xml/ns/j2ee", "java-wsdl-mapping");
     private final static QName _Webservices_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "webservices");
+    private final static QName _FacesConfig_QNAME = new QName("http://java.sun.com/xml/ns/javaee", "faces-config");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee2
@@ -162,5 +163,14 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "webservices")
     public JAXBElement<Webservices> createConnector(Webservices value) {
         return new JAXBElement<Webservices>(_Webservices_QNAME, Webservices.class, null, value);
+    }
+    
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FacesConfig }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/javaee", name = "faces-config")
+    public JAXBElement<FacesConfig> createFacesConfig(FacesConfig value) {
+        return new JAXBElement<FacesConfig>(_FacesConfig_QNAME, FacesConfig.class, null, value);
     }
 }
