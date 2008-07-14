@@ -22,6 +22,7 @@ import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
@@ -512,7 +513,24 @@ public class ReadDescriptors implements DynamicDeployer {
         }
         return tldTaglib;
     }
-
+    
+    public static FacesConfig readFacesConfig(URL url) throws OpenEJBException {
+        FacesConfig facesConfig;
+        try {
+     		JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee
+    		.unmarshal(FacesConfig.class, url.openStream());
+     		facesConfig = element.getValue();
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the faces configuration file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the faces configuration file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the faces configuration file: " + url.toExternalForm(), e);
+        }
+        return facesConfig;
+    }
     private Source getSource(Object o) {
         if (o instanceof URL) {
             return new UrlSource((URL) o);

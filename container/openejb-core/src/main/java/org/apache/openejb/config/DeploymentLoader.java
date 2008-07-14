@@ -51,10 +51,12 @@ import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.JavaWsdlMapping;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.JspConfig;
 import org.apache.openejb.jee.Module;
+import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.Taglib;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
@@ -566,6 +568,8 @@ public class DeploymentLoader {
         // load webservices descriptor
         addWebservices(webModule);
 
+        // load faces configuration files
+        addFacesConfigs(webModule);
         return webModule;
     }
 
@@ -677,7 +681,78 @@ public class DeploymentLoader {
             }
         }
     }
+    /**
+     * Finds all faces configuration files and stores them in the WebModule
+     * @param webModule
+     * @throws OpenEJBException
+     */
+    private static void addFacesConfigs(WebModule webModule) throws OpenEJBException {
+        // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
+    	// look at section 10.4.2, bullet 1 for details
+    	Set<URL> facesConfigLocations = new HashSet<URL>();
 
+        // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
+        File warFile = new File(webModule.getJarLocation());
+        WebApp webApp = webModule.getWebApp();
+        if (webApp != null) {
+            List<ParamValue> contextParam = webApp.getContextParam();
+            for (ParamValue value : contextParam) {
+				boolean foundContextParam = value.getParamName().trim().equals("javax.faces.CONFIG_FILES");
+				if(foundContextParam){
+					// the value is a comma separated list of config files
+					String commaDelimitedListOfFiles = value.getParamValue().trim();
+					String[] configFiles = commaDelimitedListOfFiles.split(",");
+					// trim any extra spaces in each file
+					String[] trimmedConfigFiles = new String[configFiles.length];
+					for (int i = 0; i < configFiles.length; i++) {
+						trimmedConfigFiles[i] = configFiles[i].trim();
+					}
+					// convert each file to a URL and add it to facesConfigLocations
+					for (String location : trimmedConfigFiles) {
+						if(!location.startsWith("/"))
+							logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file "+location);
+	                    try {
+	                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
+	                        URL url = file.toURL();
+	                        facesConfigLocations.add(url);
+	                       
+	                    } catch (IOException e) {
+	                        logger.error("Faces configuration file location bad: " + location, e);
+	                    }						
+					}
+					break;
+				}
+			}
+        	
+        }
+
+        // Search for WEB-INF/faces-config.xml
+        File webInf = new File(warFile,"WEB-INF");
+        if(webInf.isDirectory()){
+        	File facesConfigFile = new File(webInf,"faces-config.xml");
+        	if(facesConfigFile.exists()){
+        		try {
+					facesConfigFile = facesConfigFile.getCanonicalFile().getAbsoluteFile();
+					URL url = facesConfigFile.toURL();
+					facesConfigLocations.add(url);
+				} catch (IOException e) {
+					// TODO: kmalhi:: Remove the printStackTrace after testing
+					e.printStackTrace();
+				}
+        	}
+        }
+        // load the faces configuration files
+        // TODO:kmalhi:: Its good to have separate FacesConfig objects for multiple configuration files, but what if there is a conflict where the same
+        // managebean is declared in two different files, which one wins? -- check the jsf spec, Hopefully JSF should be able to check for this and
+        // flag an error and not allow the application to be deployed.
+        for (URL location : facesConfigLocations) {
+           FacesConfig facesConfig = ReadDescriptors.readFacesConfig(location);
+            webModule.getFacesConfigs().add(facesConfig);
+            if ("file".equals(location.getProtocol())) {
+                webModule.getWatchedResources().add(URLs.toFilePath(location));
+            }
+        }
+    }
     private static Set<URL> scanClassLoaderForTagLibs(ClassLoader parentClassLoader) throws OpenEJBException {
         Set<URL> urls = new HashSet<URL>();
         if (parentClassLoader == null) return urls;

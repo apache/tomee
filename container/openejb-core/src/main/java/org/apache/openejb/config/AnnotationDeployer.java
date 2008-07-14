@@ -33,6 +33,8 @@ import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EjbReference;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChains;
@@ -659,7 +661,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-
+            for (FacesConfig facesConfig: webModule.getFacesConfigs()) {
+            	for(FacesManagedBean bean: facesConfig.getManagedBean()){
+            		String managedBeanClass = bean.getManagedBeanClass().trim();
+                    if (managedBeanClass != null) {
+                        try {
+                            Class clazz = classLoader.loadClass(managedBeanClass);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
+                        }
+                    }
+            	}
+            }
             ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
             // Currently we only process the JNDI annotations for web applications

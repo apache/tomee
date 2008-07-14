@@ -16,17 +16,18 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.Webservices;
-
-import java.util.Map;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.io.File;
+
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.Webservices;
 
 /**
  * @version $Rev$ $Date$
@@ -44,6 +45,8 @@ public class WebModule implements WsModule {
     private final String moduleId;
     private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
     private final Set<String> watchedResources = new TreeSet<String>();
+    // List of all faces configuration files found in this web module
+    private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -151,4 +154,7 @@ public class WebModule implements WsModule {
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
+    public List<FacesConfig> getFacesConfigs() {
+		return facesConfigs;
+	}
 }

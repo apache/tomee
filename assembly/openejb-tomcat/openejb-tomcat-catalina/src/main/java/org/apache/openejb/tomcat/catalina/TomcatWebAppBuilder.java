@@ -19,6 +19,7 @@ package org.apache.openejb.tomcat.catalina;
 
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 import static org.apache.openejb.tomcat.catalina.BackportUtil.*;
+
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 import org.apache.catalina.Container;
@@ -66,6 +67,8 @@ import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.CoreWebDeploymentInfo;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -85,8 +88,10 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -371,8 +376,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             } catch (NamingException e) {
             }
         }
-
-
+       // Add support for Sun JSF implementation. Sun's JSF impl looks for a AnnotationProcessor (aka DefaultAnnotationProcessor) in the 
+        // ServletContext . We simply add that here
+/*        try {
+        	 ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+             Context context = containerSystem.getJNDIContext();
+             context = (Context) context.lookup("java:openejb/ejb");
+			standardContext.getServletContext().setAttribute(AnnotationProcessor.class.getName(), new DefaultAnnotationProcessor(context));
+		} catch (NamingException e) {
+			logger.error(e.getMessage(), e);
+		}
+        try {
+        	Context compEnv = (Context) ContextBindings.getClassLoader().lookup("comp/env");
+			standardContext.getServletContext().setAttribute(AnnotationProcessor.class.getName(), new DefaultAnnotationProcessor(compEnv));
+		} catch (NamingException e) {
+			logger.error(e.getMessage(), e);
+		}
+*/
         OpenEJBValve openejbValve = new OpenEJBValve();
         standardContext.getPipeline().addValve(openejbValve);
     }
@@ -605,7 +625,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         System.out.println("context path = " + path);
         WebModule webModule = new WebModule(webApp, path, classLoader, basePath, getId(standardContext));
         webModule.setHost(standardContext.getHostname());
-
+        // add faces configurations
+        try {
+			addFacesConfigs(webModule);
+		} catch (OpenEJBException e1) {
+			logger.error("Unable to add faces config modules in " + standardContext.getPath() + ": Exception: " + e1.getMessage(), e1);
+			// TODO :kmalhi:: Remove stack trace after testing
+			e1.printStackTrace();
+		}
         // Add all Tomcat env entries to context so they can be overriden by the env.properties file
         NamingResources naming = standardContext.getNamingResources();
         for (ContextEnvironment environment : naming.findEnvironments()) {
@@ -648,6 +675,78 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
 
         return webModule;
+    }
+    /**
+     * Finds all faces configuration files and stores them in the WebModule
+     * @param webModule
+     * @throws OpenEJBException
+     */
+    private static void addFacesConfigs(WebModule webModule) throws OpenEJBException {
+        // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
+    	// look at section 10.4.2, bullet 1 for details
+    	Set<URL> facesConfigLocations = new HashSet<URL>();
+
+        // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
+        File warFile = new File(webModule.getJarLocation());
+        WebApp webApp = webModule.getWebApp();
+        if (webApp != null) {
+            List<ParamValue> contextParam = webApp.getContextParam();
+            for (ParamValue value : contextParam) {
+				boolean foundContextParam = value.getParamName().trim().equals("javax.faces.CONFIG_FILES");
+				if(foundContextParam){
+					// the value is a comma separated list of config files
+					String commaDelimitedListOfFiles = value.getParamValue().trim();
+					String[] configFiles = commaDelimitedListOfFiles.split(",");
+					// trim any extra spaces in each file
+					String[] trimmedConfigFiles = new String[configFiles.length];
+					for (int i = 0; i < configFiles.length; i++) {
+						trimmedConfigFiles[i] = configFiles[i].trim();
+					}
+					// convert each file to a URL and add it to facesConfigLocations
+					for (String location : trimmedConfigFiles) {
+						if(!location.startsWith("/"))
+							logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file "+location);
+	                    try {
+	                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
+	                        URL url = file.toURL();
+	                        facesConfigLocations.add(url);
+	                       
+	                    } catch (IOException e) {
+	                        logger.error("Faces configuration file location bad: " + location, e);
+	                    }						
+					}
+					break;
+				}
+			}
+        	
+        }
+
+        // Search for WEB-INF/faces-config.xml
+        File webInf = new File(warFile,"WEB-INF");
+        if(webInf.isDirectory()){
+        	File facesConfigFile = new File(webInf,"faces-config.xml");
+        	if(facesConfigFile.exists()){
+        		try {
+					facesConfigFile = facesConfigFile.getCanonicalFile().getAbsoluteFile();
+					URL url = facesConfigFile.toURL();
+					facesConfigLocations.add(url);
+				} catch (IOException e) {
+					// TODO: kmalhi:: Remove the printStackTrace after testing
+					e.printStackTrace();
+				}
+        	}
+        }
+        // load the faces configuration files
+        // TODO:kmalhi:: Its good to have separate FacesConfig objects for multiple configuration files, but what if there is a conflict where the same
+        // managebean is declared in two different files, which one wins? -- check the jsf spec, Hopefully JSF should be able to check for this and
+        // flag an error and not allow the application to be deployed.
+        for (URL location : facesConfigLocations) {
+           FacesConfig facesConfig = ReadDescriptors.readFacesConfig(location);
+            webModule.getFacesConfigs().add(facesConfig);
+            if ("file".equals(location.getProtocol())) {
+                webModule.getWatchedResources().add(URLs.toFilePath(location));
+            }
+        }
     }
 
     private void removeRef(WebApp webApp, String name) {
