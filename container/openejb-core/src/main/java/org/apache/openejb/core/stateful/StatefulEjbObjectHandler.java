@@ -73,7 +73,7 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
         return value;
     }
 
-    private static class RegistryId implements Serializable {
+    public static class RegistryId implements Serializable {
         private static final long serialVersionUID = 5037368364299042022L;
 
         private final Object containerId;
@@ -111,6 +111,10 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
         public String toString() {
             return "[" + containerId + ", " + deploymentId + ", " + primaryKey + "]";
+        }
+        
+        public Object getPrimaryKey() {
+            return primaryKey; 
         }
     }
 }
