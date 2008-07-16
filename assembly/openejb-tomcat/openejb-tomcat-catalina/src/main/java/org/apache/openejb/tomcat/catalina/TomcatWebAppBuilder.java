@@ -376,23 +376,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             } catch (NamingException e) {
             }
         }
-       // Add support for Sun JSF implementation. Sun's JSF impl looks for a AnnotationProcessor (aka DefaultAnnotationProcessor) in the 
-        // ServletContext . We simply add that here
-/*        try {
-        	 ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-             Context context = containerSystem.getJNDIContext();
-             context = (Context) context.lookup("java:openejb/ejb");
-			standardContext.getServletContext().setAttribute(AnnotationProcessor.class.getName(), new DefaultAnnotationProcessor(context));
-		} catch (NamingException e) {
-			logger.error(e.getMessage(), e);
-		}
-        try {
-        	Context compEnv = (Context) ContextBindings.getClassLoader().lookup("comp/env");
-			standardContext.getServletContext().setAttribute(AnnotationProcessor.class.getName(), new DefaultAnnotationProcessor(compEnv));
-		} catch (NamingException e) {
-			logger.error(e.getMessage(), e);
-		}
-*/
         OpenEJBValve openejbValve = new OpenEJBValve();
         standardContext.getPipeline().addValve(openejbValve);
     }
@@ -682,8 +665,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * @throws OpenEJBException
      */
     private static void addFacesConfigs(WebModule webModule) throws OpenEJBException {
+    	//*************************IMPORTANT*******************************************
+    	// This method is an exact copy of org.apache.openejb.config.DeploymentLoader.addFacesConfigs(WebModule webModule)
+    	// Any changes to this method here would most probably need to also be reflected in the DeploymentLoader.addFacesConfigs method.
+    	//*************************IMPORTANT*******************************************
         // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
-    	// look at section 10.4.2, bullet 1 for details
+    	// look at section 10.4.2 of the JSF v1.2 spec, bullet 1 for details
     	Set<URL> facesConfigLocations = new HashSet<URL>();
 
         // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
