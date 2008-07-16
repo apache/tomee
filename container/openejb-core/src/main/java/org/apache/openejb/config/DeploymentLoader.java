@@ -687,8 +687,12 @@ public class DeploymentLoader {
      * @throws OpenEJBException
      */
     private static void addFacesConfigs(WebModule webModule) throws OpenEJBException {
-        // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
-    	// look at section 10.4.2, bullet 1 for details
+    	//*************************IMPORTANT*******************************************
+    	// This method is an exact copy of org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.addFacesConfigs(WebModule webModule)
+    	// Any changes to this method here would most probably need to also be reflected in the TomcatWebAppBuilder.addFacesConfigs method.
+    	//*************************IMPORTANT*******************************************
+    	// TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
+    	// look at section 10.4.2 of the JSF v1.2 spec, bullet 1 for details
     	Set<URL> facesConfigLocations = new HashSet<URL>();
 
         // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
