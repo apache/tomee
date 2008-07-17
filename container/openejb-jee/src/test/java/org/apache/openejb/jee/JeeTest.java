@@ -121,13 +121,12 @@ public class JeeTest extends TestCase {
         FacesConfig facesConfig = element.getValue();
         List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
 
-        int count = 0;
         for (FacesManagedBean bean : managedBean) {
-            count++;
             assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
         }
-        assertEquals(3, count);
+        assertEquals(3, managedBean.size());
 
+        marshalAndUnmarshal(FacesConfig.class, "faces-config.xml");
     }
 
     private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws Exception {
