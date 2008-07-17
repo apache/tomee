@@ -24,12 +24,15 @@ import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Strings;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.jws.WebService;
 import static java.lang.reflect.Modifier.isAbstract;
 import java.lang.reflect.Method;
@@ -69,38 +72,40 @@ public class CheckClasses extends ValidationBase {
     public void validate(EjbModule ejbModule) {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             try {
-                check_hasEjbClass(bean);
+                Class<?> beanClass = check_hasEjbClass(bean);
 
                 if (!(bean instanceof RemoteBean)) continue;
                 RemoteBean b = (RemoteBean) bean;
 
                 check_isEjbClass(b);
-                check_hasDependentClasses(b, b.getEjbClass(), "<ejb-class>");
+                check_hasDependentClasses(b, b.getEjbClass(), "ejb-class");
                 check_hasInterface(b);
-                if (b.getHome() != null) {
-                    check_hasHomeClass(b);
-                    check_hasRemoteClass(b);
-                    check_isHomeInterface(b);
-                    check_isRemoteInterface(b);
-                    check_hasDependentClasses(b, b.getHome(), "<home>");
-                    check_hasDependentClasses(b, b.getRemote(), "<remote>");
+
+                if (b.getRemote() != null){
+                    checkInterface(b, beanClass, "remote", b.getRemote());
                 }
+
+                if (b.getHome() != null) {
+                    checkInterface(b, beanClass, "home", b.getHome());
+                }
+
+                if (b.getLocal() != null) {
+                    checkInterface(b, beanClass, "local", b.getLocal());
+                }
+
                 if (b.getLocalHome() != null) {
-                    check_hasLocalHomeClass(b);
-                    check_hasLocalClass(b);
-                    check_isLocalHomeInterface(b);
-                    check_isLocalInterface(b);
-                    check_hasDependentClasses(b, b.getLocalHome(), "<local-home>");
-                    check_hasDependentClasses(b, b.getLocal(), "<local>");
+                    checkInterface(b, beanClass, "local-home", b.getLocalHome());
                 }
 
                 if (b instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) b;
+
                     for (String interfce : sessionBean.getBusinessLocal()) {
-                        check_businessInterface(sessionBean, interfce, "<business-local>");
+                        checkInterface(b, beanClass, "business-local", interfce);
                     }
+
                     for (String interfce : sessionBean.getBusinessRemote()) {
-                        check_businessInterface(sessionBean, interfce, "<business-remote>");
+                        checkInterface(b, beanClass, "business-local", interfce);
                     }
                 }
             } catch (RuntimeException e) {
@@ -113,33 +118,28 @@ public class CheckClasses extends ValidationBase {
         }
     }
 
-    private void check_businessInterface(SessionBean b, String interfaceName, String tagName) {
-        String ejbName = b.getEjbName();
-        Class<?> interfce = lookForClass(interfaceName, tagName, b.getEjbName());
+    private void checkInterface(RemoteBean b, Class<?> beanClass, String tag, String className) {
+        Class<?> interfce = lookForClass(className, tag, b.getEjbName());
 
-        if (!interfce.isInterface()){
-            fail(b, "notAnInterface", interfce.getName(), tagName);
-        }
+        if (interfce == null) return;
+
+        check_hasDependentClasses(b, className, tag);
+
+        tag = Strings.lcfirst(Strings.camelCase(tag));
+
+        if (isValidInterface(b, interfce, beanClass, tag));
 
         ClassFinder finder = new ClassFinder(interfce);
 
         for (Class<? extends Annotation> annotation : beanOnlyAnnotations) {
+
             if (interfce.isAnnotationPresent(annotation)){
                 warn(b, "interface.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), b.getEjbClass());
             }
+
             for (Method method : finder.findAnnotatedMethods(annotation)) {
                 warn(b, "interfaceMethod.beanOnlyAnnotation", annotation.getSimpleName(), interfce.getName(), method.getName(), b.getEjbClass());
             }
-        }
-
-        if (EJBHome.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.businessRemoteOrLocal.ejbHome", tagName, interfce.getName());
-        } else if (EJBObject.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.businessRemoteOrLocal.ejbObject", tagName, interfce.getName());
-        } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
-            fail(ejbName, "xml.businessRemoteOrLocal.ejbLocalHome", tagName, interfce.getName());
-        } else if (EJBLocalObject.class.isAssignableFrom(interfce)){
-            fail(ejbName, "xml.businessRemoteOrLocal.ejbLocalObject", tagName, interfce.getName());
         }
 
     }
@@ -187,7 +187,8 @@ public class CheckClasses extends ValidationBase {
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-            fail(b, "missing.dependent.class", className, e.getMessage(), type, b.getEjbName());
+            String missingClass = e.getMessage();
+            fail(b, "missing.dependent.class", className, missingClass, type, b.getEjbName());
         } catch (NoClassDefFoundError e) {
             /*
             # 0 - Referring Class name
@@ -195,19 +196,12 @@ public class CheckClasses extends ValidationBase {
             # 2 - Element (home, ejb-class, remote)
             # 3 - Bean name
             */
-            fail(b, "missing.dependent.class", className, e.getMessage(), type, b.getEjbName());
+            String missingClass = e.getMessage();
+            fail(b, "missing.dependent.class", className, missingClass, type, b.getEjbName());
         }
     }
 
-    private void check_hasLocalClass(RemoteBean b) {
-        lookForClass(b.getLocal(), "<local>", b.getEjbName());
-    }
-
-    private void check_hasLocalHomeClass(RemoteBean b) {
-        lookForClass(b.getLocalHome(), "<local-home>", b.getEjbName());
-    }
-
-    public void check_hasEjbClass(EnterpriseBean b) {
+    public Class<?> check_hasEjbClass(EnterpriseBean b) {
 
         String ejbName = b.getEjbName();
 
@@ -217,32 +211,22 @@ public class CheckClasses extends ValidationBase {
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
         }
 
-        if (isCmp(b)) return;
+        if (isCmp(b)) return beanClass;
 
         if (isAbstract(beanClass.getModifiers())){
             fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
         }
+
+        return beanClass;
     }
 
-    public void check_hasInterceptorClass(Interceptor i) {
+    private void check_hasInterceptorClass(Interceptor i) {
 
-        lookForClass(i.getInterceptorClass(), "<interceptor-class>", "Interceptor");
-
-    }
-
-    public void check_hasHomeClass(RemoteBean b) {
-
-        lookForClass(b.getHome(), "<home>", b.getEjbName());
+        lookForClass(i.getInterceptorClass(), "interceptor-class", "Interceptor");
 
     }
 
-    public void check_hasRemoteClass(RemoteBean b) {
-
-        lookForClass(b.getRemote(), "<remote>", b.getEjbName());
-
-    }
-
-    public void check_isEjbClass(RemoteBean b) {
+    private void check_isEjbClass(RemoteBean b) {
 
         if (b instanceof SessionBean) {
 
@@ -255,26 +239,6 @@ public class CheckClasses extends ValidationBase {
             compareTypes(b, b.getEjbClass(), javax.ejb.EntityBean.class);
 
         }
-
-    }
-
-    private void check_isLocalInterface(RemoteBean b) {
-        compareTypes(b, b.getLocal(), EJBLocalObject.class);
-    }
-
-    private void check_isLocalHomeInterface(RemoteBean b) {
-        compareTypes(b, b.getLocalHome(), EJBLocalHome.class);
-    }
-
-    public void check_isHomeInterface(RemoteBean b) {
-
-        compareTypes(b, b.getHome(), javax.ejb.EJBHome.class);
-
-    }
-
-    public void check_isRemoteInterface(RemoteBean b) {
-
-        compareTypes(b, b.getRemote(), javax.ejb.EJBObject.class);
 
     }
 
@@ -303,6 +267,63 @@ public class CheckClasses extends ValidationBase {
         }
 
         return null;
+    }
+
+    private boolean isValidInterface(RemoteBean b, Class clazz, Class beanClass, String tag) {
+
+        if (clazz.equals(beanClass)) {
+
+            fail(b, "xml." + tag + ".beanClass", clazz.getName());
+
+        } else if (!clazz.isInterface()) {
+
+            fail(b, "xml." + tag + ".notInterface", clazz.getName());
+
+        } else if (EJBHome.class.isAssignableFrom(clazz)) {
+
+            if (tag.equals("home")) return true;
+
+            fail(b, "xml." + tag + ".ejbHome", clazz.getName());
+
+        } else if (EJBLocalHome.class.isAssignableFrom(clazz)) {
+
+            if (tag.equals("local-home")) return true;
+
+            fail(b, "xml." + tag + ".ejbLocalHome", clazz.getName());
+
+        } else if (EJBObject.class.isAssignableFrom(clazz)) {
+
+            if (tag.equals("remote")) return true;
+
+            fail(b, "xml." + tag + ".ejbObject", clazz.getName());
+
+        } else if (EJBLocalObject.class.isAssignableFrom(clazz)) {
+
+            if (tag.equals("local")) return true;
+
+            fail(b, "xml." + tag + ".ejbLocalObject", clazz.getName());
+
+        } else if (tag.equals("businessLocal") && tag.equals("businessRemote")) {
+
+            return true;
+        }
+
+        // must be tagged as <home>, <local-home>, <remote>, or <local>
+        if (clazz.isAnnotationPresent(Local.class)) {
+
+            fail(b, "xml." + tag + ".businessLocal", clazz.getName());
+
+        } else if (clazz.isAnnotationPresent(Remote.class)) {
+
+            fail(b, "xml." + tag + ".businessRemote", clazz.getName());
+
+        } else {
+
+            fail(b, "xml." + tag + ".unknown", clazz.getName());
+
+        }
+
+        return false;
     }
 
     private void compareTypes(RemoteBean b, String clazz1, Class<?> class2) {

@@ -29,6 +29,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Strings;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
@@ -126,19 +127,8 @@ public class JndiBuilder {
                 this.type = type;
                 this.annotatedName = annotatedName;
                 this.xmlName = xmlName;
-                this.xmlNameCc = camelCase(xmlName);
+                this.xmlNameCc = Strings.camelCase(xmlName);
                 this.openejbLegacy = openejbLegacy;
-            }
-
-            private String camelCase(String string){
-                StringBuilder sb = new StringBuilder();
-                String[] strings = string.split("-");
-                for (String s : strings) {
-                    int l = sb.length();
-                    sb.append(s);
-                    sb.setCharAt(l, Character.toUpperCase(sb.charAt(l)));
-                }
-                return sb.toString();
             }
 
 

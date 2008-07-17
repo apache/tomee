@@ -70,4 +70,15 @@ public class Strings {
         return sb.toString();
     }
 
+    public static String camelCase(String string){
+        StringBuilder sb = new StringBuilder();
+        String[] strings = string.split("-");
+        for (String s : strings) {
+            int l = sb.length();
+            sb.append(s);
+            sb.setCharAt(l, Character.toUpperCase(sb.charAt(l)));
+        }
+        return sb.toString();
+    }
+
 }

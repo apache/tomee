@@ -36,6 +36,10 @@ public class ValidationException extends java.lang.Exception {
         }
     }
 
+    public String getMessageKey(){
+        return message;
+    }
+    
     public Object[] getDetails() {
         return details;
     }
