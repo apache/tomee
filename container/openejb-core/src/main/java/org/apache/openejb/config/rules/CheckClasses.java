@@ -287,7 +287,7 @@ public class CheckClasses extends ValidationBase {
 
         } else if (EJBLocalHome.class.isAssignableFrom(clazz)) {
 
-            if (tag.equals("local-home")) return true;
+            if (tag.equals("localHome")) return true;
 
             fail(b, "xml." + tag + ".ejbLocalHome", clazz.getName());
 
@@ -303,7 +303,7 @@ public class CheckClasses extends ValidationBase {
 
             fail(b, "xml." + tag + ".ejbLocalObject", clazz.getName());
 
-        } else if (tag.equals("businessLocal") && tag.equals("businessRemote")) {
+        } else if (tag.equals("businessLocal") || tag.equals("businessRemote")) {
 
             return true;
         }
