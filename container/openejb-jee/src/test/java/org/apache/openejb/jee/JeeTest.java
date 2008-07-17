@@ -17,15 +17,12 @@
  */
 package org.apache.openejb.jee;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import junit.framework.TestCase;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -36,14 +33,15 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-
-import junit.framework.TestCase;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Revision$ $Date$
@@ -68,7 +66,7 @@ public class JeeTest extends TestCase {
         JAXBContext ctx = JAXBContextFactory.newInstance(EjbJar.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         Marshaller marshaller = ctx.createMarshaller();
-            
+
         NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
         unmarshaller.setEventHandler(new TestValidationEventHandler());
@@ -106,28 +104,30 @@ public class JeeTest extends TestCase {
     public void testRar() throws Exception {
         marshalAndUnmarshal(Connector.class, "connector-example.xml");
     }
+
     /**
      * This test requires that there are three managed beans in faces-config.xml. It will ask JaxbJavaee to load faces-config.xml
      * and then assert if it found the three managed beans and checks if the class names are correct
+     *
      * @throws Exception
      */
-    public void testFacesConfig() throws Exception{
-    	List<String> managedBeanClasses = new ArrayList<String>();
-    	managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
-    	managedBeanClasses.add("org.apache.openejb.faces.OneBean");
-    	managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
-    	InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("faces-config.xml");
- 		JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee
-		.unmarshal(FacesConfig.class, inputStream);
- 		FacesConfig facesConfig = element.getValue();
- 		List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
- 		int count = 0;
- 		for (FacesManagedBean bean : managedBean) {
-			count++;
-			assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
-		}
- 		assertEquals(3, count);
- 		
+    public void testFacesConfig() throws Exception {
+        List<String> managedBeanClasses = new ArrayList<String>();
+        managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
+        managedBeanClasses.add("org.apache.openejb.faces.OneBean");
+        managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("faces-config.xml");
+        JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee.unmarshal(FacesConfig.class, inputStream);
+        FacesConfig facesConfig = element.getValue();
+        List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
+
+        int count = 0;
+        for (FacesManagedBean bean : managedBean) {
+            count++;
+            assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
+        }
+        assertEquals(3, count);
+
     }
 
     private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws Exception {
@@ -190,7 +190,7 @@ public class JeeTest extends TestCase {
             FileOutputStream out = new FileOutputStream(tempFile);
             out.write(bytes);
             out.close();
-            System.out.println("Jaxb output of "+xmlFileName+" written to "+tempFile.getAbsolutePath());
+            System.out.println("Jaxb output of " + xmlFileName + " written to " + tempFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
