@@ -738,6 +738,7 @@ public class CmpJpaConversion implements DynamicDeployer {
                         if (superclass == null) {
                             throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
                         }
+                        // these are defined ast ID fields because they are part of the primary key 
                         superclass.addField(new Id(fieldName));
                         mapping.addField(new AttributeOverride(fieldName));
                         primaryKeyFields.add(fieldName);
@@ -759,16 +760,19 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         for (CmpField cmpField : bean.getCmpField()) {
             String fieldName = cmpField.getFieldName();
+            // all of the primary key fields have been processed, so only handle whatever is left over 
             if (!primaryKeyFields.contains(fieldName)) {
                 MappedSuperclass superclass = superclassByField.get(fieldName);
                 if (superclass == null) {
-                    throw new IllegalStateException("Primary key field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
+                    throw new IllegalStateException("CMP field " + fieldName + " is not defined in class " + ejbClassName + " or any super classes");
                 }
                 superclass.addField(new Basic(fieldName));
                 mapping.addField(new AttributeOverride(fieldName));
             }
         }
 
+        // all of the fields should now be identified by type, so return a set of 
+        // the field mappings 
         return new HashSet<MappedSuperclass>(superclassByField.values());
     }
     
