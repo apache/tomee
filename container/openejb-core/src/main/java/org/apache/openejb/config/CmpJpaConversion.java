@@ -16,65 +16,34 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.Strings;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.jee.CmpField;
-import org.apache.openejb.jee.CmpVersion;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EjbRelation;
-import org.apache.openejb.jee.EjbRelationshipRole;
-import org.apache.openejb.jee.EntityBean;
-import org.apache.openejb.jee.Multiplicity;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceType;
-import org.apache.openejb.jee.RelationshipRoleSource;
-import org.apache.openejb.jee.Relationships;
-import org.apache.openejb.jee.Query;
-import org.apache.openejb.jee.QueryMethod;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.jpa.Basic;
-import org.apache.openejb.jee.jpa.CascadeType;
-import org.apache.openejb.jee.jpa.Entity;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.jpa.Id;
-import org.apache.openejb.jee.jpa.ManyToMany;
-import org.apache.openejb.jee.jpa.ManyToOne;
-import org.apache.openejb.jee.jpa.OneToMany;
-import org.apache.openejb.jee.jpa.OneToOne;
-import org.apache.openejb.jee.jpa.RelationField;
-import org.apache.openejb.jee.jpa.Transient;
-import org.apache.openejb.jee.jpa.MappedSuperclass;
-import org.apache.openejb.jee.jpa.Mapping;
-import org.apache.openejb.jee.jpa.AttributeOverride;
-import org.apache.openejb.jee.jpa.Field;
-import org.apache.openejb.jee.jpa.NamedQuery;
-import org.apache.openejb.jee.jpa.IdClass;
-import org.apache.openejb.jee.jpa.GeneratedValue;
-import org.apache.openejb.jee.jpa.GenerationType;
-import org.apache.openejb.jee.jpa.Attributes;
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.TransactionType;
-import org.apache.openejb.jee.jpa.unit.Properties;
-
-import javax.ejb.EJBLocalObject;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.HashSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.TreeMap;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Method;
+import java.util.TreeSet;
+
+import javax.ejb.EJBLocalObject;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.core.cmp.jpa.JpaCmpEngine;
+import org.apache.openejb.jee.*;
+import org.apache.openejb.jee.jpa.*;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.Properties;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Strings;
 
 public class CmpJpaConversion implements DynamicDeployer {
 
@@ -701,6 +670,24 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
     }
 
+    /**
+     * Create the class mapping for a CMP 1.x entity bean. 
+     * Since the fields for 1.x persistence are defined 
+     * in the objects directly, we need to create superclass 
+     * mappings for each of the defined fields to identify 
+     * which classes implement each of the managed fields. 
+     * 
+     * @param ejbClassName
+     *                The name of the class we're processing.
+     * @param mapping The mappings we're going to generate.
+     * @param bean    The bean metadata for the ejb.
+     * @param classLoader
+     *                The classloader used to load the bean class for
+     *                inspection.
+     * 
+     * @return The set of mapped superclasses used in this 
+     *         bean mapping.
+     */
     private Collection<MappedSuperclass> mapClass1x(String ejbClassName, Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         Class ejbClass = loadClass(classLoader, ejbClassName);
 
@@ -740,6 +727,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
                 MappedSuperclass superclass = null;
+                MappedSuperclass idclass = null; 
                 for (java.lang.reflect.Field pkField : pkClass.getFields()) {
                     String fieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
@@ -753,10 +741,13 @@ public class CmpJpaConversion implements DynamicDeployer {
                         superclass.addField(new Id(fieldName));
                         mapping.addField(new AttributeOverride(fieldName));
                         primaryKeyFields.add(fieldName);
+                        idclass = resolveIdClass(idclass, superclass, ejbClass); 
                     }
                 }
-                if (superclass != null) {
-                    superclass.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                
+                // if we've located an ID class, set it as such 
+                if (idclass != null) {
+                    idclass.setIdClass(new IdClass(bean.getPrimKeyClass()));
                 }
             } catch (ClassNotFoundException e) {
                 throw (IllegalStateException)new IllegalStateException("Could not find entity primary key class " + bean.getPrimKeyClass()).initCause(e);
@@ -780,6 +771,60 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         return new HashSet<MappedSuperclass>(superclassByField.values());
     }
+    
+    
+    /**
+     * Handle the potential situation where the fields 
+     * of a complex primary key are defined at different 
+     * levels of the class hierarchy.  We want to define
+     * the idClass as the most derived class (i.e., the one 
+     * that will contain ALL of the defined fields). 
+     * 
+     * In practice, most ejbs will define all of the 
+     * primary key fields at the same subclass level, so 
+     * this should return quickly. 
+     * 
+     * @param idclass  The currently defined id class (will be null if
+     *                 this is the first call).
+     * @param current  The current superclass being processed.
+     * @param ejbClass The ejbClass we're creating the mapping for.
+     * 
+     * @return Either idClass or current, depending on which is 
+     *         the most derived of the classes.
+     */
+    private MappedSuperclass resolveIdClass(MappedSuperclass idclass, MappedSuperclass current, Class ejbClass) 
+    {
+        // None identified yet?  Just use the one we just found 
+        if (idclass == null) {
+            return current; 
+        }
+        
+        String idClassName = idclass.getClazz(); 
+        String currentClassName = idclass.getClazz(); 
+        
+        // defined at the same level (common).  Just keep the same id class 
+        if (idClassName.equals(currentClassName)) {
+            return idclass; 
+        }
+        
+        // we have a split across the hiearchy, we need to figure out which of the classes is 
+        // the most derived 
+        for (Class clazz = ejbClass; clazz != null; clazz = clazz.getSuperclass()){
+            String name = clazz.getName(); 
+            // if we find the current one first, return it 
+            if (name.equals(currentClassName)) {
+                return current; 
+            }
+            else if (name.equals(idClassName)) {
+                // keeping the same highest level 
+                return idclass; 
+            }
+        }
+        
+        // this should never happen, but keep the same one if we ever reach here
+        return idclass; 
+    }
+    
 
     private static Class loadClass(ClassLoader classLoader, String className) {
         Class ejbClass = null;
@@ -805,7 +850,7 @@ public class CmpJpaConversion implements DynamicDeployer {
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
         persistantFields = new TreeSet<String>(persistantFields);
         Map<String,MappedSuperclass> fields = new TreeMap<String,MappedSuperclass>();
-
+        
         // spin down the class hierarchy until we've either processed all of the fields
         // or we've reached the Object class. 
         while (!persistantFields.isEmpty() && !clazz.equals(Object.class)) {
