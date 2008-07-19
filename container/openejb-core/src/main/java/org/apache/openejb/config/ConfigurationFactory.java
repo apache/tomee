@@ -363,7 +363,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             try {
-                if (getBooleanOption(CLASSPATH_AS_EAR, false)) {
+                if (getBooleanOption(CLASSPATH_AS_EAR, true)) {
 
                     AppInfo appInfo = configureApplication(classLoader, "classpath.ear", jarFiles);
 

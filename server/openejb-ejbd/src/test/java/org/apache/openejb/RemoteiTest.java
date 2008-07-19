@@ -47,6 +47,7 @@ public class RemoteiTest extends org.apache.openejb.test.TestSuite {
         System.setProperty("openejb.test.server", EjbTestServer.class.getName());
 //        System.setProperty("openejb.test.database", org.apache.openejb.test.DerbyTestDatabase.class.getName());
         System.setProperty("openejb.test.database", org.apache.openejb.test.HsqldbTestDatabase.class.getName());
+        System.setProperty("openejb.deployments.classpath.ear", "false");
         TestManager.init(null);
         TestManager.start();
     }
