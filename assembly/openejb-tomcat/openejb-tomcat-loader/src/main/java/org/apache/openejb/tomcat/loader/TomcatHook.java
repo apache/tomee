@@ -29,37 +29,43 @@ import org.apache.openejb.loader.SystemInstance;
 class TomcatHook {
     @SuppressWarnings({"UnusedDeclaration"})
     private static void hook(Properties properties) {
-        // verify properties
+        // verify properties and make sure it contains the openejb.war property
         if (properties == null) throw new NullPointerException("properties is null");
                 if (!properties.containsKey("openejb.war")) {
             throw new IllegalArgumentException("properties must contain the openejb.war property");
         }
+        // get the openejb directory (under webapps) using the openejb.war property
         File openejbWar = new File(properties.getProperty("openejb.war"));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
         }
-
+        // if SystemInstance is already initialized, then return
         if (SystemInstance.isInitialized()) {
             return;
         }
-
+        // set the openejb.loader property to tomcat-system
         properties.setProperty("openejb.loader", "tomcat-system");
-
+        
+        // get the value of catalina.home and set it to openejb.home
         String catalinaHome = System.getProperty("catalina.home");
         properties.setProperty("openejb.home", catalinaHome);
         System.setProperty("openejb.home", catalinaHome);
 
+        //get the value of catalina.base and set it to openejb.base
         String catalinaBase = System.getProperty("catalina.base");
         properties.setProperty("openejb.base", catalinaBase);
         System.setProperty("openejb.base", catalinaBase);
-
+        
+        //TODO: why do we need this, this was already set. Thats how we create the File openejbWar
         System.setProperty("openejb.war", openejbWar.getAbsolutePath());
+        // set the property openejb.libs to contain the absolute path of the lib directory of openejb webapp
         File libDir = new File(openejbWar, "lib");
         String libPath = libDir.getAbsolutePath();
         properties.setProperty("openejb.libs", libPath);
 
         // System.setProperty("tomcat.version", "x.y.z.w");
         // System.setProperty("tomcat.built", "mmm dd yyyy hh:mm:ss");
+        // set the System properties, tomcat.version, tomcat.built
         try {
             Properties tomcatServerInfo = new Properties();
             ClassLoader classLoader = TomcatHook.class.getClassLoader();

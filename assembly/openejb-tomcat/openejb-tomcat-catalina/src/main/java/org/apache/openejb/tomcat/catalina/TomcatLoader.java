@@ -66,7 +66,8 @@ public class TomcatLoader implements Loader {
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
         SystemInstance.init(properties);
-
+        
+        // install conf/openejb.xml and conf/logging.properties files
         installConfigFiles(properties);
 
         // Not thread safe
@@ -182,7 +183,12 @@ public class TomcatLoader implements Loader {
         }
         OpenEJB.destroy();
     }
-
+    /**
+     * Verifies that all the required directories and jars are available
+     * Also, uses the {@link org.apache.openejb.tomcat.installer.Installer Installer} to install
+     * openejb configuration files under the <<tomcat-install>>/conf directory. i.e. openejb.xml and logging.properties files 
+     * @param properties contains the openejb.war property used to find the openejbWar directory
+     */
     private void installConfigFiles(Properties properties) {
         String openejbWarDir = properties.getProperty("openejb.war");
         if (openejbWarDir == null) return;

@@ -265,7 +265,16 @@ public class Installer {
             addInfo("Add OpenEJB JavaAgent to catalina.bat");
         }
     }
-
+    /**
+     * Installs conf/openejb.xml and conf/logging.properties files.
+     * This method retrieves the openejb.xml and logging.properties files
+     * from openejb core jar file and installs them under the conf directory
+     * of tomcat. if there is already a conf/logging.properties file available
+     * then this method appends the contents of openejb logging.properties file
+     * to the exisiting properties file. 
+     * NOTE:- If the existing conf/logging.properties file already has some openejb specific
+     * configuration, then this method will just leave the logging.properties file alone
+     */
     public void installConfigFiles() {
         if (paths.getOpenEJBCoreJar() == null) {
             // the core jar contains the config files

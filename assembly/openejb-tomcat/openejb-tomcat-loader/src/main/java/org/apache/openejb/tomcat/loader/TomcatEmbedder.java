@@ -25,6 +25,11 @@ import java.net.URLDecoder;
 import java.util.Properties;
 
 public class TomcatEmbedder {
+	/**
+	 * 
+	 * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
+	 * @param catalinaCl The ClassLoader which loaded the ServletConfig class
+	 */
     public static void embed(Properties properties, ClassLoader catalinaCl) {
         if (catalinaCl == null) throw new NullPointerException("catalinaCl is null");
         if (properties == null) throw new NullPointerException("properties is null");
@@ -32,12 +37,14 @@ public class TomcatEmbedder {
         if (!properties.containsKey("openejb.war")) {
             throw new IllegalArgumentException("properties must contain the openejb.war property");
         }
+        // openejbWar represents the absolute path of the openejb webapp i.e. the openejb directory
         File openejbWar = new File(properties.getProperty("openejb.war"));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
         }
-
+        // retrieve the current ClassLoader
         ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
         try {
             // WebappClassLoader childCl = new WebappClassLoader(catalinaCl)
@@ -45,10 +52,15 @@ public class TomcatEmbedder {
             ClassLoader childCl = (ClassLoader) webappClClass.getConstructor(ClassLoader.class).newInstance(catalinaCl);
 
             // childCl.addRepository(openejb-tomcat-loader.jar)
+            // Use reflection to add the openejb-tomcat-loader.jar file to the repository of WebappClassLoader. 
+            // WebappClassLoader will now search for classes in this jar too
             File thisJar = getThisJar();
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJar.toURI().toString());
 
             // childCl.addRepository(openejb-loader.jar)
+            // Use reflection to add the openejb-loader.jar file to the repository of WebappClassLoader. 
+            // WebappClassLoader will now search for classes in this jar too
+
             File jarFile = findOpenEJBJar(openejbWar, "openejb-loader");
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, jarFile.toURI().toString());
 

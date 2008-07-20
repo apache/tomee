@@ -43,7 +43,11 @@ public class LoaderServlet extends HttpServlet {
 
         TomcatEmbedder.embed(properties, config.getClass().getClassLoader());
     }
-
+    /**
+     * Retrieves all intialization parameters for this servlet and stores them in a java.util.Properties object.
+     * @param config javax.servlet.ServletConfig
+     * @return java.util.Properties
+     */
     private Properties initParamsToProperties(ServletConfig config) {
         Properties properties = new Properties();
 
@@ -62,7 +66,12 @@ public class LoaderServlet extends HttpServlet {
 
         return properties;
     }
-
+    /**
+     * Retrieves the absolute path of where this web application is located.
+     * 
+     * @param config
+     * @return absolute path of this webapp directory
+     */
     private String getWebappPath(ServletConfig config) {
         ServletContext ctx = config.getServletContext();
         File webInf = new File(ctx.getRealPath("WEB-INF"));

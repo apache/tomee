@@ -42,7 +42,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         if (standardServer == null) throw new NullPointerException("standardServer is null");
         if (contextListener == null) throw new NullPointerException("contextListener is null");
         this.standardServer = standardServer;
-        this.contextListener = contextListener;
+        this.contextListener = contextListener; // this.contextListener is now an instance of TomcatWebAppBuilder
     }
 
     public void lifecycleEvent(LifecycleEvent event) {

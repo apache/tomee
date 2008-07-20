@@ -26,13 +26,23 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  */
 public class Embedder {
+	/**
+	 * Represents the name of the class which implements org.apache.openejb.loader.Loader
+	 */
     private final String className;
+    /**
+     * Represents the Class object for the className
+     */
     private Class loaderClass;
 
     public Embedder(String className) {
         this.className = className;
     }
-
+	/**
+	 * Loads the Class object for the className.
+	 * @return
+	 * @throws Exception
+	 */
     public Class load() throws Exception {
         if (loaderClass == null) {
             ClassPath classPath = SystemInstance.get().getClassPath();
@@ -45,7 +55,12 @@ public class Embedder {
         }
         return loaderClass;
     }
-
+    /**
+     * Uses reflection to invoke the init(Properties props) method on the loaderClass field
+     * @param properties
+     * @return
+     * @throws Exception
+     */
     public Object init(Properties properties) throws Exception {
         Class loaderClass = load();
 
