@@ -804,7 +804,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
         
         String idClassName = idclass.getClazz(); 
-        String currentClassName = idclass.getClazz(); 
+        String currentClassName = current.getClazz(); 
         
         // defined at the same level (common).  Just keep the same id class 
         if (idClassName.equals(currentClassName)) {
@@ -813,7 +813,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         
         // we have a split across the hiearchy, we need to figure out which of the classes is 
         // the most derived 
-        for (Class clazz = ejbClass; clazz != null; clazz = clazz.getSuperclass()){
+        for (Class clazz = ejbClass; clazz != null; clazz = clazz.getSuperclass()) {
             String name = clazz.getName(); 
             // if we find the current one first, return it 
             if (name.equals(currentClassName)) {
