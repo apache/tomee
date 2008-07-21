@@ -60,12 +60,21 @@ public class TempClassLoader extends URLClassLoader {
         // bug #283. defer to system if the name is a protected name.
         // "sun." is required for JDK 1.4, which has an access check for
         // sun.reflect.GeneratedSerializationConstructorAccessor1
-        if (name.startsWith("java.") ||
-                name.startsWith("javax.") ||
-                name.startsWith("sun.")) {
+        /*
+         * FIX for openejb-tomcat JSF support . Added the following to the if statement below: !name.startsWith("javax.faces")
+         *We want to use this TempClassLoader to also load the classes in the javax.faces package. 
+         *If not, then our AnnotationDeployer will not be able to load the javax.faces.FacesServlet class if this class is in a jar which 
+         *is in the WEB-INF/lib directory of a web app. 
+         * see AnnotationDeployer$ProcessAnnotatedBeans.deploy(WebModule webModule) 
+         * Here is what happened  before this fix was applied:
+         * 1. The AnnotationDeployer tries to load the javax.faces.FacesServlet using this classloader (TempClassLoader)
+         * 2. Since this class loader uses Class.forName to load classes starting with java, javax or sun, it cannot load javax.faces.FacesServlet
+         * 3. Result is , AnnotationDeployer throws a ClassNotFoundException
+         */
+        if ( !name.startsWith("javax.faces.") && ( name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("sun."))) {
             return Class.forName(name, resolve, getClass().getClassLoader());
         }
-
+//        ( && !name.startsWith("javax.faces.") )||
         String resourceName = name.replace('.', '/') + ".class";
         InputStream in = getResourceAsStream(resourceName);
         if (in == null) {
