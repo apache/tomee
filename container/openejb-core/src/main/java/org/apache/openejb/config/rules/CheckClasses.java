@@ -105,7 +105,7 @@ public class CheckClasses extends ValidationBase {
                     }
 
                     for (String interfce : sessionBean.getBusinessRemote()) {
-                        checkInterface(b, beanClass, "business-local", interfce);
+                        checkInterface(b, beanClass, "business-remote", interfce);
                     }
                 }
             } catch (RuntimeException e) {
@@ -303,25 +303,28 @@ public class CheckClasses extends ValidationBase {
 
             fail(b, "xml." + tag + ".ejbLocalObject", clazz.getName());
 
-        } else if (tag.equals("businessLocal") || tag.equals("businessRemote")) {
+        } else {
+             if (tag.equals("businessLocal") || tag.equals("businessRemote")) {
 
-            return true;
+                return true;
+
+            } else if (clazz.isAnnotationPresent(Local.class)) {
+
+                fail(b, "xml." + tag + ".businessLocal", clazz.getName());
+
+            } else if (clazz.isAnnotationPresent(Remote.class)) {
+
+                fail(b, "xml." + tag + ".businessRemote", clazz.getName());
+
+            } else {
+
+                fail(b, "xml." + tag + ".unknown", clazz.getName());
+
+            }
+
         }
 
         // must be tagged as <home>, <local-home>, <remote>, or <local>
-        if (clazz.isAnnotationPresent(Local.class)) {
-
-            fail(b, "xml." + tag + ".businessLocal", clazz.getName());
-
-        } else if (clazz.isAnnotationPresent(Remote.class)) {
-
-            fail(b, "xml." + tag + ".businessRemote", clazz.getName());
-
-        } else {
-
-            fail(b, "xml." + tag + ".unknown", clazz.getName());
-
-        }
 
         return false;
     }

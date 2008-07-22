@@ -24,6 +24,9 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
 
 import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
@@ -61,6 +64,10 @@ public class CheckMethods extends ValidationBase {
             return;
         }
 
+        if (!EJBLocalHome.class.isAssignableFrom(home)) {
+            return;
+        }
+
         if (check_hasCreateMethod(b, bean, home)) {
             check_createMethodsAreImplemented(b, bean, home);
 //            check_postCreateMethodsAreImplemented(b, bean, home);
@@ -74,6 +81,10 @@ public class CheckMethods extends ValidationBase {
             intrface = loadClass(b.getLocal());
             beanClass = loadClass(b.getEjbClass());
         } catch (OpenEJBException e) {
+            return;
+        }
+
+        if (!EJBLocalObject.class.isAssignableFrom(intrface)) {
             return;
         }
 
@@ -120,6 +131,10 @@ public class CheckMethods extends ValidationBase {
             return;
         }
 
+        if (!EJBObject.class.isAssignableFrom(intrface)) {
+            return;
+        }
+
         Method[] interfaceMethods = intrface.getMethods();
 
         for (int i = 0; i < interfaceMethods.length; i++) {
@@ -159,6 +174,10 @@ public class CheckMethods extends ValidationBase {
             home = loadClass(b.getHome());
             bean = loadClass(b.getEjbClass());
         } catch (OpenEJBException e) {
+            return;
+        }
+
+        if (!EJBHome.class.isAssignableFrom(home)) {
             return;
         }
 

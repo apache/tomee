@@ -361,6 +361,10 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         getBusinessLocal().add(businessLocal);
     }
 
+    public void addBusinessLocal(Class businessLocal) {
+        addBusinessLocal(businessLocal.getName());
+    }
+
     public Collection<String> getBusinessRemote() {
         if (businessRemote == null){
             businessRemote = new LinkedHashSet<String>();
@@ -371,6 +375,10 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
     public void addBusinessRemote(String businessRemote) {
         if (businessRemote == null) return;
         getBusinessRemote().add(businessRemote);
+    }
+
+    public void addBusinessRemote(Class businessRemote) {
+        addBusinessRemote(businessRemote.getName());
     }
 
     public String getServiceEndpoint() {
