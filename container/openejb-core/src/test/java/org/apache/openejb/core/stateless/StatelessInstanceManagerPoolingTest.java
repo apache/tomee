@@ -75,17 +75,16 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         Runnable r = new Runnable(){
         	public void run(){
         		try{
-        		    counter.waitFor(30);
-        		    assertFalse(true);
+        		    counter.waitFor(30);        		    
         		}catch (Exception ex){
         			ex.printStackTrace();
-        			assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out",ex.getMessage());
+        			assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
         		}
         	}
         };
         
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
-        for(int i=0;i<=30;i++){
+        for(int i=0;i<=40;i++){
         	Thread t = new Thread(r);
         	t.start();        	
         }
