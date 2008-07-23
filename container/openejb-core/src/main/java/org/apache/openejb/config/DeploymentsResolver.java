@@ -172,32 +172,45 @@ public class DeploymentsResolver {
             urlSet = urlSet.excludeJavaHome();
             urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
+            urlSet = urlSet.exclude(".*/activation-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/activeio-core-[\\d.]+(-incubator)?.jar(!/)?");
             urlSet = urlSet.exclude(".*/activemq-(core|ra)-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/annotations-api-6.[01].[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/asm-(all|commons|util|tree)?[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/avalon-framework-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/axis2-jaxws-api-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/backport-util-concurrent-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/catalina-[\\d.]+.jar(!/)?");
-            urlSet = urlSet.exclude(".*/commons-(logging|cli|pool|lang|collections|dbcp)-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/cglib-(nodep-)?[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/commons-(logging|logging-api|cli|pool|lang|collections|dbcp|dbcp-all)-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/cxf-bundle-[\\d.]+(incubator)?.jar(!/)?");
             urlSet = urlSet.exclude(".*/derby-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/ejb31-api-experimental-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/geronimo-(connector|transaction)-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/geronimo-[^/]+_spec-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/geronimo-javamail_([\\d.]+)_mail-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/hibernate-(entitymanager-)?[\\d.]+ga.jar(!/)?");
+            urlSet = urlSet.exclude(".*/howl-[\\d.-]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/hsqldb-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/idb-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/idea_rt.jar(!/)?");
+            urlSet = urlSet.exclude(".*/javaee-api-[\\d.-]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/jaxb-(impl|api)-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/jmdns-[\\d.]+(-RC\\d)?.jar(!/)?");
             urlSet = urlSet.exclude(".*/juli-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/junit-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/log4j-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/logkit-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/mail-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/openjpa-(jdbc|kernel|lib|persistence|persistence-jdbc)(-5)?-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/openjpa-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/serp-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/servlet-api-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/stax-api-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/swizzle-stream-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/sxc-(jaxb|runtime)-[\\d.]+(-SNAPSHOT)?.jar(!/)?");
             urlSet = urlSet.exclude(".*/wsdl4j-[\\d.]+.jar(!/)?");
+            urlSet = urlSet.exclude(".*/wstx-asl-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/xbean-(reflect|naming|finder)-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/xmlParserAPIs-[\\d.]+.jar(!/)?");
             urlSet = urlSet.exclude(".*/xmlunit-[\\d.]+.jar(!/)?");
@@ -206,7 +219,7 @@ public class DeploymentsResolver {
             urlSet = urlSet.include(includes);
 
             if (filterSystemApps){
-                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/classes/?)");
+                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
             }
 
             List<URL> urls = urlSet.getUrls();
@@ -216,7 +229,7 @@ public class DeploymentsResolver {
                 return;
             } else if (size == 0 && (!filterDescriptors && prefiltered.getUrls().size() == 0)) {
                 return;
-            } else if (size < 10) {
+            } else if (size < 20) {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else if (size < 50 && !requireDescriptors) {
                 logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
@@ -278,9 +291,9 @@ public class DeploymentsResolver {
     }
 
     private static void processUrls(List<URL> urls, ClassLoader classLoader, boolean searchForDescriptorlessApplications, FileUtils base, List<String> jarList) {
-        Deployments deployment;
-        String path;
         for (URL url : urls) {
+            Deployments deployment;
+            String path;
             try {
                 Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
@@ -299,7 +312,15 @@ public class DeploymentsResolver {
                         continue;
                     }
                     logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
-                    loadFrom(deployment, base, jarList);
+
+                    if (AppModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
+                        loadFrom(deployment, base, jarList);
+                    } else {
+                        if (!jarList.contains(path)){
+                            jarList.add(path);
+                        }
+                    }
+
                 }
             } catch (IOException e) {
                 logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
