@@ -18,6 +18,8 @@ package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +35,8 @@ import java.util.Timer;
 import java.util.Date;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.BlockingQueue;
 import java.text.SimpleDateFormat;
 
 /**
@@ -63,12 +67,17 @@ public class KeepAliveServer implements ServerService {
         private final Map<Thread, Status> statusMap = new ConcurrentHashMap<Thread, Status>();
 
         private final long timeout;
+        private BlockingQueue<Runnable> queue;
 
         public KeepAliveTimer(long timeout) {
             this.timeout = timeout;
         }
 
         public void run() {
+            int backlog = getQueue().size();
+
+            if (backlog <= 0) return;
+
             long now = System.currentTimeMillis();
 
             Collection<Status> statuses = statusMap.values();
@@ -79,13 +88,25 @@ public class KeepAliveServer implements ServerService {
                 if (status.isReading() && now - status.getTime() > timeout){
 //                    System.out.println("Thread Interrupt");
                     try {
+                        backlog--;
                         status.in.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+
+                if (backlog <= 0) return;
             }
 //            System.out.println("exit");
+        }
+
+        private BlockingQueue<Runnable> getQueue() {
+            if (queue == null){
+                ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
+                ThreadPoolExecutor threadPool = incoming.getThreadPool();
+                queue = threadPool.getQueue();
+            }
+            return queue;
         }
 
         public Status setStatus(Status status) {

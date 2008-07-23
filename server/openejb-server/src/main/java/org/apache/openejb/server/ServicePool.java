@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ public class ServicePool implements ServerService {
 
     private final ServerService next;
     private final Executor executor;
+    private final ThreadPoolExecutor threadPool;
 
     public ServicePool(ServerService next, String name, Properties properties) {
         this(next, name, getInt(properties, "threads", 100));
@@ -48,8 +50,8 @@ public class ServicePool implements ServerService {
 
         final int keepAliveTime = (1000 * 60 * 5);
 
-        ThreadPoolExecutor p = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
-        p.setThreadFactory(new ThreadFactory() {
+        threadPool = new ThreadPoolExecutor(threads, threads, keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+        threadPool.setThreadFactory(new ThreadFactory() {
             private volatile int id = 0;
 
             public Thread newThread(Runnable arg0) {
@@ -62,12 +64,19 @@ public class ServicePool implements ServerService {
             }
 
         });
-        executor = p;
+
+        executor = threadPool;
+        SystemInstance.get().setComponent(ServicePool.class, this);
     }
 
     public ServicePool(ServerService next, Executor executor) {
         this.next = next;
         this.executor = executor;
+        this.threadPool = null;
+    }
+
+    public ThreadPoolExecutor getThreadPool() {
+        return threadPool;
     }
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
