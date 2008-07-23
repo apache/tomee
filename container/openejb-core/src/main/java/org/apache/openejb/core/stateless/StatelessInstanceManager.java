@@ -41,6 +41,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -55,28 +56,25 @@ public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     protected int poolLimit = 0;
+    protected Duration timeout;
     protected int beanCount = 0;
     protected boolean strictPooling = false;
-
-    protected HashMap<Object,Semaphore> semaphores;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessInstanceManager(TransactionManager transactionManager, SecurityService securityService, int timeout, int poolSize, boolean strictPooling) {
+    public StatelessInstanceManager(TransactionManager transactionManager, SecurityService securityService, Duration timeout, int poolSize, boolean strictPooling) {
         this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.poolLimit = poolSize;
         this.strictPooling = strictPooling;
-
+        this.timeout = timeout;
+        
         if (strictPooling && poolSize < 1) {
             throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
         }
 
-        if (this.strictPooling) {
-            this.semaphores = new HashMap();
-        }
     }
 
     /**
@@ -99,11 +97,21 @@ public class StatelessInstanceManager {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
         Stack pool = data.getPool();
+        
         if(strictPooling){
+        	boolean acquired = false;
             try {
-                semaphores.get(deploymentInfo.getDeploymentID()).acquire();
+            	if(timeout.getTime() <= 0L){
+            		data.getSemaphore().acquire();
+            		acquired = true;
+            	} else {
+                    acquired = data.getSemaphore().tryAcquire(timeout.getTime(),timeout.getUnit());
+            	}
             } catch (InterruptedException e2) {
                 throw new OpenEJBException("Unexpected Interruption of current thread: ",e2);
+            }
+            if(!acquired){
+            	throw new IllegalStateException("An invocation of the Stateless Session Bean "+deploymentInfo.getEjbName()+" has timed-out"); 
             }
         }
         Object bean = pool.pop();
@@ -300,7 +308,7 @@ public class StatelessInstanceManager {
 
         if (strictPooling) {
             pool.push(bean);
-            semaphores.get(deploymentInfo.getDeploymentID()).release();
+            data.getSemaphore().release();
         } else {
             if (pool.size() >= poolLimit) {
                 freeInstance(callContext, (Instance)bean);
@@ -341,19 +349,12 @@ public class StatelessInstanceManager {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
-        Data data = new Data(poolLimit);
+        Data data = new Data(poolLimit, this.strictPooling);
         deploymentInfo.setContainerData(data);      
-        if (this.strictPooling) {
-            this.semaphores.put(deploymentInfo.getDeploymentID(), new Semaphore(poolLimit));
-        }
-
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
-        if (this.strictPooling) {
-            semaphores.remove(deploymentInfo.getDeploymentID());
-        }
         if (data == null) return;
         Stack pool = data.getPool();
         //TODO ejbRemove on each bean in pool.
@@ -363,14 +364,23 @@ public class StatelessInstanceManager {
 
     private static final class Data {
         private final Stack pool;
-
-        public Data(int poolLimit) {
+        private Semaphore semaphore;
+        
+        public Data(int poolLimit, boolean strictPooling) {
             pool = new LinkedListStack(poolLimit);
+            if (strictPooling) {
+                semaphore = new Semaphore(poolLimit);
+            }
         }
 
         public Stack getPool() {
             return pool;
         }
+        
+        public Semaphore getSemaphore(){
+        	return semaphore;
+        }
+                        
     }
 
 }

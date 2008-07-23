@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -32,13 +33,13 @@ import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -46,6 +47,7 @@ import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.xbean.finder.ClassFinder;
 
 /**
@@ -66,7 +68,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatelessInstanceManager(transactionManager, securityService, timeOut, poolSize, strictPooling);
+        instanceManager = new StatelessInstanceManager(transactionManager, securityService, new Duration(timeOut,TimeUnit.MILLISECONDS), poolSize, strictPooling);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;
