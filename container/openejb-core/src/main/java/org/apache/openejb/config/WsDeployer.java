@@ -131,6 +131,9 @@ public class WsDeployer implements DynamicDeployer {
         for (Servlet servlet : webApp.getServlet()) {
             String className = servlet.getServletClass();
 
+            // Skip JSPs
+            if (className == null) continue;
+
             try {
                 Class<?> clazz = webModule.getClassLoader().loadClass(className);
                 if (JaxWsUtils.isWebService(clazz)) {
