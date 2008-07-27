@@ -86,6 +86,9 @@ public class TomcatLoader implements Loader {
                 InputStream in = new BufferedInputStream(fin);
                 systemProperties.load(in);
                 System.getProperties().putAll(systemProperties);
+                // store the system properties inside SystemInstance otherwise we will lose these properties.
+                // i.e. any piece of code which is trying to look for properties inside SystemInstance will not be able to find it.
+                SystemInstance.get().getProperties().putAll(systemProperties);
             }
         } catch (IOException e) {
             System.out.println("Processing conf/system.properties failed: "+e.getMessage());
