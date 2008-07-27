@@ -552,8 +552,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                     logger.info("Found ejb module " + moduleType.getSimpleName() + " in war " + standardContext.getPath());
 
-                    // creat the module
-                    EjbModule ejbModule = new EjbModule(webModule.getClassLoader(), file.getAbsolutePath(), null, null);
+                    
+                    // create the ejb module and set its moduleId to the webapp context root name
+                    EjbModule ejbModule = new EjbModule(webModule.getClassLoader(), getEjbModuleId(standardContext),file.getAbsolutePath(), null, null);
 
                     // EJB deployment descriptors
                     try {
@@ -585,7 +586,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         return appModule;
     }
-
+    /**
+     * Strips off the / from the context root and returns the remaining String
+     * @param standardContext
+     * @return the name of the context root for the webapp
+     */
+    private String getEjbModuleId(StandardContext standardContext) {
+		String ejbModuleId = standardContext.getName();
+		if(ejbModuleId.startsWith("/"))
+			ejbModuleId = ejbModuleId.substring(1);
+		return ejbModuleId;
+	}
     private WebModule createWebModule(StandardContext standardContext) {
         // todo replace this code with DeploymentLoader
         ServletContext servletContext = standardContext.getServletContext();
