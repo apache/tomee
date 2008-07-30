@@ -183,7 +183,7 @@ public class MdbInstanceFactory {
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
         ThreadContext callContext = new ThreadContext(deploymentInfo, null, Operation.INJECTION);
-        ThreadContext.enter(callContext);
+        ThreadContext oldContext = ThreadContext.enter(callContext);
         try {
             Context ctx = deploymentInfo.getJndiEnc();
             // construct the bean instance
@@ -260,7 +260,7 @@ public class MdbInstanceFactory {
             MdbInstanceFactory.logger.error(message, e);
             throw new UnavailableException(message, e);
         } finally {
-            ThreadContext.exit(callContext);
+            ThreadContext.exit(oldContext);
         }
     }
 
