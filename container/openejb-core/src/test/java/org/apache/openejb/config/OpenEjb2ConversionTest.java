@@ -41,6 +41,10 @@ public class OpenEjb2ConversionTest extends TestCase {
     public void testItests22() throws Exception {
         convert("convert/oej2/cmp/itest-2.2/itest-2.2-");
     }
+    
+    public void testItests22Pojo() throws Exception {
+        convert("convert/oej2/cmp/itest-2.2/itest-2.2-pojo-");
+    }
 
     public void testDaytrader() throws Exception {
         convert("convert/oej2/cmp/daytrader/daytrader-");

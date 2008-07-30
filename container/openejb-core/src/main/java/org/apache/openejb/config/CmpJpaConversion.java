@@ -92,7 +92,8 @@ public class CmpJpaConversion implements DynamicDeployer {
                 }
             }
 
-
+            // if there are relationships defined in this jar, get a list of the defined
+            // entities and process the relationship maps. 
             Relationships relationships = ejbJar.getRelationships();
             if (relationships != null) {
 
@@ -176,6 +177,15 @@ public class CmpJpaConversion implements DynamicDeployer {
         return persistenceUnit;
     }
 
+    /**
+     * Test if a module contains CMP entity beans that will 
+     * need a JPA mapping generated. 
+     * 
+     * @param appModule The source application module.
+     * 
+     * @return true if the module contains any entity beans 
+     *         using container managed persistence.
+     */
     private boolean hasCmpEntities(AppModule appModule) {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -185,6 +195,14 @@ public class CmpJpaConversion implements DynamicDeployer {
         return false;
     }
 
+    /**
+     * Tests if an EJB is an entity bean using container 
+     * managed persistence. 
+     * 
+     * @param bean   The source bean.
+     * 
+     * @return True if all of the conditions for a CMP bean are met.
+     */
     private static boolean isCmpEntity(EnterpriseBean bean) {
         return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
@@ -475,12 +493,23 @@ public class CmpJpaConversion implements DynamicDeployer {
 
 
         ClassLoader classLoader = ejbModule.getClassLoader();
+        Collection<MappedSuperclass> mappedSuperclasses; 
         if (bean.getCmpVersion() == CmpVersion.CMP2) {
-            mapClass2x(entity, bean, classLoader);
+            // perform the 2.x class mapping.  This really just identifies the primary key and 
+            // other cmp fields that will be generated for the concrete class and identify them 
+            // to JPA. 
+            mappedSuperclasses = mapClass2x(entity, bean, classLoader);
         } else {
-            // map the cmp class, but if we are using a mapped super class, generate attribute-override instead of id and basic
-            Collection<MappedSuperclass> mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
-
+            // map the cmp class, but if we are using a mapped super class, 
+            // generate attribute-override instead of id and basic
+            mappedSuperclasses = mapClass1x(bean.getEjbClass(), entity, bean, classLoader);
+        }
+        
+        // if we have superclass mappings to process, add those to the
+        // configuration. f
+        if (mappedSuperclasses != null) {
+            // now that things are mapped out, add the superclass mappings to the entity mappings 
+            // that will get passed to the JPA engine. 
             for (MappedSuperclass mappedSuperclass : mappedSuperclasses) {
                 entityMappings.getMappedSuperclass().add(mappedSuperclass);
             }
@@ -509,6 +538,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             namedQuery.setQuery(query.getEjbQl());
             entity.getNamedQuery().add(namedQuery);
         }
+        
         // todo: there should be a common interface between ejb query object and openejb query object
         OpenejbJar openejbJar = ejbModule.getOpenejbJar();
         EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
@@ -579,62 +609,113 @@ public class CmpJpaConversion implements DynamicDeployer {
         return new EntityMappings();
     }
 
-    private void mapClass2x(Mapping mapping, EntityBean bean, ClassLoader classLoader) {
+    /**
+     * Generate the JPA mapping for a CMP 2.x bean.  Since 
+     * the field accessors are all defined as abstract methods 
+     * and the fields will not be defined in the implementation 
+     * class, we don't need to deal with mapped superclasses. 
+     * All of the fields and concrete methods will be 
+     * implemented by the generated subclass, so from 
+     * a JPA standpoint, there are no mapped superclasses 
+     * required. 
+     * 
+     * @param mapping The mapping information we're updating.
+     * @param bean    The entity bean meta data
+     * @param classLoader
+     *                The classloader for resolving class references and
+     *                primary key classes.
+     */
+    private Collection<MappedSuperclass> mapClass2x(Mapping mapping, EntityBean bean, ClassLoader classLoader) {
         Set<String> allFields = new TreeSet<String>();
+        // get an acculated set of the CMP fields. 
         for (CmpField cmpField : bean.getCmpField()) {
             allFields.add(cmpField.getFieldName());
         }
+        
+        Class<?> beanClass = null; 
 
-        // Add the cmp-field declarations for all the cmp fields that
-        // weren't explicitly declared in the ejb-jar.xml
         try {
-            Class<?> beanClass = classLoader.loadClass(bean.getEjbClass());
-            for (Method method : beanClass.getMethods()) {
-                if (!Modifier.isAbstract(method.getModifiers())) continue;
-                if (method.getParameterTypes().length != 0) continue;
-                if (method.getReturnType().equals(Void.TYPE)) continue;
-
-                // Skip relationships: anything of type EJBLocalObject or Collection
-                if (EJBLocalObject.class.isAssignableFrom(method.getReturnType())) continue;
-                if (Collection.class.isAssignableFrom(method.getReturnType())) continue;
-                if (Map.class.isAssignableFrom(method.getReturnType())) continue;
-
-                String name = method.getName();
-
-                if (name.startsWith("get")){
-                    name = name.substring("get".length(), name.length());
-                } else if (name.startsWith("is")){
-                    // Only add this if the return type from an "is" method 
-                    // boolean. 
-                    if (method.getReturnType() == Boolean.TYPE) {
-                        name = name.substring("is".length(), name.length());
-                    }
-                    else { 
-                        // not an acceptable "is" method. 
-                        continue; 
-                    }
-                } else continue;
-
-                name = Strings.lcfirst(name);
-                if (!allFields.contains(name)){
-                    allFields.add(name);
-                    bean.addCmpField(name);
-                }
-            }
+            beanClass = classLoader.loadClass(bean.getEjbClass());
         } catch (ClassNotFoundException e) {
-            // class was already loaded in validation phase
+            // class was already loaded in validation phase, so this should succeed 
+            // if it does fail, just return null from here
+            return null; 
         }
+        
+        
+        // build a map from the field name to the super class that contains that field.
+        // If this is a strictly CMP 2.x class, this is generally an empty map.  However, 
+        // we support some migration steps toward EJB3, so this can be defined completely 
+        // or partially as a POJO with concrete fields and accessors.  This allows us to 
+        // locate and generate the mappings 
+        Map<String, MappedSuperclass> superclassByField = mapFields(beanClass, allFields);
+        
+        // Add the cmp-field declarations for all the cmp fields that
+        // weren't explicitly declared in the ejb-jar.xml. 
+        // we can identify these by looking for abstract methods that match 
+        // the get<Name> or is<Name> pattern. 
+            
+        for (Method method : beanClass.getMethods()) {
+            if (!Modifier.isAbstract(method.getModifiers())) continue;
+            if (method.getParameterTypes().length != 0) continue;
+            if (method.getReturnType().equals(Void.TYPE)) continue;
+
+            // Skip relationships: anything of type EJBLocalObject or Collection
+            if (EJBLocalObject.class.isAssignableFrom(method.getReturnType())) continue;
+            if (Collection.class.isAssignableFrom(method.getReturnType())) continue;
+            if (Map.class.isAssignableFrom(method.getReturnType())) continue;
+
+            String name = method.getName();
+
+            if (name.startsWith("get")){
+                name = name.substring("get".length(), name.length());
+            } else if (name.startsWith("is")){
+                // Only add this if the return type from an "is" method 
+                // boolean. 
+                if (method.getReturnType() == Boolean.TYPE) {
+                    name = name.substring("is".length(), name.length());
+                }
+                else { 
+                    // not an acceptable "is" method. 
+                    continue; 
+                }
+            } else continue;
+
+            // the property needs the first character lowercased.  Generally, 
+            // we'll have this field already in our list, but it might have been 
+            // omitted from the meta data. 
+            name = Strings.lcfirst(name);
+            if (!allFields.contains(name)){
+                allFields.add(name);
+                bean.addCmpField(name);
+            }
+        }
+        
 
         //
         // id: the primary key
         //
         Set<String> primaryKeyFields = new HashSet<String>();
+        
+        
         if (bean.getPrimkeyField() != null) {
             String fieldName = bean.getPrimkeyField();
-            Field field = new Id(fieldName);
-            mapping.addField(field);
+            MappedSuperclass superclass = superclassByField.get(fieldName);
+            // this need not be here...for CMP 2.x, these are generally autogenerated fields. 
+            if (superclass != null) {
+                // ok, add this field to the superclass mapping 
+                superclass.addField(new Id(fieldName));
+                // the direct mapping is an over ride 
+                mapping.addField(new AttributeOverride(fieldName));
+            }
+            else {
+                // this is a normal generated field, it will be in the main class mapping. 
+                mapping.addField(new Id(fieldName));
+            }
             primaryKeyFields.add(fieldName);
         } else if ("java.lang.Object".equals(bean.getPrimKeyClass())) {
+            // the automatically generated keys use a special property name 
+            // and will always be in the generated superclass. 
             String fieldName = "OpenEJB_pk";
             Id field = new Id(fieldName);
             field.setGeneratedValue(new GeneratedValue(GenerationType.AUTO));
@@ -644,15 +725,35 @@ public class CmpJpaConversion implements DynamicDeployer {
             Class<?> pkClass = null;
             try {
                 pkClass = classLoader.loadClass(bean.getPrimKeyClass());
-                mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                MappedSuperclass idclass = null; 
+                // now validate the primary class fields against the bean cmp fields 
+                // to make sure everything maps correctly. 
                 for (java.lang.reflect.Field pkField : pkClass.getFields()) {
                     String pkFieldName = pkField.getName();
                     int modifiers = pkField.getModifiers();
                     if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers) && allFields.contains(pkFieldName)) {
-                        Field field = new Id(pkFieldName);
-                        mapping.addField(field);
+                        // see if the bean field is concretely defined in one of the superclasses 
+                        MappedSuperclass superclass = superclassByField.get(pkFieldName);
+                        if (superclass != null) {
+                            // ok, we have an override that needs to be specified at the main class level. 
+                            superclass.addField(new Id(pkFieldName));
+                            mapping.addField(new AttributeOverride(pkFieldName));
+                            idclass = resolveIdClass(idclass, superclass, beanClass); 
+                        }
+                        else {
+                            // this field will be autogenerated 
+                            mapping.addField(new Id(pkFieldName));
+                        }
                         primaryKeyFields.add(pkFieldName);
                     }
+                }
+                // if we've located an ID class, set it as such 
+                if (idclass != null) {
+                    idclass.setIdClass(new IdClass(bean.getPrimKeyClass()));
+                }
+                else {
+                    // do this for the toplevel mapping 
+                    mapping.setIdClass(new IdClass(bean.getPrimKeyClass()));
                 }
             } catch (ClassNotFoundException e) {
                 throw (IllegalStateException)new IllegalStateException("Could not find entity primary key class " + bean.getPrimKeyClass()).initCause(e);
@@ -661,15 +762,33 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         //
         // basic: cmp-fields
+        // This again, adds all of the additional cmp-fields to the mapping 
         //
         for (CmpField cmpField : bean.getCmpField()) {
+            // only add entries for cmp fields that are not part of the primary key 
             if (!primaryKeyFields.contains(cmpField.getFieldName())) {
-                Field field = new Basic(cmpField.getFieldName());
-                mapping.addField(field);
+                String fieldName = cmpField.getFieldName(); 
+                // this will be here if we've already processed this 
+                MappedSuperclass superclass = superclassByField.get(fieldName);
+                // if this field is defined by one of the superclasses, then 
+                // we need to provide a mapping for this. 
+                if (superclass != null) {
+                    // we need to mark this as being in one of the superclasses 
+                    superclass.addField(new Basic(fieldName));
+                    mapping.addField(new AttributeOverride(fieldName));
+                }
+                else {
+                    // directly generated. 
+                    mapping.addField(new Basic(fieldName));
+                }
             }
         }
+        // all of the fields should now be identified by type, so return a set of 
+        // the field mappings 
+        return new HashSet<MappedSuperclass>(superclassByField.values());
     }
 
+    
     /**
      * Create the class mapping for a CMP 1.x entity bean. 
      * Since the fields for 1.x persistence are defined 
@@ -840,6 +959,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         return ejbClass;
     }
 
+    
     /**
      * Build a mapping between a bean's CMP fields and the 
      * particular subclass in the inheritance hierarchy that 

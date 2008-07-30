@@ -53,7 +53,7 @@ public class SunCmpConversionTest extends TestCase {
 
 //    public void testDaytrader() throws Exception {
 //        convert("convert/oej2/cmp/daytrader/daytrader-");
-//    }
+//    }                                             
 //
     public void testOneToOne() throws Exception {
         convert("convert/oej2/cmp/onetoone/simplepk/");

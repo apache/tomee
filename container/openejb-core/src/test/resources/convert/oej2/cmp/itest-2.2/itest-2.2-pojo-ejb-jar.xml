@@ -380,6 +380,62 @@
             </query>
         </entity>
         
+        <entity>
+            <description>
+                The EmployeeRecord entity bean encapsulates access
+                to the employee records.The deployer will use
+                container-managed persistence to integrate the
+                entity bean with the back-end system managing
+                the employee records.
+            </description>
+            <ejb-name>BasicCmp2PojoBean</ejb-name>
+            <home>org.apache.openejb.test.entity.cmp.BasicCmpHome</home>
+            <remote>org.apache.openejb.test.entity.cmp.BasicCmpObject</remote>
+            <ejb-class>org.apache.openejb.test.entity.cmp.BasicCmp2PojoBean</ejb-class>
+            <persistence-type>Container</persistence-type>
+            <prim-key-class>java.lang.Integer</prim-key-class>
+            <reentrant>false</reentrant>
+            <cmp-version>2.x</cmp-version>
+            <abstract-schema-name>BasicCmp2Pojo</abstract-schema-name>
+            <cmp-field>
+                <field-name>id</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>firstName</field-name>
+            </cmp-field>
+            <cmp-field>
+                <field-name>lastName</field-name>
+            </cmp-field>
+            <primkey-field>id</primkey-field>
+            <resource-ref>
+                <description>
+                    This is a reference to a JDBC database.
+                </description>
+                <res-ref-name>jdbc/basic/entityDatabase</res-ref-name>
+                <res-type>javax.sql.DataSource</res-type>
+                <res-auth>Container</res-auth>
+            </resource-ref>
+            <query>
+                <query-method>
+                    <method-name>findByLastName</method-name>
+                    <method-params>
+                        <method-param>java.lang.String</method-param>
+                    </method-params>
+                </query-method>
+                <ejb-ql>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE o.lastName = ?1]]>
+                </ejb-ql>
+            </query>
+            <query>
+                <query-method>
+                    <method-name>findEmptyCollection</method-name>
+                    <method-params/>
+                </query-method>
+                <ejb-ql>
+                    <![CDATA[SELECT OBJECT(o) FROM BasicCmp2 AS o WHERE 1 = 0]]>
+                </ejb-ql>
+            </query>
+        </entity>
 
         <!--
         ########################################################
@@ -1904,3 +1960,4 @@
 
     </assembly-descriptor>
 </ejb-jar>
+

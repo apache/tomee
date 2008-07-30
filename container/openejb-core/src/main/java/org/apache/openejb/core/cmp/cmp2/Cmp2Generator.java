@@ -94,10 +94,27 @@ public class Cmp2Generator implements Opcodes {
             if (getter == null) {
                 throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
             }
-            
-            Type type = Type.getType(getter.getReturnType());
-            CmpField cmpField = new CmpField(cmpFieldName, type, getter); 
-            this.cmpFields.put(cmpFieldName, cmpField);
+            // if this is an abstract method, then it's one we have to generate 
+            if (Modifier.isAbstract(getter.getModifiers())) {
+
+                Type type = Type.getType(getter.getReturnType());
+                CmpField cmpField = new CmpField(cmpFieldName, type, getter); 
+                this.cmpFields.put(cmpFieldName, cmpField);
+            }
+            else {
+                // the getter is non-abstract.  We only allow this if the class that 
+                // defines the getter also has a private field with a matching type.  
+                try {
+                    Field field = getter.getDeclaringClass().getDeclaredField(cmpFieldName); 
+                    // if this is a private field, then just continue.  We don't need to generate 
+                    // any code for this 
+                    if (Modifier.isPrivate(field.getModifiers())) {
+                        continue; 
+                    }
+                } catch (NoSuchFieldException e) {
+                }
+                throw new IllegalArgumentException("No such property " + cmpFieldName + " defined on bean class " + beanClassName);
+            }
         }
 
         // if a pkField is defined, it MUST be a CMP field.  Make sure it really exists 
@@ -484,11 +501,7 @@ public class Cmp2Generator implements Opcodes {
         String getterName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
         try {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
-            Method method = beanClass.getMethod(getterName, new Class[0]); 
-            if (Modifier.isAbstract(method.getModifiers())) {
-                // this is a getter 
-                return method;     
-            }
+            return beanClass.getMethod(getterName, new Class[0]); 
         } catch (NoSuchMethodException e) {
         }
         
@@ -497,11 +510,7 @@ public class Cmp2Generator implements Opcodes {
         getterName = "is" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
         try {
             // check to see if we have the getter as an abstract class.  This might be an "is" method. 
-            Method method = beanClass.getMethod(getterName, new Class[0]); 
-            if (Modifier.isAbstract(method.getModifiers())) {
-                // this is a getter 
-                return method;     
-            }
+            return beanClass.getMethod(getterName, new Class[0]); 
         } catch (NoSuchMethodException e) {
         }
         return null; 
