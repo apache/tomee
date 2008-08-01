@@ -41,6 +41,10 @@ public class ConnectorModule implements DeploymentModule {
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
+    public ConnectorModule(Connector connector) {
+        this(connector, Thread.currentThread().getContextClassLoader(), null, null);
+    }
+
     public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
         this.classLoader = classLoader;

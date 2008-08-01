@@ -310,16 +310,19 @@ public class AutoConfig implements DynamicDeployer {
             if (bean instanceof MessageDrivenBean) {
                 MessageDrivenBean mdb = (MessageDrivenBean) bean;
 
+                if (mdb.getActivationConfig() == null) {
+                    mdb.setActivationConfig(new ActivationConfig());
+                }
+
+                if (!isJms(mdb)) continue;
+
                 EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
                 if (ejbDeployment == null) {
                     throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
                 }
 
-                if (mdb.getActivationConfig() == null) {
-                    mdb.setActivationConfig(new ActivationConfig());
-                }
-
                 Properties properties = mdb.getActivationConfig().toProperties();
+
 
                 // destination
                 String destination = properties.getProperty("destination", properties.getProperty("destinationName"));
@@ -356,8 +359,14 @@ public class AutoConfig implements DynamicDeployer {
                         mdb.getActivationConfig().addProperty("subscriptionName", ejbDeployment.getDeploymentId() + "_subscription");
                     }
                 }
+
             }
         }
+    }
+
+    private boolean isJms(MessageDrivenBean mdb) {
+        String messagingType = mdb.getMessagingType();
+        return (messagingType != null && messagingType.startsWith("javax.jms"));
     }
 
     /**
@@ -520,6 +529,8 @@ public class AutoConfig implements DynamicDeployer {
                 // MDB destination is deploymentId if none set
                 if (bean instanceof MessageDrivenBean) {
                     MessageDrivenBean mdb = (MessageDrivenBean) bean;
+
+                    if (!isJms(mdb)) continue;
 
                     EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
                     if (ejbDeployment == null) {
@@ -697,7 +708,9 @@ public class AutoConfig implements DynamicDeployer {
             }
 
             // create the container if it doesn't exist
-            if (!configFactory.getContainerIds().contains(ejbDeployment.getContainerId()) && !skipMdb(bean)) {
+            List<String> containerIds = configFactory.getContainerIds();
+            containerIds.addAll(appResources.getContainerIds());
+            if (!containerIds.contains(ejbDeployment.getContainerId()) && !skipMdb(bean)) {
                 createContainer(containerInfoType, ejbDeployment, bean);
             }
 
@@ -1583,6 +1596,14 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
             return Collections.emptyList();
+        }
+
+        public List<String> getContainerIds() {
+            ArrayList<String> ids = new ArrayList<String>();
+            for (List<String> list : containerIdsByType.values()) {
+                ids.addAll(list);
+            }
+            return ids;
         }
     }
 }

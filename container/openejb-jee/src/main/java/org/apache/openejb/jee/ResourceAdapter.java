@@ -64,6 +64,17 @@ public class ResourceAdapter {
     @XmlID
     protected String id;
 
+    public ResourceAdapter() {
+    }
+
+    public ResourceAdapter(String resourceAdapterClass) {
+        this.resourceAdapterClass = resourceAdapterClass;
+    }
+
+    public ResourceAdapter(Class resourceAdapterClass) {
+        this(resourceAdapterClass.getName());
+    }
+
     public String getResourceAdapterClass() {
         return resourceAdapterClass;
     }
@@ -83,16 +94,18 @@ public class ResourceAdapter {
         return outboundResourceAdapter;
     }
 
-    public void setOutboundResourceAdapter(OutboundResourceAdapter value) {
+    public OutboundResourceAdapter setOutboundResourceAdapter(OutboundResourceAdapter value) {
         this.outboundResourceAdapter = value;
+        return outboundResourceAdapter;
     }
 
     public InboundResource getInboundResourceAdapter() {
         return inboundResourceAdapter;
     }
 
-    public void setInboundResourceAdapter(InboundResource value) {
+    public InboundResource setInboundResourceAdapter(InboundResource value) {
         this.inboundResourceAdapter = value;
+        return inboundResourceAdapter;
     }
 
     public List<AdminObject> getAdminObject() {

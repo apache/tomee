@@ -79,6 +79,15 @@ public class ServiceProvider {
     // for some reason when this field is type List JaxB gives us a List<List<String>>
     protected List<String> types;
 
+    public ServiceProvider() {
+    }
+
+    public ServiceProvider(String className, String id, String service) {
+        this.className = className;
+        this.id = id;
+        this.service = service;
+    }
+
     /**
      * Gets the value of the properties property.
      * <p/>

@@ -176,6 +176,19 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.ejbName = ejbName;
     }
 
+    public MessageDrivenBean(String ejbName, String ejbClass) {
+        this.ejbName = ejbName;
+        this.ejbClass = ejbClass;
+    }
+
+    public MessageDrivenBean(Class ejbClass) {
+        this(ejbClass.getSimpleName(), ejbClass.getName());
+    }
+
+    public MessageDrivenBean(String ejbName, Class ejbClass) {
+        this(ejbName, ejbClass.getName());
+    }
+
     public String getJndiConsumerName() {
         return ejbName;
     }

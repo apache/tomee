@@ -32,6 +32,9 @@ import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.config.sys.ServiceProvider;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
@@ -89,10 +92,22 @@ class AppInfoBuilder {
         AppInfo appInfo = new AppInfo();
 
         //
+        //  J2EE Connectors
+        //
+        buildConnectorModules(appModule, appInfo);
+
+        //
         //  Persistence Units
         //
         buildPersistenceModules(appModule, appInfo);
 
+
+        List<String> containerIds = configFactory.getContainerIds();
+        for (ConnectorInfo connectorInfo : appInfo.connectors) {
+            for (MdbContainerInfo containerInfo : connectorInfo.inbound) {
+                containerIds.add(containerInfo.id);
+            }
+        }
 
         //
         //  EJB Jars
@@ -107,7 +122,8 @@ class AppInfoBuilder {
                 for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                     EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
 
-                    if (!configFactory.getContainerIds().contains(d.getContainerId()) && !skipMdb(bean)) {
+
+                    if (!containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
                         String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
                         logger.fatal(msg);
                         throw new OpenEJBException(msg);
@@ -155,11 +171,6 @@ class AppInfoBuilder {
         //  Application Clients
         //
         buildClientModules(appModule, appInfo, jndiEncInfoBuilder);
-
-        //
-        //  J2EE Connectors
-        //
-        buildConnectorModules(appModule, appInfo);
 
         //
         //  Webapps
@@ -245,7 +256,9 @@ class AppInfoBuilder {
         }
     }
 
-    private void buildConnectorModules(AppModule appModule, AppInfo appInfo) {
+    private void buildConnectorModules(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
+        String appId = appModule.getModuleId();
+
         for (ConnectorModule connectorModule : appModule.getResourceModules()) {
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
@@ -267,30 +280,30 @@ class AppInfoBuilder {
                 try {
                     connectorInfo.libs.add(file.getCanonicalPath());
                 } catch (IOException e) {
-                    throw new IllegalArgumentException("Invalid application lib path " + file.getAbsolutePath());                    
+                    throw new IllegalArgumentException("Invalid application lib path " + file.getAbsolutePath());
                 }
             }
 
             ResourceAdapter resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
-                ResourceInfo resourceInfo = new ResourceInfo();
-                resourceInfo.service = "Resource";
-                if (resourceAdapter.getId() != null) {
-                    resourceInfo.id = resourceAdapter.getId();
-                } else {
-                    resourceInfo.id = connectorModule.getModuleId() + "RA";
-                }
-                resourceInfo.className = resourceAdapter.getResourceAdapterClass();
-                resourceInfo.properties = new Properties();
+                String id = getId(connectorModule);
+                String className = resourceAdapter.getResourceAdapterClass();
+
+                ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                provider.getTypes().add(className);
+
+                ServiceUtils.registerServiceProvider(appId, provider);
+
+                Resource resource = new Resource(id, className, appId + "#" + id);
+
                 for (ConfigProperty property : resourceAdapter.getConfigProperty()) {
                     String name = property.getConfigPropertyName();
                     String value = property.getConfigPropertyValue();
                     if (value != null) {
-                        resourceInfo.properties.setProperty(name, value);
+                        resource.getProperties().setProperty(name, value);
                     }
                 }
-                resourceInfo.properties.putAll(ConfigurationFactory.getSystemProperties(resourceInfo.id, "RESOURCE"));
-                connectorInfo.resourceAdapter = resourceInfo;
+                connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
             }
 
             OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
@@ -308,28 +321,29 @@ class AppInfoBuilder {
                         break;
                 }
                 for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
-                    ResourceInfo resourceInfo = new ResourceInfo();
-                    resourceInfo.service = "Resource";
-                    if (connection.getId() != null) {
-                        resourceInfo.id = connection.getId();
-                    } else if (outbound.getConnectionDefinition().size() == 1) {
-                        resourceInfo.id = connectorModule.getModuleId();
-                    } else {
-                        resourceInfo.id = connectorModule.getModuleId() + "-" + connection.getConnectionFactoryInterface();
-                    }
-                    resourceInfo.className = connection.getManagedConnectionFactoryClass();
-                    resourceInfo.types.add(connection.getConnectionFactoryInterface());
-                    resourceInfo.properties = new Properties();
+
+                    String id = getId(connection, outbound, connectorModule);
+                    String className = connection.getManagedConnectionFactoryClass();
+                    String type = connection.getConnectionFactoryInterface();
+
+                    ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                    provider.getTypes().add(type);
+
+                    ServiceUtils.registerServiceProvider(appId, provider);
+
+                    Resource resource = new Resource(id, type, appId + "#" + id);
+                    Properties properties = resource.getProperties();
                     for (ConfigProperty property : connection.getConfigProperty()) {
                         String name = property.getConfigPropertyName();
                         String value = property.getConfigPropertyValue();
                         if (value != null) {
-                            resourceInfo.properties.setProperty(name, value);
+                            properties.setProperty(name, value);
                         }
                     }
-                    resourceInfo.properties.setProperty("TransactionSupport", transactionSupport);
-                    resourceInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
-                    resourceInfo.properties.putAll(ConfigurationFactory.getSystemProperties(resourceInfo.id, "RESOURCE"));
+                    properties.setProperty("TransactionSupport", transactionSupport);
+                    properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+
+                    ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
                     connectorInfo.outbound.add(resourceInfo);
                 }
             }
@@ -337,58 +351,90 @@ class AppInfoBuilder {
             InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
             if (inbound != null) {
                 for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
-                    MdbContainerInfo mdbContainerInfo = new MdbContainerInfo();
-                    mdbContainerInfo.service = "Container";
-                    if (messageListener.getId() != null) {
-                        mdbContainerInfo.id = messageListener.getId();
-                    } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
-                        mdbContainerInfo.id = connectorModule.getModuleId();
-                    } else {
-                        mdbContainerInfo.id = connectorModule.getModuleId() + "-" + messageListener.getMessageListenerType();
-                    }
+                    String id = getId(messageListener, inbound, connectorModule);
 
-                    mdbContainerInfo.properties = new Properties();
-                    mdbContainerInfo.properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
-                    mdbContainerInfo.properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
-                    mdbContainerInfo.properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
+                    Container container = new Container(id, "MESSAGE", null);
 
-                    // todo provider system should fill in this information
-                    mdbContainerInfo.types.add("MESSAGE");
-                    mdbContainerInfo.className = "org.apache.openejb.core.mdb.MdbContainer";
-                    mdbContainerInfo.constructorArgs.addAll(Arrays.asList("id", "transactionManager", "securityService", "ResourceAdapter", "MessageListenerInterface", "ActivationSpecClass", "InstanceLimit"));
-                    mdbContainerInfo.properties.setProperty("InstanceLimit", "10");
+                    Properties properties = container.getProperties();
+                    properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                    properties.setProperty("MessageListenerInterface", messageListener.getMessageListenerType());
+                    properties.setProperty("ActivationSpecClass", messageListener.getActivationSpec().getActivationSpecClass());
 
-                    mdbContainerInfo.properties.putAll(ConfigurationFactory.getSystemProperties(mdbContainerInfo.id, "CONTAINER"));
+                    MdbContainerInfo mdbContainerInfo = configFactory.configureService(container, MdbContainerInfo.class);
                     connectorInfo.inbound.add(mdbContainerInfo);
                 }
             }
 
             for (AdminObject adminObject : resourceAdapter.getAdminObject()) {
-                ResourceInfo resourceInfo = new ResourceInfo();
-                resourceInfo.service = "Resource";
-                if (adminObject.getId() != null) {
-                    resourceInfo.id = adminObject.getId();
-                } else if (resourceAdapter.getAdminObject().size() == 1) {
-                    resourceInfo.id = connectorModule.getModuleId();
-                } else {
-                    resourceInfo.id = connectorModule.getModuleId() + "-" + adminObject.getAdminObjectInterface();
-                }
-                resourceInfo.className = adminObject.getAdminObjectClass();
-                resourceInfo.types.add(adminObject.getAdminObjectInterface());
-                resourceInfo.properties = new Properties();
+
+                String id = getId(adminObject, resourceAdapter, connectorModule);
+                String className = adminObject.getAdminObjectClass();
+                String type = adminObject.getAdminObjectInterface();
+
+                ServiceProvider provider = new ServiceProvider(className, id, "Resource");
+                provider.getTypes().add(type);
+
+                ServiceUtils.registerServiceProvider(appId, provider);
+
+                Resource resource = new Resource(id, type, appId + "#" + id);
+                Properties properties = resource.getProperties();
                 for (ConfigProperty property : adminObject.getConfigProperty()) {
                     String name = property.getConfigPropertyName();
                     String value = property.getConfigPropertyValue();
                     if (value != null) {
-                        resourceInfo.properties.setProperty(name, value);
+                        properties.setProperty(name, value);
                     }
                 }
-                resourceInfo.properties.putAll(ConfigurationFactory.getSystemProperties(resourceInfo.id, "RESOURCE"));
+                ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
                 connectorInfo.adminObject.add(resourceInfo);
             }
 
             appInfo.connectors.add(connectorInfo);
         }
+    }
+
+    private String getId(AdminObject adminObject, ResourceAdapter resourceAdapter, ConnectorModule connectorModule) {
+        String id;
+        if (adminObject.getId() != null) {
+            id = adminObject.getId();
+        } else if (resourceAdapter.getAdminObject().size() == 1) {
+            id = connectorModule.getModuleId();
+        } else {
+            id = connectorModule.getModuleId() + "-" + adminObject.getAdminObjectInterface();
+        }
+        return id;
+    }
+
+    private String getId(MessageListener messageListener, InboundResource inbound, ConnectorModule connectorModule) {
+        String id;
+        if (messageListener.getId() != null) {
+            id = messageListener.getId();
+        } else if (inbound.getMessageAdapter().getMessageListener().size() == 1) {
+            id = connectorModule.getModuleId();
+        } else {
+            id = connectorModule.getModuleId() + "-" + messageListener.getMessageListenerType();
+        }
+        return id;
+    }
+
+    private String getId(ConnectionDefinition connection, OutboundResourceAdapter outbound, ConnectorModule connectorModule) {
+        String id;
+        if (connection.getId() != null) {
+            id = connection.getId();
+        } else if (outbound.getConnectionDefinition().size() == 1) {
+            id = connectorModule.getModuleId();
+        } else {
+            id = connectorModule.getModuleId() + "-" + connection.getConnectionFactoryInterface();
+        }
+        return id;
+    }
+
+    private String getId(ConnectorModule connectorModule) {
+        String id = connectorModule.getConnector().getResourceAdapter().getId();
+        if (id == null) {
+            id = connectorModule.getModuleId() + "RA";
+        }
+        return id;
     }
 
     private void buildPersistenceModules(AppModule appModule, AppInfo appInfo) {

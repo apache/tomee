@@ -54,6 +54,11 @@ public class MessageAdapter {
         return this.messageListener;
     }
 
+    public MessageListener addMessageListener(MessageListener listener){
+        getMessageListener().add(listener);
+        return listener;
+    }
+    
     public String getId() {
         return id;
     }

@@ -49,6 +49,17 @@ public class ActivationSpec {
     @XmlID
     protected String id;
 
+    public ActivationSpec() {
+    }
+
+    public ActivationSpec(String activationSpecClass) {
+        this.activationSpecClass = activationSpecClass;
+    }
+
+    public ActivationSpec(Class activationSpecClass) {
+        this(activationSpecClass.getName());
+    }
+
     public String getActivationSpecClass() {
         return activationSpecClass;
     }
@@ -64,6 +75,12 @@ public class ActivationSpec {
         return this.requiredConfigProperty;
     }
 
+    public RequiredConfigProperty addRequiredConfigProperty(String name) {
+        RequiredConfigProperty property = new RequiredConfigProperty(name);
+        getRequiredConfigProperty().add(property);
+        return property;
+    }
+    
     public String getId() {
         return id;
     }

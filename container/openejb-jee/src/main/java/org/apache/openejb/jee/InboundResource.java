@@ -48,8 +48,9 @@ public class InboundResource {
         return messageAdapter;
     }
 
-    public void setMessageAdapter(MessageAdapter value) {
+    public MessageAdapter setMessageAdapter(MessageAdapter value) {
         this.messageAdapter = value;
+        return messageAdapter;
     }
 
     public String getId() {

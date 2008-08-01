@@ -208,6 +208,25 @@ public class ServiceUtils {
         return services;
     }
 
+    public static void registerServiceProvider(String packageName, ServiceProvider provider) {
+        List<ServiceProvider> services = loadedServiceJars.get(packageName);
+        if (services == null) {
+            ServicesJar servicesJar = null;
+            try {
+                servicesJar = JaxbOpenejb.readServicesJar(packageName);
+            } catch (OpenEJBException e) {
+                servicesJar = new ServicesJar();
+            }
+
+            // index services by provider id
+            List<ServiceProvider> serviceProviders = servicesJar.getServiceProvider();
+            services = new ArrayList<ServiceProvider>(serviceProviders);
+
+            loadedServiceJars.put(packageName, services);
+        }
+        services.add(provider);
+    }
+
     private static ProviderInfo getProviderInfo(String id) {
         String providerName = null;
         String serviceName = null;

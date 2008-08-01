@@ -69,6 +69,13 @@ public class Connector {
     @XmlAttribute(required = true)
     protected String version;
 
+    public Connector() {
+    }
+
+    public Connector(String id) {
+        this.id = id;
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();
@@ -146,11 +153,15 @@ public class Connector {
     }
 
     public ResourceAdapter getResourceAdapter() {
+        if (resourceAdapter == null){
+            resourceAdapter = new ResourceAdapter();
+        }
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapter value) {
+    public ResourceAdapter setResourceAdapter(ResourceAdapter value) {
         this.resourceAdapter = value;
+        return resourceAdapter;
     }
 
     public String getId() {

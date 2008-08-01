@@ -52,6 +52,13 @@ public class RequiredConfigProperty {
     @XmlID
     protected String id;
 
+    public RequiredConfigProperty() {
+    }
+
+    public RequiredConfigProperty(String configPropertyName) {
+        this.configPropertyName = configPropertyName;
+    }
+
     public List<Text> getDescription() {
         if (description == null) {
             description = new ArrayList<Text>();

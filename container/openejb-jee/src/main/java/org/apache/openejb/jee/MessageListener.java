@@ -48,6 +48,18 @@ public class MessageListener {
     @XmlID
     protected String id;
 
+    public MessageListener() {
+    }
+
+    public MessageListener(String messageListenerType, String activationSpecClass) {
+        this.messageListenerType = messageListenerType;
+        this.activationSpec = new ActivationSpec(activationSpecClass);
+    }
+
+    public MessageListener(Class messageListenerType, Class activationSpecClass) {
+        this(messageListenerType.getName(), activationSpecClass.getName());
+    }
+
     public String getMessageListenerType() {
         return messageListenerType;
     }
