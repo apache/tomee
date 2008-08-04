@@ -38,6 +38,7 @@ import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -469,21 +470,47 @@ class AppInfoBuilder {
                     }
                 }
 
+
+                // The result is that OpenEJB-specific configuration can be avoided when
+                // using OpenEJB + Hibernate or another vendor.  A second benefit is that
+                // if another vendor is used in production, the value will automatically
+                // be reset for using OpenEJB in the test environment.  Ensuring the strategy
+                // doesn't start with "org.hibernate.transaction" allows for a custom lookup
+                // strategy to be used and not overridden.
+
+                // DMB: This whole block could be a map, but I left it this way just
+                // in case we decided we wanted to do other custom handing for the
+                // providers listed.
                 if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider)){
 
-                    // The result is that OpenEJB-specific configuration can be avoided when
-                    // using OpenEJB + Hibernate.  A second benefit is that if another vendor
-                    // is used in production, the value will automatically be reset for using
-                    // OpenEJB in the test environment.  Ensuring the strategy starts with
-                    // "org.hibernate.transaction" allows for a custom lookup strategy to be
-                    // used and not overridden.
-
                     String lookupProperty = "hibernate.transaction.manager_lookup_class";
-                    String openejbLookupClass = "org.apache.openejb.hibernate.TransactionManagerLookup";
+                    String openejbLookupClass = MakeTxLookup.HIBERNATE_FACTORY;
 
                     String className = info.properties.getProperty(lookupProperty);
 
                     if (className == null || className.startsWith("org.hibernate.transaction")){
+                        info.properties.setProperty(lookupProperty, openejbLookupClass);
+                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    }
+                } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider)){
+
+                    String lookupProperty = "toplink.target-server";
+                    String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
+
+                    String className = info.properties.getProperty(lookupProperty);
+
+                    if (className == null || className.startsWith("oracle.toplink.transaction")){
+                        info.properties.setProperty(lookupProperty, openejbLookupClass);
+                        logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                    }
+                } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider)){
+
+                    String lookupProperty = "eclipselink.target-server";
+                    String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
+
+                    String className = info.properties.getProperty(lookupProperty);
+
+                    if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
                         info.properties.setProperty(lookupProperty, openejbLookupClass);
                         logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                     }
