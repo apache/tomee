@@ -33,11 +33,11 @@ public class TelephoneTest extends TestCase {
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
         // Uncomment these properties to change the defaults
-        //properties.setProperty("openejb.ejbd.port", "4201");
-        //properties.setProperty("openejb.ejbd.bind", "localhost");
-        //properties.setProperty("openejb.ejbd.threads", "200");
-        //properties.setProperty("openejb.ejbd.disabled", "false");
-        //properties.setProperty("openejb.ejbd.only_from", "127.0.0.1,192.168.1.1");
+        //properties.setProperty("ejbd.port", "4202");
+        //properties.setProperty("ejbd.bind", "localhost");
+        //properties.setProperty("ejbd.threads", "200");
+        //properties.setProperty("ejbd.disabled", "false");
+        //properties.setProperty("ejbd.only_from", "127.0.0.1,192.168.1.1");
 
         new InitialContext(properties);
     }
