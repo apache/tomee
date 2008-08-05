@@ -51,6 +51,7 @@
     <module>custom-injection</module>
     <module>helloworld-weblogic</module>
     <module>jpa-hibernate</module>
+    <module>jpa-eclipselink</module>
     <module>telephone-stateful</module>
     <module>webapps</module>
   </modules>
