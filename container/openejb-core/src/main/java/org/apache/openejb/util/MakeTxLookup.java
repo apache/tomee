@@ -105,7 +105,7 @@ public class MakeTxLookup implements Opcodes {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/apache/openejb/util/ToplinkJTATransactionController", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, "oracle/toplink/essentials/transaction/JTATransactionController", "<init>", "()V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -144,7 +144,7 @@ public class MakeTxLookup implements Opcodes {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/apache/openejb/util/ToplinkJTATransactionController", "<init>", "()V");
+            mv.visitMethodInsn(INVOKESPECIAL, "org/eclipse/persistence/transaction/JTATransactionController", "<init>", "()V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(1, 1);
             mv.visitEnd();
