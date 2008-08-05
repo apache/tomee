@@ -84,7 +84,7 @@ public class ServiceAccessController implements ServerService {
         	String hostname = "localhost";
             addIPAddressPermissions(permissions, hostname);
 
-            StringTokenizer st = new StringTokenizer(ipString, ", ");
+            StringTokenizer st = new StringTokenizer(ipString, ", \n\t");
             while (st.hasMoreTokens()) {
                 String mask = st.nextToken();
                 try {
