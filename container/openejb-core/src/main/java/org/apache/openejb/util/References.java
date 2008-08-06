@@ -32,22 +32,6 @@ import java.util.Iterator;
  */
 public class References {
 
-    @Stateless
-    public static class TesterBean implements Tester {
-        public Object call(Object object) {
-            return object;
-        }
-    }
-
-    public interface Tester {
-        public Object call(Object object);
-    }
-
-    {
-        Tester tester = null;
-        tester.call(int.class)
-    }
-
     public static interface Visitor<T> {
         String getName(T t);
 
@@ -79,6 +63,7 @@ public class References {
         for (Node node : nodes.values()) {
             for (String name : visitor.getReferences((T) node.object)) {
                 Node ref = nodes.get(name);
+                if (ref == null) throw new IllegalArgumentException("No such object in list: "+name);
                 node.references.add(ref);
                 ref.refernceCount++;
             }

@@ -164,6 +164,25 @@ public class ReferencesTest extends TestCase {
         }
     }
 
+
+    public void testNonSuchObject() {
+
+        beans = new ArrayList<Bean>();
+
+        Bean a = bean("a");
+        Bean b = bean("b", "a");
+        Bean c = bean("c", "b", "z");
+
+        List<Bean> actual = null;
+        try {
+            actual = sort(beans, visitor);
+            fail("An IllegalArgumentException should have been thrown");
+        } catch (IllegalArgumentException e) {
+            // pass
+        }
+    }
+
+
     private List<Bean> expected(Bean... beans){
         return Arrays.asList(beans);
     }
