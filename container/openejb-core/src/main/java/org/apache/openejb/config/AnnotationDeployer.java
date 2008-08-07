@@ -121,6 +121,8 @@ import javax.ejb.TransactionManagementType;
 import javax.ejb.Singleton;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.Startup;
+import javax.ejb.DependsOn;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -151,6 +153,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Collections;
 
 /**
  * @version $Rev$ $Date$
@@ -662,8 +665,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (FacesConfig facesConfig: webModule.getFacesConfigs()) {
-            	for(FacesManagedBean bean: facesConfig.getManagedBean()){
-            		String managedBeanClass = bean.getManagedBeanClass().trim();
+                for(FacesManagedBean bean: facesConfig.getManagedBean()){
+                    String managedBeanClass = bean.getManagedBeanClass().trim();
                     if (managedBeanClass != null) {
                         try {
                             Class clazz = classLoader.loadClass(managedBeanClass);
@@ -672,7 +675,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
                         }
                     }
-            	}
+                }
             }
             ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
@@ -870,6 +873,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 processAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
                             } else {
                                 checkAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidConcurrencyAttribute");
+                            }
+
+                            if (!sessionBean.hasLoadOnStartup()){
+                                Startup startup = getInheritableAnnotation(clazz, Startup.class);
+                                sessionBean.setLoadOnStartup(startup != null);
+                            }
+
+                            if (sessionBean.getDependsOn() == null) {
+                                DependsOn dependsOn = getInheritableAnnotation(clazz, DependsOn.class);
+                                if (dependsOn != null) {
+                                    sessionBean.setDependsOn(dependsOn.value());
+                                } else {
+                                    sessionBean.setDependsOn(Collections.EMPTY_LIST);
+                                }
                             }
                         }
                     }

@@ -66,14 +66,5 @@ public class EjbJarBuilder {
         }
         return deployments;
     }
-    
-    public void deploy(HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
-        for (DeploymentInfo deployment : deployments.values()) {
-            try {
-                deployment.getContainer().deploy(deployment);
-            } catch (Throwable t) {
-                throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
-            }
-        }
-    }
+
 }

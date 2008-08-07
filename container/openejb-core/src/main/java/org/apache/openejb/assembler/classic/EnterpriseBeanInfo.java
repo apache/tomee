@@ -68,4 +68,6 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public List<JndiNameInfo> jndiNamess = new ArrayList<JndiNameInfo>();
 
     public List<String> jndiNames = new ArrayList<String>();
+    public boolean loadOnStartup;
+    public final List<String> dependsOn = new ArrayList<String>() ;
 }

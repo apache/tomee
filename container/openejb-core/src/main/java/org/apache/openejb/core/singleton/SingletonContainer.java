@@ -116,6 +116,15 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         if (timerService != null) {
             timerService.start();
         }
+
+        if (deploymentInfo.isLoadOnStartup()){
+            try {
+                ThreadContext callContext = new ThreadContext(deploymentInfo, null);
+                instanceManager.getInstance(callContext);
+            } catch (OpenEJBException e) {
+                throw new OpenEJBException("Singleton startup failed: "+deploymentInfo.getDeploymentID(), e);
+            }
+        }
     }
 
     public void undeploy(DeploymentInfo info) {

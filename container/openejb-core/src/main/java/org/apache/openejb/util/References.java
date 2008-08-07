@@ -77,17 +77,10 @@ public class References {
             if (n.refernceCount == 0) {
                 // if the node is totally isolated (no in or out refs),
                 // move it directly to the finished list, so they are first
-
                 if (n.references.size() == 0) {
-
                     sortedNodes.add(n);
-
-
                 } else {
-
-
                     leafNodes.add(n);
-
                 }
             }
         }

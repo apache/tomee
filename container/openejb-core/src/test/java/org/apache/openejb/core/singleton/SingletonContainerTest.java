@@ -93,11 +93,7 @@ public class SingletonContainerTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         // containers
-        SingletonSessionContainerInfo singletonContainerInfo = config.configureService(SingletonSessionContainerInfo.class);
-//        singletonContainerInfo.properties.setProperty("TimeOut", "10");
-//        singletonContainerInfo.properties.setProperty("PoolSize", "0");
-//        singletonContainerInfo.properties.setProperty("StrictPooling", "false");
-        assembler.createContainer(singletonContainerInfo);
+        assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
         // Setup the descriptor information
 

@@ -39,6 +39,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.MakeTxLookup;
+import org.apache.openejb.util.References;
+import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -69,6 +71,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.net.URL;
 import java.io.File;
 import java.io.IOException;
@@ -149,6 +153,7 @@ class AppInfoBuilder {
         // Create the JNDI info builder
         JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo);
 
+        List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
         // Build the JNDI tree for each ejb
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -157,6 +162,7 @@ class AppInfoBuilder {
             Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
             for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
+                beans.add(beanInfo);
 
                 // Get the ejb-jar.xml object
                 EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
@@ -165,7 +171,26 @@ class AppInfoBuilder {
                 JndiEncInfo jndi = jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleId);
 
                 beanInfo.jndiEnc = jndi;
+
+
+                jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleId);
             }
+        }
+
+        // Check for circular references in Singleton @DependsOn
+        try {
+            References.sort(beans, new References.Visitor<EnterpriseBeanInfo>(){
+                public String getName(EnterpriseBeanInfo bean) {
+                    return bean.ejbDeploymentId;
+                }
+
+                public Set<String> getReferences(EnterpriseBeanInfo bean) {
+                    return new LinkedHashSet<String>(bean.dependsOn);
+                }
+            });
+        } catch (CircularReferencesException e) {
+            List<List> circuits = e.getCircuits();
+
         }
 
         //

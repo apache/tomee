@@ -36,6 +36,7 @@ import org.apache.openejb.config.rules.CheckAssemblyBindings;
 import org.apache.openejb.config.rules.CheckCallbacks;
 import org.apache.openejb.config.rules.CheckInjectionTargets;
 import org.apache.openejb.config.rules.CheckPersistenceRefs;
+import org.apache.openejb.config.rules.CheckDependsOn;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
@@ -98,7 +99,8 @@ public class AppValidator {
                 new CheckCallbacks(),
                 new CheckAssemblyBindings(),
                 new CheckInjectionTargets(),
-                new CheckPersistenceRefs()
+                new CheckPersistenceRefs(),
+                new CheckDependsOn()
         };
         return rules;
     }

@@ -472,6 +472,9 @@ public class EjbJarInfoBuilder {
             bean = new SingletonBeanInfo();
             ConcurrencyType type = s.getConcurrencyType();
             bean.concurrencyType = (type != null) ? type.toString() : ConcurrencyType.CONTAINER.toString();
+            bean.loadOnStartup = s.getLoadOnStartup();
+            // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn 
+            // bean.dependsOn.addAll(s.getDependsOn());
         } else {
             bean = new StatelessBeanInfo();
         }

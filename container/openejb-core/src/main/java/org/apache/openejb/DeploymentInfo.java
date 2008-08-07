@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.List;
+import java.util.Set;
 import javax.naming.Context;
 
 public interface DeploymentInfo {
@@ -147,5 +148,9 @@ public interface DeploymentInfo {
 
     public <T> T set(Class<T> type, T value);
 
-    public boolean retainIfExeption(Method removeMethod); 
+    public boolean retainIfExeption(Method removeMethod);
+
+    public boolean isLoadOnStartup();
+
+    public Set<String> getDependsOn();
 }

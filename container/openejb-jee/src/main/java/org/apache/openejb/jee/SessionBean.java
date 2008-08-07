@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Arrays;
 
 
 /**
@@ -109,6 +111,7 @@ import java.util.Map;
         "serviceEndpoint",
         "ejbClass",
         "sessionType",
+        "loadOnStartup",
         "timeoutMethod",
         "initMethod",
         "removeMethod",
@@ -129,7 +132,8 @@ import java.util.Map;
         "postActivate",
         "prePassivate",
         "securityRoleRef",
-        "securityIdentity"
+        "securityIdentity",
+        "dependsOn"
         })
 public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerConsumer {
     @XmlTransient
@@ -200,6 +204,14 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
     protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
     protected SecurityIdentity securityIdentity;
+
+    @XmlElement(name = "load-on-startup")
+    protected Boolean loadOnStartup;
+
+    @XmlElementWrapper(name = "depends-on")
+    @XmlElement(name = "ejb-name")
+    protected List<String> dependsOn;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -217,7 +229,7 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
     public String getJndiConsumerName() {
         return ejbName;
     }
-    
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();
@@ -643,6 +655,30 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
 
     public void setSecurityIdentity(SecurityIdentity value) {
         this.securityIdentity = value;
+    }
+
+    public List<String> getDependsOn() {
+        return dependsOn;
+    }
+
+    public void setDependsOn(String... ejbNames) {
+        setDependsOn(Arrays.asList(ejbNames));
+    }
+
+    public void setDependsOn(List<String> ejbNames) {
+        this.dependsOn = new ArrayList(ejbNames);
+    }
+
+    public boolean hasLoadOnStartup() {
+        return loadOnStartup != null;
+    }
+
+    public boolean getLoadOnStartup() {
+        return loadOnStartup != null && loadOnStartup;
+    }
+
+    public void setLoadOnStartup(boolean loadOnStartup) {
+        this.loadOnStartup = loadOnStartup;
     }
 
     public String getId() {

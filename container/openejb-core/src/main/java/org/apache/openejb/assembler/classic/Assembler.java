@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -83,6 +87,8 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.References;
+import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -489,6 +495,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            List<DeploymentInfo> allDeployments = new ArrayList<DeploymentInfo>();
+
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -544,11 +552,42 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
 
-                // now that everything is configured, deploy to the container
-                ejbJarBuilder.deploy(deployments);
+                allDeployments.addAll(deployments.values());
+            }
 
-                for (EnterpriseBeanInfo beanInfo : ejbJar.enterpriseBeans) {
-                    logger.info("createApplication.createdEjb", beanInfo.ejbDeploymentId, beanInfo.ejbName, beanInfo.containerId);
+            // Sort all the singletons to the back of the list.  We want to make sure
+            // all non-singletons are created first so that if a singleton refers to them
+            // they are available.  We have to do this as @DependsOn only points to other
+            // Singleton beans.  If it listed non-Singlton beans, then we wouldn't need to
+            // pre-sort.
+            Collections.sort(allDeployments, new Comparator<DeploymentInfo>(){
+                public int compare(DeploymentInfo a, DeploymentInfo b) {
+                    int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                    int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                    return aa - bb;
+                }
+            });
+
+            // Sort all the beans with references to the back of the list.  Beans
+            // without references to ther beans will be deployed first.
+            References.sort(allDeployments, new References.Visitor<DeploymentInfo>(){
+                public String getName(DeploymentInfo t) {
+                    return (String) t.getDeploymentID();
+                }
+
+                public Set<String> getReferences(DeploymentInfo t) {
+                    return t.getDependsOn();
+                }
+            });
+
+            // now that everything is configured, deploy to the container
+            for (DeploymentInfo deployment : allDeployments) {
+                try {
+                    Container container = deployment.getContainer();
+                    container.deploy(deployment);
+                    logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                } catch (Throwable t) {
+                    throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                 }
             }
 

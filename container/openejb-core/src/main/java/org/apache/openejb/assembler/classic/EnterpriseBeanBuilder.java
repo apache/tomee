@@ -211,6 +211,8 @@ class EnterpriseBeanBuilder {
 
         if (ejbType == BeanType.SINGLETON) {
             deployment.setBeanManagedConcurrency("Bean".equalsIgnoreCase(bean.concurrencyType));
+            deployment.getDependsOn().addAll(bean.dependsOn);
+            deployment.setLoadOnStartup(bean.loadOnStartup);
         }
 
         if (ejbType.isEntity()) {

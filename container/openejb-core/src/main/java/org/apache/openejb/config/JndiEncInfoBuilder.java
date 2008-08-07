@@ -53,6 +53,9 @@ import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.EjbReference;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -382,6 +385,65 @@ public class JndiEncInfoBuilder {
         return infos;
     }
 
+    public void buildDependsOnRefs(EjbModule module, EnterpriseBean enterpriseBean, EnterpriseBeanInfo beanInfo, String moduleId) throws OpenEJBException {
+        if (!(enterpriseBean instanceof SessionBean)) return;
+
+        SessionBean sessionBean = (SessionBean) enterpriseBean;
+
+        if (sessionBean.getSessionType() != SessionType.SINGLETON) return;
+
+        URI moduleUri = null;
+        if (moduleId != null) {
+            try {
+                moduleUri = new URI(moduleId);
+            } catch (URISyntaxException e) {
+                throw new OpenEJBException("Illegal moduleId " + moduleId, e);
+            }
+        }
+
+        EjbResolver ejbResolver = getEjbResolver(moduleId);
+
+        for (String ejbName : sessionBean.getDependsOn()) {
+            String deploymentId = ejbResolver.resolve(new SimpleRef(ejbName), moduleUri);
+            if (deploymentId != null) {
+                beanInfo.dependsOn.add(deploymentId);
+            }
+        }
+
+    }
+
+
+    private static class SimpleRef implements EjbResolver.Reference {
+        private final String name;
+
+        public SimpleRef(String name) {
+            this.name = name;
+        }
+
+        public String getEjbLink() {
+            return name;
+        }
+
+        public String getHome() {
+            return null;
+        }
+
+        public String getInterface() {
+            return null;
+        }
+
+        public String getMappedName() {
+            return null;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public EjbResolver.Type getRefType() {
+            return EjbResolver.Type.UNKNOWN;
+        }
+    }
     /**
      * The assembler package cannot have a dependency on org.apache.openejb.jee
      * so we simply have a trimmed down copy of the org.apache.openejb.jee.EjbReference interface

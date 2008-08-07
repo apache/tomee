@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.LinkedHashSet;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -92,6 +93,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private final List<Method> removeMethods = new ArrayList<Method>();
 
+    private final Set<String> dependsOn = new LinkedHashSet<String>();
+
     private Method ejbTimeout;
     private EjbTimerService ejbTimerService;
 
@@ -133,6 +136,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
+    private boolean loadOnStartup;
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -1111,5 +1115,17 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public void setServiceEndpointInterface(Class serviceEndpointInterface) {
         this.serviceEndpointInterface = serviceEndpointInterface;
         mapObjectInterface(serviceEndpointInterface);
+    }
+
+    public boolean isLoadOnStartup() {
+        return loadOnStartup;
+    }
+
+    public void setLoadOnStartup(boolean loadOnStartup) {
+        this.loadOnStartup = loadOnStartup;
+    }
+
+    public Set<String> getDependsOn() {
+        return dependsOn;
     }
 }
