@@ -261,12 +261,14 @@ public class SingletonInstanceManager {
         return new SingletonContext(transactionManager, securityService);
     }
 
-    // TODO: Call on system shutdown
-    private void freeInstance(ThreadContext callContext, Instance instance) {
+    public void freeInstance(ThreadContext callContext) {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Data data = (Data) deploymentInfo.getContainerData();
+        Instance instance = data.instance;
+
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(SingletonContext.getStates());
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
             Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
 
@@ -275,7 +277,7 @@ public class SingletonInstanceManager {
 
             interceptorStack.invoke();
         } catch (Throwable re) {
-            logger.error("The bean instance " + instance + " threw a system exception:" + re, re);
+            logger.error("Singleton shutdown failed: "+deploymentInfo.getDeploymentID(), re);
         }
 
     }

@@ -120,7 +120,12 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         if (deploymentInfo.isLoadOnStartup()){
             try {
                 ThreadContext callContext = new ThreadContext(deploymentInfo, null);
-                instanceManager.getInstance(callContext);
+                ThreadContext old = ThreadContext.enter(callContext);
+                try {
+                    instanceManager.getInstance(callContext);
+                } finally{
+                    ThreadContext.exit(old);
+                }
             } catch (OpenEJBException e) {
                 throw new OpenEJBException("Singleton startup failed: "+deploymentInfo.getDeploymentID(), e);
             }
@@ -132,6 +137,13 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
     }
 
     private void undeploy(CoreDeploymentInfo deploymentInfo) {
+        ThreadContext threadContext = new ThreadContext(deploymentInfo, null);
+        ThreadContext old = ThreadContext.enter(threadContext);
+        try {
+            instanceManager.freeInstance(threadContext);
+        } finally{
+            ThreadContext.exit(old);
+        }
         instanceManager.undeploy(deploymentInfo);
         EjbTimerService timerService = deploymentInfo.getEjbTimerService();
         if (timerService != null) {

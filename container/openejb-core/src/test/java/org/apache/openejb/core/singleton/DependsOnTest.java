@@ -22,6 +22,7 @@ import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
@@ -31,6 +32,7 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.OpenEJBException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -67,14 +69,24 @@ public class DependsOnTest extends TestCase {
 
         EjbJar ejbJar = new EjbJar();
 
-        ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
-        ejbJar.addEnterpriseBean(new SingletonBean(Three.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Four.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(Three.class));
 
+        // startup and trigger @PostConstruct
         assembler.createApplication(config.configureApplication(ejbJar));
 
         assertEquals(expected(four, three, two, one), actual);
+
+        actual.clear();
+
+        // startup and trigger @PreDestroy
+        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+            assembler.destroyApplication(appInfo.jarPath);
+        }
+
+        assertEquals(expected(one, two, three, four), actual);
     }
 
     public void testNoSuchEjb() throws Exception {
@@ -157,7 +169,8 @@ public class DependsOnTest extends TestCase {
     public static class One implements Bean {
 
         @PostConstruct
-        public void construct() {
+        @PreDestroy
+        public void callback() {
             actual.add(one);
         }
     }
@@ -168,7 +181,8 @@ public class DependsOnTest extends TestCase {
     public static class Two implements Bean {
 
         @PostConstruct
-        public void construct() {
+        @PreDestroy
+        public void callback() {
             actual.add(two);
         }
     }
@@ -179,7 +193,8 @@ public class DependsOnTest extends TestCase {
     public static class Three implements Bean {
 
         @PostConstruct
-        public void construct() {
+        @PreDestroy
+        public void callback() {
             actual.add(three);
         }
     }
@@ -189,7 +204,8 @@ public class DependsOnTest extends TestCase {
     public static class Four implements Bean {
 
         @PostConstruct
-        public void construct() {
+        @PreDestroy
+        public void callback() {
             actual.add(four);
         }
     }

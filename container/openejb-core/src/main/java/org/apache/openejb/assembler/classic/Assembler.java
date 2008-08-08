@@ -555,30 +555,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 allDeployments.addAll(deployments.values());
             }
 
-            // Sort all the singletons to the back of the list.  We want to make sure
-            // all non-singletons are created first so that if a singleton refers to them
-            // they are available.  We have to do this as @DependsOn only points to other
-            // Singleton beans.  If it listed non-Singlton beans, then we wouldn't need to
-            // pre-sort.
-            Collections.sort(allDeployments, new Comparator<DeploymentInfo>(){
-                public int compare(DeploymentInfo a, DeploymentInfo b) {
-                    int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                    int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                    return aa - bb;
-                }
-            });
-
-            // Sort all the beans with references to the back of the list.  Beans
-            // without references to ther beans will be deployed first.
-            References.sort(allDeployments, new References.Visitor<DeploymentInfo>(){
-                public String getName(DeploymentInfo t) {
-                    return (String) t.getDeploymentID();
-                }
-
-                public Set<String> getReferences(DeploymentInfo t) {
-                    return t.getDependsOn();
-                }
-            });
+            allDeployments = sort(allDeployments);
 
             // now that everything is configured, deploy to the container
             for (DeploymentInfo deployment : allDeployments) {
@@ -641,6 +618,33 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    private static List<DeploymentInfo> sort(List<DeploymentInfo> deployments) {
+        // Sort all the singletons to the back of the list.  We want to make sure
+        // all non-singletons are created first so that if a singleton refers to them
+        // they are available.  We have to do this as @DependsOn only points to other
+        // Singleton beans.  If it listed non-Singlton beans, then we wouldn't need to
+        // pre-sort.
+        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
+            public int compare(DeploymentInfo a, DeploymentInfo b) {
+                int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                return aa - bb;
+            }
+        });
+
+        // Sort all the beans with references to the back of the list.  Beans
+        // without references to ther beans will be deployed first.
+        return References.sort(deployments, new References.Visitor<DeploymentInfo>(){
+            public String getName(DeploymentInfo t) {
+                return (String) t.getDeploymentID();
+            }
+
+            public Set<String> getReferences(DeploymentInfo t) {
+                return t.getDependsOn();
+            }
+        });
+    }
+
     public void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
         AppInfo appInfo = deployedApplications.remove(filePath);
         if (appInfo == null) {
@@ -675,7 +679,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // get all of the ejb deployments
-        List<CoreDeploymentInfo> deployments = new ArrayList<CoreDeploymentInfo>();
+        List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
                 String deploymentId = beanInfo.ejbDeploymentId;
@@ -688,6 +692,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        // Just as with startup we need to get things in an
+        // order that respects the singleton @DependsOn information
+        // Theoreticlly if a Singleton depends on something in its
+        // @PostConstruct, it can depend on it in its @PreDestroy.
+        // Therefore we want to make sure that if A dependsOn B,
+        // that we destroy A first then B so that B will still be
+        // usable in the @PreDestroy method of A.
+
+        // Sort them into the original starting order
+        deployments = sort(deployments);
+        // reverse that to get the stopping order
+        Collections.reverse(deployments);
+
+        for (DeploymentInfo deployment : deployments) {
+            String deploymentID = deployment.getDeploymentID() + "";
+            try {
+                Container container = deployment.getContainer();
+                container.undeploy(deployment);
+                deployment.setContainer(null);
+            } catch (Throwable t) {
+                undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
+            } finally {
+                ((CoreDeploymentInfo)deployment).setDestroyed(true);
+            }
+        }
+
         // get the client ids
         List<String> clientIds = new ArrayList<String>();
         for (ClientInfo clientInfo : appInfo.clients) {
@@ -695,7 +725,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // Clear out naming for all components first
-        for (CoreDeploymentInfo deployment : deployments) {
+        for (DeploymentInfo deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {
                 containerSystem.removeDeploymentInfo(deployment);
@@ -734,18 +764,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/ejb namespaces, this could cause future deployments to fail.", e));
         }
 
-        for (CoreDeploymentInfo deployment : deployments) {
-            String deploymentID = deployment.getDeploymentID() + "";
-            try {
-                Container container = deployment.getContainer();
-                container.undeploy(deployment);
-                deployment.setContainer(null);
-            } catch (Throwable t) {
-                undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
-            } finally {
-                deployment.setDestroyed(true);
-            }
-        }
         deployments.clear();
 
         for (String clientId : clientIds) {
