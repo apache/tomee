@@ -25,14 +25,14 @@
 
   HOW TO RUN
 
-    Download http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.7.jar
+    Download http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.9.jar
     Then execute ant as follows:
 
-    ant -lib maven-ant-tasks-2.0.7.jar
+    ant -lib maven-ant-tasks-2.0.9.jar
 
   NOTE
 
-    You do NOT need maven-ant-tasks-2.0.7.jar to use OpenEJB for embedded EJB
+    You do NOT need maven-ant-tasks-2.0.9.jar to use OpenEJB for embedded EJB
     testing with Ant.  It is simply used in this example to make the build.xml
     a bit simpler.  As long as OpenEJB and it's required libraries are in the
     <junit> classpath, the tests will run with OpenEJB embedded.
