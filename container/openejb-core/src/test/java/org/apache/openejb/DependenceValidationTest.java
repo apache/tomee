@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.apache.openejb.asm.ClassReader;
+import org.apache.openejb.asm.ClassWriter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -110,7 +111,7 @@ public class DependenceValidationTest extends TestCase {
             FileInputStream in = new FileInputStream(file);
             try {
                 ClassReader classReader = new ClassReader(in);
-                classReader.accept(dependencyVisitor, true);
+                classReader.accept(dependencyVisitor, ClassWriter.COMPUTE_MAXS);
             } finally {
                 in.close();
             }

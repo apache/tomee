@@ -339,12 +339,12 @@ public class JpaTest extends TestCase {
     }
 
     public static byte[] addNewField(byte[] origBytes) {
-        ClassWriter classWriter = new ClassWriter(true);
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         FieldAdderClassVisitor visitor = new FieldAdderClassVisitor(classWriter);
 
         ClassReader classReader = new ClassReader(origBytes);
-        classReader.accept(visitor, false);
+        classReader.accept(visitor, 0);
 
         byte[] newBytes = classWriter.toByteArray();
         return newBytes;
