@@ -163,7 +163,7 @@
             </manifest>
             <manifestEntries>
               <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar
-                xbean-finder-${xbeanVersion}.jar</Class-Path>
+                asm-finder-${xbeanVersion}.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
@@ -313,20 +313,12 @@
       <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-finder</artifactId>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>asm-finder</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -395,3 +387,4 @@
     </profile>
   </profiles>
 </project>
+

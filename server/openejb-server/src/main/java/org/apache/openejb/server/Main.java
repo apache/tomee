@@ -35,7 +35,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.openejb.finder.ResourceFinder;
 
 /**
  * Assemble OpenEJB instance and boot it up

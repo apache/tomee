@@ -18,11 +18,11 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.EmptyVisitor;
+import org.apache.openejb.asm.AnnotationVisitor;
+import org.apache.openejb.asm.ClassReader;
+import org.apache.openejb.asm.FieldVisitor;
+import org.apache.openejb.asm.MethodVisitor;
+import org.apache.openejb.asm.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
@@ -58,7 +58,7 @@ public class PersistenceContextAnnFactory {
         try {
             URL u = c.getResource("/" + c.getName().replace('.', '/') + ".class");
             ClassReader r = new ClassReader(u.openStream());
-            r.accept(new PersistenceContextReader(), true);
+            r.accept(new PersistenceContextReader(), ClassReader.SKIP_DEBUG);
         } catch (IOException e) {
             throw new OpenEJBException("Unable to read class " + c.getName());
         }

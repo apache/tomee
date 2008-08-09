@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.util;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.apache.openejb.asm.ClassWriter;
+import org.apache.openejb.asm.MethodVisitor;
+import org.apache.openejb.asm.Opcodes;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +47,7 @@ public class MakeTxLookup implements Opcodes {
 
         String sourceFileName = factory.substring(factory.lastIndexOf('.')+1, factory.length()) + ".java";
 
-        ClassWriter cw = new ClassWriter(false);
+        ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "java/lang/Object", new String[]{"org/hibernate/transaction/TransactionManagerLookup"});
@@ -94,7 +94,7 @@ public class MakeTxLookup implements Opcodes {
         String sourceFileName = factory.substring(factory.lastIndexOf('.')+1, factory.length()) + ".java";
 
 
-        ClassWriter cw = new ClassWriter(false);
+        ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "oracle/toplink/essentials/transaction/JTATransactionController", null);
@@ -133,7 +133,7 @@ public class MakeTxLookup implements Opcodes {
         String sourceFileName = factory.substring(factory.lastIndexOf('.')+1, factory.length()) + ".java";
 
 
-        ClassWriter cw = new ClassWriter(false);
+        ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classFilePath, null, "org/eclipse/persistence/transaction/JTATransactionController", null);

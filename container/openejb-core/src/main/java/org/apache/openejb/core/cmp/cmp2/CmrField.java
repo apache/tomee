@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.objectweb.asm.Type;
+import org.apache.openejb.asm.Type;
 
 public class CmrField {
     private final String name;

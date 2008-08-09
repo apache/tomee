@@ -60,7 +60,7 @@ public class GeronimoTransactionManagerFactory {
             SystemInstance.get().setComponent(XAResourceWrapper.class, new GeronimoXAResourceWrapper());
             
             xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID: tmId);
-            txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
+            txLog = new HOWLLog(bufferClassName == null ? "org.apache.howl.log.BlockLogBuffer" : bufferClassName,
                     bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
                     checksumEnabled,
                     adler32Checksum,

@@ -85,7 +85,7 @@ import org.apache.openejb.jee.ConcurrencyType;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.ClassFinder;
+import org.apache.openejb.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

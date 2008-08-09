@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.openejb.finder.ResourceFinder;
 
 import java.util.Properties;
 import java.io.PrintStream;

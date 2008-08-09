@@ -70,8 +70,8 @@
       <version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-finder</artifactId>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>asm-finder</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>
@@ -88,3 +88,4 @@
     </dependency>
   </dependencies>
 </project>
+

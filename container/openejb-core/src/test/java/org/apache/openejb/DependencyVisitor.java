@@ -45,15 +45,15 @@
  */
 package org.apache.openejb;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.signature.SignatureVisitor;
-import org.objectweb.asm.signature.SignatureReader;
+import org.apache.openejb.asm.AnnotationVisitor;
+import org.apache.openejb.asm.ClassVisitor;
+import org.apache.openejb.asm.FieldVisitor;
+import org.apache.openejb.asm.MethodVisitor;
+import org.apache.openejb.asm.Attribute;
+import org.apache.openejb.asm.Type;
+import org.apache.openejb.asm.Label;
+import org.apache.openejb.asm.signature.SignatureVisitor;
+import org.apache.openejb.asm.signature.SignatureReader;
 
 import java.util.Set;
 import java.util.HashSet;

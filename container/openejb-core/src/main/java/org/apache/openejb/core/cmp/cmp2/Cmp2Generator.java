@@ -29,12 +29,12 @@ import java.util.Map;
 
 import javax.ejb.EntityContext;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.apache.openejb.asm.ClassWriter;
+import org.apache.openejb.asm.FieldVisitor;
+import org.apache.openejb.asm.Label;
+import org.apache.openejb.asm.MethodVisitor;
+import org.apache.openejb.asm.Opcodes;
+import org.apache.openejb.asm.Type;
 
 /**
  * Code generate for CMP level 2 beans.  This will 
@@ -138,7 +138,7 @@ public class Cmp2Generator implements Opcodes {
         // The class writer will be used for all generator activies, while the 
         // postCreateGenerator will be used to add the ejbPostCreatexxxx methods as a 
         // last step. 
-        cw = new ClassWriter(true);
+        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }
 

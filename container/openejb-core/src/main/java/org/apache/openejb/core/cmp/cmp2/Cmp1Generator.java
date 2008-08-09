@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.FieldVisitor;
+import org.apache.openejb.asm.ClassWriter;
+import org.apache.openejb.asm.MethodVisitor;
+import org.apache.openejb.asm.Opcodes;
+import org.apache.openejb.asm.Type;
+import org.apache.openejb.asm.FieldVisitor;
 
 /**
  * Class for generating a class file that implements 
@@ -44,7 +44,7 @@ public class Cmp1Generator implements Opcodes {
         beanClassName = Type.getInternalName(beanClass);
         implClassName = cmpImplClass.replace('.', '/');
 
-        cw = new ClassWriter(true);
+        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         postCreateGenerator = new PostCreateGenerator(beanClass, cw);
     }

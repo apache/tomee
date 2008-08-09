@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.EmptyVisitor;
+import org.apache.openejb.asm.ClassReader;
+import org.apache.openejb.asm.Opcodes;
+import org.apache.openejb.asm.commons.EmptyVisitor;
 
 /**
  * ClassLoader implementation that allows classes to be temporarily
@@ -126,7 +126,7 @@ public class TempClassLoader extends URLClassLoader {
     private static boolean isAnnotationClass(byte[] bytes) {
         IsAnnotationVisitor isAnnotationVisitor = new IsAnnotationVisitor();
         ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(isAnnotationVisitor, true);
+        classReader.accept(isAnnotationVisitor, ClassReader.SKIP_DEBUG);
         return isAnnotationVisitor.isAnnotation;
     }
 

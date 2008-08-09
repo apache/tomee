@@ -24,7 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.openejb.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.FileNotFoundException;

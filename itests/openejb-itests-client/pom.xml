@@ -113,8 +113,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-finder</artifactId>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>asm-finder</artifactId>
     </dependency>
   </dependencies>
 </project>
+

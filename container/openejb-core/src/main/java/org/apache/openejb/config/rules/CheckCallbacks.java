@@ -30,7 +30,7 @@ import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.RemoveMethod;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.OpenEJBException;
-import org.apache.xbean.finder.ClassFinder;
+import org.apache.openejb.finder.ClassFinder;
 
 import javax.interceptor.InvocationContext;
 import javax.ejb.PrePassivate;

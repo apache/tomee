@@ -50,7 +50,7 @@ import org.apache.openejb.core.transaction.TransactionContainer;
 import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.xbean.finder.ClassFinder;
+import org.apache.openejb.finder.ClassFinder;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"

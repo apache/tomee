@@ -27,7 +27,7 @@ import java.util.HashMap;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.apache.xbean.finder.ResourceFinder;
+import org.apache.openejb.finder.ResourceFinder;
 
 public class DTDResolver implements EntityResolver {
     public static HashMap dtds = new HashMap();

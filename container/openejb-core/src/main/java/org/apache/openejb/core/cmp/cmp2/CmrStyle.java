@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.lang.reflect.Method;
 
-import org.objectweb.asm.Type;
+import org.apache.openejb.asm.Type;
 
 public enum CmrStyle {
     SINGLE(SingleValuedCmr.class, null, null),
