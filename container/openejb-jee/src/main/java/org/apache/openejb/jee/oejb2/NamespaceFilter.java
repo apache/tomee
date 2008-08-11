@@ -151,12 +151,27 @@ public class NamespaceFilter extends XMLFilterImpl {
 
     //String uri, String localName, String qName, Attributes atts
     public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+
         if (uri.startsWith("http://openejb.apache.org/xml/ns/openejb-jar-2")){
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
         } else if (uri.startsWith("http://www.openejb.org/xml/ns/openejb-jar-2")){
             uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+        } else if (uri.startsWith("http://openejb.org/xml/ns/openejb-jar-2")){
+            uri = "http://openejb.apache.org/xml/ns/openejb-jar-2.2";
+        } else if (uri.startsWith("http://openejb.apache.org/xml/ns/pkgen-2")){
+            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
         } else if (uri.startsWith("http://www.openejb.org/xml/ns/pkgen-2")){
             uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
+        } else if (uri.startsWith("http://openejb.org/xml/ns/pkgen-2")){
+            uri = "http://openejb.apache.org/xml/ns/pkgen-2.1";
+        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/deployment-1")){
+            uri = "http://geronimo.apache.org/xml/ns/deployment-1.2";
+        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/j2ee/application-1")) {
+            uri = "http://geronimo.apache.org/xml/ns/j2ee/application-1.2";
+        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/naming-1")) {
+            uri = "http://geronimo.apache.org/xml/ns/naming-1.2";
+        } else if (uri.startsWith("http://geronimo.apache.org/xml/ns/security-2")) {
+            uri = "http://geronimo.apache.org/xml/ns/security-2.0";
         }
 
         String previousNs = visibleNamespaces.peek();
