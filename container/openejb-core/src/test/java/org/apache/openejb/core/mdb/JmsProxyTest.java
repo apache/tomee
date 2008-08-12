@@ -52,7 +52,7 @@ public class JmsProxyTest extends TestCase {
 
         // initialize properties
         ra.setServerUrl("tcp://localhost:61616");
-        ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
+        ra.setBrokerXmlConfig(getBrokerXmlConfig());
 
         // create a thead pool for ActiveMQ
         Executor threadPool = Executors.newFixedThreadPool(30);
@@ -71,6 +71,10 @@ public class JmsProxyTest extends TestCase {
         }
         // Create a ConnectionFactory
         connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
+
+    protected String getBrokerXmlConfig() {
+        return "broker:(tcp://localhost:61616)?useJmx=false";
     }
 
     protected void tearDown() throws Exception {

@@ -115,7 +115,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         // prefix server uri with openejb: so our broker factory is used
         String brokerXmlConfig = getBrokerXmlConfig();
-        if (brokerXmlConfig != null) {
+        if (brokerXmlConfig != null && brokerXmlConfig.startsWith("broker:")) {
             try {
                 URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
                 compositeData.getParameters().put("persistent", "false");
