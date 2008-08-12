@@ -42,7 +42,7 @@
       <plugin>
         <groupId>com.envoisolutions.sxc</groupId>
         <artifactId>sxc-jaxb-maven-plugin</artifactId>
-        <version>0.7-SNAPSHOT</version>
+        <version>0.7.2</version>
         <executions>
           <execution>
               <configuration>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>com.envoisolutions.sxc</groupId>
       <artifactId>sxc-jaxb</artifactId>
-      <version>0.7-SNAPSHOT</version>
+      <version>0.7.2</version>
       <exclusions>
         <exclusion>
           <groupId>stax</groupId>
