@@ -310,13 +310,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         for (Container declaration : openejb.getContainer()) {
-            Class<? extends ContainerInfo> infoClass = getContainerInfoType(declaration.getType());
-            if (infoClass == null) {
-                throw new OpenEJBException(messages.format("unrecognizedContainerType", declaration.getType()));
-            }
-
-            ContainerInfo info = configureService(declaration, infoClass);
-
+            ContainerInfo info = createContainerInfo(declaration);
             sys.containerSystem.containers.add(info);
         }
 
@@ -384,6 +378,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
 
         return sys;
+    }
+
+    public ContainerInfo createContainerInfo(Container container) throws OpenEJBException {
+        Class<? extends ContainerInfo> infoClass = getContainerInfoType(container.getType());
+        if (infoClass == null) {
+            throw new OpenEJBException(messages.format("unrecognizedContainerType", container.getType()));
+        }
+
+        ContainerInfo info = configureService(container, infoClass);
+        return info;
     }
 
     private static boolean getBooleanOption(String name, boolean defaultValue) {

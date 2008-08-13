@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.util;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.Binding;
-import javax.naming.NamingEnumeration;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.Iterator;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 
 /**
  * @version $Rev$ $Date$
@@ -38,7 +38,7 @@ public class Debug {
     }
 
     public static Map<String,Object> contextToMap(Context context) throws NamingException {
-        Map<String, Object> map = new TreeMap<String, Object>();
+        Map<String, Object> map = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         contextToMap(context, "", map);
         return map;
     }
@@ -63,9 +63,20 @@ public class Debug {
 
     public static Map<String,Object> printContext(Context context, PrintStream out) throws NamingException {
         Map<String, Object> map = contextToMap(context);
-        for (Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<String, Object> entry = iterator.next();
+        for (Entry<String, Object> entry : map.entrySet()) {
             out.println(entry.getKey() + "=" + entry.getValue().getClass().getName());
+        }
+        return map;
+    }
+
+    public static Map<String,Object> printContextValues(Context context) throws NamingException {
+        return printContextValues(context, System.out);
+    }
+
+    public static Map<String,Object> printContextValues(Context context, PrintStream out) throws NamingException {
+        Map<String, Object> map = contextToMap(context);
+        for (Entry<String, Object> entry : map.entrySet()) {
+            out.println(entry.getKey() + "=" + entry.getValue());
         }
         return map;
     }

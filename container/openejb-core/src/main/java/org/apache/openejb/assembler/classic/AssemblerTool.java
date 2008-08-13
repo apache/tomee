@@ -22,10 +22,8 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 
 import javax.transaction.TransactionManager;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.List;
 import java.util.Map;
 
 public class AssemblerTool {

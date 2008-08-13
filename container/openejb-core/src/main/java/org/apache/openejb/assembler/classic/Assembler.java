@@ -34,7 +34,6 @@ import java.util.TreeMap;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.LinkedHashSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -88,12 +87,10 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.References;
-import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
@@ -118,7 +115,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final JndiBuilder jndiBuilder;
     private TransactionManager transactionManager;
     private SecurityService securityService;
-    private OpenEjbConfigurationFactory configFactory;
+    protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
 
@@ -261,7 +258,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public void build() throws OpenEJBException {
         setContext(new HashMap<String, Object>());
         try {
-            OpenEjbConfiguration config = configFactory.getOpenEjbConfiguration();
+            OpenEjbConfiguration config = getOpenEjbConfiguration();
             buildContainerSystem(config);
         } catch (OpenEJBException ae) {
             /* OpenEJBExceptions contain useful information and are debbugable.
@@ -279,6 +276,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         } finally {
             context.set(null);
         }
+    }
+
+    protected OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
+        OpenEjbConfiguration config = configFactory.getOpenEjbConfiguration();
+        return config;
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -834,9 +836,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
-        serviceRecipe.setProperty("id", new StaticRecipe(serviceInfo.id));
-        serviceRecipe.setProperty("transactionManager", new StaticRecipe(props.get(TransactionManager.class.getName())));
-        serviceRecipe.setProperty("securityService", new StaticRecipe(props.get(SecurityService.class.getName())));
+        serviceRecipe.setProperty("id", serviceInfo.id);
+        serviceRecipe.setProperty("transactionManager", props.get(TransactionManager.class.getName()));
+        serviceRecipe.setProperty("securityService", props.get(SecurityService.class.getName()));
 
         // MDB container has a resource adapter string name that
         // must be replaced with the real resource adapter instance
@@ -1054,7 +1056,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
 
         Object object = props.get("TransactionManager");
-        serviceRecipe.setProperty("transactionManager", new StaticRecipe(object));
+        serviceRecipe.setProperty("transactionManager", object);
 
         Object service = serviceRecipe.create();
 
@@ -1187,7 +1189,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private ObjectRecipe createRecipe(ServiceInfo info) {
         Logger serviceLogger = logger.getChildLogger("service");
         serviceLogger.info("createService", info.service, info.id, info.className);
-        ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, info.constructorArgs.toArray(new String[0]), null);
+        String[] constructorArgs = info.constructorArgs.toArray(new String[info.constructorArgs.size()]);
+        ObjectRecipe serviceRecipe = new ObjectRecipe(info.className, info.factoryMethod, constructorArgs, null);
         serviceRecipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         serviceRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         serviceRecipe.setAllProperties(info.properties);
