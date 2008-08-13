@@ -160,7 +160,7 @@ import java.util.Collections;
  */
 public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
-
+    public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ValidationContext> validationContext = new ThreadLocal<ValidationContext>();
 
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
@@ -280,7 +280,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             try {
                 finder = new ClassFinder(webModule.getClassLoader());
             } catch (Exception e) {
-                DeploymentLoader.logger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. ClassFinder failed.", e);
+                startupLogger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. ClassFinder failed.", e);
                 return webModule;
             }
 
@@ -326,14 +326,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     finder = new ClassFinder(ejbModule.getClassLoader(), url);
                 } catch (MalformedURLException e) {
-                    DeploymentLoader.logger.warning("startup.scrapeFailedForModule", ejbModule.getJarLocation());
+                    startupLogger.warning("startup.scrapeFailedForModule", ejbModule.getJarLocation());
                     return ejbModule;
                 }
             } else {
                 try {
                     finder = new ClassFinder(ejbModule.getClassLoader());
                 } catch (Exception e) {
-                    DeploymentLoader.logger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. ClassFinder failed.", e);
+                    startupLogger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. ClassFinder failed.", e);
                     return ejbModule;
                 }
             }
