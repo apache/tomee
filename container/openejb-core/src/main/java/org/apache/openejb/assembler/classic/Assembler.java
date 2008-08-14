@@ -429,6 +429,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+        createApplication(appInfo, classLoader, true);
+    }
+
+    public List<DeploymentInfo> createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
 
         logger.info("createApplication.start", appInfo.jarPath);
 
@@ -560,13 +564,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             allDeployments = sort(allDeployments);
 
             // now that everything is configured, deploy to the container
-            for (DeploymentInfo deployment : allDeployments) {
-                try {
-                    Container container = deployment.getContainer();
-                    container.deploy(deployment);
-                    logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
-                } catch (Throwable t) {
-                    throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
+            if (start) {
+                for (DeploymentInfo deployment : allDeployments) {
+                    try {
+                        Container container = deployment.getContainer();
+                        container.deploy(deployment);
+                        logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                    } catch (Throwable t) {
+                        throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
+                    }
                 }
             }
 
@@ -603,13 +609,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 webAppBuilder.deployWebApps(appInfo, classLoader);
             }
 
-            EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
-            globalEjbResolver.addAll(appInfo.ejbJars);
+            if (start) {
+                EjbResolver globalEjbResolver = systemInstance.getComponent(EjbResolver.class);
+                globalEjbResolver.addAll(appInfo.ejbJars);
+            }
 
             logger.info("createApplication.success", appInfo.jarPath);
 
             deployedApplications.put(appInfo.jarPath, appInfo);
             fireAfterApplicationCreated(appInfo);
+
+            return allDeployments;
         } catch (Throwable t) {
             try {
                 destroyApplication(appInfo);

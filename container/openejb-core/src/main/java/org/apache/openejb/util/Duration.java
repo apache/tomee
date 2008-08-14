@@ -221,14 +221,7 @@ public class Duration {
 
 
     static {
-        PropertyEditorManager.registerEditor(Duration.class, Editor.class);
-    }
-
-    public static class Editor extends java.beans.PropertyEditorSupport {
-        public void setAsText(String text) {
-            Duration d = parse(text);
-            setValue(d);
-        }
+        PropertyEditorManager.registerEditor(Duration.class, DurationEditor.class);
     }
 
     public static enum Unit {

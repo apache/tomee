@@ -81,6 +81,15 @@
         <property name="username" value="sa"/>
     </bean>
 
+    <bean name="classPathApplication" class="org.apache.openejb.spring.Application">
+        <property name="openEJB" ref="OpenEJB"/>
+    </bean>
+
+    <bean name="EchoBean" class="org.apache.openejb.spring.EJB">
+        <property name="application" ref="classPathApplication"/>
+        <property name="deploymentId" value="EchoBean"/>
+    </bean>
+
     <bean id="openejbDS" class="org.apache.openejb.spring.OpenEJBDataSource" depends-on="OpenEJB">
         <property name="resourceId" value="ds"/>
     </bean>

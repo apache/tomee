@@ -82,6 +82,10 @@ public class OpenEJB implements ApplicationContextAware{
     private Throwable initialized;
     private ApplicationContext applicationContext;
 
+    public SpringAssembler getAssembler() {
+        return assembler;
+    }
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }

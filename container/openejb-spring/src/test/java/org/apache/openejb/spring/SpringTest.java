@@ -109,6 +109,16 @@ public class SpringTest extends TestCase {
         Container cmpContainer = containerSystem.getContainer("Spring Defined CmpContainer");
         assertTrue("cmpContainer should be an instance of CmpContainer", cmpContainer instanceof org.apache.openejb.core.cmp.CmpContainer);
 
+        //
+        // ClassPath Application
+        //
+        Application application = (Application) context.getBean("classPathApplication");
+
+        //
+        // EJB
+        //
+        EJB ejb = (EJB) context.getBean("EchoBean");
+
         System.out.println();
         System.out.println();
         Debug.printContext(initialContext);

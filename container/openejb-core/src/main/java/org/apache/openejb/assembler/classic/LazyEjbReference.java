@@ -75,7 +75,7 @@ public class LazyEjbReference extends Reference {
 
         DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
 
-        if (deploymentId == null) {
+        if (deploymentInfo == null) {
             String message = messages.format("deploymentNotFound", info.getName(), deploymentId);
             throw new NameNotFoundException(message);
         }
