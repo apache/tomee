@@ -25,15 +25,19 @@ import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
 import java.io.Closeable;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
+import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Permission;
+import java.security.ProtectionDomain;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -49,6 +53,8 @@ public class Agent {
         Agent.agentArgs = agentArgs;
         Agent.instrumentation = instrumentation;
         initialized = true;
+
+        instrumentation.addTransformer(new BootstrapTransformer());
     }
 
     public static void agentmain(String agentArgs, Instrumentation instrumentation) {
@@ -221,6 +227,45 @@ public class Agent {
             try {
                 closeable.close();
             } catch (IOException ignored) {
+            }
+        }
+    }
+
+    private static class BootstrapTransformer implements ClassFileTransformer {
+        private boolean done;
+
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+
+            try {
+                bootstrap(loader);
+            } catch (Throwable e) {
+                done = true;
+            }
+
+            return classfileBuffer;
+        }
+
+        private void bootstrap(ClassLoader loader) {
+            if (loader == null || done) return;
+
+            String bootstrapClassName = "org.apache.openejb.persistence.PersistenceBootstrap";
+            String bootstrapClassFile = "org/apache/openejb/persistence/PersistenceBootstrap.class";
+
+            if (loader.getResource(bootstrapClassFile) == null) {
+                return;
+            }
+
+            // We found the classloader that has the openejb-core jar
+            // we need to mark ourselves as "done" so that when we attempt to load
+            // the PersistenceBootstrap class it doesn't cause an infinite loop
+            done = true;
+
+            try {
+                Class<?> bootstrapClass = loader.loadClass(bootstrapClassName);
+                Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
+                bootstrap.invoke(null, loader);
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
         }
     }
