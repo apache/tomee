@@ -83,7 +83,7 @@ public class SpringAssembler extends Assembler {
         //
         // Resources
         //
-        for (Resource resource : openEJB.getResources()) {
+        for (ResourceProvider resource : openEJB.getResources()) {
             ResourceInfo info = configurationFactory.configureService(resource.getResourceDefinition(), ResourceInfo.class);
             importedResourceIds.add(info.id);
             configuration.facilities.resources.add(info);

@@ -19,36 +19,10 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanNameAware;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.OpenEJBException;
 
-public class BmpContainer implements ContainerProvider, BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class BmpContainer extends AbstractContainerProvider {
     private Integer poolSize;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
 
     public Integer getPoolSize() {
         return poolSize;
@@ -58,26 +32,15 @@ public class BmpContainer implements ContainerProvider, BeanNameAware {
         this.poolSize = poolSize;
     }
 
-    public Container getContainerDefinition() throws OpenEJBException {
-        Container container = new Container();
-        container.setCtype(BeanTypes.BMP_ENTITY);
+    protected String getContainerType() {
+        return BeanTypes.BMP_ENTITY;
+    }
 
-        if (id != null) {
-            container.setId(id);
-        } else if (beanName != null) {
-            container.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for BmpContainer");
-        }
-
-        if (provider != null) {
-            container.setProvider(provider);
-        }
-
-        Properties properties = container.getProperties();
+    protected Properties getProperties() {
+        Properties properties = new Properties();
         if (poolSize != null) {
             properties.put("PoolSize", poolSize);
         }
-        return container;
+        return properties;
     }
 }

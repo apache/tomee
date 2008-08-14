@@ -17,33 +17,10 @@
  */
 package org.apache.openejb.spring;
 
-import java.util.Properties;
-
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.config.sys.Container;
-import org.springframework.beans.factory.BeanNameAware;
 
-public class SingletonContainer extends AbstractContainerProvider {
-    private String accessTimeout;
+import org.apache.openejb.config.sys.Resource;
 
-    public String getAccessTimeout() {
-        return accessTimeout;
-    }
-
-    public void setAccessTimeout(String accessTimeout) {
-        this.accessTimeout = accessTimeout;
-    }
-
-    protected String getContainerType() {
-        return BeanTypes.SINGLETON;
-    }
-
-    protected Properties getProperties() {
-        Properties properties = new Properties();
-        if (accessTimeout != null) {
-            properties.setProperty("AccessTimeout", accessTimeout);
-        }
-        return properties;
-    }
+public interface ResourceProvider {
+    Resource getResourceDefinition() throws OpenEJBException;
 }

@@ -17,40 +17,11 @@
  */
 package org.apache.openejb.spring;
 
-import javax.naming.Context;
 import javax.sql.DataSource;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.springframework.beans.factory.FactoryBean;
-
 @Exported
-public class OpenEJBDataSource implements FactoryBean {
-    private String resourceId;
-
-    public String getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public Object getObject() throws Exception {
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        if (containerSystem == null) return null;
-        Context initialContext = containerSystem.getJNDIContext();
-        if (initialContext == null) return null;
-
-        DataSource dataSource = (DataSource) initialContext.lookup("openejb/Resource/" + resourceId);
-        return dataSource;
-    }
-
-    public Class getObjectType() {
-        return DataSource.class;
-    }
-
-    public boolean isSingleton() {
-        return false;
+public class OpenEJBDataSource extends OpenEJBResource<DataSource> {
+    public OpenEJBDataSource() {
+        super(DataSource.class);
     }
 }

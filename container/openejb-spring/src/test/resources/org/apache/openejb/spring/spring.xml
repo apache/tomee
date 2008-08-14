@@ -33,6 +33,7 @@
             <list>
                 <bean class="org.apache.openejb.spring.SingletonContainer">
                     <property name="id" value="Spring Defined SingletonContainer"/>
+                    <property name="accessTimeout" value="45 sec"/>
                 </bean>
                 <bean class="org.apache.openejb.spring.StatelessContainer">
                     <property name="id" value="Spring Defined StatelessContainer"/>
@@ -72,24 +73,32 @@
         </property>
     </bean>
 
+    <!-- Spring declared TransactionManager which is automatically imported -->
     <bean name="tm" class="org.apache.openejb.spring.MockTransactionManager"/>
+
+    <!-- Spring declared SecurityService which is automatically imported -->
     <bean name="sec" class="org.apache.openejb.spring.MockSecurityService"/>
 
+    <!-- Spring declared DataSource which is imported into OpenEJB -->
     <bean id="ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:file:data/hsqldb/hsqldb"/>
         <property name="username" value="sa"/>
     </bean>
 
+    <!-- An Application containing all EJBs in the classloader -->
     <bean name="classPathApplication" class="org.apache.openejb.spring.Application">
         <property name="openEJB" ref="OpenEJB"/>
     </bean>
 
+    <!-- Deploys the classPathApplication, the EchoBean and return a proxy -->
     <bean name="EchoBean" class="org.apache.openejb.spring.EJB">
         <property name="application" ref="classPathApplication"/>
         <property name="deploymentId" value="EchoBean"/>
+        <property name="interface" value="org.apache.openejb.spring.Echo"/>
     </bean>
 
+    <!-- DataSource exported from OpenEJB -->
     <bean id="openejbDS" class="org.apache.openejb.spring.OpenEJBDataSource" depends-on="OpenEJB">
         <property name="resourceId" value="ds"/>
     </bean>

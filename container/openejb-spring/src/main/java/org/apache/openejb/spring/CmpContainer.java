@@ -19,36 +19,10 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanNameAware;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.OpenEJBException;
 
-public class CmpContainer implements ContainerProvider, BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class CmpContainer extends AbstractContainerProvider {
     private String cmpEngineFactory;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
 
     public String getCmpEngineFactory() {
         return cmpEngineFactory;
@@ -58,26 +32,15 @@ public class CmpContainer implements ContainerProvider, BeanNameAware {
         this.cmpEngineFactory = cmpEngineFactory;
     }
 
-    public Container getContainerDefinition() throws OpenEJBException {
-        Container container = new Container();
-        container.setCtype(BeanTypes.CMP_ENTITY);
+    protected String getContainerType() {
+        return BeanTypes.CMP_ENTITY;
+    }
 
-        if (id != null) {
-            container.setId(id);
-        } else if (beanName != null) {
-            container.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for CmpContainer");
-        }
-
-        if (provider != null) {
-            container.setProvider(provider);
-        }
-
-        Properties properties = container.getProperties();
+    protected Properties getProperties() {
+        Properties properties = new Properties();
         if (cmpEngineFactory != null) {
             properties.put("CmpEngineFactory", cmpEngineFactory);
         }
-        return container;
+        return properties;
     }
 }

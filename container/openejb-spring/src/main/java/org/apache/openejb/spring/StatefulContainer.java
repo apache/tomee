@@ -19,39 +19,13 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanNameAware;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.OpenEJBException;
 
-public class StatefulContainer implements ContainerProvider, BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class StatefulContainer extends AbstractContainerProvider {
     private String passivator;
     private Integer timeOut;
     private Integer poolSize;
     private Integer bulkPassivate;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
 
     public String getPassivator() {
         return passivator;
@@ -85,23 +59,12 @@ public class StatefulContainer implements ContainerProvider, BeanNameAware {
         this.bulkPassivate = bulkPassivate;
     }
 
-    public Container getContainerDefinition() throws OpenEJBException {
-        Container container = new Container();
-        container.setCtype(BeanTypes.STATEFUL);
+    protected String getContainerType() {
+        return BeanTypes.STATEFUL;
+    }
 
-        if (id != null) {
-            container.setId(id);
-        } else if (beanName != null) {
-            container.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for StatefulContainer");
-        }
-
-        if (provider != null) {
-            container.setProvider(provider);
-        }
-
-        Properties properties = container.getProperties();
+    protected Properties getProperties() {
+        Properties properties = new Properties();
         if (passivator != null) {
             properties.put("Passivator", passivator);
         }
@@ -114,6 +77,6 @@ public class StatefulContainer implements ContainerProvider, BeanNameAware {
         if (bulkPassivate != null) {
             properties.put("BulkPassivate", bulkPassivate);
         }
-        return container;
+        return properties;
     }
 }

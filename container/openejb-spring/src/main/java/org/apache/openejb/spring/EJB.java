@@ -19,15 +19,18 @@ package org.apache.openejb.spring;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Required;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Required;
 
-public class EJB {
+@Exported
+public class EJB<T> implements FactoryBean {
     private Application application;
     private Object deploymentId;
+    private Class<T> intf;
 
     public Application getApplication() {
         return application;
@@ -47,14 +50,47 @@ public class EJB {
         this.deploymentId = deploymentId;
     }
 
+    public Class<T> getInterface() {
+        return intf;
+    }
+
+    @Required
+    public void setInterface(Class<T> intf) {
+        this.intf = intf;
+    }
+
     @PostConstruct
     public void start() throws OpenEJBException {
+    }
+
+    public T getObject() throws Exception {
         if (application == null) throw new NullPointerException("application is null");
         if (deploymentId == null) throw new NullPointerException("deploymentId is null");
+        if (intf == null) throw new NullPointerException("intf is null");
 
         application.startEjb(deploymentId);
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
+        if (deploymentInfo == null) {
+            throw new IllegalArgumentException("Unknwon EJB " + deploymentInfo);
+        }
+        
+        String jndiName = "java:openejb/Deployment/" + deploymentId + "/" + getInterface().getName();
+
+        Object proxy = containerSystem.getJNDIContext().lookup(jndiName);
+        if (!intf.isInstance(proxy)) {
+            throw new IllegalArgumentException(
+                    "EJB at " + jndiName + " is not an instance of " + intf.getName() + ", but is " + proxy.getClass().getName());
+        }
+        return intf.cast(proxy);
+    }
+
+    public Class<T> getObjectType() {
+        return getInterface();
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 }

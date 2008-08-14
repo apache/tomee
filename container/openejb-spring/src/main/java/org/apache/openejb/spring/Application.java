@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.PostConstruct;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
@@ -40,17 +40,21 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.springframework.beans.factory.annotation.Required;
 
+@Exported
 public class Application {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Application.class);
     private final ConfigurationFactory configurationFactory = new ConfigurationFactory();
     private final List<AppInfo> applications = new ArrayList<AppInfo>();
-    private final Map<Object, DeploymentInfo> deployments = new LinkedHashMap<Object, DeploymentInfo>();
+    private final Map<Object, DeploymentInfo> notDeployed = new LinkedHashMap<Object, DeploymentInfo>();
 
     private OpenEJB openEJB;
     private boolean classpathAsEar = true;
+    private boolean started = false;
 
     public OpenEJB getOpenEJB() {
         return openEJB;
@@ -68,11 +72,13 @@ public class Application {
         this.classpathAsEar = classpathAsEar;
     }
 
-    @PostConstruct
-    public void start() throws Exception {
-        System.out.println();
-        System.out.println();
-        System.out.println();
+    // Do not make this the Spring start method
+    public void deployApplication() throws OpenEJBException {
+        // Ok someone made this the OpenEJB start method... ignore this deploy call
+        if (openEJB != null && openEJB.isStarting()) return;
+
+        if (started) return;
+        started = true;
 
         Set<String> declaredApplications = getDeployedApplications();
 
@@ -93,25 +99,35 @@ public class Application {
         Assembler assembler = getAssembler();
         if (classpathAsEar) {
             AppInfo appInfo = configurationFactory.configureApplication(classLoader, "classpath.ear", jarFiles);
-            List<DeploymentInfo> deployments = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), false);
-            for (DeploymentInfo deployment : deployments) {
-                this.deployments.put(deployment.getDeploymentID(), deployment);
-            }
-            applications.add(appInfo);
+            deployApplication(assembler, appInfo);
         } else {
             for (File jarFile : jarFiles) {
                 AppInfo appInfo = configurationFactory.configureApplication(jarFile);
-                List<DeploymentInfo> deployments = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), false);
-                for (DeploymentInfo deployment : deployments) {
-                    this.deployments.put(deployment.getDeploymentID(), deployment);
-                }
-                applications.add(appInfo);
+                deployApplication(assembler, appInfo);
             }
+        }
+    }
+
+    private void deployApplication(Assembler assembler, AppInfo appInfo) throws OpenEJBException {
+        try {
+            List<DeploymentInfo> deployments = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), false);
+            for (DeploymentInfo deployment : deployments) {
+                this.notDeployed.put(deployment.getDeploymentID(), deployment);
+            }
+            applications.add(appInfo);
+        } catch (Exception e) {
+            if (e instanceof OpenEJBException) {
+                throw (OpenEJBException) e;
+            }
+            throw new OpenEJBException("Error starting application " + appInfo.jarPath, e);
         }
     }
 
     @PreDestroy
     public void stop() {
+        if (!started) return;
+        started = false;
+
         for (AppInfo application : applications) {
             try {
                 getAssembler().destroyApplication(application.jarPath);
@@ -123,8 +139,20 @@ public class Application {
 
     public void startEjb(Object deploymentId) throws OpenEJBException {
         if (deploymentId == null) throw new NullPointerException("deploymentId is null");
-        DeploymentInfo deployment = deployments.get(deploymentId);
-        if (deployment == null) throw new IllegalArgumentException("Unknown deployment " + deploymentId);
+
+        deployApplication();
+
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        DeploymentInfo deployment = containerSystem.getDeploymentInfo(deploymentId);
+        if (deployment == null) {
+            throw new IllegalArgumentException("Unknwon EJB " + deployment);
+        }
+
+        deployment = notDeployed.remove(deploymentId);
+        if (deployment == null) {
+            // already deployed
+            return;
+        }
 
         Container container = deployment.getContainer();
         container.deploy(deployment);
@@ -158,25 +186,5 @@ public class Application {
             }
         }
         return declaredApps;
-    }
-
-    private static class ApplicationData {
-        private final AppInfo appInfo;
-        private final Map<Object, DeploymentInfo> deployments = new LinkedHashMap<Object, DeploymentInfo>();
-
-        private ApplicationData(AppInfo appInfo, List<DeploymentInfo> deployments) {
-            this.appInfo = appInfo;
-            for (DeploymentInfo deployment : deployments) {
-                this.deployments.put(deployment.getDeploymentID(), deployment);
-            }
-        }
-
-        public DeploymentInfo getDeploymentInfo(Object deploymentId) {
-            return deployments.get(deploymentId);
-        }
-
-        public DeploymentInfo removeDeploymentInfo(Object deploymentId) {
-            return deployments.remove(deploymentId);
-        }
     }
 }

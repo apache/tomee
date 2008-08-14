@@ -75,10 +75,11 @@ public class OpenEJB implements ApplicationContextAware{
 
     private final Collection<ContainerProvider> containers = new ArrayList<ContainerProvider>();
 
-    private final Collection<Resource> resources = new ArrayList<Resource>();
+    private final Collection<ResourceProvider> resources = new ArrayList<ResourceProvider>();
 
     private boolean importContext = true;
 
+    private boolean starting;
     private Throwable initialized;
     private ApplicationContext applicationContext;
 
@@ -131,16 +132,16 @@ public class OpenEJB implements ApplicationContextAware{
         return containers;
     }
 
-    public void setContainers(Collection<ContainerProvider> containers) {
+    public void setContainers(Collection<? extends ContainerProvider> containers) {
         this.containers.clear();
         this.containers.addAll(containers);
     }
 
-    public Collection<Resource> getResources() {
+    public Collection<ResourceProvider> getResources() {
         return resources;
     }
 
-    public void setResources(Collection<Resource> resources) {
+    public void setResources(Collection<? extends ResourceProvider> resources) {
         this.resources.clear();
         this.resources.addAll(resources);
     }
@@ -160,6 +161,10 @@ public class OpenEJB implements ApplicationContextAware{
 
         Context context = new org.apache.openejb.core.ivm.naming.InitContextFactory().getInitialContext(properties);
         return context;
+    }
+
+    public boolean isStarting() {
+        return starting;
     }
 
     public boolean isStarted() {
@@ -182,7 +187,14 @@ public class OpenEJB implements ApplicationContextAware{
                 throw new OpenEJBException(msg);
             }
         }
-        initialized = new Exception("Initialized at " + new Date()).fillInStackTrace();
+
+        //
+        // Is this bean already starting?  This helps avoid anoying spring loop backs.
+        //
+        if (starting) {
+            throw new OpenEJBException("OpenEJB already starting");
+        }
+        starting = true;
 
         //
         // System Instance
@@ -278,6 +290,8 @@ public class OpenEJB implements ApplicationContextAware{
         //
         // Done
         //
+        initialized = new Exception("Initialized at " + new Date()).fillInStackTrace();
+        starting = false;
         logger.debug("startup.ready");
     }
 

@@ -21,7 +21,5 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.Container;
 
 public interface ContainerProvider {
-    String getId();
-
     Container getContainerDefinition() throws OpenEJBException;
 }

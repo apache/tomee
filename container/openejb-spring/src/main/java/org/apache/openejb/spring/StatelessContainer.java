@@ -19,39 +19,13 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanNameAware;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.OpenEJBException;
 
-public class StatelessContainer implements ContainerProvider, BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class StatelessContainer extends AbstractContainerProvider {
     private String passivator;
     private Integer timeOut;
     private Integer poolSize;
     private Boolean strictPooling;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
 
     public String getPassivator() {
         return passivator;
@@ -85,23 +59,12 @@ public class StatelessContainer implements ContainerProvider, BeanNameAware {
         this.strictPooling = strictPooling;
     }
 
-    public Container getContainerDefinition() throws OpenEJBException {
-        Container container = new Container();
-        container.setCtype(BeanTypes.STATELESS);
+    protected String getContainerType() {
+        return BeanTypes.STATELESS;
+    }
 
-        if (id != null) {
-            container.setId(id);
-        } else if (beanName != null) {
-            container.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for StatelessContainer");
-        }
-
-        if (provider != null) {
-            container.setProvider(provider);
-        }
-
-        Properties properties = container.getProperties();
+    protected Properties getProperties() {
+        Properties properties = new Properties();
         if (passivator != null) {
             properties.put("Passivator", passivator);
         }
@@ -114,6 +77,6 @@ public class StatelessContainer implements ContainerProvider, BeanNameAware {
         if (strictPooling != null) {
             properties.put("StrictPooling", strictPooling);
         }
-        return container;
+        return properties;
     }
 }

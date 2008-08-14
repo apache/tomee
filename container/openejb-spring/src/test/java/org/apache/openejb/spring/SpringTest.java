@@ -110,17 +110,20 @@ public class SpringTest extends TestCase {
         assertTrue("cmpContainer should be an instance of CmpContainer", cmpContainer instanceof org.apache.openejb.core.cmp.CmpContainer);
 
         //
-        // ClassPath Application
-        //
-        Application application = (Application) context.getBean("classPathApplication");
-
-        //
         // EJB
         //
-        EJB ejb = (EJB) context.getBean("EchoBean");
+        Echo echo = (Echo) context.getBean("EchoBean");
+        assertNotNull("echo is null", echo);
+        assertEquals("olleH", echo.echo("Hello"));
 
         System.out.println();
         System.out.println();
         Debug.printContext(initialContext);
+
+
+        //
+        // Stop the Spring Context
+        //
+        context.destroy();
     }
 }

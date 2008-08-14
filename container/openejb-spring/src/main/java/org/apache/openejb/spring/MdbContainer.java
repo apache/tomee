@@ -19,39 +19,13 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.springframework.beans.factory.BeanNameAware;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.BeanTypes;
-import org.apache.openejb.OpenEJBException;
 
-public class MdbContainer implements ContainerProvider, BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class MdbContainer extends AbstractContainerProvider {
     private String resourceAdapter;
     private String messageListenerInterface;
     private String activationSpecClass;
     private Integer instanceLimit;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
 
     public String getResourceAdapter() {
         return resourceAdapter;
@@ -85,23 +59,12 @@ public class MdbContainer implements ContainerProvider, BeanNameAware {
         this.instanceLimit = instanceLimit;
     }
 
-    public Container getContainerDefinition() throws OpenEJBException {
-        Container container = new Container();
-        container.setCtype(BeanTypes.MESSAGE);
+    protected String getContainerType() {
+        return BeanTypes.MESSAGE;
+    }
 
-        if (id != null) {
-            container.setId(id);
-        } else if (beanName != null) {
-            container.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for MdbContainer");
-        }
-
-        if (provider != null) {
-            container.setProvider(provider);
-        }
-
-        Properties properties = container.getProperties();
+    protected Properties getProperties() {
+        Properties properties = new Properties();
         if (resourceAdapter != null) {
             properties.put("ResourceAdapter", resourceAdapter);
         }
@@ -114,6 +77,6 @@ public class MdbContainer implements ContainerProvider, BeanNameAware {
         if (instanceLimit != null) {
             properties.put("InstanceLimit", instanceLimit);
         }
-        return container;
+        return properties;
     }
 }

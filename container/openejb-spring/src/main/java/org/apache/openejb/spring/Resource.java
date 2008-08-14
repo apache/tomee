@@ -19,35 +19,9 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
-import org.apache.openejb.OpenEJBException;
-import org.springframework.beans.factory.BeanNameAware;
-
-public class Resource implements BeanNameAware {
-    private String id;
-    private String beanName;
-    private String provider;
+public class Resource extends AbstractResourceProvider {
     private String type;
-    private Properties properties;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
-    }
+    private final Properties properties = new Properties();
 
     public String getType() {
         return type;
@@ -62,31 +36,7 @@ public class Resource implements BeanNameAware {
     }
 
     public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
-    public org.apache.openejb.config.sys.Resource getResourceDefinition() throws OpenEJBException {
-        org.apache.openejb.config.sys.Resource resource = new org.apache.openejb.config.sys.Resource();
-
-        if (id != null) {
-            resource.setId(id);
-        } else if (beanName != null) {
-            resource.setId(beanName);
-        } else {
-            throw new OpenEJBException("No id defined for Resource");
-        }
-
-        if (provider != null) {
-            resource.setProvider(provider);
-        }
-
-        if (type != null) {
-            resource.setType(type);
-        }
-        
-        if (properties != null) {
-            resource.getProperties().putAll(properties);
-        }
-        return resource;
+        this.properties.clear();
+        this.properties.putAll(properties);
     }
 }
