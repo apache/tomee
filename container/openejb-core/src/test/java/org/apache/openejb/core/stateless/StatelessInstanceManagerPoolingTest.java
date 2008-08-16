@@ -17,7 +17,9 @@
  */
 package org.apache.openejb.core.stateless;
 
-import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -46,51 +48,100 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         Object object = ctx.lookup("CounterBeanLocal");
         assertTrue("instanceof counter", object instanceof Counter);
 
+        final CountDownLatch startPistol = new CountDownLatch(1);
+        final CountDownLatch startingLine = new CountDownLatch(10);
+        final CountDownLatch finishingLine = new CountDownLatch(30);
+
         final Counter counter = (Counter) object;
         // Do a business method...
         Runnable r = new Runnable(){
         	public void run(){
-        		counter.waitFor(10);        	
-        	}
+        		counter.race(startingLine, startPistol);
+                finishingLine.countDown();
+            }
         };
-        
+
+        //  -- READY --
+
         // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
-        for(int i=0;i<=30;i++){
-        	Thread t = new Thread(r);
-        	t.start();
-        	if(i==30) t.join();
+        for (int i = 0; i < 30; i++) {
+            Thread t = new Thread(r);
+            t.start();
         }
 
-        assertEquals(10,CounterBean.counter);
+        // Wait for the beans to reach the finish line
+        startingLine.await(1000, TimeUnit.MILLISECONDS);
+
+        //  -- SET --
+
+        assertEquals(10, CounterBean.instances.get());
+
+        //  -- GO --
+
+        startPistol.countDown(); // go
+
+        finishingLine.await(1000, TimeUnit.MILLISECONDS);
+
+        //  -- DONE --
+
+        assertEquals(10, CounterBean.instances.get());
 
     }
     
     public void testStatelessBeanTimeout() throws Exception {
-        InitialContext ctx = new InitialContext();            
+
+        InitialContext ctx = new InitialContext();
         Object object = ctx.lookup("CounterBeanLocal");
         assertTrue("instanceof counter", object instanceof Counter);
 
+        final CountDownLatch timeouts = new CountDownLatch(10);
+        final CountDownLatch startPistol = new CountDownLatch(1);
+        final CountDownLatch startingLine = new CountDownLatch(10);
+
         final Counter counter = (Counter) object;
+
         // Do a business method...
         Runnable r = new Runnable(){
         	public void run(){
         		try{
-        		    counter.waitFor(30);        		    
-        		}catch (Exception ex){
-        			ex.printStackTrace();
-        			assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
+                    counter.race(startingLine, startPistol);
+                }catch (Exception ex){
+                    comment("Leap Start");
+                    timeouts.countDown();
+                    assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
         		}
         	}
         };
-        
-        // How much ever the no of client invocations the count should be 10 as only 10 instances will be created.
-        for(int i=0;i<=40;i++){
-        	Thread t = new Thread(r);
-        	t.start();        	
+
+
+        comment("On your mark!");
+
+        for (int i = 0; i < 20; i++) {
+            Thread t = new Thread(r);
+            t.start();
         }
 
-        
-    	
+        // Wait for the beans to reach the finish line
+        assertTrue("expected 10 invocations", startingLine.await(3000, TimeUnit.MILLISECONDS));
+
+        comment("Get Set!");
+
+        // Wait for the other beans timeout
+        assertTrue("expected 10 timeouts", timeouts.await(3000, TimeUnit.MILLISECONDS));
+
+        assertEquals(10, CounterBean.instances.get());
+
+        comment("Go!");
+
+        startPistol.countDown(); // go
+    }
+
+    public static Object lock = new Object[]{};
+    private static void comment(String x) {
+//        synchronized(lock){
+//            System.out.println(x);
+//            System.out.flush();
+//        }
     }
 
     protected void setUp() throws Exception {
@@ -123,6 +174,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);
 
+        CounterBean.instances.set(0);
         assembler.createApplication(config.configureApplication(ejbJar));
 
     }
@@ -130,7 +182,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
  
     public static interface Counter {
         int count();
-        void waitFor(int i);
+        void race(CountDownLatch ready, CountDownLatch go);
     }
     
     @Remote
@@ -145,23 +197,27 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     @Stateless
     public static class CounterBean implements Counter, RemoteCounter {
 
-        public static int counter = 0;
+        public static AtomicInteger instances = new AtomicInteger();
+
+        private int count;
 
         public CounterBean() {
-        	counter++;
+            count = instances.incrementAndGet();
         }
         
         public int count(){
-        	return counter;
+        	return instances.get();
         }
 
-        public void waitFor(int i){
-        	try {
-				Thread.sleep(i);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        public void race(CountDownLatch ready, CountDownLatch go){
+            comment("ready = " + count);
+            ready.countDown();
+            try {
+                go.await();
+                comment("running = " + count);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
         }
         
         public void init(){
