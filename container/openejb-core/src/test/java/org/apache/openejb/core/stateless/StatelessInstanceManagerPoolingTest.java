@@ -121,7 +121,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
             t.start();
         }
 
-        // Wait for the beans to reach the finish line
+        // Wait for the beans to reach the start line
         assertTrue("expected 10 invocations", startingLine.await(3000, TimeUnit.MILLISECONDS));
 
         comment("Get Set!");
