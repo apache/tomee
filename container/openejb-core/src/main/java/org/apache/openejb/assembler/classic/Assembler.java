@@ -183,7 +183,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance system = SystemInstance.get();
 
         system.setComponent(Assembler.class, this);
-        
+
         containerSystem = new CoreContainerSystem();
         system.setComponent(ContainerSystem.class, containerSystem);
 
@@ -225,7 +225,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static void installNaming() {
         if (System.getProperty(DUCT_TAPE_PROPERTY) != null) return;
-        
+
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
@@ -436,8 +436,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         logger.info("createApplication.start", appInfo.jarPath);
 
-        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This 
-        // is a conflict we can't handle. 
+        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
+        // is a conflict we can't handle.
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -657,6 +657,25 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         });
     }
 
+    public void destroy() {
+        logger.debug("Undeploying Applications");
+        Assembler assembler = this;
+        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+            try {
+                assembler.destroyApplication(appInfo.jarPath);
+            } catch (UndeployException e) {
+                logger.error("Undeployment failed: " + appInfo.jarPath, e);
+            } catch (NoSuchApplicationException e) {
+            }
+        }
+
+        SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
+        SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
+        SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
+        SystemInstance.get().removeComponent(EjbResolver.class);
+        SystemInstance.reset();
+    }
+
     public void destroyApplication(String filePath) throws UndeployException, NoSuchApplicationException {
         AppInfo appInfo = deployedApplications.remove(filePath);
         if (appInfo == null) {
@@ -853,7 +872,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // MDB container has a resource adapter string name that
         // must be replaced with the real resource adapter instance
         replaceResourceAdapterProperty(serviceRecipe);
-        
+
         Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);

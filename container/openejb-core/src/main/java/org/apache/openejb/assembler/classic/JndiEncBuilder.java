@@ -20,6 +20,7 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -153,8 +154,7 @@ public class JndiEncBuilder {
         bindings.put("java:comp/TransactionManager", transactionManager);
 
         // bind TransactionSynchronizationRegistry
-        TransactionSynchronizationRegistry synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
-        bindings.put("java:comp/TransactionSynchronizationRegistry", synchronizationRegistry);
+        bindings.put("java:comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
 
         bindings.put("java:comp/ORB", new SystemComponentReference(ORB.class));
         bindings.put("java:comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));

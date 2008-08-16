@@ -34,4 +34,5 @@ public interface Assembler {
 
     public SecurityService getSecurityService();
 
+    public void destroy();
 }

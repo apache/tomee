@@ -19,7 +19,8 @@ package org.apache.openejb;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.transaction.TransactionManager;
+import javax.transaction.*;
+import javax.transaction.SystemException;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
@@ -46,7 +47,7 @@ public final class OpenEJB {
     public static TransactionManager getTransactionManager(){
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
-    
+
     public static class Instance {
         private static Messages messages = new Messages("org.apache.openejb.util.resources");
         private final Throwable initialized;
@@ -258,8 +259,15 @@ public final class OpenEJB {
     }
 
     public static void destroy() {
-        instance = null;
+        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        assembler.destroy();
+
         SystemInstance.get().removeComponent(ContainerSystem.class);
+        SystemInstance.get().removeComponent(Assembler.class);
+        SystemInstance.get().removeComponent(TransactionManager.class);
+        SystemInstance.get().removeComponent(SecurityService.class);
+        SystemInstance.reset();
+        instance = null;
     }
 
     /**

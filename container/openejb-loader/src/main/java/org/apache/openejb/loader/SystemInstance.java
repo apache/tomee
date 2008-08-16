@@ -151,17 +151,22 @@ public class SystemInstance {
     private static SystemInstance system;
 
     static {
-        try {
-            system = new SystemInstance(System.getProperties());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create default instance of SystemInstance", e);
-        }
+        reset();
     }
 
     private static boolean initialized;
 
     public static boolean isInitialized() {
         return initialized;
+    }
+
+    public static void reset(){
+        try {
+            system = new SystemInstance(System.getProperties());
+            initialized = false;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create default instance of SystemInstance", e);
+        }
     }
 
     public static void init(Properties properties) throws Exception {
