@@ -48,11 +48,11 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
-import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.BeanType;
@@ -70,6 +70,8 @@ import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
+import org.apache.openejb.core.transaction.SimpleWorkManager;
+import org.apache.openejb.core.transaction.SimpleBootstrapContext;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
@@ -183,7 +185,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance system = SystemInstance.get();
 
         system.setComponent(Assembler.class, this);
-
+        
         containerSystem = new CoreContainerSystem();
         system.setComponent(ContainerSystem.class, containerSystem);
 
@@ -225,7 +227,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static void installNaming() {
         if (System.getProperty(DUCT_TAPE_PROPERTY) != null) return;
-
+        
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
@@ -436,8 +438,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         logger.info("createApplication.start", appInfo.jarPath);
 
-        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
-        // is a conflict we can't handle.
+        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This 
+        // is a conflict we can't handle. 
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -872,7 +874,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // MDB container has a resource adapter string name that
         // must be replaced with the real resource adapter instance
         replaceResourceAdapterProperty(serviceRecipe);
-
+        
         Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);
@@ -988,22 +990,32 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (service instanceof ResourceAdapter) {
             ResourceAdapter resourceAdapter = (ResourceAdapter) service;
 
-            // resource adapters only work with a geronimo transaction manager
-            if (!(transactionManager instanceof GeronimoTransactionManager)) {
-                throw new OpenEJBException(messages.format("assembler.requiresGeronimoTX"));
-            }
-            GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
-
-            // create a thead pool
+            // Create a thead pool for work manager
             int threadPoolSize = getIntProperty(serviceInfo.properties, "threadPoolSize", 30);
-            if (threadPoolSize <= 0) throw new IllegalArgumentException("threadPoolSizes <= 0: " + threadPoolSize);
-            Executor threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
+            Executor threadPool;
+            if (threadPoolSize <= 0) {
+                threadPool = Executors.newCachedThreadPool(new ResourceAdapterThreadFactory(serviceInfo.id));
+            } else {
+                threadPool = Executors.newFixedThreadPool(threadPoolSize, new ResourceAdapterThreadFactory(serviceInfo.id));
+            }
 
-            // create a work manager which the resource adapter can use to dispatch messages or perform tasks
-            WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
+            // WorkManager: the resource adapter can use this to dispatch messages or perform tasks
+            WorkManager workManager;
+            if (transactionManager instanceof GeronimoTransactionManager) {
+                GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
+                workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
+            } else {
+                workManager = new SimpleWorkManager(threadPool);
+            }
 
-            // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
-            BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, geronimoTransactionManager);
+
+            // BootstrapContext: wraps the WorkMananger and XATerminator
+            BootstrapContext bootstrapContext;
+            if (transactionManager instanceof XATerminator) {
+                bootstrapContext = new SimpleBootstrapContext(workManager, (XATerminator) transactionManager);
+            } else {
+                bootstrapContext = new SimpleBootstrapContext(workManager);
+            }
 
             // start the resource adapter
             try {
