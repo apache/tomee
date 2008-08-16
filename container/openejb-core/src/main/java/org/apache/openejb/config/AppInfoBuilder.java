@@ -517,7 +517,8 @@ class AppInfoBuilder {
                         info.properties.setProperty(lookupProperty, openejbLookupClass);
                         logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                     }
-                } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider)){
+                } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider) ||
+                        "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider) ){
 
                     String lookupProperty = "toplink.target-server";
                     String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
@@ -528,7 +529,7 @@ class AppInfoBuilder {
                         info.properties.setProperty(lookupProperty, openejbLookupClass);
                         logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                     }
-                } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider)){
+                    } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)){
 
                     String lookupProperty = "eclipselink.target-server";
                     String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
