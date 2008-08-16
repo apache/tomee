@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import org.apache.openejb.config.BeanTypes;
 
+@Exported
 public class StatefulContainer extends AbstractContainerProvider {
     private String passivator;
     private Integer timeOut;

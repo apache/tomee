@@ -19,6 +19,7 @@ package org.apache.openejb.spring;
 
 import java.util.Properties;
 
+@Exported
 public class Resource extends AbstractResourceProvider {
     private String type;
     private final Properties properties = new Properties();

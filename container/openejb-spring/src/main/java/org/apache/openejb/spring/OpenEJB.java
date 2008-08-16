@@ -17,10 +17,16 @@
  */
 package org.apache.openejb.spring;
 
-import java.util.Date;
-import java.util.Properties;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.annotation.PostConstruct;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -29,31 +35,35 @@ import javax.transaction.TransactionManager;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.ServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.dynamic.PassthroughFactory;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ApplicationServer;
-import org.apache.openejb.spi.Assembler;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @Exported
-public class OpenEJB implements ApplicationContextAware{
+public class OpenEJB implements ApplicationContextAware {
     private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
-    private static Messages messages = new Messages("org.apache.openejb.util.resources");
-
-    private final Properties properties = new Properties();
 
     /**
-     * The assembler for Spring embedded.
+     * Properties added to the OpenEJB SystemInstance on startup.
      */
-    private SpringAssembler assembler;
+    private final Properties properties = new Properties();
 
     /**
      * The TransactionManager to be used by the OpenEJB server, or null for the
@@ -68,24 +78,39 @@ public class OpenEJB implements ApplicationContextAware{
     private SecurityService securityService;
 
     /**
-     * The ApplicationServer to be used by the OpenEJB server, or null for the
-     * default ApplicationServer.
+     * Containers to add to the OpenEJB server.
      */
-    private ApplicationServer applicationServer;
-
     private final Collection<ContainerProvider> containers = new ArrayList<ContainerProvider>();
 
+    /**
+     * Resources to add to the OpenEJB server.
+     */
     private final Collection<ResourceProvider> resources = new ArrayList<ResourceProvider>();
 
+    /**
+     * Should the beans in the Spring context be imported into OpenEJB as resources?
+     */
     private boolean importContext = true;
 
+    /**
+     * Is this bean starting?
+     */
     private boolean starting;
-    private Throwable initialized;
+
+    /**
+     * While OpenEJB is starting any applications that are deployed are queued up until startup is complete.
+     */
+    private final List<AbstractApplication> applicationsToDeploy = new ArrayList<AbstractApplication>();
+
+    /**
+     * The application context to scan when importing Beans.
+     */
     private ApplicationContext applicationContext;
 
-    public SpringAssembler getAssembler() {
-        return assembler;
-    }
+    /**
+     * The IDs of the resources we have already imported
+     */
+    private final Set<String> importedResourceIds = new TreeSet<String>();
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -118,14 +143,6 @@ public class OpenEJB implements ApplicationContextAware{
 
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
-    }
-
-    public ApplicationServer getApplicationServer() {
-        return applicationServer;
-    }
-
-    public void setApplicationServer(ApplicationServer applicationServer) {
-        this.applicationServer = applicationServer;
     }
 
     public Collection<ContainerProvider> getContainers() {
@@ -168,23 +185,18 @@ public class OpenEJB implements ApplicationContextAware{
     }
 
     public boolean isStarted() {
-        return initialized != null || SystemInstance.get().getComponent(ContainerSystem.class) != null;
+        return SystemInstance.get().getComponent(ContainerSystem.class) != null;
     }
 
     @PostConstruct
     public void start() throws OpenEJBException {
-        //
-        // Already started?
-        //
+        // Transaction mananager and system instance can only be set once per SystemInstance (one per ClassLoader)
         if (isStarted()) {
-            if (initialized != null){
-                String msg = messages.message("startup.alreadyInitialized");
-                logger.error(msg, initialized);
-                throw new OpenEJBException(msg, initialized);
-            } else {
-                String msg = messages.message("startup.alreadyInitialized");
-                logger.error(msg);
-                throw new OpenEJBException(msg);
+            if (transactionManager != null) {
+                throw new OpenEJBException("TransactionManager can not be set because OpenEJB has already been initalized");
+            }
+            if (securityService != null) {
+                throw new OpenEJBException("SecurityService can not be set because OpenEJB has already been initalized");
             }
         }
 
@@ -199,12 +211,8 @@ public class OpenEJB implements ApplicationContextAware{
         //
         // System Instance
         //
-        try {
-            SystemInstance.init(properties);
-        } catch (Exception e) {
-            throw new OpenEJBException(e);
-        }
         SystemInstance system = SystemInstance.get();
+        system.getProperties().putAll(properties);
 
         // do not deploy applications in claspath
         system.setProperty("openejb.deployments.classpath", "false");
@@ -212,90 +220,131 @@ public class OpenEJB implements ApplicationContextAware{
         // we are in embedded mode
         system.setProperty("openejb.embedded", "true");
 
-
         //
-        // Startup message
+        // Add TransactionManager and SecurityService to OpenEJB
         //
-        OpenEjbVersion versionInfo = OpenEjbVersion.get();
-
-        if (properties.getProperty("openejb.nobanner") == null) {
-            System.out.println("Apache OpenEJB " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
-            System.out.println("" + versionInfo.getUrl());
-        }
-
-        Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-        logger2.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
-                versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
-
-        logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
-        logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
-
-        Properties props = new Properties(SystemInstance.get().getProperties());
-
-        if (properties.isEmpty()) {
-            logger.debug("startup.noInitializationProperties");
+        ConfigurationFactory configurationFactory = new ConfigurationFactory();
+        Assembler assembler;
+        if (isStarted()) {
+            assembler = SystemInstance.get().getComponent(Assembler.class);
         } else {
-            props.putAll(properties);
+            //
+            // Startup message
+            //
+            OpenEjbVersion versionInfo = OpenEjbVersion.get();
+
+            if (properties.getProperty("openejb.nobanner") == null) {
+                System.out.println("Apache OpenEJB " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
+                System.out.println("" + versionInfo.getUrl());
+            }
+
+            Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+            logger2.info("startup.banner", versionInfo.getUrl(), new Date(), versionInfo.getCopyright(),
+                    versionInfo.getVersion(), versionInfo.getDate(), versionInfo.getTime());
+
+            logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
+            logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
+
+            Properties props = new Properties(SystemInstance.get().getProperties());
+
+            if (properties.isEmpty()) {
+                logger.debug("startup.noInitializationProperties");
+            } else {
+                props.putAll(properties);
+            }
+
+            //
+            // Assembler
+            //
+            assembler = new Assembler();
+            assembler.createProxyFactory(configurationFactory.configureService(ProxyFactoryInfo.class));
+
+            //
+            // Transaction Manager
+            //
+            TransactionManager transactionManager = getTransactionManager();
+            if (transactionManager == null) {
+                transactionManager = getBeanForType(applicationContext, TransactionManager.class);
+            }
+            if (transactionManager != null) {
+                TransactionServiceInfo info = initPassthrough(new TransactionServiceInfo(), "TransactionManager", transactionManager);
+                assembler.createTransactionManager(info);
+            }
+
+            //
+            // Security Service
+            //
+            SecurityService securityService = getSecurityService();
+            if (securityService == null) {
+                securityService = getBeanForType(applicationContext, SecurityService.class);
+            }
+            if (securityService != null) {
+                SecurityServiceInfo info = initPassthrough(new SecurityServiceInfo(), "SecurityService", securityService);
+                assembler.createSecurityService(info);
+            }
         }
 
         //
-        // Application Server
+        // Resources
         //
-        if (applicationServer == null) {
-            applicationServer = new ServerFederation();
+        for (Object resourceProvider : applicationContext.getBeansOfType(ResourceProvider.class).values()) {
+            resources.add((ResourceProvider) resourceProvider);
         }
-        system.setComponent(ApplicationServer.class, applicationServer);
-
-        //
-        // Assembler
-        //
-        assembler = new SpringAssembler(this);
-        SystemInstance.get().setComponent(Assembler.class, assembler);
-
-        try {
-            assembler.init(props);
-        } catch (OpenEJBException oe) {
-            logger.fatal("startup.assemblerFailedToInitialize", oe);
-            throw oe;
-        } catch (Throwable t) {
-            String msg = messages.message("startup.assemblerEncounteredUnexpectedError");
-            logger.fatal(msg, t);
-            throw new OpenEJBException(msg, t);
+        for (ResourceProvider resourceProvider : getResources()) {
+            ResourceInfo info = configurationFactory.configureService(resourceProvider.getResourceDefinition(), ResourceInfo.class);
+            importedResourceIds.add(info.id);
+            assembler.createResource(info);
         }
+        if (isImportContext() && applicationContext != null) {
+            for (String beanName : applicationContext.getBeanDefinitionNames()) {
+                if (!importedResourceIds.contains(beanName)) {
+                    Class beanType = applicationContext.getType(beanName);
+                    Class factoryType = applicationContext.getType("&" + beanName);
+                    if (isImportableType(beanType, factoryType)) {
+                        SpringReference factory = new SpringReference(applicationContext, beanName, beanType);
 
-        try {
-            assembler.build();
-        } catch (OpenEJBException oe) {
-            logger.fatal("startup.assemblerFailedToBuild", oe);
-            throw oe;
-        } catch (Throwable t) {
-            String msg = messages.message("startup.assemblerEncounterUnexpectedBuildError");
-            logger.fatal(msg, t);
-            throw new OpenEJBException(msg, t);
+                        ResourceInfo info = initPassthrough(beanName, new ResourceInfo(), "Resource", factory);
+                        info.types = getTypes(beanType);
+                        assembler.createResource(info);
+                    }
+                }
+            }
         }
 
         //
-        // Container System
+        // Containers
         //
-        ContainerSystem containerSystem = assembler.getContainerSystem();
-        if (containerSystem == null) {
-            String msg = messages.message("startup.assemblerReturnedNullContainer");
-            logger.fatal(msg);
-            throw new OpenEJBException(msg);
+        for (Object containerProvider : applicationContext.getBeansOfType(ContainerProvider.class).values()) {
+            containers.add((ContainerProvider) containerProvider);
         }
-        system.setComponent(ContainerSystem.class, containerSystem);
-        printContainerSystem(containerSystem);
-
+        for (ContainerProvider containerProvider: getContainers()) {
+            ContainerInfo info = configurationFactory.createContainerInfo(containerProvider.getContainerDefinition());
+            assembler.createContainer(info);
+        }
 
         //
         // Done
         //
-        initialized = new Exception("Initialized at " + new Date()).fillInStackTrace();
         starting = false;
         logger.debug("startup.ready");
+
+        List<AbstractApplication> applicationsToDeploy = new ArrayList<AbstractApplication>(this.applicationsToDeploy);
+        this.applicationsToDeploy.clear();
+        for (AbstractApplication application : applicationsToDeploy) {
+            application.deployApplication();
+        }
     }
 
-    private void printContainerSystem(ContainerSystem containerSystem) {
+    public void deployApplication(AbstractApplication application) throws OpenEJBException {
+        if (isStarting() || !isStarted()) {
+            applicationsToDeploy.add(application);
+        } else {
+            application.deployApplication();
+        }
+    }
+
+    public void printContainerSystem() {
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         if (logger.isDebugEnabled()) {
             //
             // Log Containers
@@ -362,7 +411,55 @@ public class OpenEJB implements ApplicationContextAware{
         }
     }
 
-    public Throwable getInitialized() {
-        return initialized;
+    private <T> T getBeanForType(ApplicationContext applicationContext, Class<T> type) throws OpenEJBException {
+        String[] names = applicationContext.getBeanNamesForType(type);
+        if (names.length == 0) {
+            return null;
+        }
+        if (names.length > 1) {
+            throw new OpenEJBException("Multiple " + type.getSimpleName() + " beans in application context: " + Arrays.toString(names));
+        }
+
+        String name = names[0];
+        importedResourceIds.add(name);
+        return (T) applicationContext.getBean(name);
+    }
+
+    private boolean isImportableType(Class type, Class factoryType) {
+        return !type.isAnnotationPresent(Exported.class) &&
+                !BeanPostProcessor.class.isAssignableFrom(type) &&
+                !BeanFactoryPostProcessor.class.isAssignableFrom(type) &&
+                (factoryType == null || !factoryType.isAnnotationPresent(Exported.class));
+    }
+
+    private <T extends ServiceInfo> T initPassthrough(T info, String serviceType, Object instance) {
+        return initPassthrough("Spring Supplied " + serviceType, info, serviceType, instance);
+    }
+
+    private <T extends ServiceInfo> T initPassthrough(String id, T info, String serviceType, Object instance) {
+        info.id = id;
+        info.service = serviceType;
+        info.types = getTypes(instance);
+        PassthroughFactory.add(info, instance);
+        return info;
+    }
+
+    private List<String> getTypes(Object instance) {
+        LinkedHashSet<String> types = new LinkedHashSet<String>();
+        Class clazz = instance.getClass();
+        addTypes(clazz, types);
+        return new ArrayList<String>(types);
+    }
+
+    private void addTypes(Class clazz, LinkedHashSet<String> types) {
+        if (clazz == null || Object.class.equals(clazz) || Serializable.class.equals(clazz)) {
+            return;
+        }
+        if (types.add(clazz.getName())) {
+            addTypes(clazz.getSuperclass(), types);
+            for (Class intf : clazz.getInterfaces()) {
+                addTypes(intf, types);
+            }
+        }
     }
 }

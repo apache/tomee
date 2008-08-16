@@ -79,7 +79,7 @@ public class JndiBuilder {
         }
     }
 
-    private JndiNameStrategy createStrategy(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) {
+    public static JndiNameStrategy createStrategy(EjbJarInfo ejbJar, Map<String, DeploymentInfo> deployments) {
         String strategyClassName = SystemInstance.get().getProperty(JNDINAME_STRATEGY_CLASS, TemplatedStrategy.class.getName());
         strategyClassName = ejbJar.properties.getProperty(JNDINAME_STRATEGY_CLASS, strategyClassName);
 

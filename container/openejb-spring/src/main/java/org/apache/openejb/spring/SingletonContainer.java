@@ -24,6 +24,7 @@ import org.apache.openejb.config.BeanTypes;
 import org.apache.openejb.config.sys.Container;
 import org.springframework.beans.factory.BeanNameAware;
 
+@Exported
 public class SingletonContainer extends AbstractContainerProvider {
     private String accessTimeout;
 

@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<beans default-lazy-init="true"
-        xmlns="http://www.springframework.org/schema/beans"
+<beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:context="http://www.springframework.org/schema/context"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -28,48 +27,37 @@
 
     <context:annotation-config/>
 
-    <bean name="OpenEJB" class="org.apache.openejb.spring.OpenEJB">
-        <property name="containers">
-            <list>
-                <bean class="org.apache.openejb.spring.SingletonContainer">
-                    <property name="id" value="Spring Defined SingletonContainer"/>
-                    <property name="accessTimeout" value="45 sec"/>
-                </bean>
-                <bean class="org.apache.openejb.spring.StatelessContainer">
-                    <property name="id" value="Spring Defined StatelessContainer"/>
-                    <property name="poolSize" value="50"/>
-                </bean>
-                <bean class="org.apache.openejb.spring.StatefulContainer">
-                    <property name="id" value="Spring Defined StatefulContainer"/>
-                    <property name="poolSize" value="50"/>
-                </bean>
-                <bean class="org.apache.openejb.spring.MdbContainer">
-                    <property name="id" value="Spring Defined MdbContainer"/>
-                    <property name="resourceAdapter" value="Spring Defined JMS Resource Adapter"/>
-                    <property name="instanceLimit" value="50"/>
-                </bean>
-                <bean class="org.apache.openejb.spring.BmpContainer">
-                    <property name="id" value="Spring Defined BmpContainer"/>
-                    <property name="poolSize" value="50"/>
-                </bean>
-                <bean class="org.apache.openejb.spring.CmpContainer">
-                    <property name="id" value="Spring Defined CmpContainer"/>
-                </bean>
-            </list>
-        </property>
-        <property name="resources">
-            <list>
-                <bean class="org.apache.openejb.spring.Resource">
-                    <property name="id" value="Spring Defined JMS Resource Adapter"/>
-                    <property name="type" value="ActiveMQResourceAdapter"/>
-                    <property name="properties">
-                        <props>
-                            <prop key="BrokerXmlConfig">broker:(tcp://localhost:61616)?useJmx=false</prop>
-                            <prop key="ServerUrl">vm://localhost?async=true</prop>
-                        </props>
-                    </property>
-                </bean>
-            </list>
+    <!-- OpenEJB instance is implicitly declared -->
+    <!--<bean name="OpenEJB" class="org.apache.openejb.spring.OpenEJB"/>-->
+
+    <!-- Containers -->
+    <bean name="SpringDefinedSingletonContainer" class="org.apache.openejb.spring.SingletonContainer">
+        <property name="accessTimeout" value="45 sec"/>
+    </bean>
+    <bean name="SpringDefinedStatelessContainer" class="org.apache.openejb.spring.StatelessContainer">
+        <property name="poolSize" value="50"/>
+    </bean>
+    <bean name="SpringDefinedStatefulContainer" class="org.apache.openejb.spring.StatefulContainer">
+        <property name="poolSize" value="50"/>
+    </bean>
+    <bean name="SpringDefinedMdbContainer" class="org.apache.openejb.spring.MdbContainer">
+        <property name="resourceAdapter" value="SpringDefinedJMSResourceAdapter"/>
+        <property name="instanceLimit" value="50"/>
+    </bean>
+    <bean name="SpringDefinedBmpContainer" class="org.apache.openejb.spring.BmpContainer">
+        <property name="poolSize" value="50"/>
+    </bean>
+    <bean name="SpringDefinedCmpContainer" class="org.apache.openejb.spring.CmpContainer">
+    </bean>
+
+    <!-- OpenEJB declared resouce adapter -->
+    <bean name="SpringDefinedJMSResourceAdapter" class="org.apache.openejb.spring.Resource">
+        <property name="type" value="ActiveMQResourceAdapter"/>
+        <property name="properties">
+            <props>
+                <prop key="BrokerXmlConfig">broker:(tcp://localhost:61616)?useJmx=false</prop>
+                <prop key="ServerUrl">vm://localhost?async=true</prop>
+            </props>
         </property>
     </bean>
 
@@ -86,20 +74,17 @@
         <property name="username" value="sa"/>
     </bean>
 
-    <!-- An Application containing all EJBs in the classloader -->
-    <bean name="classPathApplication" class="org.apache.openejb.spring.Application">
-        <property name="openEJB" ref="OpenEJB"/>
-    </bean>
+    <!-- Loads the Echo bean from the class path and exports it to this context -->
+    <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>
 
-    <!-- Deploys the classPathApplication, the EchoBean and return a proxy -->
-    <bean name="EchoBean" class="org.apache.openejb.spring.EJB">
-        <property name="application" ref="classPathApplication"/>
+    <!-- Explicit reference to the Echo bean... normally not needed -->
+    <bean name="Echo" class="org.apache.openejb.spring.EJB">
         <property name="deploymentId" value="EchoBean"/>
         <property name="interface" value="org.apache.openejb.spring.Echo"/>
     </bean>
 
     <!-- DataSource exported from OpenEJB -->
-    <bean id="openejbDS" class="org.apache.openejb.spring.OpenEJBDataSource" depends-on="OpenEJB">
+    <bean id="openejbDS" class="org.apache.openejb.spring.OpenEJBDataSource">
         <property name="resourceId" value="ds"/>
     </bean>
 </beans>

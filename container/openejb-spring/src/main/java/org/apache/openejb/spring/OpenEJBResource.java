@@ -23,6 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.springframework.beans.factory.FactoryBean;
 
+@Exported
 public class OpenEJBResource<T> implements FactoryBean {
     private final Class<T> type;
     private String resourceId;

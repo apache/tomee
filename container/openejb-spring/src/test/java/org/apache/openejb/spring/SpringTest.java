@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.spring;
 
+import java.util.Map;
 import javax.naming.Context;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
@@ -24,12 +25,11 @@ import javax.transaction.TransactionManager;
 import junit.framework.TestCase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.Container;
-import org.apache.openejb.util.Debug;
 import org.apache.openejb.core.entity.EntityContainer;
-import org.apache.openejb.core.cmp.*;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Debug;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringTest extends TestCase {
@@ -40,11 +40,13 @@ public class SpringTest extends TestCase {
         //
         // OpenEJB
         //
-        OpenEJB openEJB = (OpenEJB) context.getBean("OpenEJB");
+        Map map = context.getBeansOfType(OpenEJB.class);
+        assertEquals("OpenEJB instance count", 1, map.size());
+        OpenEJB openEJB = (OpenEJB) map.values().iterator().next();
         assertNotNull("openEJB is null", openEJB);
         assertTrue(openEJB.isStarted());
         assertTrue(org.apache.openejb.OpenEJB.isInitialized());
-        
+
         //
         // ContainerSystem
         //
@@ -96,30 +98,37 @@ public class SpringTest extends TestCase {
         //
         // Container
         //
-        Container singletonContainer = containerSystem.getContainer("Spring Defined SingletonContainer");
+        Container singletonContainer = containerSystem.getContainer("SpringDefinedSingletonContainer");
         assertTrue("singletonContainer should be an instance of SingletonContainer", singletonContainer instanceof org.apache.openejb.core.singleton.SingletonContainer);
-        Container statelessContainer = containerSystem.getContainer("Spring Defined StatelessContainer");
+        Container statelessContainer = containerSystem.getContainer("SpringDefinedStatelessContainer");
         assertTrue("statelessContainer should be an instance of StatelessContainer", statelessContainer instanceof org.apache.openejb.core.stateless.StatelessContainer);
-        Container statefulContainer = containerSystem.getContainer("Spring Defined StatefulContainer");
+        Container statefulContainer = containerSystem.getContainer("SpringDefinedStatefulContainer");
         assertTrue("statefulContainer should be an instance of StatefulContainer", statefulContainer instanceof org.apache.openejb.core.stateful.StatefulContainer);
-        Container mdbContainer = containerSystem.getContainer("Spring Defined MdbContainer");
+        Container mdbContainer = containerSystem.getContainer("SpringDefinedMdbContainer");
         assertTrue("mdbContainer should be an instance of MdbContainer", mdbContainer instanceof org.apache.openejb.core.mdb.MdbContainer);
-        Container bmpContainer = containerSystem.getContainer("Spring Defined BmpContainer");
+        Container bmpContainer = containerSystem.getContainer("SpringDefinedBmpContainer");
         assertTrue("bmpContainer should be an instance of BmpContainer", bmpContainer instanceof EntityContainer);
-        Container cmpContainer = containerSystem.getContainer("Spring Defined CmpContainer");
+        Container cmpContainer = containerSystem.getContainer("SpringDefinedCmpContainer");
         assertTrue("cmpContainer should be an instance of CmpContainer", cmpContainer instanceof org.apache.openejb.core.cmp.CmpContainer);
+
+        //
+        // JNDI Context
+        //
+        System.out.println();
+        System.out.println();
+        Debug.printContext(initialContext);
+        System.out.println();
+        System.out.println();
 
         //
         // EJB
         //
-        Echo echo = (Echo) context.getBean("EchoBean");
+        Echo echo = (Echo) context.getBean("EchoBeanLocal");
         assertNotNull("echo is null", echo);
         assertEquals("olleH", echo.echo("Hello"));
-
-        System.out.println();
-        System.out.println();
-        Debug.printContext(initialContext);
-
+        echo = (Echo) context.getBean("Echo");
+        assertNotNull("echo is null", echo);
+        assertEquals("olleH", echo.echo("Hello"));
 
         //
         // Stop the Spring Context

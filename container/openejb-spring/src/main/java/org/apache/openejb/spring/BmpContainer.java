@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import org.apache.openejb.config.BeanTypes;
 
+@Exported
 public class BmpContainer extends AbstractContainerProvider {
     private Integer poolSize;
 

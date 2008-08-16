@@ -17,10 +17,7 @@
  */
 package org.apache.openejb.spring;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.springframework.beans.factory.FactoryBean;
@@ -28,26 +25,44 @@ import org.springframework.beans.factory.annotation.Required;
 
 @Exported
 public class EJB<T> implements FactoryBean {
-    private Application application;
     private Object deploymentId;
+    private DeploymentInfo deploymentInfo;
     private Class<T> intf;
 
-    public Application getApplication() {
-        return application;
+    public EJB() {
     }
 
-    @Required
-    public void setApplication(Application application) {
-        this.application = application;
+    public EJB(DeploymentInfo deploymentInfo, Class<T> intf) {
+        this.deploymentInfo = deploymentInfo;
+        this.intf = intf;
     }
 
     public Object getDeploymentId() {
-        return deploymentId;
+        if (deploymentId != null) {
+            return deploymentId;
+        } else if (deploymentInfo != null) {
+            return deploymentInfo.getDeploymentID();
+        }
+        return null;
     }
 
-    @Required
     public void setDeploymentId(Object deploymentId) {
         this.deploymentId = deploymentId;
+    }
+
+    public DeploymentInfo getDeploymentInfo() {
+        if (deploymentInfo != null) {
+            return deploymentInfo;
+        } else if (deploymentId != null) {
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+            DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
+            return deploymentInfo;
+        }
+        return null;
+    }
+
+    public void setDeploymentInfo(DeploymentInfo deploymentInfo) {
+        this.deploymentInfo = deploymentInfo;
     }
 
     public Class<T> getInterface() {
@@ -59,29 +74,22 @@ public class EJB<T> implements FactoryBean {
         this.intf = intf;
     }
 
-    @PostConstruct
-    public void start() throws OpenEJBException {
-    }
-
     public T getObject() throws Exception {
-        if (application == null) throw new NullPointerException("application is null");
-        if (deploymentId == null) throw new NullPointerException("deploymentId is null");
         if (intf == null) throw new NullPointerException("intf is null");
 
-        application.startEjb(deploymentId);
-
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
+        DeploymentInfo deploymentInfo = getDeploymentInfo();
         if (deploymentInfo == null) {
-            throw new IllegalArgumentException("Unknwon EJB " + deploymentInfo);
+            throw new IllegalStateException("DeploymentInfo or DeploymentID must be set before EJB can be retrieved");
         }
-        
-        String jndiName = "java:openejb/Deployment/" + deploymentId + "/" + getInterface().getName();
 
+        // this is the pattern for the internal jndi name
+        String jndiName = "java:openejb/Deployment/" + deploymentInfo.getDeploymentID() + "/" + getInterface().getName();
+
+        // perform the lookup against the jndi context in the container system
+        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Object proxy = containerSystem.getJNDIContext().lookup(jndiName);
         if (!intf.isInstance(proxy)) {
-            throw new IllegalArgumentException(
-                    "EJB at " + jndiName + " is not an instance of " + intf.getName() + ", but is " + proxy.getClass().getName());
+            throw new IllegalArgumentException("EJB at " + jndiName + " is not an instance of " + intf.getName() + ", but is " + proxy.getClass().getName());
         }
         return intf.cast(proxy);
     }
