@@ -121,14 +121,24 @@ public class SpringTest extends TestCase {
         System.out.println();
 
         //
-        // EJB
+        // EJB with Spring bean injected
         //
         Echo echo = (Echo) context.getBean("EchoBeanLocal");
         assertNotNull("echo is null", echo);
-        assertEquals("olleH", echo.echo("Hello"));
-        echo = (Echo) context.getBean("Echo");
-        assertNotNull("echo is null", echo);
-        assertEquals("olleH", echo.echo("Hello"));
+        assertEquals("Hello MySpringBean", echo.echo("Hello"));
+//        echo = (Echo) context.getBean("Echo");
+//        assertNotNull("echo is null", echo);
+//        assertEquals("Hello MySpringBean", echo.echo("Hello"));
+
+        //
+        // Spring bean with EJB injected
+        //
+        EchoReverseBean echoReverse = (EchoReverseBean) context.getBean("EchoReverse");
+        assertNotNull("echoReverse is null", echoReverse);
+        assertEquals("naeBgnirpSyM olleH", echoReverse.echoReverse("Hello"));
+//        echoReverse = (EchoReverseBean) context.getBean("Echo");
+//        assertNotNull("echoReverse is null", echoReverse);
+//        assertEquals("Hello MySpringBean", echoReverse.echoReverse("Hello"));
 
         //
         // Stop the Spring Context

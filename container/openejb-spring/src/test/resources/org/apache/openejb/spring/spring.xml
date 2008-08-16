@@ -78,13 +78,17 @@
     <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>
 
     <!-- Explicit reference to the Echo bean... normally not needed -->
-    <bean name="Echo" class="org.apache.openejb.spring.EJB">
-        <property name="deploymentId" value="EchoBean"/>
-        <property name="interface" value="org.apache.openejb.spring.Echo"/>
-    </bean>
+    <!--<bean name="Echo" class="org.apache.openejb.spring.EJB">-->
+        <!--<property name="deploymentId" value="EchoBean"/>-->
+        <!--<property name="interface" value="org.apache.openejb.spring.Echo"/>-->
+    <!--</bean>-->
 
     <!-- DataSource exported from OpenEJB -->
     <bean id="openejbDS" class="org.apache.openejb.spring.OpenEJBDataSource">
         <property name="resourceId" value="ds"/>
     </bean>
+
+    <bean name="MySpringBean" class="org.apache.openejb.spring.SpringBean"/>
+
+    <bean name="EchoReverse" class="org.apache.openejb.spring.EchoReverseBean"/>
 </beans>

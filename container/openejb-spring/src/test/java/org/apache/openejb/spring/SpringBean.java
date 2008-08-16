@@ -17,25 +17,23 @@
  */
 package org.apache.openejb.spring;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import org.springframework.beans.factory.BeanNameAware;
 
-@Stateless
-public class EchoBean implements Echo {
-    @Resource
-    private SpringBean springBean;
+public class SpringBean implements BeanNameAware
+{
+    public String name;
+    private String beanName;
 
-    public SpringBean getSpringBean() {
-        return springBean;
+    public String getName() {
+        if (name == null) return beanName;
+        return name;
     }
 
-    public void setSpringBean(SpringBean springBean) {
-        this.springBean = springBean;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String echo(String s) {
-        String name = null;
-        if (springBean != null) name = springBean.getName();
-        return s + " " + name;
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
     }
 }

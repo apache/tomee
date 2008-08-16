@@ -439,15 +439,14 @@ public class OpenEJB implements ApplicationContextAware {
     private <T extends ServiceInfo> T initPassthrough(String id, T info, String serviceType, Object instance) {
         info.id = id;
         info.service = serviceType;
-        info.types = getTypes(instance);
+        info.types = getTypes(instance.getClass());
         PassthroughFactory.add(info, instance);
         return info;
     }
 
-    private List<String> getTypes(Object instance) {
+    private List<String> getTypes(Class type) {
         LinkedHashSet<String> types = new LinkedHashSet<String>();
-        Class clazz = instance.getClass();
-        addTypes(clazz, types);
+        addTypes(type, types);
         return new ArrayList<String>(types);
     }
 

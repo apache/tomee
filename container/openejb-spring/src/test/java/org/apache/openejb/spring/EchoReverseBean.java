@@ -17,25 +17,21 @@
  */
 package org.apache.openejb.spring;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import javax.ejb.EJB;
 
-@Stateless
-public class EchoBean implements Echo {
-    @Resource
-    private SpringBean springBean;
+public class EchoReverseBean {
+    @EJB
+    public Echo echo;
 
-    public SpringBean getSpringBean() {
-        return springBean;
+    public Echo getEcho() {
+        return echo;
     }
 
-    public void setSpringBean(SpringBean springBean) {
-        this.springBean = springBean;
+    public void setEcho(Echo echo) {
+        this.echo = echo;
     }
 
-    public String echo(String s) {
-        String name = null;
-        if (springBean != null) name = springBean.getName();
-        return s + " " + name;
+    public String echoReverse(String message) {
+        return new StringBuilder(echo.echo(message)).reverse().toString();
     }
 }
