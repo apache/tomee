@@ -16,6 +16,27 @@
  */
 package org.apache.openejb;
 
+/**
+ * This exception is thrown when the container has encountered an unresolvable
+ * system exception that make this Container unable to process requests.
+ * A breakdown in communication with one of the primary services or a
+ * RuntimeException thrown within the container (not by a bean) is are good
+ * examples.
+ *
+ * The org.apache.openejb.SystemException represents a serious problem with the
+ * Container or request.
+ *
+ * NOTE: This exception bears no resemblence to the unchecked exceptions and
+ * errors that an enterprise bean instance may throw during the
+ * execution of a session or entity bean business method, a message-driven bean
+ * onMessage method, or a container callback method (e.g. ejbLoad).
+ * See InvalidateReferenceException for this.
+ *
+ * @see ApplicationException
+ * @see InvalidateReferenceException
+ * @see OpenEJBException
+ * @see SystemException
+ */
 public class SystemException extends OpenEJBException {
 
     public SystemException() {

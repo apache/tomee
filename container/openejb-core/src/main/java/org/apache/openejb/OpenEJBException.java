@@ -16,6 +16,55 @@
  */
 package org.apache.openejb;
 
+/**
+ * The OpenEJBException is the standard exception thrown by all methods in all
+ * type in the Container Provider Interface (CPI).  The OpenEJBException has 3
+ * subtypes each serving a different purpose.  The Container will always thrown
+ * one of these subtype and should never the OpenEJBException itself.
+ * <ul>
+ * <li><b>org.apache.openejb.ApplicationException</b><br>
+ *
+ *     This type is thrown when a normal EnterpriseBean exception is thrown.
+ *     The ApplicationException's nested Exception will be either an EJB
+ *     ApplicationException (a custom exception defined by the bean developer)
+ *     or a RemoteException.  The org.openejb.ApplicationException must be
+ *     caught and its nested exception rethrown by the bean proxy to the client.
+ *     The org.apache.openejb.ApplicationException is non-system exception; it
+ *     does NOT indicate a problem with the contaienr itself.
+ *
+ * <li><b>org.apache.openejb.InvalidateReferenceException</b><br>
+ *
+ *     This type is thrown when the EnterpriseBean throws a RuntimeException or
+ *     system exception that results in the eviction of the bean instance.  The
+ *     InvalidateReferenceException's nested exception will be a RemoteException
+ *     or a RuntimeException, which must be converted to a RemoteException if
+ *     applicable for the given beany proxy type.  The Application Server must
+ *     catch the InvalidateReferenceException and its nested exception rethrown
+ *     by the bean proxy (if the nested exception is a RuntimeException it must
+ *     first be converted to a RemoteException if the bean proxy is a
+ *     java.rmi.Remote proxy). After the exception is re-thrown by the bean
+ *     proxy, the bean proxy must be invalidated so that all subsequent
+ *     invocations by the client on that bean proxy throw a RemoteException. The
+ *     proxy is made invalid. InvalidateReferenceException is non-system
+ *     exception; it does NOT indicate a problem with the container itself.
+ *
+ * <li><b>org.apache.openejb.SystemException</b><br>
+ *
+ *     This type is thrown when the container has encountered an unresolvable
+ *     system exception that make this Container unable to process requests.  A
+ *     breakdown in communication with one of the primary services or a
+ *     RuntimeException thrown within the container (not by a bean) is are good
+ *     examples.  The org.openejb.SystemException represents a serious problem
+ *     with the Container.  The Container should be shut down and not used for
+ *     any more processing.
+ *
+ * </ul>
+ * 
+ * @see ApplicationException
+ * @see InvalidateReferenceException
+ * @see OpenEJBException
+ * @see SystemException
+ */
 public class OpenEJBException extends Exception {
 
     public OpenEJBException() {

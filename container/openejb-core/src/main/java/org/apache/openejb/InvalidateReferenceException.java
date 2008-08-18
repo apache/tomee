@@ -16,6 +16,25 @@
  */
 package org.apache.openejb;
 
+/**
+ * This type is thrown when the EnterpriseBean throws a RuntimeException or
+ * system exception that results in the eviction of the bean instance.  The
+ * InvalidateReferenceException's nested exception will be a RemoteException
+ * or possibly an ObjectNotFoundException.
+ *
+ * The Application Server must catch the InvalidateReferenceException and its
+ * nested exception rethrown by the bean proxy. After the exception is
+ * re-thrown by the bean proxy, the bean proxy must be invalidated so that all
+ * subsequent invocations by the client on that bean proxy throw a
+ * RemoteException. The proxy is made invalid. InvalidateReferenceException is
+ * non-system exception; it does NOT indicate a problem with the container
+ * itself.
+ *
+ * @see ApplicationException
+ * @see InvalidateReferenceException
+ * @see OpenEJBException
+ * @see SystemException
+ */
 public class InvalidateReferenceException extends ApplicationException {
 
     public InvalidateReferenceException() {
