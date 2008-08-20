@@ -42,6 +42,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.NameAlreadyBoundException;
+import javax.naming.Binding;
+import javax.naming.NamingEnumeration;
 import javax.persistence.EntityManagerFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
@@ -185,7 +187,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance system = SystemInstance.get();
 
         system.setComponent(Assembler.class, this);
-        
+
         containerSystem = new CoreContainerSystem();
         system.setComponent(ContainerSystem.class, containerSystem);
 
@@ -227,7 +229,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static void installNaming() {
         if (System.getProperty(DUCT_TAPE_PROPERTY) != null) return;
-        
+
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
         synchronized (systemProperties) {
@@ -438,8 +440,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         logger.info("createApplication.start", appInfo.jarPath);
 
-        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This 
-        // is a conflict we can't handle. 
+        // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
+        // is a conflict we can't handle.
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
@@ -671,6 +673,26 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
+        NamingEnumeration<Binding> namingEnumeration = null;
+        try {
+            namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/Resource");
+        } catch (NamingException ignored) {
+            // no resource adapters were created
+        }
+        while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
+            Binding binding = namingEnumeration.nextElement();
+            Object object = binding.getObject();
+            if (object instanceof ResourceAdapter) {
+                ResourceAdapter resourceAdapter = (ResourceAdapter) object;
+                try {
+                    logger.info("Stopping ResourceAdapter: " + binding.getName());
+                    resourceAdapter.stop();
+                } catch (Exception e) {
+                    logger.fatal("ResourceAdapter Shutdown Failed: " + binding.getName(), e);
+                }
+            }
+        }
+
         SystemInstance.get().removeComponent(OpenEjbConfiguration.class);
         SystemInstance.get().removeComponent(JtaEntityManagerRegistry.class);
         SystemInstance.get().removeComponent(TransactionSynchronizationRegistry.class);
@@ -874,7 +896,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // MDB container has a resource adapter string name that
         // must be replaced with the real resource adapter instance
         replaceResourceAdapterProperty(serviceRecipe);
-        
+
         Object service = serviceRecipe.create();
 
         logUnusedProperties(serviceRecipe, serviceInfo);
@@ -1027,8 +1049,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             Map<String, Object> unset = serviceRecipe.getUnsetProperties();
             unset.remove("threadPoolSize");
-            logUnusedProperties(unset, serviceInfo)
-                    ;
+            logUnusedProperties(unset, serviceInfo);
         } else if (service instanceof ManagedConnectionFactory) {
             ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
 
