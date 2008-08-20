@@ -89,6 +89,10 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
                     e = ite.getTargetException();
                 }
             }
+
+            if (e instanceof NamingException){
+                throw (NamingException) e;
+            }
             throw (NamingException) new javax.naming.NamingException("Cannot instantiate a LocalInitialContext. Exception: "
                     + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
