@@ -28,6 +28,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 
+/**
+ * @Depricated Use org.apache.openejb.client.LocalInitialContextFactory
+ */
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {

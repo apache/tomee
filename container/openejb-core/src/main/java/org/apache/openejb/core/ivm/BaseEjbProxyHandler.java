@@ -57,8 +57,10 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.InvocationHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -82,6 +84,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     public transient RpcContainer container;
 
     protected boolean isInvalidReference = false;
+
+    protected Object clientIdentity;
 
     /*
     * The EJB 1.1 specification requires that arguments and return values between beans adhere to the
@@ -245,38 +249,52 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         Class interfce = getInvokedInterface(method);
 
-        if (strategy == CLASSLOADER_COPY) {
 
-            IntraVmCopyMonitor.pre(strategy);
-            ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
-            try {
-                args = copyArgs(args);
-                method = copyMethod(method);
-                interfce = copyObj(interfce);
-            } finally {
-                Thread.currentThread().setContextClassLoader(oldClassLoader);
-                IntraVmCopyMonitor.post();
-            }
-
-        } else if (strategy == COPY && args != null && args.length > 0) {
-
-            IntraVmCopyMonitor.pre(strategy);
-            try {
-                args = copyArgs(args);
-            } finally {
-                IntraVmCopyMonitor.post();
-            }
-        }
-
+        ThreadContext callContext = ThreadContext.getThreadContext();
+        Object localClientIdentity = ClientSecurity.getIdentity();
         try {
+            if (callContext == null && localClientIdentity != null) {
+                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                securityService.associate(localClientIdentity);
+            }
+            if (strategy == CLASSLOADER_COPY) {
 
-            Object returnValue = _invoke(proxy, interfce, method, args);
+                IntraVmCopyMonitor.pre(strategy);
+                ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
+                try {
+                    args = copyArgs(args);
+                    method = copyMethod(method);
+                    interfce = copyObj(interfce);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(oldClassLoader);
+                    IntraVmCopyMonitor.post();
+                }
 
-            return copy(strategy, returnValue);
-        } catch (Throwable throwable) {
-            throwable = copy(strategy, throwable);
-            throw convertException(throwable, method, interfce);
+            } else if (strategy == COPY && args != null && args.length > 0) {
+
+                IntraVmCopyMonitor.pre(strategy);
+                try {
+                    args = copyArgs(args);
+                } finally {
+                    IntraVmCopyMonitor.post();
+                }
+            }
+
+            try {
+
+                Object returnValue = _invoke(proxy, interfce, method, args);
+
+                return copy(strategy, returnValue);
+            } catch (Throwable throwable) {
+                throwable = copy(strategy, throwable);
+                throw convertException(throwable, method, interfce);
+            }
+        } finally {
+            if (callContext == null && localClientIdentity != null) {
+                SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                securityService.disassociate();
+            }
         }
     }
 

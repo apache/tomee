@@ -22,7 +22,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
@@ -35,10 +34,8 @@ import java.util.Properties;
 public class LocalInitialContextFactory implements javax.naming.spi.InitialContextFactory {
 
     private static OpenEJBInstance openejb;
-    private static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
 
     private boolean bootedOpenEJB;
-    private Object serviceManager;
 
     public Context getInitialContext(Hashtable env) throws javax.naming.NamingException {
         init(env);
@@ -70,75 +67,28 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         SystemInstance.init(properties);
         SystemInstance.get().setProperty("openejb.embedded", "true");
         openejb.init(properties);
-        if (properties.getProperty(OPENEJB_EMBEDDED_REMOTABLE, "false").equalsIgnoreCase("true")) {
-            bootServerServices();
-        }
     }
 
     public void close(){
         openejb = null;
-        if (serviceManager != null){
-            try {
-                Method stop = serviceManager.getClass().getMethod("stop");
-                stop.invoke(serviceManager);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void bootServerServices() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        try {
-            Class serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.ServiceManager");
-            Method init = serviceManagerClass.getMethod("init");
-            Method start = serviceManagerClass.getMethod("start", boolean.class);
-
-            serviceManager = serviceManagerClass.newInstance();
-            try {
-                init.invoke(serviceManager);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to initialize ServiceManager.  Cause: " + cause.getClass().getName() + ": " + cause.getMessage();
-                throw new IllegalStateException(msg, cause);
-            }
-            try {
-                start.invoke(serviceManager, false);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to start ServiceManager.  Cause: " + cause.getClass().getName() + ": " + cause.getMessage();
-                throw new IllegalStateException(msg, cause);
-            }
-        } catch (ClassNotFoundException e) {
-            String msg = "Enabling option '" + OPENEJB_EMBEDDED_REMOTABLE + "' requires class 'org.apache.openejb.server.ServiceManager' to be available.  Make sure you have the openejb-server-*.jar in your classpath and at least one protocol implementation such as openejb-ejbd-*.jar.";
-            throw new IllegalStateException(msg, e);
-        } catch (NoSuchMethodException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods not found on as expected on class 'org.apache.openejb.server.ServiceManager'.  This should never happen.";
-            throw new IllegalStateException(msg, e);
-        } catch (InstantiationException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to instantiate ServiceManager class 'org.apache.openejb.server.ServiceManager'.";
-            throw new IllegalStateException(msg, e);
-        } catch (IllegalAccessException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods cannot be accessed on class 'org.apache.openejb.server.ServiceManager'.  The VM SecurityManager settings must be adjusted.";
-            throw new IllegalStateException(msg, e);
-        }
     }
 
     private Context getLocalInitialContext(Hashtable env) throws javax.naming.NamingException {
         Context context = null;
         try {
-            InitialContextFactory factory = null;
             ClassLoader cl = SystemInstance.get().getClassLoader();
-            Class ivmFactoryClass = Class.forName("org.apache.openejb.core.ivm.naming.InitContextFactory", true, cl);
 
-            factory = (InitialContextFactory) ivmFactoryClass.newInstance();
-            context = factory.getInitialContext(env);
+            Class localInitialContext = Class.forName("org.apache.openejb.client.LocalInitialContext", true, cl);
 
-            Class clientWrapper = Class.forName("org.apache.openejb.client.LocalInitialContext", true, cl);
-            Constructor constructor = clientWrapper.getConstructor(Context.class, this.getClass());
-            context = (Context) constructor.newInstance(context, this);
-        } catch (Exception e) {
+            Constructor constructor = localInitialContext.getConstructor(Hashtable.class, this.getClass());
+            context = (Context) constructor.newInstance(env, this);
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                InvocationTargetException ite = (InvocationTargetException) e;
+                if (ite.getTargetException() != null){
+                    e = ite.getTargetException();
+                }
+            }
             throw (NamingException) new javax.naming.NamingException("Cannot instantiate a LocalInitialContext. Exception: "
                     + e.getClass().getName() + " " + e.getMessage()).initCause(e);
         }
