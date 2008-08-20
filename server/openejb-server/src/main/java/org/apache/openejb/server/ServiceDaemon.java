@@ -132,6 +132,8 @@ public class ServiceDaemon implements ServerService {
 
         secure = getBoolean(props, "secure", false);
 
+        timeout = 1000;
+        
         next.init(props);
     }
 
