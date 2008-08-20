@@ -266,6 +266,9 @@ public class SingletonInstanceManager {
         Data data = (Data) deploymentInfo.getContainerData();
         Instance instance = data.instance;
 
+        // Possible the instance was never created
+        if (instance == null) return;
+
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(SingletonContext.getStates());
