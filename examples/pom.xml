@@ -46,6 +46,7 @@
     <module>injection-of-connectionfactory</module>
     <module>testing-transactions</module>
     <module>testing-security</module>
+    <module>testing-security-2</module>
     <module>ear-testing</module>
     <module>interceptors</module>
     <module>custom-injection</module>
