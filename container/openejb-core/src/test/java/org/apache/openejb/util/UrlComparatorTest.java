@@ -16,38 +16,31 @@
  */
 package org.apache.openejb.util;
 
-import java.io.File;
+import junit.framework.TestCase;
+
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @version $Rev$ $Date$
  */
-public class URLs {
+public class UrlComparatorTest extends TestCase {
 
-    public static File toFile(URL url) {
+    public void test() throws Exception {
+        ArrayList<URL> urls = new ArrayList<URL>();
 
-        String path = url.getPath();
+        urls.add(new URL("file:///Users/lblack/four"));
+        urls.add(new URL("file:///Users/jstuart/two"));
+        urls.add(new URL("file:///Users/jstuart/one"));
+        urls.add(new URL("file:///Users/scobert/three"));
 
-        if (path.contains("!")){
-            path = path.substring(0, path.indexOf('!'));
-        }
+        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart")));
 
-        if (path.startsWith("file:")){
-            try {
-                url = new URL(path);
-                path = url.getPath();
-            } catch (MalformedURLException e) {
-            }
-        }
+        assertEquals(new URL("file:///Users/jstuart/two"), urls.get(0));
 
-        return new File(URLDecoder.decode(path));
+        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart/one")));
+
+        assertEquals(new URL("file:///Users/jstuart/one"), urls.get(0));
     }
-
-    public static String toFilePath(URL url) {
-        return toFile(url).getAbsolutePath();
-    }
-
-
 }

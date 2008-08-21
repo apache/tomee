@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.core.security.jaas;
 
+import static org.apache.openejb.util.IOUtils.readProperties;
 import org.apache.openejb.util.ConfUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.IOUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -30,6 +32,7 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
+import java.io.BufferedInputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -63,27 +66,28 @@ public class PropertiesLoginModule implements LoginModule {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
-        debug = "true".equalsIgnoreCase((String) options.get("Debug"));
+        debug = log.isDebugEnabled() || "true".equalsIgnoreCase((String) options.get("Debug"));
         String usersFile = (String) options.get(USER_FILE) + "";
         String groupsFile = (String) options.get(GROUP_FILE) + "";
 
         usersUrl = ConfUtils.getConfResource(usersFile);
         groupsUrl = ConfUtils.getConfResource(groupsFile);
 
-        if (debug) {
-            log.debug("Initialized debug=" + debug + " usersFile=" + usersFile + " groupsFile=" + groupsFile);
+        if (debug){
+            log.debug("Users file: " + usersUrl.toExternalForm());
+            log.debug("Groups file: " + groupsUrl.toExternalForm());
         }
     }
 
     public boolean login() throws LoginException {
         try {
-            users.load(usersUrl.openStream());
+            users = readProperties(usersUrl);
         } catch (IOException ioe) {
             throw new LoginException("Unable to load user properties file " + usersUrl.getFile());
         }
 
         try {
-            groups.load(groupsUrl.openStream());
+            groups = readProperties(groupsUrl);
         } catch (IOException ioe) {
             throw new LoginException("Unable to load group properties file " + groupsUrl.getFile());
         }
@@ -112,7 +116,7 @@ public class PropertiesLoginModule implements LoginModule {
         users.clear();
 
         if (debug) {
-            log.debug("login " + user);
+            log.debug("Logged in as '" + user+"'");
         }
         return true;
     }

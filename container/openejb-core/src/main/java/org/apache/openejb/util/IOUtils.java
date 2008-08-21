@@ -16,38 +16,31 @@
  */
 package org.apache.openejb.util;
 
-import java.io.File;
+import java.util.Properties;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.MalformedURLException;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
  */
-public class URLs {
+public class IOUtils {
 
-    public static File toFile(URL url) {
-
-        String path = url.getPath();
-
-        if (path.contains("!")){
-            path = path.substring(0, path.indexOf('!'));
-        }
-
-        if (path.startsWith("file:")){
+    public static Properties readProperties(URL resource) throws IOException {
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = resource.openStream();
+            in = new BufferedInputStream(in);
+            properties.load(in);
+        } finally{
             try {
-                url = new URL(path);
-                path = url.getPath();
-            } catch (MalformedURLException e) {
+                if (in != null) in.close();
+            } catch (IOException e) {
             }
         }
-
-        return new File(URLDecoder.decode(path));
+        return properties;
     }
-
-    public static String toFilePath(URL url) {
-        return toFile(url).getAbsolutePath();
-    }
-
 
 }

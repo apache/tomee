@@ -26,6 +26,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.Collections;
+import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
@@ -33,7 +36,7 @@ import java.net.URL;
 public class ConfUtils {
 
     public static URL getConfResource(String name) {
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(name);
+        URL resource = getResource(name);
 
         try {
 
@@ -46,6 +49,32 @@ public class ConfUtils {
         }
 
         return resource;
+    }
+
+    public static URL getResource(String name) {
+        Enumeration<URL> resources = null;
+        try {
+            resources = Thread.currentThread().getContextClassLoader().getResources(name);
+        } catch (IOException e) {
+            // DMB: Not sure why this version of getResource doesn't require checking
+            // for IOException, but no matter.  Perhpas it may succeed where the other fails.
+            return Thread.currentThread().getContextClassLoader().getResource(name);
+        }
+
+        URL resource = select(resources);
+        return resource;
+    }
+
+    private static URL select(Enumeration<URL> enumeration) {
+        if (enumeration == null) return null;
+        ArrayList<URL> urls = Collections.list(enumeration);
+        if (urls.size() == 0) return null;
+        if (urls.size() == 1) return urls.get(0);
+
+        // Sort so that the URL closest to openejb.base is first
+        Collections.sort(urls, new UrlComparator(SystemInstance.get().getBase().getDirectory()));
+
+        return urls.get(0);
     }
 
     public static File install(String source, String name) throws IOException {
@@ -96,4 +125,5 @@ public class ConfUtils {
 
         return file;
     }
+
 }

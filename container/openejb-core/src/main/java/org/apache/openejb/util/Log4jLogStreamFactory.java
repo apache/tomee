@@ -70,6 +70,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(loggingPropertiesFile));
                 Properties props = new Properties();
                 props.load(bis);
+                applyOverrides(props);
                 preprocessProperties(props);
                 PropertyConfigurator.configure(props);
                 try {
@@ -85,6 +86,16 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             // no conf directory, so we assume we are embedded
             // configure log4j directly
             configureEmbedded();
+        }
+    }
+
+    private static void applyOverrides(Properties properties) {
+        Properties system = SystemInstance.get().getProperties();
+        for (Map.Entry<Object, Object> entry : system.entrySet()) {
+            String key = entry.getKey().toString();
+            if (key.startsWith("log4j.") && !key.equals("log4j.configuration")){
+                properties.put(key, entry.getValue());
+            }
         }
     }
 
@@ -141,11 +152,33 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
     }
 
     private void configureEmbedded() {
-        URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
-        if (resource != null)
-            PropertyConfigurator.configure(resource);
-        else
+        URL resource = ConfUtils.getResource(EMBEDDED_PROPERTIES_FILE);
+        Properties properties = asProperies(resource);
+
+        applyOverrides(properties);
+
+        if (resource != null) {
+            PropertyConfigurator.configure(properties);
+        } else {
             System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
+        }
+    }
+
+    private static Properties asProperies(URL resource) {
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = resource.openStream();
+            in = new BufferedInputStream(in);
+            properties.load(in);
+        } catch (IOException e) {
+        } finally{
+            try {
+                if (in != null) in.close();
+            } catch (IOException e) {
+            }
+        }
+        return properties;
     }
 
     private void installLoggingPropertiesFile(File loggingPropertiesFile) throws IOException {
