@@ -26,6 +26,10 @@ import java.util.Properties;
 @ConcurrencyManagement(BEAN)
 public class PropertyRegistryBean implements PropertyRegistry {
 
+    // Note the java.util.Properties object is a thread-safe
+    // collections that uses synchronization.  If it didn't
+    // you would have to use some form of synchronization
+    // to ensure the PropertyRegistryBean is thread-safe.
     private final Properties properties = new Properties();
 
     public String getProperty(String key) {
