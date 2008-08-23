@@ -24,6 +24,7 @@ import java.util.Properties;
 import java.util.Date;
 import java.net.URI;
 
+//START SNIPPET: code
 public class ComponentRegistryBeanTest extends TestCase {
 
     public void test() throws Exception {
@@ -32,25 +33,29 @@ public class ComponentRegistryBeanTest extends TestCase {
 
         InitialContext context = new InitialContext(props);
 
-        ComponentRegistry refOne = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
+        // Both references below will point to the exact same instance
+        ComponentRegistry one = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
 
-        ComponentRegistry refTwo = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
-
-
-        refOne.setComponent(URI.class, new URI("foo://bar/baz"));
-
-        URI uri = refTwo.getComponent(URI.class);
-
-        assertEquals(uri, new URI("foo://bar/baz"));
+        ComponentRegistry two = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
 
 
-        Date now = new Date();
+        URI expectedUri = new URI("foo://bar/baz");
 
-        refTwo.setComponent(Date.class, now);
+        one.setComponent(URI.class, expectedUri);
 
-        Date date = refOne.getComponent(Date.class);
+        URI actualUri = two.getComponent(URI.class);
 
-        assertEquals(now, date);
+        assertSame(expectedUri, actualUri);
+
+
+        Date expectedDate = new Date();
+
+        two.setComponent(Date.class, expectedDate);
+
+        Date actualDate = one.getComponent(Date.class);
+
+        assertSame(expectedDate, actualDate);
 
     }
 }
+//END SNIPPET: code

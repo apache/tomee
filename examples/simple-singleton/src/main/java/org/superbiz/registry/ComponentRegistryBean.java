@@ -16,28 +16,38 @@
  */
 package org.superbiz.registry;
 
+//START SNIPPET: code
 import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 @Singleton
+@Lock(READ)
 public class ComponentRegistryBean implements ComponentRegistry {
 
     private final Map<Class, Object> components = new HashMap<Class, Object>();
 
-    @Lock(READ)
     public <T> T getComponent(Class<T> type) {
         return (T) components.get(type);
     }
 
+    public Collection<?> getComponents() {
+        return components.values();
+    }
+
+    @Lock(WRITE)
     public <T> T setComponent(Class<T> type, T value) {
         return (T) components.put(type, value);
     }
 
+    @Lock(WRITE)
     public <T> T removeComponent(Class<T> type) {
         return (T) components.remove(type);
     }
 
 }
+//END SNIPPET: code

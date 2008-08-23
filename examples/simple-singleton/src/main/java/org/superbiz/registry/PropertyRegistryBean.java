@@ -16,6 +16,7 @@
  */
 package org.superbiz.registry;
 
+//START SNIPPET: code
 import static javax.ejb.ConcurrencyManagementType.BEAN;
 import javax.ejb.Singleton;
 import javax.ejb.ConcurrencyManagement;
@@ -40,3 +41,4 @@ public class PropertyRegistryBean implements PropertyRegistry {
     }
 
 }
+//END SNIPPET: code

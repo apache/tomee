@@ -30,21 +30,21 @@ public class PropertiesRegistryBeanTest extends TestCase {
 
         InitialContext context = new InitialContext(props);
 
-        PropertyRegistry refOne = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
+        PropertyRegistry one = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
 
-        PropertyRegistry refTwo = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
+        PropertyRegistry two = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
 
 
-        refOne.setProperty("url", "http://superbiz.org");
+        one.setProperty("url", "http://superbiz.org");
 
-        String url = refTwo.getProperty("url");
+        String url = two.getProperty("url");
 
         assertEquals("http://superbiz.org", url);
 
 
-        refTwo.setProperty("version", "1.0.5");
+        two.setProperty("version", "1.0.5");
 
-        String version = refOne.getProperty("version");
+        String version = one.getProperty("version");
 
         assertEquals("1.0.5", version);
 

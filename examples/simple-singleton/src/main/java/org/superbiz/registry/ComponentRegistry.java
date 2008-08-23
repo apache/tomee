@@ -16,11 +16,15 @@
  */
 package org.superbiz.registry;
 
+import java.util.Collection;
+
 /**
  * @version $Revision$ $Date$
  */
 public interface ComponentRegistry {
 
+    public Collection<?> getComponents();
+    
     public <T> T getComponent(Class<T> type);
 
     public <T> T setComponent(Class<T> type, T value);
