@@ -17,8 +17,8 @@
 package org.apache.openejb.core.timer;
 
 import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
@@ -77,8 +77,8 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         this.transactionManager = transactionManager;
         this.threadPool = threadPool;
         this.timerStore = timerStore;
-        byte txAttribute = deployment.getTransactionAttribute(deployment.getEjbTimeout());
-        this.transacted = txAttribute == CoreDeploymentInfo.TX_REQUIRED || txAttribute == CoreDeploymentInfo.TX_REQUIRES_NEW;
+        TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
+        this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
 
     }

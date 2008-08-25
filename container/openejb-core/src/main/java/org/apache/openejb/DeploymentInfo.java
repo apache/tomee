@@ -19,6 +19,7 @@ package org.apache.openejb;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.transaction.TransactionType;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -28,20 +29,6 @@ import java.util.Set;
 import javax.naming.Context;
 
 public interface DeploymentInfo {
-
-    final public static byte TX_NEVER = (byte) 0;
-
-    final public static byte TX_NOT_SUPPORTED = (byte) 1;
-
-    final public static byte TX_SUPPORTS = (byte) 2;
-
-    final public static byte TX_MANDITORY = (byte) 3;
-
-    final public static byte TX_REQUIRED = (byte) 4;
-
-    final public static byte TX_REQUIRES_NEW = (byte) 5;
-
-    final public static byte TX_MAX = (byte) 5;
 
     final public static byte READ_LOCK = (byte) 6;
 
@@ -53,7 +40,7 @@ public interface DeploymentInfo {
 
     public InterfaceType getInterfaceType(Class clazz);
     
-    public byte getTransactionAttribute(Method method);
+    public TransactionType getTransactionType(Method method);
 
     public Collection<String> getAuthorizedRoles(Method method);
 

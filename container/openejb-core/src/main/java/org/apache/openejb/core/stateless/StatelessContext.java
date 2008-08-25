@@ -16,14 +16,10 @@
  */
 package org.apache.openejb.core.stateless;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
-
 
 /**
  * @version $Rev$ $Date$
@@ -35,13 +31,9 @@ public class StatelessContext extends BaseSessionContext {
     public static State[] getStates() {
         return states;
     }
-    
-    public StatelessContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
-    }
 
-    public StatelessContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public StatelessContext(SecurityService securityService) {
+        super(securityService);
     }
 
     protected State getState() {

@@ -17,21 +17,10 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.cmp.CmpCallback;
-import org.apache.openejb.core.cmp.CmpEngine;
-import org.apache.openejb.core.cmp.ComplexKeyGenerator;
-import org.apache.openejb.core.cmp.KeyGenerator;
-import org.apache.openejb.core.cmp.SimpleKeyGenerator;
-import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
-import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
-import org.apache.openjpa.event.AbstractLifecycleListener;
-import org.apache.openjpa.event.LifecycleEvent;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerFactorySPI;
-
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
@@ -43,15 +32,25 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.cmp.CmpCallback;
+import org.apache.openejb.core.cmp.CmpEngine;
+import org.apache.openejb.core.cmp.ComplexKeyGenerator;
+import org.apache.openejb.core.cmp.KeyGenerator;
+import org.apache.openejb.core.cmp.SimpleKeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2KeyGenerator;
+import org.apache.openejb.core.cmp.cmp2.Cmp2Util;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import org.apache.openjpa.event.AbstractLifecycleListener;
+import org.apache.openjpa.event.LifecycleEvent;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerFactorySPI;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
@@ -61,9 +60,6 @@ public class JpaCmpEngine implements CmpEngine {
      * Used to notify call CMP callback methods.
      */
     private final CmpCallback cmpCallback;
-
-    private final TransactionManager transactionManager;
-    private final TransactionSynchronizationRegistry synchronizationRegistry;
 
     /**
      * Thread local to track the beans we are creating to avoid an extra ejbStore callback
@@ -79,10 +75,8 @@ public class JpaCmpEngine implements CmpEngine {
      */
     protected Object entityManagerListener;
 
-    public JpaCmpEngine(CmpCallback cmpCallback, TransactionManager transactionManager, TransactionSynchronizationRegistry synchronizationRegistry) {
+    public JpaCmpEngine(CmpCallback cmpCallback) {
         this.cmpCallback = cmpCallback;
-        this.transactionManager = transactionManager;
-        this.synchronizationRegistry = synchronizationRegistry;
     }
 
     public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -129,7 +123,7 @@ public class JpaCmpEngine implements CmpEngine {
 
     public Object createBean(EntityBean bean, ThreadContext callContext) throws CreateException {
         // TODO verify that extract primary key requires a flush followed by a merge
-        boolean startedTx = startTransaction("persist");
+        TransactionPolicy txPolicy = startTransaction("persist", callContext);
         creating.get().add(bean);
         try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
@@ -146,12 +140,12 @@ public class JpaCmpEngine implements CmpEngine {
             return primaryKey;
         } finally {
             creating.get().remove(bean);
-            commitTransaction(startedTx, "persist");
+            commitTransaction("persist", callContext, txPolicy);
         }
     }
 
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
-        boolean startedTx = startTransaction("load");
+        TransactionPolicy txPolicy = startTransaction("load", callContext);
         try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
@@ -160,26 +154,30 @@ public class JpaCmpEngine implements CmpEngine {
             EntityManager entityManager = getEntityManager(deploymentInfo);
             return entityManager.find(beanClass, primaryKey);
         } finally {
-            commitTransaction(startedTx, "load");
+            commitTransaction("load", callContext, txPolicy);
         }
     }
 
     public void storeBeanIfNoTx(ThreadContext callContext, Object bean) {
-        boolean startedTx = startTransaction("store");
-        if (startedTx) {
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        TransactionPolicy callerTxPolicy = callContext.getTransactionPolicy();
+        if (callerTxPolicy != null && callerTxPolicy.isTransactionActive()) {
+            return;
+        }
 
-            try {
-                EntityManager entityManager = getEntityManager(deploymentInfo);
+        TransactionPolicy txPolicy = startTransaction("store", callContext);
+        try {
+            // only store if we started a new transaction
+            if (txPolicy.isNewTransaction()) {
+                EntityManager entityManager = getEntityManager(callContext.getDeploymentInfo());
                 entityManager.merge(bean);
-            } finally {
-                commitTransaction(startedTx, "store");
             }
+        } finally {
+            commitTransaction("store", callContext, txPolicy);
         }
     }
 
     public void removeBean(ThreadContext callContext) {
-        boolean startedTx = startTransaction("remove");
+        TransactionPolicy txPolicy = startTransaction("remove", callContext);
         try {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
@@ -192,7 +190,7 @@ public class JpaCmpEngine implements CmpEngine {
             // remove the bean
             entityManager.remove(bean);
         } finally {
-            commitTransaction(startedTx, "remove");
+            commitTransaction("remove", callContext, txPolicy);
         }
     }
 
@@ -320,23 +318,18 @@ public class JpaCmpEngine implements CmpEngine {
         }
     }
 
-    private boolean startTransaction(String operation) {
+    private TransactionPolicy startTransaction(String operation, ThreadContext callContext) {
         try {
-            if (Status.STATUS_NO_TRANSACTION == transactionManager.getStatus()) {
-                transactionManager.begin();
-                return true;
-            }
-            return false;
+            TransactionPolicy txPolicy = createTransactionPolicy(TransactionType.Required, callContext);
+            return txPolicy;
         } catch (Exception e) {
             throw new EJBException("Unable to start transaction for " + operation + " operation", e);
         }
     }
 
-    private void commitTransaction(boolean startedTx, String operation) {
+    private void commitTransaction(String operation, ThreadContext callContext, TransactionPolicy txPolicy) {
         try {
-            if (startedTx) {
-                transactionManager.commit();
-            }
+            afterInvoke(txPolicy, callContext);
         } catch (Exception e) {
             throw new EJBException("Unable to complete transaction for " + operation + " operation", e);
         }
@@ -355,31 +348,6 @@ public class JpaCmpEngine implements CmpEngine {
             } else {
                 di.setKeyGenerator(new ComplexKeyGenerator(cmpBeanImpl, di.getPrimaryKeyClass()));
             }
-        }
-    }
-
-    private static class TransactionCache {
-        private final Map<Class,Map<Object,Object>> cache = new HashMap<Class,Map<Object,Object>>();
-
-        public Object get(Class clazz, Object primaryKey) {
-            Map<Object, Object> instances = cache.get(clazz);
-            if (instances == null) return null;
-            return instances.get(primaryKey);
-        }
-
-        public void put(Class clazz, Object primaryKey, Object value) {
-            Map<Object, Object> instances = cache.get(clazz);
-            if (instances == null) {
-                instances = new HashMap<Object, Object>();
-                cache.put(clazz, instances);
-            }
-            instances.put(primaryKey, value);
-        }
-
-        public Object remove(Class clazz, Object primaryKey) {
-            Map<Object, Object> instances = cache.get(clazz);
-            if (instances == null) return null;
-            return instances.remove(primaryKey);
         }
     }
 

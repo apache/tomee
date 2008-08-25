@@ -19,17 +19,14 @@ package org.apache.openejb.core.stateful;
 import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.MethodAttributeInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.MethodIntf;
 import org.apache.openejb.jee.StatefulBean;
@@ -48,10 +45,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.Init;
 import javax.ejb.Remove;
 import javax.naming.InitialContext;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -326,7 +321,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
         public String attribute() {
             ThreadContext context = ThreadContext.getThreadContext();
-            return context.get(TransactionPolicy.Type.class).toString();
+            return context.getTransactionPolicy().toString();
         }
 
         @Init

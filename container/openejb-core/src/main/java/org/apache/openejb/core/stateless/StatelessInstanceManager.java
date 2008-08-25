@@ -28,7 +28,6 @@ import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.openejb.Injection;
@@ -50,7 +49,6 @@ import org.apache.openejb.util.Stack;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -61,11 +59,9 @@ public class StatelessInstanceManager {
     protected boolean strictPooling = false;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
-    private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessInstanceManager(TransactionManager transactionManager, SecurityService securityService, Duration timeout, int poolSize, boolean strictPooling) {
-        this.transactionManager = transactionManager;
+    public StatelessInstanceManager(SecurityService securityService, Duration timeout, int poolSize, boolean strictPooling) {
         this.securityService = securityService;
         this.poolLimit = poolSize;
         this.strictPooling = strictPooling;
@@ -99,7 +95,7 @@ public class StatelessInstanceManager {
         Stack pool = data.getPool();
         
         if(strictPooling){
-        	boolean acquired = false;
+        	boolean acquired;
             try {
             	if(timeout.getTime() <= 0L){
             		data.getSemaphore().acquire();
@@ -146,16 +142,15 @@ public class StatelessInstanceManager {
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
                     callContext.setCurrentAllowedStates(StatelessContext.getStates());                    
-                    objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
+                    objectRecipe.setProperty("sessionContext", sessionContext);
                 }     
                 
-                WebServiceContext wsContext;
                 // This is a fix for GERONIMO-3444
                 synchronized(this){
                     try {
-                        wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
+                        ctx.lookup("java:comp/WebServiceContext");
                     } catch (NamingException e) {
-                        wsContext = new EjbWsContext(sessionContext);
+                        WebServiceContext wsContext = new EjbWsContext(sessionContext);
                         ctx.bind("java:comp/WebServiceContext", wsContext);
                     }
                 }
@@ -193,28 +188,18 @@ public class StatelessInstanceManager {
 
                 interceptorInstances.put(beanClass.getName(), bean);
 
+                callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                callContext.setCurrentAllowedStates(StatelessContext.getStates());
+                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                interceptorStack.invoke();
 
-                try {
-                    callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                if (bean instanceof SessionBean){
+                    callContext.setCurrentOperation(Operation.CREATE);
                     callContext.setCurrentAllowedStates(StatelessContext.getStates());
-
-                    List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                    InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                    Method create = deploymentInfo.getCreateMethod();
+                    interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
                     interceptorStack.invoke();
-                } catch (Exception e) {
-                    throw e;
-                }
-
-                try {
-                    if (bean instanceof SessionBean){
-                        callContext.setCurrentOperation(Operation.CREATE);
-                        callContext.setCurrentAllowedStates(StatelessContext.getStates());
-                        Method create = deploymentInfo.getCreateMethod();
-                        InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
-                        interceptorStack.invoke();
-                    }
-                } catch (Exception e) {
-                    throw e;
                 }
 
                 bean = new Instance(bean, interceptorInstances);
@@ -262,7 +247,7 @@ public class StatelessInstanceManager {
                     // another data type by an xbean-reflect property editor
                     objectRecipe.setProperty(prefix + injection.getName(), string);
                 } else {
-                    objectRecipe.setProperty(prefix + injection.getName(), new StaticRecipe(object));
+                    objectRecipe.setProperty(prefix + injection.getName(), object);
                 }
             } catch (NamingException e) {
                 logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
@@ -280,7 +265,7 @@ public class StatelessInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return new StatelessContext(transactionManager, securityService);
+        return new StatelessContext(securityService);
     }
 
     /**
@@ -333,18 +318,6 @@ public class StatelessInstanceManager {
         } catch (Throwable re) {
             logger.error("The bean instance " + instance + " threw a system exception:" + re, re);
         }
-
-    }
-
-    /**
-     * This method has no work to do as all instances are removed from
-     * the pool on getInstance(...) and not returned via poolInstance(...)
-     * if they threw a system exception.
-     *
-     * @param callContext
-     * @param bean
-     */
-    public void discardInstance(ThreadContext callContext, Object bean) {
 
     }
 

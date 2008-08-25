@@ -27,9 +27,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.TimerService;
 import javax.naming.NamingException;
 import javax.naming.Context;
-import javax.transaction.Status;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.transaction.NotSupportedException;
 import javax.transaction.HeuristicMixedException;
@@ -40,6 +38,8 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
+import org.apache.openejb.core.transaction.EjbUserTransaction;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 
 
@@ -48,18 +48,14 @@ import org.apache.openejb.spi.SecurityService;
  */
 public abstract class BaseContext implements EJBContext, Serializable {
 
-    private final UserTransaction userTransaction;
     private final SecurityService securityService;
-    private final TransactionManager transactionManager;
+    private final UserTransaction userTransaction;
 
-    public BaseContext(TransactionManager transactionManager, SecurityService securityService) {
-        this.transactionManager = transactionManager;
-        this.securityService = securityService;
-        this.userTransaction = new UserTransactionWrapper(new CoreUserTransaction(transactionManager));
+    protected BaseContext(SecurityService securityService) {
+        this(securityService, new EjbUserTransaction());
     }
 
-    protected BaseContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        this.transactionManager = transactionManager;
+    protected BaseContext(SecurityService securityService, UserTransaction userTransaction) {
         this.securityService = securityService;
         this.userTransaction = new UserTransactionWrapper(userTransaction);
     }
@@ -107,11 +103,11 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public void setRollbackOnly() throws IllegalStateException {
-        getState().setRollbackOnly(transactionManager);
+        getState().setRollbackOnly();
     }
 
     public boolean getRollbackOnly() throws IllegalStateException {
-        return getState().getRollbackOnly(transactionManager);
+        return getState().getRollbackOnly();
     }
 
     public TimerService getTimerService() throws IllegalStateException {
@@ -258,7 +254,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
             }
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
@@ -266,14 +262,18 @@ public abstract class BaseContext implements EJBContext, Serializable {
                 throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly() method");
             }
 
-            try {
-                transactionManager.setRollbackOnly();
-            } catch (SystemException se) {
-                throw new RuntimeException("Transaction service has thrown a SystemException", se);
+            TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
+            if (txPolicy == null) {
+                throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
             }
+            if (!txPolicy.isTransactionActive()) {
+                // this would be true for Supports tx attribute where no tx was propagated
+                throw new IllegalStateException("No current transaction");
+            }
+            txPolicy.setRollbackOnly();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
@@ -281,19 +281,15 @@ public abstract class BaseContext implements EJBContext, Serializable {
                 throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
             }
 
-            try {
-                int status = transactionManager.getStatus();
-                if (status == Status.STATUS_MARKED_ROLLBACK || status == Status.STATUS_ROLLEDBACK) {
-                    return true;
-                } else if (status == Status.STATUS_NO_TRANSACTION) {
-                    // this would be true for Supports tx attribute where no tx was propagated
-                    throw new IllegalStateException("No current transaction");
-                } else {
-                    return false;
-                }
-            } catch (SystemException se) {
-                throw new RuntimeException("Transaction service has thrown a SystemException", se);
+            TransactionPolicy transactionPolicy = threadContext.getTransactionPolicy();
+            if (transactionPolicy == null) {
+                throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
             }
+            if (!transactionPolicy.isTransactionActive()) {
+                // this would be true for Supports tx attribute where no tx was propagated
+                throw new IllegalStateException("No current transaction");
+            }
+            return transactionPolicy.isRollbackOnly();
         }
 
         public TimerService getTimerService() throws IllegalStateException {

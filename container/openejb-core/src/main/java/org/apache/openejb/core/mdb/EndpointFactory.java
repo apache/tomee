@@ -17,10 +17,9 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.geronimo.transaction.manager.WrapperNamedXAResource;
+import org.apache.openejb.core.transaction.TransactionType;
 
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.ActivationSpec;
@@ -67,7 +66,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     }
 
     public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
-        byte transactionAttribute = deploymentInfo.getTransactionAttribute(method);
-        return DeploymentInfo.TX_REQUIRED == transactionAttribute;
+        TransactionType transactionType = deploymentInfo.getTransactionType(method);
+        return TransactionType.Required == transactionType;
     }
 }

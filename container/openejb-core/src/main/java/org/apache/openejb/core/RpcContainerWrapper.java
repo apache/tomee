@@ -19,11 +19,10 @@ package org.apache.openejb.core;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ContainerType;
-import org.apache.openejb.core.transaction.TransactionContainer;
 
 import java.lang.reflect.Method;
 
-public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
+public class RpcContainerWrapper implements RpcContainer {
 
     private final RpcContainer container;
 
@@ -63,12 +62,7 @@ public class RpcContainerWrapper implements RpcContainer, TransactionContainer {
         container.undeploy(info);
     }
 
-    public void discardInstance(Object instance, ThreadContext context) {
-        ((TransactionContainer) container).discardInstance(instance, context);
-    }
-
     public RpcContainer getContainer() {
         return container;
     }
-
 }

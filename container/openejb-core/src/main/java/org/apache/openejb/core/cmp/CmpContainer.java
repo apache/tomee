@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -61,18 +60,19 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.entity.EntityContext;
 import org.apache.openejb.core.entity.EntrancyTracker;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Enumerator;
 
 /**
  * @org.apache.xbean.XBean element="cmpContainer"
  */
-public class CmpContainer implements RpcContainer, TransactionContainer {
+public class CmpContainer implements RpcContainer {
     protected final Object containerID;
-    protected final TransactionManager transactionManager;
     protected final SecurityService securityService;
 
     /**
@@ -104,9 +104,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     };
 
     public CmpContainer(Object id, TransactionManager transactionManager, SecurityService securityService, String cmpEngineFactory) throws OpenEJBException {
-        this.transactionManager = transactionManager;
-        this.securityService = securityService;
         this.containerID = id;
+        this.securityService = securityService;
         synchronizationRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         entrancyTracker = new EntrancyTracker(synchronizationRegistry);
 
@@ -279,9 +278,6 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    public void discardInstance(Object bean, ThreadContext threadContext) {
-    }
-
     private EntityBean createNewInstance(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         try {
@@ -315,7 +311,7 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            entityBean.setEntityContext(new EntityContext(transactionManager, securityService));
+            entityBean.setEntityContext(new EntityContext(securityService));
         } catch (RemoteException e) {
             throw new EJBException(e);
         } finally {
@@ -471,12 +467,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
-        txPolicy.beforeInvoke(null, txContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
-        EntityBean bean = null;
+        EntityBean bean;
         Object returnValue = null;
 
         entrancyTracker.enter(deploymentInfo, callContext.getPrimaryKey());
@@ -490,24 +484,24 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // when there is not transaction, merge the data from the bean back into the cmp engine
             cmpEngine.storeBeanIfNoTx(callContext, bean);
-        } catch (InvocationTargetException ite) {
-            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+        } catch (NoSuchObjectException e) {
+            handleApplicationException(txPolicy, e, false);
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
+
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
-
+                handleSystemException(txPolicy, e, callContext);
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
             }
-        } catch (NoSuchObjectException e) {
-            txPolicy.handleApplicationException(e, false, txContext);
-        } catch (Throwable e) {
-            /* System Exception ****************************/
-            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
             entrancyTracker.exit(deploymentInfo, callContext.getPrimaryKey());
-            txPolicy.afterInvoke(bean, txContext);
+            afterInvoke(txPolicy, callContext);
         }
 
         return returnValue;
@@ -515,12 +509,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
 
-        txPolicy.beforeInvoke(null, txContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
-        EntityBean bean = null;
+        EntityBean bean;
         Object returnValue = null;
         try {
             /*
@@ -550,24 +542,22 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             } finally {
                 unsetEntityContext(bean);
             }
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
 
-            bean = null; // poof
-
-        } catch (InvocationTargetException ite) {
-            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
+                handleSystemException(txPolicy, e, callContext);
 
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
             }
-        } catch (Throwable e) {
-            /* System Exception ****************************/
-            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
-            txPolicy.afterInvoke(bean, txContext);
+            afterInvoke(txPolicy, callContext);
         }
 
         return returnValue;
@@ -576,13 +566,10 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
-        EntityBean bean = null;
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
+
+        EntityBean bean;
         Object primaryKey = null;
-
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
-
-        txPolicy.beforeInvoke(bean, txContext);
 
         try {
             // Obtain a bean instance from the method ready pool
@@ -629,21 +616,21 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
             // when there is not transaction, merge the data from the bean back into the cmp engine
             cmpEngine.storeBeanIfNoTx(callContext, bean);
-        } catch (InvocationTargetException ite) {// handle enterprise bean exceptions
-            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(ite.getTargetException());
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
+
+            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
-                txPolicy.handleSystemException(ite.getTargetException(), bean, txContext);
+                handleSystemException(txPolicy, e, callContext);
             } else {
                 /* Application Exception ***********************/
-                txPolicy.handleApplicationException(ite.getTargetException(), type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
             }
-        } catch (CreateException e) {
-            txPolicy.handleSystemException(e, bean, txContext);
-        } catch (Throwable e) {
-            txPolicy.handleSystemException(e, bean, txContext);
         } finally {
-            txPolicy.afterInvoke(bean, txContext);
+            afterInvoke(txPolicy, callContext);
         }
 
         return new ProxyInfo(deploymentInfo, primaryKey);
@@ -652,11 +639,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
-        // Get the transaction policy assigned to this method
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
-        txPolicy.beforeInvoke(null, txContext);
         try {
             EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
             if (bean == null) {
@@ -670,11 +654,11 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             // create a new ProxyInfo based on the deployment info and primary key
             return new ProxyInfo(deploymentInfo, primaryKey);
         } catch (javax.ejb.FinderException fe) {
-            txPolicy.handleApplicationException(fe, false, txContext);
+            handleApplicationException(txPolicy, fe, false);
         } catch (Throwable e) {// handle reflection exception
-            txPolicy.handleSystemException(e, null, txContext);
+            handleSystemException(txPolicy, e, callContext);
         } finally {
-            txPolicy.afterInvoke(null, txContext);
+            afterInvoke(txPolicy, callContext);
         }
         throw new AssertionError("Should not get here");
     }
@@ -682,11 +666,8 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
     private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
-        // Get the transaction policy assigned to this method
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
-        txPolicy.beforeInvoke(null, txContext);
         try {
             List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
 
@@ -731,11 +712,11 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
                 }
             }
         } catch (javax.ejb.FinderException fe) {
-            txPolicy.handleApplicationException(fe, false, txContext);
+            handleApplicationException(txPolicy, fe, false);
         } catch (Throwable e) {// handle reflection exception
-            txPolicy.handleSystemException(e, null, txContext);
+            handleSystemException(txPolicy, e, callContext);
         } finally {
-            txPolicy.afterInvoke(null, txContext);
+            afterInvoke(txPolicy, callContext);
         }
         throw new AssertionError("Should not get here");
     }
@@ -820,10 +801,9 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
 
     private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
 
-        txPolicy.beforeInvoke(null, txContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
+
         try {
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
             if (entityBean == null) {
@@ -832,11 +812,11 @@ public class CmpContainer implements RpcContainer, TransactionContainer {
             ejbRemove(entityBean);
             cmpEngine.removeBean(callContext);
         } catch (NoSuchObjectException e) {
-            txPolicy.handleApplicationException(e, false, txContext);
+            handleApplicationException(txPolicy, e, false);
         } catch (Throwable e) {// handle reflection exception
-            txPolicy.handleSystemException(e, null, txContext);
+            handleSystemException(txPolicy, e, callContext);
         } finally {
-            txPolicy.afterInvoke(null, txContext);
+            afterInvoke(txPolicy, callContext);
         }
     }
 

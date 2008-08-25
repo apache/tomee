@@ -16,77 +16,50 @@
  */
 package org.apache.openejb.core.transaction;
 
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
+
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
-import javax.transaction.TransactionRequiredException;
-
 /**
  * 17.6.2.5 Mandatory
- *
+ * <p/>
  * The Container must invoke an enterprise Bean method whose transaction
  * attribute is set to Mandatory in a client's transaction context. The client
  * is required to call with a transaction context.
- *
+ * <p/>
  * * If the client calls with a transaction context, the container invokes the
- *   enterprise Bean's method in the client's transaction context.
- *
- * * If the client calls without a transaction context, the Container throws
- *   the javax.transaction.TransactionRequiredException exception if the
- *   client is a remote client, or the
- *   javax.ejb.TransactionRequiredLocalException if the client is a local
- *   client.
- *
+ * enterprise Bean's method in the client's transaction context.
+ * <p/>
+ * * If the client calls without a transaction context, the Container throws the
+ * javax.transaction.TransactionRequiredException exception if the client is a
+ * remote client, or the javax.ejb.TransactionRequiredLocalException if the
+ * client is a local client.
  */
-public class TxMandatory extends TransactionPolicy {
+public class TxMandatory extends JtaTransactionPolicy {
+    private final Transaction clientTx;
 
-    public TxMandatory(TransactionContainer container) {
-        super(Type.Mandatory, container);
-    }
+    public TxMandatory(TransactionManager transactionManager) throws SystemException, ApplicationException {
+        super(TransactionType.Mandatory, transactionManager);
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
-        context.callContext.set(Type.class, getPolicyType());
-
-        try {
-
-            context.clientTx = context.getTransactionManager().getTransaction();
-
-            if (context.clientTx == null) {
-
-                throw new ApplicationException(new TransactionRequiredException());
-            }
-
-            context.currentTx = context.clientTx;
-
-        } catch (javax.transaction.SystemException se) {
-            logger.debug("Exception during getTransaction()", se);
-            throw new SystemException(se);
+        clientTx = getTransaction();
+        if (clientTx == null) {
+            throw new ApplicationException(new TransactionRequiredException());
         }
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
+    public boolean isNewTransaction() {
+        return false;
     }
 
-    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
-        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
-
-        throw new ApplicationException(appException);
+    protected Transaction getCurrentTrasaction() {
+        return clientTx;
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-
-        /* [1] Log the system exception or error *********/
-        logSystemException(sysException, context);
-
-        /* [2] Mark the transaction for rollback. ********/
-        markTxRollbackOnly(context.currentTx);
-
-        /* [3] Discard instance. *************************/
-        discardBeanInstance(instance, context.callContext);
-
-        /* [4] TransactionRolledbackException to client **/
-        throwTxExceptionToServer(sysException);
+    public void commit() {
+        fireNonTransactionalCompletion();
     }
-
 }
 

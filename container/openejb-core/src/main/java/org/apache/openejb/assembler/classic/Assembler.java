@@ -68,12 +68,16 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.finder.ResourceFinder;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.transaction.SimpleWorkManager;
 import org.apache.openejb.core.transaction.SimpleBootstrapContext;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
+import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
@@ -518,6 +522,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     jaccPermissionsBuilder.install(policyContext);
                 }
 
+                TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
+                for (DeploymentInfo deploymentInfo : deployments.values()) {
+                    CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+                    coreDeploymentInfo.setTransactionPolicyFactory(transactionPolicyFactory);
+                }
+
                 MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
                 methodTransactionBuilder.build(deployments, ejbJar.methodTransactions);
 
@@ -537,7 +547,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         Method ejbTimeout = coreDeploymentInfo.getEjbTimeout();
                         if (ejbTimeout != null) {
                             // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
-                            if (coreDeploymentInfo.getTransactionAttribute(ejbTimeout) == CoreDeploymentInfo.TX_REQUIRES_NEW) {
+                            if (coreDeploymentInfo.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
                                 coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, "Required");
                             }
 
@@ -632,6 +642,37 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.jarPath), t);
         }
+    }
+
+    private TransactionPolicyFactory createTransactionPolicyFactory(EjbJarInfo ejbJar, ClassLoader classLoader) {
+        TransactionPolicyFactory factory = null;
+
+        Object value = ejbJar.properties.get(TransactionPolicyFactory.class.getName());
+        if (value instanceof TransactionPolicyFactory) {
+            factory = (TransactionPolicyFactory) value;
+        } else if (value instanceof String) {
+            try {
+                String[] parts = ((String)value).split(":", 2);
+
+                ResourceFinder finder = new ResourceFinder("META-INF", classLoader);
+                Map<String,Class> plugins = finder.mapAvailableImplementations(TransactionPolicyFactory.class);
+                Class<? extends TransactionPolicyFactory> clazz = plugins.get(parts[0]).asSubclass(TransactionPolicyFactory.class);
+                if (clazz != null) {
+                    if (parts.length == 1) {
+                        factory = clazz.getConstructor(String.class).newInstance(parts[1]);
+                    } else {
+                        factory = clazz.newInstance();
+                    }
+                }
+            } catch (Exception ignored) {
+                // couldn't determine the plugins, which isn't fatal
+            }
+        }
+
+        if (factory == null) {
+             factory = new JtaTransactionPolicyFactory(transactionManager);
+        }
+        return factory;
     }
 
     private static List<DeploymentInfo> sort(List<DeploymentInfo> deployments) {

@@ -55,6 +55,6 @@ public class JpaCmpEngineFactory implements CmpEngineFactory {
     }
 
     public CmpEngine create() throws OpenEJBException {
-        return new JpaCmpEngine(cmpCallback, transactionManager, transactionSynchronizationRegistry);
+        return new JpaCmpEngine(cmpCallback);
     }
 }

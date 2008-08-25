@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.TimerService;
-import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -36,24 +34,18 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-
 /**
  * @version $Rev$ $Date$
  */
 public class EntityContext extends BaseContext implements javax.ejb.EntityContext {
-
     protected final static State[] states = new State[Operation.values().length];
 
     public static State[] getStates() {
         return states;
     }
 
-    public EntityContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
-    }
-
-    protected EntityContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public EntityContext(SecurityService securityService) {
+        super(securityService);
     }
 
     protected State getState() {
@@ -105,7 +97,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
                 throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a remote interface");
             }
 
-            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(((RpcContainer) di.getContainer()).getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
+            EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di.getContainer().getDeploymentInfo(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>());
             try {
                 Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
                 return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);
@@ -150,11 +142,11 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -313,11 +305,11 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 

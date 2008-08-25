@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.core;
 
-import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.List;
 import java.util.ArrayList;
@@ -24,19 +23,12 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
 import javax.ejb.TimerService;
-import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.RollbackException;
 import javax.xml.rpc.handler.MessageContext;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
-import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
@@ -45,18 +37,16 @@ import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
-
 /**
  * @version $Rev$ $Date$
  */
 public abstract class BaseSessionContext extends BaseContext implements SessionContext {
-
-    public BaseSessionContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
+    protected BaseSessionContext(SecurityService securityService) {
+        super(securityService);
     }
 
-    public BaseSessionContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public BaseSessionContext(SecurityService securityService, UserTransaction userTransaction) {
+        super(securityService, userTransaction);
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
@@ -143,7 +133,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
                 interfaces.add(IntraVmProxy.class);
-                return ProxyManager.newProxyInstance(interfaces.toArray(new Class[]{}), handler);
+                return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
             } catch (IllegalAccessException iae) {
                 throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
             }
@@ -199,11 +189,11 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -257,11 +247,11 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 

@@ -29,12 +29,15 @@ import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -42,14 +45,13 @@ import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.UnavailableException;
 import javax.resource.ResourceException;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
@@ -58,12 +60,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MdbContainer implements RpcContainer, TransactionContainer {
+public class MdbContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;
-    private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final ResourceAdapter resourceAdapter;
     private final Class messageListenerInterface;
@@ -73,9 +74,8 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
     private final XAResourceWrapper xaResourceWrapper;
 
-    public MdbContainer(Object containerID, TransactionManager transactionManager, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
+    public MdbContainer(Object containerID, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
-        this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
         this.messageListenerInterface = messageListenerInterface;
@@ -125,7 +125,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, transactionManager, securityService, instanceLimit);
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, securityService, instanceLimit);
         EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, xaResourceWrapper);
 
         // update the data structures
@@ -224,7 +224,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
         EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
         MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
-        Instance instance = null;
+        Instance instance;
         try {
             instance = (Instance) instanceFactory.createInstance(true);
         } catch (UnavailableException e) {
@@ -252,21 +252,13 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         mdbCallContext.deliveryMethod = method;
         mdbCallContext.oldCallContext = oldContext;
 
-        // add tx data
-        mdbCallContext.txPolicy = deployInfo.getTransactionPolicy(method);
-        mdbCallContext.txContext = new TransactionContext(callContext, transactionManager);
-
         // call the tx before method
         try {
-            boolean adapterTransaction = transactionManager.getTransaction() != null;
-            mdbCallContext.txPolicy.beforeInvoke(instance, mdbCallContext.txContext);
+            mdbCallContext.txPolicy = createTransactionPolicy(deployInfo.getTransactionType(method), callContext);
 
             // if we have an xaResource and a transaction was not imported from the adapter, enlist the xaResource
-            if (xaResource != null && !adapterTransaction) {
-                Transaction transaction = transactionManager.getTransaction();
-                if (transaction != null) {
-                    transaction.enlistResource(xaResource);
-                }
+            if (xaResource != null && mdbCallContext.txPolicy.isNewTransaction()) {
+                mdbCallContext.txPolicy.enlistResource(xaResource);
             }
         } catch (ApplicationException e) {
             ThreadContext.exit(oldContext);
@@ -342,44 +334,36 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     }
 
     private Object _invoke(Object instance, Method runMethod, Object [] args, DeploymentInfo deploymentInfo, MdbCallContext mdbCallContext) throws SystemException, ApplicationException {
-        Object returnValue = null;
+        Object returnValue;
         try {
             List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
             InterceptorStack interceptorStack = new InterceptorStack(((Instance)instance).bean, runMethod, Operation.BUSINESS, interceptors, ((Instance)instance).interceptors);
             returnValue = interceptorStack.invoke(args);            
             return returnValue;
-        } catch (java.lang.reflect.InvocationTargetException ite) {// handle exceptions thrown by enterprise bean
-            if (!isApplicationException(deploymentInfo, ite.getTargetException())) {
-                //
-                /// System Exception ****************************
-                mdbCallContext.txPolicy.handleSystemException(ite.getTargetException(), instance, mdbCallContext.txContext);
-            } else {
-                //
-                // Application Exception ***********************
-                mdbCallContext.txPolicy.handleApplicationException(ite.getTargetException(), false, mdbCallContext.txContext);
+        } catch (Throwable e) {
+            // unwrap invocation target exception
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
             }
-        } catch (Throwable re) {// handle reflection exception
+
             //  Any exception thrown by reflection; not by the enterprise bean. Possible
             //  Exceptions are:
             //    IllegalAccessException - if the underlying method is inaccessible.
             //    IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
             //    NullPointerException - if the specified object is null and the method is an instance method.
             //    ExceptionInInitializerError - if the initialization provoked by this method fails.
-            if (!isApplicationException(deploymentInfo, re)) {
+            ExceptionType type = deploymentInfo.getExceptionType(e);
+            if (type == ExceptionType.SYSTEM) {
                 //
                 /// System Exception ****************************
-                mdbCallContext.txPolicy.handleSystemException(re, instance, mdbCallContext.txContext);
+                handleSystemException(mdbCallContext.txPolicy, e, ThreadContext.getThreadContext());
             } else {
                 //
                 // Application Exception ***********************
-                mdbCallContext.txPolicy.handleApplicationException(re, false, mdbCallContext.txContext);
+                handleApplicationException(mdbCallContext.txPolicy, e, false);
             }
         }
         throw new AssertionError("Should not get here");
-    }
-
-    private boolean isApplicationException(DeploymentInfo deploymentInfo, Throwable e) {
-        return e instanceof Exception && !(e instanceof RuntimeException);
     }
 
     public void afterDelivery(Object instance) throws SystemException {
@@ -389,7 +373,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
 
         // invoke the tx after method
         try {
-            mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
+            afterInvoke(mdbCallContext.txPolicy, callContext);
         } catch (ApplicationException e) {
             throw new SystemException("Should never get an Application exception", e);
         } finally {
@@ -410,7 +394,7 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
         MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
         if (mdbCallContext != null) {
             try {
-                mdbCallContext.txPolicy.afterInvoke(instance, mdbCallContext.txContext);
+                afterInvoke(mdbCallContext.txPolicy, callContext);
             } catch (Exception e) {
                 logger.error("error while releasing message endpoint", e);
             } finally {
@@ -425,10 +409,6 @@ public class MdbContainer implements RpcContainer, TransactionContainer {
     private static class MdbCallContext {
         private Method deliveryMethod;
         private TransactionPolicy txPolicy;
-        private TransactionContext txContext;
         private ThreadContext oldCallContext;
-    }
-
-    public void discardInstance(Object instance, ThreadContext context) {
     }
 }

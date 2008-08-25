@@ -16,68 +16,47 @@
  */
 package org.apache.openejb.core.transaction;
 
+import java.rmi.RemoteException;
+import javax.transaction.TransactionManager;
+import javax.transaction.Transaction;
+
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
-import java.rmi.RemoteException;
-
 /**
  * 17.6.2.6 Never
- *
+ * <p/>
  * The Container invokes an enterprise Bean method whose transaction attribute
  * is set to Never without a transaction context defined by the EJB spec.
- *
+ * <p/>
  * The client is required to call without a transaction context.
- * 
+ * <p/>
  * If the client calls with a transaction context, the Container throws:<ul>
  * <li>java.rmi.RemoteException exception if the client is a remote client</li>
- * <li>javax.ejb.EJBException if the client is a local client</li>
- * </ul>
- * 
- * If the client calls without a transaction context, the Container performs
- * the same steps as described in the NotSupported case.
+ * <li>javax.ejb.EJBException if the client is a local client</li> </ul>
+ * <p/>
+ * If the client calls without a transaction context, the Container performs the
+ * same steps as described in the NotSupported case.
  */
-public class TxNever extends TransactionPolicy {
+public class TxNever extends JtaTransactionPolicy {
+    public TxNever(TransactionManager transactionManager) throws SystemException, ApplicationException {
+        super(TransactionType.Never, transactionManager);
 
-    public TxNever(TransactionContainer container) {
-        super(Type.Never, container);
-    }
-
-    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
-        context.callContext.set(Type.class, getPolicyType());
-
-        try {
-
-            if (context.getTransactionManager().getTransaction() != null) {
-
-                throw new ApplicationException(new RemoteException("Transactions not supported"));
-            }
-
-        } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during getTransaction()", se);
-            throw new SystemException(se);
+        if (getTransaction() != null) {
+            throw new ApplicationException(new RemoteException("Transactions not supported"));
         }
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
+    public boolean isNewTransaction() {
+        return false;
     }
 
-    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
-        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
-
-        throw new ApplicationException(appException);
+    protected Transaction getCurrentTrasaction() {
+        return null;
     }
 
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-        /* [1] Log the system exception or error *********/
-        logSystemException(sysException, context);
-
-        /* [2] Discard instance. *************************/
-        discardBeanInstance(instance, context.callContext);
-
-        /* [3] Throw RemoteException to client ***********/
-        throwExceptionToServer(sysException);
+    public void commit() {
+        fireNonTransactionalCompletion();
     }
-
 }
 

@@ -21,14 +21,12 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.MessageDrivenContext;
 import javax.ejb.TimerService;
-import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
-
 
 /**
  * @version $Rev$ $Date$
@@ -40,13 +38,9 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
     public static State[] getStates() {
         return states;
     }
-    
-    public MdbContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
-    }
 
-    protected MdbContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public MdbContext(SecurityService securityService) {
+        super(securityService);
     }
 
     protected State getState() {
@@ -88,12 +82,12 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         }
 
         @Override
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
         @Override
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -158,12 +152,12 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         }
 
         @Override
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
         @Override
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 

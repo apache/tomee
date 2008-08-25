@@ -17,31 +17,28 @@
  */
 package org.apache.openejb.core.mdb;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import javax.ejb.MessageDrivenBean;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.resource.spi.UnavailableException;
+
+import org.apache.openejb.Injection;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.Injection;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
-import org.apache.xbean.recipe.ConstructionException;
-
-import javax.ejb.MessageDrivenBean;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.resource.spi.UnavailableException;
-import javax.transaction.TransactionManager;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * A MdbInstanceFactory creates instances of message driven beans for a single instance. This class differs from other
@@ -58,7 +55,6 @@ public class MdbInstanceFactory {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final CoreDeploymentInfo deploymentInfo;
-    private final TransactionManager transactionManager;
     private final SecurityService securityService;
     private final int instanceLimit;
     private int instanceCount;
@@ -66,13 +62,11 @@ public class MdbInstanceFactory {
     /**
      * Creates a MdbInstanceFactory for a single specific deployment.
      * @param deploymentInfo the deployment for which instances will be created
-     * @param transactionManager the transaction manager for this container system
      * @param securityService the transaction manager for this container system
      * @param instanceLimit the maximal number of instances or <= 0 if unlimited
      */
-    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, TransactionManager transactionManager, SecurityService securityService, int instanceLimit) {
+    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, SecurityService securityService, int instanceLimit) {
         this.deploymentInfo = deploymentInfo;
-        this.transactionManager = transactionManager;
         this.securityService = securityService;
         this.instanceLimit = instanceLimit;
     }
@@ -187,12 +181,12 @@ public class MdbInstanceFactory {
         try {
             Context ctx = deploymentInfo.getJndiEnc();
             // construct the bean instance
-            MdbContext mdbContext = null;
+            MdbContext mdbContext;
             synchronized(this) {
                 try {
                     mdbContext = (MdbContext) ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e) {
-                    mdbContext = new MdbContext(transactionManager, securityService);
+                    mdbContext = new MdbContext(securityService);
                     ctx.bind("java:comp/EJBContext",mdbContext);
                 }
             }
@@ -202,7 +196,7 @@ public class MdbInstanceFactory {
             callContext.setCurrentOperation(Operation.INJECTION);
             callContext.setCurrentAllowedStates(MdbContext.getStates());
             if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
-                objectRecipe.setProperty("messageDrivenContext", new StaticRecipe(mdbContext));
+                objectRecipe.setProperty("messageDrivenContext", mdbContext);
             }
             Object bean = objectRecipe.create();
 
@@ -228,27 +222,19 @@ public class MdbInstanceFactory {
             // TODO: We need to keep these somehwere
             interceptorInstances.put(beanClass.getName(), bean);
             Instance instance = new Instance(bean,interceptorInstances);
-            try {
-                callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+            callContext.setCurrentAllowedStates(MdbContext.getStates());
+
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+            interceptorStack.invoke();
+
+            if (bean instanceof MessageDrivenBean){
+                callContext.setCurrentOperation(Operation.CREATE);
                 callContext.setCurrentAllowedStates(MdbContext.getStates());
-
-                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                Method create = deploymentInfo.getCreateMethod();
+                interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
                 interceptorStack.invoke();
-            } catch (Exception e) {
-                throw e;
-            }
-
-            try {
-                if (bean instanceof MessageDrivenBean){
-                    callContext.setCurrentOperation(Operation.CREATE);
-                    callContext.setCurrentAllowedStates(MdbContext.getStates());
-                    Method create = deploymentInfo.getCreateMethod();
-                    InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList(), new HashMap());
-                    interceptorStack.invoke();
-                }
-            } catch (Exception e) {
-                throw e;
             }
 
             return instance;
@@ -276,7 +262,7 @@ public class MdbInstanceFactory {
                     // another data type by an xbean-reflect property editor
                     objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), string);
                 } else {
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), new StaticRecipe(object));
+                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), object);
                 }
             } catch (NamingException e) {
                 logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());

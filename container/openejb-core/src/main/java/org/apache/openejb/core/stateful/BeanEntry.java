@@ -19,21 +19,22 @@ package org.apache.openejb.core.stateful;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
-import javax.transaction.Transaction;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 
 import org.apache.openejb.util.Index;
+import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 
 public class BeanEntry implements Serializable {
     private static final long serialVersionUID = 5940667199866151048L;
 
     protected final Object bean;
     protected final Object primaryKey;
-    protected boolean inQueue = false;
+    protected boolean inUse = false;
+    protected transient boolean inQueue = false;
     private long timeStamp;
     protected long timeOutInterval;
-    protected transient Transaction beanTransaction;
+    protected transient SuspendedTransaction beanTransaction;
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
     // alternatively, we could use ImmutableArtifact with some read/write replace magic
@@ -55,7 +56,15 @@ public class BeanEntry implements Serializable {
         timeStamp = prototype.timeStamp;
         timeOutInterval = prototype.timeOutInterval;
     }
-    
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
+    }
+
     protected boolean isTimedOut() {
         if (timeOutInterval == 0) {
             return false;

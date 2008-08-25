@@ -16,32 +16,23 @@
  */
 package org.apache.openejb.core.singleton;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
-
 /**
  * @version $Rev$ $Date$
  */
 public class SingletonContext extends BaseSessionContext {
-
     protected final static State[] states = new State[Operation.values().length];
 
     public static State[] getStates() {
         return states;
     }
-    
-    public SingletonContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
-    }
 
-    public SingletonContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public SingletonContext(SecurityService securityService) {
+        super(securityService);
     }
 
     protected State getState() {

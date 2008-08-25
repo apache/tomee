@@ -32,7 +32,6 @@ import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
 import javax.xml.ws.WebServiceContext;
 
 import org.apache.openejb.Injection;
@@ -50,17 +49,14 @@ import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
 
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("SingletonInstanceManager");
-    private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public SingletonInstanceManager(TransactionManager transactionManager, SecurityService securityService) {
-        this.transactionManager = transactionManager;
+    public SingletonInstanceManager(SecurityService securityService) {
         this.securityService = securityService;
     }
 
@@ -114,15 +110,15 @@ public class SingletonInstanceManager {
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
                     callContext.setCurrentAllowedStates(SingletonContext.getStates());
-                    objectRecipe.setProperty("sessionContext", new StaticRecipe(sessionContext));
+                    objectRecipe.setProperty("sessionContext", sessionContext);
                 }     
                 
-                WebServiceContext wsContext;
                 // This is a fix for GERONIMO-3444
                 synchronized(this){
                     try {
-                        wsContext = (WebServiceContext) ctx.lookup("java:comp/WebServiceContext");
+                        ctx.lookup("java:comp/WebServiceContext");
                     } catch (NamingException e) {
+                        WebServiceContext wsContext;
                         wsContext = new EjbWsContext(sessionContext);
                         ctx.bind("java:comp/WebServiceContext", wsContext);
                     }
@@ -162,27 +158,19 @@ public class SingletonInstanceManager {
                 interceptorInstances.put(beanClass.getName(), bean);
 
 
-                try {
-                    callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+                callContext.setCurrentAllowedStates(SingletonContext.getStates());
+
+                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                interceptorStack.invoke();
+
+                if (bean instanceof SessionBean){
+                    callContext.setCurrentOperation(Operation.CREATE);
                     callContext.setCurrentAllowedStates(SingletonContext.getStates());
-
-                    List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                    InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+                    Method create = deploymentInfo.getCreateMethod();
+                    interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
                     interceptorStack.invoke();
-                } catch (Exception e) {
-                    throw e;
-                }
-
-                try {
-                    if (bean instanceof SessionBean){
-                        callContext.setCurrentOperation(Operation.CREATE);
-                        callContext.setCurrentAllowedStates(SingletonContext.getStates());
-                        Method create = deploymentInfo.getCreateMethod();
-                        InterceptorStack interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
-                        interceptorStack.invoke();
-                    }
-                } catch (Exception e) {
-                    throw e;
                 }
 
                 ReadWriteLock lock;
@@ -240,7 +228,7 @@ public class SingletonInstanceManager {
                     // another data type by an xbean-reflect property editor
                     objectRecipe.setProperty(prefix + injection.getName(), string);
                 } else {
-                    objectRecipe.setProperty(prefix + injection.getName(), new StaticRecipe(object));
+                    objectRecipe.setProperty(prefix + injection.getName(), object);
                 }
             } catch (NamingException e) {
                 logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
@@ -258,7 +246,7 @@ public class SingletonInstanceManager {
     }
 
     private SessionContext createSessionContext() {
-        return new SingletonContext(transactionManager, securityService);
+        return new SingletonContext(securityService);
     }
 
     public void freeInstance(ThreadContext callContext) {

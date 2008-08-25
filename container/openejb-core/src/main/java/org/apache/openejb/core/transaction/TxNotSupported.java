@@ -16,84 +16,53 @@
  */
 package org.apache.openejb.core.transaction;
 
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
-import javax.transaction.InvalidTransactionException;
+import org.apache.openejb.SystemException;
 
 /**
  * 17.6.2.1 NotSupported
- *
+ * <p/>
  * The Container invokes an enterprise Bean method whose transaction attribute
  * is set to NotSupported with an unspecified transaction context.
- *
+ * <p/>
  * If a client calls with a transaction context, the container suspends the
  * association of the transaction context with the current thread before
  * invoking the enterprise bean's business method. The container resumes the
  * suspended association when the business method has completed. The suspended
  * transaction context of the client is not passed to the resource managers or
  * other enterprise Bean objects that are invoked from the business method.
- *
+ * <p/>
  * If the business method invokes other enterprise beans, the Container passes
  * no transaction context with the invocation.
- *
+ * <p/>
  * Refer to Subsection 17.6.5 for more details of how the Container can
  * implement this case.
- *
  */
-public class TxNotSupported extends TransactionPolicy {
+public class TxNotSupported extends JtaTransactionPolicy {
+    private final Transaction clientTx;
 
-    public TxNotSupported(TransactionContainer container) {
-        super(Type.NotSupported, container);
+    public TxNotSupported(TransactionManager transactionManager) throws SystemException {
+        super(TransactionType.NotSupported, transactionManager);
+
+        clientTx = suspendTransaction();
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
-        context.callContext.set(Type.class, getPolicyType());
-
-        try {
-
-            context.clientTx = context.getTransactionManager().suspend();
-        } catch (javax.transaction.SystemException se) {
-            throw new SystemException(se);
-        }
-        context.currentTx = null;
-
+    public boolean isNewTransaction() {
+        return false;
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
+    protected Transaction getCurrentTrasaction() {
+        return null;
+    }
 
-        if (context.clientTx != null) {
-            try {
-                context.getTransactionManager().resume(context.clientTx);
-            } catch (InvalidTransactionException ite) {
+    public void commit() throws SystemException {
+        fireNonTransactionalCompletion();
 
-                logger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());
-            } catch (IllegalStateException e) {
-
-                logger.error("Could not resume the client's transaction: " + e.getMessage());
-            } catch (javax.transaction.SystemException e) {
-
-                logger.error("Could not resume the client's transaction: The transaction reported a system exception: " + e.getMessage());
-            }
+        if (clientTx != null) {
+            resumeTransaction(clientTx);
         }
     }
-
-    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
-        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
-
-        throw new ApplicationException(appException);
-    }
-
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-        /* [1] Log the system exception or error *********/
-        logSystemException(sysException, context);
-
-        /* [2] Discard instance. *************************/
-        discardBeanInstance(instance, context.callContext);
-
-        /* [3] Throw RemoteException to client ***********/
-        throwExceptionToServer(sysException);
-    }
-
 }
 

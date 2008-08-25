@@ -16,86 +16,47 @@
  */
 package org.apache.openejb.core.transaction;
 
-import org.apache.openejb.ApplicationException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.SystemException;
 
 /**
  * 17.6.2.3 Supports
- *
+ * <p/>
  * The Container invokes an enterprise Bean method whose transaction attribute
  * is set to Supports as follows.
- *
- * If the client calls with a transaction context, the Container performs
- * the same steps as described in the Required case.
- * 
- * If the client calls without a transaction context, the Container performs
- * the same steps as described in the NotSupported case.
- *
- * The Supports transaction attribute must be used with caution. This is
- * because of the different transactional semantics provided by the two
- * possible modes of execution. Only the enterprise beans that will
- * execute correctly in both modes should use the Supports transaction
- * attribute.
- *
+ * <p/>
+ * If the client calls with a transaction context, the Container performs the
+ * same steps as described in the Required case.
+ * <p/>
+ * If the client calls without a transaction context, the Container performs the
+ * same steps as described in the NotSupported case.
+ * <p/>
+ * The Supports transaction attribute must be used with caution. This is because
+ * of the different transactional semantics provided by the two possible modes
+ * of execution. Only the enterprise beans that will execute correctly in both
+ * modes should use the Supports transaction attribute.
  */
-public class TxSupports extends TransactionPolicy {
+public class TxSupports extends JtaTransactionPolicy {
+    private final Transaction clientTx;
 
-    public TxSupports(TransactionContainer container) {
-        super(Type.Supports, container);
+    public TxSupports(TransactionManager transactionManager) throws SystemException {
+        super(TransactionType.Supports, transactionManager);
+
+        clientTx = getTransaction();
     }
 
-    public void beforeInvoke(Object instance, TransactionContext context) throws SystemException, ApplicationException {
-        context.callContext.set(Type.class, getPolicyType());
-
-        try {
-
-            context.clientTx = context.getTransactionManager().getTransaction();
-            context.currentTx = context.clientTx;
-
-        } catch (javax.transaction.SystemException se) {
-            throw new SystemException(se);
-        }
+    public boolean isNewTransaction() {
+        return clientTx == null;
     }
 
-    public void afterInvoke(Object instance, TransactionContext context) throws ApplicationException, SystemException {
-
+    protected Transaction getCurrentTrasaction() {
+        return clientTx;
     }
 
-    public void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException {
-        if (rollback && context.currentTx != null) markTxRollbackOnly(context.currentTx);
-
-        throw new ApplicationException(appException);
+    public void commit() {
+        fireNonTransactionalCompletion();
     }
-
-    public void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException {
-
-        boolean runningInTransaction = (context.currentTx != null);
-
-        if (runningInTransaction) {
-            /* [1] Log the system exception or error *********/
-            logSystemException(sysException, context);
-
-            /* [2] Mark the transaction for rollback. ********/
-            markTxRollbackOnly(context.currentTx);
-
-            /* [3] Discard instance. *************************/
-            discardBeanInstance(instance, context.callContext);
-
-            /* [4] TransactionRolledbackException to client **/
-            throwTxExceptionToServer(sysException);
-
-        } else {
-            /* [1] Log the system exception or error *********/
-            logSystemException(sysException, context);
-
-            /* [2] Discard instance. *************************/
-            discardBeanInstance(instance, context.callContext);
-
-            /* [3] Throw RemoteException to client ***********/
-            throwExceptionToServer(sysException);
-        }
-
-    }
-
 }
 

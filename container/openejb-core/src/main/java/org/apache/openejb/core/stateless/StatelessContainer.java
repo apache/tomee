@@ -29,7 +29,6 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
-import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
@@ -43,9 +42,11 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.finder.ClassFinder;
@@ -53,22 +54,20 @@ import org.apache.openejb.finder.ClassFinder;
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
  */
-public class StatelessContainer implements org.apache.openejb.RpcContainer, TransactionContainer {
+public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     private StatelessInstanceManager instanceManager;
 
     private HashMap<String,DeploymentInfo> deploymentRegistry = new HashMap<String,DeploymentInfo>();
 
     private Object containerID = null;
-    private TransactionManager transactionManager;
     private SecurityService securityService;
 
-    public StatelessContainer(Object id, TransactionManager transactionManager, SecurityService securityService, int timeOut, int poolSize, boolean strictPooling) throws OpenEJBException {
+    public StatelessContainer(Object id, SecurityService securityService, int timeOut, int poolSize, boolean strictPooling) throws OpenEJBException {
         this.containerID = id;
-        this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new StatelessInstanceManager(transactionManager, securityService, new Duration(timeOut,TimeUnit.MILLISECONDS), poolSize, strictPooling);
+        instanceManager = new StatelessInstanceManager(securityService, new Duration(timeOut,TimeUnit.MILLISECONDS), poolSize, strictPooling);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;
@@ -164,7 +163,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
 
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            Object retValue = _invoke(callInterface, callMethod, runMethod, args, bean, callContext);
+            Object retValue = _invoke(callInterface, callMethod, runMethod, args, (Instance) bean, callContext);
             instanceManager.poolInstance(callContext, bean);
 
             return retValue;
@@ -194,11 +193,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             throws OpenEJBException {
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
-        txContext.callContext = callContext;
 
-        txPolicy.beforeInvoke(instance, txContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
         Object returnValue = null;
         try {
@@ -216,23 +212,20 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
             if (type == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
-                /**
-                 * The bean instance is not put into the pool via instanceManager.poolInstance
-                 * and therefore the instance will be garbage collected and destroyed.
-                 * For this reason the discardInstance method of the StatelessInstanceManager
-                 * does nothing.
-                 */
-
-                txPolicy.handleSystemException(re, instance, txContext);
+                // The bean instance is not put into the pool via instanceManager.poolInstance
+                // and therefore the instance will be garbage collected and destroyed.
+                // For this reason the discardInstance method of the StatelessInstanceManager
+                // does nothing.
+                handleSystemException(txPolicy, re, callContext);
             } else {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, instance);
 
-                txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                handleApplicationException(txPolicy, re, type == ExceptionType.APPLICATION_ROLLBACK);
             }
         } finally {
 
-            txPolicy.afterInvoke(instance, txContext);
+            afterInvoke(txPolicy, callContext);
         }
 
         return returnValue;
@@ -281,15 +274,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Tran
         return returnValue;
     }
 
-    private TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         return new ProxyInfo(deploymentInfo, null);
-    }
-
-    public void discardInstance(Object instance, ThreadContext context) {
-        instanceManager.discardInstance(context, instance);
     }
 }

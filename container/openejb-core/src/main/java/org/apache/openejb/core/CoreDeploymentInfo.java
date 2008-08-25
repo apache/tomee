@@ -17,51 +17,39 @@
 package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.SessionSynchronization;
+import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.persistence.EntityManagerFactory;
 import javax.naming.Context;
+import javax.persistence.EntityManagerFactory;
 
-import org.apache.openejb.Container;
-import org.apache.openejb.SystemException;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Injection;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.cmp.KeyGenerator;
-import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
-import org.apache.openejb.core.stateful.SessionSynchronizationTxPolicy;
-import org.apache.openejb.core.stateful.StatefulBeanManagedTxPolicy;
-import org.apache.openejb.core.stateful.StatefulContainerManagedTxPolicy;
-import org.apache.openejb.core.stateless.StatelessBeanManagedTxPolicy;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.core.transaction.TxMandatory;
-import org.apache.openejb.core.transaction.TxNever;
-import org.apache.openejb.core.transaction.TxNotSupported;
-import org.apache.openejb.core.transaction.TxRequired;
-import org.apache.openejb.core.transaction.TxRequiresNew;
-import org.apache.openejb.core.transaction.TxSupports;
 import org.apache.openejb.core.interceptor.InterceptorData;
-import org.apache.openejb.core.mdb.MessageDrivenBeanManagedTxPolicy;
+import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.singleton.SingletonBeanManagedTxPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -104,8 +92,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Container container;
     private EJBHome ejbHomeRef;
     private EJBLocalHome ejbLocalHomeRef;
-    private BusinessLocalHome businessLocalHomeRef;
-    private BusinessRemoteHome businessRemoteHomeRef;
     private String destinationId;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
 
@@ -123,9 +109,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final BeanType componentType;
 
     private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
-    private final Map<Method, Byte> methodTransactionAttributes = new HashMap<Method, Byte>();
     private final Map<Method, Byte> methodConcurrencyAttributes = new HashMap<Method, Byte>();
-    private final Map<Method, TransactionPolicy> methodTransactionPolicies = new HashMap<Method, TransactionPolicy>();
+
+    private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
+    private TransactionPolicyFactory transactionPolicyFactory;
+
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
@@ -358,21 +346,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return componentType;
     }
 
-    public byte getTransactionAttribute(Method method) {
-        Byte byteWrapper = methodTransactionAttributes.get(method);
-
-        if (byteWrapper == null){
-            Method beanMethod = getMatchingBeanMethod(method);
-            byteWrapper = methodTransactionAttributes.get(beanMethod);
-        }
-
-        if (byteWrapper == null) {
-            return TX_NOT_SUPPORTED;// non remote or home interface method
-        } else {
-            return byteWrapper;
-        }
-    }
-
     public byte getConcurrencyAttribute(Method method) {
         Byte byteWrapper = methodConcurrencyAttributes.get(method);
 
@@ -388,46 +361,45 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public TransactionPolicy getTransactionPolicy(Method method) {
-        TransactionPolicy policy = methodTransactionPolicies.get(method);
-        if (policy == null && !isBeanManagedTransaction) {
-            Method beanMethod = getMatchingBeanMethod(method);
-            if (beanMethod != null){
-                policy = methodTransactionPolicies.get(beanMethod);
+    public TransactionType getTransactionType(Method method) {
+        // Check the cache
+        TransactionType type = methodTransactionType.get(method);
+        if (type != null) {
+            return type;
+        }
+
+        // Bean managed EJBs always get the BeanManaged policy
+        if (isBeanManagedTransaction) {
+            return TransactionType.BeanManaged;
+        }
+
+        // Check the matching bean method for the supplied method
+        Method beanMethod = getMatchingBeanMethod(method);
+        if (beanMethod != null){
+            type = methodTransactionType.get(beanMethod);
+            if (type != null) {
+                return type;
             }
         }
-        if (policy == null && !isBeanManagedTransaction) {
-            Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-            log.debug("The following method doesn't have a transaction policy assigned: " + method);
-        }
-        if (policy == null && container instanceof TransactionContainer) {
-            if (isBeanManagedTransaction) {
-                if (componentType == BeanType.STATEFUL) {
-                    policy = new StatefulBeanManagedTxPolicy((TransactionContainer) container);
-                } else if (componentType == BeanType.STATELESS) {
-                    policy = new StatelessBeanManagedTxPolicy((TransactionContainer) container);
-                } else if (componentType == BeanType.SINGLETON) {
-                    policy = new SingletonBeanManagedTxPolicy((TransactionContainer) container);
-                } else if (componentType == BeanType.MESSAGE_DRIVEN) {
-                    policy = new MessageDrivenBeanManagedTxPolicy((TransactionContainer) container);
-                }
-            } else if (componentType == BeanType.STATEFUL) {
-                policy = new TxRequired((TransactionContainer) container);
-                if (!isBeanManagedTransaction && SessionSynchronization.class.isAssignableFrom(beanClass)) {
-                    policy = new SessionSynchronizationTxPolicy(policy);
-                } else {
-                    policy = new StatefulContainerManagedTxPolicy(policy);
-                }
-            } else {
-                // default transaction policy is required
-                policy = new TxRequired((TransactionContainer) container);
-            }
-            methodTransactionPolicies.put(method, policy);
-        }
-        if (policy == null) {
-            policy = new TxSupports((TransactionContainer) container);
-        }
-        return policy ;
+
+        // All transaction attributes should have been set during deployment, so log a message
+        Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+        log.debug("The following method doesn't have a transaction policy assigned: " + method);
+
+        // default transaction policy is required
+        type = TransactionType.Required;
+
+        // cache this default to avoid extra log messages
+        methodTransactionType.put(method, type);
+        return type;
+    }
+
+    public TransactionPolicyFactory getTransactionPolicyFactory() {
+        return transactionPolicyFactory;
+    }
+
+    public void setTransactionPolicyFactory(TransactionPolicyFactory transactionPolicyFactory) {
+        this.transactionPolicyFactory = transactionPolicyFactory;
     }
 
     public Collection<String> getAuthorizedRoles(Method method) {
@@ -644,85 +616,46 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
 
     public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {
-        Byte byteValue = null;
-        TransactionPolicy policy = null;
-
+        TransactionType transactionType;
         if (transAttribute.equalsIgnoreCase("Supports")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxSupports((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_SUPPORTS);
+            transactionType = TransactionType.Supports;
 
         } else if (transAttribute.equalsIgnoreCase("RequiresNew")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxRequiresNew((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_REQUIRES_NEW);
+            transactionType = TransactionType.RequiresNew;
 
         } else if (transAttribute.equalsIgnoreCase("Mandatory")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxMandatory((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_MANDITORY);
+            transactionType = TransactionType.Mandatory;
 
         } else if (transAttribute.equalsIgnoreCase("NotSupported")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxNotSupported((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_NOT_SUPPORTED);
+            transactionType = TransactionType.NotSupported;
 
         } else if (transAttribute.equalsIgnoreCase("Required")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxRequired((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_REQUIRED);
+            transactionType = TransactionType.Required;
 
         } else if (transAttribute.equalsIgnoreCase("Never")) {
-            if (container instanceof TransactionContainer) {
-                policy = new TxNever((TransactionContainer) container);
-            }
-            byteValue = new Byte(TX_NEVER);
+            transactionType = TransactionType.Never;
+
         } else {
             throw new IllegalArgumentException("Invalid transaction attribute \"" + transAttribute + "\" declared for method " + method.getName() + ". Please check your configuration.");
         }
 
-        /* EJB 1.1 page 55
-         Only a stateful Session bean with container-managed transaction demarcation may implement the
-         SessionSynchronization interface. A stateless Session bean must not implement the SessionSynchronization
-         interface.
-         */
+        // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
+        // bean message listener methods. The use of the other transaction attributes is not meaningful
+        // for message-driven bean message listener methods because there is no pre-existing client transaction
+        // context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
+        if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
+            if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
 
-        if (componentType == BeanType.STATEFUL && !isBeanManagedTransaction && container instanceof TransactionContainer) {
-
-            if (SessionSynchronization.class.isAssignableFrom(beanClass)) {
-                if (!transAttribute.equals("Never") && !transAttribute.equals("NotSupported")) {
-                    policy = new SessionSynchronizationTxPolicy(policy);
-                }
-            } else {
-                policy = new StatefulContainerManagedTxPolicy(policy);
-            }
-        }
-
-        /**
-           Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
-           bean message listener methods. The use of the other transaction attributes is not meaningful
-           for message-driven bean message listener methods because there is no pre-existing client transaction
-           context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
-         */
-        if (componentType.isMessageDriven() && !isBeanManagedTransaction && container instanceof TransactionContainer) {
-            if (policy.getPolicyType() != TransactionPolicy.Type.NotSupported && policy.getPolicyType() != TransactionPolicy.Type.Required) {
-
-                if (method.equals(this.ejbTimeout) && policy.getPolicyType() == TransactionPolicy.Type.RequiresNew) {
+                if (method.equals(this.ejbTimeout) && transactionType == TransactionType.RequiresNew) {
                     // do nothing. This is allowed as the timer callback method for a message driven bean
                     // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
                 } else {
-                    throw new OpenEJBException("The transaction attribute " + policy.policyToString() + "is not supported for the method "
+                    throw new OpenEJBException("The transaction attribute " + transactionType + " is not supported for the method "
                                                + method.getName() + " of the Message Driven Bean " + beanClass.getName());
                 }
             }
         }
-        methodTransactionAttributes.put(method, byteValue);
-        methodTransactionPolicies.put(method, policy);
+        methodTransactionType.put(method, transactionType);
     }
 
     public List<Method> getAroundInvoke() {
@@ -872,10 +805,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private void mapHomeInterface(Class intrface) {
         Method [] homeMethods = intrface.getMethods();
-        for (int i = 0; i < homeMethods.length; i++) {
-            Method method = homeMethods[i];
+        for (Method method : homeMethods) {
             Class owner = method.getDeclaringClass();
-            if (owner == javax.ejb.EJBHome.class || owner == EJBLocalHome.class) {
+            if (owner == EJBHome.class || owner == EJBLocalHome.class) {
                 continue;
             }
 
@@ -883,7 +815,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                 Method beanMethod = null;
                 if (method.getName().startsWith("create")) {
                     StringBuilder ejbCreateName = new StringBuilder(method.getName());
-                    ejbCreateName.replace(0,1, "ejbC");
+                    ejbCreateName.replace(0, 1, "ejbC");
                     beanMethod = beanClass.getMethod(ejbCreateName.toString(), method.getParameterTypes());
                     createMethod = beanMethod;
                     /*
@@ -913,7 +845,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                     beanMethod = beanClass.getMethod(beanMethodName, method.getParameterTypes());
                 }
                 if (beanMethod != null) {
-                    mapMethods(homeMethods[i], beanMethod);
+                    mapMethods(method, beanMethod);
                 }
             } catch (NoSuchMethodException nsme) {
 //                throw new RuntimeException("Invalid method [" + method + "] Not declared by " + beanClass.getName() + " class");
@@ -931,10 +863,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
 
         Method [] interfaceMethods = intrface.getMethods();
-        for (int i = 0; i < interfaceMethods.length; i++) {
-            Method method = interfaceMethods[i];
+        for (Method method : interfaceMethods) {
             Class declaringClass = method.getDeclaringClass();
-            if (declaringClass == javax.ejb.EJBObject.class || declaringClass == EJBLocalObject.class) {
+            if (declaringClass == EJBObject.class || declaringClass == EJBLocalObject.class) {
                 continue;
             }
             try {

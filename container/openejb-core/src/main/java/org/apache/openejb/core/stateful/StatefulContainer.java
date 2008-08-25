@@ -17,13 +17,11 @@
 package org.apache.openejb.core.stateful;
 
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 import java.rmi.dgc.VMID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -31,26 +29,31 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.RemoveException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionRequiredException;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.InvalidateReferenceException;
-import org.apache.openejb.InterfaceType;
+import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.stateful.StatefulInstanceManager.Instance;
+import static org.apache.openejb.core.ExceptionType.SYSTEM;
+import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
+import org.apache.openejb.core.transaction.BeanTransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -62,11 +65,10 @@ import org.apache.openejb.util.Logger;
 /**
  * @org.apache.xbean.XBean element="statefulContainer"
  */
-public class StatefulContainer implements RpcContainer, TransactionContainer {
+public class StatefulContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final Object containerID;
-    private final TransactionManager transactionManager;
     private final SecurityService securityService;
     protected final StatefulInstanceManager instanceManager;
     // todo this should be part of the constructor
@@ -79,32 +81,30 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
 
     public StatefulContainer(Object id,
-        TransactionManager transactionManager,
-        SecurityService securityService,
-        Class passivator,
-        int timeOut,
-        int poolSize,
-        int bulkPassivate) throws OpenEJBException {
+            SecurityService securityService,
+            Class passivator,
+            int timeOut,
+            int poolSize,
+            int bulkPassivate) throws OpenEJBException {
         this.containerID = id;
-        this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = newStatefulInstanceManager(transactionManager,
-            securityService,
+        instanceManager = newStatefulInstanceManager(
+                securityService,
             passivator,
             timeOut,
             poolSize,
             bulkPassivate);
     }
 
-    protected StatefulInstanceManager newStatefulInstanceManager(TransactionManager transactionManager,
-        SecurityService securityService,
-        Class passivator,
-        int timeOut,
-        int poolSize,
-        int bulkPassivate) throws OpenEJBException {
-        return new StatefulInstanceManager(transactionManager,
-            securityService,
+    protected StatefulInstanceManager newStatefulInstanceManager(
+            SecurityService securityService,
+            Class passivator,
+            int timeOut,
+            int poolSize,
+            int bulkPassivate) throws OpenEJBException {
+        return new StatefulInstanceManager(
+                securityService,
             entityManagerRegistry,
             passivator,
             timeOut,
@@ -278,16 +278,15 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
 
         ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey);
-        createContext.setCurrentOperation(Operation.CREATE);
-        createContext.setCurrentAllowedStates(StatefulContext.getStates());
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
-
         try {
+            // Security check
             checkAuthorization(deploymentInfo, callMethod, callInterface);
 
-            // create the extended entity managers
+            // Create the extended entity managers for this instance
             Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
-            // register them
+
+            // Register the newly created entity managers
             if (entityManagers != null) {
                 try {
                     entityManagerRegistry.addEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
@@ -296,22 +295,46 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                 }
             }
 
-            // allocate a new instance
-            Object o = instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
-            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) o;
+            // Start transaction
+            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getDeploymentInfo().getTransactionType(callMethod), createContext);
 
-            instanceManager.setEntityManagers(createContext, entityManagers);
+            Instance instance = null;
+            try {
+                // Create new instance
+                instance = (Instance) instanceManager.newInstance(primaryKey, deploymentInfo.getBeanClass());
 
-            if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) && !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
+                // Register the entity managers with the instance
+                instanceManager.setEntityManagers(createContext, entityManagers);
+                registerEntityManagers(createContext);
 
-                Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
+                // Register for synchronization callbacks
+                SessionSynchronizationCoordinator.registerSessionSynchronization(instance, createContext);
+              
+                // Invoke create for legacy beans
+                if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) &&
+                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
 
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String,Object>());
+                    // Setup for business invocation
+                    createContext.setCurrentOperation(Operation.CREATE);
+                    createContext.setCurrentAllowedStates(StatefulContext.getStates());
+                    Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
+                    createContext.set(Method.class, createOrInit);
 
-                _invoke(callMethod, interceptorStack, args, instance, createContext);
+                    // Initialize interceptor stack
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String, Object>());
+
+                    // Invoke
+                    if (args == null){
+                        interceptorStack.invoke();
+                    } else {
+                        interceptorStack.invoke(args);
+                    }
+                }
+            } catch (Throwable e) {
+                handleException(createContext, txPolicy, e);
+            } finally {
+                afterInvoke(createContext, txPolicy, instance);
             }
-
-            instanceManager.poolInstance(createContext, instance);
 
             return new ProxyInfo(deploymentInfo, primaryKey);
         } finally {
@@ -327,49 +350,75 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
+            // Security check
             checkAuthorization(deploymentInfo, callMethod, callInterface);
 
-            InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
-            if (type.isComponent() && instanceManager.getBeanTransaction(callContext) != null) {
+            // If a bean managed transaction is active, the bean can not be removed
+            InterfaceType interfaceType = deploymentInfo.getInterfaceType(callInterface);
+            if (interfaceType.isComponent() && instanceManager.getBeanTransaction(callContext) != null) {
                 throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
             }
 
-            Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) instanceManager.obtainInstance(primKey, callContext);
+            // Start transaction
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getDeploymentInfo().getTransactionType(callMethod), callContext);
 
-            if (instance == null) throw new ApplicationException(new javax.ejb.NoSuchEJBException());
-
+            Object returnValue = null;
             boolean retain = false;
+            Instance instance = null;
+            Method runMethod = null;
             try {
-                callContext.setCurrentAllowedStates(StatefulContext.getStates());
-                callContext.setCurrentOperation(Operation.REMOVE);
-                callContext.setInvokedInterface(callInterface);
+                // Obtain instance
+                instance = (Instance) instanceManager.obtainInstance(primKey, callContext);
+                if (instance == null) throw new ApplicationException(new javax.ejb.NoSuchEJBException());
 
+                // Resume previous Bean transaction if there was one
+                if (txPolicy instanceof BeanTransactionPolicy){
+                    // Resume previous Bean transaction if there was one
+                    SuspendedTransaction suspendedTransaction = instanceManager.getBeanTransaction(callContext);
+                    if (suspendedTransaction != null) {
+                        BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
+                        beanTxEnv.resumeUserTransaction(suspendedTransaction);
+                    }
+                }
+
+                // Register the entity managers
+                registerEntityManagers(callContext);
+
+                // Register for synchronization callbacks
+                SessionSynchronizationCoordinator.registerSessionSynchronization(instance, callContext);
+
+                // Setup for remove invocation
+                callContext.setCurrentOperation(Operation.REMOVE);
+                callContext.setCurrentAllowedStates(StatefulContext.getStates());
+                callContext.setInvokedInterface(callInterface);
+                runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                callContext.set(Method.class, runMethod);
+
+                // Do not pass arguments on home.remove(remote) calls
                 Class<?> declaringClass = callMethod.getDeclaringClass();
                 if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
-                    args = new Object[]{}; // no args to pass on home.remove(remote) calls
+                    args = new Object[]{};
                 }
                 
+                // Initialize interceptor stack
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
-                return _invoke(callMethod, interceptorStack, args, instance, callContext);
 
-            } catch(InvalidateReferenceException e){
-                throw e;
-            } catch(ApplicationException e){
-                if (type.isBusiness()){
-                    retain = deploymentInfo.retainIfExeption(runMethod);
-                    throw e;
+                // Invoke
+                if (args == null){
+                    returnValue = interceptorStack.invoke();
                 } else {
-                    return null;
+                    returnValue = interceptorStack.invoke(args);
                 }
+            } catch (Throwable e) {
+                if (interfaceType.isBusiness() && deploymentInfo.getExceptionType(e) == SYSTEM) {
+                    retain = deploymentInfo.retainIfExeption(runMethod);
+                }
+                handleException(callContext, txPolicy, e);
             } finally {
-                if (retain){
-                    instanceManager.poolInstance(callContext, instance);
-                } else {
-                    callContext.setCurrentOperation(Operation.PRE_DESTROY);
-
+                if (!retain) {
                     try {
+                        callContext.setCurrentOperation(Operation.PRE_DESTROY);
                         List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
                         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
                         interceptorStack.invoke();
@@ -386,7 +435,12 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
                     // todo destroy extended persistence contexts
                     instanceManager.freeInstance(callContext);
                 }
+
+                // Commit transaction
+                afterInvoke(callContext, txPolicy, instance);
             }
+
+            return returnValue;
         } finally {
             ThreadContext.exit(oldCallContext);
         }
@@ -396,24 +450,52 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
+            // Security check
             checkAuthorization(deploymentInfo, callMethod, callInterface);
 
-            Object bean = instanceManager.obtainInstance(primKey, callContext);
-            callContext.setCurrentOperation(Operation.BUSINESS);
-            callContext.setCurrentAllowedStates(StatefulContext.getStates());
-            callContext.setInvokedInterface(callInterface);
-            Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+            // Start transaction
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getDeploymentInfo().getTransactionType(callMethod), callContext);
 
-            callContext.set(Method.class, runMethod);
+            Object returnValue = null;
+            Instance instance = null;
+            try {
+                // Obtain instance
+                instance = (Instance) instanceManager.obtainInstance(primKey, callContext);
 
-            StatefulInstanceManager.Instance instance = (StatefulInstanceManager.Instance) bean;
+                // Resume previous Bean transaction if there was one
+                if (txPolicy instanceof BeanTransactionPolicy){
+                    SuspendedTransaction suspendedTransaction = instanceManager.getBeanTransaction(callContext);
+                    if (suspendedTransaction != null) {
+                        BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
+                        beanTxEnv.resumeUserTransaction(suspendedTransaction);
+                    }
+                }
 
-            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-            InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
-            Object returnValue = _invoke(callMethod, interceptorStack, args, bean, callContext);
+                // Register the entity managers
+                registerEntityManagers(callContext);
 
-            instanceManager.poolInstance(callContext, bean);
+                // Register for synchronization callbacks
+                SessionSynchronizationCoordinator.registerSessionSynchronization(instance, callContext);
 
+                // Setup for business invocation
+                callContext.setCurrentOperation(Operation.BUSINESS);
+                callContext.setCurrentAllowedStates(StatefulContext.getStates());
+                callContext.setInvokedInterface(callInterface);
+                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                callContext.set(Method.class, runMethod);
+
+                // Initialize interceptor stack
+                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+
+                // Invoke
+                returnValue = interceptorStack.invoke(args);
+            } catch (Throwable e) {
+                handleException(callContext, txPolicy, e);
+            } finally {
+                // Commit transaction
+                afterInvoke(callContext, txPolicy, instance);
+            }
             return returnValue;
         } finally {
             ThreadContext.exit(oldCallContext);
@@ -427,47 +509,40 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
         }
     }
 
-    protected Object _invoke(Method callMethod, InterceptorStack interceptorStack, Object [] args, Object bean, ThreadContext callContext) throws OpenEJBException {
-
-        TransactionPolicy txPolicy = callContext.getDeploymentInfo().getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, transactionManager);
-        try {
-            txPolicy.beforeInvoke(bean, txContext);
-        } catch (ApplicationException e) {
-            if (e.getRootCause() instanceof TransactionRequiredException ||
-                    e.getRootCause() instanceof RemoteException) {
-
-                instanceManager.poolInstance(callContext, bean);
-            }
-            throw e;
+    private void handleException(ThreadContext callContext, TransactionPolicy txPolicy, Throwable e) throws ApplicationException {
+        if (e instanceof ApplicationException) {
+            throw (ApplicationException) e;
         }
 
-        Object returnValue = null;
+        ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
+        if (type == SYSTEM) {
+            instanceManager.freeInstance(callContext);
+            handleSystemException(txPolicy, e, callContext);
+        } else {
+            handleApplicationException(txPolicy, e, type == APPLICATION_ROLLBACK);
+        }
+    }
+
+    private void afterInvoke(ThreadContext callContext, TransactionPolicy txPolicy, Instance instance) throws OpenEJBException {
         try {
-            registerEntityManagers(callContext);
-            if (args == null){
-                returnValue = interceptorStack.invoke();
-            } else {
-                returnValue = interceptorStack.invoke(args);
-            }
-        } catch (Throwable re) {// handle reflection exception
-            ExceptionType type = callContext.getDeploymentInfo().getExceptionType(re);
-            if (type == ExceptionType.SYSTEM) {
-                /* System Exception ****************************/
+            unregisterEntityManagers(callContext);
 
-                txPolicy.handleSystemException(re, bean, txContext);
-            } else {
-                /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext, bean);
-
-                txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+            if (instance != null && txPolicy instanceof BeanTransactionPolicy) {
+                // suspend the currently running transaction if any
+                SuspendedTransaction suspendedTransaction = null;
+                try {
+                    BeanTransactionPolicy beanTxEnv = (BeanTransactionPolicy) txPolicy;
+                    suspendedTransaction = beanTxEnv.suspendUserTransaction();
+                } catch (SystemException e) {
+                    handleSystemException(txPolicy, e, callContext);
+                } finally {
+                    instanceManager.setBeanTransaction(callContext, suspendedTransaction);
+                }
             }
         } finally {
-            unregisterEntityManagers(callContext);
-            txPolicy.afterInvoke(bean, txContext);
+            instanceManager.checkInInstance(callContext);
+            EjbTransactionUtil.afterInvoke(txPolicy, callContext);
         }
-
-        return returnValue;
     }
 
     private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {
@@ -527,13 +602,5 @@ public class StatefulContainer implements RpcContainer, TransactionContainer {
 
         // register them
         entityManagerRegistry.removeEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey);
-    }
-
-    public void discardInstance(Object bean, ThreadContext threadContext) {
-        try {
-            instanceManager.freeInstance(threadContext);
-        } catch (Throwable t) {
-            logger.error("", t);
-        }
     }
 }

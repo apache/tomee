@@ -31,13 +31,13 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.interceptor.AroundInvoke;
-import javax.transaction.TransactionManager;
 
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.RpcContainer;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -46,34 +46,34 @@ import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.transaction.TransactionContainer;
-import org.apache.openejb.core.transaction.TransactionContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.finder.ClassFinder;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"
  */
-public class SingletonContainer implements org.apache.openejb.RpcContainer, TransactionContainer {
+public class SingletonContainer implements RpcContainer {
 
     private SingletonInstanceManager instanceManager;
 
     private HashMap<String,DeploymentInfo> deploymentRegistry = new HashMap<String,DeploymentInfo>();
 
     private Object containerID = null;
-    private TransactionManager transactionManager;
     private SecurityService securityService;
     private long wait = 30;
     private TimeUnit unit = TimeUnit.SECONDS;
 
 
-    public SingletonContainer(Object id, TransactionManager transactionManager, SecurityService securityService) throws OpenEJBException {
+    public SingletonContainer(Object id, SecurityService securityService) throws OpenEJBException {
         this.containerID = id;
-        this.transactionManager = transactionManager;
         this.securityService = securityService;
 
-        instanceManager = new SingletonInstanceManager(transactionManager, securityService);
+        instanceManager = new SingletonInstanceManager(securityService);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;
@@ -220,14 +220,8 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         return _invoke(callInterface, callMethod, runMethod, args, (Instance) object, callContext);
     }
 
-    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext)
-            throws OpenEJBException {
-
+    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicy(callMethod);
-        TransactionContext txContext = new TransactionContext(callContext, getTransactionManager());
-        txContext.callContext = callContext;
-
 
         boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == DeploymentInfo.READ_LOCK;
         
@@ -235,7 +229,7 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
 
         Object returnValue;
         try {
-            txPolicy.beforeInvoke(instance, txContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
             returnValue = null;
             try {
@@ -248,26 +242,23 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
                     InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
                     returnValue = interceptorStack.invoke(args);
                 }
-            } catch (Throwable re) {// handle reflection exception
-                ExceptionType type = deploymentInfo.getExceptionType(re);
+            } catch (Throwable e) {// handle reflection exception
+                ExceptionType type = deploymentInfo.getExceptionType(e);
                 if (type == ExceptionType.SYSTEM) {
                     /* System Exception ****************************/
 
-                    /**
-                     * The bean instance is not put into the pool via instanceManager.poolInstance
-                     * and therefore the instance will be garbage collected and destroyed.
-                     * For this reason the discardInstance method of the StatelessInstanceManager
-                     * does nothing.
-                     */
-
-                    txPolicy.handleSystemException(re, instance, txContext);
+                    // The bean instance is not put into the pool via instanceManager.poolInstance
+                    // and therefore the instance will be garbage collected and destroyed.
+                    // For this reason the discardInstance method of the StatelessInstanceManager
+                    // does nothing.
+                    handleSystemException(txPolicy, e, callContext);
                 } else {
                     /* Application Exception ***********************/
 
-                    txPolicy.handleApplicationException(re, type == ExceptionType.APPLICATION_ROLLBACK, txContext);
+                    handleApplicationException(txPolicy, e, type == ExceptionType.APPLICATION_ROLLBACK);
                 }
             } finally {
-                txPolicy.afterInvoke(instance, txContext);
+                afterInvoke(txPolicy, callContext);
             }
         } finally {
             lock.unlock();
@@ -340,15 +331,7 @@ public class SingletonContainer implements org.apache.openejb.RpcContainer, Tran
         throw new IllegalArgumentException("Uknown MessageContext type: " + messageContext.getClass().getName());
     }
 
-    private TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         return new ProxyInfo(deploymentInfo, null);
-    }
-
-    public void discardInstance(Object instance, ThreadContext context) {
-//        instanceManager.discardInstance(context, instance);
     }
 }

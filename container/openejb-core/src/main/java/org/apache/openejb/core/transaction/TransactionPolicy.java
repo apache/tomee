@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -8,241 +9,145 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.openejb.core.transaction;
 
+import javax.transaction.xa.XAResource;
+
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
-import javax.transaction.*;
-import javax.ejb.EJBException;
-import javax.ejb.EJBTransactionRolledbackException;
+/**
+ * TransactionPolicy represents a JEE container managed or bean manage
+ * transaction.
+ * <p/>
+ * This class can be used to query the transaction status, set the transaction
+ * rollback only flag, associate resources with the transaction and to register
+ * a listener for transaction completion events.
+ */
+public interface TransactionPolicy {
+    /**
+     * Gets the TransactionType for this policy.
+     *
+     * @return the TransactionType for this policy
+     */
+    TransactionType getTransactionType();
 
-import java.rmi.RemoteException;
+    /**
+     * Is this a new transaction and not an inhreited transaction?  Some
+     * TransactionTypes, such as Required or Supported, use the caller's
+     * transaction instead of starting a new transaction.  If there is no active
+     * transaction (e.g., TransactionType is NotSupported), this method will
+     *
+     * @return true if this not an inherited transaction
+     */
+    boolean isNewTransaction();
 
-public abstract class TransactionPolicy {
-    public Type getPolicyType() {
-        return policyType;
-    }
+    /**
+     * Is there a actual transaction active?
+     *
+     * @return true if there is an actual transaction active
+     */
+    boolean isTransactionActive();
 
-    public static enum Type {
-        Mandatory,
-        Never,
-        NotSupported,
-        Required,
-        RequiresNew,
-        Supports,
-        BeanManaged;
-    }
+    /**
+     * If true, this TransactionPolicy will ultimately end with rollback.
+     *
+     * @return true if this TransactionPolicy will ultimately end with rollback
+     */
+    boolean isRollbackOnly();
 
+    /**
+     * Sets this TransactionPolicy to rollback when completed
+     */
+    void setRollbackOnly();
 
-    private final Type policyType;
-    protected final TransactionContainer container;
-    private TransactionManager manager;
+    /**
+     * Commits or rolls back this TransactionPolicy.  If there the actual
+     * transaction is completed or there is no actual transaction, the
+     * registered TransactionSynchronization are called.  Otherwise, the
+     * registered TransactionSynchronization are called when the actual
+     * transaction is completed.
+     *
+     * @throws ApplicationException if recoverable exception is encountered
+     * @throws SystemException if an unrecoverable exception is encountered
+     */
+    void commit() throws ApplicationException, SystemException;
 
-    protected final static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-    protected final static Logger txLogger = Logger.getInstance(LogCategory.TRANSACTION, "org.apache.openejb.util.resources");
+    /**
+     * Gets a resource associated with the specified key.  If there is an actual
+     * transaction active, the resource associated with the transaction is
+     * returned; otherwise the resource is scoped to this TransactionPolicy.
+     *
+     * @param key the resource key
+     * @return the resource or null if no resource was associated with the key
+     */
+    Object getResource(Object key);
 
-    public TransactionPolicy(Type policyType, TransactionContainer container) {
-        this.policyType = policyType;
-        this.container = container;
-    }
+    /**
+     * Associates the specified resource with the specified key.  If there is an
+     * actual transaction active, the resource associated with the transaction
+     * is set; otherwise the resource is scoped to this TransactionPolicy.
+     *
+     * @param key the resource key
+     * @param value the resource
+     */
+    void putResource(Object key, Object value);
 
-    public TransactionContainer getContainer() {
-        return container;
-    }
+    /**
+     * Removes and returns the resource associated with the specified key.  If
+     * there is an actual transaction active, the resource associated with the
+     * transaction is returned; otherwise the resource is scoped to this
+     * TransactionPolicy.
+     *
+     * @param key the resource key
+     * @return the resource previously associated with the key
+     */
+    Object removeResource(Object key);
 
-    public String policyToString() {
-        return policyType.toString();
-    }
+    /**
+     * Registers a listener for transaction synchronization events.  If there is
+     * an actual transaction active, the events are fired when the acutal
+     * transaction is commited; otherwise the events are fired when this
+     * TransactionPolicy completes.
+     *
+     * @param synchronization the transaction synchronization listener
+     */
+    void registerSynchronization(TransactionSynchronization synchronization);
 
-    public abstract void handleApplicationException(Throwable appException, boolean rollback, TransactionContext context) throws ApplicationException, SystemException;
+    /**
+     * Enlists a XAResource in the actual active transaction.  This only works
+     * if the TransactionPolicy is associated with an actual transaction and the
+     * TransactionPolicy supports XAResouce enlistment.
+     *
+     * @param xaResource the XAResource to enlist
+     * @throws SystemException if the xaResource could not be enlisted in the
+     * transaction
+     */
+    void enlistResource(XAResource xaResource) throws SystemException;
 
-    public abstract void handleSystemException(Throwable sysException, Object instance, TransactionContext context) throws ApplicationException, SystemException;
-
-    public abstract void beforeInvoke(Object bean, TransactionContext context) throws SystemException, ApplicationException;
-
-    public abstract void afterInvoke(Object bean, TransactionContext context) throws ApplicationException, SystemException;
-
-    protected void markTxRollbackOnly(Transaction tx) throws SystemException {
-        try {
-            if (tx != null) {
-                tx.setRollbackOnly();
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + policyToString() + ": setRollbackOnly() on transaction " + tx);
-                }
-            }
-        } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during setRollbackOnly()", se);
-            throw new SystemException(se);
+    /**
+     * TransactionSynchronization receives notifications as the Transaction
+     * completes.
+     */
+    interface TransactionSynchronization {
+        public enum Status {
+            COMMITTED, ROLLEDBACK, UNKNOWN
         }
-    }
 
-    protected Transaction suspendTransaction(TransactionContext context) throws SystemException {
-        try {
-            Transaction tx = context.getTransactionManager().suspend();
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + policyToString() + ": Suspended transaction " + tx);
-            }
-            return tx;
-        } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during suspend()", se);
-            throw new SystemException(se);
-        }
-    }
+        /**
+         * Called immediately before the transaction is completed.
+         */
+        void beforeCompletion();
 
-    protected void resumeTransaction(TransactionContext context, Transaction tx) throws SystemException {
-        try {
-            if (tx == null) {
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + policyToString() + ": No transaction to resume");
-                }
-            } else {
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + policyToString() + ": Resuming transaction " + tx);
-                }
-                context.getTransactionManager().resume(tx);
-            }
-        } catch (InvalidTransactionException ite) {
-
-            txLogger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());
-            throw new SystemException(ite);
-        } catch (IllegalStateException e) {
-
-            txLogger.error("Could not resume the client's transaction: " + e.getMessage());
-            throw new SystemException(e);
-        } catch (javax.transaction.SystemException e) {
-
-            txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: " + e.getMessage());
-            throw new SystemException(e);
-        }
-    }
-
-    protected void commitTransaction(TransactionContext context, Transaction tx) throws SystemException, ApplicationException {
-        try {
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + policyToString() + ": Committing transaction " + tx);
-            }
-            if (tx.equals(context.getTransactionManager().getTransaction())) {
-
-                context.getTransactionManager().commit();
-            } else {
-                tx.commit();
-            }
-        } catch (RollbackException e) {
-
-            txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
-            // TODO can't set initCause on a TransactionRolledbackException, update the convertException and related code to handle something else 
-            Throwable txe = new javax.transaction.TransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization: "+e.getMessage());
-            throw new ApplicationException(txe);
-
-        } catch (HeuristicMixedException e) {
-
-            txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
-            throw new ApplicationException(new RemoteException("A heuristic decision was made, some relevant updates have been committed while others have been rolled back").initCause(e));
-
-        } catch (HeuristicRollbackException e) {
-
-            txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
-            throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back").initCause(e));
-
-        } catch (SecurityException e) {
-
-            txLogger.error("The current thread is not allowed to commit the transaction: " + e.getMessage());
-            throw new SystemException(e);
-
-        } catch (IllegalStateException e) {
-
-            txLogger.error("The current thread is not associated with a transaction: " + e.getMessage());
-            throw new SystemException(e);
-
-        } catch (javax.transaction.SystemException e) {
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: " + e.getMessage());
-
-            throw new SystemException(e);
-        }
-    }
-
-    protected void rollbackTransaction(TransactionContext context, Transaction tx) throws SystemException {
-        try {
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + policyToString() + ": Rolling back transaction " + tx);
-            }
-            if (tx.equals(context.getTransactionManager().getTransaction())) {
-
-                context.getTransactionManager().rollback();
-            } else {
-                tx.rollback();
-            }
-        } catch (IllegalStateException e) {
-
-            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
-            throw new SystemException(e);
-
-        } catch (javax.transaction.SystemException e) {
-
-            logger.error("The TransactionManager reported an exception while attempting to rollback the transaction: " + e.getMessage());
-            throw new SystemException(e);
-        }
-    }
-
-    protected void throwAppExceptionToServer(Throwable appException) throws ApplicationException {
-        throw new ApplicationException(appException);
-    }
-
-    protected void throwTxExceptionToServer(Throwable sysException) throws ApplicationException {
-        /* Throw javax.transaction.TransactionRolledbackException to remote client */
-
-        String message = "The transaction has been marked rollback only because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
-        TransactionRolledbackException txException = new TransactionRolledbackException(message, sysException);
-
-        throw new InvalidateReferenceException(txException);
-
-    }
-
-    protected void throwExceptionToServer(Throwable sysException) throws ApplicationException {
-
-        RemoteException re = new RemoteException("The bean encountered a non-application exception.", sysException);
-
-        throw new InvalidateReferenceException(re);
-
-    }
-
-    protected void logSystemException(Throwable sysException, TransactionContext context) {
-        Operation operation = context.callContext.getCurrentOperation();
-        if (operation != null && operation.isCallback()){
-            logger.error("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
-        } else {
-            logger.debug("startup.beanInstanceSystemExceptionThrown", sysException, sysException.getMessage());
-        }
-    }
-
-    protected void discardBeanInstance(Object instance, ThreadContext callContext) {
-        container.discardInstance(instance, callContext);
-    }
-
-    protected void beginTransaction(TransactionContext context) throws javax.transaction.SystemException {
-        try {
-            context.getTransactionManager().begin();
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + policyToString() + ": Started transaction " + context.getTransactionManager().getTransaction());
-            }
-        } catch (NotSupportedException nse) {
-            logger.error("", nse);
-        }
-    }
-
-    protected void handleCallbackException() {
+        /**
+         * Called after the transaction is completed.
+         */
+        void afterCompletion(Status status);
     }
 }
-

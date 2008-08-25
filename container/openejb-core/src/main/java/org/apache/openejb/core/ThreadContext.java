@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 
 public class ThreadContext {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -97,6 +98,7 @@ public class ThreadContext {
     private Operation currentOperation;
     private BaseContext.State[] currentAllowedStates;
     private Class invokedInterface;
+    private TransactionPolicy transactionPolicy;
 
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey) {
         this(deploymentInfo, primaryKey, null);
@@ -140,6 +142,14 @@ public class ThreadContext {
 
     public void setInvokedInterface(Class invokedInterface) {
         this.invokedInterface = invokedInterface;
+    }
+
+    public TransactionPolicy getTransactionPolicy() {
+        return transactionPolicy;
+    }
+
+    public void setTransactionPolicy(TransactionPolicy transactionPolicy) {
+        this.transactionPolicy = transactionPolicy;
     }
 
     public BaseContext.State[] getCurrentAllowedStates() {

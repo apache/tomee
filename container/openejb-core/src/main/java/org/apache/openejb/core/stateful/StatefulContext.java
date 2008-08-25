@@ -16,17 +16,13 @@
  */
 package org.apache.openejb.core.stateful;
 
-import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.RestrictedUserTransaction;
 import org.apache.openejb.spi.SecurityService;
-
-import java.security.Principal;
 
 
 /**
@@ -40,12 +36,8 @@ public class StatefulContext extends BaseSessionContext {
         return states;
     }
 
-    public StatefulContext(TransactionManager transactionManager, SecurityService securityService) {
-        super(transactionManager, securityService);
-    }
-
-    public StatefulContext(TransactionManager transactionManager, SecurityService securityService, UserTransaction userTransaction) {
-        super(transactionManager, securityService, userTransaction);
+    public StatefulContext(SecurityService securityService, UserTransaction userTransaction) {
+        super(securityService, userTransaction);
     }
 
     protected State getState() {
@@ -70,11 +62,11 @@ public class StatefulContext extends BaseSessionContext {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
@@ -122,11 +114,11 @@ public class StatefulContext extends BaseSessionContext {
             throw new IllegalStateException();
         }
 
-        public void setRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public void setRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
-        public boolean getRollbackOnly(TransactionManager transactionManager) throws IllegalStateException {
+        public boolean getRollbackOnly() throws IllegalStateException {
             throw new IllegalStateException();
         }
 
