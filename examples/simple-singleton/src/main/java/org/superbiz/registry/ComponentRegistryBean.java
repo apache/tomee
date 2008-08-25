@@ -24,6 +24,7 @@ import javax.ejb.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.ArrayList;
 
 @Singleton
 @Lock(READ)
@@ -36,7 +37,7 @@ public class ComponentRegistryBean implements ComponentRegistry {
     }
 
     public Collection<?> getComponents() {
-        return components.values();
+        return new ArrayList(components.values());
     }
 
     @Lock(WRITE)
