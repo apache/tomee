@@ -21,12 +21,13 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.StaticRecipe;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
@@ -34,10 +35,19 @@ public class InjectionProcessor<T> {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, InjectionProcessor.class);
     private final Class<? extends T> beanClass;
     private final List<Injection> injections;
+    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
     private final List<Method> postConstructMethods;
     private final List<Method> preDestroyMethods;
     private final Context context;
     private T instance;
+
+    public InjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, Context context) {
+        this.beanClass = beanClass;
+        this.injections = injections;
+        this.context = context;
+        postConstructMethods = null;
+        preDestroyMethods = null;
+    }
 
     public InjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, List<Method> postConstructMethods, List<Method> preDestroyMethods, Context context) {
         this.beanClass = beanClass;
@@ -45,6 +55,10 @@ public class InjectionProcessor<T> {
         this.postConstructMethods = postConstructMethods;
         this.preDestroyMethods = preDestroyMethods;
         this.context = context;
+    }
+
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
     }
 
     public T createInstance() throws OpenEJBException {
@@ -65,10 +79,15 @@ public class InjectionProcessor<T> {
         objectRecipe.allow(Option.FIELD_INJECTION);
         objectRecipe.allow(Option.PRIVATE_PROPERTIES);
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        objectRecipe.allow(Option.NAMED_PARAMETERS);
 
         fillInjectionProperties(objectRecipe);
 
-        Object object = null;
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            objectRecipe.setProperty(entry.getKey(), entry.getValue());
+        }
+
+        Object object;
         try {
             object = objectRecipe.create(beanClass.getClassLoader());
         } catch (Exception e) {
@@ -117,19 +136,29 @@ public class InjectionProcessor<T> {
     private void fillInjectionProperties(ObjectRecipe objectRecipe) {
         if (injections == null) return;
         
+        boolean usePrefix = true;
+        try {
+            beanClass.getConstructor();
+        } catch (NoSuchMethodException e) {
+            // Using constructor injection
+            // xbean can't handle the prefix yet
+            usePrefix = false;
+        }
+
         for (Injection injection : injections) {
             if (!injection.getTarget().isAssignableFrom(beanClass)) continue;
             try {
                 String jndiName = injection.getJndiName();
-                Object object = context.lookup("java:comp/env/" + jndiName);
-                if (object instanceof String) {
-                    String string = (String) object;
-                    // Pass it in raw so it could be potentially converted to
-                    // another data type by an xbean-reflect property editor
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), string);
+                Object value = context.lookup("java:comp/env/" + jndiName);
+
+                String prefix;
+                if (usePrefix) {
+                    prefix = injection.getTarget().getName() + "/";
                 } else {
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), new StaticRecipe(object));
+                    prefix = "";
                 }
+
+                objectRecipe.setProperty(prefix + injection.getName(), value);
             } catch (NamingException e) {
                 logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
             }

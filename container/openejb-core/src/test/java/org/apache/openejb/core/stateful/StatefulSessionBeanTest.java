@@ -98,7 +98,12 @@ public class StatefulSessionBeanTest extends TestCase {
     public static List<Call> calls = new ArrayList<Call>();
 
     public static enum Call {
-        Constructor, SetSessionContext, EjbCreate, EjbPassivate1, EjbActivate1, BusinessMethod, EjbPassivate2, EjbActivate2, EjbPassivate3, EjbActivate3, EjbRemove
+        // construction
+        Constructor, SetSessionContext, EjbCreate, EjbPassivate1,
+        // business method
+        EjbActivate1, BusinessMethod, EjbPassivate2,
+        // remove
+        EjbActivate2, EjbRemove
     }
 
     public static class TargetBean implements SessionBean {

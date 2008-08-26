@@ -23,6 +23,8 @@ import java.io.RandomAccessFile;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Map;
+import java.util.Iterator;
 
 // optimization: replace HashTable with HashMap (vc no debug hashmap)
 
@@ -46,16 +48,16 @@ public class RAFPassivater implements PassivationStrategy {
     public void init(Properties props) throws org.apache.openejb.SystemException {
     }
 
-    public synchronized void passivate(Hashtable stateTable)
+    public synchronized void passivate(Map stateTable)
             throws org.apache.openejb.SystemException {
         try {
             fileID++;
 
             RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw");
-            Enumeration enumeration = stateTable.keys();
+            Iterator iterator = stateTable.keySet().iterator();
             Pointer lastPointer = null;
-            while (enumeration.hasMoreElements()) {
-                Object id = enumeration.nextElement();
+            while (iterator.hasNext()) {
+                Object id = iterator.next();
                 Object obj = stateTable.get(id);
                 byte [] bytes = Serializer.serialize(obj);
                 long filepointer = ras.getFilePointer();
