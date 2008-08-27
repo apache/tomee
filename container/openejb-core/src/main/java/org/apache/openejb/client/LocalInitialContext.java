@@ -31,6 +31,7 @@ import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Map;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
@@ -57,6 +58,14 @@ public class LocalInitialContext extends ContextWrapper {
         login();
 
         startNetworkServices();
+
+        Properties properties = new Properties();
+        // set standard and vendor properties
+        createEJBContainer(properties);
+    }
+
+    public void createEJBContainer(Map<?,?> properties, String... modules){
+
     }
 
     public void close() throws NamingException {
@@ -113,12 +122,29 @@ public class LocalInitialContext extends ContextWrapper {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            logger.info("Starting network services");
             Class serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.ServiceManager");
+
+            Method get = serviceManagerClass.getMethod("get");
+
+            try {
+                if (get.invoke(null) != null) return;
+            } catch (InvocationTargetException e) {
+                return;
+            }
+
+            logger.info("Starting network services");
+
+            Method getManager = serviceManagerClass.getMethod("getManager");
             Method init = serviceManagerClass.getMethod("init");
             Method start = serviceManagerClass.getMethod("start", boolean.class);
 
-            serviceManager = serviceManagerClass.newInstance();
+            try {
+                serviceManager = getManager.invoke(null);
+            } catch (InvocationTargetException e) {
+                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to instantiate ServiceManager class 'org.apache.openejb.server.ServiceManager'.";
+                throw new IllegalStateException(msg, e);
+            }
+
             try {
                 init.invoke(serviceManager);
             } catch (InvocationTargetException e) {
@@ -138,9 +164,6 @@ public class LocalInitialContext extends ContextWrapper {
             throw new IllegalStateException(msg, e);
         } catch (NoSuchMethodException e) {
             String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods not found on as expected on class 'org.apache.openejb.server.ServiceManager'.  This should never happen.";
-            throw new IllegalStateException(msg, e);
-        } catch (InstantiationException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to instantiate ServiceManager class 'org.apache.openejb.server.ServiceManager'.";
             throw new IllegalStateException(msg, e);
         } catch (IllegalAccessException e) {
             String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods cannot be accessed on class 'org.apache.openejb.server.ServiceManager'.  The VM SecurityManager settings must be adjusted.";

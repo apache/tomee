@@ -71,6 +71,11 @@ public class ServiceManager {
         return manager;
     }
 
+    public static ServiceManager get() {
+        return manager;
+    }
+
+
     // Have properties files (like xinet.d) that specifies what daemons to
     // Look into the xinet.d file structure again
     // conf/server.d/
