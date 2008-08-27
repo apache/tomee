@@ -62,23 +62,25 @@
       </testResource>
     </testResources>
     <plugins>
+<!--
         <plugin>
-          <groupId>com.envoisolutions.sxc</groupId>
-          <artifactId>sxc-jaxb-maven-plugin</artifactId>
-          <version>0.7-SNAPSHOT</version>
-          <executions>
-            <execution>
-              <configuration>
-                <classes>
-                  <class>org.apache.openejb.config.sys</class>
-                </classes>
-              </configuration>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-          </execution>
-        </executions>
-      </plugin>
+            <groupId>com.envoisolutions.sxc</groupId>
+            <artifactId>sxc-jaxb-maven-plugin</artifactId>
+            <version>0.7-SNAPSHOT</version>
+            <executions>
+                <execution>
+                    <configuration>
+                        <classes>
+                            <class>org.apache.openejb.config.sys</class>
+                        </classes>
+                    </configuration>
+                    <goals>
+                        <goal>generate</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

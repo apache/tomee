@@ -18,98 +18,97 @@
 package org.apache.openejb.jee;
 
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.Collections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 public final class JAXBContextFactory {
-    private static boolean useSXC = false;
+//    private static boolean useSXC = false;
 
     public static JAXBContext newInstance(String s) throws JAXBException {
-        if (useSXC) {
-            try {
-                Sxc.newInstance(s);
-            } catch (NoClassDefFoundError e) {
-            }
-        }
+//        if (useSXC) {
+//            try {
+//                Sxc.newInstance(s);
+//            } catch (NoClassDefFoundError e) {
+//            }
+//        }
 
         return JAXBContext.newInstance(s);
     }
 
     public static JAXBContext newInstance(String s, ClassLoader classLoader) throws JAXBException {
-        if (useSXC) {
-            try {
-                return Sxc.newInstance(s, classLoader);
-            } catch (NoClassDefFoundError e) {
-            }
-        }
+//        if (useSXC) {
+//            try {
+//                return Sxc.newInstance(s, classLoader);
+//            } catch (NoClassDefFoundError e) {
+//            }
+//        }
 
         return JAXBContext.newInstance(s, classLoader);
     }
 
     public static JAXBContext newInstance(String s, ClassLoader classLoader, Map<String, ?> properties) throws JAXBException {
-        if (useSXC) {
-            try {
-                return Sxc.newInstance(s, classLoader, properties);
-            } catch (NoClassDefFoundError e) {
-            }
-        }
+//        if (useSXC) {
+//            try {
+//                return Sxc.newInstance(s, classLoader, properties);
+//            } catch (NoClassDefFoundError e) {
+//            }
+//        }
 
         return JAXBContext.newInstance(s, classLoader, properties);
     }
 
     public static JAXBContext newInstance(Class... classes) throws JAXBException {
-        if (useSXC) {
-            try {
-                return Sxc.newInstance(classes);
-            } catch (NoClassDefFoundError e) {
-            }
-        }
+//        if (useSXC) {
+//            try {
+//                return Sxc.newInstance(classes);
+//            } catch (NoClassDefFoundError e) {
+//            }
+//        }
+
         return JAXBContext.newInstance(classes);
     }
 
     public static JAXBContext newInstance(Class[] classes, Map<String, ?> properties) throws JAXBException {
-        if (useSXC) {
-            try {
-                return Sxc.newInstance(classes, properties);
-            } catch (NoClassDefFoundError e) {
-            }
-        }
+//        if (useSXC) {
+//            try {
+//                return Sxc.newInstance(classes, properties);
+//            } catch (NoClassDefFoundError e) {
+//            }
+//        }
 
         return JAXBContext.newInstance(classes, properties);
     }
 
-    public static class Sxc {
-        public static JAXBContext newInstance(String s) throws JAXBException {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader == null) classLoader = JAXBContextFactory.class.getClassLoader();
-            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
-        }
-
-        public static JAXBContext newInstance(String s, ClassLoader classLoader) throws JAXBException {
-            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
-        }
-
-        public static JAXBContext newInstance(String s, ClassLoader classLoader, Map<String, ?> properties) throws JAXBException {
-            if (properties == null) properties = new TreeMap<String, Object>();
-            // hack because intellij is being stupid
-            ((Map<String, Object>) properties).put("com.envoisolutions.sxc.generate", "false");
-            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, properties);
-        }
-
-        public static JAXBContext newInstance(Class... classes) throws JAXBException {
-            JAXBContext jaxbContext = null;
-            jaxbContext = com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(classes, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
-            return jaxbContext;
-        }
-
-        public static JAXBContext newInstance(Class[] classes, Map<String, ?> properties) throws JAXBException {
-            if (properties == null) properties = new TreeMap<String, Object>();
-            // hack because intellij is being stupid
-            ((Map<String, Object>) properties).put("com.envoisolutions.sxc.generate", "false");
-            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(classes, properties);
-        }
-    }
+//    public static class Sxc {
+//        public static JAXBContext newInstance(String s) throws JAXBException {
+//            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//            if (classLoader == null) classLoader = JAXBContextFactory.class.getClassLoader();
+//            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
+//        }
+//
+//        public static JAXBContext newInstance(String s, ClassLoader classLoader) throws JAXBException {
+//            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
+//        }
+//
+//        public static JAXBContext newInstance(String s, ClassLoader classLoader, Map<String, ?> properties) throws JAXBException {
+//            if (properties == null) properties = new TreeMap<String, Object>();
+//            // hack because intellij is being stupid
+//            ((Map<String, Object>) properties).put("com.envoisolutions.sxc.generate", "false");
+//            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(s, classLoader, properties);
+//        }
+//
+//        public static JAXBContext newInstance(Class... classes) throws JAXBException {
+//            JAXBContext jaxbContext = null;
+//            jaxbContext = com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(classes, Collections.singletonMap("com.envoisolutions.sxc.generate", "false"));
+//            return jaxbContext;
+//        }
+//
+//        public static JAXBContext newInstance(Class[] classes, Map<String, ?> properties) throws JAXBException {
+//            if (properties == null) properties = new TreeMap<String, Object>();
+//            // hack because intellij is being stupid
+//            ((Map<String, Object>) properties).put("com.envoisolutions.sxc.generate", "false");
+//            return com.envoisolutions.sxc.jaxb.JAXBContextImpl.newInstance(classes, properties);
+//        }
+//    }
 
 }
