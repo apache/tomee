@@ -19,6 +19,17 @@ package org.apache.openejb.core.stateful;
 
 public interface Cache<K, V> {
     /**
+     * Gets the listener for cache events.
+     */
+    CacheListener<V> getListener();
+
+    /**
+     * Sets the listener for cache events.  This should be called by the
+     * container before using the cache.
+     */
+    void setListener(CacheListener<V> listener);
+
+    /**
      * Add a new entry to the cache.  The entry is marked checked-out and can
      * not be accessed again until checked-in.
      *

@@ -275,9 +275,14 @@ public class AutoConfig implements DynamicDeployer {
 
                     List<String> possibleUnits = new ArrayList<String>();
                     for (PersistenceUnit persistenceUnit : persistenceUnits.values()) {
-                        URI unitURI = URI.create(persistenceUnit.getId());
-                        unitURI = URISupport.relativize(moduleURI, unitURI);
-                        possibleUnits.add(unitURI.toString());
+                        try {
+                            URI unitURI = URI.create(persistenceUnit.getId());
+                            unitURI = URISupport.relativize(moduleURI, unitURI);
+                            possibleUnits.add(unitURI.toString());
+                        } catch (Exception e) {
+                            // id is typically not a valid URI
+                            possibleUnits.add(persistenceUnit.getId());
+                        }
                     }
 
                     Collections.sort(possibleUnits);

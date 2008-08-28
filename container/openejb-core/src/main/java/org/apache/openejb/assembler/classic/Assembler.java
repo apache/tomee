@@ -933,6 +933,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         serviceRecipe.setProperty("id", serviceInfo.id);
         serviceRecipe.setProperty("transactionManager", props.get(TransactionManager.class.getName()));
         serviceRecipe.setProperty("securityService", props.get(SecurityService.class.getName()));
+        serviceRecipe.setProperty("properties", new UnsetPropertiesRecipe());
 
         // MDB container has a resource adapter string name that
         // must be replaced with the real resource adapter instance

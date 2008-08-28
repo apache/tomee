@@ -46,29 +46,32 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     /**
      * Notified when values are loaded, stored, or timedOut
      */
-    private final CacheListener<V> listener;
+    private CacheListener<V> listener;
 
     /**
      * Used to load and store values
      */
-    private final PassivationStrategy passivator;
+    private PassivationStrategy passivator;
 
     /**
      * Maximum number of values that should be in the LRU
      */
-    private final int capacity;
+    private int capacity;
 
     /**
      * When the LRU is exceeded, this is the is the number of beans stored.
      * This helps to avoid passivating a bean at a time.
      */
-    private final int bulkPassivate;
+    private int bulkPassivate;
 
     /**
      * A bean may be destroyed if it isn't used in this length of time (in
      * milliseconds).
      */
-    private final long timeOut;
+    private long timeOut;
+
+    public SimpleCache() {
+    }
 
     public SimpleCache(CacheListener<V> listener, PassivationStrategy passivator, int capacity, int bulkPassivate, long timeOut) {
         this.listener = listener;
@@ -76,6 +79,55 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         this.capacity = capacity;
         this.bulkPassivate = bulkPassivate;
         this.timeOut = timeOut;
+    }
+
+    public synchronized CacheListener<V> getListener() {
+        return listener;
+    }
+
+    public synchronized void setListener(CacheListener<V> listener) {
+        this.listener = listener;
+    }
+
+    public synchronized PassivationStrategy getPassivator() {
+        return passivator;
+    }
+
+    public synchronized void setPassivator(PassivationStrategy passivator) {
+        this.passivator = passivator;
+    }
+
+    public synchronized void setPassivator(Class<? extends PassivationStrategy> passivatorClass) throws Exception {
+        this.passivator = passivatorClass.newInstance();
+    }
+
+    public synchronized int getCapacity() {
+        return capacity;
+    }
+
+    public synchronized void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    // Old configurations use "PoolSize" to configure max cache size
+    public synchronized void setPoolSize(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public synchronized int getBulkPassivate() {
+        return bulkPassivate;
+    }
+
+    public synchronized void setBulkPassivate(int bulkPassivate) {
+        this.bulkPassivate = bulkPassivate;
+    }
+
+    public synchronized long getTimeOut() {
+        return timeOut;
+    }
+
+    public synchronized void setTimeOut(long timeOut) {
+        this.timeOut = timeOut * 60 * 1000;
     }
 
     public void add(K key, V value) {
@@ -234,6 +286,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     }
 
     public void processLRU() {
+        CacheListener<V> listener = this.getListener();
+
         // check for timed out entries
         Iterator<Entry> iterator = lru.iterator();
         while (iterator.hasNext()) {
@@ -263,10 +317,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     entry.setState(EntryState.REMOVED);
 
                     // notify listener that the entry has been removed
-                    try {
-                        listener.timedOut(entry.getValue());
-                    } catch (Exception e) {
-                        logger.error("An unexpected exception occured from timedOut callback", e);
+                    if (listener != null) {
+                        try {
+                            listener.timedOut(entry.getValue());
+                        } catch (Exception e) {
+                            logger.error("An unexpected exception occured from timedOut callback", e);
+                        }
                     }
                 } else {
                     // entries are in order of last updates, so if this bean isn't timed out
@@ -280,10 +336,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
 
         // if there are to many beans in the lru, shink is by on bulkPassivate size
         // bulkPassivate size is just an estimate, as locked or timed out beans are skipped
-        if (lru.size() >= capacity) {
+        if (lru.size() >= getCapacity()) {
             Map<K, V> valuesToStore = new LinkedHashMap<K, V>();
             List<Entry> entries = new ArrayList<Entry>();
 
+            int bulkPassivate = getBulkPassivate();
+            if (bulkPassivate < 1) bulkPassivate = 1;
             for (int i = 0; i < bulkPassivate; i++) {
                 Entry entry = lru.poll();
                 if (entry == null) {
@@ -323,10 +381,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     // if the entry is actually timed out we just destroy it; othewise it is written to disk
                     if (entry.isTimedOut()) {
                         entry.setState(EntryState.REMOVED);
-                        try {
-                            listener.timedOut(entry.getValue());
-                        } catch (Exception e) {
-                            logger.error("An unexpected exception occured from timedOut callback", e);
+                        if (listener != null) {
+                            try {
+                                listener.timedOut(entry.getValue());
+                            } catch (Exception e) {
+                                logger.error("An unexpected exception occured from timedOut callback", e);
+                            }
                         }
                     } else {
                         // entry will be passivated, so we need to obtain an additional lock until the passivation is complete
@@ -352,10 +412,14 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                 }
             }
         }
-
     }
 
     private Entry loadEntry(K key) throws Exception {
+        PassivationStrategy passivator = getPassivator();
+        if (passivator == null) {
+            return null;
+        }
+
         V value = null;
         try {
             value = (V) passivator.activate(key);
@@ -367,23 +431,34 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             return null;
         }
 
-        listener.afterLoad(value);
+        CacheListener<V> listener = this.getListener();
+        if (listener != null) {
+            listener.afterLoad(value);
+        }
         Entry entry = new Entry(key, value, EntryState.AVAILABLE);
         cache.put(key, entry);
         return entry;
     }
 
     private void storeEntries(Map<K, V> entriesToStore) {
+        CacheListener<V> listener = this.getListener();
         for (Iterator<java.util.Map.Entry<K, V>> iterator = entriesToStore.entrySet().iterator(); iterator.hasNext();) {
             java.util.Map.Entry<K, V> entry = iterator.next();
 
-            try {
-                listener.beforeStore(entry.getValue());
-            } catch (Exception e) {
-                iterator.remove();
-                logger.error("An unexpected exception occured from beforeStore callback", e);
+            if (listener != null) {
+                try {
+                    listener.beforeStore(entry.getValue());
+                } catch (Exception e) {
+                    iterator.remove();
+                    logger.error("An unexpected exception occured from beforeStore callback", e);
+                }
             }
 
+        }
+
+        PassivationStrategy passivator = getPassivator();
+        if (passivator == null) {
+            return;
         }
 
         try {
@@ -434,6 +509,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         private boolean isTimedOut() {
             assertLockHeld();
 
+            long timeOut = getTimeOut();
             if (timeOut == 0) {
                 return false;
             }
@@ -444,7 +520,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         private void resetTimeOut() {
             assertLockHeld();
 
-            if (timeOut > 0) {
+            if (getTimeOut() > 0) {
                 lastAccess = System.currentTimeMillis();
             }
         }
@@ -455,5 +531,4 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             }
         }
     }
-
 }

@@ -74,8 +74,10 @@ public class KeepAliveServer implements ServerService {
         }
 
         public void run() {
-            int backlog = getQueue().size();
+            BlockingQueue<Runnable> queue = getQueue();
+            if (queue == null) return;
 
+            int backlog = queue.size();
             if (backlog <= 0) return;
 
             long now = System.currentTimeMillis();
@@ -102,7 +104,9 @@ public class KeepAliveServer implements ServerService {
 
         private BlockingQueue<Runnable> getQueue() {
             if (queue == null){
+                // this can be null if timer fires before service is fully initialized
                 ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
+                if (incoming == null) return null;
                 ThreadPoolExecutor threadPool = incoming.getThreadPool();
                 queue = threadPool.getQueue();
             }

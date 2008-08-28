@@ -141,8 +141,16 @@
           id="Default Stateful Container"
           service="Container"
           types="STATEFUL"
-          constructor="id, securityService, Passivator, TimeOut, PoolSize, BulkPassivate"
-          class-name="org.apache.openejb.core.stateful.StatefulContainer">
+          factory-name="create"
+          class-name="org.apache.openejb.core.stateful.StatefulContainerFactory">
+
+    # The cache is responsible for managing stateful bean
+    # instances.  The cache can page instances to disk as memory
+    # is filled and can destroy abandoned instances.  A different
+    # cache implementation can be used by setting this property
+    # to the fully qualified class name of the Cache implementation.
+
+    Cache org.apache.openejb.core.stateful.SimpleCache
 
     # The passivator is responsible for writing beans to disk
     # at passivation time. Different passivators can be used

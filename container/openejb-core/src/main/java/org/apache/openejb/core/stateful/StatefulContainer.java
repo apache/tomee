@@ -93,32 +93,11 @@ public class StatefulContainer implements RpcContainer {
     protected final Cache<Object, Instance> cache;
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
 
-
-    public StatefulContainer(Object id,
-            SecurityService securityService,
-            Class<? extends PassivationStrategy> passivatorClass,
-            int timeOut,
-            int poolSize,
-            int bulkPassivate) throws OpenEJBException {
+    public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache) {
         this.containerID = id;
         this.securityService = securityService;
-
-        cache = createCache(passivatorClass, timeOut, poolSize, bulkPassivate);
-    }
-
-    protected Cache<Object, Instance> createCache(Class<? extends PassivationStrategy> passivatorClass, int timeOut, int poolSize, int bulkPassivate) throws OpenEJBException {
-        PassivationStrategy passivator;
-        if (passivatorClass != null) {
-            try {
-                passivator = passivatorClass.newInstance();
-            } catch (Exception e) {
-                throw new OpenEJBException("Could not create the passivator " + passivatorClass.getName(), e);
-            }
-        } else {
-            passivator = new SimplePassivater();
-        }
-
-        return new SimpleCache<Object, Instance>(new StatefulCacheListener(), passivator, poolSize, bulkPassivate, timeOut * 60 * 1000);
+        this.cache = cache;
+        cache.setListener(new StatefulCacheListener());
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
