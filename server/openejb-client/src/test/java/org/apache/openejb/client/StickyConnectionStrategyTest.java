@@ -23,18 +23,18 @@ import java.rmi.RemoteException;
 import com.agical.rmock.extension.junit.RMockTestCase;
 
 
-public class StickToLastServerConnectionFactoryStrategyTest extends RMockTestCase {
+public class StickyConnectionStrategyTest extends RMockTestCase {
 
-    private StickToLastServerConnectionFactoryStrategy factoryStrategy;
+    private StickyConnectionStrategy factoryStrategy;
     private ConnectionFactory connectionFactory;
     private URI[] locations;
 
     @Override
     protected void setUp() throws Exception {
         connectionFactory = (ConnectionFactory) mock(ConnectionFactory.class);
-        ConnectionManager.setFactory(connectionFactory);
+        ConnectionManager.registerFactory("ejbd", connectionFactory);
 
-        factoryStrategy = new StickToLastServerConnectionFactoryStrategy();
+        factoryStrategy = new StickyConnectionStrategy();
         
         URI uri1 = new URI("ejbd://localhost:4201");
         URI uri2 = new URI("ejbd://localhost:4202");
@@ -51,9 +51,10 @@ public class StickToLastServerConnectionFactoryStrategyTest extends RMockTestCas
         startVerification();
 
         try {
-            factoryStrategy.connect(locations, null);
+            ServerMetaData server = new ServerMetaData(locations);
+            factoryStrategy.connect(server);
             fail();
-        } catch (RemoteException e) {
+        } catch (IOException e) {
         }
     }
     
@@ -65,7 +66,8 @@ public class StickToLastServerConnectionFactoryStrategyTest extends RMockTestCas
         
         startVerification();
 
-        Connection actualConnection = factoryStrategy.connect(locations, null);
+        ServerMetaData server = new ServerMetaData(locations);
+        Connection actualConnection = factoryStrategy.connect(server);
         assertSame(expectedConnection, actualConnection);
     }
     
@@ -78,8 +80,9 @@ public class StickToLastServerConnectionFactoryStrategyTest extends RMockTestCas
         
         startVerification();
 
-        factoryStrategy.connect(locations, null);
-        factoryStrategy.connect(locations, null);
+        ServerMetaData server = new ServerMetaData(locations);
+        factoryStrategy.connect(server);
+        factoryStrategy.connect(server);
     }
     
 }

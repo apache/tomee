@@ -70,7 +70,7 @@ public class ServiceDaemon implements ServerService {
         this.next = next;
     }
 
-    private static InetAddress getAddress(String host){
+    public static InetAddress getAddress(String host){
         try {
             return InetAddress.getByName(host);
         } catch (UnknownHostException e) {
@@ -82,6 +82,16 @@ public class ServiceDaemon implements ServerService {
         String value = p.getProperty(property);
         try {
             if (value != null) return Integer.parseInt(value);
+            else return defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static long getLong(Properties p, String property, long defaultValue){
+        String value = p.getProperty(property);
+        try {
+            if (value != null) return Long.parseLong(value);
             else return defaultValue;
         } catch (NumberFormatException e) {
             return defaultValue;

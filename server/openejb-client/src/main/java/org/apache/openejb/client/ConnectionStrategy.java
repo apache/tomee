@@ -16,10 +16,8 @@
  */
 package org.apache.openejb.client;
 
-import java.io.Serializable;
-import java.net.URI;
-import java.rmi.RemoteException;
+import java.io.IOException;
 
-public interface ConnectionFactoryStrategy extends Serializable {
-    Connection connect(URI[] locations, Request request) throws RemoteException;
+public interface ConnectionStrategy {
+    public Connection connect(ServerMetaData server) throws IOException;
 }

@@ -31,9 +31,6 @@ import java.util.Properties;
  */
 public class HttpConnectionFactory implements ConnectionFactory {
 
-    public void init(Properties props) {
-    }
-
     public Connection getConnection(URI uri) throws IOException {
         return new HttpConnection(uri);
     }

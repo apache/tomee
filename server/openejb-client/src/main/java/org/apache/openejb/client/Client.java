@@ -51,7 +51,7 @@ public class Client {
             /*----------------------------*/
             /* Get a connection to server */
             /*----------------------------*/
-            conn = server.connect(req);
+            conn = ConnectionManager.getConnection(server);
 
             /*----------------------------------*/
             /* Get output streams */

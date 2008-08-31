@@ -22,12 +22,13 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StickToLastServerConnectionFactoryStrategy implements ConnectionFactoryStrategy {
+public class StickyConnectionStrategy implements ConnectionStrategy {
     private static final Logger LOGGER = Logger.getLogger("OpenEJB.client");
 
     private URI lastLocation;
     
-    public Connection connect(URI[] locations, Request request) throws RemoteException {
+    public Connection connect(ServerMetaData server) throws IOException {
+        URI[] locations = server.getLocations();
         if (null != lastLocation) {
             for (int i = 0; i < locations.length; i++) {
                 if (locations[i].equals(lastLocation)) {
@@ -39,7 +40,7 @@ public class StickToLastServerConnectionFactoryStrategy implements ConnectionFac
                 }
             }
         }
-        
+
         Connection connection = null;
         for (int i = 0; i < locations.length; i++) {
             URI uri = locations[i];
@@ -53,10 +54,11 @@ public class StickToLastServerConnectionFactoryStrategy implements ConnectionFac
                 throw new RemoteException("Cannot connect to server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
             }
         }
+        
         if (null != connection) {
             return connection;
         }
-        
+
         // If no servers responded, throw an error
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < locations.length; i++) {

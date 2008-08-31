@@ -38,9 +38,6 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private static Map<URI, SocketConnection> connections = new ConcurrentHashMap<URI, SocketConnection>();
 
-    public void init(Properties props) {
-    }
-
     public Connection getConnection(URI uri) throws java.io.IOException {
 
         SocketConnection conn = connections.get(uri);

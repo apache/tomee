@@ -17,6 +17,8 @@
 package org.apache.openejb.client;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.Properties;
 
@@ -25,24 +27,34 @@ import junit.framework.TestCase;
 
 public class ConnectionManagerTest extends TestCase{
 
-    public void testSetConnectionFactory() throws Exception {
+    public void testRegisterFactory() throws Exception {
         MockConnectionFactory connectionFactory = new MockConnectionFactory();
-        ConnectionManager.setFactory(connectionFactory);
-        
-        assertSame(connectionFactory, ConnectionManager.getFactory());
-        assertEquals(connectionFactory.getClass().getName(), ConnectionManager.getFactoryName());
+        ConnectionManager.registerFactory("mock", connectionFactory);
+
+        Connection connection = ConnectionManager.getConnection(new URI("mock://foo"));
+
+        assertTrue(connection instanceof MockConnection);
     }
     
     public static class MockConnectionFactory implements ConnectionFactory {
 
         public Connection getConnection(URI uri) throws IOException {
+            return new MockConnection();
+        }
+
+    }
+
+    private static class MockConnection implements Connection {
+        public void close() throws IOException {
             throw new UnsupportedOperationException();
         }
 
-        public void init(Properties props) {
+        public InputStream getInputStream() throws IOException {
             throw new UnsupportedOperationException();
         }
-        
+
+        public OutputStream getOuputStream() throws IOException {
+            throw new UnsupportedOperationException();
+        }
     }
-    
 }

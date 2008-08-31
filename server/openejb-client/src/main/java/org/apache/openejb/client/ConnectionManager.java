@@ -17,88 +17,72 @@
 package org.apache.openejb.client;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.net.URI;
 
 public class ConnectionManager {
 
-    private static ConnectionFactory factory;
-
-    private static Class defaultFactoryClass = SocketConnectionFactory.class;
-
-    private static String factoryName;
+    private static Registry<ConnectionFactory> factories = Registry.create(ConnectionFactory.class);
+    private static Registry<ConnectionStrategy> strategies = Registry.create(ConnectionStrategy.class);
 
     static {
-        try {
-            installFactory(defaultFactoryClass.getName());
-        } catch (Exception e) {
+        SocketConnectionFactory ejbdFactory = new SocketConnectionFactory();
 
-        }
+        factories.register("default", ejbdFactory);
+        factories.register("ejbd", ejbdFactory);
+
+        HttpConnectionFactory httpFactory = new HttpConnectionFactory();
+        factories.register("http", httpFactory);
+        factories.register("https", httpFactory);
+
+        strategies.register("default", new StickyConnectionStrategy());
+    }
+
+
+    public static Connection getConnection(ServerMetaData serverMetaData) throws IOException {
+        String name = serverMetaData.getConnectionStrategy();
+
+        if (name == null) name = "default";
+
+        ConnectionStrategy strategy = strategies.get(name);
+
+        if (strategy == null) throw new IOException("Unsupported ConnectionStrategy  \"" + name + "\"");
+
+
+        return strategy.connect(serverMetaData);
     }
 
     public static Connection getConnection(URI uri) throws IOException {
-        if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
-            return new HttpConnectionFactory().getConnection(uri);
-        } else {
-            return factory.getConnection(uri);
-        }
+        String scheme = uri.getScheme();
+
+        ConnectionFactory factory = factories.get(scheme);
+
+        if (factory == null) throw new IOException("Unsupported ConnectionFactory URI scheme  \"" + scheme + "\"");
+
+        return factory.getConnection(uri);
     }
 
-    public static void setFactory(String factoryName) throws IOException {
-        installFactory(factoryName);
+    public static void registerFactory(String scheme, ConnectionFactory factory) {
+        factories.register(scheme, factory);
     }
 
+    public static ConnectionFactory unregisterFactory(String scheme) {
+        return factories.unregister(scheme);
+    }
+
+    public static void registerStrategy(String scheme, ConnectionStrategy factory) {
+        strategies.register(scheme, factory);
+    }
+
+    public static ConnectionStrategy unregisterStrategy(String scheme) {
+        return strategies.unregister(scheme);
+    }
+
+    /**
+     * @param factory
+     * @throws IOException
+     * @Depricated use register("default", factory);
+     */
     public static void setFactory(ConnectionFactory factory) throws IOException {
-        if (null == factory) {
-            throw new IllegalArgumentException("factory is required");
-        }
-        ConnectionManager.factory = factory;
-        factoryName = factory.getClass().getName();
+        registerFactory("default", factory);
     }
-    
-    public static ConnectionFactory getFactory() {
-        return factory;
-    }
-
-    public static String getFactoryName() {
-        return factoryName;
-    }
-
-    private static void installFactory(String factoryName) throws IOException {
-
-        Class factoryClass = null;
-        ConnectionFactory factory = null;
-
-        try {
-            ClassLoader cl = getContextClassLoader();
-            factoryClass = Class.forName(factoryName, true, cl);
-        } catch (Exception e) {
-            throw new IOException("No ConnectionFactory Can be installed. Unable to load the class " + factoryName);
-        }
-
-        try {
-            factory = (ConnectionFactory) factoryClass.newInstance();
-        } catch (Exception e) {
-            throw new IOException("No ConnectionFactory Can be installed. Unable to instantiate the class " + factoryName);
-        }
-
-        try {
-
-            factory.init(new Properties());
-        } catch (Exception e) {
-            throw new IOException("No ConnectionFactory Can be installed. Unable to initialize the class " + factoryName);
-        }
-
-        ConnectionManager.factory = factory;
-        ConnectionManager.factoryName = factoryName;
-    }
-
-    public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
-    }
-
 }

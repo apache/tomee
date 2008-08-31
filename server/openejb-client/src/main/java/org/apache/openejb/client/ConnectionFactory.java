@@ -21,8 +21,6 @@ import java.util.Properties;
 
 public interface ConnectionFactory {
 
-    public void init(Properties props);
-
     public Connection getConnection(URI uri) throws java.io.IOException;
 
 }
