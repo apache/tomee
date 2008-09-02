@@ -495,6 +495,17 @@ class AppInfoBuilder {
                     }
                 }
 
+                Properties overrides = ConfigurationFactory.getSystemProperties(info.name, "PersistenceUnit");
+                for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+                    Object property = entry.getKey();
+                    Object value = entry.getValue();
+                    if (info.properties.contains(property)){
+                        logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
+                    } else {
+                        logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
+                    }
+                    info.properties.put(property, value);
+                }
 
                 // The result is that OpenEJB-specific configuration can be avoided when
                 // using OpenEJB + Hibernate or another vendor.  A second benefit is that
