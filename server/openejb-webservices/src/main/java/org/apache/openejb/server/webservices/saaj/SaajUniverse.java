@@ -28,7 +28,7 @@ public class SaajUniverse {
         setProperty("javax.xml.soap.MessageFactory", "org.apache.openejb.server.webservices.saaj.MessageFactoryImpl");
         setProperty("javax.xml.soap.SOAPFactory", "org.apache.openejb.server.webservices.saaj.SoapFactoryImpl");
         setProperty("javax.xml.soap.SOAPConnectionFactory", "org.apache.openejb.server.webservices.saaj.SoapConnectionFactoryImpl");
-        setProperty("javax.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.MetaFactoryImpl");
+        setProperty("javax.xml.soap.MetaFactory", "org.apache.openejb.server.webservices.saaj.SaajMetaFactoryImpl");
     }
 
     private static void setProperty(String name, String value) {
