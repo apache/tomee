@@ -68,7 +68,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UrlCache;
 import static org.apache.openejb.util.URLs.toFile;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.finder.ResourceFinder;
 import org.apache.openejb.finder.UrlSet;
 import org.xml.sax.SAXException;
@@ -1073,11 +1073,21 @@ public class DeploymentLoader {
         }
 
         if (searchForDescriptorlessApplications) {
-            ClassFinder classFinder = new ClassFinder(classLoader, baseUrl);
+            AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
 
-            if (classFinder.isAnnotationPresent(Stateless.class) ||
-                    classFinder.isAnnotationPresent(Stateful.class) ||
-                    classFinder.isAnnotationPresent(MessageDriven.class)) {
+            AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
+                public boolean accept(String annotationName) {
+                    if (annotationName.startsWith("javax.ejb.")) {
+                        if ("javax.ejb.Stateful".equals(annotationName)) return true;
+                        if ("javax.ejb.Stateless".equals(annotationName)) return true;
+                        if ("javax.ejb.Singleton".equals(annotationName)) return true;
+                        if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
+                    }
+                    return false;
+                }
+            };
+
+            if (classFinder.find(filter)) {
                 return EjbModule.class;
             }
         }
