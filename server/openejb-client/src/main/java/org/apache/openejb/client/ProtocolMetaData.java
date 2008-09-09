@@ -20,6 +20,7 @@ package org.apache.openejb.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.EOFException;
 
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
@@ -86,7 +87,7 @@ public class ProtocolMetaData {
         for (int i = 0; i < spec.length; i++) {
             spec[i] = (byte) in.read();
             if (spec[i] == -1){
-                throw new IOException("Unable to read protocol version.  Reached the end of the stream.");
+                throw new EOFException("Unable to read protocol version.  Reached the end of the stream.");
             }
         }
         init(new String(spec,"UTF-8"));

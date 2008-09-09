@@ -32,6 +32,12 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 /**
  */
@@ -143,7 +149,7 @@ public class ServiceDaemon implements ServerService {
         secure = getBoolean(props, "secure", false);
 
         timeout = 1000;
-        
+
         next.init(props);
     }
 
@@ -185,11 +191,11 @@ public class ServiceDaemon implements ServerService {
     public void stop() throws ServiceException {
 
         synchronized (this) {
+            next.stop();
             if (socketListener != null) {
                 socketListener.stop();
                 socketListener = null;
             }
-            next.stop();
         }
     }
 
@@ -216,35 +222,49 @@ public class ServiceDaemon implements ServerService {
     }
 
     private static class SocketListener implements Runnable {
-        private ServerService serverService;
-        private ServerSocket serverSocket;
-        private boolean stopped;
+        private final ServerService serverService;
+        private final ServerSocket serverSocket;
+        private AtomicBoolean stop = new AtomicBoolean();
+        private Lock lock = new ReentrantLock();
 
         public SocketListener(ServerService serverService, ServerSocket serverSocket) {
             this.serverService = serverService;
             this.serverSocket = serverSocket;
-            stopped = false;
         }
 
-        public synchronized void stop() {
-            stopped = true;
-        }
-
-        private synchronized boolean shouldStop() {
-            return stopped;
+        public void stop() {
+            stop.set(true);
+            try {
+                if (lock.tryLock(10, TimeUnit.SECONDS)){
+                    serverSocket.close();
+                }
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            } catch (IOException e) {
+            }
         }
 
         public void run() {
-            while (!shouldStop()) {
+            while (!stop.get()) {
                 Socket socket = null;
                 try {
                     socket = serverSocket.accept();
                     socket.setTcpNoDelay(true);
-                    if (!shouldStop()) {
+                    if (!stop.get()) {
                         // the server service is responsible
                         // for closing the socket.
-                        serverService.service(socket);
+                        try {
+                            lock.lock();
+                            serverService.service(socket);
+                        } finally {
+                            lock.unlock();
+                        }
                     }
+
+                    // Sockets are consumed in other threads
+                    // and should never be closed here
+                    // It's up to the consumer of the socket
+                    // to close it.
                 } catch (SocketTimeoutException e) {
                     // we don't really care
                     // log.debug("Socket timed-out",e);
@@ -253,15 +273,11 @@ public class ServiceDaemon implements ServerService {
                 }
             }
 
-            if (serverSocket != null) {
-                try {
-                    serverSocket.close();
-                } catch (IOException ioException) {
-                    log.debug("Error cleaning up socked", ioException);
-                }
-                serverSocket = null;
+            try {
+                serverSocket.close();
+            } catch (IOException ioException) {
+                log.debug("Error cleaning up socked", ioException);
             }
-            serverService = null;
         }
 
         public void setSoTimeout(int timeout) throws SocketException {

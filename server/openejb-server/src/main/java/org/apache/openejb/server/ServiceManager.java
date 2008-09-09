@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Collections;
 
 /**
  * @version $Rev$ $Date$
@@ -144,7 +146,8 @@ public class ServiceManager {
 
         ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
 
-        Map availableServices = serviceFinder.mapAvailableServices(ServerService.class);
+        Map<String, Properties> availableServices = serviceFinder.mapAvailableServices(ServerService.class);
+
         List enabledServers = new ArrayList();
 
         OpenEjbConfiguration conf = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
@@ -197,6 +200,12 @@ public class ServiceManager {
                     recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
                     service = (ServerService) recipe.create(serviceClass.getClassLoader());
+
+                    if (service instanceof DiscoveryAgent){
+                        DiscoveryAgent agent = (DiscoveryAgent) service;
+                        DiscoveryRegistry registry = new DiscoveryRegistry(agent);
+                        SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
+                    }
 
                     if (!(service instanceof SelfManaging)) {
                         service = new ServicePool(service, serviceName, serviceProperties);

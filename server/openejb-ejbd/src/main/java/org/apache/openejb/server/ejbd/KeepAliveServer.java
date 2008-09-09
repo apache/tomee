@@ -16,36 +16,48 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Exceptions;
+import org.apache.openejb.client.KeepAliveStyle;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Properties;
-import java.util.Map;
-import java.util.TimerTask;
-import java.util.Timer;
+import java.net.SocketException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Collection;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.BlockingQueue;
-import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @version $Rev$ $Date$
  */
 public class KeepAliveServer implements ServerService {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("keepalive"), KeepAliveServer.class);
     private final ServerService service;
     private final long timeout = (1000 * 3);
-    private final KeepAliveTimer keepAliveTimer = new KeepAliveTimer(timeout);
+
+    private final AtomicBoolean stop = new AtomicBoolean();
+    private final KeepAliveTimer keepAliveTimer;
+    private Timer timer;
 
     public KeepAliveServer() {
         this(new EjbServer());
@@ -54,26 +66,27 @@ public class KeepAliveServer implements ServerService {
     public KeepAliveServer(ServerService service) {
         this.service = service;
 
+        keepAliveTimer = new KeepAliveTimer();
 
-        Timer timer = new Timer("KeepAliveTimer", true);
+        timer = new Timer("KeepAliveTimer", true);
         timer.scheduleAtFixedRate(keepAliveTimer, timeout, timeout / 2);
-
     }
 
 
+    public class KeepAliveTimer extends TimerTask {
 
-    public static class KeepAliveTimer extends TimerTask {
+        // Doesn't need to be a map.  Could be a set if Session.equals/hashCode only referenced the Thread.
+        private final Map<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
 
-        private final Map<Thread, Status> statusMap = new ConcurrentHashMap<Thread, Status>();
-
-        private final long timeout;
         private BlockingQueue<Runnable> queue;
 
-        public KeepAliveTimer(long timeout) {
-            this.timeout = timeout;
+        public void run() {
+            if (!stop.get()) {
+                closeInactiveSessions();
+            }
         }
 
-        public void run() {
+        private void closeInactiveSessions() {
             BlockingQueue<Runnable> queue = getQueue();
             if (queue == null) return;
 
@@ -82,28 +95,50 @@ public class KeepAliveServer implements ServerService {
 
             long now = System.currentTimeMillis();
 
-            Collection<Status> statuses = statusMap.values();
-            for (Status status : statuses) {
+            for (Session session : sessions.values()) {
 
-//                System.out.println(""+status);
-
-                if (status.isReading() && now - status.getTime() > timeout){
-//                    System.out.println("Thread Interrupt");
+                if (session.usage.tryLock()) {
                     try {
-                        backlog--;
-                        status.in.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        if (now - session.lastRequest > timeout) {
+                            try {
+                                backlog--;
+                                session.socket.close();
+                            } catch (IOException e) {
+                                logger.info("Error closing socket.", e);
+                            } finally {
+                                removeSession(session);
+                            }
+                        }
+                    } finally {
+                        session.usage.unlock();
                     }
                 }
 
                 if (backlog <= 0) return;
             }
-//            System.out.println("exit");
+        }
+
+        public void closeSessions() {
+
+            // Close the ones we can
+            for (Session session : sessions.values()) {
+                if (session.usage.tryLock()) {
+                    try {
+                        session.socket.close();
+                    } catch (IOException e) {
+                        logger.info("Error closing socket.", e);
+                    } finally {
+                        removeSession(session);
+                        session.usage.unlock();
+                    }
+                } else {
+                    logger.info("Allowing graceful shutdown of " + session.socket.getInetAddress());
+                }
+            }
         }
 
         private BlockingQueue<Runnable> getQueue() {
-            if (queue == null){
+            if (queue == null) {
                 // this can be null if timer fires before service is fully initialized
                 ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
                 if (incoming == null) return null;
@@ -113,77 +148,85 @@ public class KeepAliveServer implements ServerService {
             return queue;
         }
 
-        public Status setStatus(Status status) {
-//            System.out.println("status = " + status);
-            return statusMap.put(status.getThread(), status);
+        public Session addSession(Session session) {
+            return sessions.put(session.thread, session);
+        }
+
+        public Session removeSession(Session session) {
+            return sessions.remove(session.thread);
         }
     }
 
-    public static class Status {
-        private final long time;
-        private final boolean reading;
+    private class Session {
+
         private final Thread thread;
-        private static final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
-        private final InputStream in;
+        private final Lock usage = new ReentrantLock();
 
-        public boolean isReading() {
-            return reading;
-        }
+        // only used inside the Lock
+        private long lastRequest;
 
-        public Thread getThread() {
-            return thread;
-        }
+        // only used inside the Lock
+        private final Socket socket;
 
-        public long getTime() {
-            return time;
-        }
-
-        public Status(boolean reading, InputStream in) {
-            this.reading = reading;
+        public Session(Socket socket) {
+            this.socket = socket;
+            this.lastRequest = System.currentTimeMillis();
             this.thread = Thread.currentThread();
-            this.time = System.currentTimeMillis();
-            this.in = in;
         }
 
-        public String toString() {
-            String msg = "";
-            if (reading)
-            msg += "READING";
-            else msg += "WORKING";
-            msg += " "+thread.getName();
+        public void service(Socket socket) throws ServiceException, IOException {
+            keepAliveTimer.addSession(this);
 
-            msg += " since "+ format.format(new Date(time));
-            return msg;
+            int i = -1;
+
+            try {
+                InputStream in = new BufferedInputStream(socket.getInputStream());
+                OutputStream out = new BufferedOutputStream(socket.getOutputStream());
+
+                while (!stop.get()) {
+                    try {
+                        i = in.read();
+                    } catch (SocketException e) {
+                        // Socket closed.
+                        break;
+                    }
+                    KeepAliveStyle style = KeepAliveStyle.values()[i];
+
+                    try {
+                        usage.lock();
+
+                        switch(style){
+                            case PING_PING: {
+                                in.read();
+                            }
+                            break;
+                            case PING_PONG: {
+                                out.write(style.ordinal());
+                                out.flush();
+                            }
+                        }
+
+                        service.service(new Input(in), new Output(out));
+                        out.flush();
+                    } finally {
+                        this.lastRequest = System.currentTimeMillis();
+                        usage.unlock();
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e){
+                throw new IOException("Unexpected byte " + i);
+            } catch (InterruptedIOException e) {
+                Thread.interrupted();
+            } finally {
+                keepAliveTimer.removeSession(this);
+            }
         }
     }
 
 
     public void service(Socket socket) throws ServiceException, IOException {
-        InputStream in = new BufferedInputStream(socket.getInputStream());
-        OutputStream out = new BufferedOutputStream(socket.getOutputStream());
-
-        try {
-            while (true) {
-                keepAliveTimer.setStatus(new Status(true, in));
-                int i = in.read();
-                char c = (char) i;
-                if (i == 30){
-                    keepAliveTimer.setStatus(new Status(false, null));
-                    service.service(new Input(in), new Output(out));
-                    out.flush();
-                } else {
-                    keepAliveTimer.setStatus(new Status(false, null));
-                    break;
-                }
-            }
-        } catch (InterruptedIOException e) {
-            Thread.interrupted();
-        } catch (IOException e) {
-        } finally{
-            keepAliveTimer.setStatus(new Status(false, null));
-//            System.out.println("close socket");
-            socket.close();
-        }
+        Session session = new Session(socket);
+        session.service(socket);
     }
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
@@ -202,11 +245,16 @@ public class KeepAliveServer implements ServerService {
     }
 
     public void start() throws ServiceException {
-        service.start();
+        stop.set(false);
+
+//        service.start();
     }
 
+
     public void stop() throws ServiceException {
-        service.stop();
+        stop.set(true);
+        keepAliveTimer.closeSessions();
+//        service.stop();
     }
 
     public void init(Properties props) throws Exception {

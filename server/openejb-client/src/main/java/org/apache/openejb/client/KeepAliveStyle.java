@@ -14,17 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.discovery;
-
-
-import java.net.URI;
-import java.io.IOException;
+package org.apache.openejb.client;
 
 /**
  * @version $Rev$ $Date$
  */
-public interface DiscoveryListener {
-    public void serviceAdded(URI service);
-    public void serviceRemoved(URI service);
-
+public enum KeepAliveStyle {
+    PING, PING_PONG, PING_PING;
 }

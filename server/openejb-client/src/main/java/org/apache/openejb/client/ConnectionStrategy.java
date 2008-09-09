@@ -19,5 +19,5 @@ package org.apache.openejb.client;
 import java.io.IOException;
 
 public interface ConnectionStrategy {
-    public Connection connect(ServerMetaData server) throws IOException;
+    public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException;
 }

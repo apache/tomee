@@ -47,9 +47,11 @@ public class EjbServer implements org.apache.openejb.server.ServerService, org.a
     }
 
     public void start() throws ServiceException {
+        keepAlive.start();
     }
 
     public void stop() throws ServiceException {
+        keepAlive.stop();
     }
 
     public String getName() {

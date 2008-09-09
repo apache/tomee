@@ -27,31 +27,38 @@ public class StickyConnectionStrategy implements ConnectionStrategy {
 
     private URI lastLocation;
     
-    public Connection connect(ServerMetaData server) throws IOException {
-        URI[] locations = server.getLocations();
+    public Connection connect(ClusterMetaData cluster, ServerMetaData server) throws IOException {
+        URI[] locations = cluster.getLocations();
+        if (locations.length == 0){
+            return connect(server.getLocation());
+        }
         if (null != lastLocation) {
-            for (int i = 0; i < locations.length; i++) {
-                if (locations[i].equals(lastLocation)) {
+            for (URI uri : locations) {
+                if (uri.equals(lastLocation)) {
                     try {
                         return connect(lastLocation);
                     } catch (IOException e) {
-                        LOGGER.log(Level.WARNING, "Cannot connect to last server: " + lastLocation.getHost() + ":" + lastLocation.getPort() + " Exception: ", e);
+                        if (locations.length > 1){
+                            LOGGER.log(Level.WARNING, "Failing over.  Cannot connect to last server: " + lastLocation.toString() + " Exception: " + e.getClass().getName() +" " + e.getMessage());
+                        }
                     }
                 }
             }
         }
 
         Connection connection = null;
-        for (int i = 0; i < locations.length; i++) {
-            URI uri = locations[i];
+        for (URI uri : locations) {
+            if (uri.equals(lastLocation)) {
+                continue;
+            }
             try {
                 connection = connect(uri);
                 lastLocation = uri;
                 break;
             } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Cannot connect to server(s): " + uri.getHost() + ":" + uri.getPort() + " Exception: ", e);
+                LOGGER.log(Level.WARNING, "Failover: Cannot connect to server(s): " + uri.toString() + " Exception: " + e.getMessage()+".  Trying next.");
             } catch (Throwable e) {
-                throw new RemoteException("Cannot connect to server: " + uri.getHost() + ":" + uri.getPort() + " due to an unkown exception in the OpenEJB client: ", e);
+                throw new RemoteException("Failover: Cannot connect to server: " +  uri.toString() + " due to an unkown exception in the OpenEJB client: ", e);
             }
         }
         

@@ -482,6 +482,9 @@ public class EJBRequest implements ClusterableRequest {
             case RequestMethodConstants.EJB_HOME_CREATE:
                 s = new StringBuffer("EJB_HOME.CREATE");
                 break;
+            case RequestMethodConstants.EJB_HOME_METHOD:
+                s = new StringBuffer("EJB_HOME.HOME_METHOD");
+                break;
             case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
                 s = new StringBuffer("EJB_OBJECT.GET_EJB_HOME");
                 break;
@@ -500,6 +503,8 @@ public class EJBRequest implements ClusterableRequest {
             case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
                 s = new StringBuffer("EJB_OBJECT.BUSINESS_METHOD");
                 break;
+            default:
+                s = new StringBuffer("EJB_UKNOWN."+requestMethod);
         }
         s.append(':').append(deploymentId);
         if (body != null) {

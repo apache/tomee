@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.DiscoveryListener;
 
 /**
  * @version $Rev$ $Date$

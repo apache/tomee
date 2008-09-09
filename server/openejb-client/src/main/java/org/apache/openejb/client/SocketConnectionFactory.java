@@ -25,7 +25,6 @@ import java.io.BufferedOutputStream;
 import java.net.Socket;
 import java.net.URI;
 import java.net.ConnectException;
-import java.util.Properties;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -35,6 +34,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 public class SocketConnectionFactory implements ConnectionFactory {
+
+    private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
 
     private static Map<URI, SocketConnection> connections = new ConcurrentHashMap<URI, SocketConnection>();
 
@@ -60,13 +61,46 @@ public class SocketConnectionFactory implements ConnectionFactory {
         try {
             conn.lock.tryLock(60*5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
+            Thread.interrupted();
             throw new IOException("Connection busy");
         }
 
         OutputStream ouputStream = conn.getOuputStream();
-        ouputStream.write(30);
-//        ouputStream.flush();
+        if (conn.socket.isClosed()){
+            connections.remove(uri);
+            return getConnection(uri);
+        }
+
+        try {
+            ouputStream.write(getKeepAliveStyle().ordinal());
+
+            switch(getKeepAliveStyle()){
+                case PING_PING: {
+                    ouputStream.flush();
+                    ouputStream.write(getKeepAliveStyle().ordinal());
+                    ouputStream.flush();
+                }
+                break;
+                case PING_PONG: {
+                    ouputStream.flush();
+                    conn.getInputStream().read();
+                }
+            }
+        } catch (IOException e) {
+            connections.remove(uri);
+            throw e;
+        }
+
         return conn;
+    }
+
+    public KeepAliveStyle getKeepAliveStyle() {
+        String property = System.getProperty("openejb.client.keepalive");
+        if (property != null){
+            property = property.toUpperCase();
+            return KeepAliveStyle.valueOf(property);
+        }
+        return keepAliveStyle;
     }
 
     class SocketConnection implements Connection {

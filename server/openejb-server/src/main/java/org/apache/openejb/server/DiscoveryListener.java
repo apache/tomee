@@ -14,7 +14,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.discovery;
+package org.apache.openejb.server;
+
 
 import java.net.URI;
 import java.io.IOException;
@@ -22,32 +23,8 @@ import java.io.IOException;
 /**
  * @version $Rev$ $Date$
  */
-public interface DiscoveryAgent {
-    /**
-     * Sets the discovery listener
-     * @param listener
-     */
-    void setDiscoveryListener(DiscoveryListener listener);
-
-    /**
-     * register a service
-     * @param serviceUri
-     * @param details
-     */
-    void registerService(URI serviceUri) throws IOException;
-
-    /**
-     * register a service
-     * @param serviceUri
-     * @param details
-     */
-    void unregisterService(URI serviceUri) throws IOException;
-
-    /**
-     * A process actively using a service may see it go down before the DiscoveryAgent notices the
-     * service's failure.  That process can use this method to notify the DiscoveryAgent of the failure
-     * so that other listeners of this DiscoveryAgent can also be made aware of the failure.
-     */
-    void reportFailed(URI serviceUri) throws IOException;
+public interface  DiscoveryListener {
+    public void serviceAdded(URI service);
+    public void serviceRemoved(URI service);
 
 }

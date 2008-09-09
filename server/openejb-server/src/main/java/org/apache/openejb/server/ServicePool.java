@@ -23,6 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -40,6 +41,7 @@ public class ServicePool implements ServerService {
     private final ServerService next;
     private final Executor executor;
     private final ThreadPoolExecutor threadPool;
+    private final AtomicBoolean stop = new AtomicBoolean();
 
     public ServicePool(ServerService next, String name, Properties properties) {
         this(next, name, getInt(properties, "threads", 100));
@@ -86,6 +88,7 @@ public class ServicePool implements ServerService {
         final Runnable service = new Runnable() {
             public void run() {
                 try {
+                    if (stop.get()) return;
                     next.service(socket);
                 } catch (SecurityException e) {
                     log.error("Security error: " + e.getMessage(), e);
@@ -93,6 +96,12 @@ public class ServicePool implements ServerService {
                     log.error("Unexpected error", e);
                 } finally {
                     try {
+                        // Once the thread is done with the socket, clean it up
+                        // The ServiceDaemon does not close the sockets as it is
+                        // single threaded and only accepts sockets and then
+                        // hands them off to be proceeceed.  As the thread doing
+                        // that processing it is our job to close the socket
+                        // when we are finished with it.
                         if (socket != null) {
                             socket.close();
                         }

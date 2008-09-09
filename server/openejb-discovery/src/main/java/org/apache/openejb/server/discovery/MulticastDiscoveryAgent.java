@@ -22,7 +22,8 @@ import static org.apache.openejb.server.ServiceDaemon.getInt;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -72,6 +73,9 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
     private Map<String, Service> registeredServices = new ConcurrentHashMap<String, Service>();
 
+    private String group = "default";
+    private String groupPrefix = group + ":";
+
     private int maxMissedHeartbeats = 10;
     private long heartRate = 500;
 
@@ -83,9 +87,9 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
     // ---------------------------------
     // Listenting specific settings
-    private long initialReconnectDelay = 1000 * 5;
+    private long reconnectDelay = 1000 * 5;
     private long maxReconnectDelay = 1000 * 30;
-    private long backOffMultiplier = 0;
+    private long exponentialBackoff = 0;
     private boolean useExponentialBackOff;
     private int maxReconnectAttempts = 10; // todo: check this out
     // ---------------------------------
@@ -94,19 +98,21 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     public void init(Properties props) throws Exception {
 
         host = props.getProperty("bind", host);
+        group = props.getProperty("group", group);
+        groupPrefix = group + ":";
 
         port = getInt(props, "port", port);
 
         heartRate = getLong(props, "heart_rate", heartRate);
         maxMissedHeartbeats = getInt(props, "max_missed_heartbeats", maxMissedHeartbeats);
-        loopbackMode = getBoolean(props, "max_missed_heartbeats", loopbackMode);
+        loopbackMode = getBoolean(props, "loopback_mode", loopbackMode);
 
-        initialReconnectDelay = getLong(props, "reconnect_delay", initialReconnectDelay);
-        maxReconnectDelay = getLong(props, "max_reconnect_delay", initialReconnectDelay);
+        reconnectDelay = getLong(props, "reconnect_delay", reconnectDelay);
+        maxReconnectDelay = getLong(props, "max_reconnect_delay", reconnectDelay);
         maxReconnectAttempts = getInt(props, "max_reconnect_attempts", maxReconnectAttempts);
-        backOffMultiplier = getLong(props, "exponential_backoff", backOffMultiplier);
+        exponentialBackoff = getLong(props, "exponential_backoff", exponentialBackoff);
 
-        useExponentialBackOff = (backOffMultiplier > 1);
+        useExponentialBackOff = (exponentialBackoff > 1);
     }
 
     public String getIP() {
@@ -127,12 +133,14 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
     public void registerService(URI serviceUri) throws IOException {
         Service service = new Service(serviceUri);
-        this.registeredServices.put(service.uriString, service);
+        this.registeredServices.put(service.broadcastString, service);
+        this.listener.fireServiceAddedEvent(serviceUri);
     }
 
     public void unregisterService(URI serviceUri) throws IOException {
         Service service = new Service(serviceUri);
-        this.registeredServices.remove(service.uriString);
+        this.registeredServices.remove(service.broadcastString);
+        this.listener.fireServiceRemovedEvent(serviceUri);
     }
 
     public void reportFailed(URI serviceUri) throws IOException {
@@ -141,7 +149,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
 
     private boolean isSelf(Service service) {
-        return isSelf(service.uriString);
+        return isSelf(service.broadcastString);
     }
 
     private boolean isSelf(String service) {
@@ -204,15 +212,18 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
     class Service {
         private final URI uri;
-        private final String uriString;
+        private final String broadcastString;
 
         public Service(URI uri) {
             this.uri = uri;
-            this.uriString = uri.toString();
+            this.broadcastString = groupPrefix + uri.toString();
         }
 
         public Service(String uriString) throws URISyntaxException {
-            this(new URI(uriString));
+            URI uri = new URI(uriString);
+            uri = new URI(uri.getSchemeSpecificPart());
+            this.uri = uri;
+            this.broadcastString = uriString;
         }
     }
 
@@ -253,23 +264,23 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                 dead = true;
                 failureCount++;
 
-                long reconnectDelay;
+                long delay;
                 if (useExponentialBackOff) {
-                    reconnectDelay = (long) Math.pow(backOffMultiplier, failureCount);
-                    if (reconnectDelay > maxReconnectDelay) {
-                        reconnectDelay = maxReconnectDelay;
+                    delay = (long) Math.pow(exponentialBackoff, failureCount);
+                    if (delay > maxReconnectDelay) {
+                        delay = maxReconnectDelay;
                     }
                 } else {
-                    reconnectDelay = initialReconnectDelay;
+                    delay = reconnectDelay;
                 }
 
                 if (log.isDebugEnabled()) {
                     log.debug("Remote failure of " + service + " while still receiving multicast advertisements.  " +
-                            "Advertising events will be suppressed for " + reconnectDelay
+                            "Advertising events will be suppressed for " + delay
                             + " ms, the current failure count is: " + failureCount);
                 }
 
-                recoveryTime = System.currentTimeMillis() + reconnectDelay;
+                recoveryTime = System.currentTimeMillis() + delay;
                 return true;
             }
             return false;
@@ -344,6 +355,11 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
             if (discoveryListener == null) {
                 return;
             }
+
+            if (!uriString.startsWith(groupPrefix)){
+                return;
+            }
+
             if (isSelf(uriString)) {
                 return;
             }
@@ -356,7 +372,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
                     discoveredServices.put(uriString, vitals);
 
-                    fireServiceAddEvent(vitals.service.uri);
+                    fireServiceAddedEvent(vitals.service.uri);
                 } catch (URISyntaxException e) {
                     // don't continuously log this
                 }
@@ -365,7 +381,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                 vitals.heartbeat();
 
                 if (vitals.doRecovery()) {
-                    fireServiceAddEvent(vitals.service.uri);
+                    fireServiceAddedEvent(vitals.service.uri);
                 }
             }
         }
@@ -375,7 +391,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
             for (ServiceVitals serviceVitals : discoveredServices.values()) {
                 if (serviceVitals.getLastHeartbeat() < expireTime && !isSelf(serviceVitals.service)) {
 
-                    ServiceVitals vitals = discoveredServices.remove(serviceVitals.service.uriString);
+                    ServiceVitals vitals = discoveredServices.remove(serviceVitals.service.broadcastString);
                     if (vitals != null && !vitals.isDead()) {
                         fireServiceRemovedEvent(vitals.service.uri);
                     }
@@ -408,7 +424,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
             }
         }
 
-        private void fireServiceAddEvent(final URI uri) {
+        private void fireServiceAddedEvent(final URI uri) {
             if (discoveryListener != null) {
                 final DiscoveryListener discoveryListener = this.discoveryListener;
 
@@ -427,7 +443,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
 
         public void reportFailed(URI serviceUri) {
             final Service service = new Service(serviceUri);
-            ServiceVitals serviceVitals = discoveredServices.get(service.uriString);
+            ServiceVitals serviceVitals = discoveredServices.get(service.broadcastString);
             if (serviceVitals != null && serviceVitals.pronounceDead()) {
                 fireServiceRemovedEvent(service.uri);
             }
@@ -466,6 +482,93 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                 }
             }
         }
+    }
+
+
+    //
+    //  Ordinary getters/setters
+    //
+
+    public long getExponentialBackoff() {
+        return exponentialBackoff;
+    }
+
+    public void setExponentialBackoff(long exponentialBackoff) {
+        this.exponentialBackoff = exponentialBackoff;
+        this.useExponentialBackOff = (exponentialBackoff > 1);
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+        groupPrefix = group + ":";
+    }
+
+    public long getHeartRate() {
+        return heartRate;
+    }
+
+    public void setHeartRate(long heartRate) {
+        this.heartRate = heartRate;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    public void setReconnectDelay(long reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
+    }
+
+    public boolean isLoopbackMode() {
+        return loopbackMode;
+    }
+
+    public void setLoopbackMode(boolean loopbackMode) {
+        this.loopbackMode = loopbackMode;
+    }
+
+    public int getMaxMissedHeartbeats() {
+        return maxMissedHeartbeats;
+    }
+
+    public void setMaxMissedHeartbeats(int maxMissedHeartbeats) {
+        this.maxMissedHeartbeats = maxMissedHeartbeats;
+    }
+
+    public int getMaxReconnectAttempts() {
+        return maxReconnectAttempts;
+    }
+
+    public void setMaxReconnectAttempts(int maxReconnectAttempts) {
+        this.maxReconnectAttempts = maxReconnectAttempts;
+    }
+
+    public long getMaxReconnectDelay() {
+        return maxReconnectDelay;
+    }
+
+    public void setMaxReconnectDelay(long maxReconnectDelay) {
+        this.maxReconnectDelay = maxReconnectDelay;
+    }
+
+    public int getTimeToLive() {
+        return timeToLive;
+    }
+
+    public void setTimeToLive(int timeToLive) {
+        this.timeToLive = timeToLive;
     }
 
 }

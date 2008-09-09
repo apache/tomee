@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.client.EJBRequest;
+import org.apache.openejb.client.ServerMetaData;
 
 import java.util.HashMap;
 
@@ -49,6 +50,15 @@ public class CallContext {
         set(DeploymentInfo.class, info);
     }
 
+
+    public void setServerMetaData(ServerMetaData serverMetaData){
+        set(ServerMetaData.class, serverMetaData);
+    }
+
+    public ServerMetaData getServerMetaData(){
+        return get(ServerMetaData.class);
+    }
+    
     public EJBRequest getEJBRequest() {
         return get(EJBRequest.class);
     }

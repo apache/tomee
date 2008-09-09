@@ -38,8 +38,8 @@ public class ConnectionManager {
     }
 
 
-    public static Connection getConnection(ServerMetaData serverMetaData) throws IOException {
-        String name = serverMetaData.getConnectionStrategy();
+    public static Connection getConnection(ClusterMetaData cluster, ServerMetaData server) throws IOException {
+        String name = cluster.getConnectionStrategy();
 
         if (name == null) name = "default";
 
@@ -48,7 +48,7 @@ public class ConnectionManager {
         if (strategy == null) throw new IOException("Unsupported ConnectionStrategy  \"" + name + "\"");
 
 
-        return strategy.connect(serverMetaData);
+        return strategy.connect(cluster, server);
     }
 
     public static Connection getConnection(URI uri) throws IOException {

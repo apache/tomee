@@ -26,7 +26,6 @@ import java.util.Arrays;
 public class ServerMetaData implements Externalizable {
 
     private transient URI[] locations;
-    private transient String connectionStrategy;
 
     public ServerMetaData() {
     }
@@ -35,17 +34,12 @@ public class ServerMetaData implements Externalizable {
         this.locations = locations;
     }
 
-    public ServerMetaData(String connectionStrategy, URI ... locations)  {
-        this.connectionStrategy = connectionStrategy;
-        this.locations = locations;
-    }
-
     public void merge(ServerMetaData toMerge) {
         locations = toMerge.locations;
     }
 
-    public String getConnectionStrategy() {
-        return connectionStrategy;
+    public URI getLocation() {
+        return locations[0];
     }
 
     public URI[] getLocations() {
@@ -54,7 +48,7 @@ public class ServerMetaData implements Externalizable {
 
     public int buildHash() {
         int locationsHash = 0;
-        for (URI location : locations) {
+        for (URI location : this.locations) {
             locationsHash += location.hashCode();
         }
         return locationsHash;
@@ -63,18 +57,13 @@ public class ServerMetaData implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         byte version = in.readByte();
 
-        if (version > 1){
-            connectionStrategy = (String) in.readObject();
-        }
-
         locations = (URI[]) in.readObject();
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
-        out.writeByte(2);
+        out.writeByte(1);
 
-        out.writeObject(connectionStrategy);
         out.writeObject(locations);
     }
 

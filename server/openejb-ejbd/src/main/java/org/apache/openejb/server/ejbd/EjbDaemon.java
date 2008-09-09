@@ -27,19 +27,21 @@ import java.util.Properties;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.EjbObjectInputStream;
 import org.apache.openejb.client.ProtocolMetaData;
+import org.apache.openejb.client.ServerMetaData;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.0");
+    private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
 
     private static final Messages _messages = new Messages("org.apache.openejb.server.util.resources");
     static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
@@ -49,6 +51,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
     private EjbRequestHandler ejbHandler;
     private JndiRequestHandler jndiHandler;
     private AuthRequestHandler authHandler;
+    private ClusterRequestHandler clusterHandler;
 
     boolean stop = false;
 
@@ -74,6 +77,12 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         ejbHandler = new EjbRequestHandler(this);
         jndiHandler = new JndiRequestHandler(this);
         authHandler = new AuthRequestHandler(this);
+        clusterHandler = new ClusterRequestHandler(this);
+
+        DiscoveryAgent discovery = SystemInstance.get().getComponent(DiscoveryAgent.class);
+        if (discovery != null) {
+            discovery.setDiscoveryListener(clusterHandler);
+        }
     }
 
     public void service(Socket socket) throws IOException {
@@ -100,18 +109,36 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
         try {
 
+            // Read Protocol Version
             protocolMetaData.readExternal(in);
 
             PROTOCOL_VERSION.writeExternal(out);
 
-            byte requestType = (byte) in.read();
+            ois = new EjbObjectInputStream(in);
+            oos = new ObjectOutputStream(out);
+
+            // Read ServerMetaData
+            ServerMetaData serverMetaData = new ServerMetaData();
+            serverMetaData.readExternal(ois);
+            ClientObjectFactory.serverMetaData.set(serverMetaData);
+
+            // Read request type
+            byte requestType = (byte) ois.read();
 
             if (requestType == -1) {
                 return;
             }
 
-            ois = new EjbObjectInputStream(in);
-            oos = new ObjectOutputStream(out);
+            if (requestType == RequestMethodConstants.CLUSTER_REQUEST){
+                processClusterRequest(ois, oos);
+            }
+
+            requestType = (byte) ois.read();
+
+            if (requestType == -1) {
+                return;
+            }
+
 
             // Exceptions should not be thrown from these methods
             // They should handle their own exceptions and clean
@@ -139,6 +166,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         } catch (Throwable e) {
             logger.error("\""+requestTypeName +" "+ protocolMetaData.getSpec() + "\" FAIL \"Unexpected error - "+e.getMessage()+"\"",e);
         } finally {
+            ClientObjectFactory.serverMetaData.remove();
             try {
                 if (oos != null) {
                     oos.flush();
@@ -151,6 +179,10 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                 logger.error("\""+requestTypeName +" "+ protocolMetaData.getSpec() + "\" FAIL \""+t.getMessage()+"\"");
             }
         }
+    }
+
+    private void processClusterRequest(ObjectInputStream in, ObjectOutputStream out) throws IOException {
+        clusterHandler.processRequest(in, out);
     }
 
     protected DeploymentInfo getDeployment(EJBRequest req) throws RemoteException {

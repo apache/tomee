@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import java.io.IOException;
 import java.net.URI;
-import java.rmi.RemoteException;
 
 import com.agical.rmock.extension.junit.RMockTestCase;
 
@@ -51,8 +50,8 @@ public class StickyConnectionStrategyTest extends RMockTestCase {
         startVerification();
 
         try {
-            ServerMetaData server = new ServerMetaData(locations);
-            factoryStrategy.connect(server);
+            ServerMetaData server = new ServerMetaData(locations[0]);
+            factoryStrategy.connect(new ClusterMetaData(1, locations), server);
             fail();
         } catch (IOException e) {
         }
@@ -66,8 +65,9 @@ public class StickyConnectionStrategyTest extends RMockTestCase {
         
         startVerification();
 
-        ServerMetaData server = new ServerMetaData(locations);
-        Connection actualConnection = factoryStrategy.connect(server);
+        ServerMetaData server = new ServerMetaData(locations[0]);
+        ClusterMetaData cluster = new ClusterMetaData(1, locations);
+        Connection actualConnection = factoryStrategy.connect(cluster, server);
         assertSame(expectedConnection, actualConnection);
     }
     
@@ -80,9 +80,10 @@ public class StickyConnectionStrategyTest extends RMockTestCase {
         
         startVerification();
 
-        ServerMetaData server = new ServerMetaData(locations);
-        factoryStrategy.connect(server);
-        factoryStrategy.connect(server);
+        ServerMetaData server = new ServerMetaData(locations[0]);
+        ClusterMetaData cluster = new ClusterMetaData(1, locations);
+        factoryStrategy.connect(cluster, server);
+        factoryStrategy.connect(cluster, server);
     }
     
 }
