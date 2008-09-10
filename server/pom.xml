@@ -42,7 +42,7 @@
     <module>openejb-axis</module>
     <module>openejb-axis2</module>
     <module>openejb-cxf</module>
-    <module>openejb-discovery</module>
+    <module>openejb-multicast</module>
   </modules>
 </project>
 

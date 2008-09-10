@@ -103,8 +103,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-discovery</artifactId>
+      <artifactId>openejb-multicast</artifactId>
       <version>${version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
