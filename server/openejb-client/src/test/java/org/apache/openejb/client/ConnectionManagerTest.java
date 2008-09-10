@@ -56,5 +56,13 @@ public class ConnectionManagerTest extends TestCase{
         public OutputStream getOuputStream() throws IOException {
             throw new UnsupportedOperationException();
         }
+
+        public void discard() {
+            throw new UnsupportedOperationException();
+        }
+
+        public URI getURI() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -16,65 +16,78 @@
  */
 package org.apache.openejb.client;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URI;
-import java.net.ConnectException;
 import java.util.Map;
+import java.util.Stack;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.SSLSocket;
 
 public class SocketConnectionFactory implements ConnectionFactory {
 
     private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
 
-    private static Map<URI, SocketConnection> connections = new ConcurrentHashMap<URI, SocketConnection>();
+    private static Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
+    private int size = 5;
+    private int timeout = 120;
+
+    public SocketConnectionFactory() {
+        Properties p = System.getProperties();
+
+        size = getInt(p, "openejb.client.connectionpool.size", size);
+        timeout = getInt(p, "openejb.client.connectionpool.timeout", timeout);
+    }
+
+    public static int getInt(Properties p, String property, int defaultValue){
+        String value = p.getProperty(property);
+        try {
+            if (value != null) return Integer.parseInt(value);
+            else return defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 
     public Connection getConnection(URI uri) throws java.io.IOException {
 
-        SocketConnection conn = connections.get(uri);
+        Pool pool = getPool(uri);
+
+        SocketConnection conn = pool.get();
         if (conn == null) {
-            conn = new SocketConnection();
+            conn = new SocketConnection(uri, pool);
             conn.open(uri);
-            SocketConnection old = connections.put(uri, conn);
-            if (old != null) {
-                try {
-                    old.lock.lock();
-                } catch (Exception e) {
-                } finally {
-                    try {
-                        old.socket.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
         }
+
         try {
-            conn.lock.tryLock(60*5, TimeUnit.SECONDS);
+            conn.lock.tryLock(60 * 5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw new IOException("Connection busy");
         }
 
         OutputStream ouputStream = conn.getOuputStream();
-        if (conn.socket.isClosed()){
-            connections.remove(uri);
+        if (conn.socket.isClosed()) {
+            pool.put(null);
             return getConnection(uri);
         }
 
         try {
             ouputStream.write(getKeepAliveStyle().ordinal());
 
-            switch(getKeepAliveStyle()){
+            switch (getKeepAliveStyle()) {
                 case PING_PING: {
                     ouputStream.flush();
                     ouputStream.write(getKeepAliveStyle().ordinal());
@@ -87,16 +100,25 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 }
             }
         } catch (IOException e) {
-            connections.remove(uri);
+            pool.put(null);
             throw e;
         }
 
         return conn;
     }
 
+    private Pool getPool(URI uri) {
+        Pool pool = connections.get(uri);
+        if (pool == null) {
+            pool = new Pool(size, timeout);
+            connections.put(uri, pool);
+        }
+        return pool;
+    }
+
     public KeepAliveStyle getKeepAliveStyle() {
         String property = System.getProperty("openejb.client.keepalive");
-        if (property != null){
+        if (property != null) {
             property = property.toUpperCase();
             return KeepAliveStyle.valueOf(property);
         }
@@ -106,10 +128,18 @@ public class SocketConnectionFactory implements ConnectionFactory {
     class SocketConnection implements Connection {
 
         private Socket socket = null;
+        private final URI uri;
 
+        private boolean discarded;
+        private final Pool pool;
         private final Lock lock = new ReentrantLock();
         private OutputStream out;
         private BufferedInputStream in;
+
+        public SocketConnection(URI uri, Pool pool) {
+            this.uri = uri;
+            this.pool = pool;
+        }
 
         protected void open(URI uri) throws IOException {
 
@@ -132,21 +162,39 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
                 socket.setTcpNoDelay(true);
             } catch (ConnectException e) {
-                throw new ConnectException("Cannot connect to server '"+uri.toString()+"'.  Check that the server is started and that the specified serverURL is correct.");
+                throw new ConnectException("Cannot connect to server '" + uri.toString() + "'.  Check that the server is started and that the specified serverURL is correct.");
 
             } catch (IOException e) {
-                throw new IOException("Cannot connect to server: '"+uri.toString()+"'.  Exception: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot connect to server: '" + uri.toString() + "'.  Exception: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (SecurityException e) {
-                throw new IOException("Cannot access server: '"+uri.toString()+"' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot access server: '" + uri.toString() + "' due to security restrictions in the current VM: " + e.getClass().getName() + " : " + e.getMessage());
 
             } catch (Throwable e) {
-                throw new IOException("Cannot  connect to server: '"+uri.toString()+"' due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Cannot  connect to server: '" + uri.toString() + "' due to an unkown exception in the OpenEJB client: " + e.getClass().getName() + " : " + e.getMessage());
             }
 
         }
 
+        public void discard() {
+            pool.put(null);
+            discarded = true;
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
+            // don't bother unlocking it
+            // it should never get used again
+        }
+
+        public URI getURI() {
+            return uri;
+        }
+
         public void close() throws IOException {
+            if (discarded) return;
+
+            pool.put(this);
             lock.unlock();
         }
 
@@ -155,7 +203,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Open input streams */
             /*----------------------------------*/
             try {
-                if (in==null){
+                if (in == null) {
                     in = new BufferedInputStream(socket.getInputStream());
                 }
 
@@ -176,7 +224,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             /* Openning output streams */
             /*----------------------------------*/
             try {
-                if (out == null){
+                if (out == null) {
                     out = new BufferedOutputStream(socket.getOutputStream());
                 }
                 return new Output(out);
@@ -207,6 +255,44 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         public void close() throws IOException {
             flush();
+        }
+    }
+
+    public static class Pool {
+        private final Semaphore semaphore;
+        private final Stack<SocketConnection> pool;
+        private final long timeout;
+        private final TimeUnit timeUnit;
+        private final int size;
+
+        public Pool(int size, long timeout) {
+            this.size = size;
+            this.semaphore = new Semaphore(size);
+            this.pool = new Stack<SocketConnection>();
+            this.timeout = timeout;
+            this.timeUnit = TimeUnit.SECONDS;
+
+            Object[] objects = new Object[size];
+            for (int i = 0; i < objects.length; i++) {
+                pool.push(null);
+            }
+        }
+
+        public SocketConnection get() {
+            try {
+                if (semaphore.tryAcquire(timeout, timeUnit)) {
+                    return pool.pop();
+                }
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+
+            throw new IllegalStateException("No connections available in pool (size " + size + ").  Waited for " + timeout + " seconds for a connection.");
+        }
+
+        public void put(SocketConnection connection) {
+            pool.push(connection);
+            semaphore.release();
         }
     }
 }

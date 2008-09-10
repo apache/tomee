@@ -16,11 +16,21 @@
  */
 package org.apache.openejb.client;
 
+import javax.naming.NamingException;
+import javax.naming.AuthenticationException;
+import javax.transaction.RollbackException;
+import javax.ejb.EJBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.NotSerializableException;
+import java.net.URI;
 
 public interface Connection {
+
+    public URI getURI();
+
+    public void discard();
 
     public void close() throws java.io.IOException;
 

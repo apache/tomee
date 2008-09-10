@@ -40,12 +40,25 @@ public class HttpConnectionFactory implements ConnectionFactory {
         private HttpURLConnection httpURLConnection;
         private InputStream inputStream;
         private OutputStream outputStream;
+        private URI uri;
 
         public HttpConnection(URI uri) throws IOException {
+            this.uri = uri;
             URL url = uri.toURL();
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setDoOutput(true);
             httpURLConnection.connect();
+        }
+
+        public void discard() {
+            try {
+                close();
+            } catch (IOException e) {
+            }
+        }
+
+        public URI getURI() {
+            return uri;
         }
 
         public void close() throws IOException {

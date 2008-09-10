@@ -16,36 +16,20 @@
  */
 package org.apache.openejb.client;
 
-import java.io.ObjectInput;
-import java.io.IOException;
-import java.io.ObjectOutput;
+import java.rmi.RemoteException;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ClusterRequest implements Request {
-    private long clusterMetaDataVersion;
-
-    public ClusterRequest() {
+public class RemoteFailoverException extends RemoteException {
+    public RemoteFailoverException() {
     }
 
-    public ClusterRequest(ClusterMetaData clusterMetaData) {
-        clusterMetaDataVersion = clusterMetaData.getVersion();
+    public RemoteFailoverException(String s) {
+        super(s);
     }
 
-    public byte getRequestType() {
-        return RequestMethodConstants.CLUSTER_REQUEST;
-    }
-
-    public long getClusterMetaDataVersion() {
-        return clusterMetaDataVersion;
-    }
-
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        clusterMetaDataVersion = in.readLong();
-    }
-
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeLong(clusterMetaDataVersion);
+    public RemoteFailoverException(String s, Throwable cause) {
+        super(s, cause);
     }
 }

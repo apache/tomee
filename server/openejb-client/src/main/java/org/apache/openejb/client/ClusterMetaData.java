@@ -28,13 +28,13 @@ import java.net.URISyntaxException;
  */
 public class ClusterMetaData implements Externalizable {
     private URI[] locations;
-    private int version;
+    private long version;
     private String connectionStrategy;
 
     public ClusterMetaData() {
     }
 
-    public ClusterMetaData(int version, URI... locations) {
+    public ClusterMetaData(long version, URI... locations) {
         this.locations = locations;
         this.version = version;
     }
@@ -43,7 +43,7 @@ public class ClusterMetaData implements Externalizable {
         return locations;
     }
 
-    public int getVersion() {
+    public long getVersion() {
         return version;
     }
 
@@ -54,7 +54,7 @@ public class ClusterMetaData implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         in.readByte(); // for future use to identify format of the data.
 
-        version = in.readInt();
+        version = in.readLong();
         connectionStrategy = (String) in.readObject();
 
         int length = in.readInt();
@@ -74,7 +74,7 @@ public class ClusterMetaData implements Externalizable {
         // write out the version of the serialized data for future use
         out.writeByte(1);
 
-        out.writeInt(version);
+        out.writeLong(version);
         out.writeObject(connectionStrategy);
         out.writeInt(locations.length);
         for (URI uri : locations) {

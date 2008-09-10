@@ -17,54 +17,53 @@
 package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
-import org.apache.openejb.OpenEJB;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ServerFederation;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.DiscoveryAgent;
-import org.apache.openejb.server.DiscoveryListener;
-import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServerServiceFilter;
-import org.apache.openejb.server.ServiceDaemon;
-import org.apache.openejb.server.ServiceException;
 
-import javax.ejb.Remote;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.net.URI;
+import java.net.Socket;
+import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.Socket;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.server.DiscoveryAgent;
+import org.apache.openejb.server.ServerService;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.server.DiscoveryListener;
+import org.apache.openejb.server.ServerServiceFilter;
+import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.DiscoveryRegistry;
+import org.apache.openejb.server.discovery.MulticastDiscoveryAgent;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.core.ServerFederation;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.ejb.Remote;
+import javax.ejb.EJBException;
 
 /**
  * @version $Rev$ $Date$
  */
-public class FailoverTest extends TestCase {
+public class ClientMulticastDiscoveryTest extends TestCase {
 
-    private static DiscoveryAgent agent;
+    private DiscoveryAgent agent;
 
-    public void _testCleanShutdown() throws Exception {
+    public void test() throws Exception {
 
-        agent = new TestAgent();
+        System.setProperty("openejb.client.requestretry", "true");
+        Properties initProps = new Properties();
+        initProps.setProperty("openejb.deployments.classpath.include", "");
+        initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        OpenEJB.init(initProps, new ServerFederation());
 
-        try {
-//            Properties initProps = System.getProperties();
-            Properties initProps = new Properties();
-            initProps.setProperty("openejb.deployments.classpath.include", "");
-            initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
-            OpenEJB.init(initProps, new ServerFederation());
-        } catch (Exception e) {
-        }
         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         ConfigurationFactory config = new ConfigurationFactory();
 
@@ -72,80 +71,48 @@ public class FailoverTest extends TestCase {
         ejbJar.addEnterpriseBean(new StatelessBean(Target.class));
         assembler.createApplication(config.configureApplication(ejbJar));
 
-        SystemInstance.get().setComponent(DiscoveryAgent.class, agent);
+
+        MulticastDiscoveryAgent multicastAgent = new MulticastDiscoveryAgent();
+        DiscoveryRegistry registry = new DiscoveryRegistry(multicastAgent);
+        SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
+        this.agent = registry;
+        multicastAgent.start();
+
 
         ServerService red = server(Host.RED);
         ServerService blue = server(Host.BLUE);
         ServerService green = server(Host.GREEN);
 
         red.start();
-        blue.start();
-        green.start();
 
-        TargetRemote target = getBean(red);
+        Properties props = new Properties();
+        props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+
+        props.put("java.naming.provider.url", "multicast://239.255.2.3:6142");
+
+        Context context = new InitialContext(props);
+        TargetRemote target = (TargetRemote) context.lookup("TargetRemote");
 
         assertEquals(Host.RED, target.getHost());
 
         red.stop();
 
+        // Blue is not in the cluster list as it was started
+        // after the last invocation list was sent.
+        // We're testing that the client can fail all
+        // the way out of the cluster list and back to
+        // the original multicast://239.255.2.3:6142 uri.
+        blue.start();
+
         assertEquals(Host.BLUE, target.getHost());
 
         blue.stop();
 
-        assertEquals(Host.GREEN, target.getHost());
-
-        green.stop();
-    }
-
-    public void testCrash() throws Exception {
-        agent = new TestAgent();
-
         try {
-//            Properties initProps = System.getProperties();
-            Properties initProps = new Properties();
-            initProps.setProperty("openejb.deployments.classpath.include", "");
-            initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
-            OpenEJB.init(initProps, new ServerFederation());
-        } catch (Exception e) {
+            target.getHost();
+        } catch (EJBException e) {
+            // pass..  no server available
         }
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-//        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
-
-        EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new StatelessBean(Target.class));
-        assembler.createApplication(config.configureApplication(ejbJar));
-
-        SystemInstance.get().setComponent(DiscoveryAgent.class, agent);
-
-        ServerService red = server(Host.RED);
-        ServerService blue = server(Host.BLUE);
-        ServerService green = server(Host.GREEN);
-
-        red.start();
-        blue.start();
-        green.start();
-
-        TargetRemote target = getBean(red);
-
-        assertEquals(Host.GREEN, target.kill(Host.RED, Host.BLUE).host);
-        assertEquals(Host.GREEN, target.getHost());
-
-    }
-
-
-    private TargetRemote getBean(ServerService server) throws NamingException, IOException, OpenEJBException {
-        int port = server.getPort();
-
-        // good creds
-        Properties props = new Properties();
-        props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put("java.naming.provider.url", "ejbd://localhost:" + port + "/RED");
-        System.setProperty("openejb.client.keepalive", "ping_pong");
-        System.setProperty("openejb.client.requestretry", "true");
-        Context context = new InitialContext(props);
-        TargetRemote target = (TargetRemote) context.lookup("TargetRemote");
-        return target;
     }
 
     private ServerService server(Host host) throws Exception {

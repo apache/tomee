@@ -289,7 +289,7 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
                 throw (Error) res.getResult();
 
             default:
-                throw new RuntimeException("Invalid response from server :" + res.getResponseCode());
+                throw new RuntimeException("Invalid response from server: " + res.getResponseCode());
         }
     }
 

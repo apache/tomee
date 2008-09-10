@@ -3,4 +3,4 @@ bind        = 127.0.0.1
 port        = 4201
 disabled    = false
 threads     = 200
-
+discovery   = ejb:ejbd://{bind}:{port}

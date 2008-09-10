@@ -18,6 +18,8 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.loader.SystemInstance;
+import org.codehaus.swizzle.stream.StringTemplate;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
@@ -31,10 +33,12 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +68,8 @@ public class ServiceDaemon implements ServerService {
     private String ip;
 
     private boolean secure;
+    private StringTemplate discoveryUriFormat;
+    private URI uri;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -136,6 +142,11 @@ public class ServiceDaemon implements ServerService {
 
     public void init(Properties props) throws Exception {
 
+        String formatString = props.getProperty("discovery");
+        if (formatString != null){
+            discoveryUriFormat = new StringTemplate(formatString);
+        }
+
         ip = props.getProperty("bind");
 
         address = getAddress(ip);
@@ -185,12 +196,36 @@ public class ServiceDaemon implements ServerService {
             thread.setDaemon(true);
             thread.start();
 
+            DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
+            if (agent != null && discoveryUriFormat != null) {
+                Map map = new HashMap();
+                map.put("port", port);
+                map.put("host", ip);
+                map.put("bind", ip);
+                String uriString = discoveryUriFormat.apply(map);
+                try {
+                    uri = new URI(uriString);
+                    agent.registerService(uri);
+                } catch (Exception e) {
+                    log.error("Cannot register service '" + getName() + "' with DiscoveryAgent.", e);
+                }
+            }
+
+
         }
     }
 
     public void stop() throws ServiceException {
 
         synchronized (this) {
+            DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
+            if (agent != null && discoveryUriFormat != null && uri != null) {
+                try {
+                    agent.unregisterService(uri);
+                } catch (IOException e) {
+                    log.error("Cannot unregister service '" + getName() + "' with DiscoveryAgent.", e);
+                }
+            }
             next.stop();
             if (socketListener != null) {
                 socketListener.stop();

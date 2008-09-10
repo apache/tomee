@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.client;
 
+import static org.apache.openejb.client.Exceptions.newIOException;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,16 +27,27 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.net.URI;
 
 public class Client {
     private static final Logger logger = Logger.getLogger("OpenEJB.client");
 
+    public static final ThreadLocal<Set<URI>> failed = new ThreadLocal<Set<URI>>();
+
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
 
     private static Client client = new Client();
+    private boolean retry = false;
+
+    public Client() {
+        String retryValue = System.getProperty("openejb.client.requestretry", retry + "");
+        retry = new Boolean(retryValue);
+    }
 
     // This lame hook point if only of testing
     public static void setClient(Client client) {
@@ -42,7 +55,11 @@ public class Client {
     }
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
-        return client.processRequest(req, res, server);
+        try {
+            return client.processRequest(req, res, server);
+        } finally {
+            failed.remove();
+        }
     }
 
     protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
@@ -50,15 +67,21 @@ public class Client {
         if (server == null)
             throw new IllegalArgumentException("Server instance cannot be null");
 
+        ClusterMetaData cluster = getClusterMetaData(server);
+
+        /*----------------------------*/
+        /* Get a connection to server */
+        /*----------------------------*/
+
         Connection conn = null;
         try {
-
-            ClusterMetaData cluster = getClusterMetaData(server);
-
-            /*----------------------------*/
-            /* Get a connection to server */
-            /*----------------------------*/
             conn = ConnectionManager.getConnection(cluster, server);
+        } catch (IOException e) {
+            throw new RemoteException("Unable to connect",e);
+        }
+
+        try {
+
 
             /*----------------------------------*/
             /* Get output streams */
@@ -69,10 +92,7 @@ public class Client {
                 out = conn.getOuputStream();
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot open output stream to server: ", e);
-
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot open output stream to server: ", e);
+                throw newIOException("Cannot open output stream to server: ", e);
             }
 
             /*----------------------------------*/
@@ -82,8 +102,8 @@ public class Client {
 
                 PROTOCOL_VERSION.writeExternal(out);
 
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot write the protocol metadata to the server: ", e);
+            } catch (IOException e) {
+                throw newIOException("Cannot write the protocol metadata to the server: ", e);
             }
 
             /*----------------------------------*/
@@ -95,10 +115,7 @@ public class Client {
                 objectOut = new ObjectOutputStream(out);
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot open object output stream to server: ", e);
-
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot open object output stream to server: ", e);
+                throw newIOException("Cannot open object output stream to server: ", e);
             }
 
             /*----------------------------------*/
@@ -108,8 +125,8 @@ public class Client {
 
                 server.writeExternal(objectOut);
 
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot write the ServerMetaData to the server: ", e);
+            } catch (IOException e) {
+                throw newIOException("Cannot write the ServerMetaData to the server: ", e);
             }
 
             /*----------------------------------*/
@@ -122,7 +139,7 @@ public class Client {
                 clusterRequest.writeExternal(objectOut);
 
             } catch (Throwable e) {
-                throw new RemoteException("Cannot write the ServerMetaData to the server: ", e);
+                throw newIOException("Cannot write the ClusterMetaData to the server: ", e);
             }
 
             /*----------------------------------*/
@@ -133,10 +150,7 @@ public class Client {
                 objectOut.write(req.getRequestType());
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot write the request type to the server: ", e);
-
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot write the request type to the server: ", e);
+                throw newIOException("Cannot write the request type to the server: ", e);
             }
 
             /*----------------------------------*/
@@ -153,10 +167,8 @@ public class Client {
                 throw new IllegalArgumentException("Object is not serializable: " + e.getMessage());
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot write the request to the server: ", e);
 
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot write the request to the server: ", e);
+                throw newIOException("Cannot write the request to the server: ", e);
             }
 
             /*----------------------------------*/
@@ -169,7 +181,7 @@ public class Client {
 
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot open input stream to server: ", e);
+                throw newIOException("Cannot open input stream to server: ", e);
             }
 
             ProtocolMetaData protocolMetaData = null;
@@ -179,9 +191,12 @@ public class Client {
                 protocolMetaData.readExternal(in);
 
             } catch (EOFException e) {
-                throw new RemoteException("Prematurely reached the end of the stream.  " + protocolMetaData.getSpec(), e);
+
+                throw newIOException("Prematurely reached the end of the stream.  " + protocolMetaData.getSpec(), e);
+
             } catch (IOException e) {
-                throw new RemoteException("Cannot deternmine server protocol version: Received " + protocolMetaData.getSpec(), e);
+
+                throw newIOException("Cannot deternmine server protocol version: Received " + protocolMetaData.getSpec(), e);
             }
 
             ObjectInput objectIn;
@@ -189,8 +204,8 @@ public class Client {
 
                 objectIn = new EjbObjectInputStream(in);
 
-            } catch (Throwable e) {
-                throw new RemoteException("Cannot open object input stream to server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+            } catch (IOException e) {
+                throw newIOException("Cannot open object input stream to server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
             }
 
             /*----------------------------------*/
@@ -201,7 +216,7 @@ public class Client {
                 clusterResponse.readExternal(objectIn);
                 switch (clusterResponse.getResponseCode()) {
                     case UPDATE: {
-                        clusters.put(server, clusterResponse.getUpdatedMetaData());
+                        setClusterMetaData(server, clusterResponse.getUpdatedMetaData());
                     }
                     break;
                     case FAILURE: {
@@ -212,7 +227,7 @@ public class Client {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
 
             } catch (Throwable e) {
                 throw new RemoteException("Error reading response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
@@ -228,7 +243,7 @@ public class Client {
                 throw new RemoteException("Cannot read the response from the server.  The class for an object being returned is not located in this system:", e);
 
             } catch (IOException e) {
-                throw new RemoteException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
+                throw newIOException("Cannot read the response from the server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
 
             } catch (Throwable e) {
                 throw new RemoteException("Error reading response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
@@ -236,6 +251,19 @@ public class Client {
 
         } catch (RemoteException e) {
             throw e;
+        } catch (IOException e){
+            if (retry){
+                Set<URI> failed = getFailed();
+                failed.add(conn.getURI());
+                conn.discard();
+                try {
+                    processRequest(req, res, server);
+                } catch (RemoteFailoverException re) {
+                    throw re;
+                } catch (RemoteException re) {
+                    throw new RemoteFailoverException("Cannot complete request.  Retry attempted on " + failed.size() + " servers", e);
+                }
+            }
         } catch (Throwable error) {
             throw new RemoteException("Error while communicating with server: ", error);
 
@@ -249,6 +277,15 @@ public class Client {
             }
         }
         return res;
+    }
+
+    public static Set<URI> getFailed() {
+        Set<URI> set = failed.get();
+        if (set == null){
+            set = new HashSet<URI>();
+            failed.set(set);
+        }
+        return set;
     }
 
     private static final Map<ServerMetaData, ClusterMetaData> clusters = new ConcurrentHashMap<ServerMetaData, ClusterMetaData>();
@@ -266,4 +303,5 @@ public class Client {
 
         return cluster;
     }
+
 }

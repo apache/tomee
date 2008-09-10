@@ -34,6 +34,8 @@ public class ConnectionManager {
         factories.register("http", httpFactory);
         factories.register("https", httpFactory);
 
+        factories.register("multicast", new MulticastConnectionFactory());
+        
         strategies.register("default", new StickyConnectionStrategy());
     }
 

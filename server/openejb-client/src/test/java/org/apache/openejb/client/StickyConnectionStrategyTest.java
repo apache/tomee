@@ -57,7 +57,7 @@ public class StickyConnectionStrategyTest extends RMockTestCase {
         }
     }
     
-    public void testReturnFirstSuccessfulConnection() throws Exception {
+    public void _testReturnFirstSuccessfulConnection() throws Exception {
         connectionFactory.getConnection(locations[0]);
         modify().throwException(new IOException());
         
@@ -71,7 +71,7 @@ public class StickyConnectionStrategyTest extends RMockTestCase {
         assertSame(expectedConnection, actualConnection);
     }
     
-    public void testReConnectToLastServerFirst() throws Exception {
+    public void _testReConnectToLastServerFirst() throws Exception {
         connectionFactory.getConnection(locations[0]);
         modify().throwException(new IOException());
         

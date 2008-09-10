@@ -169,7 +169,7 @@ public class ClusterRequestHandler implements DiscoveryListener {
         private static ClusterMetaData newClusterMetaData(Set set, ClusterMetaData current) {
             URI[] locations = new URI[set.size()];
             set.toArray(locations);
-            return new ClusterMetaData(current.getVersion()+1, locations);
+            return new ClusterMetaData(System.currentTimeMillis(), locations);
         }
 
         public ClusterMetaData current() {
