@@ -190,6 +190,10 @@ public class KeepAliveServer implements ServerService {
                         // Socket closed.
                         break;
                     }
+                    if (i == -1){
+                        // client hung up
+                        break;
+                    }
                     KeepAliveStyle style = KeepAliveStyle.values()[i];
 
                     try {

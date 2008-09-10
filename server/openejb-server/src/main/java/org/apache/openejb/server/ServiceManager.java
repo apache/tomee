@@ -27,7 +27,6 @@ import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
-import org.apache.xbean.recipe.MissingFactoryMethodException;
 
 import javax.naming.NamingException;
 import javax.naming.Binding;
@@ -43,9 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.LinkedHashMap;
-import java.util.Collections;
 
 /**
  * @version $Rev$ $Date$
@@ -144,6 +140,9 @@ public class ServiceManager {
         } catch (Throwable e) {
         }
 
+        DiscoveryRegistry registry = new DiscoveryRegistry();
+        SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
+
         ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
 
         Map<String, Properties> availableServices = serviceFinder.mapAvailableServices(ServerService.class);
@@ -203,8 +202,7 @@ public class ServiceManager {
 
                     if (service instanceof DiscoveryAgent){
                         DiscoveryAgent agent = (DiscoveryAgent) service;
-                        DiscoveryRegistry registry = new DiscoveryRegistry(agent);
-                        SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
+                        registry.addDiscoveryAgent(agent);
                     }
 
                     if (!(service instanceof SelfManaging)) {

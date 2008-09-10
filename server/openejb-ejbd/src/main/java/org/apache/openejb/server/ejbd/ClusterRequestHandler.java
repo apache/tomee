@@ -23,6 +23,7 @@ import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Exceptions;
+import org.apache.openejb.util.Join;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -67,6 +68,14 @@ public class ClusterRequestHandler implements DiscoveryListener {
         ClusterMetaData currentClusterMetaData = data.current();
 
         if (req.getClusterMetaDataVersion() < currentClusterMetaData.getVersion()){
+            if (logger.isDebugEnabled()) {
+                URI[] locations = currentClusterMetaData.getLocations();
+                if (locations.length < 10) {
+                    logger.debug("Sending client updated cluster locations: [" + Join.join(", ", locations) + "]");
+                } else {
+                    logger.debug("Sending client updated cluster locations: " + locations.length + " locations total");
+                }
+            }
             res.setUpdatedMetaData(currentClusterMetaData);
         } else {
             res.setCurrent();
@@ -98,6 +107,7 @@ public class ClusterRequestHandler implements DiscoveryListener {
             URI service = unwrap(type);
 
             if ("ejb".equals(type.getScheme())) {
+                logger.info("Peer discovered: " + service.toString());
                 data.add(service);
             }
         } catch (URISyntaxException e) {
@@ -116,6 +126,7 @@ public class ClusterRequestHandler implements DiscoveryListener {
             URI service = unwrap(type);
 
             if ("ejb".equals(type.getScheme())) {
+                logger.info("Peer removed: " + service.toString());
                 data.remove(service);
             }
         } catch (URISyntaxException e) {

@@ -38,9 +38,10 @@ import java.io.IOException;
  */
 public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
-    private final DiscoveryAgent agent;
+    private final List<DiscoveryAgent> agents = new ArrayList<DiscoveryAgent>();
     private final List<DiscoveryListener> listeners = new ArrayList<DiscoveryListener>();
     private final Map<String, URI> services = new ConcurrentHashMap<String, URI>();
+    private final Map<String, URI> registered = new ConcurrentHashMap<String, URI>();
 
     private final Executor executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
         public Thread newThread(Runnable runable) {
@@ -50,11 +51,26 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
         }
     });
 
-    public DiscoveryRegistry(DiscoveryAgent agent) {
-        this.agent = agent;
-        agent.setDiscoveryListener(this);
+    public DiscoveryRegistry() {
         SystemInstance.get().setComponent(DiscoveryRegistry.class, this);
         SystemInstance.get().setComponent(DiscoveryAgent.class, this);
+    }
+
+    public DiscoveryRegistry(DiscoveryAgent agent) {
+        SystemInstance.get().setComponent(DiscoveryRegistry.class, this);
+        SystemInstance.get().setComponent(DiscoveryAgent.class, this);
+        addDiscoveryAgent(agent);
+    }
+
+    public void addDiscoveryAgent(DiscoveryAgent agent) {
+        agents.add(agent);
+        agent.setDiscoveryListener(this);
+        for (URI uri : registered.values()) {
+            try {
+                agent.registerService(uri);
+            } catch (IOException e) {
+            }
+        }
     }
 
     public Set<URI> getServices() {
@@ -62,15 +78,24 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     }
 
     public void registerService(URI serviceUri) throws IOException {
-        agent.registerService(serviceUri);
+        registered.put(serviceUri.toString(), serviceUri);
+        for (DiscoveryAgent agent : agents) {
+            agent.registerService(serviceUri);
+        }
     }
 
     public void reportFailed(URI serviceUri) throws IOException {
-        agent.reportFailed(serviceUri);
+        registered.remove(serviceUri.toString());
+        for (DiscoveryAgent agent : agents) {
+            agent.reportFailed(serviceUri);
+        }
     }
 
     public void unregisterService(URI serviceUri) throws IOException {
-        agent.unregisterService(serviceUri);
+        registered.remove(serviceUri.toString());
+        for (DiscoveryAgent agent : agents) {
+            agent.unregisterService(serviceUri);
+        }
     }
 
     public void setDiscoveryListener(DiscoveryListener listener) {
