@@ -38,7 +38,7 @@ public class OpenEJBValve extends ValveBase {
     public void invoke(Request request, Response response) throws IOException, ServletException {
         Object oldState = null;
         if (securityService != null && request.getWrapper() != null) {
-            oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getUserPrincipal(), request.getWrapper().getRunAs());
+            oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
         }
 
         try {

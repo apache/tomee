@@ -24,6 +24,8 @@ import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.Properties;
 import javax.naming.InitialContext;
 
@@ -42,6 +44,15 @@ public abstract class ServletTestClient extends TestClient {
             serverUrl = new URL(serverUri);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
+        }
+
+        // install authenticator for protected urls
+        Authenticator.setDefault(new StaticAuthenticator());
+    }
+
+    private static class StaticAuthenticator extends Authenticator {
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication("user", "user".toCharArray());
         }
     }
 

@@ -17,21 +17,22 @@
  */
 package org.apache.openejb.test.servlet;
 
-import junit.framework.TestSuite;
-import org.apache.openejb.test.FilteredTestSuite;
+import javax.ejb.Local;
+import java.security.Principal;
 
-public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
-        super(name);
-    }
+@Local
+public interface SecureEJBLocal {
+    Principal getCallerPrincipal();
 
-    public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
-        suite.addTest(new AnnotatedServletTests());
-        suite.addTest(new EjbServletTests());
-        suite.addTest(new SecureServletTests());
-        suite.addTest(new RunAsServletTests());
-        suite.addTest(new WebserviceServletTests());
-        return suite;
-    }
+    boolean isCallerInRole(String role);
+
+    void allowUserMethod();
+
+    void allowManagerMethod();
+
+    void allowUnknownMethod();
+
+    void allowRunasMethod();
+
+    void denyAllMethod();
 }

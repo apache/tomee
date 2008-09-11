@@ -20,6 +20,10 @@
 <!-- $Rev$ $Date$ -->
 
 <Context>
+  <!-- This only works if the context is installed under the correct name -->
+  <Realm className="org.apache.catalina.realm.MemoryRealm"
+      pathname="webapps/ejb-examples/WEB-INF/tomcat-users.xml"/>
+
   <Environment
       name="context.xml/environment"
       value="ContextString"

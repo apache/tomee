@@ -17,21 +17,20 @@
  */
 package org.apache.openejb.test.servlet;
 
-import junit.framework.TestSuite;
-import org.apache.openejb.test.FilteredTestSuite;
-
-public class ServletTestSuite extends junit.framework.TestCase {
-    public ServletTestSuite(String name) {
-        super(name);
+public class RunAsServletTests extends ServletTestClient {
+    public RunAsServletTests(){
+        super("RunAsServlet");
     }
 
-    public static junit.framework.Test suite() {
-        TestSuite suite = new FilteredTestSuite();
-        suite.addTest(new AnnotatedServletTests());
-        suite.addTest(new EjbServletTests());
-        suite.addTest(new SecureServletTests());
-        suite.addTest(new RunAsServletTests());
-        suite.addTest(new WebserviceServletTests());
-        return suite;
+    public void test01_invokeGetCallerPrincipal() {
+        invoke("invokeGetCallerPrincipal");
+    }
+
+    public void test02_invokeIsCallerInRole() {
+        invoke("invokeIsCallerInRole");
+    }
+
+    public void test03_invokeIsAllowed() {
+        invoke("invokeIsAllowed");
     }
 }
