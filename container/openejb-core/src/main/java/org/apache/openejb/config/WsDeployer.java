@@ -42,6 +42,7 @@ import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.jws.HandlerChain;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -204,6 +205,10 @@ public class WsDeployer implements DynamicDeployer {
                     }
                     if (portComponent.getProtocolBinding() == null) {
                         portComponent.setProtocolBinding(JaxWsUtils.getBindingUriFromAnn(clazz));
+                    }
+                    if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
+                            SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
+                        portComponent.setEnableMtom(true);
                     }
 
                     // handlers
