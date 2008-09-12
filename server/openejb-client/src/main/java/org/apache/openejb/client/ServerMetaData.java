@@ -25,13 +25,15 @@ import java.util.Arrays;
 
 public class ServerMetaData implements Externalizable {
 
-    private transient URI[] locations;
+    private URI[] locations;
+    private URI location;
 
     public ServerMetaData() {
     }
 
     public ServerMetaData(URI ... locations)  {
         this.locations = locations;
+        location = getLocation();
     }
 
     public void merge(ServerMetaData toMerge) {
@@ -39,7 +41,7 @@ public class ServerMetaData implements Externalizable {
     }
 
     public URI getLocation() {
-        return locations[0];
+        return location;
     }
 
     public URI[] getLocations() {
@@ -71,5 +73,19 @@ public class ServerMetaData implements Externalizable {
         return Arrays.toString(locations);
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final ServerMetaData that = (ServerMetaData) o;
+
+        if (location != null ? !location.equals(that.location) : that.location != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        return (location != null ? location.hashCode() : 0);
+    }
 }
 
