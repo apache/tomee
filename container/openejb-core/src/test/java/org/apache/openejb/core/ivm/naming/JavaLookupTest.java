@@ -23,6 +23,8 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 
 import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.LinkRef;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -50,4 +52,31 @@ public class JavaLookupTest extends TestCase {
 
         assertTrue(context.lookup("java:comp/TransactionSynchronizationRegistry") instanceof TransactionSynchronizationRegistry);
     }
+
+
+    public void testLinking() throws Exception {
+
+        Assembler assembler = new Assembler();
+        ConfigurationFactory config = new ConfigurationFactory();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        InitialContext context = new InitialContext();
+
+        Context javaContext = (Context) context.lookup("java:");
+
+        javaContext.bind("java:TransactionManager", new JndiUrlReference("java:comp/TransactionManager"));
+        javaContext.bind("java:TransactionManagerLink", new LinkRef("java:comp/TransactionManager"));
+
+        assertTrue(context.lookup("java:TransactionManager") instanceof TransactionManager);
+        assertTrue(context.lookup("java:TransactionManagerLink") instanceof TransactionManager);
+
+        new InitialContext().bind("java:foo", new LinkRef("java:comp/TransactionManager"));
+
+        assertTrue(context.lookup("java:foo") instanceof TransactionManager);
+
+
+    }
+
 }
