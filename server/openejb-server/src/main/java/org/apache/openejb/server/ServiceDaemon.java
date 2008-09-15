@@ -303,6 +303,10 @@ public class ServiceDaemon implements ServerService {
                 } catch (SocketTimeoutException e) {
                     // we don't really care
                     // log.debug("Socket timed-out",e);
+                } catch (SocketException e) {
+                    if (!stop.get()){
+                        log.error("Socket error", e);
+                    }
                 } catch (Throwable e) {
                     log.error("Unexpected error", e);
                 }
