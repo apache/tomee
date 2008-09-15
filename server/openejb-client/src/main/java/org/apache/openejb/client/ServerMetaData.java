@@ -33,7 +33,7 @@ public class ServerMetaData implements Externalizable {
 
     public ServerMetaData(URI ... locations)  {
         this.locations = locations;
-        location = getLocation();
+        location = locations[0];
     }
 
     public void merge(ServerMetaData toMerge) {
