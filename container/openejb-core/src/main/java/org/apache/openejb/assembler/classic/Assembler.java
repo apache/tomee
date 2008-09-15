@@ -73,6 +73,8 @@ import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
+import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.transaction.SimpleWorkManager;
 import org.apache.openejb.core.transaction.SimpleBootstrapContext;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -1235,6 +1237,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         try {
             this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service, service);
+            this.containerSystem.getJNDIContext().bind("java:comp/UserTransaction", new CoreUserTransaction((TransactionManager) service));
+            this.containerSystem.getJNDIContext().bind("java:comp/TransactionManager", service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
@@ -1262,8 +1266,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // todo this should be built
             synchronizationRegistry = new SimpleTransactionSynchronizationRegistry(transactionManager);
         }
+
         Assembler.getContext().put(TransactionSynchronizationRegistry.class.getName(), synchronizationRegistry);
         SystemInstance.get().setComponent(TransactionSynchronizationRegistry.class, synchronizationRegistry);
+
+        try {
+            this.containerSystem.getJNDIContext().bind("java:comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
+        } catch (NamingException e) {
+            throw new OpenEJBException("Cannot bind java:comp/TransactionSynchronizationRegistry", e);
+        }
+
 
         // JtaEntityManagerRegistry
         // todo this should be built
