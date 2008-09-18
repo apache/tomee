@@ -18,6 +18,7 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.codehaus.swizzle.stream.StringTemplate;
 
@@ -34,7 +35,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
@@ -90,42 +90,12 @@ public class ServiceDaemon implements ServerService {
         }
     }
 
-    public static int getInt(Properties p, String property, int defaultValue){
-        String value = p.getProperty(property);
-        try {
-            if (value != null) return Integer.parseInt(value);
-            else return defaultValue;
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
-    public static long getLong(Properties p, String property, long defaultValue){
-        String value = p.getProperty(property);
-        try {
-            if (value != null) return Long.parseLong(value);
-            else return defaultValue;
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
-    public static boolean getBoolean(Properties p, String property, boolean defaultValue){
-        String value = p.getProperty(property);
-        try {
-            if (value != null) return Boolean.parseBoolean(value);
-            else return defaultValue;
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
-   public void setSoTimeout(int timeout) throws SocketException {
-        this.timeout = timeout;
-        if (socketListener != null) {
-            socketListener.setSoTimeout(timeout);
-        }
-    }
+    public void setSoTimeout(int timeout) throws SocketException {
+         this.timeout = timeout;
+         if (socketListener != null) {
+             socketListener.setSoTimeout(timeout);
+         }
+     }
 
     public int getSoTimeout() throws IOException {
         if (socketListener == null) return 0;
@@ -151,13 +121,13 @@ public class ServiceDaemon implements ServerService {
 
         address = getAddress(ip);
 
-        port = getInt(props, "port", 0);
+        port = Options.getInt(props, "port", 0);
 
-        int threads = getInt(props, "threads", 100);
+        int threads = Options.getInt(props, "threads", 100);
 
-        backlog = getInt(props, "backlog", threads);
+        backlog = Options.getInt(props, "backlog", threads);
 
-        secure = getBoolean(props, "secure", false);
+        secure = Options.getBoolean(props, "secure", false);
 
         timeout = 1000;
 

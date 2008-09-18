@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.util.Options;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -77,7 +78,7 @@ public class JettyHttpServer implements HttpServer {
     }
 
     public void init(Properties props) throws Exception {
-        port = Integer.parseInt(props.getProperty("port", "8080"));
+        port = Options.getInt(props, "port", 8080);
         
         // Create all the Jetty objects but dont' start them
         server = new Server();

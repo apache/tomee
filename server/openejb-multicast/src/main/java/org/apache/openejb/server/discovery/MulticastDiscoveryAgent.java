@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.server.discovery;
 
-import static org.apache.openejb.server.ServiceDaemon.getBoolean;
-import static org.apache.openejb.server.ServiceDaemon.getLong;
-import static org.apache.openejb.server.ServiceDaemon.getInt;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
@@ -26,6 +23,7 @@ import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Options;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,16 +99,16 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         group = props.getProperty("group", group);
         groupPrefix = group + ":";
 
-        port = getInt(props, "port", port);
+        port = Options.getInt(props, "port", port);
 
-        heartRate = getLong(props, "heart_rate", heartRate);
-        maxMissedHeartbeats = getInt(props, "max_missed_heartbeats", maxMissedHeartbeats);
-        loopbackMode = getBoolean(props, "loopback_mode", loopbackMode);
+        heartRate = Options.getLong(props, "heart_rate", heartRate);
+        maxMissedHeartbeats = Options.getInt(props, "max_missed_heartbeats", maxMissedHeartbeats);
+        loopbackMode = Options.getBoolean(props, "loopback_mode", loopbackMode);
 
-        reconnectDelay = getLong(props, "reconnect_delay", reconnectDelay);
-        maxReconnectDelay = getLong(props, "max_reconnect_delay", reconnectDelay);
-        maxReconnectAttempts = getInt(props, "max_reconnect_attempts", maxReconnectAttempts);
-        exponentialBackoff = getLong(props, "exponential_backoff", exponentialBackoff);
+        reconnectDelay = Options.getLong(props, "reconnect_delay", reconnectDelay);
+        maxReconnectDelay = Options.getLong(props, "max_reconnect_delay", reconnectDelay);
+        maxReconnectAttempts = Options.getInt(props, "max_reconnect_attempts", maxReconnectAttempts);
+        exponentialBackoff = Options.getLong(props, "exponential_backoff", exponentialBackoff);
 
         useExponentialBackOff = (exponentialBackoff > 1);
     }

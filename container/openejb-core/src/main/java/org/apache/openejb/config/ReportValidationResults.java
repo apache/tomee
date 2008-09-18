@@ -21,9 +21,11 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Options;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -41,19 +43,9 @@ public class ReportValidationResults implements DynamicDeployer {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        String levelString = SystemInstance.get().getProperty(VALIDATION_LEVEL, Level.MEDIUM.toString());
+        Properties properties = SystemInstance.get().getProperties();
 
-        Level level;
-        try {
-            level = Level.valueOf(levelString.toUpperCase());
-        } catch (IllegalArgumentException noSuchEnumConstant) {
-            try {
-                int i = Integer.parseInt(levelString) - 1;
-                level = Level.values()[i];
-            } catch (Exception e) {
-                level = Level.MEDIUM;
-            }
-        }
+        Level level = Options.getEnum(properties, VALIDATION_LEVEL, Level.MEDIUM);
 
         boolean hasErrors = appModule.hasErrors();
         boolean hasFailures = appModule.hasFailures();
