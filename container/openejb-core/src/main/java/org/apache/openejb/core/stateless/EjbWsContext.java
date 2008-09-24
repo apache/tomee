@@ -24,6 +24,7 @@ import javax.xml.ws.EndpointReference;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.webservices.AddressingSupport;
 import org.w3c.dom.Element;
 
 public class EjbWsContext implements WebServiceContext {
@@ -50,13 +51,20 @@ public class EjbWsContext implements WebServiceContext {
         return this.context.isCallerInRole(roleName);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    private AddressingSupport getAddressingSupport() {
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        AddressingSupport wsaSupport = threadContext.get(AddressingSupport.class);
+        if (wsaSupport == null) {
+            throw new IllegalStateException("Only calls on the service-endpoint can get the EndpointReference.");
+        }
+        return wsaSupport;
+    }
+    
     public EndpointReference getEndpointReference(org.w3c.dom.Element... referenceParameters) {
-        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");        
+        return getAddressingSupport().getEndpointReference(referenceParameters);      
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
-        throw new UnsupportedOperationException("JaxWS 2.1 APIs are not supported");
+        return getAddressingSupport().getEndpointReference(clazz, referenceParameters);
     }
 }

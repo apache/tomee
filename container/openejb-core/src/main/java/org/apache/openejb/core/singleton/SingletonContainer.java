@@ -47,6 +47,9 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.webservices.AddressingSupport;
+import org.apache.openejb.core.webservices.NoAddressingSupport;
+
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
@@ -286,8 +289,8 @@ public class SingletonContainer implements RpcContainer {
     }
 
     private Object invokeWebService(Object[] args, CoreDeploymentInfo deploymentInfo, Method runMethod, Instance instance) throws Exception {
-        if (args.length != 2){
-            throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor}.");
+        if (args.length < 2) {
+            throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor, [arg...]}.");
         }
 
         Object messageContext = args[0];
@@ -325,6 +328,13 @@ public class SingletonContainer implements RpcContainer {
             ThreadContext.getThreadContext().set(javax.xml.rpc.handler.MessageContext.class, (javax.xml.rpc.handler.MessageContext) messageContext);
             return interceptorStack.invoke((javax.xml.rpc.handler.MessageContext) messageContext, params);
         } else if (messageContext instanceof javax.xml.ws.handler.MessageContext) {
+            AddressingSupport wsaSupport = NoAddressingSupport.INSTANCE;
+            for (int i = 2; i < args.length; i++) {
+                if (args[i] instanceof AddressingSupport) {
+                    wsaSupport = (AddressingSupport)args[i];
+                }
+            }
+            ThreadContext.getThreadContext().set(AddressingSupport.class, wsaSupport);
             ThreadContext.getThreadContext().set(javax.xml.ws.handler.MessageContext.class, (javax.xml.ws.handler.MessageContext) messageContext);
             return interceptorStack.invoke((javax.xml.ws.handler.MessageContext) messageContext, params);
         }
