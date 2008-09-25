@@ -426,7 +426,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (Class<?> exceptionClass : finder.findAnnotatedClasses(ApplicationException.class)) {
-                if (assemblyDescriptor.getApplicationException(exceptionClass) != null){
+                if (assemblyDescriptor.getApplicationException(exceptionClass) == null){
                     ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
                     assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
                 }
