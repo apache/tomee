@@ -97,6 +97,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.References;
+import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -104,6 +105,10 @@ import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
+
+    static {
+        AsmParameterNameLoader.install();
+    }
 
     public static final String JAVA_OPENEJB_NAMING_CONTEXT = "java:openejb/";
 

@@ -19,6 +19,7 @@ package org.apache.openejb;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -32,6 +33,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 public class InjectionProcessor<T> {
+
+    static {
+        AsmParameterNameLoader.install();
+    }
+    
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, InjectionProcessor.class);
     private final Class<? extends T> beanClass;
     private final List<Injection> injections;
