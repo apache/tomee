@@ -53,7 +53,7 @@ public class LocalInitialContext extends ContextWrapper {
     private Close onClose;
 
     public static enum Close {
-        LOGOUT, RESTART, DESTROY;
+        LOGOUT, DESTROY;
     }
 
 
