@@ -33,6 +33,7 @@ import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
 
 import javax.ejb.Remote;
+import javax.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -95,6 +96,18 @@ public class FailoverTest extends TestCase {
         assertEquals(Host.GREEN, target.getHost());
 
         green.stop();
+
+        try {
+            target.getHost();
+            fail("EJBException should have been thrown");
+        } catch (EJBException e) {
+            // pass
+        }
+
+        red.start();
+
+        assertEquals(Host.RED, target.getHost());
+
     }
 
     public void testCrash() throws Exception {
@@ -109,7 +122,6 @@ public class FailoverTest extends TestCase {
         } catch (Exception e) {
         }
         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-//        Assembler assembler = new Assembler();
         ConfigurationFactory config = new ConfigurationFactory();
 
         EjbJar ejbJar = new EjbJar();
@@ -130,6 +142,21 @@ public class FailoverTest extends TestCase {
 
         assertEquals(Host.GREEN, target.kill(Host.RED, Host.BLUE).host);
         assertEquals(Host.GREEN, target.getHost());
+
+        red.stop();
+        blue.stop();
+        green.stop();
+
+        try {
+            target.getHost();
+            fail("EJBException should have been thrown");
+        } catch (EJBException e) {
+            // pass
+        }
+
+        red.start();
+
+        assertEquals(Host.RED, target.getHost());
 
     }
 
