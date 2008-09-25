@@ -22,6 +22,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Options;
 import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
 
@@ -48,10 +49,20 @@ public class LocalInitialContext extends ContextWrapper {
     private Object clientIdentity;
     private Object serviceManager;
 
+    private static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
+    private Close onClose;
+
+    public static enum Close {
+        LOGOUT, RESTART, DESTROY;
+    }
+
+
     public LocalInitialContext(Hashtable env, LocalInitialContextFactory factory) throws NamingException {
         super(getContainerSystemEjbContext());
         properties = new Properties();
         properties.putAll(env);
+
+        onClose = Options.getEnum(properties, ON_CLOSE, Close.LOGOUT);
 
         this.factory = factory;
 
@@ -60,6 +71,7 @@ public class LocalInitialContext extends ContextWrapper {
         startNetworkServices();
 
         Properties properties = new Properties();
+
         // set standard and vendor properties
         createEJBContainer(properties);
     }
@@ -71,10 +83,20 @@ public class LocalInitialContext extends ContextWrapper {
     public void close() throws NamingException {
         logger.debug("LocalIntialContext.close()");
 
-        logout();
+        switch(onClose){
+            case LOGOUT: {
+                logout();
+            } break;
+            case DESTROY: {
+                logout();
+                destroy();
+            } break;
 
+        }
+    }
+
+    private void destroy() throws NamingException {
         stopNetworkServices();
-
         tearDownOpenEJB();
     }
 
