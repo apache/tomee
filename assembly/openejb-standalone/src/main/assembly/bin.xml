@@ -80,7 +80,7 @@
       <outputDirectory>data/</outputDirectory>
       <destName>README.txt</destName>
       <!-- TODO Assembly 2.1 plugin takes a decimal permission instead of octal -->
-      <fileMode>420</fileMode>
+      <fileMode>0755</fileMode>
     </file>
   </files>
   <dependencySets>
