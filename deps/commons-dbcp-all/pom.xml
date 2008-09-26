@@ -25,6 +25,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.openejb</groupId>
   <artifactId>commons-dbcp-all</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Dependencies :: Commons DBCP and Pool</name>
