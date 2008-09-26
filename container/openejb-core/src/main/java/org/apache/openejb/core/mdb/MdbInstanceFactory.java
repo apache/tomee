@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 import javax.resource.spi.UnavailableException;
 
 import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -146,7 +147,7 @@ public class MdbInstanceFactory {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             callContext.setCurrentAllowedStates(MdbContext.getStates());
             Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove"): null;
-            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();           
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
             interceptorStack.invoke();
         } catch (Throwable re) {
@@ -171,10 +172,6 @@ public class MdbInstanceFactory {
 
     private Object constructBean() throws UnavailableException {
         Class beanClass = deploymentInfo.getBeanClass();
-        ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
-        objectRecipe.allow(Option.FIELD_INJECTION);
-        objectRecipe.allow(Option.PRIVATE_PROPERTIES);
-        objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
 
         ThreadContext callContext = new ThreadContext(deploymentInfo, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
@@ -190,29 +187,26 @@ public class MdbInstanceFactory {
                     ctx.bind("java:comp/EJBContext",mdbContext);
                 }
             }
-            fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
+
+            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, ctx);
 
             // only in this case should the callback be used
             callContext.setCurrentOperation(Operation.INJECTION);
             callContext.setCurrentAllowedStates(MdbContext.getStates());
             if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
-                objectRecipe.setProperty("messageDrivenContext", mdbContext);
+                injectionProcessor.setProperty("messageDrivenContext", mdbContext);
             }
-            Object bean = objectRecipe.create();
+            Object bean = injectionProcessor.createInstance();
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
             for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
 
                 Class clazz = interceptorData.getInterceptorClass();
-                ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
-                interceptorRecipe.allow(Option.FIELD_INJECTION);
-                interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
-                interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), ctx);
 
-                fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
                 try {
-                    Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
+                    Object interceptorInstance = interceptorInjector.createInstance();
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
                 } catch (ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);

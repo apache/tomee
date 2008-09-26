@@ -287,6 +287,11 @@ public class AsmParameterNameLoader implements ParameterNameLoader {
                 return null;
             }
 
+            System.out.println("-----------------------------");
+            System.out.println("visitMethod.name = " + name);
+            System.out.println("visitMethod.desc = " + desc);
+            System.out.println("visitMethod.signature = " + signature);
+
             try {
                 final List<String> parameterNames;
                 final boolean isStaticMethod;
@@ -314,11 +319,20 @@ public class AsmParameterNameLoader implements ParameterNameLoader {
                 return new EmptyVisitor() {
                     // assume static method until we get a first parameter name
                     public void visitLocalVariable(String name, String description, String signature, Label start, Label end, int index) {
+                        System.out.println("parameterNames.size=" + parameterNames.size());
+                        System.out.println("visitLocalVariable.name = " + name);
+                        System.out.println("visitLocalVariable.signature = " + signature);
+
                         if (isStaticMethod) {
-                            parameterNames.set(index, name);
+                            if (index < parameterNames.size()) {
+                                parameterNames.set(index, name);
+                            }
                         } else if (index > 0) {
                             // for non-static the 0th arg is "this" so we need to offset by -1
-                            parameterNames.set(index - 1, name);
+                            index--;
+                            if (index < parameterNames.size()) {
+                                parameterNames.set(index, name);
+                            }
                         }
                     }
                 };
