@@ -25,10 +25,12 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Duration;
 
 public class SimpleCache<K, V> implements Cache<K, V> {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -73,12 +75,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     public SimpleCache() {
     }
 
-    public SimpleCache(CacheListener<V> listener, PassivationStrategy passivator, int capacity, int bulkPassivate, long timeOut) {
+    public SimpleCache(CacheListener<V> listener, PassivationStrategy passivator, int capacity, int bulkPassivate, Duration timeOut) {
         this.listener = listener;
         this.passivator = passivator;
         this.capacity = capacity;
         this.bulkPassivate = bulkPassivate;
-        this.timeOut = timeOut;
+        this.timeOut = timeOut.getUnit().convert(timeOut.getTime(), TimeUnit.MILLISECONDS);
     }
 
     public synchronized CacheListener<V> getListener() {
