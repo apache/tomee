@@ -265,7 +265,6 @@ public class Agent {
                 Method bootstrap = bootstrapClass.getMethod("bootstrap", ClassLoader.class);
                 bootstrap.invoke(null, loader);
             } catch (Throwable e) {
-                e.printStackTrace();
             }
         }
     }
