@@ -778,7 +778,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * 5.  If this fails, throw NoSuchProviderException
      */
     public <T extends ServiceInfo>T configureService(Class<? extends T> type, String serviceId, Properties declaredProperties, String providerId, String serviceType) throws OpenEJBException {
+        if (type == null) throw new NullPointerException("type is null");
+
         Class<? extends Service> serviceClass = types.get(type);
+        if (serviceClass == null) throw new OpenEJBException("Unsupported service info type: " + type.getName());
         Service service;
         try {
             service = serviceClass.newInstance();
