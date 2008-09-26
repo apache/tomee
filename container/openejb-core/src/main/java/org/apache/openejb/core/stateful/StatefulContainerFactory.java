@@ -28,7 +28,7 @@ public class StatefulContainerFactory {
     private Object id;
     private SecurityService securityService;
     private Cache<Object, Instance> cache;
-    private Properties properties;
+    private Properties properties = new Properties();
 
     public Object getId() {
         return id;
@@ -54,12 +54,32 @@ public class StatefulContainerFactory {
         this.cache = cache;
     }
 
+    public void setCache(String s) {
+        properties.put("Cache", s);
+    }
+
+    public void setPassivator(String s) {
+        properties.put("Passivator", s);
+    }
+
+    public void setTimeOut(String s) {
+        properties.put("TimeOut", s);
+    }
+
+    public void setCapacity(String s) {
+        properties.put("Capacity", s);
+    }
+
+    public void setBulkPassivate(String s) {
+        properties.put("BulkPassivate", s);
+    }
+
     public Properties getProperties() {
         return properties;
     }
 
     public void setProperties(Properties properties) {
-        this.properties = properties;
+        this.properties.putAll(properties);
     }
 
     public StatefulContainer create() throws Exception {
