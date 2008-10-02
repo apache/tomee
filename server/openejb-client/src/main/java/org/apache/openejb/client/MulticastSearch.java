@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.MulticastSocket;
 import java.net.InetAddress;
 import java.net.DatagramPacket;
+import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 
@@ -74,6 +75,8 @@ public class MulticastSearch {
                         return service;
                     }
                 }
+            } catch (SocketException e) {
+                
             } finally {
                 long stop = System.currentTimeMillis();
                 waited += stop - start;
