@@ -31,6 +31,19 @@
   <name>OpenEJB :: Dependencies :: Commons DBCP and Pool</name>
   <version>1.3-r699049-SNAPSHOT</version>
 
+  <repositories>
+    <repository>
+      <id>openejb-3rdparty-builds</id>
+      <name>3rd Party Build Repository</name>
+      <url>http://svn.apache.org/repos/asf/openejb/repo/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <build>
     <plugins>
       <plugin>
