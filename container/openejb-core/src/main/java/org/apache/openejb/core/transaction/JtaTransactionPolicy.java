@@ -200,7 +200,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         try {
             return transactionManager.getTransaction();
         } catch (javax.transaction.SystemException e) {
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain current transaction: " + e.getMessage());
+            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain current transaction: {}", e.getMessage());
             throw new SystemException(e);
         }
     }
@@ -210,12 +210,10 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         try {
             if (tx != null && tx.getStatus() == Status.STATUS_ACTIVE) {
                 tx.setRollbackOnly();
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + transactionType + ": setRollbackOnly() on transaction " + tx);
-                }
+                txLogger.debug("TX {}: setRollbackOnly() on transaction {}", transactionType, tx);
             }
         } catch (Exception e) {
-            logger.error("Exception during setRollbackOnly()", e);
+            txLogger.error("Exception during setRollbackOnly()", e);
             throw new IllegalStateException("No transaction active", e);
         }
     }
@@ -226,7 +224,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             transactionManager.begin();
             transaction = transactionManager.getTransaction();
         } catch (Exception e) {
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to begin a new transaction: " + e.getMessage());
+            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to begin a new transaction: {}", e.getMessage());
             throw new SystemException(e);
         }
 
@@ -234,21 +232,17 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             throw new SystemException("Failed to begin a new transaction");
         }
 
-        if (txLogger.isInfoEnabled()) {
-            txLogger.info("TX " + transactionType + ": Started transaction " + transaction);
-        }
+        txLogger.debug("TX {}: Started transaction {}", transactionType, transaction);
         return transaction;
     }
 
     protected Transaction suspendTransaction() throws SystemException {
         try {
             Transaction tx = transactionManager.suspend();
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + transactionType + ": Suspended transaction " + tx);
-            }
+            txLogger.info("TX {}: Suspended transaction {}", transactionType, tx);
             return tx;
         } catch (javax.transaction.SystemException se) {
-            logger.error("Exception during suspend()", se);
+            txLogger.error("Exception during suspend()", se);
             throw new SystemException(se);
         }
     }
@@ -256,26 +250,22 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected void resumeTransaction(Transaction tx) throws SystemException {
         try {
             if (tx == null) {
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + transactionType + ": No transaction to resume");
-                }
+                txLogger.debug("TX {}: No transaction to resume", transactionType);
             } else {
-                if (txLogger.isInfoEnabled()) {
-                    txLogger.info("TX " + transactionType + ": Resuming transaction " + tx);
-                }
+                txLogger.debug("TX {}: Resuming transaction {}",transactionType, tx);
                 transactionManager.resume(tx);
             }
         } catch (InvalidTransactionException ite) {
 
-            txLogger.error("Could not resume the client's transaction, the transaction is no longer valid: " + ite.getMessage());
+            txLogger.error("Could not resume the client's transaction, the transaction is no longer valid: {}", ite.getMessage());
             throw new SystemException(ite);
         } catch (IllegalStateException e) {
 
-            txLogger.error("Could not resume the client's transaction: " + e.getMessage());
+            txLogger.error("Could not resume the client's transaction: {}", e.getMessage());
             throw new SystemException(e);
         } catch (javax.transaction.SystemException e) {
 
-            txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: " + e.getMessage());
+            txLogger.error("Could not resume the client's transaction: The transaction reported a system exception: {}", e.getMessage());
             throw new SystemException(e);
         }
     }
@@ -285,7 +275,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         try {
             shouldRollback = tx.getStatus() != Status.STATUS_ACTIVE;
         } catch (javax.transaction.SystemException e) {
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain transaction status: " + e.getMessage());
+            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to obtain transaction status: {}", e.getMessage());
             throw new SystemException(e);
         }
 
@@ -295,9 +285,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
 
         try {
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + transactionType + ": Committing transaction " + tx);
-            }
+            txLogger.debug("TX {}: Committing transaction {}", transactionType, tx);
             if (tx.equals(transactionManager.getTransaction())) {
 
                 transactionManager.commit();
@@ -306,32 +294,32 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             }
         } catch (RollbackException e) {
 
-            txLogger.info("The transaction has been rolled back rather than commited: " + e.getMessage());
+            txLogger.debug("The transaction has been rolled back rather than commited: {}", e.getMessage());
             Throwable txe = new TransactionRolledbackException("Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization").initCause(e);
             throw new ApplicationException(txe);
 
         } catch (HeuristicMixedException e) {
 
-            txLogger.info("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: " + e.getMessage());
+            txLogger.debug("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: {}", e.getMessage());
             throw new ApplicationException(new RemoteException("A heuristic decision was made, some relevant updates have been committed while others have been rolled back").initCause(e));
 
         } catch (HeuristicRollbackException e) {
 
-            txLogger.info("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: " + e.getMessage());
+            txLogger.debug("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: {}", e.getMessage());
             throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back").initCause(e));
 
         } catch (SecurityException e) {
 
-            txLogger.error("The current thread is not allowed to commit the transaction: " + e.getMessage());
+            txLogger.error("The current thread is not allowed to commit the transaction: {}", e.getMessage());
             throw new SystemException(e);
 
         } catch (IllegalStateException e) {
 
-            txLogger.error("The current thread is not associated with a transaction: " + e.getMessage());
+            txLogger.error("The current thread is not associated with a transaction: {}", e.getMessage());
             throw new SystemException(e);
 
         } catch (javax.transaction.SystemException e) {
-            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: " + e.getMessage());
+            txLogger.error("The Transaction Manager has encountered an unexpected error condition while attempting to commit the transaction: {}", e.getMessage());
 
             throw new SystemException(e);
         }
@@ -339,9 +327,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     protected void rollbackTransaction(Transaction tx) throws SystemException {
         try {
-            if (txLogger.isInfoEnabled()) {
-                txLogger.info("TX " + transactionType + ": Rolling back transaction " + tx);
-            }
+            txLogger.debug("TX {}: Rolling back transaction {}", transactionType, tx);
             if (tx.equals(transactionManager.getTransaction())) {
 
                 transactionManager.rollback();
