@@ -99,7 +99,7 @@ public class SingletonContainer implements RpcContainer {
     }
 
     public ContainerType getContainerType() {
-        return ContainerType.STATELESS;
+        return ContainerType.SINGLETON;
     }
 
     public Object getContainerID() {
