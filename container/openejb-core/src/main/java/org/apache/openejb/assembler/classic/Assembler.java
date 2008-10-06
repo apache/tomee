@@ -683,6 +683,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static List<DeploymentInfo> sort(List<DeploymentInfo> deployments) {
+        // Sort all the beans with references to the back of the list.  Beans
+        // without references to ther beans will be deployed first.
+        deployments = References.sort(deployments, new References.Visitor<DeploymentInfo>(){
+            public String getName(DeploymentInfo t) {
+                return (String) t.getDeploymentID();
+            }
+
+            public Set<String> getReferences(DeploymentInfo t) {
+                return t.getDependsOn();
+            }
+        });
+
         // Sort all the singletons to the back of the list.  We want to make sure
         // all non-singletons are created first so that if a singleton refers to them
         // they are available.  We have to do this as @DependsOn only points to other
@@ -706,18 +718,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 return aa - bb;
             }
         });
-
-        // Sort all the beans with references to the back of the list.  Beans
-        // without references to ther beans will be deployed first.
-        return References.sort(deployments, new References.Visitor<DeploymentInfo>(){
-            public String getName(DeploymentInfo t) {
-                return (String) t.getDeploymentID();
-            }
-
-            public Set<String> getReferences(DeploymentInfo t) {
-                return t.getDependsOn();
-            }
-        });
+        
+        return deployments;
     }
 
     public void destroy() {
