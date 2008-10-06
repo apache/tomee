@@ -696,6 +696,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         });
 
+        // Now Sort all the MDBs to the back of the list.  The Resource Adapter
+        // may attempt to use the MDB on endpointActivation and the MDB may have
+        // references to other ejbs that would need to be available first.
+        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
+            public int compare(DeploymentInfo a, DeploymentInfo b) {
+                int aa = (a.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
+                int bb = (b.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
+                return aa - bb;
+            }
+        });
+
         // Sort all the beans with references to the back of the list.  Beans
         // without references to ther beans will be deployed first.
         return References.sort(deployments, new References.Visitor<DeploymentInfo>(){
