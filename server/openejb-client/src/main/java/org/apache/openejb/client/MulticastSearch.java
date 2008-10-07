@@ -21,6 +21,8 @@ import java.net.MulticastSocket;
 import java.net.InetAddress;
 import java.net.DatagramPacket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 
@@ -34,7 +36,7 @@ public class MulticastSearch {
     private final MulticastSocket multicast;
 
     public MulticastSearch() throws IOException {
-        this("239.255.2.3", 6142);
+        this("239.255.3.2", 6142);
     }
 
     public MulticastSearch(String host, int port) throws IOException {
@@ -70,13 +72,18 @@ public class MulticastSearch {
                 multicast.receive(packet);
                 if (packet.getLength() > 0) {
                     String str = new String(packet.getData(), packet.getOffset(), packet.getLength());
-                    URI service = URI.create(str);
-                    if (service != null && filter.accept(service)) {
-                        return service;
+                    try {
+                        URI service = new URI(str);
+                        if (service != null && filter.accept(service)) {
+                            return service;
+                        }
+                    } catch (URISyntaxException e) {
+                        // not a service URI
                     }
                 }
+            } catch (SocketTimeoutException e) {
             } catch (SocketException e) {
-                
+                System.out.println(e.getClass().getName() + ": " + e.getMessage());
             } finally {
                 long stop = System.currentTimeMillis();
                 waited += stop - start;

@@ -33,7 +33,7 @@ public class MulticastSearch {
     private final MulticastSocket multicast;
 
     public MulticastSearch() throws IOException {
-        this("239.255.2.3", 6142);
+        this("239.255.3.2", 6142);
     }
 
     public MulticastSearch(String host, int port) throws IOException {

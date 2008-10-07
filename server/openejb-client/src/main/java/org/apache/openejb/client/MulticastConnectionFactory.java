@@ -62,10 +62,16 @@ public class MulticastConnectionFactory implements ConnectionFactory {
 
         URI serviceURI = search.search(new Filter(group, schemes), timeout, TimeUnit.MILLISECONDS);
 
+        if (serviceURI == null) {
+            throw new IllegalArgumentException("Unable to find an ejb server via the multicast URI: " + uri);
+        }
+
         try {
             serviceURI = unwrap(serviceURI); // cut group:
             serviceURI = unwrap(serviceURI); // cut ejb:
         } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid ejb service uri " + serviceURI.toString(), e);
         }
 

@@ -59,11 +59,15 @@ public class StickyConnectionStrategy implements ConnectionStrategy {
             try {
                 return connect(uri);
             } catch (IOException e) {
+                failed.add(uri);
                 LOGGER.log(Level.WARNING, "Failover: Cannot connect to server(s): " + uri.toString() + " Exception: " + e.getMessage()+".  Trying next.");
             } catch (Throwable e) {
+                failed.add(uri);
                 throw new RemoteException("Failover: Cannot connect to server: " +  uri.toString() + " due to an unkown exception in the OpenEJB client: ", e);
             }
         }
+
+        remaining.removeAll(failed);
 
         if (remaining.size() == 0 && !failed.contains(server.getLocation())){
             return connect(server.getLocation());

@@ -67,8 +67,13 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
         SocketConnection conn = pool.get();
         if (conn == null) {
-            conn = new SocketConnection(uri, pool);
-            conn.open(uri);
+            try {
+                conn = new SocketConnection(uri, pool);
+                conn.open(uri);
+            } catch (IOException e) {
+                pool.put(null);
+                throw e;
+            }
         }
 
         try {
