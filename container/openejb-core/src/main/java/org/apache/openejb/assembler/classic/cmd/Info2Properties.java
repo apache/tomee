@@ -42,7 +42,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.HashMap;
-import java.net.URISyntaxException;
 
 /**
  * @version $Rev$ $Date$
@@ -121,6 +120,17 @@ public class Info2Properties {
             System.exit(10);
         }
 
+        printConfig(configuration);
+    }
+
+    public static void printLocalConfig() {
+        OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        if (configuration != null){
+            printConfig(configuration);
+        }
+    }
+
+    public static void printConfig(OpenEjbConfiguration configuration) {
         comment(i18n("cmd.properties.header"));
         comment("");
         comment("");
@@ -170,22 +180,23 @@ public class Info2Properties {
         comment("-------------------------------------------------");
         println("");
         printSystemProperties();
-
     }
 
     private static void printSystemProperties() {
 
         try {
-            Properties p = new Properties();
+            SuperProperties p = new SuperProperties();
+            p.setSpaceBetweenProperties(false);
+            p.setKeyValueSeparator(" = ");
             copyOpenEjbProperties(System.getProperties(), p);
             copyOpenEjbProperties(SystemInstance.get().getProperties(), p);
-            p.store(new Filter(System.out), null);
+            p.store(System.out, null);
 
 
-            p = System.getProperties();
+            Properties p2 = System.getProperties();
             String[] misc = {"os.version", "os.name", "os.arch", "java.version", "java.vendor"};
             for (String prop : misc) {
-                comment(prop + "=" + p.get(prop));
+                comment(prop + "=" + p2.get(prop));
             }
         } catch (IOException e) {
             e.printStackTrace(new PrintWriter(new CommentsFilter(System.out)));
@@ -228,7 +239,9 @@ public class Info2Properties {
             // TODO: the codebase value usually isn't filled in, we should do that.
             // comment("codebase: " + info.codebase);
             comment("");
-            Properties p = new SuperProperties();
+            SuperProperties p = new SuperProperties();
+            p.setSpaceBetweenProperties(false);
+            p.setKeyValueSeparator(" = ");
 
 
             String uri = "new://" + info.service;
@@ -254,7 +267,7 @@ public class Info2Properties {
                     p.put(info.id + "." + entry.getKey(), entry.getValue());
                 }
             }
-            p.store(new Filter(System.out), null);
+            p.store(System.out, null);
 
         } catch (IOException e) {
             System.out.println("# Printing service(id=" + info.id + ") failed.");
