@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.cmd.Info2Properties;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
@@ -78,6 +79,8 @@ public class StatelessContainerTest extends TestCase {
             // Check the lifecycle of the bean
             assertEquals(join("\n", expected), join("\n", lifecycle));
         }
+
+        Info2Properties.printLocalConfig();
     }
 
     protected void setUp() throws Exception {
