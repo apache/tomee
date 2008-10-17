@@ -174,7 +174,7 @@ public class EjbJar {
     public Map<String,EnterpriseBean> getEnterpriseBeansByEjbName() {
         return enterpriseBeans;
     }
-    
+
     public Interceptor[] getInterceptors() {
         if (interceptors == null) return new Interceptor[]{};
         return interceptors.getInterceptor();

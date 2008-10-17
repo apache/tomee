@@ -58,6 +58,7 @@ import java.util.Collection;
         "methodPermission",
         "containerTransaction",
         "containerConcurrency",
+        "methodSchedule",
         "interceptorBinding",
         "messageDestination",
         "excludeList",
@@ -73,6 +74,8 @@ public class AssemblyDescriptor {
     protected List<ContainerTransaction> containerTransaction;
     @XmlElement(name = "container-concurrency", required = true)
     protected List<ContainerConcurrency> containerConcurrency;
+    @XmlElement(name = "method-schedule", required = true)
+    protected List<MethodSchedule> methodSchedule;
     @XmlElement(name = "interceptor-binding", required = true)
     protected List<InterceptorBinding> interceptorBinding;
     @XmlElement(name = "message-destination", required = true)
@@ -114,12 +117,23 @@ public class AssemblyDescriptor {
         return this.containerConcurrency;
     }
 
+    public List<MethodSchedule> getMethodSchedule() {
+        if (methodSchedule == null) {
+            methodSchedule = new ArrayList<MethodSchedule>();
+        }
+        return this.methodSchedule;
+    }
+
     public Map<String,List<MethodAttribute>> getMethodTransactionMap(String ejbName) {
         return getMethodAttributes(ejbName, getContainerTransaction());
     }
 
     public Map<String,List<MethodAttribute>> getMethodConcurrencyMap(String ejbName) {
         return getMethodAttributes(ejbName, getContainerConcurrency());
+    }
+
+    public Map<String,List<MethodAttribute>> getMethodScheduleMap(String ejbName) {
+        return getMethodAttributes(ejbName, getMethodSchedule());
     }
 
     private Map<String, List<MethodAttribute>> getMethodAttributes(String ejbName, List<? extends AttributeBinding> bindings) {
