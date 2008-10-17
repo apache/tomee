@@ -16,16 +16,17 @@
  */
 package org.apache.openejb.config;
 
-import static java.util.Arrays.asList;
-import static java.lang.reflect.Modifier.isAbstract;
-
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.finder.ClassFinder;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ConcurrencyAttribute;
+import org.apache.openejb.jee.ConcurrencyType;
+import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
@@ -48,9 +49,9 @@ import org.apache.openejb.jee.Lifecycle;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.Listener;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
@@ -69,6 +70,7 @@ import org.apache.openejb.jee.ServiceRef;
 import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.Tag;
@@ -78,14 +80,9 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.ConcurrencyAttribute;
-import org.apache.openejb.jee.ContainerConcurrency;
-import org.apache.openejb.jee.ConcurrencyType;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -97,6 +94,9 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
 import javax.ejb.ApplicationException;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -112,17 +112,14 @@ import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
 import javax.ejb.RemoteHome;
 import javax.ejb.Remove;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.ejb.Singleton;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Startup;
-import javax.ejb.DependsOn;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -139,13 +136,16 @@ import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.annotation.Annotation;
+import static java.lang.reflect.Modifier.isAbstract;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -153,7 +153,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Collections;
 
 /**
  * @version $Rev$ $Date$
@@ -218,13 +217,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
                 "boolean", "java.lang.Boolean",
-                "char",    "java.lang.Character",
-                "byte",    "java.lang.Byte",
-                "short",   "java.lang.Short",
-                "int",     "java.lang.Integer",
-                "long",    "java.lang.Long",
-                "float",   "java.lang.Float",
-                "double",  "java.lang.Double",
+                "char", "java.lang.Character",
+                "byte", "java.lang.Byte",
+                "short", "java.lang.Short",
+                "int", "java.lang.Integer",
+                "long", "java.lang.Long",
+                "float", "java.lang.Float",
+                "double", "java.lang.Double",
                 "java.lang.String"
         ));
 
@@ -426,7 +425,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (Class<?> exceptionClass : finder.findAnnotatedClasses(ApplicationException.class)) {
-                if (assemblyDescriptor.getApplicationException(exceptionClass) == null){
+                if (assemblyDescriptor.getApplicationException(exceptionClass) == null) {
                     ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
                     assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
                 }
@@ -459,7 +458,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<Class<? extends Annotation>> annotations = new ArrayList(asList(Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
-            Map<String,Class<? extends Annotation>> names = new HashMap<String,Class<? extends Annotation>>();
+            Map<String, Class<? extends Annotation>> names = new HashMap<String, Class<? extends Annotation>>();
 
             boolean b = true;
             for (Class<? extends Annotation> secondAnnotation : annotations) {
@@ -481,12 +480,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (beanClass.isInterface()){
+            if (beanClass.isInterface()) {
                 ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.getName());
                 return false;
             }
 
-            if (isAbstract(beanClass.getModifiers())){
+            if (isAbstract(beanClass.getModifiers())) {
                 ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.getName());
                 return false;
             }
@@ -509,13 +508,13 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
                 "boolean", "java.lang.Boolean",
-                "char",    "java.lang.Character",
-                "byte",    "java.lang.Byte",
-                "short",   "java.lang.Short",
-                "int",     "java.lang.Integer",
-                "long",    "java.lang.Long",
-                "float",   "java.lang.Float",
-                "double",  "java.lang.Double",
+                "char", "java.lang.Character",
+                "byte", "java.lang.Byte",
+                "short", "java.lang.Short",
+                "int", "java.lang.Integer",
+                "long", "java.lang.Long",
+                "float", "java.lang.Float",
+                "double", "java.lang.Double",
                 "java.lang.String"
         ));
 
@@ -556,7 +555,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
-            if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
+            if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete())
+                return clientModule;
 
             ClassLoader classLoader = clientModule.getClassLoader();
             Class<?> clazz;
@@ -567,7 +567,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
             ApplicationClient client = clientModule.getApplicationClient();
             ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+            /*
+             * @EJB
+             * @Resource
+             * @WebServiceRef
+             * @PersistenceUnit
+             * @PersistenceContext
+             */
             buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+
             processWebServiceClientHandlers(client, classLoader);
 
             return clientModule;
@@ -578,12 +587,30 @@ public class AnnotationDeployer implements DynamicDeployer {
             return connectorModule;
         }
 
+        /**
+         * Collects a list of all webapp related classes that are eligible for
+         * annotation processing then scans them and fills out the web.xml with
+         * the xml version of the annotations.
+         *
+         * @param webModule
+         * @return
+         * @throws OpenEJBException
+         */
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
             if (webApp != null && webApp.isMetadataComplete()) return webModule;
 
+            /*
+             * Classes added to this set will be scanned for annotations
+             */
             Set<Class<?>> classes = new HashSet<Class<?>>();
+
+
             ClassLoader classLoader = webModule.getClassLoader();
+
+            /*
+             * Servlet classes are scanned
+             */
             for (Servlet servlet : webApp.getServlet()) {
                 String servletClass = servlet.getServletClass();
                 if (servletClass != null) {
@@ -595,6 +622,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+
+            /*
+             * Filter classes are scanned
+             */
             for (Filter filter : webApp.getFilter()) {
                 String filterClass = filter.getFilterClass();
                 if (filterClass != null) {
@@ -606,6 +637,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+
+            /*
+             * Listener classes are scanned
+             */
             for (Listener listener : webApp.getListener()) {
                 String listenerClass = listener.getListenerClass();
                 if (listenerClass != null) {
@@ -617,7 +652,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+
             for (TldTaglib taglib : webModule.getTaglibs()) {
+                /*
+                 * TagLib Listener classes are scanned
+                 */
                 for (Listener listener : taglib.getListener()) {
                     String listenerClass = listener.getListenerClass();
                     if (listenerClass != null) {
@@ -629,6 +668,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                 }
+
+                /*
+                 * TagLib Tag classes are scanned
+                 */
                 for (Tag tag : taglib.getTag()) {
                     String tagClass = tag.getTagClass();
                     if (tagClass != null) {
@@ -641,6 +684,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+
+            /*
+             * WebService HandlerChain classes are scanned
+             */
             if (webModule.getWebservices() != null) {
                 for (WebserviceDescription webservice : webModule.getWebservices().getWebserviceDescription()) {
                     for (PortComponent port : webservice.getPortComponent()) {
@@ -648,7 +695,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if (port.getServiceImplBean().getEjbLink() != null) continue;
 
                         if (port.getHandlerChains() == null) continue;
-                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain())
+                        {
                             for (Handler handler : handlerChain.getHandler()) {
                                 String handlerClass = handler.getHandlerClass();
                                 if (handlerClass != null) {
@@ -664,8 +712,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-            for (FacesConfig facesConfig: webModule.getFacesConfigs()) {
-                for(FacesManagedBean bean: facesConfig.getManagedBean()){
+
+            /*
+             * JSF ManagedBean classes are scanned
+             */
+            for (FacesConfig facesConfig : webModule.getFacesConfigs()) {
+                for (FacesManagedBean bean : facesConfig.getManagedBean()) {
                     String managedBeanClass = bean.getManagedBeanClass().trim();
                     if (managedBeanClass != null) {
                         try {
@@ -677,10 +729,18 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+
             ClassFinder inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
-            // Currently we only process the JNDI annotations for web applications
+            /*
+             * @EJB
+             * @Resource
+             * @WebServiceRef
+             * @PersistenceUnit
+             * @PersistenceContext
+             */
             buildAnnotatedRefs(webApp, inheritedClassFinder, classLoader);
+
             processWebServiceClientHandlers(webApp, classLoader);
 
             return webModule;
@@ -704,8 +764,21 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
+                /*
+                 * @PostConstruct
+                 * @PreDestroy
+                 * @AroundInvoke
+                 * @Timeout
+                 * @PostActivate
+                 * @PrePassivate
+                 * @Init
+                 * @Remove
+                 */
                 processCallbacks(bean, inheritedClassFinder);
 
+                /*
+                 * @TransactionManagement
+                 */
                 if (bean.getTransactionType() == null) {
                     TransactionManagement tx = getInheritableAnnotation(clazz, TransactionManagement.class);
                     TransactionManagementType transactionType = TransactionManagementType.CONTAINER;
@@ -724,17 +797,34 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
 
+                /*
+                 * @ApplicationException
+                 */
                 processApplicationExceptions(clazz, assemblyDescriptor);
 
+                /*
+                 * TransactionAttribute
+                 */
                 if (bean.getTransactionType() == TransactionType.CONTAINER) {
                     processAttributes(new TransactionAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
                 } else {
                     checkAttributes(new TransactionAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidTransactionAttribute");
                 }
 
+                /*
+                 * @RolesAllowed
+                 * @PermitAll
+                 * @DenyAll
+                 * @RunAs
+                 * @DeclareRoles
+                 */
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
 
-                for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class)) {
+                /*
+                 * @Interceptors
+                 */
+                for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class))
+                {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
@@ -772,6 +862,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * @ExcludeDefaultInterceptors
+                 */
                 ExcludeDefaultInterceptors excludeDefaultInterceptors = clazz.getAnnotation(ExcludeDefaultInterceptors.class);
                 if (excludeDefaultInterceptors != null) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
@@ -796,9 +889,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setMethod(new NamedMethod(method));
                 }
 
+                /**
+                 * All beans except MDBs have remoting capabilities (busines or legacy interfaces)
+                 */
                 if (bean instanceof RemoteBean) {
                     RemoteBean remoteBean = (RemoteBean) bean;
 
+                    /*
+                     * @RemoteHome
+                     */
                     if (remoteBean.getHome() == null) {
                         RemoteHome remoteHome = getInheritableAnnotation(clazz, RemoteHome.class);
                         if (remoteHome != null) {
@@ -822,6 +921,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
+                    /*
+                     * @LocalHome
+                     */
                     if (remoteBean.getLocalHome() == null) {
                         LocalHome localHome = getInheritableAnnotation(clazz, LocalHome.class);
                         if (localHome != null) {
@@ -845,13 +947,28 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
+                    /*
+                     * Annotations specific to @Stateless, @Stateful and @Singleton beans
+                     */
                     if (remoteBean instanceof SessionBean) {
                         SessionBean sessionBean = (SessionBean) remoteBean;
 
+                        /*
+                         * @Remote
+                         * @Local
+                         * @WebService
+                         * @WebServiceProvider
+                         */
                         processSessionInterfaces(sessionBean, clazz, ejbModule);
 
+                        /*
+                         * Annotations specific to @Singleton beans
+                         */
                         if (sessionBean.getSessionType() == SessionType.SINGLETON) {
 
+                            /*
+                             * @ConcurrencyManagement
+                             */
                             if (sessionBean.getConcurrencyType() == null) {
                                 ConcurrencyManagement tx = getInheritableAnnotation(clazz, ConcurrencyManagement.class);
                                 ConcurrencyManagementType concurrencyType = ConcurrencyManagementType.CONTAINER;
@@ -868,18 +985,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 }
                             }
 
-
+                            /*
+                             * @Lock
+                             */
                             if (sessionBean.getConcurrencyType() == ConcurrencyType.CONTAINER) {
                                 processAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
                             } else {
                                 checkAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidConcurrencyAttribute");
                             }
 
-                            if (!sessionBean.hasLoadOnStartup()){
+                            /*
+                             * @Startup
+                             */
+                            if (!sessionBean.hasLoadOnStartup()) {
                                 Startup startup = getInheritableAnnotation(clazz, Startup.class);
                                 sessionBean.setLoadOnStartup(startup != null);
                             }
 
+                            /*
+                             * @DependsOn
+                             */
                             if (sessionBean.getDependsOn() == null) {
                                 DependsOn dependsOn = getInheritableAnnotation(clazz, DependsOn.class);
                                 if (dependsOn != null) {
@@ -893,6 +1018,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 if (bean instanceof MessageDrivenBean) {
+                    /*
+                     * @ActivationConfigProperty
+                     */
                     MessageDrivenBean mdb = (MessageDrivenBean) bean;
                     MessageDriven messageDriven = clazz.getAnnotation(MessageDriven.class);
                     if (messageDriven != null) {
@@ -923,6 +1051,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
+                    /*
+                     * Determine the MessageListener interface
+                     */
                     if (mdb.getMessagingType() == null) {
                         List<Class<?>> interfaces = new ArrayList<Class<?>>();
                         for (Class<?> intf : clazz.getInterfaces()) {
@@ -956,7 +1087,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (!ejbName.equals(port.getServiceImplBean().getEjbLink())) continue;
 
                             if (port.getHandlerChains() == null) continue;
-                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain())
+                            {
                                 for (Handler handler : handlerChain.getHandler()) {
                                     String handlerClass = handler.getHandlerClass();
                                     if (handlerClass != null) {
@@ -974,7 +1106,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
 
+                /*
+                 * @EJB
+                 * @Resource
+                 * @WebServiceRef
+                 * @PersistenceUnit
+                 * @PersistenceContext
+                 */
                 buildAnnotatedRefs(bean, inheritedClassFinder, classLoader);
+
+
                 processWebServiceClientHandlers(bean, classLoader);
             }
 
@@ -988,13 +1129,39 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
+                /*
+                 * @PostConstruct
+                 * @PreDestroy
+                 * @AroundInvoke
+                 * @Timeout
+                 * @PostActivate
+                 * @PrePassivate
+                 * @Init
+                 * @Remove
+                 */
                 processCallbacks(interceptor, inheritedClassFinder);
 
+                /*
+                 * @ApplicationException
+                 */
                 processApplicationExceptions(clazz, ejbModule.getEjbJar().getAssemblyDescriptor());
 
+                /*
+                 * @EJB
+                 * @Resource
+                 * @WebServiceRef
+                 * @PersistenceUnit
+                 * @PersistenceContext
+                 */
                 buildAnnotatedRefs(interceptor, inheritedClassFinder, classLoader);
+
                 processWebServiceClientHandlers(interceptor, classLoader);
 
+                /**
+                 * Interceptors do not have their own section in ejb-jar.xml for resource references
+                 * so we add them to the references of each ejb.  A bit backwards but more or less
+                 * mandated by the design of the spec.
+                 */
                 for (EnterpriseBean bean : enterpriseBeans) {
                     // DMB: TODO, we should actually check to see if the ref exists in the bean's enc.
                     bean.getEnvEntry().addAll(interceptor.getEnvEntry());
@@ -1013,6 +1180,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
+            /*
+             * @ApplicationException
+             */
             for (Method method : clazz.getMethods()) {
                 for (Class<?> exception : method.getExceptionTypes()) {
                     ApplicationException annotation = exception.getAnnotation(ApplicationException.class);
@@ -1029,7 +1199,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             String ejbName = sessionBean.getEjbName();
 
             for (Class<?> clazz : ancestors(beanClass)) {
-                // Anything declared in the xml is also not eligable
+                /*
+                 * Collect all interfaces explicitly declared via xml.
+                 * We will subtract these from the interfaces implemented
+                 * by the bean and do annotation scanning on the remainder.
+                 */
                 List<String> declared = new ArrayList<String>();
                 declared.addAll(sessionBean.getBusinessLocal());
                 declared.addAll(sessionBean.getBusinessRemote());
@@ -1039,6 +1213,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 declared.add(sessionBean.getLocal());
                 declared.add(sessionBean.getServiceEndpoint());
 
+                /*
+                 * These interface types are not eligable to be business interfaces.
+                 * java.io.Serializable
+                 * java.io.Externalizable
+                 * javax.ejb.*
+                 */
                 List<Class<?>> interfaces = new ArrayList<Class<?>>();
                 for (Class<?> interfce : clazz.getInterfaces()) {
                     String name = interfce.getName();
@@ -1050,6 +1230,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * @Remote
+                 */
                 List<Class> remotes = new ArrayList<Class>();
                 Remote remote = clazz.getAnnotation(Remote.class);
                 if (remote != null) {
@@ -1061,19 +1244,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                         } else if (interfaces.get(0).getAnnotation(Local.class) != null) {
                             validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
                         } else {
-                            if (validateRemoteInterface(interfaces.get(0), validation, ejbName)){
+                            if (validateRemoteInterface(interfaces.get(0), validation, ejbName)) {
                                 remotes.add(interfaces.get(0));
                             }
                             interfaces.remove(0);
                         }
                     } else for (Class interfce : remote.value()) {
-                        if (validateRemoteInterface(interfce, validation, ejbName)){
+                        if (validateRemoteInterface(interfce, validation, ejbName)) {
                             remotes.add(interfce);
                         }
                         interfaces.remove(interfce);
                     }
                 }
 
+                /*
+                 * @Local
+                 */
                 List<Class> locals = new ArrayList<Class>();
                 Local local = clazz.getAnnotation(Local.class);
                 if (local != null) {
@@ -1085,30 +1271,34 @@ public class AnnotationDeployer implements DynamicDeployer {
                         } else if (interfaces.get(0).getAnnotation(Remote.class) != null) {
                             validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
                         } else {
-                            if (validateLocalInterface(interfaces.get(0), validation, ejbName)){
+                            if (validateLocalInterface(interfaces.get(0), validation, ejbName)) {
                                 locals.add(interfaces.get(0));
                             }
                             interfaces.remove(0);
                         }
                     } else for (Class interfce : local.value()) {
-                        if (validateLocalInterface(interfce, validation, ejbName)){
+                        if (validateLocalInterface(interfce, validation, ejbName)) {
                             locals.add(interfce);
                         }
                         interfaces.remove(interfce);
                     }
                 }
 
+                /*
+                 * @WebService
+                 * @WebServiceProvider
+                 */
                 if (sessionBean.getServiceEndpoint() == null) {
                     WebService webService = clazz.getAnnotation(WebService.class);
                     if (webService != null) {
                         String endpointInterfaceName = webService.endpointInterface();
-                        if (!endpointInterfaceName.equals("")){
+                        if (!endpointInterfaceName.equals("")) {
                             try {
                                 sessionBean.setServiceEndpoint(endpointInterfaceName);
                                 Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
                                 interfaces.remove(endpointInterface);
                             } catch (ClassNotFoundException e) {
-                                throw new IllegalStateException("Class not found @WebService.endpointInterface: "+endpointInterfaceName, e);
+                                throw new IllegalStateException("Class not found @WebService.endpointInterface: " + endpointInterfaceName, e);
                             }
                         } else {
                             sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
@@ -1118,6 +1308,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * The remainder of the interfaces are checked for annotations in this order:
+                 * 1. @WebService
+                 * 2. @Remote
+                 * 3. Else assumed to be @Local
+                 */
                 for (Class interfce : copy(interfaces)) {
                     if (interfce.isAnnotationPresent(WebService.class)) {
                         if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
@@ -1133,6 +1329,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /**
+                 * The 'interfaces' list should now be empty and all interfaces
+                 * of the bean sorted into either the remote or local bucket.
+                 */
                 for (Class interfce : remotes) {
                     sessionBean.addBusinessRemote(interfce.getName());
                 }
@@ -1149,13 +1349,18 @@ public class AnnotationDeployer implements DynamicDeployer {
             List<String> classPermissions = getDeclaredClassPermissions(assemblyDescriptor, ejbName);
 
             for (Class<?> clazz : ancestors(beanClass)) {
-
-                if (!classPermissions.contains("*") || !classPermissions.contains(clazz.getName())){
+                /*
+                 * Process annotations at the class level
+                 */
+                if (!classPermissions.contains("*") || !classPermissions.contains(clazz.getName())) {
 
                     RolesAllowed rolesAllowed = clazz.getAnnotation(RolesAllowed.class);
                     PermitAll permitAll = clazz.getAnnotation(PermitAll.class);
 
-                    if (rolesAllowed != null && permitAll != null){
+                    /*
+                     * @RolesAllowed
+                     */
+                    if (rolesAllowed != null && permitAll != null) {
                         ejbModule.getValidation().fail(ejbName, "permitAllAndRolesAllowedOnClass", clazz.getName());
                     }
 
@@ -1173,6 +1378,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
 
+                    /*
+                     * @PermitAll
+                     */
                     if (permitAll != null) {
                         MethodPermission methodPermission = new MethodPermission();
                         methodPermission.setUnchecked(true);
@@ -1181,6 +1389,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * @RunAs
+                 */
                 RunAs runAs = clazz.getAnnotation(RunAs.class);
                 if (runAs != null && bean.getSecurityIdentity() == null) {
                     SecurityIdentity securityIdentity = new SecurityIdentity();
@@ -1188,8 +1399,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     bean.setSecurityIdentity(securityIdentity);
                 }
 
+                /*
+                 * @DeclareRoles
+                 */
                 DeclareRoles declareRoles = clazz.getAnnotation(DeclareRoles.class);
-                if (declareRoles != null && bean instanceof RemoteBean){
+                if (declareRoles != null && bean instanceof RemoteBean) {
                     RemoteBean remoteBean = (RemoteBean) bean;
                     List<SecurityRoleRef> securityRoleRefs = remoteBean.getSecurityRoleRef();
                     for (String role : declareRoles.value()) {
@@ -1198,8 +1412,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /*
+             * Process annotations at the method level
+             */
             List<Method> seen = new ArrayList<Method>();
 
+            /*
+             * @RolesAllowed
+             */
             for (Method method : classFinder.findAnnotatedMethods(RolesAllowed.class)) {
                 checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
                 RolesAllowed rolesAllowed = method.getAnnotation(RolesAllowed.class);
@@ -1216,6 +1436,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /*
+             * @PermitAll
+             */
             for (Method method : classFinder.findAnnotatedMethods(PermitAll.class)) {
                 checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
                 MethodPermission methodPermission = new MethodPermission();
@@ -1224,6 +1447,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 assemblyDescriptor.getMethodPermission().add(methodPermission);
             }
 
+            /*
+             * @DenyAll
+             */
             for (Method method : classFinder.findAnnotatedMethods(DenyAll.class)) {
                 checkConflictingSecurityAnnotations(method, ejbName, ejbModule, seen);
                 ExcludeList excludeList = assemblyDescriptor.getExcludeList();
@@ -1232,244 +1458,37 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         }
 
+        /**
+         * Validation
+         * <p/>
+         * Conflicting use of @RolesAllowed, @PermitAll, and @DenyAll
+         *
+         * @param method
+         * @param ejbName
+         * @param ejbModule
+         * @param seen
+         */
         private void checkConflictingSecurityAnnotations(Method method, String ejbName, EjbModule ejbModule, List<Method> seen) {
             if (seen.contains(method)) return;
             seen.add(method);
 
             List<String> annotations = new ArrayList<String>();
             for (Class<? extends Annotation> annotation : asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
-                if (method.getAnnotation(annotation) != null){
-                    annotations.add("@"+annotation.getSimpleName());
+                if (method.getAnnotation(annotation) != null) {
+                    annotations.add("@" + annotation.getSimpleName());
                 }
             }
 
-            if (annotations.size() > 1){
+            if (annotations.size() > 1) {
                 ejbModule.getValidation().fail(ejbName, "conflictingSecurityAnnotations", method.getName(), join(" and ", annotations), method.getDeclaringClass());
             }
         }
 
 
-        private List<String> getDeclaredClassPermissions(AssemblyDescriptor assemblyDescriptor, String ejbName) {
-            List<MethodPermission> permissions = assemblyDescriptor.getMethodPermission();
-            List<String> classPermissions = new ArrayList<String>();
-            for (MethodPermission permission : permissions) {
-                for (org.apache.openejb.jee.Method method : permission.getMethod()) {
-                    if (!method.getEjbName().equals(ejbName)) continue;
-                    if (!"*".equals(method.getMethodName())) continue;
-
-                    String className = method.getClassName();
-                    if (className == null){
-                        className = "*";
-                    }
-                    classPermissions.add(className);
-                }
-            }
-            return classPermissions;
-        }
-
-        public interface AnnotationHandler<A extends Annotation> {
-            public Class<A> getAnnotationClass();
-
-            public Map<String, List<MethodAttribute>> getExistingDeclarations();
-
-            public void addClassLevelDeclaration(A annotation, Class clazz);
-
-            public void addMethodLevelDeclaration(A annotation, Method method);
-        }
-
-        public static class TransactionAttributeHandler implements AnnotationHandler<TransactionAttribute> {
-
-            private final AssemblyDescriptor assemblyDescriptor;
-            private final String ejbName;
-
-            public TransactionAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
-                this.assemblyDescriptor = assemblyDescriptor;
-                this.ejbName = ejbName;
-            }
-
-            public Map<String, List<MethodAttribute>> getExistingDeclarations(){
-                return assemblyDescriptor.getMethodTransactionMap(ejbName);
-            }
-
-            public void addClassLevelDeclaration(TransactionAttribute attribute, Class type) {
-                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), type.getName(), ejbName, "*");
-                assemblyDescriptor.getContainerTransaction().add(ctx);
-            }
-
-            public void addMethodLevelDeclaration(TransactionAttribute attribute, Method method) {
-                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method);
-                assemblyDescriptor.getContainerTransaction().add(ctx);
-            }
-
-            public Class<TransactionAttribute> getAnnotationClass() {
-                return TransactionAttribute.class;
-            }
-
-            private TransAttribute cast(TransactionAttributeType transactionAttributeType) {
-                return TransAttribute.valueOf(transactionAttributeType.toString());
-            }
-        }
-
-        public static class ConcurrencyAttributeHandler implements AnnotationHandler<javax.ejb.Lock> {
-
-            private final AssemblyDescriptor assemblyDescriptor;
-            private final String ejbName;
-
-            public ConcurrencyAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
-                this.assemblyDescriptor = assemblyDescriptor;
-                this.ejbName = ejbName;
-            }
-
-            public Map<String, List<MethodAttribute>> getExistingDeclarations(){
-                return assemblyDescriptor.getMethodConcurrencyMap(ejbName);
-            }
-
-            public void addClassLevelDeclaration(javax.ejb.Lock attribute, Class type) {
-                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), type.getName(), ejbName, "*");
-                assemblyDescriptor.getContainerConcurrency().add(ctx);
-            }
-
-            public void addMethodLevelDeclaration(javax.ejb.Lock attribute, Method method) {
-                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), ejbName, method);
-                assemblyDescriptor.getContainerConcurrency().add(ctx);
-            }
-
-            public Class<javax.ejb.Lock> getAnnotationClass() {
-                return javax.ejb.Lock.class;
-            }
-
-            private ConcurrencyAttribute cast(javax.ejb.LockType lockType) {
-                return ConcurrencyAttribute.valueOf(lockType.toString());
-            }
-        }
-
-        private <A extends Annotation> void checkAttributes(AnnotationHandler<A> handler, String ejbName, EjbModule ejbModule, ClassFinder classFinder, String messageKey) {
-            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
-
-            int xml = 0;
-            for (List<MethodAttribute> methodAttributes : existingDeclarations.values()) {
-                xml += methodAttributes.size();
-            }
-
-            if (xml > 0){
-                ejbModule.getValidation().warn(ejbName, "xml."+messageKey, xml);
-            }
-
-            int ann = classFinder.findAnnotatedClasses(handler.getAnnotationClass()).size();
-            ann += classFinder.findAnnotatedMethods(handler.getAnnotationClass()).size();
-
-            if (ann > 0){
-                ejbModule.getValidation().warn(ejbName, "ann."+messageKey, ann);
-            }
-
-
-        }
-
-        private <A extends Annotation> void processAttributes(AnnotationHandler<A> handler, Class<?> clazz, ClassFinder classFinder) {
-            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
-
-            // SET THE DEFAULT
-            final Class<A> annotationClass = handler.getAnnotationClass();
-
-            if (!hasMethodAttribute("*", null, existingDeclarations)) {
-                for (Class<?> type : ancestors(clazz)) {
-                    if (!hasMethodAttribute("*", type, existingDeclarations)){
-                        A attribute = type.getAnnotation(annotationClass);
-                        if (attribute != null) {
-                            handler.addClassLevelDeclaration(attribute, type);
-                        }
-                    }
-                }
-            }
-
-
-            List<Method> methods = classFinder.findAnnotatedMethods(annotationClass);
-            for (Method method : methods) {
-                A attribute = method.getAnnotation(annotationClass);
-                if (!existingDeclarations.containsKey(method.getName())) {
-                    // no method with this name in descriptor
-                    handler.addMethodLevelDeclaration(attribute, method);
-                } else {
-                    // method name already declared
-                    List<MethodAttribute> list = existingDeclarations.get(method.getName());
-                    for (MethodAttribute mtx : list) {
-                        MethodParams methodParams = mtx.getMethodParams();
-                        if (methodParams == null) {
-                            // params not specified, so this is more specific
-                            handler.addMethodLevelDeclaration(attribute, method);
-                        } else {
-                            List<String> params1 = methodParams.getMethodParam();
-                            String[] params2 = asStrings(method.getParameterTypes());
-                            if (params1.size() != params2.length) {
-                                // params not the same
-                                handler.addMethodLevelDeclaration(attribute, method);
-                            } else {
-                                for (int i = 0; i < params1.size(); i++) {
-                                    String a = params1.get(i);
-                                    String b = params2[i];
-                                    if (!a.equals(b)) {
-                                        // params not the same
-                                        handler.addMethodLevelDeclaration(attribute, method);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private boolean hasMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map){
-            return getMethodAttribute(methodName, clazz, map) != null;
-        }
-
-        private MethodAttribute getMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map) {
-            List<MethodAttribute> methodAttributes = map.get(methodName);
-            if (methodAttributes == null) return null;
-
-            for (MethodAttribute methodAttribute : methodAttributes) {
-                String className = (clazz != null) ? clazz.getName() : null + "";
-
-                if (className.equals(methodAttribute.getClassName() + "")) {
-                    return methodAttribute;
-                }
-            }
-            return null;
-        }
-
-        private <A extends Annotation> A getInheritableAnnotation(Class clazz, Class<A> annotationClass) {
-            if (clazz == null || clazz.equals(Object.class)) return null;
-
-            Annotation annotation = clazz.getAnnotation(annotationClass);
-            if (annotation != null) {
-                return (A) annotation;
-            }
-
-            return getInheritableAnnotation(clazz.getSuperclass(), annotationClass);
-        }
-
-        private List<Class<?>> ancestors(Class clazz){
-            ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
-
-            while (clazz != null && !clazz.equals(Object.class)) {
-                ancestors.add(clazz);
-                clazz = clazz.getSuperclass();
-            }
-
-            return ancestors;
-        }
-
-        private ClassFinder createInheritedClassFinder(Class<?>... classes) {
-            List<Class> parents = new ArrayList<Class>();
-            for (Class<?> clazz : classes) {
-                parents.addAll(ancestors(clazz));
-            }
-
-            return new ClassFinder(parents);
-        }
-
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
+            /*
+             * @PostConstruct
+             */
             LifecycleCallback postConstruct = getFirst(bean.getPostConstruct());
             if (postConstruct == null) {
                 for (Method method : classFinder.findAnnotatedMethods(PostConstruct.class)) {
@@ -1477,6 +1496,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /*
+             * @PreDestroy
+             */
             LifecycleCallback preDestroy = getFirst(bean.getPreDestroy());
             if (preDestroy == null) {
                 for (Method method : classFinder.findAnnotatedMethods(PreDestroy.class)) {
@@ -1484,6 +1506,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /*
+             * @AroundInvoke
+             */
             AroundInvoke aroundInvoke = getFirst(bean.getAroundInvoke());
             if (aroundInvoke == null) {
                 for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
@@ -1491,6 +1516,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /*
+             * @Timeout
+             */
             if (bean instanceof TimerConsumer) {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
@@ -1504,6 +1532,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (bean instanceof org.apache.openejb.jee.Session) {
                 org.apache.openejb.jee.Session session = (org.apache.openejb.jee.Session) bean;
 
+                /*
+                 * @PostActivate
+                 */
                 LifecycleCallback postActivate = getFirst(session.getPostActivate());
                 if (postActivate == null) {
                     for (Method method : classFinder.findAnnotatedMethods(PostActivate.class)) {
@@ -1511,6 +1542,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * @PrePassivate
+                 */
                 LifecycleCallback prePassivate = getFirst(session.getPrePassivate());
                 if (prePassivate == null) {
                     for (Method method : classFinder.findAnnotatedMethods(PrePassivate.class)) {
@@ -1518,6 +1552,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                /*
+                 * @Init
+                 */
                 List<Method> initMethods = classFinder.findAnnotatedMethods(Init.class);
                 for (Method method : initMethods) {
                     InitMethod initMethod = new InitMethod(method);
@@ -1530,8 +1567,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                     session.getInitMethod().add(initMethod);
                 }
 
+                /*
+                 * @Remove
+                 */
                 List<Method> removeMethods = classFinder.findAnnotatedMethods(Remove.class);
-                Map<NamedMethod,RemoveMethod> declaredRemoveMethods = new HashMap<NamedMethod,RemoveMethod>();
+                Map<NamedMethod, RemoveMethod> declaredRemoveMethods = new HashMap<NamedMethod, RemoveMethod>();
                 for (RemoveMethod removeMethod : session.getRemoveMethod()) {
                     declaredRemoveMethods.put(removeMethod.getBeanMethod(), removeMethod);
                 }
@@ -1543,7 +1583,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     if (declaredRemoveMethod == null) {
                         session.getRemoveMethod().add(removeMethod);
-                    } else if (!declaredRemoveMethod.isExplicitlySet()){
+                    } else if (!declaredRemoveMethod.isExplicitlySet()) {
                         declaredRemoveMethod.setRetainIfException(remove.retainIfException());
                     }
                 }
@@ -1584,7 +1624,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 buildEjbRef(consumer, ejb, member);
             }
-
 
             //
             // @Resource
@@ -1716,80 +1755,144 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         }
 
-        private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
-            if (System.getProperty("duct tape") != null) return;
-            Set<Class<?>> processedClasses = new HashSet<Class<?>>();
-            Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
-            do {
-                // get unprocessed handler classes
-                handlerClasses.clear();
-                for (ServiceRef serviceRef : consumer.getServiceRef()) {
-                    HandlerChains chains = serviceRef.getAllHandlers();
-                    if (chains == null) continue;
-                    for (org.apache.openejb.jee.HandlerChain handlerChain : chains.getHandlerChain()) {
-                        for (Handler handler : handlerChain.getHandler()) {
-                            if (handler.getHandlerClass() != null) {
-                                try {
-                                    Class clazz = classLoader.loadClass(handler.getHandlerClass());
-                                    handlerClasses.add(clazz);
-                                } catch (ClassNotFoundException e) {
-                                    throw new OpenEJBException("Unable to load webservice handler class: " + handler.getHandlerClass(), e);
-                                }
-                            }
+        /**
+         * Process @EJB into <ejb-ref> or <ejb-local-ref> for the specified member (field or method)
+         *
+         * @param consumer
+         * @param ejb
+         * @param member
+         */
+        private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
+
+            /**
+             * Was @EJB used at a class level witout specifying the 'name' or 'beanInterface' attributes?
+             */
+            if (member == null) {
+                boolean shouldReturn = false;
+                if (ejb.name().equals("")) {
+                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoName");
+                    shouldReturn = true;
+                }
+                if (ejb.beanInterface().equals(Object.class)) {
+                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoBeanInterface");
+                    shouldReturn = true;
+                }
+                if (shouldReturn) return;
+            }
+
+            EjbRef ejbRef = new EjbRef();
+
+            // This is how we deal with the fact that we don't know
+            // whether to use an EjbLocalRef or EjbRef (remote).
+            // We flag it uknown and let the linking code take care of
+            // figuring out what to do with it.
+            ejbRef.setRefType(EjbReference.Type.UNKNOWN);
+
+            if (member != null) {
+                // Set the member name where this will be injected
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                ejbRef.getInjectionTarget().add(target);
+            }
+
+            Class<?> interfce = ejb.beanInterface();
+            if (interfce.equals(Object.class)) {
+                interfce = (member == null) ? null : member.getType();
+            }
+
+            if (interfce != null && !interfce.equals(Object.class)) {
+                if (EJBHome.class.isAssignableFrom(interfce)) {
+                    ejbRef.setHome(interfce.getName());
+                    Method[] methods = interfce.getMethods();
+                    for (Method method : methods) {
+                        if (method.getName().startsWith("create")) {
+                            ejbRef.setRemote(method.getReturnType().getName());
+                            break;
                         }
                     }
+                    ejbRef.setRefType(EjbReference.Type.REMOTE);
+                } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
+                    ejbRef.setHome(interfce.getName());
+                    Method[] methods = interfce.getMethods();
+                    for (Method method : methods) {
+                        if (method.getName().startsWith("create")) {
+                            ejbRef.setRemote(method.getReturnType().getName());
+                            break;
+                        }
+                    }
+                    ejbRef.setRefType(EjbReference.Type.LOCAL);
+                } else {
+                    ejbRef.setRemote(interfce.getName());
+                    if (interfce.getAnnotation(Local.class) != null) {
+                        ejbRef.setRefType(EjbReference.Type.LOCAL);
+                    } else if (interfce.getAnnotation(Remote.class) != null) {
+                        ejbRef.setRefType(EjbReference.Type.REMOTE);
+                    }
                 }
-                handlerClasses.removeAll(processedClasses);
+            }
 
-                // process handler classes
-                ClassFinder handlerClassFinder = createInheritedClassFinder(handlerClasses.toArray(new Class<?>[handlerClasses.size()]));
-                buildAnnotatedRefs(consumer, handlerClassFinder, classLoader);
-                processedClasses.addAll(handlerClasses);
-            } while (!handlerClasses.isEmpty());
-        }
-
-        private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
-            // Get the ref-name
-            String refName = persistenceUnit.name();
+            // Get the ejb-ref-name
+            String refName = ejb.name();
             if (refName.equals("")) {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
+            ejbRef.setEjbRefName(refName);
 
-            if (refName == null && member == null) {
-                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
+            // Set the ejb-link, if any
+            String ejbName = ejb.beanName();
+            if (ejbName.equals("")) {
+                ejbName = null;
+            }
+            ejbRef.setEjbLink(ejbName);
+
+            // Set the mappedName, if any
+            String mappedName = ejb.mappedName();
+            if (mappedName.equals("")) {
+                mappedName = null;
+            }
+            ejbRef.setMappedName(mappedName);
+
+
+            Map<String, EjbRef> remoteRefs = consumer.getEjbRefMap();
+            if (remoteRefs.containsKey(ejbRef.getName())) {
+                EjbRef ref = remoteRefs.get(ejbRef.getName());
+                if (ref.getRemote() == null) ref.setRemote(ejbRef.getRemote());
+                if (ref.getHome() == null) ref.setHome(ejbRef.getHome());
+                if (ref.getMappedName() == null) ref.setMappedName(ejbRef.getMappedName());
+                ref.getInjectionTarget().addAll(ejbRef.getInjectionTarget());
                 return;
             }
 
-            PersistenceUnitRef persistenceUnitRef = consumer.getPersistenceUnitRefMap().get(refName);
-            if (persistenceUnitRef == null) {
-                persistenceUnitRef = new PersistenceUnitRef();
-                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
-                persistenceUnitRef.setPersistenceUnitRefName(refName);
-                consumer.getPersistenceUnitRef().add(persistenceUnitRef);
-            }
-            if (member != null) {
-                Class type = member.getType();
-                if (EntityManager.class.isAssignableFrom(type)){
-                    ValidationContext validationContext = AnnotationDeployer.getValidationContext().get();
-                    String jndiConsumerName = consumer.getJndiConsumerName();
-                    String name = persistenceUnitRef.getName();
-                    validationContext.fail(jndiConsumerName, "presistenceUnitAnnotation.onEntityManager", name);
-                } else if (!EntityManagerFactory.class.isAssignableFrom(type)){
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
-                } else {
-                    // Set the member name where this will be injected
-                    InjectionTarget target = new InjectionTarget();
-                    target.setInjectionTargetClass(member.getDeclaringClass().getName());
-                    target.setInjectionTargetName(member.getName());
-                    persistenceUnitRef.getInjectionTarget().add(target);
-                }
+            Map<String, EjbLocalRef> localRefs = consumer.getEjbLocalRefMap();
+            if (localRefs.containsKey(ejbRef.getName())) {
+                EjbLocalRef ejbLocalRef = new EjbLocalRef(ejbRef);
+                EjbLocalRef ref = localRefs.get(ejbLocalRef.getName());
+                if (ref.getLocal() == null) ref.setLocal(ejbLocalRef.getLocal());
+                if (ref.getLocalHome() == null) ref.setLocalHome(ejbLocalRef.getLocalHome());
+                if (ref.getMappedName() == null) ref.setMappedName(ejbLocalRef.getMappedName());
+                ref.getInjectionTarget().addAll(ejbLocalRef.getInjectionTarget());
+                return;
             }
 
-            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().equals("")) {
-                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
+            switch (ejbRef.getRefType()) {
+                case UNKNOWN:
+                case REMOTE:
+                    consumer.getEjbRef().add(ejbRef);
+                    break;
+                case LOCAL:
+                    consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
+                    break;
             }
         }
 
+        /**
+         * Process @Resource into either <resource-ref> or <resource-env-ref> for the given member (field or method) or class
+         *
+         * @param consumer
+         * @param resource
+         * @param member
+         */
         private void buildResource(JndiConsumer consumer, Resource resource, Member member) {
             // Get the ref-name
             String refName = resource.name();
@@ -1797,13 +1900,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
+            /**
+             * Was @Resource used at a class level witout specifying the 'name' or 'beanInterface' attributes?
+             */
             if (member == null) {
                 boolean shouldReturn = false;
-                if (resource.name().equals("")){
+                if (resource.name().equals("")) {
                     getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
-                if (resource.type().equals(Object.class)){
+                if (resource.type().equals(Object.class)) {
                     getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoType");
                     shouldReturn = true;
                 }
@@ -1813,18 +1919,22 @@ public class AnnotationDeployer implements DynamicDeployer {
             JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
 
+                /**
+                 * Was @Resource mistakenly used when either @PersistenceContext or @PersistenceUnit should have been used?
+                 */
                 if (member != null) { // Little quick validation for common mistake
                     Class type = member.getType();
                     boolean shouldReturn = false;
-                    if (EntityManager.class.isAssignableFrom(type)){
+                    if (EntityManager.class.isAssignableFrom(type)) {
                         getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
                         shouldReturn = true;
-                    } else if (EntityManagerFactory.class.isAssignableFrom(type)){
+                    } else if (EntityManagerFactory.class.isAssignableFrom(type)) {
                         getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
                         shouldReturn = true;
                     }
                     if (shouldReturn) return;
                 }
+
                 String type;
                 if (resource.type() != java.lang.Object.class) {
                     type = resource.type().getName();
@@ -1833,6 +1943,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 if (knownResourceEnvTypes.contains(type)) {
+                    /*
+                     * @Resource <resource-env-ref>
+                     */
                     ResourceEnvRef resourceEnvRef = consumer.getResourceEnvRefMap().get(refName);
                     if (resourceEnvRef == null) {
                         resourceEnvRef = new ResourceEnvRef();
@@ -1840,7 +1953,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getResourceEnvRef().add(resourceEnvRef);
                     }
 
-                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
+                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType()))
+                    {
                         if (resource.type() != java.lang.Object.class) {
                             resourceEnvRef.setResourceEnvRefType(resource.type().getName());
                         } else {
@@ -1849,6 +1963,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     reference = resourceEnvRef;
                 } else if (!knownEnvironmentEntries.contains(type)) {
+                    /*
+                     * @Resource <resource-ref>
+                     */
                     ResourceRef resourceRef = consumer.getResourceRefMap().get(refName);
 
                     if (resourceRef == null) {
@@ -1883,12 +2000,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                     reference = resourceRef;
                 }
             }
+
+            /*
+             * @Resource <env-entry>
+             *
+             * Can't add an env-entry via @Resource as there needs to
+             * be a corresponding value specified in the ejb-jar.xml.
+             *
+             * If we didn't find a reference (env-entry) in the ejb-jar.xml
+             * and this is not a resource-env-ref or a resource-ref then
+             * this is not a valid @Resource reference.
+             */
             if (reference == null) {
                 return;
             }
 
 //            reference.setName(refName);
 
+            /*
+             * Fill in the injection information <injection-target>
+             */
             if (member != null) {
                 // Set the member name where this will be injected
                 InjectionTarget target = new InjectionTarget();
@@ -1904,6 +2035,173 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         }
 
+        /**
+         * Process @PersistenceUnit into <persistence-unit> for the specified member (field or method)
+         *
+         * @param consumer
+         * @param persistenceUnit
+         * @param member
+         * @throws OpenEJBException
+         */
+        private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
+            // Get the ref-name
+            String refName = persistenceUnit.name();
+            if (refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+
+            /**
+             * Was @PersistenceUnit used at a class level without specifying the 'name' attribute?
+             */
+            if (refName == null && member == null) {
+                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
+                return;
+            }
+
+            PersistenceUnitRef persistenceUnitRef = consumer.getPersistenceUnitRefMap().get(refName);
+            if (persistenceUnitRef == null) {
+                persistenceUnitRef = new PersistenceUnitRef();
+                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
+                persistenceUnitRef.setPersistenceUnitRefName(refName);
+                consumer.getPersistenceUnitRef().add(persistenceUnitRef);
+            }
+
+
+            if (member != null) {
+                Class type = member.getType();
+                if (EntityManager.class.isAssignableFrom(type)) {
+                    /**
+                     * Was @PersistenceUnit mistakenly used when @PersistenceContext should have been used?
+                     */
+                    ValidationContext validationContext = AnnotationDeployer.getValidationContext().get();
+                    String jndiConsumerName = consumer.getJndiConsumerName();
+                    String name = persistenceUnitRef.getName();
+                    validationContext.fail(jndiConsumerName, "presistenceUnitAnnotation.onEntityManager", name);
+                } else if (!EntityManagerFactory.class.isAssignableFrom(type)) {
+                    /**
+                     * Was @PersistenceUnit mistakenly used for something that isn't an EntityManagerFactory?
+                     */
+                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
+                } else {
+                    // Set the member name where this will be injected
+                    InjectionTarget target = new InjectionTarget();
+                    target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                    target.setInjectionTargetName(member.getName());
+                    persistenceUnitRef.getInjectionTarget().add(target);
+                }
+            }
+
+            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().equals("")) {
+                persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
+            }
+        }
+
+        /**
+         * Process @PersistenceContext into <persistence-context> for the specified member (field or method)
+         * <p/>
+         * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
+         *
+         * @param consumer
+         * @param persistenceContext
+         * @param member
+         * @throws OpenEJBException
+         */
+        private void buildPersistenceContext(JndiConsumer consumer, PersistenceContextAnn persistenceContext, Member member) throws OpenEJBException {
+            String refName = persistenceContext.name();
+
+            if (refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+
+            /**
+             * Was @PersistenceContext used at a class level without specifying the 'name' attribute?
+             */
+            if (refName == null && member == null) {
+                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
+                return;
+            }
+
+            PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
+            if (persistenceContextRef == null) {
+                persistenceContextRef = new PersistenceContextRef();
+                persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                persistenceContextRef.setPersistenceContextRefName(refName);
+                if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
+                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
+                } else {
+                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
+                }
+                consumer.getPersistenceContextRef().add(persistenceContextRef);
+            } else {
+                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName()))
+                {
+                    persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
+                }
+                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType()))
+                {
+                    if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
+                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
+                    } else {
+                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
+                    }
+                }
+            }
+
+            List<Property> persistenceProperties = persistenceContextRef.getPersistenceProperty();
+            if (persistenceProperties == null) {
+                persistenceProperties = new ArrayList<Property>();
+                persistenceContextRef.setPersistenceProperty(persistenceProperties);
+            }
+
+            for (Map.Entry<String, String> persistenceProperty : persistenceContext.properties().entrySet()) {
+                boolean flag = true;
+                for (Property prpty : persistenceProperties) {
+                    if (prpty.getName().equals(persistenceProperty.getKey())) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    Property property = new Property();
+                    property.setName(persistenceProperty.getKey());
+                    property.setValue(persistenceProperty.getValue());
+                    persistenceProperties.add(property);
+                }
+            }
+
+            if (member != null) {
+                Class type = member.getType();
+                if (EntityManagerFactory.class.isAssignableFrom(type)) {
+                    /**
+                     * Was @PersistenceContext mistakenly used when @PersistenceUnit should have been used?
+                     */
+                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
+                } else if (!EntityManager.class.isAssignableFrom(type)) {
+                    /**
+                     * Was @PersistenceContext mistakenly used for something that isn't an EntityManager?
+                     */
+                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
+                } else {
+                    // Set the member name where this will be injected
+                    InjectionTarget target = new InjectionTarget();
+                    target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                    target.setInjectionTargetName(member.getName());
+                    persistenceContextRef.getInjectionTarget().add(target);
+                }
+            }
+        }
+
+
+        /**
+         * Process @WebServiceRef and @HandlerChain for the given member (field or method)
+         *
+         * @param consumer
+         * @param webService
+         * @param handlerChain
+         * @param member
+         * @param classLoader
+         * @throws OpenEJBException
+         */
         private void buildWebServiceRef(JndiConsumer consumer, WebServiceRef webService, HandlerChain handlerChain, Member member, ClassLoader classLoader) throws OpenEJBException {
 
             ServiceRef serviceRef;
@@ -2008,212 +2306,318 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         /**
-         * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
+         * Scan for @EJB, @Resource, @WebServiceRef, @PersistenceUnit, and @PersistenceContext on WebService HandlerChain classes
          *
          * @param consumer
-         * @param persistenceContext
-         * @param member
+         * @param classLoader
          * @throws OpenEJBException
          */
-        private void buildPersistenceContext(JndiConsumer consumer, PersistenceContextAnn persistenceContext, Member member) throws OpenEJBException {
-            String refName = persistenceContext.name();
+        private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
+            if (System.getProperty("duct tape") != null) return;
+            Set<Class<?>> processedClasses = new HashSet<Class<?>>();
+            Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
+            do {
+                // get unprocessed handler classes
+                handlerClasses.clear();
+                for (ServiceRef serviceRef : consumer.getServiceRef()) {
+                    HandlerChains chains = serviceRef.getAllHandlers();
+                    if (chains == null) continue;
+                    for (org.apache.openejb.jee.HandlerChain handlerChain : chains.getHandlerChain()) {
+                        for (Handler handler : handlerChain.getHandler()) {
+                            if (handler.getHandlerClass() != null) {
+                                try {
+                                    Class clazz = classLoader.loadClass(handler.getHandlerClass());
+                                    handlerClasses.add(clazz);
+                                } catch (ClassNotFoundException e) {
+                                    throw new OpenEJBException("Unable to load webservice handler class: " + handler.getHandlerClass(), e);
+                                }
+                            }
+                        }
+                    }
+                }
+                handlerClasses.removeAll(processedClasses);
 
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+                // process handler classes
+                ClassFinder handlerClassFinder = createInheritedClassFinder(handlerClasses.toArray(new Class<?>[handlerClasses.size()]));
+
+                /*
+                 * @EJB
+                 * @Resource
+                 * @WebServiceRef
+                 * @PersistenceUnit
+                 * @PersistenceContext
+                 */
+                buildAnnotatedRefs(consumer, handlerClassFinder, classLoader);
+
+                processedClasses.addAll(handlerClasses);
+            } while (!handlerClasses.isEmpty());
+        }
+
+        // ----------------------------------------------------------------------
+        //
+        //  Utility methods and classes
+        //
+        // ----------------------------------------------------------------------
+
+
+        private List<String> getDeclaredClassPermissions(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+            List<MethodPermission> permissions = assemblyDescriptor.getMethodPermission();
+            List<String> classPermissions = new ArrayList<String>();
+            for (MethodPermission permission : permissions) {
+                for (org.apache.openejb.jee.Method method : permission.getMethod()) {
+                    if (!method.getEjbName().equals(ejbName)) continue;
+                    if (!"*".equals(method.getMethodName())) continue;
+
+                    String className = method.getClassName();
+                    if (className == null) {
+                        className = "*";
+                    }
+                    classPermissions.add(className);
+                }
+            }
+            return classPermissions;
+        }
+
+        public interface AnnotationHandler<A extends Annotation> {
+            public Class<A> getAnnotationClass();
+
+            public Map<String, List<MethodAttribute>> getExistingDeclarations();
+
+            public void addClassLevelDeclaration(A annotation, Class clazz);
+
+            public void addMethodLevelDeclaration(A annotation, Method method);
+        }
+
+        public static class TransactionAttributeHandler implements AnnotationHandler<TransactionAttribute> {
+
+            private final AssemblyDescriptor assemblyDescriptor;
+            private final String ejbName;
+
+            public TransactionAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+                this.assemblyDescriptor = assemblyDescriptor;
+                this.ejbName = ejbName;
             }
 
-            if (refName == null && member == null) {
-                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
-                return;
+            public Map<String, List<MethodAttribute>> getExistingDeclarations() {
+                return assemblyDescriptor.getMethodTransactionMap(ejbName);
             }
 
-            PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
-            if (persistenceContextRef == null) {
-                persistenceContextRef = new PersistenceContextRef();
-                persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
-                persistenceContextRef.setPersistenceContextRefName(refName);
-                if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
-                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
-                } else {
-                    persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
-                }
-                consumer.getPersistenceContextRef().add(persistenceContextRef);
-            } else {
-                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
-                    persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
-                }
-                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
-                    if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
-                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
-                    } else {
-                        persistenceContextRef.setPersistenceContextType(PersistenceContextType.TRANSACTION);
+            public void addClassLevelDeclaration(TransactionAttribute attribute, Class type) {
+                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), type.getName(), ejbName, "*");
+                assemblyDescriptor.getContainerTransaction().add(ctx);
+            }
+
+            public void addMethodLevelDeclaration(TransactionAttribute attribute, Method method) {
+                ContainerTransaction ctx = new ContainerTransaction(cast(attribute.value()), ejbName, method);
+                assemblyDescriptor.getContainerTransaction().add(ctx);
+            }
+
+            public Class<TransactionAttribute> getAnnotationClass() {
+                return TransactionAttribute.class;
+            }
+
+            private TransAttribute cast(TransactionAttributeType transactionAttributeType) {
+                return TransAttribute.valueOf(transactionAttributeType.toString());
+            }
+        }
+
+        public static class ConcurrencyAttributeHandler implements AnnotationHandler<javax.ejb.Lock> {
+
+            private final AssemblyDescriptor assemblyDescriptor;
+            private final String ejbName;
+
+            public ConcurrencyAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+                this.assemblyDescriptor = assemblyDescriptor;
+                this.ejbName = ejbName;
+            }
+
+            public Map<String, List<MethodAttribute>> getExistingDeclarations() {
+                return assemblyDescriptor.getMethodConcurrencyMap(ejbName);
+            }
+
+            public void addClassLevelDeclaration(javax.ejb.Lock attribute, Class type) {
+                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), type.getName(), ejbName, "*");
+                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            }
+
+            public void addMethodLevelDeclaration(javax.ejb.Lock attribute, Method method) {
+                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), ejbName, method);
+                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            }
+
+            public Class<javax.ejb.Lock> getAnnotationClass() {
+                return javax.ejb.Lock.class;
+            }
+
+            private ConcurrencyAttribute cast(javax.ejb.LockType lockType) {
+                return ConcurrencyAttribute.valueOf(lockType.toString());
+            }
+        }
+
+        private <A extends Annotation> void checkAttributes(AnnotationHandler<A> handler, String ejbName, EjbModule ejbModule, ClassFinder classFinder, String messageKey) {
+            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
+
+            int xml = 0;
+            for (List<MethodAttribute> methodAttributes : existingDeclarations.values()) {
+                xml += methodAttributes.size();
+            }
+
+            if (xml > 0) {
+                ejbModule.getValidation().warn(ejbName, "xml." + messageKey, xml);
+            }
+
+            int ann = classFinder.findAnnotatedClasses(handler.getAnnotationClass()).size();
+            ann += classFinder.findAnnotatedMethods(handler.getAnnotationClass()).size();
+
+            if (ann > 0) {
+                ejbModule.getValidation().warn(ejbName, "ann." + messageKey, ann);
+            }
+
+
+        }
+
+        private <A extends Annotation> void processAttributes(AnnotationHandler<A> handler, Class<?> clazz, ClassFinder classFinder) {
+            Map<String, List<MethodAttribute>> existingDeclarations = handler.getExistingDeclarations();
+
+            // SET THE DEFAULT
+            final Class<A> annotationClass = handler.getAnnotationClass();
+
+            if (!hasMethodAttribute("*", null, existingDeclarations)) {
+                for (Class<?> type : ancestors(clazz)) {
+                    if (!hasMethodAttribute("*", type, existingDeclarations)) {
+                        A attribute = type.getAnnotation(annotationClass);
+                        if (attribute != null) {
+                            handler.addClassLevelDeclaration(attribute, type);
+                        }
                     }
                 }
             }
 
-            List<Property> persistenceProperties = persistenceContextRef.getPersistenceProperty();
-            if (persistenceProperties == null) {
-                persistenceProperties = new ArrayList<Property>();
-                persistenceContextRef.setPersistenceProperty(persistenceProperties);
-            }
 
-            for (Map.Entry<String, String> persistenceProperty : persistenceContext.properties().entrySet()) {
-                boolean flag = true;
-                for (Property prpty : persistenceProperties) {
-                    if (prpty.getName().equals(persistenceProperty.getKey())) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    Property property = new Property();
-                    property.setName(persistenceProperty.getKey());
-                    property.setValue(persistenceProperty.getValue());
-                    persistenceProperties.add(property);
-                }
-            }
-
-            if (member != null) {
-                Class type = member.getType();
-                if (EntityManagerFactory.class.isAssignableFrom(type)){
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
-                } else if (!EntityManager.class.isAssignableFrom(type)){
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
+            List<Method> methods = classFinder.findAnnotatedMethods(annotationClass);
+            for (Method method : methods) {
+                A attribute = method.getAnnotation(annotationClass);
+                if (!existingDeclarations.containsKey(method.getName())) {
+                    // no method with this name in descriptor
+                    handler.addMethodLevelDeclaration(attribute, method);
                 } else {
-                    // Set the member name where this will be injected
-                    InjectionTarget target = new InjectionTarget();
-                    target.setInjectionTargetClass(member.getDeclaringClass().getName());
-                    target.setInjectionTargetName(member.getName());
-                    persistenceContextRef.getInjectionTarget().add(target);
+                    // method name already declared
+                    List<MethodAttribute> list = existingDeclarations.get(method.getName());
+                    for (MethodAttribute mtx : list) {
+                        MethodParams methodParams = mtx.getMethodParams();
+                        if (methodParams == null) {
+                            // params not specified, so this is more specific
+                            handler.addMethodLevelDeclaration(attribute, method);
+                        } else {
+                            List<String> params1 = methodParams.getMethodParam();
+                            String[] params2 = asStrings(method.getParameterTypes());
+                            if (params1.size() != params2.length) {
+                                // params not the same
+                                handler.addMethodLevelDeclaration(attribute, method);
+                            } else {
+                                for (int i = 0; i < params1.size(); i++) {
+                                    String a = params1.get(i);
+                                    String b = params2[i];
+                                    if (!a.equals(b)) {
+                                        // params not the same
+                                        handler.addMethodLevelDeclaration(attribute, method);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
-
-            if (member == null) {
-                boolean shouldReturn = false;
-                if (ejb.name().equals("")){
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoName");
-                    shouldReturn = true;
-                }
-                if (ejb.beanInterface().equals(Object.class)){
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoBeanInterface");
-                    shouldReturn = true;
-                }
-                if (shouldReturn) return;
-            }
-
-            EjbRef ejbRef = new EjbRef();
-
-            // This is how we deal with the fact that we don't know
-            // whether to use an EjbLocalRef or EjbRef (remote).
-            // We flag it uknown and let the linking code take care of
-            // figuring out what to do with it.
-            ejbRef.setRefType(EjbReference.Type.UNKNOWN);
-
-            if (member != null) {
-                // Set the member name where this will be injected
-                InjectionTarget target = new InjectionTarget();
-                target.setInjectionTargetClass(member.getDeclaringClass().getName());
-                target.setInjectionTargetName(member.getName());
-                ejbRef.getInjectionTarget().add(target);
-            }
-
-            Class<?> interfce = ejb.beanInterface();
-            if (interfce.equals(Object.class)) {
-                interfce = (member == null) ? null : member.getType();
-            }
-
-            if (interfce != null && !interfce.equals(Object.class)) {
-                if (EJBHome.class.isAssignableFrom(interfce)) {
-                    ejbRef.setHome(interfce.getName());
-                    Method[] methods = interfce.getMethods();
-                    for (Method method : methods) {
-                        if (method.getName().startsWith("create")) {
-                            ejbRef.setRemote(method.getReturnType().getName());
-                            break;
-                        }
-                    }
-                    ejbRef.setRefType(EjbReference.Type.REMOTE);
-                } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
-                    ejbRef.setHome(interfce.getName());
-                    Method[] methods = interfce.getMethods();
-                    for (Method method : methods) {
-                        if (method.getName().startsWith("create")) {
-                            ejbRef.setRemote(method.getReturnType().getName());
-                            break;
-                        }
-                    }
-                    ejbRef.setRefType(EjbReference.Type.LOCAL);
-                } else {
-                    ejbRef.setRemote(interfce.getName());
-                    if (interfce.getAnnotation(Local.class) != null) {
-                        ejbRef.setRefType(EjbReference.Type.LOCAL);
-                    } else if (interfce.getAnnotation(Remote.class) != null) {
-                        ejbRef.setRefType(EjbReference.Type.REMOTE);
-                    }
-                }
-            }
-
-            // Get the ejb-ref-name
-            String refName = ejb.name();
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
-            }
-            ejbRef.setEjbRefName(refName);
-
-            // Set the ejb-link, if any
-            String ejbName = ejb.beanName();
-            if (ejbName.equals("")) {
-                ejbName = null;
-            }
-            ejbRef.setEjbLink(ejbName);
-
-            // Set the mappedName, if any
-            String mappedName = ejb.mappedName();
-            if (mappedName.equals("")) {
-                mappedName = null;
-            }
-            ejbRef.setMappedName(mappedName);
-
-
-            Map<String, EjbRef> remoteRefs = consumer.getEjbRefMap();
-            if (remoteRefs.containsKey(ejbRef.getName())){
-                EjbRef ref = remoteRefs.get(ejbRef.getName());
-                if (ref.getRemote() == null) ref.setRemote(ejbRef.getRemote());
-                if (ref.getHome() == null) ref.setHome(ejbRef.getHome());
-                if (ref.getMappedName() == null) ref.setMappedName(ejbRef.getMappedName());
-                ref.getInjectionTarget().addAll(ejbRef.getInjectionTarget());
-                return;
-            }
-
-            Map<String, EjbLocalRef> localRefs = consumer.getEjbLocalRefMap();
-            if (localRefs.containsKey(ejbRef.getName())){
-                EjbLocalRef ejbLocalRef = new EjbLocalRef(ejbRef);
-                EjbLocalRef ref = localRefs.get(ejbLocalRef.getName());
-                if (ref.getLocal() == null) ref.setLocal(ejbLocalRef.getLocal());
-                if (ref.getLocalHome() == null) ref.setLocalHome(ejbLocalRef.getLocalHome());
-                if (ref.getMappedName() == null) ref.setMappedName(ejbLocalRef.getMappedName());
-                ref.getInjectionTarget().addAll(ejbLocalRef.getInjectionTarget());
-                return;
-            }
-
-            switch (ejbRef.getRefType()) {
-                case UNKNOWN:
-                case REMOTE:
-                    consumer.getEjbRef().add(ejbRef);
-                    break;
-                case LOCAL:
-                    consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
-                    break;
-            }
+        private boolean hasMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map) {
+            return getMethodAttribute(methodName, clazz, map) != null;
         }
 
+        private MethodAttribute getMethodAttribute(String methodName, Class clazz, Map<String, List<MethodAttribute>> map) {
+            List<MethodAttribute> methodAttributes = map.get(methodName);
+            if (methodAttributes == null) return null;
+
+            for (MethodAttribute methodAttribute : methodAttributes) {
+                String className = (clazz != null) ? clazz.getName() : null + "";
+
+                if (className.equals(methodAttribute.getClassName() + "")) {
+                    return methodAttribute;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Searches for an annotation starting at the specified class and working backwards.
+         * Searching stops when the annotation is found.
+         *
+         * @param clazz
+         * @param annotationClass
+         * @return
+         */
+        private <A extends Annotation> A getInheritableAnnotation(Class clazz, Class<A> annotationClass) {
+            if (clazz == null || clazz.equals(Object.class)) return null;
+
+            Annotation annotation = clazz.getAnnotation(annotationClass);
+            if (annotation != null) {
+                return (A) annotation;
+            }
+
+            return getInheritableAnnotation(clazz.getSuperclass(), annotationClass);
+        }
+
+        /**
+         * Creates a list of the specified class and all its parent classes
+         *
+         * @param clazz
+         * @return
+         */
+        private List<Class<?>> ancestors(Class clazz) {
+            ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
+
+            while (clazz != null && !clazz.equals(Object.class)) {
+                ancestors.add(clazz);
+                clazz = clazz.getSuperclass();
+            }
+
+            return ancestors;
+        }
+
+        /**
+         * Creates a list of the specified class and all its parent
+         * classes then creates a ClassFinder from that list which
+         * can be used for easy annotation scanning.
+         *
+         * @param classes
+         * @return
+         */
+        private ClassFinder createInheritedClassFinder(Class<?>... classes) {
+            List<Class> parents = new ArrayList<Class>();
+            for (Class<?> clazz : classes) {
+                parents.addAll(ancestors(clazz));
+            }
+
+            return new ClassFinder(parents);
+        }
+
+        /**
+         * Copy lists for iteration avoiding ConcurrentModificationException
+         *
+         * @param classes
+         * @return
+         */
         private List<Class<?>> copy(List<Class<?>> classes) {
             return new ArrayList<Class<?>>(classes);
         }
 
+        /**
+         * Converts an array of classes to an array of class name strings
+         *
+         * @param types
+         * @return
+         */
         private String[] asStrings(Class[] types) {
             List<String> names = new ArrayList<String>();
             for (Class clazz : types) {
@@ -2222,6 +2626,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             return names.toArray(new String[names.size()]);
         }
 
+        /**
+         * Grabs the first element of a list if there is one.
+         *
+         * @param list
+         * @return
+         */
         private <T> T getFirst(List<T> list) {
             if (list.size() > 0) {
                 return list.get(0);
@@ -2230,28 +2640,59 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
 
+        /**
+         * Remote interface validation
+         *
+         * @param interfce
+         * @param validation
+         * @param ejbName
+         * @return
+         */
         private boolean validateRemoteInterface(Class interfce, ValidationContext validation, String ejbName) {
             return isValidInterface(interfce, validation, ejbName, "Remote");
         }
 
+        /**
+         * Local interface validation
+         *
+         * @param interfce
+         * @param validation
+         * @param ejbName
+         * @return
+         */
         private boolean validateLocalInterface(Class interfce, ValidationContext validation, String ejbName) {
             return isValidInterface(interfce, validation, ejbName, "Local");
         }
 
+        /**
+         * Checks that the values specified via @Local and @Remote are *not*:
+         * <p/>
+         * - classes
+         * - derived from javax.ejb.EJBObject
+         * - derived from javax.ejb.EJBHome
+         * - derived from javax.ejb.EJBLocalObject
+         * - derived from javax.ejb.EJBLocalHome
+         *
+         * @param interfce
+         * @param validation
+         * @param ejbName
+         * @param annotationName
+         * @return
+         */
         private boolean isValidInterface(Class interfce, ValidationContext validation, String ejbName, String annotationName) {
-            if (!interfce.isInterface()){
+            if (!interfce.isInterface()) {
                 validation.fail(ejbName, "ann.notAnInterface", annotationName, interfce.getName());
                 return false;
-            } else if (EJBHome.class.isAssignableFrom(interfce)){
+            } else if (EJBHome.class.isAssignableFrom(interfce)) {
                 validation.fail(ejbName, "ann.remoteOrLocal.ejbHome", annotationName, interfce.getName());
                 return false;
-            } else if (EJBObject.class.isAssignableFrom(interfce)){
+            } else if (EJBObject.class.isAssignableFrom(interfce)) {
                 validation.fail(ejbName, "ann.remoteOrLocal.ejbObject", annotationName, interfce.getName());
                 return false;
             } else if (EJBLocalHome.class.isAssignableFrom(interfce)) {
                 validation.fail(ejbName, "ann.remoteOrLocal.ejbLocalHome", annotationName, interfce.getName());
                 return false;
-            } else if (EJBLocalObject.class.isAssignableFrom(interfce)){
+            } else if (EJBLocalObject.class.isAssignableFrom(interfce)) {
                 validation.fail(ejbName, "ann.remoteOrLocal.ejbLocalObject", annotationName, interfce.getName());
                 return false;
             }
@@ -2259,6 +2700,12 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
     }
 
+    /**
+     * Small utility interface used to allow polymorphing
+     * of java.lang.reflect.Method and java.lang.reflect.Field
+     * so that each can be treated as injection targets using
+     * the same code.
+     */
     public static interface Member {
         Class getDeclaringClass();
 
@@ -2267,6 +2714,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         Class getType();
     }
 
+    /**
+     * Implementation of Member for java.lang.reflect.Method
+     * Used for injection targets that are annotated methods
+     */
     public static class MethodMember implements Member {
         private final Method setter;
 
@@ -2282,6 +2733,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             return setter.getDeclaringClass();
         }
 
+        /**
+         * The method name needs to be changed from "getFoo" to "foo"
+         *
+         * @return
+         */
         public String getName() {
             StringBuilder name = new StringBuilder(setter.getName());
 
@@ -2299,6 +2755,10 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
     }
 
+    /**
+     * Implementation of Member for java.lang.reflect.Field
+     * Used for injection targets that are annotated fields
+     */
     public static class FieldMember implements Member {
         private final Field field;
 
