@@ -108,6 +108,8 @@ public interface DeploymentInfo {
 
     public List<Method> getPrePassivate();
 
+    public List<Method> getRemoveMethods();
+    
     public List<Injection> getInjections();
     
     public List<InterceptorData> getMethodInterceptors(Method method);
