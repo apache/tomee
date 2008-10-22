@@ -88,85 +88,6 @@ public class InterceptorBindingBuilder {
         }
     }
 
-    private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
-        for (CallbackInfo callbackInfo : callbackInfos) {
-            try {
-                Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
-                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
-                    methods.add(method);
-                }
-                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
-                    methods.add(method);
-                }
-            } catch (NoSuchMethodException e) {
-                logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
-            }
-        }
-        Collections.sort(methods, new MethodCallbackComparator());
-    }
-
-    public static class MethodCallbackComparator implements Comparator<Method> {
-        public int compare(Method m1, Method m2) {
-            Class<?> c1 = m1.getDeclaringClass();
-            Class<?> c2 = m2.getDeclaringClass();
-            if (c1.equals(c2)) return 0;
-            if (c1.isAssignableFrom(c2)) return -1;
-            return 1;
-        }
-    }
-
-    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
-        NoSuchMethodException original = null;
-        while (clazz != null){
-            try {
-                Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
-                return SetAccessible.on(method);
-            } catch (NoSuchMethodException e) {
-                if (original == null) original = e;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        throw original;
-    }
-
-    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
-        for (CallbackInfo callbackInfo : callbackInfos) {
-            try {
-                Method method = getMethod(clazz, callbackInfo.method);
-                if (callbackInfo.className == null){
-                    methods.add(method);
-                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
-                    methods.add(method);
-                } else {
-                    // check for a private method on the declared class
-
-                    // find declared class
-                    Class c = clazz;
-                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
-
-                    // get callback method
-                    if (c != null) {
-                        try {
-                            method = c.getDeclaredMethod(callbackInfo.method);
-                            // make sure it is private
-                            if (Modifier.isPrivate(method.getModifiers())) {
-                                SetAccessible.on(method);
-                                methods.add(method);
-                            }
-                        } catch (NoSuchMethodException e) {
-                        }
-                    }
-                }
-            } catch (NoSuchMethodException e) {
-                String message = "Bean Callback method not found (skipping): public void " + callbackInfo.method + "(); in class " + clazz.getName();
-                logger.warning(message);
-                throw new IllegalStateException(message, e);
-            }
-        }
-        Collections.sort(methods, new MethodCallbackComparator());
-    }
-
-
     public void build(CoreDeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
         Class clazz = deploymentInfo.getBeanClass();
 
@@ -317,6 +238,120 @@ public class InterceptorBindingBuilder {
         return true;
     }
 
+
+    /**
+     * Used for getting the java.lang.reflect.Method objects for the following callbacks:
+     *
+     *  - @PostConstruct <any-scope> void <method-name>(InvocationContext)
+     *  - @PreDestroy <any-scope> void <method-name>(InvocationContext)
+     *  - @PrePassivate <any-scope> void <method-name>(InvocationContext)
+     *  - @PostActivate <any-scope> void <method-name>(InvocationContext)
+     *  - @AroundInvoke <any-scope> Object <method-name>(InvocationContext) throws Exception
+     *
+     * @param clazz
+     * @param callbackInfos the raw CallbackInfo objects
+     * @param methods the collection where the created methods will be placed
+     */
+    private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
+        for (CallbackInfo callbackInfo : callbackInfos) {
+            try {
+                Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
+                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
+                    methods.add(method);
+                }
+                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                    methods.add(method);
+                }
+            } catch (NoSuchMethodException e) {
+                logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
+            }
+        }
+        Collections.sort(methods, new MethodCallbackComparator());
+    }
+
+    /**
+     * Used for getting the java.lang.reflect.Method objects for the following callbacks:
+     *
+     *  - @PostConstruct <any-scope> void <method-name>()
+     *  - @PreDestroy <any-scope> void <method-name>()
+     *  - @PrePassivate <any-scope> void <method-name>()
+     *  - @PostActivate <any-scope> void <method-name>()
+     *
+     * These apply to the bean class only, interceptor methods use InvocationContext as
+     * a parameter.  The toMethods method is used for those.
+     *
+     * @param clazz
+     * @param callbackInfos
+     * @param methods
+     */
+    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
+        for (CallbackInfo callbackInfo : callbackInfos) {
+            try {
+                Method method = getMethod(clazz, callbackInfo.method);
+                if (callbackInfo.className == null){
+                    methods.add(method);
+                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                    methods.add(method);
+                } else {
+                    // check for a private method on the declared class
+
+                    // find declared class
+                    Class c = clazz;
+                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
+
+                    // get callback method
+                    if (c != null) {
+                        try {
+                            method = c.getDeclaredMethod(callbackInfo.method);
+                            // make sure it is private
+                            if (Modifier.isPrivate(method.getModifiers())) {
+                                SetAccessible.on(method);
+                                methods.add(method);
+                            }
+                        } catch (NoSuchMethodException e) {
+                        }
+                    }
+                }
+            } catch (NoSuchMethodException e) {
+                String message = "Bean Callback method not found (skipping): public void " + callbackInfo.method + "(); in class " + clazz.getName();
+                logger.warning(message);
+                throw new IllegalStateException(message, e);
+            }
+        }
+        Collections.sort(methods, new MethodCallbackComparator());
+    }
+
+    /**
+     * Used by toMethods and toCallbacks to find the nearest java.lang.reflect.Method with the given
+     * name and parameters.  Callbacks can be private so class.getMethod() cannot be used.  Searching
+     * starts by looking in the specified class, if the method is not found searching continues with
+     * the immediate parent and continues recurssively until the method is found or java.lang.Object
+     * is reached.  If the method is not found a NoSuchMethodException is thrown.
+     *
+     * @param clazz
+     * @param methodName
+     * @param parameterTypes
+     * @return
+     * @throws NoSuchMethodException if the method is not found in this class or any of its parent classes
+     */
+    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+        NoSuchMethodException original = null;
+        while (clazz != null){
+            try {
+                Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
+                return SetAccessible.on(method);
+            } catch (NoSuchMethodException e) {
+                if (original == null) original = e;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        throw original;
+    }
+
+    // -------------------------------------------------------------------
+    // Methods for sorting the bindings and callbacks
+    // -------------------------------------------------------------------
+
     public static class IntercpetorBindingComparator implements Comparator<InterceptorBindingInfo> {
         public int compare(InterceptorBindingInfo a, InterceptorBindingInfo b) {
             Level levelA = level(a);
@@ -360,6 +395,16 @@ public class InterceptorBindingBuilder {
         }
 
         return Type.ADDITION_OR_LOWER_EXCLUSION;
+    }
+
+    public static class MethodCallbackComparator implements Comparator<Method> {
+        public int compare(Method m1, Method m2) {
+            Class<?> c1 = m1.getDeclaringClass();
+            Class<?> c2 = m2.getDeclaringClass();
+            if (c1.equals(c2)) return 0;
+            if (c1.isAssignableFrom(c2)) return -1;
+            return 1;
+        }
     }
 
 }
