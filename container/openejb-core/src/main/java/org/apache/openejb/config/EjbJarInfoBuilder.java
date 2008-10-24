@@ -41,6 +41,8 @@ import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.JndiNameInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.MethodConcurrencyInfo;
+import org.apache.openejb.assembler.classic.MethodScheduleInfo;
+import org.apache.openejb.assembler.classic.ScheduleInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -77,6 +79,8 @@ import org.apache.openejb.jee.ResultTypeMapping;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.ConcurrencyType;
 import org.apache.openejb.jee.ContainerConcurrency;
+import org.apache.openejb.jee.MethodSchedule;
+import org.apache.openejb.jee.Schedule;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.Jndi;
@@ -176,6 +180,7 @@ public class EjbJarInfoBuilder {
             initExcludesList(jar, ejbds, ejbJar);
             initMethodTransactions(jar, ejbds, ejbJar);
             initMethodConcurrency(jar, ejbds, ejbJar);
+            initMethodSchedules(jar, ejbds, ejbJar);
             initApplicationExceptions(jar, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -329,6 +334,33 @@ public class EjbJarInfoBuilder {
             info.concurrencyAttribute = att.getConcurrencyAttribute().toString();
             info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));
             ejbJarInfo.methodConcurrency.add(info);
+        }
+    }
+
+    private void initMethodSchedules(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
+
+        List<MethodSchedule> methodSchedule = jar.getEjbJar().getAssemblyDescriptor().getMethodSchedule();
+        for (MethodSchedule att : methodSchedule) {
+            MethodScheduleInfo info = new MethodScheduleInfo();
+
+            info.description = att.getDescription();
+            info.method = toInfo(att.getMethod());
+
+            for (Schedule schedule : att.getSchedule()) {
+                ScheduleInfo scheduleInfo = new ScheduleInfo();
+                scheduleInfo.second = schedule.getSecond();
+                scheduleInfo.minute = schedule.getMinute();
+                scheduleInfo.hour = schedule.getHour();
+                scheduleInfo.dayOfWeek = schedule.getDayOfWeek();
+                scheduleInfo.dayOfMonth = schedule.getDayOfMonth();
+                scheduleInfo.month = schedule.getMonth();
+                scheduleInfo.year = schedule.getYear();
+                scheduleInfo.info = schedule.getInfo();
+                scheduleInfo.persistent = schedule.isPersistent();
+                info.schedules.add(scheduleInfo);
+            }
+
+            ejbJarInfo.methodSchedules.add(info);
         }
     }
 

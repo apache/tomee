@@ -80,6 +80,8 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.MethodSchedule;
+import org.apache.openejb.jee.Schedule;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -821,10 +823,56 @@ public class AnnotationDeployer implements DynamicDeployer {
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
 
                 /*
+                 * @Schedule
+                 * @Schedules
+                 */
+                Set<Method> scheduleMethods = new HashSet<Method>();
+                scheduleMethods.addAll(inheritedClassFinder.findAnnotatedMethods(javax.ejb.Schedules.class));
+                scheduleMethods.addAll(inheritedClassFinder.findAnnotatedMethods(javax.ejb.Schedule.class));
+
+                Map<String, List<MethodAttribute>> existingDeclarations = assemblyDescriptor.getMethodScheduleMap(ejbName);
+
+                for (Method method : scheduleMethods) {
+
+                    // Don't add the schedules from annotations if the schedules have been
+                    // supplied for this method via xml.  The xml is considered an override.
+                    if (hasMethodAttribute(existingDeclarations, method)) break;
+
+                    List<javax.ejb.Schedule> list = new ArrayList<javax.ejb.Schedule>();
+
+                    javax.ejb.Schedules schedulesAnnotation = method.getAnnotation(javax.ejb.Schedules.class);
+                    if (schedulesAnnotation != null){
+                        list.addAll(asList(schedulesAnnotation.value()));
+                    }
+
+                    javax.ejb.Schedule scheduleAnnotation = method.getAnnotation(javax.ejb.Schedule.class);
+                    if (scheduleAnnotation != null){
+                        list.add(scheduleAnnotation);
+                    }
+
+                    if (list.size() == 0) continue;
+
+                    MethodSchedule methodSchedule = new MethodSchedule(ejbName, method);
+                    for (javax.ejb.Schedule schedule : list) {
+                        Schedule s = new Schedule();
+                        s.setSecond(schedule.second());
+                        s.setMinute(schedule.minute());
+                        s.setHour(schedule.hour());
+                        s.setDayOfWeek(schedule.dayOfWeek());
+                        s.setDayOfMonth(schedule.dayOfMonth());
+                        s.setMonth(schedule.month());
+                        s.setYear(schedule.year());
+                        s.setPersistent(schedule.persistent());
+                        s.setInfo(schedule.info());
+                        methodSchedule.getSchedule().add(s);
+                    }
+                    assemblyDescriptor.getMethodSchedule().add(methodSchedule);
+                }
+
+                /*
                  * @Interceptors
                  */
-                for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class))
-                {
+                for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class)) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
@@ -1177,6 +1225,30 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
+        }
+
+        private boolean hasMethodAttribute(Map<String, List<MethodAttribute>> existingDeclarations, Method method) {
+            List<MethodAttribute> list = existingDeclarations.get(method.getName());
+            if (list == null) return false;
+
+            for (MethodAttribute attribute : list) {
+                MethodParams methodParams = attribute.getMethodParams();
+                if (methodParams == null) break;
+
+                List<String> params1 = methodParams.getMethodParam();
+                String[] params2 = asStrings(method.getParameterTypes());
+                if (params1.size() != params2.length) break;
+
+                for (int i = 0; i < params1.size(); i++) {
+                    String a = params1.get(i);
+                    String b = params2[i];
+                    if (!a.equals(b)) break;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {

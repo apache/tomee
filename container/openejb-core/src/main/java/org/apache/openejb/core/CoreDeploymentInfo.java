@@ -34,6 +34,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.ejb.ScheduleExpression;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -115,6 +116,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private TransactionPolicyFactory transactionPolicyFactory;
 
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
+    private final Map<Method, List<ScheduleExpression>> methodSchedules = new HashMap<Method, List<ScheduleExpression>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
@@ -703,10 +705,21 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return interceptors;
     }
 
-
     public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
         methodInterceptors.put(method, interceptors);
         this.interceptors.addAll(interceptors);
+    }
+
+    public List<ScheduleExpression> getMethodSchedules(Method method) {
+        List<ScheduleExpression> schedules = methodSchedules.get(method);
+        if (schedules == null) {
+            schedules = new ArrayList<ScheduleExpression>();
+        }
+        return schedules;
+    }
+
+    public void setMethodSchedules(Method method, List<ScheduleExpression> schedules) {
+        methodSchedules.put(method, schedules);
     }
 
     private final Set<InterceptorData> interceptors = new HashSet<InterceptorData>();

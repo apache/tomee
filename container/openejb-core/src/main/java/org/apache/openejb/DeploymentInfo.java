@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Set;
 import javax.naming.Context;
+import javax.ejb.ScheduleExpression;
 
 public interface DeploymentInfo {
 
@@ -39,7 +40,7 @@ public interface DeploymentInfo {
     public BeanType getComponentType();
 
     public InterfaceType getInterfaceType(Class clazz);
-    
+
     public TransactionType getTransactionType(Method method);
 
     public Collection<String> getAuthorizedRoles(Method method);
@@ -109,10 +110,12 @@ public interface DeploymentInfo {
     public List<Method> getPrePassivate();
 
     public List<Method> getRemoveMethods();
-    
+
     public List<Injection> getInjections();
-    
+
     public List<InterceptorData> getMethodInterceptors(Method method);
+
+    public List<ScheduleExpression> getMethodSchedules(Method method);
 
     public void setContainer(Container container);
 

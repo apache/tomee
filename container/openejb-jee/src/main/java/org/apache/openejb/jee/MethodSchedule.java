@@ -31,16 +31,20 @@ import java.util.ArrayList;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-scheduleType", propOrder = {
         "descriptions",
+        "ejbName",
         "schedule",
         "method"
         })
-public class MethodSchedule implements AttributeBinding<List<Schedule>> {
+public class MethodSchedule {
 
     @XmlElement(name = "schedule", required = true)
     protected List<Schedule> schedule;
 
     @XmlElement(required = true)
-    protected List<Method> method;
+    protected NamedMethod method;
+
+    @XmlElement(name = "ejb-name", required = true)
+    protected String ejbName;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -54,15 +58,16 @@ public class MethodSchedule implements AttributeBinding<List<Schedule>> {
     }
 
     public MethodSchedule(String className, String ejbName, String methodName, Schedule... schedules) {
-        this(new Method(ejbName, className, methodName), schedules);
+        this(ejbName, new NamedMethod(className, methodName), schedules);
     }
 
     public MethodSchedule(String ejbName, java.lang.reflect.Method method, Schedule... schedules) {
-        this(new Method(ejbName, method), schedules);
+        this(ejbName, new NamedMethod(method), schedules);
     }
 
-    public MethodSchedule(Method method, Schedule... schedules) {
-        getMethod().add(method);
+    public MethodSchedule(String ejbName, NamedMethod method, Schedule... schedules) {
+        this.method = method;
+        this.ejbName = ejbName;
         for (Schedule schedule : schedules) {
             getSchedule().add(schedule);
         }
@@ -88,11 +93,20 @@ public class MethodSchedule implements AttributeBinding<List<Schedule>> {
         return this.schedule;
     }
 
-    public List<Method> getMethod() {
-        if (method == null) {
-            method = new ArrayList<Method>();
-        }
-        return this.method;
+    public String getEjbName() {
+        return ejbName;
+    }
+
+    public void setEjbName(String ejbName) {
+        this.ejbName = ejbName;
+    }
+
+    public NamedMethod getMethod() {
+        return method;
+    }
+
+    public void setMethod(NamedMethod method) {
+        this.method = method;
     }
 
     public String getId() {

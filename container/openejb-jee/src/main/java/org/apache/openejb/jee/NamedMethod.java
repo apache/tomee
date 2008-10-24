@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -39,8 +40,13 @@ public class NamedMethod {
 
     @XmlElement(name = "method-name", required = true)
     protected String methodName;
+
     @XmlElement(name = "method-params")
     protected MethodParams methodParams;
+
+    @XmlTransient
+    protected String className;
+
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -50,6 +56,7 @@ public class NamedMethod {
     }
 
     public NamedMethod(java.lang.reflect.Method method) {
+        this.className = method.getDeclaringClass().getName();
         this.methodName = method.getName();
         MethodParams methodParams = new MethodParams();
         for (Class<?> type : method.getParameterTypes()) {
@@ -84,6 +91,14 @@ public class NamedMethod {
 
     public void setMethodParams(MethodParams value) {
         this.methodParams = value;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getId() {

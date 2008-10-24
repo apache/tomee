@@ -20,39 +20,46 @@ package org.apache.openejb.jee;
  * @version $Rev$ $Date$
  */
 public class MethodAttribute<A> {
-    private final Method method;
+
     private final A attribute;
+    private final String ejbName;
+    private final String methodName;
+    private final MethodParams methodParams;
+    private final String className;
 
     public MethodAttribute(A attribute, Method method) {
         this.attribute = attribute;
-        this.method = method;
+        this.ejbName = method.getEjbName();
+        this.methodName = method.getMethodName();
+        this.methodParams = method.getMethodParams();
+        this.className = method.getClassName();
+    }
+
+    public MethodAttribute(A attribute, String ejbName, NamedMethod method) {
+        this.attribute = attribute;
+        this.ejbName = ejbName;
+        this.methodName = method.getMethodName();
+        this.methodParams = method.getMethodParams();
+        this.className = method.getClassName();
     }
 
     public A getAttribute() {
         return attribute;
     }
 
-    public String getEjbName() {
-        return method.getEjbName();
+    public String getClassName() {
+        return className;
     }
 
-    public MethodIntf getMethodIntf() {
-        return method.getMethodIntf();
+    public String getEjbName() {
+        return ejbName;
     }
 
     public String getMethodName() {
-        return method.getMethodName();
+        return methodName;
     }
 
     public MethodParams getMethodParams() {
-        return method.getMethodParams();
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public String getClassName() {
-        return method.getClassName();
+        return methodParams;
     }
 }

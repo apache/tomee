@@ -133,7 +133,21 @@ public class AssemblyDescriptor {
     }
 
     public Map<String,List<MethodAttribute>> getMethodScheduleMap(String ejbName) {
-        return getMethodAttributes(ejbName, getMethodSchedule());
+        Map<String,List<MethodAttribute>> methods = new LinkedHashMap<String,List<MethodAttribute>>();
+
+        for (MethodSchedule methodSchedule : getMethodSchedule()) {
+            if (!methodSchedule.getEjbName().equals(ejbName)) continue;
+
+            NamedMethod method = methodSchedule.getMethod();
+            String methodName = method.getMethodName();
+            List<MethodAttribute> list = methods.get(methodName);
+            if (list == null){
+                list = new ArrayList<MethodAttribute>();
+                methods.put(methodName, list);
+            }
+            list.add(new MethodAttribute(methodSchedule.getAttribute(), ejbName, method));
+        }
+        return methods;
     }
 
     private Map<String, List<MethodAttribute>> getMethodAttributes(String ejbName, List<? extends AttributeBinding> bindings) {
