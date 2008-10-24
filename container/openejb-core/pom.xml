@@ -354,6 +354,10 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
     <dependency>
+      <groupId>quartz</groupId>
+      <artifactId>quartz</artifactId>
+    </dependency>
+    <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
       <scope>test</scope>
