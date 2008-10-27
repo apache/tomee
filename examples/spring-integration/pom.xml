@@ -59,10 +59,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!--
-    The <scope>test</scope> guarantees that non of your runtime
-    code is dependent on any OpenEJB classes.
-    -->
+    <!-- START SNIPPET: required -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
@@ -78,7 +75,9 @@
       <artifactId>spring</artifactId>
       <version>2.5.5</version>
     </dependency>
+    <!-- END SNIPPET: required -->
 
+    <!-- START SNIPPET: optional -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
@@ -103,7 +102,8 @@
       </exclusions>
       <scope>test</scope>
     </dependency>
-    
+    <!-- END SNIPPET: optional -->
+
   </dependencies>
 </project>
 
