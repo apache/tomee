@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import java.util.List;
 
+//START SNIPPET: code
 /**
  * This is a simple Spring bean that we use as an easy way
  * to seed the example with a list of persistent Movie objects
@@ -50,3 +51,4 @@ public class AvailableMovies {
         this.movies = movies;
     }
 }
+//END SNIPPET: code
