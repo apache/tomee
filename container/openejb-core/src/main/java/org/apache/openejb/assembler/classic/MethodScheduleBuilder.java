@@ -20,22 +20,16 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.SetAccessible;
-import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.timer.MethodSchedule;
+import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.OpenEJBException;
 
-import javax.interceptor.InvocationContext;
 import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Comparator;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 public class MethodScheduleBuilder {
 
@@ -51,6 +45,7 @@ public class MethodScheduleBuilder {
         Class clazz = deploymentInfo.getBeanClass();
         String ejbName = deploymentInfo.getEjbName();
 
+        List<MethodSchedule> schedules = new ArrayList<MethodSchedule>();
         for (MethodScheduleInfo info : methodSchedules) {
             if (!ejbName.equals(info.ejbName)) continue;
 
@@ -67,8 +62,10 @@ public class MethodScheduleBuilder {
             }
 
             if (info.method.className == null || method.getDeclaringClass().getName().equals(info.method.className)){
-                ArrayList<ScheduleExpression> schedules = new ArrayList<ScheduleExpression>();
+
+                ArrayList<ScheduleData> data = new ArrayList<ScheduleData>();
                 for (ScheduleInfo scheduleInfo : info.schedules) {
+
                     ScheduleExpression expr = new ScheduleExpression();
                     expr.second(scheduleInfo.second);
                     expr.minute(scheduleInfo.minute);
@@ -77,15 +74,19 @@ public class MethodScheduleBuilder {
                     expr.dayOfMonth(scheduleInfo.dayOfMonth);
                     expr.month(scheduleInfo.month);
                     expr.year(scheduleInfo.year);
-                    // TODO: we loose 'persistent' and 'info'
 
-                    schedules.add(expr);
+                    TimerConfig config = new TimerConfig();
+                    config.setInfo(scheduleInfo.info);
+                    config.setPersistent(scheduleInfo.persistent);
+
+                    data.add(new ScheduleData(config, expr));
                 }
 
-                deploymentInfo.setMethodSchedules(method, schedules);
+                schedules.add(new MethodSchedule(method, data));
             }
         }
 
+        deploymentInfo.setMethodSchedules(schedules);
 
     }
 

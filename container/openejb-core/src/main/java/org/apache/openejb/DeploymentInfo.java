@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.transaction.TransactionType;
 
@@ -115,7 +116,7 @@ public interface DeploymentInfo {
 
     public List<InterceptorData> getMethodInterceptors(Method method);
 
-    public List<ScheduleExpression> getMethodSchedules(Method method);
+    public List<MethodSchedule> getMethodSchedules();
 
     public void setContainer(Container container);
 

@@ -49,6 +49,7 @@ import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.util.Index;
@@ -116,7 +117,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private TransactionPolicyFactory transactionPolicyFactory;
 
     private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
-    private final Map<Method, List<ScheduleExpression>> methodSchedules = new HashMap<Method, List<ScheduleExpression>>();
+    private final List<MethodSchedule> methodSchedules = new ArrayList<MethodSchedule>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
@@ -710,16 +711,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.interceptors.addAll(interceptors);
     }
 
-    public List<ScheduleExpression> getMethodSchedules(Method method) {
-        List<ScheduleExpression> schedules = methodSchedules.get(method);
-        if (schedules == null) {
-            schedules = new ArrayList<ScheduleExpression>();
-        }
-        return schedules;
+    public List<MethodSchedule> getMethodSchedules() {
+        return methodSchedules;
     }
 
-    public void setMethodSchedules(Method method, List<ScheduleExpression> schedules) {
-        methodSchedules.put(method, schedules);
+    public void setMethodSchedules(List<MethodSchedule> schedules) {
+        methodSchedules.addAll(schedules);
     }
 
     private final Set<InterceptorData> interceptors = new HashSet<InterceptorData>();
