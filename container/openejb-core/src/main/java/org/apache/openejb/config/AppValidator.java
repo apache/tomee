@@ -30,13 +30,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.cli.SystemExitException;
-import org.apache.openejb.config.rules.CheckClasses;
-import org.apache.openejb.config.rules.CheckMethods;
-import org.apache.openejb.config.rules.CheckAssemblyBindings;
-import org.apache.openejb.config.rules.CheckCallbacks;
-import org.apache.openejb.config.rules.CheckInjectionTargets;
-import org.apache.openejb.config.rules.CheckPersistenceRefs;
-import org.apache.openejb.config.rules.CheckDependsOn;
+import org.apache.openejb.config.rules.*;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 
@@ -100,7 +94,8 @@ public class AppValidator {
                 new CheckAssemblyBindings(),
                 new CheckInjectionTargets(),
                 new CheckPersistenceRefs(),
-                new CheckDependsOn()
+                new CheckDependsOn(),
+                new CheckUserTransactionRefs()
         };
         return rules;
     }

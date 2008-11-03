@@ -84,6 +84,14 @@ public class ResourceEnvRef implements JndiReference {
     @XmlID
     protected String id;
 
+    public ResourceEnvRef() {
+    }
+
+    public ResourceEnvRef(String resourceEnvRefName, String resourceEnvRefType) {
+        this.resourceEnvRefName = resourceEnvRefName;
+        this.resourceEnvRefType = resourceEnvRefType;
+    }
+
     @XmlTransient
     public String getName() {
         return getResourceEnvRefName();

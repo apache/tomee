@@ -92,7 +92,7 @@ public class EnvEntry implements JndiReference {
         this.envEntryValue = envEntryValue;
     }
 
-    public EnvEntry(String envEntryName, Class envEntryType, String envEntryValue) {
+    public EnvEntry(String envEntryName, Class<?> envEntryType, String envEntryValue) {
         this(envEntryName, envEntryType.getName(), envEntryValue);
     }
 

@@ -23,9 +23,6 @@ import org.apache.openejb.OpenEJBException;
  */
 public class ValidateModules implements DynamicDeployer {
 
-    public ValidateModules() {
-    }
-
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         AppValidator validator = new AppValidator();
         return validator.validate(appModule);
