@@ -38,7 +38,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 
 /**
- * @version $Revision: 581127 $ $Date: 2007-10-02 07:43:16 +0530 (Tue, 02 Oct 2007) $
+ * @version $Revision$ $Date$
  */
 public class StatelessInstanceManagerPoolingTest extends TestCase {
 

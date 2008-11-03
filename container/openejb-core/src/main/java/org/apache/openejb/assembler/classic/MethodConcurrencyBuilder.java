@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.lang.reflect.Method;
 
 /**
- * @version $Rev: 646050 $ $Date: 2008-04-08 12:46:04 -0700 (Tue, 08 Apr 2008) $
+ * @version $Rev$ $Date$
  */
 public class MethodConcurrencyBuilder {
 

@@ -33,7 +33,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * @version $Revision: 581127 $ $Date: 2007-10-01 19:13:16 -0700 (Mon, 01 Oct 2007) $
+ * @version $Revision$ $Date$
  */
 public class StatefulConstructorInjectionTest extends TestCase {
 

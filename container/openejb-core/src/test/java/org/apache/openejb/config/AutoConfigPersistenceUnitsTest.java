@@ -40,7 +40,7 @@ import java.util.Properties;
 import java.util.List;
 
 /**
- * @version $Revision: 632667 $ $Date: 2008-03-01 14:32:11 -0800 (Sat, 01 Mar 2008) $
+ * @version $Revision$ $Date$
  */
 public class AutoConfigPersistenceUnitsTest extends TestCase {
     private ConfigurationFactory config;

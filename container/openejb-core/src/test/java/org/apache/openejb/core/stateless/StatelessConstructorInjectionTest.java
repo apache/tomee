@@ -39,7 +39,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 
 /**
- * @version $Revision: 581127 $ $Date: 2007-10-01 19:13:16 -0700 (Mon, 01 Oct 2007) $
+ * @version $Revision$ $Date$
  */
 public class StatelessConstructorInjectionTest extends TestCase {
 

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @version $Rev: 607160 $ $Date: 2007-12-27 18:22:44 -0800 (Thu, 27 Dec 2007) $
+ * @version $Rev$ $Date$
  */
 class RemoveWebServices implements DynamicDeployer {
 
