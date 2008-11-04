@@ -16,13 +16,15 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.StatelessBean;
 import static org.apache.openejb.jee.TransactionType.CONTAINER;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,44 +33,42 @@ import org.junit.Test;
  */
 public class CheckUserTransactionRefsTest {
 
-    AppModule appModule;
+    private EjbModule module;
+    private StatelessBean bean;
+
+    private CheckUserTransactionRefs rule;
 
     @Before
-    public void setUp() {
-        // Stateless session bean with container-managed transaction demarcation
-        StatelessBean cmtdSlsb = new StatelessBean("CheckUserTransactionRefsTest", "nopackage.CheckUserTransactionRefsTestBean");
-        cmtdSlsb.setTransactionType(CONTAINER);
+    public void initialize() {
+        bean = new StatelessBean("CheeseEjb", "org.acme.CheeseEjb");
+        bean.setTransactionType(CONTAINER);
 
-        // "@Resource UserTransaction tx" declaration
-        ResourceRef resourceRef = new ResourceRef();
-        resourceRef.setName("nopackage.CheckUserTransactionRefsTestBean/tx");
-        resourceRef.setResType("javax.transaction.UserTransaction");
+        module = new EjbModule(new EjbJar());
+        module.getEjbJar().addEnterpriseBean(bean);
 
-        cmtdSlsb.getResourceRef().add(resourceRef);
-
-        EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(cmtdSlsb);
-        EjbModule ejbModule = new EjbModule(ejbJar);
-
-        appModule = new AppModule(getClass().getClassLoader(), "some/path");
-        appModule.getEjbModules().add(ejbModule);
-
+        rule = new CheckUserTransactionRefs();
+        rule.module = module;
     }
 
     @Test
     public void testSLSBwithUserTransaction() {
 
-        CheckUserTransactionRefs checkUserTransactionRefs = new CheckUserTransactionRefs();
-        // FIXME: It's not possible to run validate(ejbModule) with warn without setting up module in the validate first
-        checkUserTransactionRefs.validate(appModule);
+        // "@Resource UserTransaction tx" declaration
+        ResourceRef resourceRef = new ResourceRef();
+        resourceRef.setResRefName("org.acme.CheeseEjb/tx");
+        resourceRef.setResType("javax.transaction.UserTransaction");
+        resourceRef.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "org.acme.CheeseEjb/tx"));
+        bean.getResourceRef().add(resourceRef);
 
-        assert appModule.getValidation().getErrors().length == 0;
-        assert appModule.getValidation().getWarnings().length == 1;
-        assert appModule.getValidation().getFailures().length == 0;
+        rule.validate(module);
+
+        Assert.assertThat(module.getValidation().getErrors().length, is(1));
+        Assert.assertThat(module.getValidation().getWarnings().length, is(0));
+        Assert.assertThat(module.getValidation().getFailures().length, is(0));
     }
 
     @After
     public void cleanUp() {
-        appModule = null;
+        module = null;
     }
 }

@@ -19,6 +19,7 @@ package org.apache.openejb.config.rules;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
 import static org.apache.openejb.jee.TransactionType.CONTAINER;
 
 import java.util.Collection;
@@ -34,15 +35,14 @@ import java.util.Collection;
  * @version $Rev$ $Date$
  */
 public class CheckUserTransactionRefs extends ValidationBase {
-    // FIXME: Shouldn't the parent method be protected?
+
     public void validate(EjbModule ejbModule) {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (bean.getTransactionType() == CONTAINER) {
-                // FIXME: I think bean.getRes should be used instead, but OpenEJB doesn't allow it atm
-                Collection<ResourceEnvRef> resRefs = bean.getResourceEnvRef();
-                for (ResourceEnvRef resRef : resRefs) {
-                    if ("javax.transaction.UserTransaction".equals(resRef.getResourceEnvRefType())) {
-                        warn(bean, "userResourceRef.forbiddenForCmtdBeans", resRef.getResourceEnvRefName());
+                Collection<ResourceRef> resRefs = bean.getResourceRef();
+                for (ResourceRef resRef : resRefs) {
+                    if ("javax.transaction.UserTransaction".equals(resRef.getResType())) {
+                        error(bean, "userResourceRef.forbiddenForCmtdBeans", resRef.getName());
                     }
                 }
             }

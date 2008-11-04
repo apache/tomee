@@ -27,11 +27,12 @@ import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
 /**
  * @version $Rev$ $Date$
  */
-public class CheckInjectionTargetsTest extends TestCase {
+public class CheckInjectionTargetsTest {
 
     private EjbModule module;
     private StatelessBean bean;
@@ -46,9 +47,10 @@ public class CheckInjectionTargetsTest extends TestCase {
         rule = new CheckInjectionTargets();
         rule.module = module;
     }
-    
-    public void test() {
 
+    @Test
+    public void test() {
+        
         // Valid
         EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
         envEntry.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "org.acme.CheeseEjb/count"));
@@ -67,23 +69,7 @@ public class CheckInjectionTargetsTest extends TestCase {
         rule.validate(module);
 
         ValidationWarning[] warnings = module.getValidation().getWarnings();
-        assertEquals(warnings.length, 2);
+        Assert.assertEquals(warnings.length, 2);
 
     }
-    
-    @Test
-    public void testUserTransaction() {
-        // 16.12 UserTransaction Interface
-        // only session and message-driven beans with bean-managed transaction demarcation are allowed to use this interface
-        ResourceEnvRef resEnvEntry = new ResourceEnvRef("jta/UserTransaction", "javax.transaction.UserTransaction");
-        bean.getResourceEnvRef().add(resEnvEntry);
-        
-        rule.validate(module);
-
-        ValidationError[] errors = module.getValidation().getErrors();
-        assertEquals(errors.length, 1);
-
-        // The authenticationType and shareable elements of the Resource annotation must not be specified
-    }
-
 }
