@@ -350,5 +350,13 @@ public class PersistenceBootstrap {
 
         public void setLogWriter(PrintWriter out) throws SQLException {
         }
+
+        public boolean isWrapperFor(Class<?> iface) throws SQLException {
+            return false;
+        }
+
+        public <T> T unwrap(Class<T> iface) throws SQLException {
+            throw new SQLException();
+        }
     }
 }
