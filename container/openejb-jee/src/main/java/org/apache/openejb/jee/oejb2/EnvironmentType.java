@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="dependencies" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}dependenciesType" minOccurs="0"/>
  *         &lt;element name="hidden-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
  *         &lt;element name="non-overridable-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
+ *         &lt;element name="private-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
  *         &lt;element name="inverse-classloading" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/>
  *         &lt;element name="suppress-default-environment" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/>
  *       &lt;/sequence>
@@ -53,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "dependencies",
     "hiddenClasses",
     "nonOverridableClasses",
+    "privateClasses",
     "inverseClassloading",
     "suppressDefaultEnvironment"
 })
@@ -66,6 +68,8 @@ public class EnvironmentType {
     protected ClassFilterType hiddenClasses;
     @XmlElement(name = "non-overridable-classes", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ClassFilterType nonOverridableClasses;
+    @XmlElement(name = "private-classes", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected ClassFilterType privateClasses;
     @XmlElement(name = "inverse-classloading", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EmptyType inverseClassloading;
     @XmlElement(name = "suppress-default-environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
@@ -165,6 +169,30 @@ public class EnvironmentType {
      */
     public void setNonOverridableClasses(ClassFilterType value) {
         this.nonOverridableClasses = value;
+    }
+
+    /**
+     * Gets the value of the privateClasses property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ClassFilterType }
+     *     
+     */
+    public ClassFilterType getPrivateClasses() {
+        return privateClasses;
+    }
+
+    /**
+     * Sets the value of the privateClasses property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ClassFilterType }
+     *     
+     */
+    public void setPrivatelasses(ClassFilterType value) {
+        this.privateClasses = value;
     }
 
     /**
