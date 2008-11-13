@@ -91,7 +91,6 @@ public class NamespaceFilter extends XMLFilterImpl {
         ns.put("port-completion", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("port-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("primary-key-class", "http://openejb.apache.org/xml/ns/pkgen-2.1");
-        ns.put("private-classes", "http://geronimo.apache.org/xml/ns/deployment-1.2");
         ns.put("property", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("protocol", "http://geronimo.apache.org/xml/ns/naming-1.2");
         ns.put("ref-name", "http://geronimo.apache.org/xml/ns/naming-1.2");
