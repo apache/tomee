@@ -308,7 +308,6 @@ public class StatelessInstanceManager {
      * throwing a system exception
      * 
      * @param callContext
-     * @param bean
      */
     public void discardInstance(ThreadContext callContext) {    	
     	if (strictPooling) {
