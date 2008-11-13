@@ -302,6 +302,21 @@ public class StatelessInstanceManager {
             }
         }
     }
+    
+    /**
+     * This method is called to release the semaphore in case of the business method 
+     * throwing a system exception
+     * 
+     * @param callContext
+     * @param bean
+     */
+    public void discardInstance(ThreadContext callContext) {    	
+    	if (strictPooling) {
+    	    CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            Data data = (Data) deploymentInfo.getContainerData();        
+            data.getSemaphore().release();            
+        }
+    }
 
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {

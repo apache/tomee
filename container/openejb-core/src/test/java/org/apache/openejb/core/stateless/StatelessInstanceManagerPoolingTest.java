@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import junit.framework.TestCase;
 
@@ -87,6 +88,48 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         assertEquals(10, CounterBean.instances.get());
 
     }
+    
+    public void testStatelessBeanRelease() throws Exception {
+    	
+    	
+    	final CountDownLatch invocations = new CountDownLatch(30);
+        final InitialContext ctx = new InitialContext(); 
+        final AtomicInteger instances = new AtomicInteger();
+        // Do a business method...
+        Runnable r = new Runnable(){        	
+        	public void run(){
+                Object object = null;
+				try {
+					object = ctx.lookup("CounterBeanLocal");
+				} catch (NamingException e) {					
+					assertTrue(false);
+				}                                
+                Counter counter = (Counter) object;
+                assertNotNull(counter);
+                try{                
+        		    counter.explode(invocations);        	
+                }catch(Exception e){
+                	
+                }        	   
+            }
+        };
+
+        //  -- READY --
+
+        // 30 instances should be created and discarded.
+        for (int i = 0; i < 30; i++) {
+            Thread t = new Thread(r);
+            t.start();            
+        }
+
+        boolean success = invocations.await(10000, TimeUnit.MILLISECONDS);
+
+        assertTrue(success);
+
+        assertEquals(30, CounterBean.discardedInstances.get());
+
+    }
+
     
     public void testStatelessBeanTimeout() throws Exception {
 
@@ -183,6 +226,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     public static interface Counter {
         int count();
         void race(CountDownLatch ready, CountDownLatch go);
+        void explode(CountDownLatch invocations);
     }
     
     @Remote
@@ -198,6 +242,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
     public static class CounterBean implements Counter, RemoteCounter {
 
         public static AtomicInteger instances = new AtomicInteger();
+        public static AtomicInteger discardedInstances = new AtomicInteger();
 
         private int count;
 
@@ -207,6 +252,19 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         
         public int count(){
         	return instances.get();
+        }
+        
+        public int discardCount(){
+        	return discardedInstances.get();
+        }
+        
+        public void explode(CountDownLatch invocations){
+        	try{
+        	    discardedInstances.incrementAndGet();
+        	    throw new NullPointerException();
+        	}finally{
+        		invocations.countDown();
+        	}
         }
 
         public void race(CountDownLatch ready, CountDownLatch go){

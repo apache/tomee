@@ -217,8 +217,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
                 // The bean instance is not put into the pool via instanceManager.poolInstance
                 // and therefore the instance will be garbage collected and destroyed.
-                // For this reason the discardInstance method of the StatelessInstanceManager
-                // does nothing.
+                // In case of StrictPooling flag being set to true we also release the semaphore
+            	// in the discardInstance method of the instanceManager.
+            	instanceManager.discardInstance(callContext);
                 handleSystemException(txPolicy, re, callContext);
             } else {
                 /* Application Exception ***********************/
