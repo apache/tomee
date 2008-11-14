@@ -57,7 +57,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
             return null;
         }
 
-        txLogger.info("TX {}: Suspended transaction {}", transactionType, currentTx);
+        txLogger.info("TX {0}: Suspended transaction {1}", transactionType, currentTx);
 
         return new JtaSuspendedTransaction(currentTx);
     }

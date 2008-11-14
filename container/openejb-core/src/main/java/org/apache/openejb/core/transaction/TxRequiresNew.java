@@ -70,7 +70,7 @@ public class TxRequiresNew extends JtaTransactionPolicy {
             if (clientTx != null) {
                 resumeTransaction(clientTx);
             } else {
-                txLogger.debug("TX {}: No transaction to resume", transactionType);
+                txLogger.debug("TX {0}: No transaction to resume", transactionType);
             }
         }
     }
