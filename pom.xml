@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>3</version>
+    <version>4</version>
   </parent>
 
   <groupId>org.apache.openejb</groupId>
@@ -86,9 +86,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://${maven.username}@svn.apache.org/repos/asf/openejb/tags/openejb-3.0-SNAPSHOT</developerConnection>
-    <url>http://svn.apache.org/viewvc/incubator/openejb/tags/openejb-3.0-SNAPSHOT</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/openejb/trunk/openejb3</connection>
+    <developerConnection>scm:svn:https://${maven.username}@svn.apache.org/repos/asf/openejb/trunk/openejb3</developerConnection>
+    <url>http://svn.apache.org/viewvc/openejb/trunk/openejb3</url>
   </scm>
 
   <properties>
@@ -905,6 +905,12 @@
       <id>openejb-website</id>
       <url>scp://people.apache.org/www/openejb.apache.org/openejb/maven</url>
     </site>
+    <snapshotRepository>
+      <id>apache.snapshots</id>
+      <name>Apache Development Snapshot Repository</name>
+      <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
   </distributionManagement>
   <reporting>
     <plugins>
