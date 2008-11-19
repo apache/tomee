@@ -296,7 +296,7 @@ public class Paths {
         verifyDirectory("Catalina bin", getCatalinaBinDir());
         verifyWritableFile("Catalina server.xml", getServerXmlFile());
         verifyWritableFile("Catalina catalina.sh", getCatalinaShFile());
-        verifyWritableFile("Catalina catalina.sh", getCatalinaBatFile());
+        verifyWritableFile("Catalina catalina.bat", getCatalinaBatFile());
 
         verifyDirectory("OpenEJB lib", getOpenEJBLibDir());
 
