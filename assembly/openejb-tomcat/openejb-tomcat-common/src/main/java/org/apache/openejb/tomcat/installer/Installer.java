@@ -213,11 +213,11 @@ public class Installer {
         }
 
         // add our magic bits to the catalina sh file
-        String openejbJavaagentPath = paths.getCatalinaBaseDir().toURI().relativize(javaagentJar.toURI()).getPath();
+        String openejbJavaagentPath = paths.getCatalinaHomeDir().toURI().relativize(javaagentJar.toURI()).getPath();
         String newCatalinaSh = catalinaShOriginal.replace("# ----- Execute The Requested Command",
                 "# Add OpenEJB javaagent\n" +
-                "if [ -r \"$CATALINA_BASE\"/" + openejbJavaagentPath + " ]; then\n" +
-                "  JAVA_OPTS=\"\"-javaagent:$CATALINA_BASE/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
+                "if [ -r \"$CATALINA_HOME\"/" + openejbJavaagentPath + " ]; then\n" +
+                "  JAVA_OPTS=\"\"-javaagent:$CATALINA_HOME/" + openejbJavaagentPath + "\" $JAVA_OPTS\"\n" +
                 "fi\n" +
                 "\n" +
                 "# ----- Execute The Requested Command");
@@ -254,8 +254,8 @@ public class Installer {
         openejbJavaagentPath = openejbJavaagentPath.replace('/', '\\');
         String newCatalinaBat = catalinaBatOriginal.replace("rem ----- Execute The Requested Command",
                 "rem Add OpenEJB javaagent\r\n" +
-                "if not exist \"%CATALINA_BASE%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
-                "set JAVA_OPTS=\"-javaagent:%CATALINA_BASE%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
+                "if not exist \"%CATALINA_HOME%\\" + openejbJavaagentPath + "\" goto noOpenEJBJavaagent\r\n" +
+                "set JAVA_OPTS=\"-javaagent:%CATALINA_HOME%\\" + openejbJavaagentPath + "\" %JAVA_OPTS%\r\n" +
                 ":noOpenEJBJavaagent\r\n" +
                 "\r\n" +
                 "rem ----- Execute The Requested Command");
