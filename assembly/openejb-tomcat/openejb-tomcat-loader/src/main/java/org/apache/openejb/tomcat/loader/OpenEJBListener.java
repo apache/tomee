@@ -20,11 +20,14 @@ package org.apache.openejb.tomcat.loader;
 import java.io.File;
 import java.util.Properties;
 
+import javax.management.ObjectName;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
@@ -78,6 +81,8 @@ public class OpenEJBListener implements LifecycleListener {
                         openEjbWar = findOpenEjbWar(hostDir);
                         if (openEjbWar != null) {
                             return openEjbWar;
+                        } else {
+                        	return findOpenEjbWar(host);
                         }
                     }
                 }
@@ -87,6 +92,23 @@ public class OpenEJBListener implements LifecycleListener {
 
         return null;
     }
+    
+    private static File findOpenEjbWar(StandardHost standardHost) {
+    	//look for openejb war in a Tomcat context
+    	for(Container container : standardHost.findChildren()) {
+    		if(container instanceof StandardContext) {
+    			StandardContext standardContext = (StandardContext)container;
+    			File contextDocBase = new File(standardContext.getDocBase());
+    			if(contextDocBase.isDirectory()) {
+	    			File openEjbWar = findOpenEjbWarInContext(contextDocBase);
+	    	        if (openEjbWar != null) {
+	    	            return openEjbWar;
+	    	        }
+    			}
+    		}
+    	}
+    	return null;
+    }
 
     private static File findOpenEjbWar(File hostDir) {
         if (!hostDir.isDirectory()) {
@@ -95,19 +117,27 @@ public class OpenEJBListener implements LifecycleListener {
 
         // iterate over the contexts
         for (File contextDir : hostDir.listFiles()) {
-            // does this war have a web-inf lib dir
-            File webInfLib = new File(new File(contextDir, "WEB-INF"), "lib");
-            if (!webInfLib.isDirectory()) {
-                continue;
-            }
-            // iterate over the libs looking for the openejb-loader-*.jar
-            for (File file : webInfLib.listFiles()) {
-                if (file.getName().startsWith("openejb-tomcat-loader-") && file.getName().endsWith(".jar")) {
-                    // this should be the openejb war...
-                    // make sure it has a lib directory
-                    if (new File(contextDir, "lib").isDirectory()) {
-                        return contextDir;
-                    }
+        	File foundContextDir = findOpenEjbWarInContext(contextDir);
+        	if(foundContextDir != null) {
+        		return foundContextDir;
+        	}
+        }
+        return null;
+    }
+     
+    private static File findOpenEjbWarInContext(File contextDir) {
+        // does this war have a web-inf lib dir
+        File webInfLib = new File(new File(contextDir, "WEB-INF"), "lib");
+        if (!webInfLib.isDirectory()) {
+             return null;
+        }
+        // iterate over the libs looking for the openejb-loader-*.jar
+        for (File file : webInfLib.listFiles()) {
+            if (file.getName().startsWith("openejb-tomcat-loader-") && file.getName().endsWith(".jar")) {
+                // this should be the openejb war...
+                // make sure it has a lib directory
+                if (new File(contextDir, "lib").isDirectory()) {
+                    return contextDir;
                 }
             }
         }
