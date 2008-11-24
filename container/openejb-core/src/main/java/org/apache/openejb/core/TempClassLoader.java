@@ -97,7 +97,8 @@ public class TempClassLoader extends URLClassLoader {
         }
 
         // Annotation classes must be loaded by the normal classloader
-        if (isAnnotationClass(bytes)) {
+        // So must Enum classes to prevent problems with the sun jdk.
+        if (isAnnotationClass(bytes) || isEnum(bytes)) {
             return Class.forName(name, resolve, getClass().getClassLoader());
         }
 
@@ -117,6 +118,17 @@ public class TempClassLoader extends URLClassLoader {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
         }
+    }
+    
+    /**
+     * Fast-parse the given class bytecode to determine if it is an
+     * enum class.
+     */
+    private static boolean isEnum(byte[] bytes) {
+        IsEnumVisitor isEnumVisitor = new IsEnumVisitor();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(isEnumVisitor, ClassReader.SKIP_DEBUG);
+        return isEnumVisitor.isEnum;
     }
 
     /**
@@ -138,4 +150,14 @@ public class TempClassLoader extends URLClassLoader {
         }
 
     }
+    
+    public static class IsEnumVisitor extends EmptyVisitor {
+        public boolean isEnum = false;
+
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            isEnum = (access & Opcodes.ACC_ENUM) != 0;
+        }
+
+    }
+
 }

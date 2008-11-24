@@ -28,6 +28,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.openejb.test.ApplicationException;
+import org.apache.openejb.test.annotations.MeasureSensible;
+import org.apache.openejb.test.annotations.MeasureSensivity;
 import org.apache.openejb.test.beans.TimerSync;
 import org.apache.openejb.test.object.OperationsPolicy;
 
@@ -138,6 +140,7 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
     /**
      * @throws javax.ejb.CreateException
      */
+    @MeasureSensible(MeasureSensivity.RESULT)  
     public void ejbCreateObject() throws javax.ejb.CreateException {
         testAllowedOperations("ejbCreate");
         this.name = "nameless automaton";
