@@ -51,6 +51,10 @@
             <filter>String</filter>
             <filter>String</filter>
         </non-overridable-classes>
+        <private-classes>
+            <filter>String</filter>
+            <filter>String</filter>
+        </private-classes>
         <inverse-classloading/>
         <suppress-default-environment/>
     </environment>
