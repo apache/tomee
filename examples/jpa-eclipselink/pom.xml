@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -47,7 +47,7 @@
     <repository>
       <id>eclipselink-repo</id>
       <name>EclipseLink Repository</name>
-      <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+      <url>http://ftp.kaist.ac.kr/eclipse/rt/eclipselink/maven.repo</url>
     </repository>
   </repositories>
   <dependencies>
