@@ -35,6 +35,7 @@ import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.ejb.ScheduleExpression;
+import javax.ejb.SessionSynchronization;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -1068,5 +1069,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Set<String> getDependsOn() {
         return dependsOn;
+    }
+
+    public boolean isSessionSynchronized() {
+        return !isBeanManagedTransaction() && SessionSynchronization.class.isAssignableFrom(beanClass);
     }
 }

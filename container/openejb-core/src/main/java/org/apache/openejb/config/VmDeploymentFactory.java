@@ -33,7 +33,7 @@ public class VmDeploymentFactory implements DeploymentFactory {
     }
 
     public String getProductVersion() {
-        return "3.0";
+        return "3.1.1";
     }
 
     public boolean handlesURI(String uri) {

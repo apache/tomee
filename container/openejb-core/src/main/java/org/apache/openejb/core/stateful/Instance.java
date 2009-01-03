@@ -40,7 +40,6 @@ public class Instance implements Serializable {
 
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
-    private boolean callSessionSynchronization;
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
@@ -82,14 +81,6 @@ public class Instance implements Serializable {
 
     public synchronized void setBeanTransaction(SuspendedTransaction beanTransaction) {
         this.beanTransaction = beanTransaction;
-    }
-
-    public synchronized boolean isCallSessionSynchronization() {
-        return callSessionSynchronization;
-    }
-
-    public synchronized void setCallSessionSynchronization() {
-        this.callSessionSynchronization = true;
     }
 
     public synchronized Map<EntityManagerFactory, EntityManager> getEntityManagers(Index<EntityManagerFactory, Map> factories) {

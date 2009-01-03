@@ -91,7 +91,7 @@ public class VmDeploymentManager implements DeploymentManager {
         String openejbUri = System.getProperty("openejb.server.uri");
         if (openejbUri == null) {
             try {
-                openejbUri = new URI("ejb", null, "localhost", 4201, null, null, null).toString();
+                openejbUri = new URI("ejbd", null, "localhost", 4201, null, null, null).toString();
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }

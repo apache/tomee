@@ -291,6 +291,9 @@ public class StatefulContainer implements RpcContainer {
                 }
             }
 
+            createContext.setCurrentOperation(Operation.CREATE);
+            createContext.setCurrentAllowedStates(StatefulContext.getStates());
+
             // Start transaction
             TransactionPolicy txPolicy = createTransactionPolicy(createContext.getDeploymentInfo().getTransactionType(callMethod), createContext);
 
@@ -307,8 +310,6 @@ public class StatefulContainer implements RpcContainer {
                         !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
 
                     // Setup for business invocation
-                    createContext.setCurrentOperation(Operation.CREATE);
-                    createContext.setCurrentAllowedStates(StatefulContext.getStates());
                     Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
                     createContext.set(Method.class, createOrInit);
 
@@ -764,12 +765,11 @@ public class StatefulContainer implements RpcContainer {
         }
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
-        boolean sessionSynchronization = callContext.getCurrentOperation() != Operation.CREATE &&
-                callContext.getDeploymentInfo().isBeanManagedTransaction() &&
-                instance.bean instanceof SessionSynchronization &&
+        boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
+                callContext.getDeploymentInfo().isSessionSynchronized() &&
                 txPolicy.isTransactionActive();
 
-        coordinator.registerSessionSynchronization(instance, callContext.getDeploymentInfo(), callContext.getPrimaryKey(), sessionSynchronization);
+        coordinator.registerSessionSynchronization(instance, callContext.getDeploymentInfo(), callContext.getPrimaryKey(), synchronize);
     }
 
     /**
@@ -778,24 +778,49 @@ public class StatefulContainer implements RpcContainer {
      * This class also is responsible for calling releaseInstance after the transaction completes. 
      */
     private class SessionSynchronizationCoordinator implements TransactionSynchronization {
-        private final Map<Object, Instance> registry = new HashMap<Object, Instance>();
+        private final Map<Object, Synchronization> registry = new HashMap<Object, Synchronization>();
         private final TransactionPolicy txPolicy;
 
         private SessionSynchronizationCoordinator(TransactionPolicy txPolicy) {
             this.txPolicy = txPolicy;
         }
 
-        private void registerSessionSynchronization(Instance instance, CoreDeploymentInfo deploymentInfo, Object primaryKey, boolean sessionSynchronization) {
-            // register
-            if (!registry.containsKey(primaryKey)) {
-                registry.put(primaryKey, instance);
+        public class Synchronization {
+            private final Instance instance;
+
+            private boolean callSessionSynchronization;
+
+            public Synchronization(Instance instance) {
+                this.instance = instance;
             }
 
+            public synchronized boolean isCallSessionSynchronization() {
+                return callSessionSynchronization;
+            }
+
+            public synchronized boolean setCallSessionSynchronization(boolean synchronize) {
+                boolean oldValue = this.callSessionSynchronization;
+                this.callSessionSynchronization = synchronize;
+                return oldValue;
+            }
+
+        }
+
+        private void registerSessionSynchronization(Instance instance, CoreDeploymentInfo deploymentInfo, Object primaryKey, boolean synchronize) {
+
+            Synchronization synchronization = registry.get(primaryKey);
+
+            if (synchronization == null){
+                synchronization = new Synchronization(instance);
+                registry.put(primaryKey, synchronization);
+            }
+
+            boolean wasSynchronized = synchronization.setCallSessionSynchronization(synchronize);
+
             // check if afterBegin has already been invoked or if this is not a session synchronization bean
-            if (instance.isCallSessionSynchronization() || !sessionSynchronization) {
+            if (wasSynchronized || !synchronize) {
                 return;
             }
-            instance.setCallSessionSynchronization();
 
             // Invoke afterBegin
             ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_BEGIN);
@@ -824,12 +849,15 @@ public class StatefulContainer implements RpcContainer {
         }
 
         public void beforeCompletion() {
-            for (Instance instance : registry.values()) {
+            for (Synchronization synchronization : registry.values()) {
+
+                Instance instance = synchronization.instance;
+
                 // don't call beforeCompletion when transaction is marked rollback only
                 if (txPolicy.isRollbackOnly()) return;
 
                 // only call beforeCompletion on beans with session synchronization
-                if (!instance.isCallSessionSynchronization()) continue;
+                if (!synchronization.isCallSessionSynchronization()) continue;
 
                 // Invoke beforeCompletion
                 ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.BEFORE_COMPLETION);
@@ -869,14 +897,16 @@ public class StatefulContainer implements RpcContainer {
 
         public void afterCompletion(Status status) {
             Throwable firstException = null;
-            for (Instance instance : registry.values()) {
+            for (Synchronization synchronization : registry.values()) {
+
+                Instance instance = synchronization.instance;
 
                 ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_COMPLETION);
                 callContext.setCurrentAllowedStates(StatefulContext.getStates());
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
                 try {
                     instance.setInUse(true);
-                    if (instance.isCallSessionSynchronization()) {
+                    if (synchronization.isCallSessionSynchronization()) {
                         Method afterCompletion = SessionSynchronization.class.getMethod("afterCompletion", boolean.class);
 
                         List<InterceptorData> interceptors = instance.deploymentInfo.getMethodInterceptors(afterCompletion);

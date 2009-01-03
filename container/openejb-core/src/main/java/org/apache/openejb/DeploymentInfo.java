@@ -146,4 +146,6 @@ public interface DeploymentInfo {
     public boolean isLoadOnStartup();
 
     public Set<String> getDependsOn();
+
+    public boolean isSessionSynchronized();
 }
