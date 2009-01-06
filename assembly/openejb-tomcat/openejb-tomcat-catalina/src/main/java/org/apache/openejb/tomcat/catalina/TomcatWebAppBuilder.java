@@ -252,7 +252,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // appInfo is null when deployment fails
         if (contextInfo.appInfo != null) {
             for (WebAppInfo w : contextInfo.appInfo.webApps) {
-                if (("/" + w.contextRoot).equals(standardContext.getPath())) {
+                if (("/" + w.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
                     webAppInfo = w;
                     break;
                 }
@@ -336,7 +336,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath())) {
+                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
                     CoreWebDeploymentInfo webDeploymentInfo = (CoreWebDeploymentInfo) getContainerSystem().getWebDeploymentInfo(webAppInfo.moduleId);
                     if (webDeploymentInfo != null) {
                         webDeploymentInfo.setJndiEnc(comp);
@@ -510,6 +510,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         if (name.equals("/ROOT")) name = "";
 
         return file.isFile() && standardHost.findChild(name) != null;
+    }
+    
+    private boolean isRootApplication(StandardContext standardContext) {
+	return "".equals(standardContext.getPath());
     }
 
     protected File appBase(StandardHost standardHost) {
