@@ -97,7 +97,8 @@ public class WebServiceBindingType {
         "securityRealmName",
         "realmName",
         "transportGuarantee",
-        "authMethod"
+        "authMethod",
+        "httpMethod"
     })
     public static class WebServiceSecurityType {
 
@@ -109,6 +110,8 @@ public class WebServiceBindingType {
         protected TransportGuaranteeType transportGuarantee;
         @XmlElement(name = "auth-method", required = true)
         protected AuthMethodType authMethod;
+        @XmlElement(name = "http-method")
+        protected List<String> httpMethod;
 
         public WebServiceSecurityType() {
         }
@@ -118,6 +121,7 @@ public class WebServiceBindingType {
             this.realmName = s.getRealmName();
             this.transportGuarantee = s.getTransportGuarantee();
             this.authMethod = s.getAuthMethod();
+            this.httpMethod = s.httpMethod;
         }
 
         public String getSecurityRealmName() {
@@ -150,6 +154,13 @@ public class WebServiceBindingType {
 
         public void setAuthMethod(AuthMethodType value) {
             this.authMethod = value;
+        }
+
+        public List<String> getHttpMethod() {
+            if (httpMethod == null) {
+                httpMethod = new ArrayList<String>();
+            }
+            return this.httpMethod;
         }
     }
 }
