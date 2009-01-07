@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.lang.reflect.Method;
 
 public class EjbTimerServiceImpl implements EjbTimerService {

@@ -410,10 +410,16 @@ public class StatefulContainer implements RpcContainer {
                     returnValue = interceptorStack.invoke(args);
                 }
             } catch (Throwable e) {
-                if (interfaceType.isBusiness() && deploymentInfo.getExceptionType(e) == SYSTEM) {
+                if (interfaceType.isBusiness()) {
                     retain = deploymentInfo.retainIfExeption(runMethod);
+                    handleException(callContext, txPolicy, e);
+                } else {
+                    try {
+                        handleException(callContext, txPolicy, e);
+                    } catch (ApplicationException ae){
+                        // Don't throw application exceptions for non-business interface removes
+                    }
                 }
-                handleException(callContext, txPolicy, e);
             } finally {
                 if (!retain) {
                     try {
