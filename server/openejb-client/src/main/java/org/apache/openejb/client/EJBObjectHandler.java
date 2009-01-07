@@ -159,13 +159,13 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
         } catch (SystemException e) {
             invalidateAllHandlers(getRegistryId());
-            throw convertException(e.getCause(), m);
+            throw convertException(getCause(e), m);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw convertException(ae.getCause(), m);
+            throw convertException(getCause(ae), m);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
@@ -173,15 +173,15 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         } catch (SystemError se) {
             invalidateReference();
             if (remote) {
-                throw new RemoteException("Container has suffered a SystemException", se.getCause());
+                throw new RemoteException("Container has suffered a SystemException", getCause(se));
             } else {
-                throw new EJBException("Container has suffered a SystemException").initCause(se.getCause());
+                throw new EJBException("Container has suffered a SystemException").initCause(getCause(se));
             }
         } catch (Throwable oe) {
             if (remote) {
-                throw new RemoteException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage(), oe.getCause());
+                throw new RemoteException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage(), getCause(oe));
             } else {
-                throw new EJBException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage()).initCause(oe.getCause());
+                throw new EJBException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage()).initCause(getCause(oe));
             }
         }
         return retValue;

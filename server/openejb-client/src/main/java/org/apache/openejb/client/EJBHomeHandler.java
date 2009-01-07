@@ -149,13 +149,13 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
 
         } catch (SystemException e) {
             invalidateReference();
-            throw convertException(e.getCause(), method);
+            throw convertException(getCause(e), method);
             /*
             * Application exceptions must be reported dirctly to the client. They
             * do not impact the viability of the proxy.
             */
         } catch (ApplicationException ae) {
-            throw convertException(ae.getCause(), method);
+            throw convertException(getCause(ae), method);
             /*
             * A system exception would be highly unusual and would indicate a sever
             * problem with the container system.
@@ -163,9 +163,9 @@ public abstract class EJBHomeHandler extends EJBInvocationHandler implements Ext
         } catch (SystemError se) {
             invalidateReference();
             if (remote) {
-                throw new RemoteException("Container has suffered a SystemException", se.getCause());
+                throw new RemoteException("Container has suffered a SystemException", getCause(se));
             } else {
-                throw new EJBException("Container has suffered a SystemException").initCause(se.getCause());
+                throw new EJBException("Container has suffered a SystemException").initCause(getCause(se));
             }
         } catch (Throwable oe) {
             if (remote) {

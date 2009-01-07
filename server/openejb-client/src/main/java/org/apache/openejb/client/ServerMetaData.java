@@ -60,6 +60,7 @@ public class ServerMetaData implements Externalizable {
         byte version = in.readByte();
 
         locations = (URI[]) in.readObject();
+        location = locations[0];
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {

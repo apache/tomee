@@ -232,7 +232,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         return e;
     }
 
-    protected Throwable getCause(Throwable e) {
+    protected static Throwable getCause(Throwable e) {
         if (e != null && e.getCause() != null) {
             return e.getCause();
         }
