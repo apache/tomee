@@ -352,8 +352,8 @@ public class StatefulContainer implements RpcContainer {
             InterfaceType interfaceType = deploymentInfo.getInterfaceType(callInterface);
             if (interfaceType.isComponent()) {
                 Instance instance = checkedOutInstances.get(primKey);
-                if (instance != null && instance.getBeanTransaction() != null) {
-                    throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a bean-managed transaction can not be removed"));
+                if (instance != null) {
+                    throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
                 }
             }
 
