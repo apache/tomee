@@ -18,6 +18,8 @@ package org.apache.openejb.config;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Messages;
@@ -44,17 +46,37 @@ public class InitEjbDeployments implements DynamicDeployer {
     }
 
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
+
+        Set<String> abstractSchemaNames = new HashSet<String>();
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                if (isCmpEntity(bean)) {
+                    EntityBean entity = (EntityBean) bean;
+                    String name = entity.getAbstractSchemaName();
+                    if (name != null) {
+                        abstractSchemaNames.add(name);
+                    }
+                }
+            }
+        }
+
+
         Map<String, String> contextData = new HashMap<String, String>();
         contextData.put("appId", appModule.getModuleId());
+
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             contextData.put("ejbJarId", ejbModule.getModuleId());
-            deploy(ejbModule, contextData);
+            deploy(ejbModule, contextData, abstractSchemaNames);
         }
         contextData.clear();
         return appModule;
     }
 
-    public EjbModule deploy(EjbModule ejbModule, Map<String, String> contextData) throws OpenEJBException {
+    public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
+        return deploy(ejbModule, new HashMap<String,String>(), new HashSet<String>());
+    }
+
+    private EjbModule deploy(EjbModule ejbModule, Map<String, String> contextData, Set<String> abstractSchemaNames) throws OpenEJBException {
         contextData.put("moduleId", ejbModule.getModuleId());
 
         OpenejbJar openejbJar;
@@ -95,7 +117,17 @@ public class InitEjbDeployments implements DynamicDeployer {
                 EntityBean entity = (EntityBean) bean;
                 if (entity.getAbstractSchemaName() == null) {
                     String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
-                    // The AbstractSchemaName must be unique, we should check that it is 
+
+                    // The AbstractSchemaName must be unique, we should check that it is
+                    if (abstractSchemaNames.contains(abstractSchemaName)) {
+                        int i = 2;
+                        while (abstractSchemaNames.contains(abstractSchemaName + i)) {
+                             i++;
+                        }
+                        abstractSchemaName = abstractSchemaName + i;
+                    }
+
+                    abstractSchemaNames.add(abstractSchemaName);
                     entity.setAbstractSchemaName(abstractSchemaName);
                 }
             }
