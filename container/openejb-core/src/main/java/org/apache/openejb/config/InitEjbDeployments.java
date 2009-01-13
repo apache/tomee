@@ -44,7 +44,7 @@ public class InitEjbDeployments implements DynamicDeployer {
     }
 
     public synchronized AppModule deploy(AppModule appModule) throws OpenEJBException {
-        Map<String,String> contextData = new HashMap<String,String>();
+        Map<String, String> contextData = new HashMap<String, String>();
         contextData.put("appId", appModule.getModuleId());
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             contextData.put("ejbJarId", ejbModule.getModuleId());
@@ -66,9 +66,9 @@ public class InitEjbDeployments implements DynamicDeployer {
         }
 
         StringTemplate deploymentIdTemplate = this.deploymentIdTemplate;
-        if (openejbJar.getProperties().containsKey(DEPLOYMENT_ID_FORMAT)){
+        if (openejbJar.getProperties().containsKey(DEPLOYMENT_ID_FORMAT)) {
             String format = openejbJar.getProperties().getProperty(DEPLOYMENT_ID_FORMAT);
-            logger.info("Using "+DEPLOYMENT_ID_FORMAT+" '"+format+"'");
+            logger.info("Using " + DEPLOYMENT_ID_FORMAT + " '" + format + "'");
             deploymentIdTemplate = new StringTemplate(format);
         }
 
@@ -91,9 +91,9 @@ public class InitEjbDeployments implements DynamicDeployer {
                 }
             }
 
-            if (isCmpEntity(bean)){
+            if (isCmpEntity(bean)) {
                 EntityBean entity = (EntityBean) bean;
-                if (entity.getAbstractSchemaName() == null){
+                if (entity.getAbstractSchemaName() == null) {
                     String abstractSchemaName = bean.getEjbName().trim().replaceAll("[ \\t\\n\\r-]+", "_");
                     // The AbstractSchemaName must be unique, we should check that it is 
                     entity.setAbstractSchemaName(abstractSchemaName);
