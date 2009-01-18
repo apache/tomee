@@ -18,12 +18,18 @@
 package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Classes;
+import static org.apache.openejb.util.Join.join;
 
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Stack;
 
 /**
  * @version $Rev$ $Date$
@@ -42,6 +48,11 @@ public class InterceptorStack {
         this.operation = operation;
 
         interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
+//        try {
+//            interceptors.add(new Interceptor(new Debug(), Debug.class.getMethod("invoke", InvocationContext.class)));
+//        } catch (Throwable e) {
+//        }
+        
         for (InterceptorData interceptorData : interceptorDatas) {
             Class interceptorClass = interceptorData.getInterceptorClass();
             Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());
@@ -53,6 +64,50 @@ public class InterceptorStack {
             for (Method method : methods) {
                 Interceptor interceptor = new Interceptor(interceptorInstance, method);
                 interceptors.add(interceptor);
+            }
+        }
+    }
+
+    private static final ThreadLocal<Stack> stack = new ThreadLocal<Stack>();
+    private class Debug {
+
+        private Stack stack() {
+            Stack s = stack.get();
+            if (s == null){
+                s = new Stack();
+                stack.set(s);
+            }
+            return s;
+        }
+
+        public Object invoke(InvocationContext context) throws Exception {
+            try {
+                StringBuilder sb = new StringBuilder();
+                ThreadContext threadContext = ThreadContext.getThreadContext();
+                String txPolicy = threadContext.getTransactionPolicy().getClass().getSimpleName();
+                String ejbName = threadContext.getDeploymentInfo().getEjbName();
+                String methodName = targetMethod.getName() + "(" + join(", ", Classes.getSimpleNames(targetMethod.getParameterTypes())) + ")";
+                sb.append(join("", stack()));
+                sb.append(ejbName).append(".");
+                sb.append(methodName).append(" <").append(txPolicy).append("> {");
+                synchronized (System.out){
+                    System.out.println(sb.toString());
+                }
+            } catch (Throwable e) {
+            }
+
+            try {
+
+                stack().push("  ");
+                return context.proceed();
+            } finally {
+                stack().pop();
+                StringBuilder sb = new StringBuilder();
+                sb.append(join("", stack()));
+                sb.append("}");
+                synchronized (System.out){
+                    System.out.println(sb.toString());
+                }
             }
         }
     }
