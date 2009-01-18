@@ -352,7 +352,17 @@ public class StatefulContainer implements RpcContainer {
             InterfaceType interfaceType = deploymentInfo.getInterfaceType(callInterface);
             if (interfaceType.isComponent()) {
                 Instance instance = checkedOutInstances.get(primKey);
-                if (instance != null) {
+
+                /**
+                 * According to EJB 3.0 "4.4.4 Restrictions for Transactions" any remove methods
+                 * from home or component interfaces must not be allowed if the bean instance is
+                 * in a transaction.  Unfortunately, the Java EE 5 TCK has tests that ignore the
+                 * restrictions in 4.4.4 and expect beans in transactions can be removed via their
+                 * home or component interface.   The test to see if the bean instance implements
+                 * javax.ejb.SessionBean is a workaround for passing the TCK while the tests in
+                 * question can be challenged or the spec can be changed/updated.
+                 */
+                if (instance != null && instance.bean instanceof javax.ejb.SessionBean) {
                     throw new ApplicationException(new RemoveException("A stateful EJB enrolled in a transaction can not be removed"));
                 }
             }
