@@ -17,6 +17,8 @@
 package org.apache.openejb.util;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.lang.reflect.Array;
 
 /**
@@ -64,5 +66,14 @@ public class Classes {
         } else {
             return "";
         }
+    }
+
+    public static List<String> getSimpleNames(Class... classes){
+        List<String> list = new ArrayList<String>();
+        for (Class aClass : classes) {
+            list.add(aClass.getSimpleName());
+        }
+
+        return list;
     }
 }

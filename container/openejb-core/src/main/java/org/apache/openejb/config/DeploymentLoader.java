@@ -38,9 +38,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import javax.ejb.MessageDriven;
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
 
 import org.apache.openejb.ClassLoaderUtil;
@@ -78,6 +75,7 @@ import org.xml.sax.SAXException;
  */
 public class DeploymentLoader {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+    private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
 
     public AppModule load(File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -115,7 +113,7 @@ public class DeploymentLoader {
                         throw new OpenEJBException(e);
                     }
                 }
-
+                                                    
                 moduleClass = discoverModuleType(tempURL, ClassLoaderUtil.createTempClassLoader(doNotUseClassLoader), true);
             } catch (Exception e) {
                 throw new UnknownModuleTypeException("Unable to determine module type for jar: " + baseUrl.toExternalForm(), e);
@@ -191,12 +189,7 @@ public class DeploymentLoader {
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
 
-        Map<String, URL> appDescriptors;
-        try {
-            appDescriptors = finder.getResourcesMap("META-INF");
-        } catch (IOException e) {
-            throw new OpenEJBException("Unable to determine descriptors in jar: " + appUrl.toExternalForm(), e);
-        }
+        Map<String, URL> appDescriptors = getDescriptors(finder);
 
         try {
 
@@ -934,14 +927,47 @@ public class DeploymentLoader {
     }
 
     private static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
-        try {
-            ResourceFinder finder = new ResourceFinder(moduleUrl);
 
-            return finder.getResourcesMap("META-INF/");
+        ResourceFinder finder = new ResourceFinder(moduleUrl);
+
+        return getDescriptors(finder);
+    }
+
+    private static Map<String, URL> getDescriptors(ResourceFinder finder) throws OpenEJBException {
+        try {
+
+            return altDDSources(finder.getResourcesMap("META-INF/"));
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }
+    }
+
+    private static Map<String, URL> altDDSources(Map<String, URL> map) {
+
+        return altDDSources(map, true);
+    }
+
+    private static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
+        String prefix = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
+
+        if (prefix == null || prefix.length() <= 0) return map;
+
+        if (!prefix.matches(".*[.-]$")) prefix += ".";
+
+        for (Map.Entry<String, URL> entry : map.entrySet()) {
+            String key = entry.getKey();
+            URL value = entry.getValue();
+            if (key.startsWith(prefix)) {
+                key = key.substring(prefix.length());
+                map.put(key, value);
+
+                if (log) logger.info("Found AltDD " + key + " -> " + value.toExternalForm());
+            }
+        }
+
+
+        return map;
     }
 
     private static Map<String, URL> getWebDescriptors(File warFile) throws IOException {
@@ -1036,7 +1062,7 @@ public class DeploymentLoader {
     public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
 
-        Map<String, URL> descriptors = finder.getResourcesMap("META-INF");
+        Map<String, URL> descriptors = altDDSources(finder.getResourcesMap("META-INF/"), false);
 
         String path = baseUrl.getPath();
         if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
