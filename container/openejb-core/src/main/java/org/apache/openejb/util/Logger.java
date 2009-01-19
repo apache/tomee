@@ -26,6 +26,10 @@ public class Logger {
     private static LogStreamFactory logStreamFactory;
 
     static {
+        configure();
+    }
+
+    public static void configure() {
         String factoryName = System.getProperty("openejb.log.factory");
         Class<?> factoryClass = null;
         if (factoryName != null) {

@@ -66,6 +66,7 @@ public final class OpenEJB {
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
             initialized = new Exception("Initialized at "+new Date()).fillInStackTrace();
 
+            Logger.configure();
             Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
 
             try {
