@@ -343,7 +343,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     finder = new ClassFinder(ejbModule.getClassLoader());
                 } catch (Exception e) {
-                    startupLogger.warning("Unable to scrape for @Stateful, @Stateless or @MessageDriven annotations. ClassFinder failed.", e);
+                    startupLogger.warning("Unable to scrape for @Stateful, @Stateless, @Singleton or @MessageDriven annotations. ClassFinder failed.", e);
                     return ejbModule;
                 }
             }
