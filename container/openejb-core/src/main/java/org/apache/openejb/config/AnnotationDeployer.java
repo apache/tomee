@@ -162,7 +162,7 @@ import java.util.TreeSet;
 public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, AnnotationDeployer.class.getPackage().getName());
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    private static final ThreadLocal<ValidationContext> validationContext = new ThreadLocal<ValidationContext>();
+    private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
 
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
@@ -175,34 +175,43 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        getValidationContext().set(appModule.getValidation());
+        setModule(appModule);
         try {
             appModule = discoverAnnotatedBeans.deploy(appModule);
             appModule = envEntriesPropertiesDeployer.deploy(appModule);
             appModule = processAnnotatedBeans.deploy(appModule);
             return appModule;
         } finally {
-            getValidationContext().remove();
+            removeModule();
         }
     }
 
     public WebModule deploy(WebModule webModule) throws OpenEJBException {
-        getValidationContext().set(webModule.getValidation());
+        setModule(webModule);
         try {
             webModule = discoverAnnotatedBeans.deploy(webModule);
             webModule = envEntriesPropertiesDeployer.deploy(webModule);
             webModule = processAnnotatedBeans.deploy(webModule);
             return webModule;
         } finally {
-            getValidationContext().remove();
+            removeModule();
         }
     }
 
-    public static ThreadLocal<ValidationContext> getValidationContext() {
-//        Throwable throwable = new Throwable();
-//        throwable.fillInStackTrace();
-//        throwable.printStackTrace();
-        return validationContext;
+    public static DeploymentModule getModule() {
+        return currentModule.get();
+    }
+
+    private static void setModule(DeploymentModule module) {
+        currentModule.set(module);
+    }
+
+    private static void removeModule() {
+        currentModule.remove();
+    }
+
+    private static ValidationContext getValidationContext() {
+        return getModule().getValidation();
     }
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
@@ -231,35 +240,35 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
-                getValidationContext().set(ejbModule.getValidation());
+                setModule(ejbModule);
                 try {
                     deploy(ejbModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (ClientModule clientModule : appModule.getClientModules()) {
-                getValidationContext().set(clientModule.getValidation());
+                setModule(clientModule);
                 try {
                     deploy(clientModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-                getValidationContext().set(connectorModule.getValidation());
+                setModule(connectorModule);
                 try {
                     deploy(connectorModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (WebModule webModule : appModule.getWebModules()) {
-                getValidationContext().set(webModule.getValidation());
+                setModule(webModule);
                 try {
                     deploy(webModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             return appModule;
@@ -457,7 +466,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private boolean isValidAnnotationUsage(Class annotationClass, Class<?> beanClass, String ejbName, EjbModule ejbModule) {
-            List<Class<? extends Annotation>> annotations = new ArrayList(asList(Stateless.class, Stateful.class, MessageDriven.class));
+            List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
             Map<String, Class<? extends Annotation>> names = new HashMap<String, Class<? extends Annotation>>();
@@ -473,6 +482,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     secondEjbName = getEjbName((Stateful) annotation, beanClass);
                 } else if (annotation instanceof Stateless) {
                     secondEjbName = getEjbName((Stateless) annotation, beanClass);
+                } else if (annotation instanceof Singleton) {
+                    secondEjbName = getEjbName((Singleton) annotation, beanClass);
                 } else if (annotation instanceof MessageDriven) {
                     secondEjbName = getEjbName((MessageDriven) annotation, beanClass);
                 }
@@ -522,35 +533,35 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
-                getValidationContext().set(ejbModule.getValidation());
+                setModule(ejbModule);
                 try {
                     deploy(ejbModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (ClientModule clientModule : appModule.getClientModules()) {
-                getValidationContext().set(clientModule.getValidation());
+                setModule(clientModule);
                 try {
                     deploy(clientModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-                getValidationContext().set(connectorModule.getValidation());
+                setModule(connectorModule);
                 try {
                     deploy(connectorModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             for (WebModule webModule : appModule.getWebModules()) {
-                getValidationContext().set(webModule.getValidation());
+                setModule(webModule);
                 try {
                     deploy(webModule);
                 } finally {
-                    getValidationContext().remove();
+                    removeModule();
                 }
             }
             return appModule;
@@ -1836,17 +1847,21 @@ public class AnnotationDeployer implements DynamicDeployer {
          */
         private void buildEjbRef(JndiConsumer consumer, EJB ejb, Member member) {
 
+            // TODO: Looks like we aren't looking for an existing ejb-ref or ejb-local-ref
+            // we need to do this to support overriding.
+            
             /**
              * Was @EJB used at a class level witout specifying the 'name' or 'beanInterface' attributes?
              */
+            String name = consumer.getJndiConsumerName();
             if (member == null) {
                 boolean shouldReturn = false;
                 if (ejb.name().equals("")) {
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoName");
+                    fail(name, "ejbAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
                 if (ejb.beanInterface().equals(Object.class)) {
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "ejbAnnotation.onClassWithNoBeanInterface");
+                    fail(name, "ejbAnnotation.onClassWithNoBeanInterface");
                     shouldReturn = true;
                 }
                 if (shouldReturn) return;
@@ -1860,17 +1875,29 @@ public class AnnotationDeployer implements DynamicDeployer {
             // figuring out what to do with it.
             ejbRef.setRefType(EjbReference.Type.UNKNOWN);
 
+            // Get the ejb-ref-name
+            String refName = ejb.name();
+            if (refName.equals("")) {
+                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+            ejbRef.setEjbRefName(refName);
+
             if (member != null) {
                 // Set the member name where this will be injected
                 InjectionTarget target = new InjectionTarget();
                 target.setInjectionTargetClass(member.getDeclaringClass().getName());
                 target.setInjectionTargetName(member.getName());
                 ejbRef.getInjectionTarget().add(target);
+
             }
 
             Class<?> interfce = ejb.beanInterface();
             if (interfce.equals(Object.class)) {
                 interfce = (member == null) ? null : member.getType();
+            }
+
+            if (interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
+                return;
             }
 
             if (interfce != null && !interfce.equals(Object.class)) {
@@ -1903,13 +1930,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-
-            // Get the ejb-ref-name
-            String refName = ejb.name();
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
-            }
-            ejbRef.setEjbRefName(refName);
 
             // Set the ejb-link, if any
             String ejbName = ejb.beanName();
@@ -1958,6 +1978,48 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
+        private boolean isValidEjbInterface(String b, Class clazz, String refName) {
+            if (!clazz.isInterface()) {
+
+                DeploymentModule module = getModule();
+                if (module instanceof EjbModule) {
+                    Set<String> beanClasses = new HashSet<String>();
+                    EjbModule ejbModule = (EjbModule) module;
+                    for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                        beanClasses.add(bean.getEjbClass());
+                    }
+
+                    if (beanClasses.contains(clazz.getName())){
+                        fail(b, "ann.ejb.beanClass", clazz.getName(), refName);
+                    } else {
+                        fail(b, "ann.ejb.notInterface", clazz.getName(), refName);
+                    }
+                } else {
+                    fail(b, "ann.ejb.notInterface", clazz.getName(), refName);
+                }
+
+                return false;
+
+            } else if (EJBObject.class.isAssignableFrom(clazz)) {
+
+                fail(b, "ann.ejb.ejbObject", clazz.getName(), refName);
+
+                return false;
+
+            } else if (EJBLocalObject.class.isAssignableFrom(clazz)) {
+
+                fail(b, "ann.ejb.ejbLocalObject", clazz.getName(), refName);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private void fail(String component, String key, Object... details) {
+            getValidationContext().fail(component, key, details);
+        }
+
         /**
          * Process @Resource into either <resource-ref> or <resource-env-ref> for the given member (field or method) or class
          *
@@ -1978,11 +2040,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (member == null) {
                 boolean shouldReturn = false;
                 if (resource.name().equals("")) {
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
+                    fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
                 if (resource.type().equals(Object.class)) {
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoType");
+                    fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoType");
                     shouldReturn = true;
                 }
                 if (shouldReturn) return;
@@ -1998,10 +2060,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     Class type = member.getType();
                     boolean shouldReturn = false;
                     if (EntityManager.class.isAssignableFrom(type)) {
-                        getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
+                        fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManager", refName);
                         shouldReturn = true;
                     } else if (EntityManagerFactory.class.isAssignableFrom(type)) {
-                        getValidationContext().get().fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
+                        fail(consumer.getJndiConsumerName(), "resourceRef.onEntityManagerFactory", refName);
                         shouldReturn = true;
                     }
                     if (shouldReturn) return;
@@ -2126,7 +2188,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              * Was @PersistenceUnit used at a class level without specifying the 'name' attribute?
              */
             if (refName == null && member == null) {
-                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
+                fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
                 return;
             }
 
@@ -2145,7 +2207,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     /**
                      * Was @PersistenceUnit mistakenly used when @PersistenceContext should have been used?
                      */
-                    ValidationContext validationContext = AnnotationDeployer.getValidationContext().get();
+                    ValidationContext validationContext = getValidationContext();
                     String jndiConsumerName = consumer.getJndiConsumerName();
                     String name = persistenceUnitRef.getName();
                     validationContext.fail(jndiConsumerName, "presistenceUnitAnnotation.onEntityManager", name);
@@ -2153,7 +2215,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     /**
                      * Was @PersistenceUnit mistakenly used for something that isn't an EntityManagerFactory?
                      */
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
+                    fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
                 } else {
                     // Set the member name where this will be injected
                     InjectionTarget target = new InjectionTarget();
@@ -2189,7 +2251,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              * Was @PersistenceContext used at a class level without specifying the 'name' attribute?
              */
             if (refName == null && member == null) {
-                getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
+                fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
                 return;
             }
 
@@ -2247,12 +2309,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     /**
                      * Was @PersistenceContext mistakenly used when @PersistenceUnit should have been used?
                      */
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
+                    fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
                 } else if (!EntityManager.class.isAssignableFrom(type)) {
                     /**
                      * Was @PersistenceContext mistakenly used for something that isn't an EntityManager?
                      */
-                    getValidationContext().get().fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
+                    fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
                 } else {
                     // Set the member name where this will be injected
                     InjectionTarget target = new InjectionTarget();

@@ -172,7 +172,6 @@ public class InvalidInterfacesTest extends TestCase {
     }
 
     private void validate(Class interfaceClass, List<String> expectedKeys) throws OpenEJBException {
-        Collections.sort(expectedKeys);
 
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
@@ -185,38 +184,7 @@ public class InvalidInterfacesTest extends TestCase {
             config.configureApplication(ejbJar);
             fail("A ValidationFailedException should have been thrown");
         } catch (ValidationFailedException e) {
-            ValidationFailure[] failures = e.getFailures();
-            List<String> actualKeys = new ArrayList<String>();
-            for (ValidationFailure failure : failures) {
-                actualKeys.add(failure.getMessageKey());
-            }
-
-            Collections.sort(actualKeys);
-
-            String actual = join("\n", actualKeys);
-            String expected = join("\n", expectedKeys);
-
-            assertEquals("Keys do not match", expected, actual);
-
-            // Check for the expected keys
-            for (String key : expectedKeys) {
-                assertTrue("Missing key: "+key, actualKeys.contains(key));
-            }
-
-            assertEquals("Number of failures don't match", expectedKeys.size(), actualKeys.size());
-
-            // Ensure the i18n message is there by checking
-            // the key is not in the getMessage() output
-            for (ValidationFailure failure : e.getFailures()) {
-                String key = failure.getMessageKey();
-
-                for (Integer level : Arrays.asList(1, 2, 3)) {
-                    String message = failure.getMessage(level);
-                    assertFalse("No message text (key=" + key + ", level=" + level + "): " + message, message.contains(key));
-                    assertFalse("Not all parameters substituted (key=" + key + ", level=" + level + "): " + message, message.matches(".*\\{[0-9]\\}.*"));
-                }
-
-            }
+            ValidationAssertions.assertFailures(expectedKeys, e);
         }
     }
 

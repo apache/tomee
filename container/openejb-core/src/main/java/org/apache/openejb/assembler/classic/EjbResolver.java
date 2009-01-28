@@ -138,6 +138,13 @@ public class EjbResolver {
     private String resolveInterface(Reference ref) {
         String id = null;
 
+        if (ref.getInterface() == null) {
+            // TODO: Support home-only refs.  Could only happen for EJB 2.x Entity beans
+            // All other beans are required to have create methods in their home interfaces
+            // and we would have used it to discover the remote interface when creating the ref 
+            return null;
+        }
+
         List<Interfaces> matches = this.interfaces.get(new Interfaces(ref.getHome(), ref.getInterface()));
         if (matches != null && matches.size() > 0){
 
