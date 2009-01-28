@@ -18,7 +18,6 @@ package org.apache.openejb.config.rules;
 
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationException;
-import org.apache.openejb.config.ValidationFailure;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -33,21 +32,21 @@ import junit.framework.Assert;
 public class ValidationAssertions {
 
     public static void assertFailures(List<String> expectedKeys, ValidationFailedException e) {
-        assertValidation(expectedKeys, e, e.getFailures());
+        assertValidation(expectedKeys, e.getFailures());
     }
 
     public static void assertErrors(List<String> expectedKeys, ValidationFailedException e) {
-        assertValidation(expectedKeys, e, e.getErrors());
+        assertValidation(expectedKeys, e.getErrors());
     }
 
     public static void assertWarnings(List<String> expectedKeys, ValidationFailedException e) {
-        assertValidation(expectedKeys, e, e.getWarnings());
+        assertValidation(expectedKeys, e.getWarnings());
     }
 
-    private static void assertValidation(List<String> expectedKeys, ValidationFailedException e, ValidationException[] failures) {
+    private static void assertValidation(List<String> expectedKeys, ValidationException[] validations) {
         List<String> actualKeys = new ArrayList<String>();
-        for (ValidationException failure : failures) {
-            actualKeys.add(failure.getMessageKey());
+        for (ValidationException validation : validations) {
+            actualKeys.add(validation.getMessageKey());
         }
 
         Collections.sort(expectedKeys);
@@ -68,11 +67,11 @@ public class ValidationAssertions {
 
         // Ensure the i18n message is there by checking
         // the key is not in the getMessage() output
-        for (ValidationFailure failure : e.getFailures()) {
-            String key = failure.getMessageKey();
+        for (ValidationException validation : validations) {
+            String key = validation.getMessageKey();
 
             for (Integer level : Arrays.asList(1, 2, 3)) {
-                String message = failure.getMessage(level);
+                String message = validation.getMessage(level);
                 Assert.assertFalse("No message text (key=" + key + ", level=" + level + "): " + message, message.contains(key));
                 Assert.assertFalse("Not all parameters substituted (key=" + key + ", level=" + level + "): " + message, message.matches(".*\\{[0-9]\\}.*"));
             }
