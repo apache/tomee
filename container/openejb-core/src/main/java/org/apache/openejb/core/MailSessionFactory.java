@@ -25,7 +25,7 @@ public class MailSessionFactory {
     private final Properties properties = new Properties();
 
     public Session create() {
-        return Session.getDefaultInstance(properties);
+        return Session.getInstance(properties);
     }
 
     public Properties getProperties() {
