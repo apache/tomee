@@ -39,6 +39,8 @@ public interface EnterpriseBean extends JndiConsumer, Lifecycle {
 
     public void setEjbClass(String value);
 
+    public void setEjbClass(Class value);
+
     public SecurityIdentity getSecurityIdentity();
 
     public void setSecurityIdentity(SecurityIdentity value);

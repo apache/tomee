@@ -241,7 +241,7 @@ public class Method {
         this.className = method.getDeclaringClass().getName();
         MethodParams methodParams = new MethodParams();
         for (Class<?> type : method.getParameterTypes()) {
-            methodParams.getMethodParam().add(type.getCanonicalName());
+            methodParams.getMethodParam().add(type.getName());
         }
         this.methodParams = methodParams;
     }

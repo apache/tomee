@@ -359,6 +359,10 @@ public class EntityBean implements EnterpriseBean, RemoteBean {
         this.ejbClass = value;
     }
 
+    public void setEjbClass(Class value) {
+        this.ejbClass = value.getName();
+    }
+
     public PersistenceType getPersistenceType() {
         return persistenceType;
     }

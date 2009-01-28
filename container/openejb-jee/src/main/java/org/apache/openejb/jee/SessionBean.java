@@ -409,6 +409,10 @@ public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerCo
         this.ejbClass = value;
     }
 
+    public void setEjbClass(Class value) {
+        this.ejbClass = value.getName();
+    }
+
     public SessionType getSessionType() {
         return sessionType;
     }

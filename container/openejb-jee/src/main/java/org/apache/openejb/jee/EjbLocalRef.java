@@ -87,6 +87,11 @@ public class EjbLocalRef implements EjbReference {
     public EjbLocalRef() {
     }
 
+    public EjbLocalRef(String ejbRefName, String ejbLink) {
+        this.ejbRefName = ejbRefName;
+        this.ejbLink = ejbLink;
+    }
+
     public EjbLocalRef(EjbReference ref) {
         this.ejbRefName = ref.getName();
         this.ejbRefType = ref.getEjbRefType();

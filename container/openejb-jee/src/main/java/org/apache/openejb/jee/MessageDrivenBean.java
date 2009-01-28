@@ -280,6 +280,10 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.ejbClass = value;
     }
 
+    public void setEjbClass(Class value) {
+        this.ejbClass = value.getName();
+    }
+
     public String getMessagingType() {
         return messagingType;
     }
