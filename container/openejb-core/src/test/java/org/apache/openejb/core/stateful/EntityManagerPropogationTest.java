@@ -75,7 +75,7 @@ public class EntityManagerPropogationTest extends TestCase {
      * 
      * @throws Exception
      */
-    public void testExtendedRemove() throws Exception {
+    public void _testExtendedRemove() throws Exception {
 
         InitialContext ctx = new InitialContext();
 
@@ -113,7 +113,7 @@ public class EntityManagerPropogationTest extends TestCase {
      *
      * @throws Exception
      */
-    public void testNotTooExtended() throws Exception {
+    public void _testNotTooExtended() throws Exception {
 
         InitialContext ctx = new InitialContext();
 

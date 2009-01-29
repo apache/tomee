@@ -689,12 +689,38 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             if (service.getId() == null) service.setId(provider.getId());
 
+            Properties overrides = getSystemProperties(service.getId(), provider.getService());
+
             logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
+
+            if (logger.isDebugEnabled()) {
+                for (Map.Entry<Object, Object> entry : service.getProperties().entrySet()) {
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    if (key instanceof String && "password".equalsIgnoreCase((String) key)) {
+                        value = "<hidden>";
+                    }
+
+                    logger.debug(key + "=" + value);
+                }
+
+                for (Map.Entry<Object, Object> entry : service.getProperties().entrySet()) {
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    if (key instanceof String && "password".equalsIgnoreCase((String) key)) {
+                        value = "<hidden>";
+                    }
+
+                    logger.debug("Override" + key + "=" + value);
+                }
+            }
 
             Properties props = new SuperProperties();
             props.putAll(provider.getProperties());
             props.putAll(service.getProperties());
-            props.putAll(getSystemProperties(service.getId(), provider.getService()));
+            props.putAll(overrides);
 
             if (providerType != null && !provider.getService().equals(providerType)) {
                 throw new OpenEJBException(messages.format("configureService.wrongProviderType", service.getId(), providerType));

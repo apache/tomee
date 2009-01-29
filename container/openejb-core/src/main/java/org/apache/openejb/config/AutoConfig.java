@@ -896,8 +896,38 @@ public class AutoConfig implements DynamicDeployer {
 //                unit.setNonJtaDataSource(unit.getJtaDataSource()+"NonJta");
 //            }
 
+            logger.debug("raw <jta-data-source>" + unit.getJtaDataSource() + "</jta-datasource>");
+            logger.debug("raw <non-jta-data-source>" + unit.getNonJtaDataSource() + "</non-jta-datasource>");
+
             unit.setJtaDataSource(normalizeResourceId(unit.getJtaDataSource()));
             unit.setNonJtaDataSource(normalizeResourceId(unit.getNonJtaDataSource()));
+
+            logger.debug("normalized <jta-data-source>" + unit.getJtaDataSource() + "</jta-datasource>");
+            logger.debug("normalized <non-jta-data-source>" + unit.getNonJtaDataSource() + "</non-jta-datasource>");
+
+            if (logger.isDebugEnabled()){
+                required.put("JtaManaged", "true");
+                List<String> managed = configFactory.getResourceIds("DataSource", required);
+
+                required.put("JtaManaged", "false");
+                List<String> unmanaged = configFactory.getResourceIds("DataSource", required);
+
+                required.clear();
+                List<String> unknown = configFactory.getResourceIds("DataSource", required);
+
+                logger.debug("Available DataSources");
+                for (String name : managed) {
+                    logger.debug("DataSource(name=" + name + ", JtaManaged=true)");
+                }
+                for (String name : unmanaged) {
+                    logger.debug("DataSource(name=" + name + ", JtaManaged=false)");
+                }
+                for (String name : unknown) {
+                    if (managed.contains(name)) continue;
+                    if (unmanaged.contains(name)) continue;
+                    logger.debug("DataSource(name=" + name + ", JtaManaged=<unknown>)");
+                }
+            }
 
             required.put("JtaManaged", "true");
             String jtaDataSourceId = findResourceId(unit.getJtaDataSource(), "DataSource", required, null);
@@ -1174,7 +1204,7 @@ public class AutoConfig implements DynamicDeployer {
 
         if (!current.equals(previous)) {
 
-            logger.info("Adjusting " + unit.getName() + " <non-jta-data-source> to '" + current+"'");
+            logger.info("Adjusting " + unit.getName() + " <non-jta-data-source> to '" + current + "' from '" + previous + "'");
 
         }
 
@@ -1188,7 +1218,7 @@ public class AutoConfig implements DynamicDeployer {
 
         if (!current.equals(previous)) {
 
-            logger.info("Adjusting " + unit.getName() + " <jta-data-source> to '" + current+"'");
+            logger.info("Adjusting " + unit.getName() + " <jta-data-source> to '" + current + "' from '" + previous + "'");
 
         }
 

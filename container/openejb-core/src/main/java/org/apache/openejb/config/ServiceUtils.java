@@ -160,9 +160,9 @@ public class ServiceUtils {
         return null;
     }
 
-    public static boolean implies(Properties a, Properties b){
-        for (Map.Entry<Object, Object> entry : a.entrySet()) {
-            Object value = b.get(entry.getKey());
+    public static boolean implies(Properties required, Properties available){
+        for (Map.Entry<Object, Object> entry : required.entrySet()) {
+            Object value = available.get(entry.getKey());
 
             Object expected = entry.getValue();
 
@@ -170,7 +170,13 @@ public class ServiceUtils {
                 if (value != null) return false;
             } else if (expected.equals(ANY)){
                 if (value == null) return false;
-            } else if (!expected.equals(value)) return false;
+            } else {
+                if (value instanceof String) value = ((String) value).toLowerCase();
+
+                if (expected instanceof String) expected = ((String) expected).toLowerCase();
+                
+                if (!expected.equals(value)) return false;
+            }
         }
         return true;
     }

@@ -91,6 +91,71 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
+     * Existing data source "Orange", jta managed
+     * Existing data source "OrangeUnmanaged", not jta managed
+     * Existing data source "Lime", jta managed
+     * Existing data source "LimeUnmanaged", not jta managed
+     *
+     * Persistence xml like so:
+     *
+     * <persistence-unit name="orange-unit">
+     *      <jta-data-source>Orange</jta-data-source>
+     *      <non-jta-data-source>OrangeUnmanagedamanged</non-jta-data-source>
+     * </persistence-unit>
+     * <persistence-unit name="lime-unit">
+     *      <jta-data-source>Lime</jta-data-source>
+     *      <non-jta-data-source>LimeUnmanagedamanged</non-jta-data-source>
+     * </persistence-unit>
+     *
+     * This is the happy path.
+     *
+     * @throws Exception
+     */
+    public void testMultiple() throws Exception {
+
+        ResourceInfo orangeJta = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
+        ResourceInfo orangeNonJta = addDataSource("OrangeUnmanaged", OrangeDriver.class, "jdbc:orange:some:stuff", false);
+        ResourceInfo limeJta = addDataSource("Lime", LimeDriver.class, "jdbc:lime:some:stuff", true);
+        ResourceInfo limeNonJta = addDataSource("LimeUnmanaged", LimeDriver.class, "jdbc:lime:some:stuff", false);
+
+        assertSame(orangeJta, resources.get(0));
+        assertSame(orangeNonJta, resources.get(1));
+        assertSame(limeJta, resources.get(2));
+        assertSame(limeNonJta, resources.get(3));
+
+        PersistenceUnit unit1 = new PersistenceUnit("orange-unit");
+        unit1.setJtaDataSource("Orange");
+        unit1.setNonJtaDataSource("OrangeUnmanaged");
+
+        PersistenceUnit unit2 = new PersistenceUnit("lime-unit");
+        unit2.setJtaDataSource("Lime");
+        unit2.setNonJtaDataSource("LimeUnmanaged");
+
+        AppModule app = new AppModule(this.getClass().getClassLoader(), "test-app");
+        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit1, unit2)));
+
+        // Create app
+
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+
+        // Check results
+
+        PersistenceUnitInfo orangeUnit = appInfo.persistenceUnits.get(0);
+        PersistenceUnitInfo limeUnit = appInfo.persistenceUnits.get(1);
+
+        assertNotNull(orangeUnit);
+
+        assertEquals(orangeJta.id, orangeUnit.jtaDataSource);
+        assertEquals(orangeNonJta.id, orangeUnit.nonJtaDataSource);
+
+        assertNotNull(limeUnit);
+
+        assertEquals(limeJta.id, limeUnit.jtaDataSource);
+        assertEquals(limeNonJta.id, limeUnit.nonJtaDataSource);
+    }
+
+    /**
      * Existing data source "Orange", not controlled by us
      * Existing data source "OrangeUnmanaged", also not controlled by us
      *
