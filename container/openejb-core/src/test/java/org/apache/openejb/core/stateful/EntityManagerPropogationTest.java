@@ -36,6 +36,8 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openjpa.persistence.ArgumentException;
 
 import javax.ejb.EJB;
+import javax.ejb.Remove;
+import javax.ejb.NoSuchEJBException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.Entity;
@@ -63,6 +65,72 @@ public class EntityManagerPropogationTest extends TestCase {
             assertTrue(node.contains(attached));
 
             node = node.getChild();
+        }
+
+    }
+
+    /**
+     * Test that the extended persistence context can
+     * survive the removal of the parent
+     * 
+     * @throws Exception
+     */
+    public void testExtendedRemove() throws Exception {
+
+        InitialContext ctx = new InitialContext();
+
+        Node node = (Node) ctx.lookup("ExtendedLocal");
+
+        // This bean should still be attached
+        // when the transaction commits
+        Color attached = node.create(1, "Red");
+
+        while (node.getChild() != null) {
+
+            assertTrue(node.contains(attached));
+
+            Node next = node.getChild();
+
+            node.remove();
+
+            try {
+                node.contains(attached);
+                fail("The Stateful bean should have been removed");
+            } catch (NoSuchEJBException e) {
+                // good
+            }
+            node = next;
+        }
+
+    }
+
+    /**
+     * Test that two Stateful session bean siblings
+     * do not share the same extended persistence context
+     *
+     * A stateful session bean must be a child in order
+     * for the context to be propogated to that bean.
+     *
+     * @throws Exception
+     */
+    public void testNotTooExtended() throws Exception {
+
+        InitialContext ctx = new InitialContext();
+
+        // Stateful Node tree A and Node tree B are syblings
+        Node chainA = (Node) ctx.lookup("ExtendedLocal");
+
+        Node chainB = (Node) ctx.lookup("ExtendedLocal");
+
+        // This bean should still be attached
+        // when the transaction commits
+        Color attachedA = chainA.create(1, "Red");
+
+        while (chainB.getChild() != null) {
+
+            assertFalse(chainB.contains(attachedA));
+
+            chainB = chainB.getChild();
         }
 
     }
@@ -182,6 +250,9 @@ public class EntityManagerPropogationTest extends TestCase {
     }
 
     public static interface Node {
+
+        void remove();
+        
         Color create(int id, String name);
 
         boolean contains(Color bean);
@@ -244,6 +315,9 @@ public class EntityManagerPropogationTest extends TestCase {
             return getEntityManager().contains(bean);
         }
 
+        @Remove
+        public void remove(){}
+
     }
 
     public static class EndNodeBean implements Node {
@@ -259,6 +333,10 @@ public class EntityManagerPropogationTest extends TestCase {
         public Node getChild() {
             return null;
         }
+
+        @Remove
+        public void remove(){}
+
     }
 
 }
