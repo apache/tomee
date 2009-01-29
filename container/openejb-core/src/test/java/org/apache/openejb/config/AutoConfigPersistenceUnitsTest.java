@@ -48,6 +48,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     private List<ResourceInfo> resources;
 
     protected void setUp() throws Exception {
+        System.setProperty("log4j.category.OpenEJB.startup.config", "debug");
         config = new ConfigurationFactory();
         assembler = new Assembler();
 
@@ -999,7 +1000,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         Resource resource = new Resource(id, "DataSource");
         resource.getProperties().put("JdbcDriver", driver.getName());
         resource.getProperties().put("JdbcUrl", url);
-        resource.getProperties().put("JtaManaged", managed + "");
+        resource.getProperties().put("JtaManaged", managed + " ");  // space should be trimmed later, this verifies that.
 
         ResourceInfo resourceInfo = config.configureService(resource, ResourceInfo.class);
 

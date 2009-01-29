@@ -689,7 +689,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
             if (service.getId() == null) service.setId(provider.getId());
 
-            Properties overrides = getSystemProperties(service.getId(), provider.getService());
+            Properties overrides = trim(getSystemProperties(service.getId(), provider.getService()));
+
+            trim(service.getProperties());
+
+            trim(provider.getProperties());
 
             logger.info("configureService.configuring", service.getId(), provider.getService(), provider.getId());
 
@@ -702,7 +706,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         value = "<hidden>";
                     }
 
-                    logger.debug(key + "=" + value);
+                    logger.debug("["+key + "=" + value+"]");
                 }
 
                 for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
@@ -713,7 +717,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         value = "<hidden>";
                     }
 
-                    logger.debug("Override " + key + "=" + value);
+                    logger.debug("Override [" + key + "=" + value+"]");
                 }
             }
 
@@ -754,6 +758,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             String message = logger.fatal("configureService.failed", e, service.getId());
             throw new OpenEJBException(message, e);
         }
+    }
+
+    private static Properties trim(Properties properties) {
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            Object o = entry.getValue();
+            if (o instanceof String) {
+                String value = (String) o;
+                String trimmed = value.trim();
+                if (value.length() != trimmed.length()){
+                    properties.put(entry.getKey(), trimmed);
+                }
+            }
+        }
+        return properties;
     }
 
     private <T extends ServiceInfo> void specialProcessing(T info) {
