@@ -50,7 +50,14 @@ import java.io.IOException;
 
 public class EntityManagerPropogationTest extends TestCase {
 
-    public void testExtended() throws Exception {
+    public void test() throws Exception {
+        _testExtended();
+        _testExtendedRemove();
+        _testNotTooExtended();
+        _testTransaction();
+    }
+
+    public void _testExtended() throws Exception {
 
         InitialContext ctx = new InitialContext();
 
@@ -83,7 +90,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         // This bean should still be attached
         // when the transaction commits
-        Color attached = node.create(1, "Red");
+        Color attached = node.create(2, "Blue");
 
         while (node.getChild() != null) {
 
@@ -124,7 +131,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         // This bean should still be attached
         // when the transaction commits
-        Color attachedA = chainA.create(1, "Red");
+        Color attachedA = chainA.create(3, "Green");
 
         while (chainB.getChild() != null) {
 
@@ -135,7 +142,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
     }
 
-    public void testTransaction() throws Exception {
+    public void _testTransaction() throws Exception {
 
         InitialContext ctx = new InitialContext();
 
@@ -143,7 +150,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         // This bean should not still be attached
         // when the transaction commits
-        Color detached = node.create(2, "Blue");
+        Color detached = node.create(4, "Yellow");
 
         while (node.getChild() != null) {
 
