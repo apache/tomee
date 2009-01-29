@@ -48,7 +48,6 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     private List<ResourceInfo> resources;
 
     protected void setUp() throws Exception {
-        System.setProperty("log4j.category.OpenEJB.startup.config", "debug");
         config = new ConfigurationFactory();
         assembler = new Assembler();
 
