@@ -705,7 +705,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                     logger.debug(key + "=" + value);
                 }
 
-                for (Map.Entry<Object, Object> entry : service.getProperties().entrySet()) {
+                for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
                     Object key = entry.getKey();
                     Object value = entry.getValue();
 
@@ -713,7 +713,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                         value = "<hidden>";
                     }
 
-                    logger.debug("Override" + key + "=" + value);
+                    logger.debug("Override " + key + "=" + value);
                 }
             }
 
