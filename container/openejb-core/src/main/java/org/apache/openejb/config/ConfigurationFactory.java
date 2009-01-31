@@ -173,6 +173,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         chain.add(new ApplyOpenejbJar());
+        chain.add(new MappedNameBuilder());
 
         // TODO: How do we want this plugged in?
         chain.add(new OutputGeneratedDescriptors());

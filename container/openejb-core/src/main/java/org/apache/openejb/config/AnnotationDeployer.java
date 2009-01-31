@@ -388,6 +388,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
                     sessionBean.setSessionType(SessionType.STATELESS);
+
+                    if (stateless.mappedName() != null) {
+                        sessionBean.setMappedName(stateless.mappedName());
+                    }
                 }
             }
 
@@ -409,6 +413,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
                     // TODO: We might be stepping on an xml override here
                     sessionBean.setSessionType(SessionType.STATEFUL);
+                    if (stateful.mappedName() != null) {
+                        sessionBean.setMappedName(stateful.mappedName());
+                    }
                 }
             }
 
