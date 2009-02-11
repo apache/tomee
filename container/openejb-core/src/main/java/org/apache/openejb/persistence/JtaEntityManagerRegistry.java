@@ -29,7 +29,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
  * The JtaEntityManagerRegistry tracks JTA entity managers for transation and extended scoped
- * entity managers.  A signle instance of this object should be created and shared by all
+ * entity managers.  A single instance of this object should be created and shared by all
  * JtaEntityManagers in the server instance.  Failure to do this will result in multiple entity
  * managers being created for a single persistence until, and that will result in cache
  * incoherence.
@@ -41,7 +41,7 @@ public class JtaEntityManagerRegistry {
     private final TransactionSynchronizationRegistry transactionRegistry;
 
     /**
-     * Registry of entended context entity managers.
+     * Registry of extended context entity managers.
      */
     private final ThreadLocal<ExtendedRegistry> extendedRegistry = new ThreadLocal<ExtendedRegistry>() {
         protected ExtendedRegistry initialValue() {
@@ -88,7 +88,7 @@ public class JtaEntityManagerRegistry {
         if (extended) {
             EntityManager entityManager = getInheritedEntityManager(entityManagerFactory);
             if (entityManager == null) {
-                throw new IllegalStateException("InternalError: an entity manager should already be registered for this entended persistence unit");
+                throw new IllegalStateException("InternalError: an entity manager should already be registered for this extended persistence unit");
             }
 
             // if transaction is active, we need to register the entity manager with the transaction manager
