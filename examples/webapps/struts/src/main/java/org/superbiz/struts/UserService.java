@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
 
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,13 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
---><!-- $Rev$ $Date$ --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.1.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>webapps</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Web Examples </name>
-  <modules>
-    <module>ejb-examples</module>
-    <module>struts</module>
-  </modules>
-</project>
+*/
+package org.superbiz.struts;
+
+import java.util.List;
+
+public interface UserService {
+	public void add(User user);
+	public User find(int id);
+	public List<User> findAll();
+}
