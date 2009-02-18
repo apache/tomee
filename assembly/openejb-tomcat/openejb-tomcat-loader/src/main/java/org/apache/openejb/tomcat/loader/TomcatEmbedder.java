@@ -55,14 +55,19 @@ public class TomcatEmbedder {
             // Use reflection to add the openejb-tomcat-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
             File thisJar = getThisJar();
-            webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJar.toURI().toString());
+            String thisJarUrl = thisJar.toURI().toString();
+            thisJarUrl = thisJarUrl.replaceAll("\\+", "%2B");
+            webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJarUrl);
 
             // childCl.addRepository(openejb-loader.jar)
             // Use reflection to add the openejb-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
 
             File jarFile = findOpenEJBJar(openejbWar, "openejb-loader");
-            webappClClass.getMethod("addRepository", String.class).invoke(childCl, jarFile.toURI().toString());
+            String openejbLoaderUrl = jarFile.toURI().toString();
+            openejbLoaderUrl = openejbLoaderUrl.replaceAll("\\+", "%2B");
+
+            webappClClass.getMethod("addRepository", String.class).invoke(childCl, openejbLoaderUrl);
 
             // childCl.start()
             webappClClass.getMethod("start").invoke(childCl);
@@ -91,6 +96,10 @@ public class TomcatEmbedder {
 
             URI uri = null;
             String url = classURL.toExternalForm();
+            if (url.contains("+")) {
+                url = url.replaceAll("\\+", "%2B");
+            }
+
             if (url.contains(" ")) {
                 url = url.replaceAll(" ", "%20");
             }
@@ -107,6 +116,7 @@ public class TomcatEmbedder {
                 path = path.substring(0, path.length() - classFileName.length());
             }
 
+            path = path.replaceAll("\\+", "%2B");
             return new File(URLDecoder.decode(path));
         } catch (Exception e) {
             throw new IllegalStateException(e);
