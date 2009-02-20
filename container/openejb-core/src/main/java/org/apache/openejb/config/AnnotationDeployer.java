@@ -52,6 +52,7 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.MethodSchedule;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
@@ -64,6 +65,7 @@ import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResSharingScope;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.Schedule;
 import org.apache.openejb.jee.SecurityIdentity;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.ServiceRef;
@@ -80,8 +82,6 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.MethodSchedule;
-import org.apache.openejb.jee.Schedule;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -715,8 +715,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if (port.getServiceImplBean().getEjbLink() != null) continue;
 
                         if (port.getHandlerChains() == null) continue;
-                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain())
-                        {
+                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                             for (Handler handler : handlerChain.getHandler()) {
                                 String handlerClass = handler.getHandlerClass();
                                 if (handlerClass != null) {
@@ -859,12 +858,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     List<javax.ejb.Schedule> list = new ArrayList<javax.ejb.Schedule>();
 
                     javax.ejb.Schedules schedulesAnnotation = method.getAnnotation(javax.ejb.Schedules.class);
-                    if (schedulesAnnotation != null){
+                    if (schedulesAnnotation != null) {
                         list.addAll(asList(schedulesAnnotation.value()));
                     }
 
                     javax.ejb.Schedule scheduleAnnotation = method.getAnnotation(javax.ejb.Schedule.class);
-                    if (scheduleAnnotation != null){
+                    if (scheduleAnnotation != null) {
                         list.add(scheduleAnnotation);
                     }
 
@@ -1153,8 +1152,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             if (!ejbName.equals(port.getServiceImplBean().getEjbLink())) continue;
 
                             if (port.getHandlerChains() == null) continue;
-                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain())
-                            {
+                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
                                 for (Handler handler : handlerChain.getHandler()) {
                                     String handlerClass = handler.getHandlerClass();
                                     if (handlerClass != null) {
@@ -1856,7 +1854,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // TODO: Looks like we aren't looking for an existing ejb-ref or ejb-local-ref
             // we need to do this to support overriding.
-            
+
             /**
              * Was @EJB used at a class level witout specifying the 'name' or 'beanInterface' attributes?
              */
@@ -1996,7 +1994,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         beanClasses.add(bean.getEjbClass());
                     }
 
-                    if (beanClasses.contains(clazz.getName())){
+                    if (beanClasses.contains(clazz.getName())) {
                         fail(b, "ann.ejb.beanClass", clazz.getName(), refName);
                     } else {
                         fail(b, "ann.ejb.notInterface", clazz.getName(), refName);
@@ -2094,8 +2092,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         consumer.getResourceEnvRef().add(resourceEnvRef);
                     }
 
-                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType()))
-                    {
+                    if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
                         if (resource.type() != java.lang.Object.class) {
                             resourceEnvRef.setResourceEnvRefType(resource.type().getName());
                         } else {
@@ -2274,12 +2271,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 consumer.getPersistenceContextRef().add(persistenceContextRef);
             } else {
-                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName()))
-                {
+                if (persistenceContextRef.getPersistenceUnitName() == null || ("").equals(persistenceContextRef.getPersistenceUnitName())) {
                     persistenceContextRef.setPersistenceUnitName(persistenceContext.unitName());
                 }
-                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType()))
-                {
+                if (persistenceContextRef.getPersistenceContextType() == null || ("").equals(persistenceContextRef.getPersistenceContextType())) {
                     if ("EXTENDED".equalsIgnoreCase(persistenceContext.type())) {
                         persistenceContextRef.setPersistenceContextType(PersistenceContextType.EXTENDED);
                     } else {
