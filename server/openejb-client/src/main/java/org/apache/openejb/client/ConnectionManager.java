@@ -29,6 +29,7 @@ public class ConnectionManager {
 
         factories.register("default", ejbdFactory);
         factories.register("ejbd", ejbdFactory);
+        factories.register("ejbds", ejbdFactory);
 
         HttpConnectionFactory httpFactory = new HttpConnectionFactory();
         factories.register("http", httpFactory);
