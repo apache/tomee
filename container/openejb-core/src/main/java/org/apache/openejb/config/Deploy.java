@@ -139,10 +139,7 @@ public class Deploy {
             Properties p = new Properties();
             p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-            String serverUrl = defaultServerUrl;
-            if (line.hasOption(serverUrl)) {
-                serverUrl = line.getOptionValue("serverUrl");
-            }
+            String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
             p.put(Context.PROVIDER_URL, serverUrl);
 
             try {

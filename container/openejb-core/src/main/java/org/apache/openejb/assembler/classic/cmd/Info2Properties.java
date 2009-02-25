@@ -16,6 +16,18 @@
  */
 package org.apache.openejb.assembler.classic.cmd;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -29,19 +41,8 @@ import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
-import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.SuperProperties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-import java.util.HashMap;
+import org.apache.openejb.util.URISupport;
 
 /**
  * @version $Rev$ $Date$
@@ -81,10 +82,7 @@ public class Info2Properties {
         Properties p = new Properties();
         p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 
-        String serverUrl = defaultServerUrl;
-        if (line.hasOption(serverUrl)) {
-            serverUrl = line.getOptionValue("serverUrl");
-        }
+        String serverUrl = line.getOptionValue("server-url", defaultServerUrl);
         p.put(Context.PROVIDER_URL, serverUrl);
 
         ConfigurationInfo configInfo = null;
