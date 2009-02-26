@@ -69,15 +69,6 @@ public class LocalInitialContext extends ContextWrapper {
         login();
 
         startNetworkServices();
-
-        Properties properties = new Properties();
-
-        // set standard and vendor properties
-        createEJBContainer(properties);
-    }
-
-    public void createEJBContainer(Map<?,?> properties, String... modules){
-
     }
 
     public void close() throws NamingException {
