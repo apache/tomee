@@ -159,7 +159,7 @@ public class JtaEntityManager implements EntityManager {
     }
 
     public void clear() {
-        if (!isTransactionActive()) {
+        if (!extended && !isTransactionActive()) {
             return;
         }
         getEntityManager().clear();
@@ -217,6 +217,6 @@ public class JtaEntityManager implements EntityManager {
     }
 
     public EntityTransaction getTransaction() {
-        throw new IllegalStateException("A JTA Entity Manager can not use an entity transaction");
+        throw new IllegalStateException("A JTA EntityManager can not use the EntityTransaction API.  See JPA 1.0 section 5.5");
     }
 }
