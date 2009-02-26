@@ -42,7 +42,7 @@ public class ClientSecurity {
             } catch (Exception e) {
                 if (serverUri.indexOf("://") == -1) {
                     try {
-                        URI location =  new URI("oejb://" + serverUri);
+                        URI location =  new URI("ejbd://" + serverUri);
                         server = new ServerMetaData(location);
                     } catch (URISyntaxException ignored) {
                     }
