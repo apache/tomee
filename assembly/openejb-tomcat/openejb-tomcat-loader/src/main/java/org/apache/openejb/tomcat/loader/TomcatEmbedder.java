@@ -56,7 +56,6 @@ public class TomcatEmbedder {
             // WebappClassLoader will now search for classes in this jar too
             File thisJar = getThisJar();
             String thisJarUrl = thisJar.toURI().toString();
-            thisJarUrl = thisJarUrl.replaceAll("\\+", "%2B");
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, thisJarUrl);
 
             // childCl.addRepository(openejb-loader.jar)
@@ -65,7 +64,6 @@ public class TomcatEmbedder {
 
             File jarFile = findOpenEJBJar(openejbWar, "openejb-loader");
             String openejbLoaderUrl = jarFile.toURI().toString();
-            openejbLoaderUrl = openejbLoaderUrl.replaceAll("\\+", "%2B");
 
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, openejbLoaderUrl);
 
