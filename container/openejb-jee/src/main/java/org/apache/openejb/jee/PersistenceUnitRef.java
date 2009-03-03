@@ -81,6 +81,15 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
     @XmlID
     protected String id;
 
+
+    public PersistenceUnitRef() {
+    }
+
+    public PersistenceUnitRef(String persistenceUnitRefName, String persistenceUnitName) {
+        this.persistenceUnitRefName = persistenceUnitRefName;
+        this.persistenceUnitName = persistenceUnitName;
+    }
+
     public String getName() {
         return getPersistenceUnitRefName();
     }

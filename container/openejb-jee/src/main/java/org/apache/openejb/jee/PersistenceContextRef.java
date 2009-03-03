@@ -92,6 +92,21 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     @XmlID
     protected String id;
 
+    public PersistenceContextRef() {
+    }
+
+    public PersistenceContextRef(String persistenceContextRefName, String persistenceUnitName) {
+        this.persistenceContextRefName = persistenceContextRefName;
+        this.persistenceUnitName = persistenceUnitName;
+    }
+
+    public PersistenceContextRef(String persistenceContextRefName, String persistenceUnitName, PersistenceContextType persistenceContextType, List<Property> persistenceProperty) {
+        this.persistenceContextRefName = persistenceContextRefName;
+        this.persistenceUnitName = persistenceUnitName;
+        this.persistenceContextType = persistenceContextType;
+        this.persistenceProperty = persistenceProperty;
+    }
+
     public String getName() {
         return getPersistenceContextRefName();
     }

@@ -91,6 +91,21 @@ public class ResourceRef implements JndiReference {
     @XmlID
     protected String id;
 
+    public ResourceRef() {
+    }
+
+    public ResourceRef(String resRefName, String resType) {
+        this.resRefName = resRefName;
+        this.resType = resType;
+    }
+
+    public ResourceRef(String resRefName, String resType, ResAuth resAuth, ResSharingScope resSharingScope) {
+        this.resRefName = resRefName;
+        this.resType = resType;
+        this.resAuth = resAuth;
+        this.resSharingScope = resSharingScope;
+    }
+
     @XmlTransient
     public String getName() {
         return getResRefName();

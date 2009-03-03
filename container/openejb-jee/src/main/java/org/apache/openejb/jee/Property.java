@@ -47,6 +47,14 @@ public class Property {
     @XmlID
     protected String id;
 
+    public Property() {
+    }
+
+    public Property(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }
