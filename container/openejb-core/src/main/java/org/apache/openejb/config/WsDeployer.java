@@ -41,6 +41,7 @@ import javax.wsdl.Port;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.jws.HandlerChain;
@@ -292,6 +293,13 @@ public class WsDeployer implements DynamicDeployer {
                 ServiceImplBean serviceImplBean = new ServiceImplBean();
                 serviceImplBean.setEjbLink(sessionBean.getEjbName());
                 portComponent.setServiceImplBean(serviceImplBean);
+
+                // Checking if MTOM must be enabled
+                if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding()) ||
+                        SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(portComponent.getProtocolBinding())) {
+                    portComponent.setEnableMtom(true);
+                }
+                
             }
 
             // default portId == deploymentId
