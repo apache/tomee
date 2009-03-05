@@ -54,6 +54,7 @@
     <module>jpa-hibernate</module>
     <module>jpa-eclipselink</module>
     <module>telephone-stateful</module>
+    <module>webservice-attachments</module>
     <module>webapps</module>
   </modules>
 </project>
