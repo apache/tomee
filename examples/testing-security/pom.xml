@@ -49,7 +49,7 @@
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+      <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
   <dependencies>
