@@ -63,6 +63,9 @@ import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.SessionBeanType;
+import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 
 import javax.xml.bind.JAXBException;
 import java.util.Map;
@@ -138,6 +141,7 @@ class AppInfoBuilder {
                 }
 
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
+                configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbJarInfo.jarPath, ejbJarInfo);
 
@@ -235,6 +239,42 @@ class AppInfoBuilder {
         logger.info("config.appLoaded", appInfo.jarPath);
         return appInfo;
 
+    }
+
+    /*
+     * left package-local for a unit test
+     */
+    void configureWebserviceSecurity(EjbJarInfo ejbJarInfo, EjbModule ejbModule) {
+        Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
+        if (altDD == null || (! (altDD instanceof OpenejbJarType))) return;
+
+        OpenejbJarType openejbJarType = (OpenejbJarType) altDD;
+
+        List<PortInfo> infoList = ejbJarInfo.portInfos;
+        for (PortInfo portInfo : infoList) {
+            String link = portInfo.serviceLink;
+
+            List<org.apache.openejb.jee.oejb2.EnterpriseBean> enterpriseBeans = openejbJarType.getEnterpriseBeans();
+            for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : enterpriseBeans) {
+                if (link.equals(enterpriseBean.getEjbName()) && enterpriseBean instanceof SessionBeanType) {
+                    SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
+                    WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
+                    portInfo.realmName = webServiceSecurityType.getRealmName();
+                    portInfo.securityRealmName = webServiceSecurityType.getSecurityRealmName();
+                    if (webServiceSecurityType.getTransportGuarantee() != null) {
+                        portInfo.transportGuarantee = webServiceSecurityType.getTransportGuarantee().value();
+                    } else {
+                        portInfo.transportGuarantee = "NONE";
+                    }
+
+                    if (webServiceSecurityType.getAuthMethod() != null) {
+                        portInfo.authMethod = webServiceSecurityType.getAuthMethod().value();
+                    } else {
+                        portInfo.authMethod = "NONE";
+                    }
+                }
+            }
+        }
     }
 
     private void buildClientModules(AppModule appModule, AppInfo appInfo, JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {

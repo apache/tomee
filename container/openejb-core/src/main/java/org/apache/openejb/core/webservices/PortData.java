@@ -38,6 +38,7 @@ public class PortData implements PortInfo {
     private QName wsdlPort;
     private QName wsdlService;
     private String location;
+    private boolean secure;
 
     public String getPortId() {
         return portId;
@@ -117,5 +118,13 @@ public class PortData implements PortInfo {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    public boolean isSecure() {
+        return secure;
     }
 }

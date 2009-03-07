@@ -78,6 +78,10 @@ public class OpenEJBHttpWsRegistry implements WsRegistry {
         if (path == null) throw new NullPointerException("contextRoot is null");
         if (httpListener == null) throw new NullPointerException("httpListener is null");
 
+        if ("BASIC".equals(authMethod)) {
+            httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName);
+        }
+
         // assure context root with a leading slash
         if (!path.startsWith("/")) path = "/" + path;
 

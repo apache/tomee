@@ -48,6 +48,9 @@ public class WsBuilder {
         portData.setWsdlPort(port.wsdlPort);
         portData.setWsdlService(port.wsdlService);
         portData.setLocation(port.location);
+
+        portData.setSecure("WS-SECURITY".equals(port.authMethod));
+
         return portData;
     }
 

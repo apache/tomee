@@ -195,6 +195,10 @@ public class TomcatWsRegistry implements WsRegistry {
             } else if ("NONE".equals(authMethod)) {
                 context.addValve(new NonLoginAuthenticator());
             }
+
+            OpenEJBValve openejbValve = new OpenEJBValve();
+            context.getPipeline().addValve(openejbValve);
+
         } else {
             throw new IllegalArgumentException("Invalid authMethod: " + authMethod);
         }

@@ -242,8 +242,17 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                             ClassLoader classLoader = deploymentInfo.getClassLoader();
                             if (wsRegistry != null) {
-                                // add servlet to web container
-                                List<String> addresses = wsRegistry.addWsContainer(location, container, virtualHost, realmName, transportGuarantee, authMethod, classLoader);
+                                String auth = authMethod;
+                                String realm = realmName;
+                                String transport = transportGuarantee;
+
+                                if ("BASIC".equals(portInfo.authMethod) || "DIGEST".equals(portInfo.authMethod) || "CLIENT-CERT".equals(portInfo.authMethod)) {
+                                    auth = portInfo.authMethod;
+                                    realm = portInfo.realmName;
+                                    transport = portInfo.transportGuarantee;
+                                }
+
+                                List<String> addresses = wsRegistry.addWsContainer(location, container, virtualHost, realm, transport, auth, classLoader);
 
                                 // one of the registered addresses to be the connonical address
                                 String address = selectSingleAddress(addresses);

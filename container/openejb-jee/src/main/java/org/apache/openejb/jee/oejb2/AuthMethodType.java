@@ -45,6 +45,8 @@ public enum AuthMethodType {
     DIGEST("DIGEST"),
     @XmlEnumValue("CLIENT-CERT")
     CLIENT_CERT("CLIENT-CERT"),
+    @XmlEnumValue("WS-SECURITY")
+    WS_SECURITY("WS-SECURITY"),
     NONE("NONE");
     private final String value;
 

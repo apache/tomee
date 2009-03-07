@@ -209,20 +209,12 @@
           <artifactId>velocity</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>wss4j</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>xalan</groupId>
           <artifactId>xalan</artifactId>
         </exclusion>
         <exclusion>
           <groupId>xml-apis</groupId>
           <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-security</groupId>
-          <artifactId>xmlsec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>xmlbeans</groupId>

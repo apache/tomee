@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.DestinationFactoryManager;
@@ -26,12 +27,18 @@ import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
+import org.apache.openejb.util.Base64;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.loader.SystemInstance;
 
+import javax.security.auth.login.LoginException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.security.Principal;
 
 public abstract class CxfWsContainer implements HttpListener {
     protected final Bus bus;

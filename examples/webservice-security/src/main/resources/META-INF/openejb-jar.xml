@@ -1,0 +1,12 @@
+<openejb-jar xmlns="http://openejb.apache.org/xml/ns/openejb-jar-2.2">
+    <enterprise-beans>
+        <session>
+            <ejb-name>CalculatorImpl</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>BASIC</auth-method>
+            </web-service-security>
+        </session>
+    </enterprise-beans>
+</openejb-jar>

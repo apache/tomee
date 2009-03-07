@@ -18,6 +18,7 @@
 package org.apache.openejb.server.cxf.ejb;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.binding.soap.SoapBinding;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.saaj.SAAJInInterceptor;
@@ -32,9 +33,14 @@ import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
+import org.apache.openejb.server.cxf.ServerPasswordHandler;
+import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.ws.security.WSConstants;
 
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -86,6 +92,18 @@ public class EjbEndpoint extends CxfEndpoint {
         if (endpoint.getBinding() instanceof SoapBinding && !this.implInfo.isWebServiceProvider()) {
             endpoint.getService().getInInterceptors().add(new SAAJInInterceptor());
         }
+
+        // Install WSS4J interceptor
+        if (port.isSecure()) {
+            Map<String, Object> inProps = new HashMap<String, Object>();
+            inProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+            inProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+            inProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ServerPasswordHandler.class.getName());
+
+            WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
+            endpoint.getInInterceptors().add(wssIn);
+        }
+
     }
 
     private static void removeHandlerInterceptors(List<Interceptor> interceptors) {

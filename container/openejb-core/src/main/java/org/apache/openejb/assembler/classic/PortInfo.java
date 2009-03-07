@@ -39,4 +39,9 @@ public class PortInfo extends InfoObject {
     public String binding;
 
     public String location;
+
+    public String authMethod;
+    public String realmName;
+    public String transportGuarantee;
+    public String securityRealmName;
 }
