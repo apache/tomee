@@ -32,8 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.Vendor;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BmpEntityContainerInfo;
@@ -85,6 +87,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
+import org.apache.openejb.util.Options;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -150,9 +153,21 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         chain.add(new CmpJpaConversion());
-        chain.add(new OpenEjb2Conversion());
-        chain.add(new SunConversion());
-        chain.add(new WlsConversion());
+
+        // By default all vendor support is enabled
+        Set<Vendor> support = Options.getEnums(SystemInstance.get().getProperties(), "openejb.vendor.config", Vendor.values());
+
+        if (support.contains(Vendor.GERONIMO) || System.getProperty(DUCT_TAPE_PROPERTY) != null) {
+            chain.add(new OpenEjb2Conversion());
+        }
+
+        if (support.contains(Vendor.GLASSFISH)) {
+            chain.add(new SunConversion());
+        }
+
+        if (support.contains(Vendor.WEBLOGIC)) {
+            chain.add(new WlsConversion());
+        }
 
         if (System.getProperty(DUCT_TAPE_PROPERTY) != null){
             // must be after CmpJpaConversion since it adds new persistence-context-refs
