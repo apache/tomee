@@ -27,6 +27,10 @@
   <name>OpenEJB :: Web Examples </name>
   <modules>
     <module>ejb-examples</module>
+    <module>applet</module>
+    <module>ejb-webservice</module>
+    <module>jsf</module>
+    <module>struts</module>
   </modules>
 
 </project>
