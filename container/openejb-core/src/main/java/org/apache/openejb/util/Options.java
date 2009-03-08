@@ -18,13 +18,12 @@ package org.apache.openejb.util;
 
 import static org.apache.openejb.util.Join.join;
 
-import java.util.Properties;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -33,7 +32,7 @@ public class Options {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, Options.class);
 
-    public static int getInt(Properties p, String property, int defaultValue){
+    public static int getInt(Properties p, String property, int defaultValue) {
         String value = p.getProperty(property);
         try {
             if (value != null) return Integer.parseInt(value);
@@ -44,7 +43,7 @@ public class Options {
         }
     }
 
-    public static long getLong(Properties p, String property, long defaultValue){
+    public static long getLong(Properties p, String property, long defaultValue) {
         String value = p.getProperty(property);
         try {
             if (value != null) return Long.parseLong(value);
@@ -55,7 +54,7 @@ public class Options {
         }
     }
 
-    public static boolean getBoolean(Properties p, String property, boolean defaultValue){
+    public static boolean getBoolean(Properties p, String property, boolean defaultValue) {
         String value = p.getProperty(property);
         try {
             if (value != null) return Boolean.parseBoolean(value);
@@ -66,7 +65,7 @@ public class Options {
         }
     }
 
-    public static <T extends Enum<T>> T getEnum(Properties p, String property, T defaultValue){
+    public static <T extends Enum<T>> T getEnum(Properties p, String property, T defaultValue) {
         String value = p.getProperty(property);
         if (value == null) return defaultValue;
 
@@ -82,7 +81,7 @@ public class Options {
         }
     }
 
-    public static <T extends Enum<T>> Set<T> getEnums(Properties p, String property, T... defaultValue){
+    public static <T extends Enum<T>> Set<T> getEnums(Properties p, String property, T... defaultValue) {
         String value = p.getProperty(property);
 
         if (value == null) return EnumSet.copyOf(Arrays.asList(defaultValue));
@@ -113,13 +112,13 @@ public class Options {
     /**
      * Use this instead of Enum.valueOf() when you want to ensure that the
      * the enum values are case insensitive.
-     * 
+     *
      * @param enumType
      * @param name
      * @param <T>
      * @return
      */
-    public static <T extends Enum<T>> T valueOf(Class<T> enumType, String name){
+    public static <T extends Enum<T>> T valueOf(Class<T> enumType, String name) {
         Map<String, T> map = new HashMap<String, T>();
         for (T t : enumType.getEnumConstants()) {
             map.put(t.name().toUpperCase(), t);
@@ -132,7 +131,7 @@ public class Options {
 
         return value;
     }
-    
+
     private static void warn(String property, String value, Class<? extends Enum> enumType, Enum... defaults) {
         String defaultValues = join(", ", lowercase(defaults));
         String possibleValues = join(", ", lowercase(enumType.getEnumConstants()));
@@ -143,7 +142,7 @@ public class Options {
         logger.warning("Cannot parse supplied value \"" + value + "\" for option \"" + property + "\".  Using default of \"" + defaultValue + "\"", e);
     }
 
-    private static <T extends Enum<T>>  String[] lowercase(T... items) {
+    private static <T extends Enum<T>> String[] lowercase(T... items) {
         String[] values = new String[items.length];
         for (int i = 0; i < items.length; i++) {
             values[i] = items[i].name().toLowerCase();
