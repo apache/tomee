@@ -21,6 +21,11 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.lang.reflect.Field;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -79,5 +84,17 @@ public class Debug {
             out.println(entry.getKey() + "=" + entry.getValue());
         }
         return map;
+    }
+
+    public static List<Field> getFields(Class clazz){
+        if (clazz == null) return Collections.EMPTY_LIST;
+
+        List<Field> fields = new ArrayList<Field>();
+
+        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+
+        fields.addAll(getFields(clazz.getSuperclass()));
+
+        return fields;
     }
 }
