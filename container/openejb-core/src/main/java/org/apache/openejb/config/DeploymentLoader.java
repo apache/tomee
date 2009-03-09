@@ -949,20 +949,35 @@ public class DeploymentLoader {
     }
 
     private static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
-        String prefix = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
+        String prefixes = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
 
-        if (prefix == null || prefix.length() <= 0) return map;
+        if (prefixes == null || prefixes.length() <= 0) return map;
 
-        if (!prefix.matches(".*[.-]$")) prefix += ".";
+        List<String> list = new ArrayList<String>(Arrays.asList(prefixes.split(",")));
+        Collections.reverse(list);
 
-        for (Map.Entry<String, URL> entry : new HashMap<String, URL>(map).entrySet()) {
-            String key = entry.getKey();
-            URL value = entry.getValue();
-            if (key.startsWith(prefix)) {
-                key = key.substring(prefix.length());
-                map.put(key, value);
+        Map<String, URL> alts = new HashMap<String, URL>();
 
-                if (log) logger.info("Found AltDD " + key + " -> " + value.toExternalForm());
+        for (String prefix : list) {
+            prefix = prefix.trim();
+            if (!prefix.matches(".*[.-]$")) prefix += ".";
+
+            for (Map.Entry<String, URL> entry : new HashMap<String, URL>(map).entrySet()) {
+                String key = entry.getKey();
+                URL value = entry.getValue();
+                if (key.startsWith(prefix)) {
+                    key = key.substring(prefix.length());
+                    map.put(key, value);
+
+                    // for logging once all is resolved
+                    alts.put(key, value);
+                }
+            }
+        }
+
+        if (log) {
+            for (Map.Entry<String, URL> alt : alts.entrySet()) {
+                logger.info("AltDD " + alt.getKey() + " -> " + alt.getValue().toExternalForm());
             }
         }
 
