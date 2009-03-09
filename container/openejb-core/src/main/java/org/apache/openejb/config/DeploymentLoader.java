@@ -955,7 +955,7 @@ public class DeploymentLoader {
 
         if (!prefix.matches(".*[.-]$")) prefix += ".";
 
-        for (Map.Entry<String, URL> entry : map.entrySet()) {
+        for (Map.Entry<String, URL> entry : new HashMap<String, URL>(map).entrySet()) {
             String key = entry.getKey();
             URL value = entry.getValue();
             if (key.startsWith(prefix)) {
