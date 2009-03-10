@@ -887,6 +887,27 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 /*
+                 * Add any interceptors they may have referenced in xml but did not declare 
+                 */
+                for (InterceptorBinding binding : assemblyDescriptor.getInterceptorBinding()) {
+                    EjbJar ejbJar = ejbModule.getEjbJar();
+
+                    List<String> list = new ArrayList<String>(binding.getInterceptorClass());
+
+                    if (binding.getInterceptorOrder() != null){
+                        list.clear();
+                        list.addAll(binding.getInterceptorOrder().getInterceptorClass());
+                    }
+
+                    for (String interceptor : list) {
+                        if (ejbJar.getInterceptor(interceptor) == null) {
+                            logger.debug("Adding '<ejb-jar><interceptors><interceptor>' entry for undeclared interceptor " + interceptor);
+                            ejbJar.addInterceptor(new Interceptor(interceptor));
+                        }
+                    }
+                }
+
+                /*
                  * @Interceptors
                  */
                 for (Class<?> interceptorsAnnotatedClass : inheritedClassFinder.findAnnotatedClasses(Interceptors.class)) {
