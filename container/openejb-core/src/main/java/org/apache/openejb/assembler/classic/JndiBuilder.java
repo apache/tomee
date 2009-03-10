@@ -31,6 +31,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
@@ -60,8 +61,7 @@ public class JndiBuilder {
 
     public JndiBuilder(Context context) {
         this.context = context;
-        String property = SystemInstance.get().getProperty(JNDINAME_FAILONCOLLISION, "true");
-        failOnCollision = "true".equalsIgnoreCase(property);
+        failOnCollision = SystemInstance.get().getOptions().get(JNDINAME_FAILONCOLLISION, true);
     }
 
     public void build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) {
@@ -80,14 +80,13 @@ public class JndiBuilder {
     }
 
     public static JndiNameStrategy createStrategy(EjbJarInfo ejbJar, Map<String, DeploymentInfo> deployments) {
-        String strategyClassName = SystemInstance.get().getProperty(JNDINAME_STRATEGY_CLASS, TemplatedStrategy.class.getName());
-        strategyClassName = ejbJar.properties.getProperty(JNDINAME_STRATEGY_CLASS, strategyClassName);
+        Options options = new Options(ejbJar.properties, SystemInstance.get().getOptions());
 
-        logger.debug("Using " + JNDINAME_STRATEGY_CLASS + " '" + strategyClassName + "'");
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Class strategyClass = options.get(JNDINAME_STRATEGY_CLASS, TemplatedStrategy.class);
+
+        String strategyClassName = strategyClass.getName();
+
         try {
-            Class strategyClass = classLoader.loadClass(strategyClassName);
-
             try {
                 Constructor constructor = strategyClass.getConstructor(EjbJarInfo.class, Map.class);
                 return (JndiNameStrategy) constructor.newInstance(ejbJar, deployments);
@@ -100,8 +99,6 @@ public class JndiBuilder {
             throw new IllegalStateException("Could not instantiate JndiNameStrategy: "+strategyClassName, e);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Could not access JndiNameStrategy: "+strategyClassName, e);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Could not load JndiNameStrategy: "+strategyClassName, e);
         } catch (Throwable t){
             throw new IllegalStateException("Could not create JndiNameStrategy: "+strategyClassName, t);
         }
@@ -171,10 +168,9 @@ public class JndiBuilder {
         private Map<String, StringTemplate> templates;
 
         public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
-            String format = SystemInstance.get().getProperty(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
-            format = ejbJarInfo.properties.getProperty(JNDINAME_FORMAT, format);
+            Options options = new Options(ejbJarInfo.properties, SystemInstance.get().getOptions());
 
-            logger.debug("Using " + JNDINAME_FORMAT + " '" + format + "'");
+            String format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
 
             this.template = new StringTemplate(format);
 

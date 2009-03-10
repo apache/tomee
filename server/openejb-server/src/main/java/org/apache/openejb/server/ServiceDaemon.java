@@ -18,7 +18,7 @@ package org.apache.openejb.server;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Options;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.codehaus.swizzle.stream.StringTemplate;
 
@@ -121,13 +121,15 @@ public class ServiceDaemon implements ServerService {
 
         address = getAddress(ip);
 
-        port = Options.getInt(props, "port", 0);
+        Options options = new Options(props);
 
-        int threads = Options.getInt(props, "threads", 100);
+        port = options.get("port", 0);
 
-        backlog = Options.getInt(props, "backlog", threads);
+        int threads = options.get("threads", 100);
 
-        secure = Options.getBoolean(props, "secure", false);
+        backlog = options.get("backlog", threads);
+
+        secure = options.get("secure", false);
 
         timeout = 1000;
 

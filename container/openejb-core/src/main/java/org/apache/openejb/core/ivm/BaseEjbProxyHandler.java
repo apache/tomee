@@ -209,12 +209,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     private static boolean parseRemoteCopySetting() {
-        Properties properties = SystemInstance.get().getProperties();
-        String value = properties.getProperty(OPENEJB_LOCALCOPY);
-        if (value == null) {
-            value = properties.getProperty(org.apache.openejb.core.EnvProps.INTRA_VM_COPY);
-        }
-        return value == null || !value.equalsIgnoreCase("FALSE");
+        return SystemInstance.get().getOptions().get(OPENEJB_LOCALCOPY, true);
     }
 
     protected void checkAuthorization(Method method) throws org.apache.openejb.OpenEJBException {

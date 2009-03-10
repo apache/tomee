@@ -22,6 +22,7 @@ import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.finder.UrlSet;
 
@@ -151,17 +152,12 @@ public class DeploymentsResolver {
      */
     public static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
 
-        String include = SystemInstance.get().getProperty(CLASSPATH_INCLUDE, "");
-        String exclude = SystemInstance.get().getProperty(CLASSPATH_EXCLUDE, ".*");
-        boolean requireDescriptors = SystemInstance.get().getProperty(CLASSPATH_REQUIRE_DESCRIPTOR, "false").equalsIgnoreCase("true");
-        boolean filterDescriptors = SystemInstance.get().getProperty(CLASSPATH_FILTER_DESCRIPTORS, "false").equalsIgnoreCase("true");
-        boolean filterSystemApps = SystemInstance.get().getProperty(CLASSPATH_FILTER_SYSTEMAPPS, "true").equalsIgnoreCase("true");
-
-        logger.debug("Using "+CLASSPATH_INCLUDE+" '"+include+"'");
-        logger.debug("Using "+CLASSPATH_EXCLUDE+" '"+exclude+"'");
-        logger.debug("Using "+CLASSPATH_FILTER_SYSTEMAPPS+" '"+filterSystemApps+"'");
-        logger.debug("Using "+CLASSPATH_FILTER_DESCRIPTORS+" '"+filterDescriptors+"'");
-        logger.debug("Using "+CLASSPATH_REQUIRE_DESCRIPTOR+" '"+requireDescriptors+"'");
+        Options options = SystemInstance.get().getOptions();
+        String include = options.get(CLASSPATH_INCLUDE, "");
+        String exclude = options.get(CLASSPATH_EXCLUDE, ".*");
+        boolean requireDescriptors = options.get(CLASSPATH_REQUIRE_DESCRIPTOR, false);
+        boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
+        boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);

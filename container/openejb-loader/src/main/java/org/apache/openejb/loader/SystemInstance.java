@@ -41,6 +41,8 @@ public class SystemInstance {
      */
     private final Properties internalProperties = new Properties();
 
+    private final Options options;
+
     /**
      * Properties that need to be set to System via {@link System#setProperty(String, String)}
      * FIXME: Some properties are doubled in internal and external prop sets, but it simplifies get's
@@ -60,6 +62,8 @@ public class SystemInstance {
         this.internalProperties.putAll(System.getProperties());
         this.internalProperties.putAll(properties);
 
+        this.options = new Options(internalProperties, new Options(System.getProperties()));
+
         this.home = new FileUtils("openejb.home", "user.dir", this.internalProperties);
         this.base = new FileUtils("openejb.base", "openejb.home", this.internalProperties);
         this.classPath = ClassPathFactory.createClassPath(this.internalProperties.getProperty("openejb.loader", "context"));
@@ -75,6 +79,10 @@ public class SystemInstance {
 
     public long getStartTime() {
         return startTime;
+    }
+
+    public Options getOptions() {
+        return options;
     }
 
     public Properties getProperties() {

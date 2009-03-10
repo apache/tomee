@@ -82,12 +82,12 @@ import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
-import org.apache.openejb.util.Options;
 
 public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
@@ -123,6 +123,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         this.offline = offline;
         deploymentLoader = new DeploymentLoader();
 
+        Options options = SystemInstance.get().getOptions();
+
         Chain chain = new Chain();
 
         chain.add(new ReadDescriptors());
@@ -131,8 +133,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ClearEmptyMappedName());
 
-        boolean shouldValidate = !Boolean.parseBoolean(SystemInstance.get().getProperty(VALIDATION_SKIP_PROPERTY, "false"));
-        if (shouldValidate) {
+        if (!options.get(VALIDATION_SKIP_PROPERTY, false)) {
             chain.add(new ValidateModules());
         } else {
             DeploymentLoader.logger.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
@@ -140,13 +141,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new InitEjbDeployments());
 
-        String debuggableVmHackery = SystemInstance.get().getProperty(DEBUGGABLE_VM_HACKERY_PROPERTY, "false");
-        if (Boolean.parseBoolean(debuggableVmHackery)){
+        if (options.get(DEBUGGABLE_VM_HACKERY_PROPERTY, false)){
             chain.add(new DebuggableVmHackery());
         }
 
-        String webservicesEnabled = SystemInstance.get().getProperty(WEBSERVICES_ENABLED, "true");
-        if (Boolean.parseBoolean(webservicesEnabled)){
+        if (options.get(WEBSERVICES_ENABLED, true)){
             chain.add(new WsDeployer());
         } else {
             chain.add(new RemoveWebServices());
@@ -155,7 +154,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new CmpJpaConversion());
 
         // By default all vendor support is enabled
-        Set<Vendor> support = Options.getEnums(SystemInstance.get().getProperties(), "openejb.vendor.config", Vendor.values());
+        Set<Vendor> support = SystemInstance.get().getOptions().getAll("openejb.vendor.config", Vendor.values());
 
         if (support.contains(Vendor.GERONIMO) || System.getProperty(DUCT_TAPE_PROPERTY) != null) {
             chain.add(new OpenEjb2Conversion());
@@ -248,7 +247,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public void init(Properties props) throws OpenEJBException {
-
         configLocation = props.getProperty(CONF_FILE_PROPERTY);
         if (configLocation == null) {
             configLocation = props.getProperty(CONFIGURATION_PROPERTY);
@@ -358,7 +356,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        if (getBooleanOption(DEPLOYMENTS_CLASSPATH_PROPERTY, true)) {
+        if (SystemInstance.get().getOptions().get(DEPLOYMENTS_CLASSPATH_PROPERTY, true)) {
             List<String> classpathApps = new ArrayList<String>();
 
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -373,7 +371,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
 
             try {
-                if (getBooleanOption(CLASSPATH_AS_EAR, true)) {
+                if (SystemInstance.get().getOptions().get(CLASSPATH_AS_EAR, true)) {
 
                     AppInfo appInfo = configureApplication(classLoader, "classpath.ear", jarFiles);
 
@@ -404,11 +402,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         ContainerInfo info = configureService(container, infoClass);
         return info;
-    }
-
-    private static boolean getBooleanOption(String name, boolean defaultValue) {
-        String flag = SystemInstance.get().getProperty(name, defaultValue + "");
-        return Boolean.parseBoolean(flag);
     }
 
     private void loadPropertiesDeclaredConfiguration(Openejb openejb) {

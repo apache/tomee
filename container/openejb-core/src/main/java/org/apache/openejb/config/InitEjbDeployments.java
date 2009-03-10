@@ -41,7 +41,7 @@ public class InitEjbDeployments implements DynamicDeployer {
     private static final String DEPLOYMENT_ID_FORMAT = "openejb.deploymentId.format";
 
     public InitEjbDeployments() {
-        String format = SystemInstance.get().getProperty(DEPLOYMENT_ID_FORMAT, "{ejbName}");
+        String format = SystemInstance.get().getOptions().get(DEPLOYMENT_ID_FORMAT, "{ejbName}");
         this.deploymentIdTemplate = new StringTemplate(format);
     }
 

@@ -18,11 +18,11 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Options;
 import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
 
@@ -32,7 +32,6 @@ import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Map;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
@@ -51,6 +50,7 @@ public class LocalInitialContext extends ContextWrapper {
 
     private static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
     private Close onClose;
+    private Options options;
 
     public static enum Close {
         LOGOUT, DESTROY;
@@ -62,7 +62,8 @@ public class LocalInitialContext extends ContextWrapper {
         properties = new Properties();
         properties.putAll(env);
 
-        onClose = Options.getEnum(properties, ON_CLOSE, Close.LOGOUT);
+        options = new Options(properties);
+        onClose = options.get(ON_CLOSE, Close.LOGOUT);
 
         this.factory = factory;
 
@@ -129,7 +130,7 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void startNetworkServices() {
-        if (!properties.getProperty(OPENEJB_EMBEDDED_REMOTABLE, "false").equalsIgnoreCase("true")) {
+        if (!options.get(OPENEJB_EMBEDDED_REMOTABLE, false)) {
             return;
         }
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

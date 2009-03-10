@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Options;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class ServicePool implements ServerService {
     private final AtomicBoolean stop = new AtomicBoolean();
 
     public ServicePool(ServerService next, String name, Properties properties) {
-        this(next, name, Options.getInt(properties, "threads", 100));
+        this(next, name, new Options(properties).get("threads", 100));
     }
 
     public ServicePool(ServerService next, final String name, int threads) {

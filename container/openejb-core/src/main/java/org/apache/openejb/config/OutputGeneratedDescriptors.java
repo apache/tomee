@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
@@ -38,7 +39,7 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        boolean output = SystemInstance.get().getProperty(OUTPUT_DESCRIPTORS, "false").equalsIgnoreCase("true");
+        boolean output = SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS, false);
 
         if (output && appModule.getCmpMappings() != null){
 
@@ -46,8 +47,9 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         }
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
+            Options options = new Options(ejbModule.getOpenejbJar().getProperties(), SystemInstance.get().getOptions());
 
-            output = ejbModule.getOpenejbJar().getProperties().getProperty(OUTPUT_DESCRIPTORS, output+"").equalsIgnoreCase("true");
+            output = options.get(OUTPUT_DESCRIPTORS, false);
 
             if (output){
                 if (ejbModule.getEjbJar() != null) {

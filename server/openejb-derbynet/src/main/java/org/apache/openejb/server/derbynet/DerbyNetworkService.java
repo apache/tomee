@@ -22,13 +22,12 @@ import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.util.Log4jPrintWriter;
-import org.apache.openejb.util.Options;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Properties;
@@ -57,10 +56,12 @@ public class DerbyNetworkService implements ServerService, SelfManaging {
     }
 
     public void init(Properties properties) throws Exception {
-        String bind = properties.getProperty("bind");
-        this.threads = Options.getInt(properties, "threads", 20);
-        this.port = Options.getInt(properties, "port", 1527);;
-        this.disabled = Options.getBoolean(properties, "disabled", false);;
+        Options options = new Options(properties);
+
+        this.threads = options.get("threads", 20);
+        this.port = options.get("port", 1527);
+        this.disabled = options.get("disabled", false);
+        
         host = InetAddress.getByName("0.0.0.0");
         System.setProperty("derby.system.home", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
     }

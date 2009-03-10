@@ -58,7 +58,7 @@ public class ServiceUtils {
             }
         } catch (Exception ignored) {
         }
-        defaultProviderURL = System.getProperty("openejb.provider.default", defaultValue);
+        defaultProviderURL = SystemInstance.get().getOptions().get("openejb.provider.default", defaultValue);
     }
 
 

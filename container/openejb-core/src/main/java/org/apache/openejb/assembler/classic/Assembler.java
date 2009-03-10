@@ -62,7 +62,6 @@ import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.DuplicateDeploymentIdException;
-import org.apache.openejb.EnvProps;
 import org.apache.openejb.Injection;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
@@ -85,6 +84,7 @@ import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
@@ -113,10 +113,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String JAVA_OPENEJB_NAMING_CONTEXT = "java:openejb/";
 
     public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = "java:openejb/PersistenceUnit/";
-
-    public static final String DEFAULT_CONFIGURATOR = "org.apache.openejb.config.ConfigurationFactory";
-
-    public static final String CONFIGURATOR_PROPERTY = "openejb.configurator";
 
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
@@ -228,11 +224,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void init(Properties props) throws OpenEJBException {
-        this.props = props;
-        String className = props.getProperty(EnvProps.CONFIGURATION_FACTORY);
-        if (className == null) {
-            className = props.getProperty(CONFIGURATOR_PROPERTY, DEFAULT_CONFIGURATOR);
-        }
+        this.props = new Properties(props);
+        Options options = new Options(props, SystemInstance.get().getOptions());
+        String className = options.get("openejb.configurator", "org.apache.openejb.config.ConfigurationFactory");
 
         configFactory = (OpenEjbConfigurationFactory) toolkit.newInstance(className);
         configFactory.init(props);
@@ -253,7 +247,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
             systemProperties.setProperty(Context.URL_PKG_PREFIXES, str);
         }
-        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/}
+        /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+    }
 
     private static ThreadLocal<Map<String, Object>> context = new ThreadLocal<Map<String, Object>>();
 

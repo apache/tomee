@@ -23,7 +23,7 @@ import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.server.DiscoveryListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Options;
+import org.apache.openejb.loader.Options;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,16 +99,18 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
         group = props.getProperty("group", group);
         groupPrefix = group + ":";
 
-        port = Options.getInt(props, "port", port);
+        Options options = new Options(props);
 
-        heartRate = Options.getLong(props, "heart_rate", heartRate);
-        maxMissedHeartbeats = Options.getInt(props, "max_missed_heartbeats", maxMissedHeartbeats);
-        loopbackMode = Options.getBoolean(props, "loopback_mode", loopbackMode);
+        port = options.get("port", port);
 
-        reconnectDelay = Options.getLong(props, "reconnect_delay", reconnectDelay);
-        maxReconnectDelay = Options.getLong(props, "max_reconnect_delay", reconnectDelay);
-        maxReconnectAttempts = Options.getInt(props, "max_reconnect_attempts", maxReconnectAttempts);
-        exponentialBackoff = Options.getLong(props, "exponential_backoff", exponentialBackoff);
+        heartRate = options.get("heart_rate", heartRate);
+        maxMissedHeartbeats = options.get("max_missed_heartbeats", maxMissedHeartbeats);
+        loopbackMode = options.get("loopback_mode", loopbackMode);
+
+        reconnectDelay = options.get("reconnect_delay", reconnectDelay);
+        maxReconnectDelay = options.get("max_reconnect_delay", reconnectDelay);
+        maxReconnectAttempts = options.get("max_reconnect_attempts", maxReconnectAttempts);
+        exponentialBackoff = options.get("exponential_backoff", exponentialBackoff);
 
         useExponentialBackOff = (exponentialBackoff > 1);
     }

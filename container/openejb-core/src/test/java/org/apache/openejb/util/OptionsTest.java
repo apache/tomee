@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 
 import java.util.Properties;
 
+import org.apache.openejb.loader.Options;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -30,9 +32,11 @@ public class OptionsTest extends TestCase {
         properties.setProperty("caseSensitive", Colors.RED.toString());
         properties.setProperty("caseInsensitive", "blue");
 
-        assertSame(Colors.RED, Options.getEnum(properties, "caseSensitive", Colors.GREEN));
-        assertSame(Colors.BLUE, Options.getEnum(properties, "caseInsensitive", Colors.GREEN));
-        assertSame(Colors.GREEN, Options.getEnum(properties, "default", Colors.GREEN));
+        Options options = new Options(properties);
+
+        assertSame(Colors.RED, options.get("caseSensitive", Colors.GREEN));
+        assertSame(Colors.BLUE, options.get("caseInsensitive", Colors.GREEN));
+        assertSame(Colors.GREEN, options.get("default", Colors.GREEN));
     }
 
     public static enum Colors {

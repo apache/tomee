@@ -21,11 +21,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Options;
 
 import java.util.List;
 import java.util.Arrays;
-import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -43,9 +41,7 @@ public class ReportValidationResults implements DynamicDeployer {
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
-        Properties properties = SystemInstance.get().getProperties();
-
-        Level level = Options.getEnum(properties, VALIDATION_LEVEL, Level.MEDIUM);
+        Level level = SystemInstance.get().getOptions().get(VALIDATION_LEVEL, Level.MEDIUM);
 
         boolean hasErrors = appModule.hasErrors();
         boolean hasFailures = appModule.hasFailures();

@@ -89,7 +89,7 @@ public final class OpenEJB {
             */
             OpenEjbVersion versionInfo = OpenEjbVersion.get();
 
-            if (initProps.getProperty("openejb.nobanner") == null) {
+            if (system.getOptions().get("openejb.nobanner", true)) {
                 System.out.println("Apache OpenEJB " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
                 System.out.println("" + versionInfo.getUrl());
             }
@@ -101,24 +101,9 @@ public final class OpenEJB {
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
-            Properties props = new Properties(SystemInstance.get().getProperties());
-
-            if (initProps == null) {
-                logger.debug("startup.noInitializationProperties");
-            } else {
-                props.putAll(initProps);
-            }
-
-
-
-            /* Uses the EnvProps.ASSEMBLER property to obtain the Assembler impl.
+            /* Obtain the Assembler impl.
                Default is org.apache.openejb.assembler.classic.Assembler */
-            String className = props.getProperty(EnvProps.ASSEMBLER);
-            if (className == null) {
-                className = props.getProperty("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
-            } else {
-                logger.warning("startup.deprecatedPropertyName", EnvProps.ASSEMBLER);
-            }
+            String className = system.getOptions().get("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
 
             logger.debug("startup.instantiatingAssemblerClass", className);
             Assembler assembler = null;
@@ -137,7 +122,7 @@ public final class OpenEJB {
             SystemInstance.get().setComponent(Assembler.class, assembler);
 
             try {
-                assembler.init(props);
+                assembler.init(system.getProperties());
             } catch (OpenEJBException oe) {
                 logger.fatal("startup.assemblerFailedToInitialize", oe);
                 throw oe;
