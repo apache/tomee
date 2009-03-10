@@ -26,29 +26,25 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
+ * The purpose of this class is to provide a more strongly typed version of a
+ * java.util.Properties object. So far it is a read only view of the properties
+ * and does not set data into the underlying Properties instance.
+ * <p/>
+ * Similar to java.util.Properties it will delegate to a "parent" instance when
+ * a property is not found.  If a property is found but its value cannot be parsed
+ * as the desired data type, the parent's value is used.
+ * <p/>
+ * By default this object will log nothing, but if a Log implementation is set the
+ * Options class will log three kinds of statements:
+ * <p/>
+ * - When a property is not found: the property name and default value in use along
+ * with all possible values (enums only). Debug level.
+ * - When a property is found: the property name and value.  Info level.
+ * - When a property value cannot be parsed: the property name and invalid value. Warn level.
+ *
  * @version $Rev$ $Date$
  */
 public class Options {
-
-    public static interface Log {
-        public boolean isDebugEnabled();
-
-        public boolean isInfoEnabled();
-
-        public boolean isWarningEnabled();
-
-        public void warning(String message, Throwable t, Object... args);
-
-        public void warning(String message, Object... args);
-
-        public void debug(String message, Throwable t, Object... args);
-
-        public void debug(String message, Object... args);
-
-        public void info(String message, Throwable t, Object... args);
-
-        public void info(String message, Object... args);
-    }
 
     private final Options parent;
     private final Properties properties;
@@ -273,6 +269,11 @@ public class Options {
         }
 
         @Override
+        public boolean has(String property) {
+            return false;
+        }
+
+        @Override
         public int get(String property, int defaultValue) {
             return log(property, defaultValue);
         }
@@ -316,11 +317,6 @@ public class Options {
         }
 
         @Override
-        public boolean has(String property) {
-            return false;
-        }
-
-        @Override
         public String get(String property, String defaultValue) {
             return log(property, defaultValue);
         }
@@ -344,6 +340,26 @@ public class Options {
             }
             return value;
         }
+    }
+
+    public static interface Log {
+        public boolean isDebugEnabled();
+
+        public boolean isInfoEnabled();
+
+        public boolean isWarningEnabled();
+
+        public void warning(String message, Throwable t, Object... args);
+
+        public void warning(String message, Object... args);
+
+        public void debug(String message, Throwable t, Object... args);
+
+        public void debug(String message, Object... args);
+
+        public void info(String message, Throwable t, Object... args);
+
+        public void info(String message, Object... args);
     }
 
     public static class NullLog implements Log {
