@@ -17,19 +17,16 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.URLs;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.core.stateful.StatefulInterceptor2Test;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.URLs;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import javax.interceptor.Interceptors;
-import javax.ejb.Stateful;
-import java.net.URL;
 import java.io.File;
+import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
@@ -40,7 +37,7 @@ public class AltDDPrefixTest extends TestCase {
      * This module has only a "test.ejb-jar.xml" file and no equivalent
      * non-test ejb-jar.xml file.  It should still get discovered even though
      * there is not an ejb-jar.xml file and only a test.ejb-jar.xml file
-     * 
+     *
      * @throws Exception
      */
     public void testTestOnlyModule() throws Exception {
