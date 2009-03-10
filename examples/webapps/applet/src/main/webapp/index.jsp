@@ -19,7 +19,7 @@
 <body>
 <applet alt="could not load applet" height="100" width="300"
 	codebase="."
-	archive="app.jar,javaee-api-5.0-1.jar,openejb-client-3.1.jar"
+	archive="app.jar,javaee-api.jar,openejb-client.jar"
 	code="org.superbiz.applet.CalculatorApplet">
 </applet>
 </body>
