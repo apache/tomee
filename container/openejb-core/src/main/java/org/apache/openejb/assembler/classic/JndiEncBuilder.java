@@ -452,9 +452,9 @@ public class JndiEncBuilder {
     }
 
     private IvmContext createIvmContext() {
-        IvmContext context = new IvmContext(new NameNode(null, new ParsedName("comp"), null, null));
+        IvmContext context = new IvmContext();
         try {
-            context.createSubcontext("comp").createSubcontext("env");
+//            context.createSubcontext("comp");
             // todo remove this... IvmContext seems to drop empty nodes
             context.bind("java:comp/env/dummy", "dummy");
         } catch (NamingException e) {

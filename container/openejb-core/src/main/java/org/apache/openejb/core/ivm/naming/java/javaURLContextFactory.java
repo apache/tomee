@@ -35,7 +35,7 @@ public class javaURLContextFactory implements ObjectFactory {
         return getContext();
     }
 
-    public Context getContext() {
+    public static Context getContext() {
         ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext == null) {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);

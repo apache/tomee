@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.NotSerializableException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -45,10 +46,13 @@ import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
+import javax.naming.InitialContext;
 import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
+import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
+import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.xbean.naming.context.ContextUtil;
 
 /*
@@ -69,11 +73,11 @@ public class IvmContext implements Context, Serializable {
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
-        return new IvmContext(new NameNode(null, new ParsedName("/"), null, null));
+        return new IvmContext();
     }
 
     public IvmContext() {
-        this(new NameNode(null, new ParsedName("root"), null, null));
+        this(new NameNode(null, new ParsedName(""), null, null));
     }
 
     public IvmContext(String nodeName) {
@@ -82,6 +86,7 @@ public class IvmContext implements Context, Serializable {
 
     public IvmContext(NameNode node) {
         mynode = node;
+//        mynode.setMyContext(this);
     }
 
     public IvmContext(Hashtable<String, Object> environment) throws NamingException {
@@ -99,13 +104,34 @@ public class IvmContext implements Context, Serializable {
         }
 
         String compoundName;
-        int indx = compositName.indexOf(":");
-        if (indx > -1) {
-            /*
-             The ':' character will be in the path if its an absolute path name starting with the schema
-             'java:'.  We strip the schema off the path before passing it to the node.resolve method.
-            */
-            compoundName = compositName.substring(indx + 1);
+        int index = compositName.indexOf(":");
+        if (index > -1) {
+
+            String prefix = compositName.substring(0, index);
+
+            String path = compositName.substring(index + 1);
+            ParsedName name = new ParsedName(path);
+
+            if (prefix.equals("openejb")){
+                path = name.path();
+                return openejbURLContextFactory.getContext().lookup(path);
+            }
+
+            if (prefix.equals("java")){
+                if (name.getComponent().equals("openejb")){
+                    path = name.remaining().path();
+                    return openejbURLContextFactory.getContext().lookup(path);
+                } else {
+                    path = name.path();
+                    return javaURLContextFactory.getContext().lookup(path);
+                }
+            }
+
+            // we don't know what the prefix means, default to JNDI
+
+            InitialContext initialContext = new InitialContext();
+            return initialContext.lookup(compositName);
+
         } else {
             /*
               the resolve method always starts with the comparison assuming that the first
@@ -280,7 +306,11 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void rebind(String name, Object obj) throws NamingException {
-        throw new javax.naming.OperationNotSupportedException();
+        try {
+            unbind(name);
+        } catch (NameNotFoundException e) {
+        }
+        bind(name, obj);
     }
 
     public void rebind(Name name, Object obj) throws NamingException {
@@ -525,6 +555,17 @@ public class IvmContext implements Context, Serializable {
         public Object nextElement() {
             return myEnum.nextElement();
         }
+    }
+
+    public void tree(PrintStream out){
+        mynode.tree("", out);
+    }
+
+    @Override
+    public String toString() {
+        return "IvmContext{" +
+                "mynode=" + mynode.getAtomicName() +
+                '}';
     }
 
     protected Object writeReplace() throws ObjectStreamException {

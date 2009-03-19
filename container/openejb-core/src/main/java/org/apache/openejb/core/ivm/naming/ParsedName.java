@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import java.util.Arrays;
+
 public class ParsedName implements java.io.Serializable {
     final static int IS_EQUAL = 0;
     final static int IS_LESS = -1;
@@ -41,8 +43,7 @@ public class ParsedName implements java.io.Serializable {
             hashcode = components[0].hashCode();
         } else {
 
-            components = new String[1];
-            components[0] = "";
+            components = new String[]{""};
             hashcode = 0;
         }
     }
@@ -89,7 +90,27 @@ public class ParsedName implements java.io.Serializable {
         while (name.next()) System.out.println(name.getComponent());
     }
 
+    public ParsedName remaining() {
+        ParsedName name = new ParsedName("");
+        int next = pos +1;
+        if (next > components.length) return name;
+        
+        String[] dest = new String[components.length - next];
+        System.arraycopy(components, next, dest, 0, dest.length);
+        name.components = dest;
+
+        return name;
+    }
+
+    @Override
     public String toString() {
+        return "ParsedName{" +
+                "path=" + path() +
+                ", component=" + getComponent() +
+                '}';
+    }
+
+    public String path() {
         if (components.length == 0) {
             return "";
         }

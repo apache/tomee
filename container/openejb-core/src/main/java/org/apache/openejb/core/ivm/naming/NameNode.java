@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import java.io.PrintStream;
+
 public class NameNode implements java.io.Serializable {
     private String atomicName;
     private int atomicHash;
@@ -36,6 +38,10 @@ public class NameNode implements java.io.Serializable {
             subTree = new NameNode(this, name, obj, this);
         else
             myObject = obj;
+    }
+
+    void setMyContext(IvmContext myContext) {
+        this.myContext = myContext;
     }
 
     public Object getBinding() {
@@ -105,6 +111,24 @@ public class NameNode implements java.io.Serializable {
                 grtrTree.bind(name, obj);
         }
     }
+
+    public void tree(String indent, PrintStream out){
+        out.println(atomicName + " @ " + atomicHash + (myObject != null ? " [" + myObject + "]" : ""));
+
+        if (grtrTree != null) {
+            out.print(indent +" + ");
+            grtrTree.tree(indent + "    ", out);
+        }
+        if (lessTree != null) {
+            out.print(indent +" - ");
+            lessTree.tree(indent + "    ", out);
+        }
+        if (subTree != null) {
+            out.print(indent +" - ");
+            subTree.tree(indent + "    ", out);
+        }
+    }
+
 
     public int compareTo(int otherHash) {
         if (atomicHash == otherHash)
@@ -282,4 +306,20 @@ public class NameNode implements java.io.Serializable {
         return parent;
     }
 
+
+    @Override
+    public String toString() {
+        return "NameNode{" +
+                "atomicName='" + atomicName + '\'' +
+                ", atomicHash=" + atomicHash +
+                ", lessTree=" + (lessTree != null ? lessTree.atomicName : "null") +
+                ", grtrTree=" + (grtrTree != null ? grtrTree.atomicName : "null") +
+                ", subTree=" + (subTree != null ? subTree.atomicName : "null") +
+                ", parentTree=" + (parentTree != null ? parentTree.atomicName : "null") +
+                ", parent=" + (parent != null ? parent.atomicName : "null") +
+                ", myObject=" + myObject +
+                ", myContext=" + myContext +
+                ", unbound=" + unbound +
+                '}';
+    }
 }
