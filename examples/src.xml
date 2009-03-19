@@ -12,9 +12,5 @@
         <exclude>**/target/**</exclude>
       </excludes>
     </fileSet>
-    <fileSet>
-      <directory>target/maven-shared-archive-resources/META-INF</directory>
-      <outputDirectory>/</outputDirectory>
-    </fileSet>
   </fileSets>
 </assembly>
