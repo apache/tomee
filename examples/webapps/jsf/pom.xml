@@ -59,7 +59,7 @@
       </releases>
       <snapshots/>
       <id>apache-maven-snapshots</id>
-      <url>http://people.apache.org/repo/m2-snapshot-repository
+      <url>http://repository.apache.org/snapshots/
       </url>
     </repository>
     <repository>

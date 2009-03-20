@@ -25,7 +25,7 @@
 
   HOW TO RUN
 
-    Download http://www.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.9.jar
+    Download http://archive.apache.org/dist/maven/binaries/maven-ant-tasks-2.0.9.jar
     Then execute ant as follows:
 
     ant -lib maven-ant-tasks-2.0.9.jar
@@ -39,7 +39,7 @@
 
   ================================================================= -->
 
-  <artifact:remoteRepository id="apache.snapshot.repository" url="http://repository.apache.org/content/repositories/snapshots/" />
+  <artifact:remoteRepository id="apache.snapshot.repository" url="http://repository.apache.org/snapshots/" />
   <artifact:remoteRepository id="m2.repository" url="http://repo1.maven.org/maven2/" />
 
   <!-- Build Classpath -->

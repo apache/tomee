@@ -437,7 +437,7 @@
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache M2 Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <url>http://repository.apache.org/snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -489,7 +489,7 @@
     <pluginRepository>
       <id>apache-m2-snapshot</id>
       <name>Apache Software Foundation M2 Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <url>http://repository.apache.org/snapshots/</url>
       <releases>
         <enabled>false</enabled>
       </releases>
