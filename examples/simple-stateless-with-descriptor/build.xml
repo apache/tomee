@@ -39,7 +39,7 @@
 
   ================================================================= -->
 
-  <artifact:remoteRepository id="apache.snapshot.repository" url="http://people.apache.org/repo/m2-snapshot-repository/" />
+  <artifact:remoteRepository id="apache.snapshot.repository" url="http://repository.apache.org/content/repositories/snapshots/" />
   <artifact:remoteRepository id="m2.repository" url="http://repo1.maven.org/maven2/" />
 
   <!-- Build Classpath -->
