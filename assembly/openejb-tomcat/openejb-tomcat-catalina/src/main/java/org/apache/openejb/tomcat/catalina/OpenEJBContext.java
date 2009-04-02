@@ -18,6 +18,8 @@
 package org.apache.openejb.tomcat.catalina;
 
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -29,102 +31,101 @@ import javax.naming.NamingException;
 import java.util.Hashtable;
 
 public class OpenEJBContext implements Context {
-    private static final String URL_PREFIX = "comp";
 
     public Object lookup(Name name) throws NamingException {
-        return getThreadContext().lookup(addUrlPrefix(name));
+        return getThreadContext().lookup(name);
     }
 
     public Object lookup(String name) throws NamingException {
-        return getThreadContext().lookup(addUrlPrefix(name));
+        return getThreadContext().lookup(name);
     }
 
     public void bind(Name name, Object obj) throws NamingException {
-        getThreadContext().bind(addUrlPrefix(name), obj);
+        getThreadContext().bind(name, obj);
     }
 
     public void bind(String name, Object obj) throws NamingException {
-        getThreadContext().bind(addUrlPrefix(name), obj);
+        getThreadContext().bind(name, obj);
     }
 
     public void rebind(Name name, Object obj) throws NamingException {
-        getThreadContext().rebind(addUrlPrefix(name), obj);
+        getThreadContext().rebind(name, obj);
     }
 
     public void rebind(String name, Object obj) throws NamingException {
-        getThreadContext().rebind(addUrlPrefix(name), obj);
+        getThreadContext().rebind(name, obj);
     }
 
     public void unbind(Name name) throws NamingException {
-        getThreadContext().unbind(addUrlPrefix(name));
+        getThreadContext().unbind(name);
     }
 
     public void unbind(String name) throws NamingException {
-        getThreadContext().unbind(addUrlPrefix(name));
+        getThreadContext().unbind(name);
     }
 
     public void rename(Name oldName, Name newName) throws NamingException {
-        getThreadContext().rename(addUrlPrefix(oldName), addUrlPrefix(newName));
+        getThreadContext().rename(oldName, newName);
     }
 
     public void rename(String oldName, String newName) throws NamingException {
-        getThreadContext().rename(addUrlPrefix(oldName), addUrlPrefix(newName));
+        getThreadContext().rename(oldName, newName);
     }
 
     public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
-        return getThreadContext().list(addUrlPrefix(name));
+        return getThreadContext().list(name);
     }
 
     public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
-        return getThreadContext().list(addUrlPrefix(name));
+        return getThreadContext().list(name);
     }
 
     public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
-        return getThreadContext().listBindings(addUrlPrefix(name));
+        return getThreadContext().listBindings(name);
     }
 
     public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
-        return getThreadContext().listBindings(addUrlPrefix(name));
+        return getThreadContext().listBindings(name);
     }
 
     public void destroySubcontext(Name name) throws NamingException {
-        getThreadContext().destroySubcontext(addUrlPrefix(name));
+        getThreadContext().destroySubcontext(name);
     }
 
     public void destroySubcontext(String name) throws NamingException {
-        getThreadContext().destroySubcontext(addUrlPrefix(name));
+        getThreadContext().destroySubcontext(name);
     }
 
     public Context createSubcontext(Name name) throws NamingException {
-        return getThreadContext().createSubcontext(addUrlPrefix(name));
+        return getThreadContext().createSubcontext(name);
     }
 
     public Context createSubcontext(String name) throws NamingException {
-        return getThreadContext().createSubcontext(addUrlPrefix(name));
+        return getThreadContext().createSubcontext(name);
     }
 
     public Object lookupLink(Name name) throws NamingException {
-        return getThreadContext().lookupLink(addUrlPrefix(name));
+        return getThreadContext().lookupLink(name);
     }
 
     public Object lookupLink(String name) throws NamingException {
-        return getThreadContext().lookupLink(addUrlPrefix(name));
+        return getThreadContext().lookupLink(name);
     }
 
     public NameParser getNameParser(Name name) throws NamingException {
-        return getThreadContext().getNameParser(addUrlPrefix(name));
+        return getThreadContext().getNameParser(name);
     }
 
     public NameParser getNameParser(String name) throws NamingException {
-        return getThreadContext().getNameParser(addUrlPrefix(name));
+        return getThreadContext().getNameParser(name);
     }
 
     public Name composeName(Name name, Name prefix) throws NamingException {
-        return getThreadContext().composeName(addUrlPrefix(name), prefix);
+        return getThreadContext().composeName(name, prefix);
     }
 
     public String composeName(String name, String prefix) throws NamingException {
-        return getThreadContext().composeName(addUrlPrefix(name), prefix);
+        return getThreadContext().composeName(name, prefix);
     }
 
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
@@ -144,7 +145,7 @@ public class OpenEJBContext implements Context {
     }
 
     public String getNameInNamespace() throws NamingException {
-        return URL_PREFIX;
+        return "";
     }
 
     private Context getThreadContext() throws NamingException {
@@ -153,18 +154,5 @@ public class OpenEJBContext implements Context {
         return context;
     }
 
-    private String addUrlPrefix(String name) throws NamingException {
-        if (name.startsWith(URL_PREFIX)) {
-            return name.substring(URL_PREFIX.length());
-        }
-        return name;
-    }
-
-    private Name addUrlPrefix(Name name) throws NamingException {
-        if (!name.isEmpty() || !name.get(0).equals(URL_PREFIX)) {
-            return name.getSuffix(1);
-        }
-        return name;
-    }
 }
 
