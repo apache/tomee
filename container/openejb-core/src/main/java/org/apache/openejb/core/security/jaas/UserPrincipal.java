@@ -16,11 +16,14 @@
  */
 package org.apache.openejb.core.security.jaas;
 
+import org.apache.openejb.spi.CallerPrincipal;
+
 import java.security.Principal;
 
 /**
  * @version $Rev$ $Date$
  */
+@CallerPrincipal
 public class UserPrincipal implements Principal {
 
     private final String name;

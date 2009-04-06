@@ -24,6 +24,7 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Server;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.spi.CallerPrincipal;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -151,6 +152,7 @@ public class TomcatSecurityService  extends AbstractSecurityService {
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
+    @CallerPrincipal
     protected static class TomcatUser implements Principal {
         private final Realm realm;
         private final Principal tomcatPrincipal;

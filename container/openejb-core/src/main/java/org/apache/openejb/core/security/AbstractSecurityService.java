@@ -18,6 +18,7 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -210,7 +211,13 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
         Set<Principal> principals = securityContext.subject.getPrincipals();
+
         if (!principals.isEmpty()) {
+            for (Principal principal : principals) {
+                if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
+                    return principal;
+                }
+            }
             return principals.iterator().next();
         }
         return null;
