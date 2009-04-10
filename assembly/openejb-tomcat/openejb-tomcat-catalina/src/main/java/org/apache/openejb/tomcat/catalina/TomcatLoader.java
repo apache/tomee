@@ -161,12 +161,6 @@ public class TomcatLoader implements Loader {
                 }
             }
         });
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                TomcatLoader.this.destroy();
-            }
-        });
     }
 
     public void destroy() {
