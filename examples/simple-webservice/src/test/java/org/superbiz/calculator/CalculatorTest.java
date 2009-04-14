@@ -50,7 +50,13 @@ public class CalculatorTest extends TestCase {
 
         CalculatorWs calc = calcService.getPort(CalculatorWs.class);
         assertEquals(10, calc.sum(4,6));
-	assertEquals(12, calc.multiply(3,4));
+	    assertEquals(12, calc.multiply(3,4));
+    }
+
+     public void testCalculatorViaRemoteInterface() throws Exception {
+        CalculatorLocal calc = (CalculatorLocal) initialContext.lookup("CalculatorImplLocal");
+        assertEquals(10, calc.sum(4, 6));
+        assertEquals(12, calc.multiply(3, 4));
     }
     //END SNIPPET: webservice
 

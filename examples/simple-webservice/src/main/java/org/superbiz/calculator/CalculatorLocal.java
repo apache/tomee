@@ -16,31 +16,17 @@
  */
 package org.superbiz.calculator;
 
-import javax.ejb.Stateless;
 import javax.jws.WebService;
+import javax.ejb.Remote;
 
-/**
- * This is an EJB 3 style pojo stateless session bean
- * Every stateless session bean implementation must be annotated
- * using the annotation @Stateless
- * This EJB has a single interface: CalculatorWs a webservice interface.
- */
-//START SNIPPET: code
-@Stateless
-@WebService(
-        portName = "CalculatorPort",
-        serviceName = "CalculatorWsService",
-        targetNamespace = "http://superbiz.org/wsdl",
-        endpointInterface = "org.superbiz.calculator.CalculatorWs")
-public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
-
-    public int sum(int add1, int add2) {
-        return add1 + add2;
-    }
-
-    public int multiply(int mul1, int mul2) {
-        return mul1 * mul2;
-    }
-
-}
 //END SNIPPET: code
+
+//END SNIPPET: code
+
+//START SNIPPET: code
+public interface CalculatorLocal {
+
+	public int sum(int add1, int add2);
+
+	public int multiply(int mul1, int mul2);
+}
