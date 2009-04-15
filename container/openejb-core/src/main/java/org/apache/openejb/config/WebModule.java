@@ -51,7 +51,7 @@ public class WebModule implements WsModule {
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
         if (contextRoot == null) {
-            contextRoot = jarLocation.substring(jarLocation.lastIndexOf('/'));
+            contextRoot = jarLocation.substring(jarLocation.lastIndexOf(System.getProperty("file.separator")));
             if (contextRoot.endsWith(".unpacked")) {
                 contextRoot = contextRoot.substring(0, contextRoot.length() - ".unpacked".length());
             }
