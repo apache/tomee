@@ -33,7 +33,7 @@ public class CalculatorTest extends TestCase {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-        
+
         initialContext = new InitialContext(properties);
     }
     //END SNIPPET: setup    
@@ -49,11 +49,11 @@ public class CalculatorTest extends TestCase {
         assertNotNull(calcService);
 
         CalculatorWs calc = calcService.getPort(CalculatorWs.class);
-        assertEquals(10, calc.sum(4,6));
-	    assertEquals(12, calc.multiply(3,4));
+        assertEquals(10, calc.sum(4, 6));
+        assertEquals(12, calc.multiply(3, 4));
     }
 
-     public void testCalculatorViaRemoteInterface() throws Exception {
+    public void testCalculatorViaRemoteInterface() throws Exception {
         CalculatorLocal calc = (CalculatorLocal) initialContext.lookup("CalculatorImplLocal");
         assertEquals(10, calc.sum(4, 6));
         assertEquals(12, calc.multiply(3, 4));

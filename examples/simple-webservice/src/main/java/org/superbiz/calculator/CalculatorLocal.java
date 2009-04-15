@@ -16,9 +16,6 @@
  */
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
-import javax.ejb.Remote;
-
 //END SNIPPET: code
 
 //END SNIPPET: code
