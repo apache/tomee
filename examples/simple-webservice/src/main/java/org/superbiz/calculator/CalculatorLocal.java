@@ -24,9 +24,6 @@ import javax.ejb.Remote;
 //END SNIPPET: code
 
 //START SNIPPET: code
-public interface CalculatorLocal {
+public interface CalculatorLocal extends CalculatorWs {
 
-	public int sum(int add1, int add2);
-
-	public int multiply(int mul1, int mul2);
 }
