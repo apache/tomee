@@ -379,8 +379,8 @@ public class InheritenceTest extends TestCase {
         if (a == null || b == null) return false;
 
         if (a.referenceName != null ? !a.referenceName.equals(b.referenceName) : b.referenceName != null) return false;
-        if (a.homeType != null ? !a.homeType.equals(b.homeType) : b.homeType != null) return false;
-        if (a.interfaceType != null ? !a.interfaceType.equals(b.interfaceType) : b.interfaceType != null) return false;
+        if (a.homeClassName != null ? !a.homeClassName.equals(b.homeClassName) : b.homeClassName != null) return false;
+        if (a.interfaceClassName != null ? !a.interfaceClassName.equals(b.interfaceClassName) : b.interfaceClassName != null) return false;
         if (a.ejbDeploymentId != null ? !a.ejbDeploymentId.equals(b.ejbDeploymentId) : b.ejbDeploymentId != null)
             return false;
         if (a.link != null ? !a.link.equals(b.link) : b.link != null) return false;

@@ -18,6 +18,7 @@
 package org.apache.openejb.spring;
 
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.assembler.classic.JndiBuilder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.springframework.beans.factory.FactoryBean;
@@ -83,7 +84,7 @@ public class EJB<T> implements FactoryBean {
         }
 
         // this is the pattern for the internal jndi name
-        String jndiName = "java:openejb/Deployment/" + deploymentInfo.getDeploymentID() + "/" + getInterface().getName();
+        String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(deploymentInfo.getDeploymentID(), getInterface().getName());
 
         // perform the lookup against the jndi context in the container system
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);

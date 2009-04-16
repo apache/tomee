@@ -20,10 +20,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
@@ -191,11 +189,11 @@ public class DeploymentListBean extends WebAdminBean {
         }
 
         for (EjbLocalReferenceInfo info : enc.ejbLocalReferences) {
-            printRow(info.referenceName, info.ejbDeploymentId, info.homeType, body);
+            printRow(info.referenceName, info.ejbDeploymentId, info.homeClassName, body);
         }
 
         for (EjbReferenceInfo info : enc.ejbReferences) {
-            printRow(info.referenceName, info.ejbDeploymentId, info.homeType, body);
+            printRow(info.referenceName, info.ejbDeploymentId, info.homeClassName, body);
         }
 
         for (ResourceReferenceInfo info : enc.resourceRefs) {

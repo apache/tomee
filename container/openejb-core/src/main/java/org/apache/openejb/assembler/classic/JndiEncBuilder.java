@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
@@ -27,8 +28,6 @@ import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
-import org.apache.openejb.core.ivm.naming.NameNode;
-import org.apache.openejb.core.ivm.naming.ParsedName;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
@@ -54,7 +53,6 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
@@ -181,7 +179,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null){
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
-                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
+                String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_REMOTE);
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                     reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {
@@ -200,7 +198,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null){
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
-                String jndiName = "java:openejb/Deployment/" + referenceInfo.ejbDeploymentId + "/" + referenceInfo.interfaceType;
+                String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_LOCAL);
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
@@ -504,11 +502,11 @@ public class JndiEncBuilder {
         }
 
         public String getHome() {
-            return info.homeType;
+            return info.homeClassName;
         }
 
         public String getInterface() {
-            return info.interfaceType;
+            return info.interfaceClassName;
         }
 
         public String getMappedName() {
@@ -522,7 +520,7 @@ public class JndiEncBuilder {
         public EjbResolver.Type getRefType() {
             if (info instanceof EjbLocalReferenceInfo){
                 return EjbResolver.Type.LOCAL;
-            } else if (info.homeType != null) {
+            } else if (info.homeClassName != null) {
                 return EjbResolver.Type.REMOTE;
             } else {
                 return EjbResolver.Type.UNKNOWN;

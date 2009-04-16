@@ -153,8 +153,8 @@ public class JndiEncInfoBuilder {
 
             EjbReferenceInfo info = new EjbReferenceInfo();
 
-            info.homeType = ref.getHome();
-            info.interfaceType = ref.getInterface();
+            info.homeClassName = ref.getHome();
+            info.interfaceClassName = ref.getInterface();
             info.referenceName = ref.getName();
             info.link = ref.getEjbLink();
             info.location = buildLocationInfo(ref);
@@ -221,8 +221,8 @@ public class JndiEncInfoBuilder {
         EjbLocalReferenceInfo l = new EjbLocalReferenceInfo();
         l.ejbDeploymentId = r.ejbDeploymentId;
         l.externalReference = r.externalReference;
-        l.homeType = r.homeType;
-        l.interfaceType = r.interfaceType;
+        l.homeClassName = r.homeClassName;
+        l.interfaceClassName = r.interfaceClassName;
         l.referenceName = r.referenceName;
         l.link = r.link;
         l.location = r.location;

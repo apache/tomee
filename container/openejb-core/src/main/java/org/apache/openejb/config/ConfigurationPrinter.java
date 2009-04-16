@@ -85,7 +85,7 @@ public class ConfigurationPrinter {
                     for (ListIterator<EjbReferenceInfo> iterator = jndiEnc.ejbReferences.listIterator(); iterator.hasNext();) {
                         EjbReferenceInfo ejbReference = iterator.next();
                         out(3, "--[" + iterator.previousIndex() + "]----------------------");
-                        out(3, "homeType        ", ejbReference.homeType);
+                        out(3, "homeType        ", ejbReference.homeClassName);
                         out(3, "referenceName   ", ejbReference.referenceName);
                         out(3, "ejbDeploymentId ", ejbReference.ejbDeploymentId);
                         if (ejbReference.location != null){

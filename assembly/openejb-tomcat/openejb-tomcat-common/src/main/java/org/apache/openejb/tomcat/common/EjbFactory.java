@@ -26,6 +26,8 @@ import static org.apache.openejb.tomcat.common.NamingUtil.LOCAL;
 import static org.apache.openejb.tomcat.common.NamingUtil.REMOTE;
 import static org.apache.openejb.tomcat.common.NamingUtil.getProperty;
 import static org.apache.openejb.tomcat.common.NamingUtil.isPropertyTrue;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.assembler.classic.JndiBuilder;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -62,14 +64,16 @@ public class EjbFactory extends AbstractObjectFactory {
         if (deploymentId == null) throw new NamingException("ejb-ref deploymentId is null");
 
         // get and verify interface type
+        InterfaceType type = InterfaceType.BUSINESS_REMOTE;
         String interfaceType = getProperty(reference, REMOTE);
         if (interfaceType == null) {
+            type = InterfaceType.BUSINESS_LOCAL;
             interfaceType = getProperty(reference, LOCAL);
         }
         if (interfaceType == null) throw new NamingException("ejb-ref interface type is null");
 
         // build jndi name using the deploymentId and interface type
-        jndiName = "java:openejb/Deployment/" + deploymentId + "/" + interfaceType;
+        jndiName = "java:openejb/Deployment/" + JndiBuilder.format(deploymentId, interfaceType, type);
         return jndiName;
     }
 

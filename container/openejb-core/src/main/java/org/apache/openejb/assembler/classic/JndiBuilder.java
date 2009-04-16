@@ -270,7 +270,10 @@ public class JndiBuilder {
                 ObjectReference ref = new ObjectReference(deployment.getEJBHome());
                 bind(name, ref, bindings, beanInfo, homeInterface);
 
-                name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + deployment.getRemoteInterface().getName();
+                name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getRemoteInterface().getName());
+                bind(name, ref, bindings, beanInfo, homeInterface);
+
+                name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getRemoteInterface().getName(), InterfaceType.EJB_OBJECT);
                 bind(name, ref, bindings, beanInfo, homeInterface);
             }
         } catch (NamingException e) {
@@ -285,7 +288,10 @@ public class JndiBuilder {
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
 
-                name = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + deployment.getLocalInterface().getName();
+                name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getLocalInterface().getName());
+                bind(name, ref, bindings, beanInfo, localHomeInterface);
+
+                name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getLocalInterface().getName(), InterfaceType.EJB_LOCAL);
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
             }
         } catch (NamingException e) {
@@ -302,7 +308,9 @@ public class JndiBuilder {
                 DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces);
                 BusinessLocalReference ref = new BusinessLocalReference(home);
 
-                String internalName = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
+                optionalBind(bindings, ref, "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName()));
+
+                String internalName = "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_LOCAL);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
                 String externalName = "openejb/ejb/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
@@ -323,7 +331,9 @@ public class JndiBuilder {
                 DeploymentInfo.BusinessRemoteHome home = deployment.getBusinessRemoteHome(interfaces);
                 BusinessRemoteReference ref = new BusinessRemoteReference(home);
 
-                String internalName = "openejb/Deployment/" + deployment.getDeploymentID() + "/" + interfce.getName();
+                optionalBind(bindings, ref, "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName(), null));
+
+                String internalName = "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_REMOTE);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
                 String externalName = "openejb/ejb/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
@@ -348,6 +358,25 @@ public class JndiBuilder {
         }
     }
 
+    private void optionalBind(Bindings bindings, Reference ref, String name) throws NamingException {
+        try {
+            context.bind(name, ref);
+            bindings.add(name);
+        } catch (NamingException okIfBindFails) {
+        }
+    }
+
+    public static String format(Object deploymentId, String interfaceClassName) {
+        return format((String) deploymentId, interfaceClassName, null);
+    }
+
+    public static String format(Object deploymentId, String interfaceClassName, InterfaceType interfaceType) {
+        return format((String) deploymentId, interfaceClassName, interfaceType);
+    }
+
+    public static String format(String deploymentId, String interfaceClassName, InterfaceType interfaceType) {
+        return deploymentId + "/" + interfaceClassName + (interfaceType == null ? "" : "!" + interfaceType.getSpecName());
+    }
 
     private void bind(String name, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo, Class intrface) throws NamingException {
 
@@ -362,7 +391,6 @@ public class JndiBuilder {
 
             try {
                 context.bind(name, ref);
-
                 bindings.add(name);
 
                 beanInfo.jndiNames.add(externalName);

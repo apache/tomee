@@ -18,6 +18,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.finder.ClassFinder;
 import org.apache.openejb.jee.ActivationConfig;
@@ -82,6 +83,7 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -537,6 +539,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 "double", "java.lang.Double",
                 "java.lang.String"
         ));
+        private static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
@@ -1307,20 +1310,25 @@ public class AnnotationDeployer implements DynamicDeployer {
             ValidationContext validation = ejbModule.getValidation();
             String ejbName = sessionBean.getEjbName();
 
+            boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
+
             for (Class<?> clazz : ancestors(beanClass)) {
                 /*
                  * Collect all interfaces explicitly declared via xml.
                  * We will subtract these from the interfaces implemented
                  * by the bean and do annotation scanning on the remainder.
                  */
-                List<String> declared = new ArrayList<String>();
-                declared.addAll(sessionBean.getBusinessLocal());
-                declared.addAll(sessionBean.getBusinessRemote());
-                declared.add(sessionBean.getHome());
-                declared.add(sessionBean.getRemote());
-                declared.add(sessionBean.getLocalHome());
-                declared.add(sessionBean.getLocal());
-                declared.add(sessionBean.getServiceEndpoint());
+                List<String> xmlDeclared = new ArrayList<String>();
+                xmlDeclared.add(sessionBean.getHome());
+                xmlDeclared.add(sessionBean.getRemote());
+                xmlDeclared.add(sessionBean.getLocalHome());
+                xmlDeclared.add(sessionBean.getLocal());
+
+                if (strict) { // when not being strict, thse
+                    xmlDeclared.addAll(sessionBean.getBusinessLocal());
+                    xmlDeclared.addAll(sessionBean.getBusinessRemote());
+                    xmlDeclared.add(sessionBean.getServiceEndpoint());
+                }
 
                 /*
                  * These interface types are not eligable to be business interfaces.
@@ -1334,10 +1342,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (!name.equals("java.io.Serializable") &&
                             !name.equals("java.io.Externalizable") &&
                             !name.startsWith("javax.ejb.") &&
-                            !declared.contains(interfce.getName())) {
+                            !xmlDeclared.contains(interfce.getName())) {
                         interfaces.add(interfce);
                     }
                 }
+
+                List<Class> declared = new ArrayList<Class>();
 
                 /*
                  * @Remote
@@ -1348,24 +1358,26 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (remote.value().length == 0) {
                         if (interfaces.size() != 1) {
                             validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
-                        } else if (clazz.getAnnotation(Local.class) != null) {
+                        } else if (strict && clazz.getAnnotation(Local.class) != null) {
                             validation.fail(ejbName, "ann.remoteLocal.ambiguous", join(", ", interfaces));
-                        } else if (interfaces.get(0).getAnnotation(Local.class) != null) {
+                        } else if (strict && interfaces.get(0).getAnnotation(Local.class) != null) {
                             validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
                         } else {
                             if (validateRemoteInterface(interfaces.get(0), validation, ejbName)) {
                                 remotes.add(interfaces.get(0));
                             }
-                            interfaces.remove(0);
+                            declared.add(interfaces.get(0));
                         }
                     } else for (Class interfce : remote.value()) {
                         if (validateRemoteInterface(interfce, validation, ejbName)) {
                             remotes.add(interfce);
                         }
-                        interfaces.remove(interfce);
+                        declared.add(interfce);
                     }
                 }
 
+                if (strict) interfaces.removeAll(declared);
+                
                 /*
                  * @Local
                  */
@@ -1375,23 +1387,25 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (local.value().length == 0) {
                         if (interfaces.size() != 1) {
                             validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
-                        } else if (clazz.getAnnotation(Remote.class) != null) {
+                        } else if (strict && clazz.getAnnotation(Remote.class) != null) {
                             validation.fail(ejbName, "ann.localRemote.ambiguous", join(", ", interfaces));
-                        } else if (interfaces.get(0).getAnnotation(Remote.class) != null) {
+                        } else if (strict && interfaces.get(0).getAnnotation(Remote.class) != null) {
                             validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
                         } else {
                             if (validateLocalInterface(interfaces.get(0), validation, ejbName)) {
                                 locals.add(interfaces.get(0));
                             }
-                            interfaces.remove(0);
+                            declared.add(interfaces.get(0));
                         }
                     } else for (Class interfce : local.value()) {
                         if (validateLocalInterface(interfce, validation, ejbName)) {
                             locals.add(interfce);
                         }
-                        interfaces.remove(interfce);
+                        declared.add(interfce);
                     }
                 }
+
+                if (strict) interfaces.removeAll(declared);
 
                 /*
                  * @WebService
@@ -1405,7 +1419,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             try {
                                 sessionBean.setServiceEndpoint(endpointInterfaceName);
                                 Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
-                                interfaces.remove(endpointInterface);
+                                declared.add(endpointInterface);
                             } catch (ClassNotFoundException e) {
                                 throw new IllegalStateException("Class not found @WebService.endpointInterface: " + endpointInterfaceName, e);
                             }
@@ -1417,25 +1431,47 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
+                if (strict) interfaces.removeAll(declared);
+
                 /*
                  * The remainder of the interfaces are checked for annotations in this order:
                  * 1. @WebService
                  * 2. @Remote
                  * 3. Else assumed to be @Local
                  */
-                for (Class interfce : copy(interfaces)) {
+                for (Class interfce : interfaces) {
                     if (interfce.isAnnotationPresent(WebService.class)) {
-                        if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
+                        if (sessionBean.getServiceEndpoint() == null){
+                            sessionBean.setServiceEndpoint(interfce.getName());
+                        } else if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
                             sessionBean.setServiceEndpoint(interfce.getName());
                         }
-                        interfaces.remove(interfce);
-                    } else if (interfce.isAnnotationPresent(Remote.class)) {
-                        remotes.add(interfce);
-                        interfaces.remove(interfce);
-                    } else {
-                        locals.add(interfce);
-                        interfaces.remove(interfce);
+                        declared.add(interfce);
                     }
+                }
+
+                if (strict) interfaces.removeAll(declared);
+
+                for (Class interfce : interfaces) {
+                    if (interfce.isAnnotationPresent(Remote.class)) {
+                        remotes.add(interfce);
+                        declared.add(interfce);
+                    }
+                }
+
+                if (strict) interfaces.removeAll(declared);
+
+                for (Class interfce : interfaces) {
+                    if (interfce.isAnnotationPresent(Local.class)) {
+                        locals.add(interfce);
+                        declared.add(interfce);
+                    }
+                }
+
+                if (!strict){
+                    // Treat the rest of the unannotated and undeclared interfaces implicitly as local interfaces
+                    interfaces.removeAll(declared);
+                    locals.addAll(interfaces);
                 }
 
                 /**
@@ -1450,6 +1486,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                     sessionBean.addBusinessLocal(interfce.getName());
                 }
             }
+        }
+
+        private String getProperty(EjbModule ejbModule, String key, String defaultValue) {
+            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+            String value = SystemInstance.get().getProperty(key, defaultValue);
+            if (openejbJar != null && openejbJar.getProperties() != null){
+                value = openejbJar.getProperties().getProperty(key, value);
+            }
+            return value;
         }
 
         private void processSecurityAnnotations(Class<?> beanClass, String ejbName, EjbModule ejbModule, ClassFinder classFinder, EnterpriseBean bean) {
