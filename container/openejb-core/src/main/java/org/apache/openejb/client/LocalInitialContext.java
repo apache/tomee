@@ -203,7 +203,7 @@ public class LocalInitialContext extends ContextWrapper {
     private static Context getContainerSystemEjbContext() throws NamingException {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Context context = containerSystem.getJNDIContext();
-        context = (Context) context.lookup("openejb/ejb");
+        context = (Context) context.lookup("openejb/local");
         return context;
     }
 }

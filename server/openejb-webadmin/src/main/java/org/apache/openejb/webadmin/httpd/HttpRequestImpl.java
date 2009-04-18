@@ -627,7 +627,7 @@ public class HttpRequestImpl implements HttpRequest {
         WebSessionHome home = null;
 
         try {
-            home = (WebSessionHome)new InitialContext().lookup("java:openejb/ejb/httpd/session");
+            home = (WebSessionHome)new InitialContext().lookup("java:openejb/local/httpd/session");
         } catch (NamingException e) {
             // TODO Auto-generated catch block
             throw new IllegalStateException("The WebSessionBean has not been deployed. "+

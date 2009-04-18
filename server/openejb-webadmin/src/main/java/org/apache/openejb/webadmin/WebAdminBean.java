@@ -332,7 +332,7 @@ public abstract class WebAdminBean implements HttpBean {
         try{
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             Context ctx = containerSystem.getJNDIContext();
-            ctx = (Context) ctx.lookup("openejb/ejb");
+            ctx = (Context) ctx.lookup("openejb/local");
             NamingEnumeration enumeration = ctx.list("");
             //System.out.println("\n\nENUM "+enumeration);
 

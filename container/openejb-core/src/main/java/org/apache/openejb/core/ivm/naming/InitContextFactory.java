@@ -59,7 +59,7 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Context context = containerSystem.getJNDIContext();
-        context = (Context) context.lookup("java:openejb/ejb");
+        context = (Context) context.lookup("java:openejb/local");
         return context;
 
     }

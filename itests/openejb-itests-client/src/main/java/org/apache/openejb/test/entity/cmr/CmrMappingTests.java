@@ -65,9 +65,9 @@ public class CmrMappingTests extends AbstractCMRTest {
         compoundPK_20_20 = new Integer(20);
         compoundPK_20_20_field1 = new Integer(20);
 
-        oneInverseHome = (OneInverseSideLocalHome) initialContext.lookup("java:openejb/ejb/client/tests/entity/cmp2/OneInverseSideBean/EJBHomeLocal");
-        oneOwningHome = (OneOwningSideLocalHome) initialContext.lookup("java:openejb/ejb/client/tests/entity/cmp2/OneOwningSideBean/EJBHomeLocal");
-        manyHome = (ManyOwningSideLocalHome) initialContext.lookup("java:openejb/ejb/client/tests/entity/cmp2/ManyOwningSideBean/EJBHomeLocal");
+        oneInverseHome = (OneInverseSideLocalHome) initialContext.lookup("java:openejb/local/client/tests/entity/cmp2/OneInverseSideBean/EJBHomeLocal");
+        oneOwningHome = (OneOwningSideLocalHome) initialContext.lookup("java:openejb/local/client/tests/entity/cmp2/OneOwningSideBean/EJBHomeLocal");
+        manyHome = (ManyOwningSideLocalHome) initialContext.lookup("java:openejb/local/client/tests/entity/cmp2/ManyOwningSideBean/EJBHomeLocal");
     }
 
     public void testOneToOneSetCMROnOwningSide() throws Exception {

@@ -266,9 +266,11 @@ public class JndiBuilder {
             Class homeInterface = deployment.getHomeInterface();
             if (homeInterface != null) {
 
-                String name = "openejb/ejb/" + strategy.getName(homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBHome());
-                bind(name, ref, bindings, beanInfo, homeInterface);
+
+                String name = strategy.getName(homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
+                bind("openejb/local/" + name, ref, bindings, beanInfo, homeInterface);
+                bind("openejb/remote/" + name, ref, bindings, beanInfo, homeInterface);
 
                 name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getRemoteInterface().getName());
                 bind(name, ref, bindings, beanInfo, homeInterface);
@@ -277,16 +279,17 @@ public class JndiBuilder {
                 bind(name, ref, bindings, beanInfo, homeInterface);
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind home interface for deployment " + id, e);
+            throw new RuntimeException("Unable to bind remote home interface for deployment " + id, e);
         }
 
         try {
             Class localHomeInterface = deployment.getLocalHomeInterface();
             if (localHomeInterface != null) {
 
-                String name = "openejb/ejb/" + strategy.getName(deploymentInfo.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
-                bind(name, ref, bindings, beanInfo, localHomeInterface);
+
+                String name = strategy.getName(deploymentInfo.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
+                bind("openejb/local/" + name, ref, bindings, beanInfo, localHomeInterface);
 
                 name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getLocalInterface().getName());
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
@@ -295,7 +298,7 @@ public class JndiBuilder {
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
             }
         } catch (NamingException e) {
-            throw new RuntimeException("Unable to bind local interface for deployment " + id, e);
+            throw new RuntimeException("Unable to bind local home interface for deployment " + id, e);
         }
 
         try {
@@ -313,7 +316,7 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_LOCAL);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
-                String externalName = "openejb/ejb/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                String externalName = "openejb/local/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 bind(externalName, ref, bindings, beanInfo, interfce);
             }
         } catch (NamingException e) {
@@ -336,8 +339,9 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(deployment.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_REMOTE);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
-                String externalName = "openejb/ejb/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
-                bind(externalName, ref, bindings, beanInfo, interfce);
+                String name = strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
+                bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
+                bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
@@ -345,13 +349,14 @@ public class JndiBuilder {
 
         try {
             if (MessageListener.class.equals(deployment.getMdbInterface())) {
-                String name = "openejb/ejb/" + deployment.getDeploymentID().toString();
 
                 String destinationId = deployment.getDestinationId();
                 String jndiName = "java:openejb/Resource/" + destinationId;
                 Reference reference = new IntraVmJndiReference(jndiName);
 
-                bind(name, reference, bindings, beanInfo, MessageListener.class);
+                String deploymentId = deployment.getDeploymentID().toString();
+                bind("openejb/local/" + deploymentId, reference, bindings, beanInfo, MessageListener.class);
+                bind("openejb/remote/" + deploymentId, reference, bindings, beanInfo, MessageListener.class);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind mdb destination in jndi.", e);
@@ -380,12 +385,15 @@ public class JndiBuilder {
 
     private void bind(String name, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo, Class intrface) throws NamingException {
 
-        if (name.startsWith("openejb/ejb/")) {
+        if (name.startsWith("openejb/local/") || name.startsWith("openejb/remote/")) {
 
-            String externalName = name.replaceFirst("openejb/ejb/", "");
+            String externalName = name.replaceFirst("openejb/[^/]+/", "");
 
             if (bindings.contains(name)){
-                logger.debug("Duplicate: Jndi(name=" + externalName +")");
+                // We bind under two sections of jndi, only warn once.. the user doesn't need to be bothered with that detail
+                if (name.startsWith("openejb/local/")) {
+                    logger.debug("Duplicate: Jndi(name=" + externalName +")");
+                }
                 return;
             }
 

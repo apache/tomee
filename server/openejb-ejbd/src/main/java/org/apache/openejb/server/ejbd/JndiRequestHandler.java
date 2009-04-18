@@ -77,7 +77,7 @@ class JndiRequestHandler {
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/ejb");
+        ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
