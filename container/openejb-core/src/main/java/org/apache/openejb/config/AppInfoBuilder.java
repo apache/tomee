@@ -76,6 +76,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.net.URL;
 import java.io.File;
 import java.io.IOException;
@@ -250,29 +251,40 @@ class AppInfoBuilder {
 
         OpenejbJarType openejbJarType = (OpenejbJarType) altDD;
 
+
+        Map<String, org.apache.openejb.jee.oejb2.EnterpriseBean> beans = new HashMap<String, org.apache.openejb.jee.oejb2.EnterpriseBean>();
+        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
+            beans.put(enterpriseBean.getEjbName(), enterpriseBean);
+        }
+
         List<PortInfo> infoList = ejbJarInfo.portInfos;
         for (PortInfo portInfo : infoList) {
-            String link = portInfo.serviceLink;
 
-            List<org.apache.openejb.jee.oejb2.EnterpriseBean> enterpriseBeans = openejbJarType.getEnterpriseBeans();
-            for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : enterpriseBeans) {
-                if (link.equals(enterpriseBean.getEjbName()) && enterpriseBean instanceof SessionBeanType) {
-                    SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
-                    WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
-                    portInfo.realmName = webServiceSecurityType.getRealmName();
-                    portInfo.securityRealmName = webServiceSecurityType.getSecurityRealmName();
-                    if (webServiceSecurityType.getTransportGuarantee() != null) {
-                        portInfo.transportGuarantee = webServiceSecurityType.getTransportGuarantee().value();
-                    } else {
-                        portInfo.transportGuarantee = "NONE";
-                    }
+            org.apache.openejb.jee.oejb2.EnterpriseBean bean = beans.get(portInfo.serviceLink);
 
-                    if (webServiceSecurityType.getAuthMethod() != null) {
-                        portInfo.authMethod = webServiceSecurityType.getAuthMethod().value();
-                    } else {
-                        portInfo.authMethod = "NONE";
-                    }
-                }
+            if (bean == null) continue; /* TODO: throw something? */
+            if (!(bean instanceof SessionBeanType)) continue; /* TODO: throw something? */
+
+            SessionBeanType sessionBean = (SessionBeanType) bean;
+            WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
+
+            if (webServiceSecurityType == null) {
+                //TODO: this ok?
+                continue;
+            }
+
+            portInfo.realmName = webServiceSecurityType.getRealmName();
+            portInfo.securityRealmName = webServiceSecurityType.getSecurityRealmName();
+            if (webServiceSecurityType.getTransportGuarantee() != null) {
+                portInfo.transportGuarantee = webServiceSecurityType.getTransportGuarantee().value();
+            } else {
+                portInfo.transportGuarantee = "NONE";
+            }
+
+            if (webServiceSecurityType.getAuthMethod() != null) {
+                portInfo.authMethod = webServiceSecurityType.getAuthMethod().value();
+            } else {
+                portInfo.authMethod = "NONE";
             }
         }
     }
