@@ -131,13 +131,13 @@ public class JaxWsInvocationTest extends TestCase {
     }
 
     public static enum Call {
+        WebServiceProvider_Invoke_BEFORE,
         EjbInterceptor_Invoke_BEFORE,
         Bean_Invoke_BEFORE,
-        WebServiceProvider_Invoke_BEFORE,
         Bean_Invoke,
-        WebServiceProvider_Invoke_AFTER,
         Bean_Invoke_AFTER,
         EjbInterceptor_Invoke_AFTER,
+        WebServiceProvider_Invoke_AFTER,
     }
 
     public static List<Call> calls = new ArrayList<Call>();

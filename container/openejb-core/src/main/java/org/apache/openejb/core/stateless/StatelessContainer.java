@@ -263,8 +263,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             InterceptorData providerData = new InterceptorData(interceptor.getClass());
             ClassFinder finder = new ClassFinder(interceptor.getClass());
             providerData.getAroundInvoke().addAll(finder.findAnnotatedMethods(AroundInvoke.class));
-            interceptorDatas.add(providerData);
-//            interceptorDatas.add(0, providerData);
+//            interceptorDatas.add(providerData);
+            interceptorDatas.add(0, providerData);
         }
 
         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS_WS, interceptorDatas, interceptors);
