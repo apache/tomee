@@ -245,14 +245,20 @@ public class StatefulContainer implements RpcContainer {
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
+        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+        return invoke(deployID, null, callInterface, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
-        if (deployInfo == null) {
-            throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='" + deployID + "'), Container(id='" + containerID + "')");
-        }
+
+        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+
+        // Use the backup way to determine call type if null was supplied.
+        if (type == null) type = deployInfo.getInterfaceType(callInterface);
 
         StatefulContainerData data = (StatefulContainerData) deployInfo.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
@@ -260,15 +266,15 @@ public class StatefulContainer implements RpcContainer {
 
         switch (methodType) {
             case CREATE:
-                return createEJBObject(deployInfo, callInterface, callMethod, args);
+                return createEJBObject(deployInfo, callMethod, args, type);
             case REMOVE:
-                return removeEJBObject(deployInfo, primKey, callInterface, callMethod, args);
+                return removeEJBObject(deployInfo, primKey, callInterface, callMethod, args, type);
             default:
-                return businessMethod(deployInfo, primKey, callInterface, callMethod, args);
+                return businessMethod(deployInfo, primKey, callInterface, callMethod, args, type);
         }
     }
 
-    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Class callInterface, Method callMethod, Object [] args) throws OpenEJBException {
+    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         // generate a new primary key
         Object primaryKey = newPrimaryKey();
 
@@ -277,7 +283,7 @@ public class StatefulContainer implements RpcContainer {
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
         try {
             // Security check
-            checkAuthorization(deploymentInfo, callMethod, callInterface);
+            checkAuthorization(callMethod, interfaceType);
 
             // Create the extended entity managers for this instance
             Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
@@ -339,17 +345,16 @@ public class StatefulContainer implements RpcContainer {
         return new VMID();
     }
 
-    protected Object removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
+    protected Object removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         if (primKey == null) throw new NullPointerException("primKey is null");
 
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            checkAuthorization(deploymentInfo, callMethod, callInterface);
+            checkAuthorization(callMethod, interfaceType);
 
             // If a bean managed transaction is active, the bean can not be removed
-            InterfaceType interfaceType = deploymentInfo.getInterfaceType(callInterface);
             if (interfaceType.isComponent()) {
                 Instance instance = checkedOutInstances.get(primKey);
 
@@ -461,12 +466,12 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    protected Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args) throws OpenEJBException {
+    protected Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            checkAuthorization(deploymentInfo, callMethod, callInterface);
+            checkAuthorization(callMethod, interfaceType);
 
             // Start transaction
             TransactionPolicy txPolicy = createTransactionPolicy(callContext.getDeploymentInfo().getTransactionType(callMethod), callContext);
@@ -666,8 +671,8 @@ public class StatefulContainer implements RpcContainer {
         cache.remove(primaryKey);
     }
 
-    private void checkAuthorization(CoreDeploymentInfo deployInfo, Method callMethod, Class callInterface) throws ApplicationException {
-        boolean authorized = securityService.isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
+    private void checkAuthorization(Method callMethod, InterfaceType interfaceType) throws ApplicationException {
+        boolean authorized = securityService.isCallerAuthorized(callMethod, interfaceType);
         if (!authorized) {
             throw new ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
         }

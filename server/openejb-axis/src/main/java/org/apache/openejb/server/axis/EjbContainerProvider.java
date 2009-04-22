@@ -37,6 +37,7 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
@@ -86,7 +87,7 @@ public class EjbContainerProvider extends RPCProvider {
             Object[] arguments = {msgContext, interceptor};
 
             Class callInterface = ejbDeployment.getServiceEndpointInterface();
-            Object result = container.invoke(ejbDeployment.getDeploymentID(), callInterface, operation.getMethod(), arguments, null);
+            Object result = container.invoke(ejbDeployment.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, operation.getMethod(), arguments, null);
 
             interceptor.createResult(result);
         } catch (InvalidateReferenceException e) {

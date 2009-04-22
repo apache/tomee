@@ -23,6 +23,7 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.BaseContext;
@@ -216,10 +217,14 @@ public class MdbContainer implements RpcContainer {
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
+        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deploymentId, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+        return invoke(deployID, null, callInterface, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deploymentId, InterfaceType type, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
 
         EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();

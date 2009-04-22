@@ -32,6 +32,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
@@ -111,7 +112,7 @@ public class JaxRpcInvocationTest extends TestCase {
 
         Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 
-        String value = (String) container.invoke("EchoBean", echoMethod.getDeclaringClass(), echoMethod, args, null);
+        String value = (String) container.invoke("EchoBean", InterfaceType.SERVICE_ENDPOINT, echoMethod.getDeclaringClass(), echoMethod, args, null);
 
         assertCalls(Call.values());
         calls.clear();

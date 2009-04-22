@@ -133,17 +133,25 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
+        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+        return invoke(deployID, null, callInterface, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+
+        // Use the backup way to determine call type if null was supplied.
+        if (type == null) type = deployInfo.getInterfaceType(callInterface);
 
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
+            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -166,7 +174,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            Object retValue = _invoke(callInterface, callMethod, runMethod, args, (Instance) bean, callContext);
+            Object retValue = _invoke(callMethod, runMethod, args, (Instance) bean, callContext, type);
             instanceManager.poolInstance(callContext, bean);
 
             return retValue;
@@ -185,14 +193,14 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     /**
-     * @deprecated use type-safe {@link #_invoke(Class, java.lang.reflect.Method, java.lang.reflect.Method, Object[], Instance, org.apache.openejb.core.ThreadContext)}
+     * @deprecated
      */
     protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Object object, ThreadContext callContext)
             throws OpenEJBException {
-        return _invoke(callInterface, callMethod, runMethod, args, (Instance) object, callContext);
+        return _invoke(callMethod, runMethod, args, (Instance) object, callContext, null);
     }
 
-    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext)
+    protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType type)
             throws OpenEJBException {
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
@@ -201,7 +209,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         Object returnValue = null;
         try {
-            InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
             if (type == InterfaceType.SERVICE_ENDPOINT){
                 callContext.setCurrentOperation(Operation.BUSINESS_WS);
                 returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);
@@ -211,8 +218,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 returnValue = interceptorStack.invoke(args);
             }
         } catch (Throwable re) {// handle reflection exception
-            ExceptionType type = deploymentInfo.getExceptionType(re);
-            if (type == ExceptionType.SYSTEM) {
+            ExceptionType exceptionType = deploymentInfo.getExceptionType(re);
+            if (exceptionType == ExceptionType.SYSTEM) {
                 /* System Exception ****************************/
 
                 // The bean instance is not put into the pool via instanceManager.poolInstance
@@ -225,7 +232,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 /* Application Exception ***********************/
                 instanceManager.poolInstance(callContext, instance);
 
-                handleApplicationException(txPolicy, re, type == ExceptionType.APPLICATION_ROLLBACK);
+                handleApplicationException(txPolicy, re, exceptionType == ExceptionType.APPLICATION_ROLLBACK);
             }
         } finally {
 

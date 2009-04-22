@@ -60,7 +60,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         Object retValue;
         try {
-            retValue = container.invoke(deploymentID, interfce, method, args, null);
+            retValue = container.invoke(deploymentID, interfaceType, interfce, method, args, null);
         } catch (OpenEJBException e) {
             logger.debug("entityEjbHomeHandler.containerInvocationFailure", e, e.getMessage());
             throw e;
@@ -130,7 +130,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             throw new RemoveException("Invalid argument '" + ejbObjectName + "', expected primary key.  Update to ejbHome.remove(" + lcfirst(ejbObjectName) + ".getPrimaryKey())");
         }
 
-        container.invoke(deploymentID, interfce, method, args, primKey);
+        container.invoke(deploymentID, interfaceType, interfce, method, args, primKey);
 
         /* 
         * This operation takes care of invalidating all the EjbObjectProxyHanders associated with 

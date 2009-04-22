@@ -67,7 +67,7 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
     protected Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        Object value = container.invoke(deploymentID, interfce, method, args, primaryKey);
+        Object value = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
 
         invalidateAllHandlers(getRegistryId());
         return value;

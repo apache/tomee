@@ -51,6 +51,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     protected transient EJBHome ejbHomeProxy;
 
+    protected transient InterfaceType interfaceType;
+
     // only used for business objects;
     protected transient Object primaryKey;
 
@@ -58,7 +60,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean, List<Class> businessInterfaces) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces) {
+        this.interfaceType = interfaceType;
+        
         if ("STATEFUL".equalsIgnoreCase(typeOfBean)){
             this.type = STATEFUL;
         } else if ("STATELESS".equalsIgnoreCase(typeOfBean)){
@@ -77,20 +81,20 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, List<Class> businessInterfaces) {
-        this(homeInterface, remoteInterface, typeOfBean, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces) {
+        this(homeInterface, remoteInterface, typeOfBean, interfaceType, businessInterfaces);
         if (type == CMP_ENTITY || type == BMP_ENTITY) {
             this.keyClass = primaryKeyClass;
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, List<Class> businessInterfaces) {
-        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, InterfaceType interfaceType, List<Class> businessInterfaces) {
+        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, interfaceType, businessInterfaces);
         this.deploymentID = deploymentID;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, List<Class> businessInterfaces) {
-        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces) {
+        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, interfaceType, businessInterfaces);
         this.deploymentCode = deploymentCode;
     }
 
@@ -156,7 +160,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
-        out.writeByte(1);
+        out.writeByte(2);
 
         out.writeObject(homeClass);
         out.writeObject(remoteClass);
@@ -172,6 +176,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (businessClasses.size() >0){
             out.writeObject(primaryKey);
         }
+
+        out.writeByte(interfaceType.ordinal());
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -190,6 +196,11 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         }
         if (businessClasses.size() > 0){
             primaryKey = in.readObject();
+        }
+
+        if (version > 1) {
+            byte typeIndex = in.readByte();
+            interfaceType = InterfaceType.values()[typeIndex];
         }
     }
 

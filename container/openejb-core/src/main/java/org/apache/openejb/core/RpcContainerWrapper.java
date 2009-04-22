@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ContainerType;
+import org.apache.openejb.InterfaceType;
 
 import java.lang.reflect.Method;
 
@@ -36,6 +37,10 @@ public class RpcContainerWrapper implements RpcContainer {
 
     public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
         return container.invoke(deployID, callInterface, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deployID, InterfaceType callType, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+        return container.invoke(deployID, callType, callInterface, callMethod, args, primKey);
     }
 
     public ContainerType getContainerType() {

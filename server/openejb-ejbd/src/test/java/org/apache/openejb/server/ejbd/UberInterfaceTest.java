@@ -14,39 +14,57 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
+import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.OpenEJB;
+import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.server.ServiceDaemon;
+import org.apache.openejb.core.ServerFederation;
 
+import javax.naming.InitialContext;
+import javax.naming.Context;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
 import javax.jws.WebService;
-import javax.naming.InitialContext;
 import static java.util.Arrays.asList;
+import java.util.Properties;
 import java.io.Serializable;
 
+/**
+ * @version $Rev$ $Date$
+ */
 public class UberInterfaceTest extends TestCase {
 
     public void test() throws Exception {
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
+        EjbServer ejbServer = new EjbServer();
 
+        Properties initProps = new Properties();
+        initProps.setProperty("openejb.deployments.classpath.include", "");
+        initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        OpenEJB.init(initProps, new ServerFederation());
+        ejbServer.init(new Properties());
+
+        ServicePool pool = new ServicePool(ejbServer, "ejbd", 10);
+        ServiceDaemon serviceDaemon = new ServiceDaemon(pool, 0, "localhost");
+        serviceDaemon.start();
+
+        int port = serviceDaemon.getPort();
+
+        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
-
-        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(SuperBean.class));
@@ -68,18 +86,32 @@ public class UberInterfaceTest extends TestCase {
         assertEquals(asList(Everything.class), deployment.getBusinessRemoteInterfaces());
         assertEquals(Everything.class, deployment.getServiceEndpointInterface());
 
-        InitialContext context = new InitialContext();
+        { // remote invoke
+            Properties props = new Properties();
+            props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+            props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
+            Context context = new InitialContext(props);
 
-        Everything local = (Everything) context.lookup("SuperBeanLocal");
-        Everything remote = (Everything) context.lookup("SuperBeanRemote");
+            Everything remote = (Everything) context.lookup("SuperBeanRemote");
 
-        Reference reference = new Reference("test");
+            Reference reference = new Reference("test");
 
-        assertEquals(reference, local.echo(reference));
-        assertSame(reference, local.echo(reference)); // pass by reference
+            assertEquals(reference, remote.echo(reference));
+            assertNotSame(reference, remote.echo(reference)); // pass by value
+        }
 
-        assertEquals(reference, remote.echo(reference));
-        assertNotSame(reference, remote.echo(reference)); // pass by value
+        { // local invoke
+            Properties props = new Properties();
+            props.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+            Context context = new InitialContext(props);
+
+            Everything local = (Everything) context.lookup("SuperBeanLocal");
+
+            Reference reference = new Reference("test");
+
+            assertEquals(reference, local.echo(reference));
+            assertSame(reference, local.echo(reference)); // pass by reference
+        }
     }
 
 

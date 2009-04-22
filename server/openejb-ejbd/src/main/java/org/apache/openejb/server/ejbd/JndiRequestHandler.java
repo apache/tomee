@@ -38,6 +38,7 @@ import javax.xml.namespace.QName;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
+import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 import org.apache.openejb.client.CallbackMetaData;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.EJBMetaDataImpl;
@@ -52,6 +53,7 @@ import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.WsMetaData;
+import org.apache.openejb.client.InterfaceType;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.webservices.HandlerChainData;
@@ -363,7 +365,7 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1, null);
+                        -1, convert(proxyInfo.getInterfaceType()), null);
                 res.setResult(metaData);
                 break;
             }
@@ -380,28 +382,15 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1, proxyInfo.getInterfaces());
+                        -1, convert(proxyInfo.getInterfaceType()), proxyInfo.getInterfaces());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 res.setResult(metaData);
                 break;
             }
             case BUSINESS_LOCAL: {
-                String property = SystemInstance.get().getProperty("openejb.remotable.businessLocals", "false");
-                if (property.equalsIgnoreCase("true")) {
-                    res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
-                    EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
-                            null,
-                            deployment.getPrimaryKeyClass(),
-                            deployment.getComponentType().toString(),
-                            deploymentID,
-                            -1, proxyInfo.getInterfaces());
-                    metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
-                    res.setResult(metaData);
-                } else {
-                    res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                    NamingException namingException = new NamingException("Not remotable: '" + name + "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
-                    res.setResult(new ThrowableArtifact(namingException));
-                }
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
+                NamingException namingException = new NamingException("Not remotable: '" + name + "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                res.setResult(new ThrowableArtifact(namingException));
                 break;
             }
             default: {

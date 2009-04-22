@@ -23,6 +23,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBRequest;
+import org.apache.openejb.client.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.DeploymentContext;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class DeploymentIndexTest {
 
     @Test
     public void testGetDeploymentEJBRequest() throws RemoteException {
-        EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, null);
+        EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null);
         EJBRequest request = new EJBRequest(0, ejbMetadataWithId, method, null, null);
         DeploymentInfo info = deploymentIndex.getDeployment(request);
         assert deploymentInfo.equals(info);
@@ -55,7 +56,7 @@ public class DeploymentIndexTest {
     @Test(expected = RemoteException.class)
     public void testGetDeploymentEJBRequestRemoteException() throws RemoteException {
         // 0 causes DeploymentIndex to move further
-        EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, null);
+        EJBMetaDataImpl ejbMetadata = new EJBMetaDataImpl(null, null, null, null, null, 0, InterfaceType.BUSINESS_REMOTE, null);
         EJBRequest request = new EJBRequest(0, ejbMetadata, method, null, null);
         deploymentIndex.getDeployment(request);
     }

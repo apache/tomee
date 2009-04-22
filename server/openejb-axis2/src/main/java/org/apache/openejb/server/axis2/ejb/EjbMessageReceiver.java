@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -83,7 +84,7 @@ public class EjbMessageReceiver implements MessageReceiver {
         method = getMostSpecificMethod(method, callInterface);
 
         try {
-            Object res = container.invoke(this.deploymentInfo.getDeploymentID(), callInterface, method, arguments, null);
+            Object res = container.invoke(this.deploymentInfo.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, method, arguments, null);
             // TODO: update response message with new response value?
         } catch (ApplicationException e) {
             if (e.getCause() instanceof AxisFault) {

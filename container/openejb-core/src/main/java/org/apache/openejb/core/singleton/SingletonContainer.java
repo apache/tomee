@@ -165,17 +165,25 @@ public class SingletonContainer implements RpcContainer {
      * @deprecated use invoke signature without 'securityIdentity' argument.
      */
     public Object invoke(Object deployID, Method callMethod, Object[] args, Object primKey, Object securityIdentity) throws OpenEJBException {
-        return invoke(deployID, callMethod.getDeclaringClass(), callMethod, args, primKey);
+        return invoke(deployID, null, callMethod.getDeclaringClass(), callMethod, args, primKey);
     }
 
-    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object [] args, Object primKey) throws OpenEJBException {
+    public Object invoke(Object deployID, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
+        return invoke(deployID, null, callInterface, callMethod, args, primKey);
+    }
+
+    public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
         CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+
         if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
 
+        // Use the backup way to determine call type if null was supplied.
+        if (type == null) type = deployInfo.getInterfaceType(callInterface);
+        
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, deployInfo.getInterfaceType(callInterface));
+            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -198,7 +206,8 @@ public class SingletonContainer implements RpcContainer {
 
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
-            Object retValue = _invoke(callInterface, callMethod, runMethod, args, instance, callContext);
+
+            Object retValue = _invoke(callMethod, runMethod, args, instance, callContext, type);
 
             return retValue;
 
@@ -215,15 +224,7 @@ public class SingletonContainer implements RpcContainer {
         return instanceManager;
     }
 
-    /**
-     * @deprecated use type-safe {@link #_invoke(Class, java.lang.reflect.Method, java.lang.reflect.Method, Object[], Instance, org.apache.openejb.core.ThreadContext)}
-     */
-    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Object object, ThreadContext callContext)
-            throws OpenEJBException {
-        return _invoke(callInterface, callMethod, runMethod, args, (Instance) object, callContext);
-    }
-
-    protected Object _invoke(Class callInterface, Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext) throws OpenEJBException {
+    protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType callType) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == DeploymentInfo.READ_LOCK;
@@ -236,8 +237,7 @@ public class SingletonContainer implements RpcContainer {
 
             returnValue = null;
             try {
-                InterfaceType type = deploymentInfo.getInterfaceType(callInterface);
-                if (type == InterfaceType.SERVICE_ENDPOINT){
+                if (callType == InterfaceType.SERVICE_ENDPOINT) {
                     callContext.setCurrentOperation(Operation.BUSINESS_WS);
                     returnValue = invokeWebService(args, deploymentInfo, runMethod, instance);
                 } else {

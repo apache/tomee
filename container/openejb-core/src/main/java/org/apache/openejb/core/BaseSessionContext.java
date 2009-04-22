@@ -101,7 +101,6 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             ThreadContext threadContext = ThreadContext.getThreadContext();
             DeploymentInfo di = threadContext.getDeploymentInfo();
 
-
             InterfaceType interfaceType = di.getInterfaceType(interfce);
 
             if (interfaceType == null){

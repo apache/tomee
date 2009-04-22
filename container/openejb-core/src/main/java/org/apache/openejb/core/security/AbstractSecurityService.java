@@ -223,7 +223,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         return null;
     }
 
-    public boolean isCallerAuthorized(Method method, InterfaceType interfaceType) {
+    public boolean isCallerAuthorized(Method method, InterfaceType type) {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
@@ -232,8 +232,6 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
 
             String ejbName = deploymentInfo.getEjbName();
-
-            InterfaceType type = deploymentInfo.getInterfaceType(method.getDeclaringClass());
 
             String name = (type == null)? null: type.getSpecName();
 

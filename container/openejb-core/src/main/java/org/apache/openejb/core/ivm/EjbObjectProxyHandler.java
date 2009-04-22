@@ -214,7 +214,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected Object businessMethod(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
 //        checkAuthorization(method);
-        return container.invoke(deploymentID, interfce, method, args, primaryKey);
+        return container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
     }
 
     public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType) {

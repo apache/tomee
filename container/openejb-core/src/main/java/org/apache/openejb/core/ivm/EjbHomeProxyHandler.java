@@ -263,11 +263,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object homeMethod(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return container.invoke(deploymentID, interfce, method, args, null);
+        return container.invoke(deploymentID, interfaceType, interfce, method, args, null);
     }
 
     protected Object create(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, interfce, method, args, null);
+        ProxyInfo proxyInfo = (ProxyInfo) container.invoke(deploymentID, interfaceType, interfce, method, args, null);
         assert proxyInfo != null : "Container returned a null ProxyInfo: ContainerID=" + container.getContainerID();
         return createProxy(proxyInfo.getPrimaryKey());
     }
@@ -335,7 +335,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             stub = null;
         }
 
-        container.invoke(deploymentID, interfce, method, args, primKey);
+        container.invoke(deploymentID, interfaceType, interfce, method, args, primKey);
 
         /*
          * This operation takes care of invalidating all the EjbObjectProxyHanders associated with
