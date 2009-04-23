@@ -30,6 +30,7 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
@@ -95,13 +96,7 @@ public class EjbEndpoint extends CxfEndpoint {
 
         // Install WSS4J interceptor
         if (port.isSecure()) {
-            Map<String, Object> inProps = new HashMap<String, Object>();
-            inProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-            inProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-            inProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ServerPasswordHandler.class.getName());
-
-            WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
-            endpoint.getInInterceptors().add(wssIn);
+            ConfigureCxfSecurity.configure(endpoint, port.getSecurityProperties());
         }
 
     }

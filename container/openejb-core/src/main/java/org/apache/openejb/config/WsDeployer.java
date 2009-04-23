@@ -269,6 +269,8 @@ public class WsDeployer implements DynamicDeployer {
                 webservices = new Webservices();
                 ejbModule.setWebservices(webservices);
             }
+            
+            webserviceDescription = webservices.getWebserviceDescriptionMap().get(JaxWsUtils.getServiceName(ejbClass));
             if (webserviceDescription == null) {
                 webserviceDescription = new WebserviceDescription();
                 if (JaxWsUtils.isWebService(ejbClass)) {
@@ -283,11 +285,15 @@ public class WsDeployer implements DynamicDeployer {
             PortComponent portComponent = portMap.get(sessionBean.getEjbName());
             if (portComponent == null) {
                 portComponent = new PortComponent();
-                if (ejbClass.isAnnotationPresent(WebServiceProvider.class)) {
-                    portComponent.setPortComponentName(ejbClass.getName());
-                } else {
-                    portComponent.setPortComponentName(ejbClass.getSimpleName());
-                }
+                if (webserviceDescription.getPortComponentMap().containsKey(JaxWsUtils.getPortQName(ejbClass).getLocalPart())) {
+                    // when to webservices.xml is defined and when we want to
+                    // publish more than one port for the same implementation by configuration
+                    portComponent.setPortComponentName(sessionBean.getEjbName());
+		    
+		} else { // JAX-WS Metadata specification default
+		    portComponent.setPortComponentName(JaxWsUtils.getPortQName(ejbClass).getLocalPart());
+		    
+		}
                 webserviceDescription.getPortComponent().add(portComponent);
 
                 ServiceImplBean serviceImplBean = new ServiceImplBean();

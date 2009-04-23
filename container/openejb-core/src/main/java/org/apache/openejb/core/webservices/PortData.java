@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.handler.PortInfo;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.net.URL;
 
 public class PortData implements PortInfo {
@@ -39,6 +40,7 @@ public class PortData implements PortInfo {
     private QName wsdlService;
     private String location;
     private boolean secure;
+    private Properties securityProperties;
 
     public String getPortId() {
         return portId;
@@ -127,4 +129,14 @@ public class PortData implements PortInfo {
     public boolean isSecure() {
         return secure;
     }
+
+    public Properties getSecurityProperties() {
+        return securityProperties;
+    }
+
+    public void setSecurityProperties(Properties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
+    
+    
 }

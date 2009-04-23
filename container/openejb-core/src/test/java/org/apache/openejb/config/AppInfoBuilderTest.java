@@ -25,6 +25,7 @@ import org.apache.openejb.jee.oejb2.*;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.util.List;
+import java.util.Properties;
 
 public class AppInfoBuilderTest extends TestCase {
     public void testShouldAddSecurityDetailsToPortInfo() throws Exception {
@@ -44,6 +45,11 @@ public class AppInfoBuilderTest extends TestCase {
         serviceSecurityType.setRealmName("MyRealm");
         serviceSecurityType.setSecurityRealmName("MySecurityRealm");
         serviceSecurityType.setTransportGuarantee(TransportGuaranteeType.NONE);
+        
+        Properties props = new Properties();
+        props.put("wss4j.in.action", "Timestamp");
+        props.put("wss4j.out.action", "Timestamp");
+        serviceSecurityType.setProperties(props);
 
         openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
         openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
@@ -65,6 +71,8 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals("MySecurityRealm", info.securityRealmName);
         assertEquals("BASIC", info.authMethod);
         assertEquals("NONE", info.transportGuarantee);
+        assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.in.action"));
+        assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.out.action"));
     }
 
     public void testShouldUseDefaultsIfSettingIsNull() throws Exception {
@@ -84,6 +92,7 @@ public class AppInfoBuilderTest extends TestCase {
         serviceSecurityType.setRealmName(null);
         serviceSecurityType.setSecurityRealmName(null);
         serviceSecurityType.setTransportGuarantee(null);
+        serviceSecurityType.setProperties(null);
 
         openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
         openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
@@ -105,9 +114,10 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals(null, info.securityRealmName);
         assertEquals("NONE", info.authMethod);
         assertEquals("NONE", info.transportGuarantee);
+        assertTrue(portInfo.properties.isEmpty());
     }
 
-    public void testShouldIngorePortInfoThatDontMatchTheEjb() throws Exception {
+    public void testShouldIgnorePortInfoThatDontMatchTheEjb() throws Exception {
         EjbJar ejbJar = new EjbJar();
         SessionBean sessionBean = new SessionBean();
         sessionBean.setEjbName("MySessionBean");
@@ -124,6 +134,7 @@ public class AppInfoBuilderTest extends TestCase {
         serviceSecurityType.setRealmName(null);
         serviceSecurityType.setSecurityRealmName(null);
         serviceSecurityType.setTransportGuarantee(null);
+        serviceSecurityType.setProperties(null);
 
         openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
         openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
@@ -138,6 +149,10 @@ public class AppInfoBuilderTest extends TestCase {
         portInfo.securityRealmName = "";
         portInfo.transportGuarantee = "CONFIDENTIAL";
         portInfo.serviceLink = "DifferentInfo";
+        Properties props = new Properties();
+        props.put("wss4j.in.action", "Timestamp");
+        props.put("wss4j.out.action", "Timestamp");
+        portInfo.properties = props;
         ejbJarInfo.portInfos.add(portInfo);
 
         new AppInfoBuilder(null).configureWebserviceSecurity(ejbJarInfo, ejbModule);
@@ -149,5 +164,7 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals("", info.securityRealmName);
         assertEquals("DIGEST", info.authMethod);
         assertEquals("CONFIDENTIAL", info.transportGuarantee);
+        assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.in.action"));
+        assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.out.action"));
     }
 }

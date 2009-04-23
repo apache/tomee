@@ -20,6 +20,7 @@ package org.apache.openejb.assembler.classic;
 import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class PortInfo extends InfoObject {
     public String serviceId;
@@ -44,4 +45,5 @@ public class PortInfo extends InfoObject {
     public String realmName;
     public String transportGuarantee;
     public String securityRealmName;
+    public Properties properties;
 }

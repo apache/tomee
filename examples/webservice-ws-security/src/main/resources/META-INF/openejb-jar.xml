@@ -6,6 +6,91 @@
                 <security-realm-name/>
                 <transport-guarantee>NONE</transport-guarantee>
                 <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = UsernameToken
+                    wss4j.in.passwordType = PasswordText
+                </properties>
+            </web-service-security>
+        </session>
+        
+        <session>
+            <ejb-name>CalculatorImplTimestamp1way</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = Timestamp
+                </properties>
+            </web-service-security>
+        </session>
+
+        <session>
+            <ejb-name>CalculatorImplTimestamp2ways</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = Timestamp
+                    wss4j.out.action = Timestamp
+                </properties>
+            </web-service-security>
+        </session>
+
+        <session>
+            <ejb-name>CalculatorImplUsernameTokenPlainPassword</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = UsernameToken
+                    wss4j.in.passwordType = PasswordText
+                </properties>
+            </web-service-security>
+        </session>
+
+        <session>
+            <ejb-name>CalculatorImplUsernameTokenHashedPassword</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = UsernameToken
+                    wss4j.in.passwordType = PasswordDigest
+                    wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+                </properties>
+            </web-service-security>
+        </session>
+        
+        <session>
+            <ejb-name>CalculatorImplUsernameTokenPlainPasswordEncrypt</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = UsernameToken Encrypt
+                    wss4j.in.passwordType = PasswordText
+                    wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+                    wss4j.in.decryptionPropFile = META-INF/CalculatorImplUsernameTokenPlainPasswordEncrypt-server.properties
+                </properties>
+            </web-service-security>
+        </session>
+        
+        <session>
+            <ejb-name>CalculatorImplSign</ejb-name>
+            <web-service-security>
+                <security-realm-name/>
+                <transport-guarantee>NONE</transport-guarantee>
+                <auth-method>WS-SECURITY</auth-method>
+                <properties>
+                    wss4j.in.action = Signature
+                    wss4j.in.passwordCallbackClass=org.superbiz.calculator.CustomPasswordHandler
+                    wss4j.in.signaturePropFile = META-INF/CalculatorImplSign-server.properties
+                </properties>
             </web-service-security>
         </session>
     </enterprise-beans>

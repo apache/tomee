@@ -47,7 +47,7 @@ public class JaxWsUtils {
         if (webService != null) {
             String localName = webService.name();
             if (localName == null || localName.length() == 0) {
-                localName = seiClass.getName();
+                localName = seiClass.getSimpleName();
             }
             String namespace = webService.targetNamespace();
             return new QName(getNamespace(seiClass, namespace), localName);

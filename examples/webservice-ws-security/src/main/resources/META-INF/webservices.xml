@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
+    xmlns:ger="http://ciaows.org/wsdl" version="1.1">
+
+    <webservice-description>
+        <webservice-description-name>CalculatorWsService</webservice-description-name>
+        <port-component>
+            <port-component-name>CalculatorImplTimestamp1way</port-component-name>
+            <wsdl-port>CalculatorImplTimestamp1way</wsdl-port>
+            <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+            <service-impl-bean>
+                <ejb-link>CalculatorImplTimestamp1way</ejb-link>
+            </service-impl-bean>
+        </port-component>
+        <port-component>
+            <port-component-name>CalculatorImplTimestamp2ways</port-component-name>
+            <wsdl-port>CalculatorImplTimestamp2ways</wsdl-port>
+            <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+            <service-impl-bean>
+                <ejb-link>CalculatorImplTimestamp2ways</ejb-link>
+            </service-impl-bean>
+        </port-component>
+        <port-component>
+            <port-component-name>CalculatorImplUsernameTokenPlainPassword</port-component-name>
+            <wsdl-port>CalculatorImplUsernameTokenPlainPassword</wsdl-port>
+            <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+            <service-impl-bean>
+                <ejb-link>CalculatorImplUsernameTokenPlainPassword</ejb-link>
+            </service-impl-bean>
+        </port-component>
+        <port-component>
+            <port-component-name>CalculatorImplUsernameTokenHashedPassword</port-component-name>
+            <wsdl-port>CalculatorImplUsernameTokenHashedPassword</wsdl-port>
+            <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+            <service-impl-bean>
+                <ejb-link>CalculatorImplUsernameTokenHashedPassword</ejb-link>
+            </service-impl-bean>
+        </port-component>
+        <port-component>
+            <port-component-name>CalculatorImplUsernameTokenPlainPasswordEncrypt</port-component-name>
+            <wsdl-port>CalculatorImplUsernameTokenPlainPasswordEncrypt</wsdl-port>
+            <service-endpoint-interface>org.superbiz.calculator.CalculatorWs</service-endpoint-interface>
+            <service-impl-bean>
+                <ejb-link>CalculatorImplUsernameTokenPlainPasswordEncrypt</ejb-link>
+            </service-impl-bean>
+        </port-component>
+    </webservice-description>
+
+</webservices>

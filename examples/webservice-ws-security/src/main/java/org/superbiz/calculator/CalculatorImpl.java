@@ -42,7 +42,6 @@ public class CalculatorImpl implements CalculatorWs, CalculatorRemote    {
         return add1 + add2;
     }
 
-    @RolesAllowed(value={"Administrator"})
     public int multiply(int mul1, int mul2) {
         return mul1 * mul2;
     }

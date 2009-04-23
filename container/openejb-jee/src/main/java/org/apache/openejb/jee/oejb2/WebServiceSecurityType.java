@@ -19,10 +19,15 @@ package org.apache.openejb.jee.oejb2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 
 /**
@@ -54,7 +59,8 @@ import javax.xml.bind.annotation.XmlType;
     "realmName",
     "transportGuarantee",
     "authMethod",
-    "httpMethod"
+    "httpMethod",
+    "properties"
 })
 public class WebServiceSecurityType {
 
@@ -68,6 +74,9 @@ public class WebServiceSecurityType {
     protected AuthMethodType authMethod;
     @XmlElement(name = "http-method")
     protected List<String> httpMethod;
+    @XmlElement(name = "properties", required = false)
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
 
     /**
      * Gets the value of the securityRealmName property.
@@ -193,5 +202,17 @@ public class WebServiceSecurityType {
         }
         return this.httpMethod;
     }
+
+    public Properties getProperties() {
+	if (null == properties) {
+	    properties = new Properties();
+	}
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+    
 
 }
