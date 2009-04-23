@@ -296,6 +296,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return webModule;
             }
 
+            // TODO: Possible this class is also annotated @Stateless or @Singleton, in which case we maybe should skip it
             List<Class> classes = new ArrayList<Class>();
             classes.addAll(finder.findAnnotatedClasses(WebService.class));
             classes.addAll(finder.findAnnotatedClasses(WebServiceProvider.class));
