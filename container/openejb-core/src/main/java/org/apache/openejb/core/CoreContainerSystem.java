@@ -49,9 +49,6 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
 
             jndiRootContext = IvmContext.createRootContext();
 
-            jndiRootContext.createSubcontext("java:openejb/local");
-            jndiRootContext.createSubcontext("java:openejb/client");
-            jndiRootContext.createSubcontext("java:openejb/Deployment");
             jndiRootContext.bind("openejb/local/.", "");
             jndiRootContext.bind("openejb/remote/.", "");
             jndiRootContext.bind("openejb/client/.", "");
