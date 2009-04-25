@@ -20,7 +20,6 @@ import static org.apache.openejb.util.IOUtils.readProperties;
 import org.apache.openejb.util.ConfUtils;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.IOUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -32,13 +31,12 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
-import java.io.BufferedInputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.LinkedHashSet;
 
 /**
  * @version $Rev$ $Date$
@@ -57,7 +55,7 @@ public class PropertiesLoginModule implements LoginModule {
     private Properties users = new Properties();
     private Properties groups = new Properties();
     private String user;
-    private Set principals = new HashSet();
+    private Set principals = new LinkedHashSet();
 
     private URL usersUrl;
     private URL groupsUrl;
