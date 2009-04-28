@@ -16,12 +16,7 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.loader.SystemInstance;
-
-import javax.naming.*;
-import javax.naming.NamingException;
-import java.util.Hashtable;
+import javax.naming.InitialContext;
 
 public class JndiUrlReference extends Reference {
     private String jndiName;
