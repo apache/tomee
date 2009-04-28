@@ -56,14 +56,16 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void testConfigureApplicationWebModule() throws OpenEJBException {
+    	final String moduleId = "testConfigureApplicationWebModule";
+    	final String fileSeparator = System.getProperty("file.separator");
+    	
         SystemInstance.get().setProperty(ConfigurationFactory.VALIDATION_SKIP_PROPERTY, "false");
         SystemInstance.get().setProperty(DeploymentsResolver.SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY, "false");
-        ConfigurationFactory factory = new ConfigurationFactory();
-        final String moduleId = "testConfigureApplicationWebModule";
+        ConfigurationFactory factory = new ConfigurationFactory();        
         WebApp webApp = new WebApp();
         // no real classes engaged so disable metadata (annotation) processing
         webApp.setMetadataComplete(true);
-        WebModule webModule = new WebModule(webApp, null, null, "/some/where.war", moduleId);
+        WebModule webModule = new WebModule(webApp, null, null, fileSeparator + "some" + fileSeparator+ "where.war", moduleId);
         WebAppInfo info = factory.configureApplication(webModule);
         assertEquals(moduleId, info.moduleId);
     }
