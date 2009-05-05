@@ -16,7 +16,15 @@
  */
 package org.superbiz.calculator;
 
+import java.util.Date;
+
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.jws.soap.SOAPBinding.Style;
+import javax.jws.soap.SOAPBinding.Use;
+import javax.xml.ws.Holder;
 
 //END SNIPPET: code
 
@@ -32,5 +40,14 @@ public interface CalculatorWs {
     public int sum(int add1, int add2);
 
     public int multiply(int mul1, int mul2);
+    
+    // because of CXF bug, BARE must be used instead of default WRAPPED
+    @SOAPBinding(use=Use.LITERAL, parameterStyle=ParameterStyle.BARE, style=Style.DOCUMENT)
+    public int factorial(
+	    int number,
+	    @WebParam(name="userid", header=true, mode=WebParam.Mode.IN) Holder<String> userId,
+	    @WebParam(name="returncode", header=true, mode=WebParam.Mode.OUT) Holder<String> returnCode,
+	    @WebParam(name="datetime", header=true, mode=WebParam.Mode.INOUT) Holder<Date> datetime);
+    
 }
 //END SNIPPET: code

@@ -16,24 +16,31 @@
  */
 package org.superbiz.calculator;
 
-import junit.framework.TestCase;
+import java.net.URL;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
-import java.net.URL;
-import java.util.Properties;
+
+import junit.framework.TestCase;
 
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup	
     private InitialContext initialContext;
+    
+    // date used to invoke a web service with INOUT parameters
+    private static final Date date = new Date();
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-
+        
         initialContext = new InitialContext(properties);
     }
     //END SNIPPET: setup    
@@ -45,18 +52,34 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"), null);
+	Service calcService = Service.create(
+        	new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"), 
+        	new QName("http://superbiz.org/wsdl", "CalculatorWsService"));
         assertNotNull(calcService);
 
         CalculatorWs calc = calcService.getPort(CalculatorWs.class);
-        assertEquals(10, calc.sum(4, 6));
-        assertEquals(12, calc.multiply(3, 4));
+        assertEquals(10, calc.sum(4,6));
+	assertEquals(12, calc.multiply(3,4));
+	
+	Holder<String> userIdHolder = new Holder<String>("jane");
+	Holder<String> returnCodeHolder = new Holder<String>();
+	Holder<Date> datetimeHolder = new Holder<Date>(date);
+	assertEquals(6, calc.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
+	assertEquals(userIdHolder.value, returnCodeHolder.value);
+	assertTrue(date.before(datetimeHolder.value));
     }
 
     public void testCalculatorViaRemoteInterface() throws Exception {
         CalculatorLocal calc = (CalculatorLocal) initialContext.lookup("CalculatorImplLocal");
         assertEquals(10, calc.sum(4, 6));
         assertEquals(12, calc.multiply(3, 4));
+        
+        Holder<String> userIdHolder = new Holder<String>("jane");
+	Holder<String> returnCodeHolder = new Holder<String>();
+	Holder<Date> datetimeHolder = new Holder<Date>(date);
+	assertEquals(6, calc.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
+	assertEquals(userIdHolder.value, returnCodeHolder.value);
+	assertTrue(date.before(datetimeHolder.value));
     }
     //END SNIPPET: webservice
 

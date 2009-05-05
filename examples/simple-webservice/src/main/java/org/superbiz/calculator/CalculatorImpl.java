@@ -16,8 +16,12 @@
  */
 package org.superbiz.calculator;
 
+import java.util.Date;
+
 import javax.ejb.Stateless;
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.xml.ws.Holder;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -32,6 +36,7 @@ import javax.jws.WebService;
         serviceName = "CalculatorWsService",
         targetNamespace = "http://superbiz.org/wsdl",
         endpointInterface = "org.superbiz.calculator.CalculatorWs")
+@HandlerChain(file = "handler.xml")
 public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
 
     public int sum(int add1, int add2) {
@@ -42,5 +47,29 @@ public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
         return mul1 * mul2;
     }
 
+    public int factorial(
+	    int number,
+	    Holder<String> userId, 
+	    Holder<String> returnCode,
+	    Holder<Date> datetime) {
+	
+	if (number == 0) {
+	    returnCode.value = "Can not calculate factorial for zero.";
+	    return -1;
+	}
+	
+	returnCode.value = userId.value;
+	datetime.value = new Date();
+	return (int) factorial(number);
+    }
+    
+    // return n!
+    // precondition: n >= 0 and n <= 20
+    private static long factorial(long n) {
+        if      (n <  0) throw new RuntimeException("Underflow error in factorial");
+        else if (n > 20) throw new RuntimeException("Overflow error in factorial");
+        else if (n == 0) return 1;
+        else             return n * factorial(n-1);
+    }
 }
 //END SNIPPET: code

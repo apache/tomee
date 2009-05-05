@@ -20,14 +20,22 @@ package org.apache.openejb.server.cxf.ejb;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
+import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
+import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
+import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
+import org.apache.cxf.interceptor.AttachmentInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.interceptor.ServiceInvokerInterceptor;
+import org.apache.cxf.interceptor.StaxInInterceptor;
 import org.apache.cxf.jaxws.handler.logical.LogicalHandlerInInterceptor;
 import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
+import org.apache.cxf.jaxws.interceptors.HolderInInterceptor;
+import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
+import org.apache.cxf.jaxws.interceptors.WrapperClassInInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
@@ -44,6 +52,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Binding;
+
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -117,6 +127,16 @@ public class EjbInterceptor {
             // install default interceptors
             chain.add(new ServiceInvokerInterceptor());
             chain.add(new OutgoingChainInterceptor());
+            
+            // add JAX-WS interceptors
+            // See http://cwiki.apache.org/CXF20DOC/interceptors.html
+            chain.add(new AttachmentInInterceptor());
+            chain.add(new StaxInInterceptor());
+            chain.add(new ReadHeadersInterceptor(bus));
+            chain.add(new SoapActionInInterceptor());
+            chain.add(new SoapHeaderInterceptor());
+            chain.add(new WrapperClassInInterceptor());
+            chain.add(new HolderInInterceptor());
 
             // install interceptors for handler processing
             chain.add(new MustUnderstandInterceptor());
@@ -158,17 +178,22 @@ public class EjbInterceptor {
     }
 
     private void reserialize(SoapMessage message) throws Exception {
-        SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
-        if (soapMessage == null) {
-            return;
-        }
-
-        XMLStreamReader xmlReader = message.getContent(XMLStreamReader.class);
-        StaxUtils.readDocElements(soapMessage.getSOAPBody(), xmlReader, true);
-        DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart().getEnvelope().getBody());
-        xmlReader = StaxUtils.createXMLStreamReader(bodySource);
-        xmlReader.nextTag();
-        xmlReader.nextTag(); // move past body tag
-        message.setContent(XMLStreamReader.class, xmlReader);
+	// If we just remove XMLStreamReader from the message content, we
+	// only need to add the StaxInInterceptor to re serialize the message
+	// Then we must reset the InputStream to allow re serialization by the StaxInInterceptor
+	message.removeContent(XMLStreamReader.class);
+	InputStream is = message.getContent(InputStream.class);
+	is.reset();
+	
+//	SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
+//	if (soapMessage == null) {
+//	    return;
+//	}
+//
+//        XMLStreamReader xmlReader = message.getContent(XMLStreamReader.class);
+//        StaxUtils.readDocElements(soapMessage.getSOAPPart().getEnvelope(), xmlReader, true);
+//        DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart().getEnvelope());
+//        xmlReader = StaxUtils.createXMLStreamReader(bodySource);
+//        message.setContent(XMLStreamReader.class, xmlReader);
     }
 }
