@@ -49,7 +49,9 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
-        Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"), null);
+        URL url = new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl");
+        QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
+        Service calcService = Service.create(url, calcServiceQName);
         assertNotNull(calcService);
 
         CalculatorWs calc = calcService.getPort(CalculatorWs.class);
