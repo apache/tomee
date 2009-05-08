@@ -17,12 +17,14 @@
 #
 cd "$(dirname "$0")"
 
-JAR=$PWD/../../itests/openejb-itests-app/target/openejb-itests-app-3.1-SNAPSHOT.ear
+VERSION=3.1.1-SNAPSHOT
+
+JAR=$PWD/../../itests/openejb-itests-app/target/openejb-itests-app-$VERSION.ear
 
 cd target/
 
-tar xzvf openejb-3.1-SNAPSHOT.tar.gz
-cd openejb-3.1-SNAPSHOT
+tar xzvf openejb-$VERSION.tar.gz
+cd openejb-$VERSION
 cp $JAR apps/
 ./bin/openejb start &
 sleep 1
