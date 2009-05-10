@@ -119,22 +119,22 @@
                             <tasks name="generate keys">
                                 <property name="server.alias" value="serveralias"/>
                                 <property name="server.keypass" value="serverPassword"/>
-                                <property name="server.keystore" value="target/classes/META-INF/serverStore.jks"/>
+                                <property name="server.keystore" value="${basedir}/target/classes/META-INF/serverStore.jks"/>
                                 <property name="server.storepass" value="keystorePass"/>
                                 <property name="server.dname" value="'cn=serveralias'"/>
-                                <property name="server.file" value="target/classes/META-INF/serverKey.rsa"/>
+                                <property name="server.file" value="${basedir}/target/classes/META-INF/serverKey.rsa"/>
                                 
                                 <property name="client.alias" value="clientalias"/>
                                 <property name="client.keypass" value="clientPassword"/>
-                                <property name="client.keystore" value="target/test-classes/META-INF/clientStore.jks"/>
+                                <property name="client.keystore" value="${basedir}/target/test-classes/META-INF/clientStore.jks"/>
                                 <property name="client.storepass" value="keystorePass"/>
                                 <property name="client.dname" value="'cn=clientalias'"/>
-                                <property name="client.file" value="target/test-classes/META-INF/clientKey.rsa"/>
+                                <property name="client.file" value="${basedir}/target/test-classes/META-INF/clientKey.rsa"/>
                                 
                                 <property name="keyalg" value="RSA"/>
                             
                                 <echo message="generate server keys"/>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-genkey" />
                                     <arg line="-alias ${server.alias}" />
                                     <arg line="-keypass ${server.keypass}" />
@@ -146,7 +146,7 @@
                                         <grant class="java.security.AllPermission" />
                                     </permissions>
                                 </java>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-selfcert" />
                                     <arg line="-alias ${server.alias}" />
                                     <arg line="-keystore ${server.keystore}" />
@@ -156,7 +156,7 @@
                                         <grant class="java.security.AllPermission" />
                                     </permissions>
                                 </java>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-export" />
                                     <arg line="-alias ${server.alias}" />
                                     <arg line="-file ${server.file}" />
@@ -169,7 +169,7 @@
 				
 				<echo message="generate client keys"/>
                                 
-				<java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-genkey" />
                                     <arg line="-alias ${client.alias}" />
                                     <arg line="-keypass ${client.keypass}" />
@@ -181,7 +181,7 @@
                                         <grant class="java.security.AllPermission" />
                                     </permissions>
                                 </java>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-selfcert" />
                                     <arg line="-alias ${client.alias}" />
                                     <arg line="-keystore ${client.keystore}" />
@@ -191,7 +191,7 @@
                                         <grant class="java.security.AllPermission" />
                                     </permissions>
                                 </java>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-export" />
                                     <arg line="-alias ${client.alias}" />
                                     <arg line="-file ${client.file}" />
@@ -202,9 +202,8 @@
                                     </permissions>
                                 </java>
                                 
-                                <echo message="import client/server public keys
-                                    in client/server keystores"/>
-                                <java classname="sun.security.tools.KeyTool">
+                                <echo message="import client/server public keys in client/server keystores"/>
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-import" />
                                     <arg line="-alias ${server.alias}" />
                                     <arg line="-file ${server.file}" />
@@ -215,7 +214,7 @@
                                         <grant class="java.security.AllPermission" />
                                     </permissions>
                                 </java>
-                                <java classname="sun.security.tools.KeyTool">
+                                <java classname="sun.security.tools.KeyTool" fork="true">
                                     <arg line="-import" />
                                     <arg line="-alias ${client.alias}" />
                                     <arg line="-file ${client.file}" />
