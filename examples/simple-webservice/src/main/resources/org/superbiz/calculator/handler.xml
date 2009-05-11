@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
-  <handler-chain>
-    <handler>
-      <handler-name>org.superbiz.handler.DummyInterceptor</handler-name>
-      <handler-class>org.superbiz.handler.DummyInterceptor</handler-class>
-    </handler>
-  </handler-chain>
-</handler-chains>
