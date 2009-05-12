@@ -36,6 +36,7 @@ import javax.xml.ws.Holder;
         serviceName = "CalculatorWsService",
         targetNamespace = "http://superbiz.org/wsdl",
         endpointInterface = "org.superbiz.calculator.CalculatorWs")
+@HandlerChain(file = "handler.xml")
 public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
 
     public int sum(int add1, int add2) {
