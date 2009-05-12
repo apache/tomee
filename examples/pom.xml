@@ -55,6 +55,7 @@
     <module>helloworld-weblogic</module>
     <module>jpa-hibernate</module>
     <module>jpa-eclipselink</module>
+    <module>spring-integration</module>
     <module>telephone-stateful</module>
     <module>webservice-attachments</module>
     <module>webapps</module>
