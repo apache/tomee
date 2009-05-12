@@ -46,6 +46,16 @@ public class InjectionProcessor<T> {
     private final List<Method> preDestroyMethods;
     private final Context context;
     private T instance;
+    private T suppliedInstance;
+
+    public InjectionProcessor(T suppliedInstance, List<Injection> injections, Context context) {
+        this.beanClass = null;
+        this.suppliedInstance = suppliedInstance;
+        this.injections = injections;
+        this.context = context;
+        postConstructMethods = null;
+        preDestroyMethods = null;
+    }
 
     public InjectionProcessor(Class<? extends T> beanClass, List<Injection> injections, Context context) {
         this.beanClass = beanClass;
@@ -81,7 +91,16 @@ public class InjectionProcessor<T> {
     private void construct() throws OpenEJBException {
         if (instance != null) throw new IllegalStateException("Instance already constructed");
 
-        ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
+        Class<? extends T> clazz = beanClass;
+
+        ObjectRecipe objectRecipe;
+        if (suppliedInstance != null) {
+            clazz = (Class<? extends T>) suppliedInstance.getClass();
+            objectRecipe = getInstanceRecipe(suppliedInstance);
+        } else {
+            objectRecipe = new ObjectRecipe(clazz);
+        }
+        
         objectRecipe.allow(Option.FIELD_INJECTION);
         objectRecipe.allow(Option.PRIVATE_PROPERTIES);
         objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
@@ -95,18 +114,18 @@ public class InjectionProcessor<T> {
 
         Object object;
         try {
-            object = objectRecipe.create(beanClass.getClassLoader());
+            object = objectRecipe.create(clazz.getClassLoader());
         } catch (Exception e) {
-            throw new OpenEJBException("Error while creating bean " + beanClass.getName(), e);
+            throw new OpenEJBException("Error while creating bean " + clazz.getName(), e);
         }
 
         Map unsetProperties = objectRecipe.getUnsetProperties();
         if (unsetProperties.size() > 0) {
             for (Object property : unsetProperties.keySet()) {
-                logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
+                logger.warning("Injection: No such property '" + property + "' in class " + clazz.getName());
             }
         }
-        instance = beanClass.cast(object);
+        instance = clazz.cast(object);
     }
 
     public void postConstruct() throws OpenEJBException {
@@ -144,18 +163,22 @@ public class InjectionProcessor<T> {
         
         boolean usePrefix = true;
         try {
-            beanClass.getConstructor();
+            if (beanClass != null) beanClass.getConstructor();
         } catch (NoSuchMethodException e) {
             // Using constructor injection
             // xbean can't handle the prefix yet
             usePrefix = false;
         }
 
+        Class clazz = beanClass;
+
+        if (suppliedInstance != null) clazz = suppliedInstance.getClass();
+
         for (Injection injection : injections) {
-            if (!injection.getTarget().isAssignableFrom(beanClass)) continue;
+            if (!injection.getTarget().isAssignableFrom(clazz)) continue;
             try {
                 String jndiName = injection.getJndiName();
-                Object value = context.lookup("java:comp/env/" + jndiName);
+                Object value = context.lookup(jndiName);
 
                 String prefix;
                 if (usePrefix) {
@@ -166,8 +189,36 @@ public class InjectionProcessor<T> {
 
                 objectRecipe.setProperty(prefix + injection.getName(), value);
             } catch (NamingException e) {
-                logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
+                logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
             }
         }
     }
+
+    public static Context unwrap(Context context) {
+        try {
+            context = (Context) context.lookup("java:comp/env/");
+        } catch (NamingException notAnIssue) {
+        }
+        
+        return context;
+    }
+    
+    private static ObjectRecipe getInstanceRecipe(Object instance) {
+        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.class);
+        recipe.setFactoryMethod("create");
+
+        String param = "instance"+recipe.hashCode();
+
+        recipe.setConstructorArgNames(new String[]{param});
+        recipe.setProperty(param, instance);
+
+        return recipe;
+    }
+
+    public static class PassthroughFactory {
+        public static Object create(Object instance) {
+            return instance;
+        }
+    }
+
 }

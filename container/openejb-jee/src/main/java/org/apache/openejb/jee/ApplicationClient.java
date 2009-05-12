@@ -40,10 +40,12 @@ import java.util.Map;
         "icon",
         "envEntry",
         "ejbRef",
+        "ejbLocalRef",
         "serviceRef",
         "resourceRef",
         "resourceEnvRef",
         "messageDestinationRef",
+        "persistenceContextRef",
         "persistenceUnitRef",
         "postConstruct",
         "preDestroy",
@@ -63,6 +65,8 @@ public class ApplicationClient implements JndiConsumer {
     protected KeyedCollection<String,EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
     protected KeyedCollection<String,EjbRef> ejbRef;
+    @XmlElement(name = "ejb-local-ref", required = true)
+    protected KeyedCollection<String,EjbLocalRef> ejbLocalRef;
     @XmlElement(name = "service-ref", required = true)
     protected KeyedCollection<String,ServiceRef> serviceRef;
     @XmlElement(name = "resource-ref", required = true)
@@ -71,6 +75,8 @@ public class ApplicationClient implements JndiConsumer {
     protected KeyedCollection<String,ResourceEnvRef> resourceEnvRef;
     @XmlElement(name = "message-destination-ref", required = true)
     protected KeyedCollection<String,MessageDestinationRef> messageDestinationRef;
+    @XmlElement(name = "persistence-context-ref", required = true)
+    protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
     protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
     @XmlElement(name = "post-construct", required = true)
@@ -180,11 +186,17 @@ public class ApplicationClient implements JndiConsumer {
     }
 
     public Collection<EjbLocalRef> getEjbLocalRef() {
-        return Collections.emptyList();
+        if (ejbLocalRef == null) {
+            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+        }
+        return this.ejbLocalRef;
     }
 
     public Map<String,EjbLocalRef> getEjbLocalRefMap() {
-        return Collections.emptyMap();
+        if (ejbLocalRef == null) {
+            ejbLocalRef = new KeyedCollection<String,EjbLocalRef>();
+        }
+        return this.ejbLocalRef.toMap();
     }
 
     public Collection<ServiceRef> getServiceRef() {
@@ -244,11 +256,17 @@ public class ApplicationClient implements JndiConsumer {
     }
 
     public Collection<PersistenceContextRef> getPersistenceContextRef() {
-        return Collections.emptyList();
+        if (persistenceContextRef == null) {
+            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+        }
+        return this.persistenceContextRef;
     }
 
     public Map<String,PersistenceContextRef> getPersistenceContextRefMap() {
-        return Collections.emptyMap();
+        if (persistenceContextRef == null) {
+            persistenceContextRef = new KeyedCollection<String,PersistenceContextRef>();
+        }
+        return this.persistenceContextRef.toMap();
     }
 
     public Collection<PersistenceUnitRef> getPersistenceUnitRef() {

@@ -23,6 +23,7 @@ import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.WsBuilder;
+import org.apache.openejb.assembler.classic.Assembler;
 
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.PortInfo;
@@ -33,6 +34,10 @@ import java.net.URL;
 
 public class HandlerResolverImplTest extends TestCase {
 
+    public void setUp() throws Exception {
+        new Assembler();
+    }
+    
     public void testBasic() throws Exception {
         HandlerChains handlerChains = readHandlerChains("/handlers.xml");
         assertEquals(3, handlerChains.getHandlerChain().size());

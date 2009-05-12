@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.LinkedHashSet;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -43,6 +44,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.LocalClient;
+import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
@@ -136,6 +139,15 @@ public class DeploymentLoader {
 
                 // Persistence Units
                 addPersistenceUnits(appModule, baseUrl);
+
+                return appModule;
+            } else if (ClientModule.class.equals(moduleClass)) {
+                String jarLocation = URLs.toFilePath(baseUrl);
+                ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), null);
+
+                // Wrap the resource module with an Application Module
+                AppModule appModule = new AppModule(clientModule.getClassLoader(), jarLocation);
+                appModule.getClientModules().add(clientModule);
 
                 return appModule;
             } else if (ConnectorModule.class.equals(moduleClass)) {
@@ -397,15 +409,28 @@ public class DeploymentLoader {
         }
     }
 
-    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws IOException, OpenEJBException {
+    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws OpenEJBException {
         ResourceFinder clientFinder = new ResourceFinder(clientUrl);
 
-        URL manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
-        InputStream is = manifestUrl.openStream();
-        Manifest manifest = new Manifest(is);
-        String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+        URL manifestUrl = null;
+        try {
+            manifestUrl = clientFinder.find("META-INF/MANIFEST.MF");
+        } catch (IOException e) {
+            // 
+        }
 
-        if (mainClass == null) throw new IllegalStateException("No Main-Class defined in META-INF/MANIFEST.MF file");
+        String mainClass = null;
+        if (manifestUrl != null) {
+            try {
+            InputStream is = manifestUrl.openStream();
+            Manifest manifest = new Manifest(is);
+            mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+            } catch (IOException e) {
+                throw new OpenEJBException("Unable to determine Main-Class defined in META-INF/MANIFEST.MF file", e);
+            }
+        }
+
+//        if (mainClass == null) throw new IllegalStateException("No Main-Class defined in META-INF/MANIFEST.MF file");
         Map<String, URL> descriptors = getDescriptors(clientUrl);
 
         ApplicationClient applicationClient = null;
@@ -441,6 +466,8 @@ public class DeploymentLoader {
         if (ejbJarXmlUrl != null && "file".equals(ejbJarXmlUrl.getProtocol())) {
             ejbModule.getWatchedResources().add(URLs.toFilePath(ejbJarXmlUrl));
         }
+
+        ejbModule.setClientModule(createClientModule(baseUrl, jarPath, classLoader, null));
 
         // load webservices descriptor
         addWebservices(ejbModule);
@@ -948,7 +975,7 @@ public class DeploymentLoader {
         return altDDSources(map, true);
     }
 
-    private static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
+    public static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
         String prefixes = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
 
         if (prefixes == null || prefixes.length() <= 0) return map;
@@ -1073,7 +1100,6 @@ public class DeploymentLoader {
         }
     }
 
-
     public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
 
@@ -1116,6 +1142,8 @@ public class DeploymentLoader {
         if (searchForDescriptorlessApplications) {
             AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
 
+            final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet();
+            
             AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
                 public boolean accept(String annotationName) {
                     if (annotationName.startsWith("javax.ejb.")) {
@@ -1123,6 +1151,9 @@ public class DeploymentLoader {
                         if ("javax.ejb.Stateless".equals(annotationName)) return true;
                         if ("javax.ejb.Singleton".equals(annotationName)) return true;
                         if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
+                    } else if (annotationName.startsWith("org.apache.openejb.annotation.")){
+                        if (LocalClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
+                        if (RemoteClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                     }
                     return false;
                 }
@@ -1130,6 +1161,11 @@ public class DeploymentLoader {
 
             if (classFinder.find(filter)) {
                 return EjbModule.class;
+            }
+
+            if (otherTypes.size() > 0){
+                // We may want some ordering/sorting if we add more type scanning
+                return otherTypes.iterator().next();
             }
         }
 

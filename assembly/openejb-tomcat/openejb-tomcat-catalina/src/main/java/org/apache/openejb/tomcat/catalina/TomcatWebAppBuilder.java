@@ -62,6 +62,7 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.ReadDescriptors;
 import org.apache.openejb.config.UnknownModuleTypeException;
 import org.apache.openejb.config.WebModule;
+import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.CoreWebDeploymentInfo;
@@ -566,12 +567,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     
                     // create the ejb module and set its moduleId to the webapp context root name
                     EjbModule ejbModule = new EjbModule(webModule.getClassLoader(), getEjbModuleId(standardContext),file.getAbsolutePath(), null, null);
+                    ejbModule.setClientModule(new ClientModule(null, ejbModule.getClassLoader(), ejbModule.getJarLocation(), null, ejbModule.getModuleId()));
 
                     // EJB deployment descriptors
                     try {
                         ResourceFinder ejbResourceFinder = new ResourceFinder("", standardContext.getLoader().getClassLoader(), file.toURL());
                         Map<String, URL> descriptors = ejbResourceFinder.getResourcesMap("META-INF/");
+                        descriptors = DeploymentLoader.altDDSources(descriptors, true);
                         ejbModule.getAltDDs().putAll(descriptors);
+                        ejbModule.getClientModule().getAltDDs().putAll(descriptors);
                     } catch (IOException e) {
                         logger.error("Unable to determine descriptors in jar.", e);
                     }

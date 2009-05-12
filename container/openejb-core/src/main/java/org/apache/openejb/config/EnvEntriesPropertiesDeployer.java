@@ -45,6 +45,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
         // ApplicationClient META-INF/env-entries.properties
         for (ClientModule module : appModule.getClientModules()) {
+            if (module.getApplicationClient() == null) continue;
             for (Map.Entry<String, String> entry : getEnvEntries(module).entrySet()) {
                 EnvEntry envEntry = new EnvEntry(entry.getKey(), "java.lang.String", entry.getValue());
                 apply(module.getApplicationClient(), envEntry, "AppClient");

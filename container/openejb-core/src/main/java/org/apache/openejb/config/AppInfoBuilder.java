@@ -250,6 +250,8 @@ class AppInfoBuilder {
             clientInfo.displayName = applicationClient.getDisplayName();
             clientInfo.codebase = clientModule.getJarLocation();
             clientInfo.mainClass = clientModule.getMainClass();
+            clientInfo.localClients.addAll(clientModule.getLocalClients());
+            clientInfo.remoteClients.addAll(clientModule.getRemoteClients());
             clientInfo.callbackHandler = applicationClient.getCallbackHandler();
             clientInfo.moduleId = getClientModuleId(clientModule);
             clientInfo.watchedResources.addAll(clientModule.getWatchedResources());

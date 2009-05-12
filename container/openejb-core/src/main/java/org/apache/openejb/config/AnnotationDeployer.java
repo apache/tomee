@@ -18,6 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.LocalClient;
+import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.finder.ClassFinder;
@@ -277,6 +279,68 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
+
+            if (clientModule.getApplicationClient() == null){
+                if (clientModule.getRemoteClients().size() > 0 || clientModule.getLocalClients().size() > 0) {
+                    clientModule.setApplicationClient(new ApplicationClient());
+                }
+            }
+            
+            // Lots of jars have main classes so this might not even be an app client.
+            // We're not going to scrape it for @LocalClient or @RemoteClient annotations
+            // unless they flag us specifically by adding a META-INF/application-client.xml
+            // this will have been read in as the JAXB ApplicationClient object below.
+            // This applies only to jars that have just been flagged as ClientModules,
+            // EjbModules are also scraped for @LocalClient and @RemoteClient annotations
+            if (clientModule.getFinder() == null && clientModule.getApplicationClient() == null) return clientModule;
+
+            if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
+
+            ClassFinder finder = clientModule.getFinder();
+
+            if (finder == null) {
+                if (clientModule.getJarLocation() != null) {
+                    try {
+                        String location = clientModule.getJarLocation();
+                        File file = new File(location);
+
+                        URL url;
+                        if (file.exists()) {
+                            url = file.toURL();
+                        } else {
+                            url = new URL(location);
+                        }
+                        finder = new ClassFinder(clientModule.getClassLoader(), url);
+                    } catch (MalformedURLException e) {
+                        startupLogger.warning("startup.scrapeFailedForModule", clientModule.getJarLocation());
+                        return clientModule;
+                    }
+                } else {
+                    try {
+                        finder = new ClassFinder(clientModule.getClassLoader());
+                    } catch (Exception e) {
+                        startupLogger.warning("Unable to scrape for @LocalClient or @RemoteClient annotations. ClassFinder failed.", e);
+                        return clientModule;
+                    }
+                }
+            }
+
+            // This method is also called by the deploy(EjbModule) method to see if those
+            // modules have any @LocalClient or @RemoteClient classes
+            for (Class<?> clazz : finder.findAnnotatedClasses(LocalClient.class)) {
+                clientModule.getLocalClients().add(clazz.getName());
+            }
+
+            for (Class<?> clazz : finder.findAnnotatedClasses(RemoteClient.class)) {
+                clientModule.getRemoteClients().add(clazz.getName());
+            }
+
+            if (clientModule.getApplicationClient() == null){
+                if (clientModule.getRemoteClients().size() > 0 || clientModule.getLocalClients().size() > 0) {
+                    clientModule.setApplicationClient(new ApplicationClient());
+                }
+            }
+
             return clientModule;
         }
 
@@ -358,7 +422,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Singleton singleton = beanClass.getAnnotation(Singleton.class);
                 String ejbName = getEjbName(singleton, beanClass);
 
-                if (!isValidAnnotationUsage(Singleton.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Singleton.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -378,7 +442,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = getEjbName(stateless, beanClass);
 
-                if (!isValidAnnotationUsage(Stateless.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateless.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -402,7 +466,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 String ejbName = getEjbName(stateful, beanClass);
 
-                if (!isValidAnnotationUsage(Stateful.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateful.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -427,7 +491,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = getEjbName(mdb, beanClass);
 
-                if (!isValidAnnotationUsage(MessageDriven.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(MessageDriven.class, beanClass, ejbName, ejbModule)) continue;
 
                 MessageDrivenBean messageBean = (MessageDrivenBean) ejbJar.getEnterpriseBean(ejbName);
                 if (messageBean == null) {
@@ -452,6 +516,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            ejbModule.getFinderReference().set(finder);
+
             return ejbModule;
         }
 
@@ -475,7 +541,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbName;
         }
 
-        private boolean isValidAnnotationUsage(Class annotationClass, Class<?> beanClass, String ejbName, EjbModule ejbModule) {
+        private boolean isValidEjbAnnotationUsage(Class annotationClass, Class<?> beanClass, String ejbName, EjbModule ejbModule) {
             List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
@@ -515,6 +581,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             return b;
         }
+
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
@@ -583,27 +650,113 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return clientModule;
 
             ClassLoader classLoader = clientModule.getClassLoader();
-            Class<?> clazz;
-            try {
-                clazz = classLoader.loadClass(clientModule.getMainClass());
-            } catch (ClassNotFoundException e) {
-                throw new OpenEJBException("Unable to load Client main-class: " + clientModule.getMainClass(), e);
-            }
-            ApplicationClient client = clientModule.getApplicationClient();
-            ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
-            /*
-             * @EJB
-             * @Resource
-             * @WebServiceRef
-             * @PersistenceUnit
-             * @PersistenceContext
-             */
-            buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+            ApplicationClient client = clientModule.getApplicationClient();
+
+            if (client == null) client = new ApplicationClient();
+
+            Set<Class> remoteClients = new HashSet<Class>();
+
+            if (clientModule.getMainClass() != null){
+                String className = clientModule.getMainClass();
+
+                Class clazz;
+                try {
+                    clazz = classLoader.loadClass(className);
+                    remoteClients.add(clazz);
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBException("Unable to load Client main-class: " + className, e);
+                }
+
+                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+                buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+
+            }
+
+            for (String className : clientModule.getRemoteClients()) {
+                Class clazz;
+                try {
+                    clazz = classLoader.loadClass(className);
+                    remoteClients.add(clazz);
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBException("Unable to load RemoteClient class: " + className, e);
+                }
+
+                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+                buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+            }
+
+            for (String className : clientModule.getLocalClients()) {
+                Class clazz;
+                try {
+                    clazz = classLoader.loadClass(className);
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBException("Unable to load LocalClient class: " + className, e);
+                }
+
+                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+                buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
+            }
+
+            validateRemoteClientRefs(classLoader, client, remoteClients);
 
             processWebServiceClientHandlers(client, classLoader);
 
             return clientModule;
+        }
+
+        private void validateRemoteClientRefs(ClassLoader classLoader, ApplicationClient client, Set<Class> remoteClients) {
+            for (EjbLocalRef ref : client.getEjbLocalRef()) {
+                for (InjectionTarget target : ref.getInjectionTarget()) {
+                    try {
+                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        for (Class remoteClient : remoteClients) {
+                            if (targetClass.isAssignableFrom(remoteClient)) {
+                                fail(remoteClient.getName(), "remoteClient.ejbLocalRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
+                            }
+                        }
+                    } catch (ClassNotFoundException ignore) {
+                    }
+                }
+            }
+
+            for (PersistenceContextRef ref : client.getPersistenceContextRef()) {
+                for (InjectionTarget target : ref.getInjectionTarget()) {
+                    try {
+                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        for (Class remoteClient : remoteClients) {
+                            if (targetClass.isAssignableFrom(remoteClient)) {
+                                fail(remoteClient.getName(), "remoteClient.persistenceContextRef", target.getInjectionTargetClass(), target.getInjectionTargetName());
+                            }
+                        }
+                    } catch (ClassNotFoundException ignore) {
+                    }
+                }
+            }
+
+            List<String> unusableTypes = new ArrayList<String>(knownResourceEnvTypes);
+            unusableTypes.remove("javax.jms.Topic");
+            unusableTypes.remove("javax.jms.Queue");
+
+            for (ResourceEnvRef ref : client.getResourceEnvRef()) {
+
+                if (!unusableTypes.contains(ref.getType())) continue;
+
+                for (InjectionTarget target : ref.getInjectionTarget()) {
+                    try {
+                        Class<?> targetClass = classLoader.loadClass(target.getInjectionTargetClass());
+                        for (Class remoteClient : remoteClients) {
+                            if (targetClass.isAssignableFrom(remoteClient)) {
+                                fail(remoteClient.getName(), "remoteClient.resourceEnvRef", target.getInjectionTargetClass(), target.getInjectionTargetName(), ref.getType());
+                            }
+                        }
+                    } catch (ClassNotFoundException ignore) {
+                    }
+                }
+            }
         }
 
         public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {

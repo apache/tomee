@@ -17,11 +17,14 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.finder.ClassFinder;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicReference;
 import java.io.File;
 
 /**
@@ -33,6 +36,10 @@ public class ClientModule implements DeploymentModule {
     private String jarLocation;
     private ClassLoader classLoader;
     private String mainClass;
+    private boolean ejbModuleGenerated;
+    private AtomicReference<ClassFinder> finder;
+    private final Set<String> localClients = new HashSet<String>();
+    private final Set<String> remoteClients = new HashSet<String>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final String moduleId;
     private final Set<String> watchedResources = new TreeSet<String>();
@@ -56,6 +63,26 @@ public class ClientModule implements DeploymentModule {
         validation = new ValidationContext(ClientModule.class, jarLocation);
     }
 
+    public boolean isEjbModuleGenerated() {
+        return ejbModuleGenerated;
+    }
+
+    public void setEjbModuleGenerated(boolean ejbModuleGenerated) {
+        this.ejbModuleGenerated = ejbModuleGenerated;
+    }
+
+    public ClassFinder getFinder() {
+        return (finder != null)? finder.get(): null;
+    }
+
+    public void setFinderReference(AtomicReference<ClassFinder> finder) {
+        this.finder = finder;
+    }
+
+    public AtomicReference<ClassFinder> getFinderReference() {
+        return this.finder;
+    }
+
     public ValidationContext getValidation() {
         return validation;
     }
@@ -74,6 +101,14 @@ public class ClientModule implements DeploymentModule {
 
     public void setApplicationClient(ApplicationClient applicationClient) {
         this.applicationClient = applicationClient;
+    }
+
+    public Set<String> getLocalClients() {
+        return localClients;
+    }
+
+    public Set<String> getRemoteClients() {
+        return remoteClients;
     }
 
     public ClassLoader getClassLoader() {

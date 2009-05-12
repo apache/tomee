@@ -272,8 +272,10 @@ public class ReadDescriptors implements DynamicDeployer {
             ApplicationClient applicationClient = readApplicationClient(url);
             clientModule.setApplicationClient(applicationClient);
         } else {
-            DeploymentLoader.logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
-            clientModule.setApplicationClient(new ApplicationClient());
+            if (!clientModule.isEjbModuleGenerated()) {
+                DeploymentLoader.logger.warning("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
+                clientModule.setApplicationClient(new ApplicationClient());
+            }
         }
     }
 

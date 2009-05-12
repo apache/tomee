@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.jee.jpa.EntityMappings;
+
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-import java.io.File;
-
-import org.apache.openejb.jee.jpa.EntityMappings;
 
 /**
  * @version $Rev$ $Date$

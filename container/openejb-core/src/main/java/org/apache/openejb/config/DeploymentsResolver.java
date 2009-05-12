@@ -292,7 +292,7 @@ public class DeploymentsResolver {
             String path;
             try {
                 Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
-                if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType)) {
+                if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {
                         url = new URL(url.getFile().replaceFirst("!.*$", ""));

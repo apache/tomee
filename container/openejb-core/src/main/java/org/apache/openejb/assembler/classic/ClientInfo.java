@@ -30,6 +30,9 @@ public class ClientInfo extends InfoObject {
     public String largeIcon;
     public String moduleId;
     public String mainClass;
+    public final List<String> localClients = new ArrayList<String>();
+    public final List<String> remoteClients = new ArrayList<String>();
+
     public String callbackHandler;
     public final Set<String> watchedResources = new TreeSet<String>();
 

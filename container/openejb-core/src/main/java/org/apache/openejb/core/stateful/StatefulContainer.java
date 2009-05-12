@@ -48,6 +48,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
@@ -545,7 +546,7 @@ public class StatefulContainer implements RpcContainer {
             }
 
             // Create bean instance
-            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, ctx);
+            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
             try {
                 if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
                     callContext.setCurrentOperation(Operation.INJECTION);
@@ -564,7 +565,7 @@ public class StatefulContainer implements RpcContainer {
                 }
 
                 Class clazz = interceptorData.getInterceptorClass();
-                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), ctx);
+                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), unwrap(ctx));
                 try {
                     Object interceptorInstance = interceptorInjector.createInstance();
                     interceptorInstances.put(clazz.getName(), interceptorInstance);

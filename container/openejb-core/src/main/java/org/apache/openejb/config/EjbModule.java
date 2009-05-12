@@ -20,12 +20,14 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.finder.ClassFinder;
 
 import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Class is to remain "dumb" and should not have deployment logic added to it.
@@ -42,8 +44,11 @@ public class EjbModule implements WsModule {
     private OpenejbJar openejbJar;
     private Webservices webservices;
     private String moduleId;
+    private final AtomicReference<ClassFinder> finder = new AtomicReference<ClassFinder>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
+
+    private ClientModule clientModule;
 
     public EjbModule(EjbJar ejbJar){
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
@@ -89,6 +94,26 @@ public class EjbModule implements WsModule {
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
         this(classLoader, null, jarURI, ejbJar, openejbJar);
+    }
+
+    public ClassFinder getFinder() {
+        return (finder != null)? finder.get(): null;
+    }
+
+    public AtomicReference<ClassFinder> getFinderReference() {
+        return this.finder;
+    }
+
+    public ClientModule getClientModule() {
+        return clientModule;
+    }
+
+    public void setClientModule(ClientModule clientModule) {
+        this.clientModule = clientModule;
+        if (clientModule != null) {
+            clientModule.setEjbModuleGenerated(true);
+            clientModule.setFinderReference(finder);
+        }
     }
 
     public ValidationContext getValidation() {

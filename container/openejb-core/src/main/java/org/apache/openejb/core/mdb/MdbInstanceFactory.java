@@ -28,6 +28,7 @@ import javax.resource.spi.UnavailableException;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -188,7 +189,7 @@ public class MdbInstanceFactory {
                 }
             }
 
-            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, ctx);
+            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
 
             // only in this case should the callback be used
             callContext.setCurrentOperation(Operation.INJECTION);
@@ -203,7 +204,7 @@ public class MdbInstanceFactory {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
 
                 Class clazz = interceptorData.getInterceptorClass();
-                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), ctx);
+                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), unwrap(ctx));
 
                 try {
                     Object interceptorInstance = interceptorInjector.createInstance();

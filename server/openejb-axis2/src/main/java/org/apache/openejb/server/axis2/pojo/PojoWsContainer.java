@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycl
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.axis2.Axis2WsContainer;
 import org.apache.openejb.server.httpd.HttpRequest;
@@ -63,7 +64,7 @@ public class PojoWsContainer extends Axis2WsContainer {
         
         // instantiate and inject resources into service
         try {
-            injectionProcessor = new InjectionProcessor<Object>(endpointClass, port.getInjections(), null, null, context);
+            injectionProcessor = new InjectionProcessor<Object>(endpointClass, port.getInjections(), null, null, unwrap(context));
             injectionProcessor.createInstance();
             injectionProcessor.postConstruct();
             endpointInstance = injectionProcessor.getInstance();

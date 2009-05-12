@@ -197,12 +197,12 @@ public class JndiEncInfoBuilder {
             if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
                 EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
                 if (otherBean != null) {
-                    if (otherBean.businessRemote.contains(ref.getInterface())) {
-                        ref.setRefType(EjbReference.Type.REMOTE);
-                    } else {
+                    if (otherBean.businessLocal.contains(ref.getInterface())) {
                         ref.setRefType(EjbReference.Type.LOCAL);
                         jndiConsumer.getEjbRef().remove(ref);
                         jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ref));
+                    } else {
+                        ref.setRefType(EjbReference.Type.REMOTE);
                     }
                 }
             }

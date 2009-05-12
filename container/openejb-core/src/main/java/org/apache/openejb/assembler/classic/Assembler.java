@@ -603,10 +603,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, clientInfo.moduleId, classLoader);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, classLoader);
                 jndiEncBuilder.setClient(true);
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build().lookup("comp/env");
+
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
                 if (clientInfo.codebase != null) {
                     containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
@@ -618,6 +619,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/callbackHandler", clientInfo.callbackHandler);
                 }
                 containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
+
+                for (String clientClassName : clientInfo.remoteClients) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientClassName, clientInfo.moduleId);
+                }
+                
+                for (String clientClassName : clientInfo.localClients) {
+                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientClassName, clientInfo.moduleId);
+                }
             }
 
             SystemInstance systemInstance = SystemInstance.get();
@@ -837,6 +846,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         List<String> clientIds = new ArrayList<String>();
         for (ClientInfo clientInfo : appInfo.clients) {
             clientIds.add(clientInfo.moduleId);
+            for (String className : clientInfo.localClients) {
+                clientIds.add(className);
+            }
+            for (String className : clientInfo.remoteClients) {
+                clientIds.add(className);
+            }
         }
 
         // Clear out naming for all components first

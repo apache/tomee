@@ -19,6 +19,7 @@ package org.apache.openejb.core.webservices;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 
 import javax.naming.Context;
 import javax.xml.namespace.QName;
@@ -78,7 +79,7 @@ public class HandlerResolverImpl implements HandlerResolver {
                         injections,
                         handler.getPostConstruct(),
                         handler.getPreDestroy(),
-                        context);
+                        unwrap(context));
                 processor.createInstance();
                 processor.postConstruct();
                 Handler handlerInstance = processor.getInstance();

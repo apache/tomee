@@ -21,6 +21,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfEndpoint;
@@ -53,7 +54,7 @@ public class PojoEndpoint extends CxfEndpoint {
 
         // instantiate and inject resources into service
         try {
-            injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, context);
+            injectionProcessor = new InjectionProcessor<Object>(instance, port.getInjections(), null, null, unwrap(context));
             injectionProcessor.createInstance();
             injectionProcessor.postConstruct();
             implementor = injectionProcessor.getInstance();
