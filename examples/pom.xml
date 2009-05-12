@@ -48,6 +48,7 @@
     <module>testing-transactions</module>
     <module>testing-security</module>
     <module>testing-security-2</module>
+    <module>testcase-injection</module>
     <module>ear-testing</module>
     <module>interceptors</module>
     <module>custom-injection</module>
