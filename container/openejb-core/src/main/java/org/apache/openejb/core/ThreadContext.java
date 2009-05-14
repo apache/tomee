@@ -100,6 +100,12 @@ public class ThreadContext {
     private Class invokedInterface;
     private TransactionPolicy transactionPolicy;
 
+    /**
+     * A boolean which keeps track of whether to discard the bean instance after the method invocation.
+     * The boolean would be set to true in case of exceptions which mandate bean discard.
+     */
+    private boolean discardInstance;
+
     public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey) {
         this(deploymentInfo, primaryKey, null);
     }
@@ -170,5 +176,13 @@ public class ThreadContext {
     @SuppressWarnings({"unchecked"})
     public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
+    }
+
+    public boolean isDiscardInstance() {
+        return discardInstance;
+    }
+
+    public void setDiscardInstance(boolean discardInstance) {
+        this.discardInstance = discardInstance;
     }
 }

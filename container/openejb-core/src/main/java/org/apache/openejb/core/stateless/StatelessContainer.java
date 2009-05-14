@@ -30,11 +30,7 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
 
-import org.apache.openejb.ContainerType;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.*;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
@@ -150,6 +146,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
+        Object bean = null;
         try {
             boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
@@ -165,7 +162,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 return null;// EJBObject.remove( ) and other EJBObject methods are not process by the container
             }
 
-            Object bean = instanceManager.getInstance(callContext);
+            bean = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(Operation.BUSINESS);
             callContext.setCurrentAllowedStates(StatelessContext.getStates());
@@ -175,11 +172,17 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
             Object retValue = _invoke(callMethod, runMethod, args, (Instance) bean, callContext, type);
-            instanceManager.poolInstance(callContext, bean);
 
             return retValue;
 
         } finally {
+            if (bean != null) {
+                if (callContext.isDiscardInstance()) {
+                    instanceManager.discardInstance(callContext);
+                } else {
+                    instanceManager.poolInstance(callContext, bean);
+                }
+            }
             ThreadContext.exit(oldCallContext);
         }
     }
@@ -226,17 +229,25 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 // and therefore the instance will be garbage collected and destroyed.
                 // In case of StrictPooling flag being set to true we also release the semaphore
             	// in the discardInstance method of the instanceManager.
-            	instanceManager.discardInstance(callContext);
+            	callContext.setDiscardInstance(true);
                 handleSystemException(txPolicy, re, callContext);
             } else {
                 /* Application Exception ***********************/
-                instanceManager.poolInstance(callContext, instance);
 
                 handleApplicationException(txPolicy, re, exceptionType == ExceptionType.APPLICATION_ROLLBACK);
             }
         } finally {
-
-            afterInvoke(txPolicy, callContext);
+            try {
+                afterInvoke(txPolicy, callContext);
+            } catch (SystemException e) {
+                callContext.setDiscardInstance(true);
+                throw e;
+            } catch (ApplicationException e) {
+                throw e;
+            } catch (RuntimeException e) {
+                callContext.setDiscardInstance(true);
+                throw e;
+            }
         }
 
         return returnValue;
