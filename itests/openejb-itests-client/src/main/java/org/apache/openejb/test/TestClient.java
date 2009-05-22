@@ -29,7 +29,7 @@ import javax.ejb.HomeHandle;
 import javax.naming.InitialContext;
 import javax.rmi.PortableRemoteObject;
 
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>

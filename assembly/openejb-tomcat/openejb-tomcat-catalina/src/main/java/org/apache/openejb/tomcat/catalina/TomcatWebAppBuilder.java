@@ -75,8 +75,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.finder.ResourceFinder;
-import org.apache.openejb.finder.UrlSet;
+import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;

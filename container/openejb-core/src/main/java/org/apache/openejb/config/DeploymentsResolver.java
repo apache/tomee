@@ -24,7 +24,7 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.finder.UrlSet;
+import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
 import java.io.IOException;

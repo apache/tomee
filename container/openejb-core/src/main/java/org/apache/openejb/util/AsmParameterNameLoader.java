@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.asm.ClassReader;
-import org.apache.openejb.asm.Label;
-import org.apache.openejb.asm.MethodVisitor;
-import org.apache.openejb.asm.Type;
-import org.apache.openejb.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.Label;
+import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm.Type;
+import org.apache.xbean.asm.commons.EmptyVisitor;
 import org.apache.xbean.recipe.ParameterNameLoader;
 
 import java.io.IOException;

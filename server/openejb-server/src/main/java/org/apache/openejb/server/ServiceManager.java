@@ -24,7 +24,7 @@ import org.apache.openejb.util.Messages;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.finder.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 

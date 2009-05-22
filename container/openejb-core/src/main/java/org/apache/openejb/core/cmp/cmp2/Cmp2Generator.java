@@ -29,12 +29,12 @@ import java.util.Map;
 
 import javax.ejb.EntityContext;
 
-import org.apache.openejb.asm.ClassWriter;
-import org.apache.openejb.asm.FieldVisitor;
-import org.apache.openejb.asm.Label;
-import org.apache.openejb.asm.MethodVisitor;
-import org.apache.openejb.asm.Opcodes;
-import org.apache.openejb.asm.Type;
+import org.apache.xbean.asm.ClassWriter;
+import org.apache.xbean.asm.FieldVisitor;
+import org.apache.xbean.asm.Label;
+import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm.Opcodes;
+import org.apache.xbean.asm.Type;
 
 /**
  * Code generate for CMP level 2 beans.  This will 

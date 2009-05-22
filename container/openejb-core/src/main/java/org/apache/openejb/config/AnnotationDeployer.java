@@ -22,7 +22,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;

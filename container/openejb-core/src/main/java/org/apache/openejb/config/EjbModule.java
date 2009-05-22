@@ -20,7 +20,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 import java.io.File;
 import java.util.Map;

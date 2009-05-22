@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.cli;
 
-import org.apache.openejb.finder.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.commons.cli.PosixParser;

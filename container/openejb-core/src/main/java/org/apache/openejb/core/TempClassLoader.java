@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.apache.openejb.asm.ClassReader;
-import org.apache.openejb.asm.Opcodes;
-import org.apache.openejb.asm.commons.EmptyVisitor;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.Opcodes;
+import org.apache.xbean.asm.commons.EmptyVisitor;
 
 /**
  * ClassLoader implementation that allows classes to be temporarily

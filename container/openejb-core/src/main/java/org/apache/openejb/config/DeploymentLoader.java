@@ -69,8 +69,8 @@ import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UrlCache;
 import static org.apache.openejb.util.URLs.toFile;
 import org.apache.openejb.util.AnnotationFinder;
-import org.apache.openejb.finder.ResourceFinder;
-import org.apache.openejb.finder.UrlSet;
+import org.apache.xbean.finder.ResourceFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.SAXException;
 
 /**

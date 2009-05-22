@@ -20,7 +20,7 @@ package org.apache.openejb.config.sys;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.config.ConfigUtils;
-import org.apache.openejb.finder.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

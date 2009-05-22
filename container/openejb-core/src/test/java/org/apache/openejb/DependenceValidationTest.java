@@ -20,8 +20,8 @@ import static org.apache.openejb.util.URLs.toFile;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
-import org.apache.openejb.asm.ClassReader;
-import org.apache.openejb.asm.ClassWriter;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.ClassWriter;
 
 import java.io.File;
 import java.io.FileInputStream;

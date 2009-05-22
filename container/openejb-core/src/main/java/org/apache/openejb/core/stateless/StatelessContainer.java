@@ -48,7 +48,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @org.apache.xbean.XBean element="statelessContainer"

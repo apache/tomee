@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.finder.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.sql.SQLException;
 import java.util.Map;

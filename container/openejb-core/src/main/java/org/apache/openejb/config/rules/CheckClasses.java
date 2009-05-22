@@ -25,7 +25,7 @@ import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Strings;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;

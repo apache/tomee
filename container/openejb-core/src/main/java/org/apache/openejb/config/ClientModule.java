@@ -17,7 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.finder.ClassFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 import java.util.Map;
 import java.util.HashMap;

@@ -165,7 +165,7 @@
             </manifest>
             <manifestEntries>
               <Class-Path>openejb-loader-${version}.jar openejb-client-${version}.jar
-                asm-finder-${xbeanVersion}.jar</Class-Path>
+                xbean-finder-${xbeanVersion}.jar xbean-asm-shaded-${xbeanVersion}.jar</Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory</J2EE-DeploymentFactory-Implementation-Class>
             </manifestEntries>
@@ -317,11 +317,15 @@
     <!-- End: JavaMail -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-reflect</artifactId>
+      <artifactId>xbean-asm-shaded</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>asm-finder</artifactId>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>

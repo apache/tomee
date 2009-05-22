@@ -19,7 +19,7 @@ package org.apache.openejb.resource.jdbc;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.finder.ResourceFinder;
+import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.File;
 import java.io.FileOutputStream;

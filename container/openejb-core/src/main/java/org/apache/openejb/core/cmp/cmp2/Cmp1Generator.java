@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.openejb.asm.ClassWriter;
-import org.apache.openejb.asm.MethodVisitor;
-import org.apache.openejb.asm.Opcodes;
-import org.apache.openejb.asm.Type;
-import org.apache.openejb.asm.FieldVisitor;
+import org.apache.xbean.asm.ClassWriter;
+import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm.Opcodes;
+import org.apache.xbean.asm.Type;
+import org.apache.xbean.asm.FieldVisitor;
 
 /**
  * Class for generating a class file that implements 

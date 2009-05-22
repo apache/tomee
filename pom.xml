@@ -93,7 +93,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.5</xbeanVersion>
+    <xbeanVersion>3.6-SNAPSHOT</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
@@ -849,23 +849,14 @@
         <version>2.0.5</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
-        <artifactId>asm-finder</artifactId>
-        <version>3.1</version>
-        <exclusions>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm-commons</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-finder</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-finder</artifactId>
+        <version>${xbeanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-asm-shaded</artifactId>
+        <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>

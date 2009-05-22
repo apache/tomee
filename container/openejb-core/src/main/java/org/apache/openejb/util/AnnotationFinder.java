@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.asm.ClassReader;
-import org.apache.openejb.asm.ClassVisitor;
-import org.apache.openejb.asm.Attribute;
-import org.apache.openejb.asm.FieldVisitor;
-import org.apache.openejb.asm.MethodVisitor;
-import org.apache.openejb.asm.AnnotationVisitor;
-import org.apache.openejb.finder.UrlSet;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.ClassVisitor;
+import org.apache.xbean.asm.Attribute;
+import org.apache.xbean.asm.FieldVisitor;
+import org.apache.xbean.asm.MethodVisitor;
+import org.apache.xbean.asm.AnnotationVisitor;
+import org.apache.xbean.finder.UrlSet;
 
 import java.util.List;
 import java.util.ArrayList;

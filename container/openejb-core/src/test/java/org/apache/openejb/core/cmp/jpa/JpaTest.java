@@ -51,12 +51,12 @@ import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.resource.jdbc.BasicDataSource;
 import org.apache.openejb.resource.jdbc.BasicManagedDataSource;
 import org.apache.xbean.naming.context.ImmutableContext;
-import org.apache.openejb.asm.ClassAdapter;
-import org.apache.openejb.asm.ClassReader;
-import org.apache.openejb.asm.ClassVisitor;
-import org.apache.openejb.asm.ClassWriter;
-import static org.apache.openejb.asm.Opcodes.ACC_PRIVATE;
-import static org.apache.openejb.asm.Opcodes.ACC_TRANSIENT;
+import org.apache.xbean.asm.ClassAdapter;
+import org.apache.xbean.asm.ClassReader;
+import org.apache.xbean.asm.ClassVisitor;
+import org.apache.xbean.asm.ClassWriter;
+import static org.apache.xbean.asm.Opcodes.ACC_PRIVATE;
+import static org.apache.xbean.asm.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
 //    private static final String PERSISTENCE_PROVIDER = "org.apache.cayenne.jpa.Provider";
