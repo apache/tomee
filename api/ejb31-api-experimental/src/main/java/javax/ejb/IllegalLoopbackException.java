@@ -21,17 +21,16 @@
 //
 package javax.ejb;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+/**
+ * @version $Revision$ $Date$
+ */
+public class IllegalLoopbackException extends javax.ejb.ConcurrentAccessException {
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
+    public IllegalLoopbackException() {
+    }
 
-@Target(value = {METHOD, TYPE})
-@Retention(value = RUNTIME)
-public @interface AccessTimeout {
-    long value();
-    TimeUnit unit() default TimeUnit.MILLISECONDS; 
+    public IllegalLoopbackException(String string) {
+        super(string);
+    }
+
 }

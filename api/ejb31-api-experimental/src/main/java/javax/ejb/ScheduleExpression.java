@@ -32,6 +32,7 @@ public final class ScheduleExpression implements Serializable {
 	private String month = "*";
 	private String second = "0";
 	private String year = "*";
+	private String timezone;
 	private Date start;
 	private Date end;
 	
@@ -96,6 +97,10 @@ public final class ScheduleExpression implements Serializable {
 		return year;
 	}
 	
+	public String getTimezone() {
+		return timezone;
+	}
+
 	public ScheduleExpression hour(int h) {
 		hour = Integer.toString(h);
 		return this;
@@ -148,6 +153,16 @@ public final class ScheduleExpression implements Serializable {
 
 	public ScheduleExpression year(String y) {
 		year = y;
+		return this;
+	}
+
+    /**
+     * See http://en.wikipedia.org/wiki/List_of_zoneinfo_timezones for valid timezones 
+     * @param t
+     * @return
+     */
+	public ScheduleExpression timezone(String t) {
+		timezone = t;
 		return this;
 	}
 }

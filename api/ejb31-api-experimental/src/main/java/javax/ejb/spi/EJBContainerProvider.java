@@ -19,19 +19,10 @@
 // Community Process. In order to remain compliant with the specification
 // DO NOT add / change / or delete method signatures!
 //
-package javax.ejb;
+package javax.ejb.spi;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.ejb.embeddable.EJBContainer;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
-
-@Target(value = {METHOD, TYPE})
-@Retention(value = RUNTIME)
-public @interface AccessTimeout {
-    long value();
-    TimeUnit unit() default TimeUnit.MILLISECONDS; 
+public interface EJBContainerProvider {
+    public EJBContainer createEJBContainer(java.util.Map<?,?> properties);
 }

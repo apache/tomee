@@ -19,19 +19,29 @@
 // Community Process. In order to remain compliant with the specification
 // DO NOT add / change / or delete method signatures!
 //
-package javax.ejb;
+package javax.ejb.embeddable;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.Collections;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
+public abstract class EJBContainer {
 
-@Target(value = {METHOD, TYPE})
-@Retention(value = RUNTIME)
-public @interface AccessTimeout {
-    long value();
-    TimeUnit unit() default TimeUnit.MILLISECONDS; 
+    public static final String PROVIDER = "javax.ejb.embeddable.provider";
+    public static final String APP_NAME = "javax.ejb.embeddable.appName";
+    public static final String MODULES = "javax.ejb.embeddable.modules";
+
+    public EJBContainer() {
+    }
+
+    public abstract void close();
+
+    public static EJBContainer createEJBContainer() {
+        return createEJBContainer(Collections.EMPTY_MAP);
+    }
+
+    public static EJBContainer createEJBContainer(java.util.Map<?, ?> properties) {
+        return null; // TODO
+    }
+
+    public abstract javax.naming.Context getContext();
+
 }
