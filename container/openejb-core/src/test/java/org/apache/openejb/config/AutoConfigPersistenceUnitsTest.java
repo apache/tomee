@@ -82,7 +82,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", "OrangeUnmanaged");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -176,7 +176,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", "OrangeUnmanaged");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -205,7 +205,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", null);
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
@@ -233,7 +233,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -263,7 +263,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(dataSource, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit",  "Orange", "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit",  "orange", "orange");
 
         assertNotNull(unitInfo);
 
@@ -297,7 +297,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
@@ -344,7 +344,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", "orange");
 
         assertNotNull(unitInfo);
 
@@ -394,7 +394,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "OrangeOne", "OrangeOne");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeOne", "orangeOne");
 
         assertNotNull(unitInfo);
 
@@ -432,7 +432,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "OrangeTwo", "OrangeTwo");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orangeTwo", "orangeTwo");
 
         assertNotNull(unitInfo);
 
@@ -464,7 +464,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
         assertSame(nonJta, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/Orange", "java:foo/bar/baz/OrangeUnmanaged");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "java:foo/bar/baz/orange", "java:foo/bar/baz/orangeUnmanaged");
 
         assertNotNull(unitInfo);
 
@@ -530,7 +530,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(nonJta2, resources.get(1));
 
         try {
-            addPersistenceUnit("orange-unit", "OrangeOne", "OrangeTwo");
+            addPersistenceUnit("orange-unit", "orangeOne", "orangeTwo");
             fail("Configuration should be rejected");
         } catch (OpenEJBException e) {
             // pass
@@ -561,7 +561,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta2, resources.get(1));
 
         try {
-            addPersistenceUnit("orange-unit", "OrangeOne", "OrangeTwo");
+            addPersistenceUnit("orange-unit", "orangeOne", "orangeTwo");
             fail("Configuration should be rejected");
         } catch (OpenEJBException e) {
             // pass
@@ -588,7 +588,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
 
         try {
-            addPersistenceUnit("orange-unit", "OrangeOne", null);
+            addPersistenceUnit("orange-unit", "orangeOne", null);
             fail("Configuration should be rejected");
         } catch (OpenEJBException e) {
             // pass
@@ -615,7 +615,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(jta, resources.get(0));
 
         try {
-            addPersistenceUnit("orange-unit", null, "OrangeOne");
+            addPersistenceUnit("orange-unit", null, "orangeOne");
             fail("Configuration should be rejected");
         } catch (OpenEJBException e) {
             // pass
@@ -643,7 +643,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", false);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -681,7 +681,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         ResourceInfo supplied = addDataSource("Orange", OrangeDriver.class, "jdbc:orange:some:stuff", true);
         assertSame(supplied, resources.get(0));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", null);
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
@@ -724,7 +724,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -765,7 +765,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(supplied, resources.get(0));
         assertSame(badMatch, resources.get(1));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", null);
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
@@ -811,7 +811,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(badMatch, resources.get(1));
         assertSame(goodMatch, resources.get(2));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "Orange");
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", null, "orange");
 
         assertNotNull(unitInfo);
 
@@ -845,7 +845,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         assertSame(badMatch, resources.get(1));
         assertSame(goodMatch, resources.get(2));
 
-        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "Orange", null);
+        PersistenceUnitInfo unitInfo = addPersistenceUnit("orange-unit", "orange", null);
 
         assertNotNull(unitInfo);
 
