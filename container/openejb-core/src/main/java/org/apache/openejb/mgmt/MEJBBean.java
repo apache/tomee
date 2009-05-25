@@ -19,7 +19,6 @@ package org.apache.openejb.mgmt;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.Init;
 import javax.ejb.RemoteHome;
 import javax.ejb.Stateless;
 import javax.management.Attribute;
@@ -51,11 +50,6 @@ public class MEJBBean {
         } else {
             mbeanServer = MBeanServerFactory.createMBeanServer();
         }
-    }
-
-    @Init
-    public void create() {
-
     }
 
     public Object getAttribute(ObjectName objectName, String string) throws MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
