@@ -195,6 +195,7 @@ public class InjectionProcessor<T> {
     }
 
     public static Context unwrap(Context context) {
+        if (context == null) return null;
         try {
             context = (Context) context.lookup("java:comp/env/");
         } catch (NamingException notAnIssue) {
