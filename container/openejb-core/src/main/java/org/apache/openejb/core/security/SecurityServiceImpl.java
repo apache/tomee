@@ -26,11 +26,15 @@ import javax.security.auth.login.LoginException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.UUID;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @version $Rev$ $Date$
  */
 public class SecurityServiceImpl extends AbstractSecurityService {
+
+    static private final Map<Object, LoginContext> contexts = new ConcurrentHashMap<Object, LoginContext>();
 
     public SecurityServiceImpl() {
         this(BasicJaccProvider.class.getName());
@@ -72,6 +76,23 @@ public class SecurityServiceImpl extends AbstractSecurityService {
 
         Subject subject = context.getSubject();
 
-        return registerSubject(subject);
+        UUID token =  registerSubject(subject);
+        contexts.put(token, context);
+        
+        return token;
     }
+
+    /* (non-Javadoc)
+     * @see org.apache.openejb.core.security.AbstractSecurityService#logout(java.util.UUID)
+     */
+    @Override
+    public void logout(UUID securityIdentity) throws LoginException {
+        LoginContext context = contexts.get(securityIdentity);
+        if (null == context) {
+            throw new IllegalStateException("Unable to logout. Can not recover LoginContext.");
+        }
+        context.logout();
+        super.logout(securityIdentity);
+    }
+
 }
