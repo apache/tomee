@@ -1329,6 +1329,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             //TODO: DMB: Make more robust later
             if (property.equalsIgnoreCase("properties")) return;
             if (property.equalsIgnoreCase("transactionManager")) return;
+            if (info.types.contains("javax.mail.Session")) return;
             //---
 
             logger.getChildLogger("service").warning("unusedProperty", property, info.id);
