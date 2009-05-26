@@ -96,21 +96,38 @@ public class InitEjbDeployments implements DynamicDeployer {
 
 
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+            StringTemplate template = deploymentIdTemplate;
+
+            org.apache.openejb.api.EjbDeployment annotation = getEjbDeploymentAnnotation(ejbModule, bean);
+
             EjbDeployment ejbDeployment = openejbJar.getDeploymentsByEjbName().get(bean.getEjbName());
             if (ejbDeployment == null) {
 
                 ejbDeployment = new EjbDeployment();
 
                 ejbDeployment.setEjbName(bean.getEjbName());
-                ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData, deploymentIdTemplate));
 
-                logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
+                if (annotation != null && isDefined(annotation.id())) {
+                    template = new StringTemplate(annotation.id());
+                    ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
+                } else {
+                    ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
+                    logger.info("Auto-deploying ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
+                }
+
                 openejbJar.getEjbDeployment().add(ejbDeployment);
-            } else {
-                if (ejbDeployment.getDeploymentId() == null) {
-                    ejbDeployment.setDeploymentId(autoAssignDeploymentId(bean, contextData, deploymentIdTemplate));
+            } else if (ejbDeployment.getDeploymentId() == null) {
+                if (annotation != null && isDefined(annotation.id())) {
+                    template = new StringTemplate(annotation.id());
+                    ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
+                } else {
+                    ejbDeployment.setDeploymentId(formatDeploymentId(bean, contextData, template));
                     logger.info("Auto-assigning deployment-id for ejb " + bean.getEjbName() + ": EjbDeployment(deployment-id=" + ejbDeployment.getDeploymentId() + ")");
                 }
+            }
+
+            if (ejbDeployment.getContainerId() == null && annotation != null && isDefined(annotation.container())) {
+                ejbDeployment.setContainerId(annotation.container());
             }
 
             if (isCmpEntity(bean)) {
@@ -136,12 +153,32 @@ public class InitEjbDeployments implements DynamicDeployer {
         return ejbModule;
     }
 
+    private org.apache.openejb.api.EjbDeployment getEjbDeploymentAnnotation(EjbModule ejbModule, EnterpriseBean bean) {
+        try {
+            Class<?> beanClass = ejbModule.getClassLoader().loadClass(bean.getEjbClass());
+            return beanClass.getAnnotation(org.apache.openejb.api.EjbDeployment.class);
+        } catch (ClassNotFoundException e) {
+            // this should never happen, the class has already been loaded a ton of times by this point
+            // unfortunately we have some unit tests that prevent us from throwing an exception just in case
+            // Those are OpenEjb2ConversionTest and SunCmpConversionTest
+            return null;
+        }
+    }
+
+    private String get(String s) {
+        return isDefined(s) ? s : null;
+    }
+
+    private boolean isDefined(String s) {
+        return s != null && !"".equals(s);
+    }
+
     private static boolean isCmpEntity(EnterpriseBean bean) {
         return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
 
 
-    private String autoAssignDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
+    private String formatDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
         contextData.put("ejbClass", bean.getClass().getName());
         contextData.put("ejbClass.simpleName", bean.getClass().getSimpleName());
