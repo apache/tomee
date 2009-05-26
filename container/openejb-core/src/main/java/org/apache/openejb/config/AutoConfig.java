@@ -1204,7 +1204,7 @@ public class AutoConfig implements DynamicDeployer {
 
         if (!current.equals(previous)) {
 
-            logger.info("Adjusting " + unit.getName() + " <non-jta-data-source> to '" + current + "' from '" + previous + "'");
+            logger.info("Adjusting PersistenceUnit " + unit.getName() + " <non-jta-data-source> to Resource ID '" + current + "' from '" + previous + "'");
 
         }
 
@@ -1218,7 +1218,7 @@ public class AutoConfig implements DynamicDeployer {
 
         if (!current.equals(previous)) {
 
-            logger.info("Adjusting " + unit.getName() + " <jta-data-source> to '" + current + "' from '" + previous + "'");
+            logger.info("Adjusting PersistenceUnit " + unit.getName() + " <jta-data-source> to Resource ID '" + current + "' from '" + previous + "'");
 
         }
 
