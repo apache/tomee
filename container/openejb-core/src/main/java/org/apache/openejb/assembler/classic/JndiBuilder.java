@@ -401,14 +401,16 @@ public class JndiBuilder {
                 context.bind(name, ref);
                 bindings.add(name);
 
-                beanInfo.jndiNames.add(externalName);
+                if (!beanInfo.jndiNames.contains(externalName)) {
+                    beanInfo.jndiNames.add(externalName);
 
-                JndiNameInfo nameInfo = new JndiNameInfo();
-                nameInfo.intrface = intrface.getName();
-                nameInfo.name = externalName;
-                beanInfo.jndiNamess.add(nameInfo);
+                    JndiNameInfo nameInfo = new JndiNameInfo();
+                    nameInfo.intrface = intrface.getName();
+                    nameInfo.name = externalName;
+                    beanInfo.jndiNamess.add(nameInfo);
 
-                logger.info("Jndi(name=" + externalName +") --> Ejb(deployment-id="+beanInfo.ejbDeploymentId+")");
+                    logger.info("Jndi(name=" + externalName +") --> Ejb(deployment-id="+beanInfo.ejbDeploymentId+")");
+                }
             } catch (NameAlreadyBoundException e) {
                 DeploymentInfo deployment = findNameOwner(name);
                 if (deployment != null){
