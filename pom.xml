@@ -850,7 +850,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-finder</artifactId>
+        <artifactId>xbean-finder-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
