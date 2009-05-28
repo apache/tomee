@@ -24,6 +24,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 
 import org.apache.openejb.test.object.ObjectGraph;
+import org.apache.openejb.test.object.Color;
 
 /**
  * 
@@ -139,5 +140,13 @@ public interface RmiIiopStatelessObject extends javax.ejb.EJBObject{
     public Class returnClass(Class data) throws RemoteException;
 
     public Class[] returnClassArray(Class[] data) throws RemoteException;
+
+    public Color returnColor(Color data)  throws RemoteException;
+
+    public Color returnColor()  throws RemoteException;
+
+    public ObjectGraph returnNestedColor()  throws RemoteException;
+
+    public Color[] returnColorArray(Color[] data)  throws RemoteException;
 
 }

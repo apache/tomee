@@ -185,11 +185,13 @@ public class Logger {
      * @return the formatted message
      */
     private String formatMessage(String message, Object... args) {
+        if (args.length == 0) return message;
+        
         try {
             MessageFormat mf = messageFormatCache.compute(message);
             String msg = mf.format(args);
             return msg;
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             return "Error in formatting message " + message;
         }
 

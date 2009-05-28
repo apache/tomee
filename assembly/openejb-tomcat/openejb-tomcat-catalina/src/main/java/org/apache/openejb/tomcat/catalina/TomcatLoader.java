@@ -30,6 +30,7 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.OptionsLog;
 import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.tomcat.installer.Paths;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
@@ -66,6 +67,7 @@ public class TomcatLoader implements Loader {
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
         SystemInstance.init(properties);
+        OptionsLog.install();
         
         // install conf/openejb.xml and conf/logging.properties files
         installConfigFiles(properties);

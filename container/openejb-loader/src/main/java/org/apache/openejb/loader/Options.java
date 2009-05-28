@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The purpose of this class is to provide a more strongly typed version of a
@@ -48,27 +50,23 @@ public class Options {
 
     private final Options parent;
     private final Properties properties;
-    protected Log logger;
 
     public Options(Properties properties) {
-        this(properties, new NullOptions(), new NullLog());
+        this(properties, new NullOptions());
     }
 
-    public Options(Properties properties, Options options) {
-        this(properties, options, new NullLog());
-    }
-
-    public Options(Properties properties, Options parent, Log log) {
+    public Options(Properties properties, Options parent) {
         this.parent = parent;
         this.properties = properties;
-        this.logger = log;
     }
 
-    public Options setLogger(Log logger) {
-        this.logger = logger;
-        return this;
+    public void setLogger(Log logger) {
+        parent.setLogger(logger);
     }
 
+    public Log getLogger() {
+        return parent.getLogger();
+    }
 
     public boolean has(String property) {
         return properties.containsKey(property) || parent.has(property);
@@ -128,7 +126,7 @@ public class Options {
         try {
             return log(property, classLoader.loadClass(className));
         } catch (Exception e) {
-            logger.warning("Could not load " + property + " : " + className, e);
+            getLogger().warning("Could not load " + property + " : " + className, e);
             return parent.get(property, defaultValue);
         }
     }
@@ -208,19 +206,19 @@ public class Options {
     }
 
     private void warn(String property, String value) {
-        logger.warning("Cannot parse supplied value \"" + value + "\" for option \"" + property + "\"");
+        getLogger().warning("Cannot parse supplied value \"" + value + "\" for option \"" + property + "\"");
     }
 
     private void warn(String property, String value, Exception e) {
-        logger.warning("Cannot parse supplied value \"" + value + "\" for option \"" + property + "\"", e);
+        getLogger().warning("Cannot parse supplied value \"" + value + "\" for option \"" + property + "\"", e);
     }
 
     private <V> V log(String property, V value) {
         if (value instanceof Class) {
             Class clazz = (Class) value;
-            logger.info("Using " + property + " '" + clazz.getName() + "'");
+            getLogger().info("Using \'" + property + "=" + clazz.getName() + "\'");
         } else {
-            logger.info("Using " + property + " '" + value + "'");
+            getLogger().info("Using \'" + property + "=" + value + "\'");
         }
         return value;
     }
@@ -264,8 +262,21 @@ public class Options {
 
     private final static class NullOptions extends Options {
 
+        private Log logger;
+
         public NullOptions() {
-            super(null, null, new NullLog());
+            super(null, null);
+            this.logger = new NullLog();
+        }
+
+        @Override
+        public Log getLogger() {
+            return logger;
+        }
+
+        @Override
+        public void setLogger(Log logger) {
+            this.logger = logger;
         }
 
         @Override
@@ -300,7 +311,7 @@ public class Options {
 
         @Override
         public <T extends Enum<T>> Set<T> get(String property, Set<T> defaults) {
-            if (logger.isDebugEnabled()) {
+            if (getLogger().isDebugEnabled()) {
                 Iterator<T> iterator = defaults.iterator();
                 String possibleValues = "";
                 if (iterator.hasNext()) {
@@ -310,7 +321,7 @@ public class Options {
 
                 String defaultValues = join(", ", lowercase(defaults));
 
-                logger.debug("Using " + property + " default '" + defaultValues + "'" + possibleValues);
+                getLogger().debug("Using default \'" + property + "=" + defaultValues + "\'" + possibleValues);
             }
 
             return defaults;
@@ -327,15 +338,15 @@ public class Options {
         }
 
         private <V> V log(String property, V value) {
-            if (logger.isDebugEnabled()) {
+            if (getLogger().isDebugEnabled()) {
                 if (value instanceof Enum) {
                     Enum anEnum = (Enum) value;
-                    logger.debug("Using " + property + " default '" + anEnum.name().toLowerCase() + "'.  Possible values are: " + possibleValues(anEnum));
+                    getLogger().debug("Using default \'" + property + "=" + anEnum.name().toLowerCase() + "\'.  Possible values are: " + possibleValues(anEnum));
                 } else if (value instanceof Class) {
                     Class clazz = (Class) value;
-                    logger.debug("Using " + property + " default '" + clazz.getName() + "'");
+                    getLogger().debug("Using default \'" + property + "=" + clazz.getName() + "\'");
                 } else if (value != null) {
-                    logger.debug("Using " + property + " default '" + value + "'");
+                    logger.debug("Using default \'" + property + "=" + value + "\'");
                 }
             }
             return value;
@@ -349,17 +360,17 @@ public class Options {
 
         public boolean isWarningEnabled();
 
-        public void warning(String message, Throwable t, Object... args);
+        public void warning(String message, Throwable t);
 
-        public void warning(String message, Object... args);
+        public void warning(String message);
 
-        public void debug(String message, Throwable t, Object... args);
+        public void debug(String message, Throwable t);
 
-        public void debug(String message, Object... args);
+        public void debug(String message);
 
-        public void info(String message, Throwable t, Object... args);
+        public void info(String message, Throwable t);
 
-        public void info(String message, Object... args);
+        public void info(String message);
     }
 
     public static class NullLog implements Log {
@@ -375,22 +386,22 @@ public class Options {
             return false;
         }
 
-        public void warning(String message, Throwable t, Object... args) {
+        public void warning(String message, Throwable t) {
         }
 
-        public void warning(String message, Object... args) {
+        public void warning(String message) {
         }
 
-        public void debug(String message, Throwable t, Object... args) {
+        public void debug(String message, Throwable t) {
         }
 
-        public void debug(String message, Object... args) {
+        public void debug(String message) {
         }
 
-        public void info(String message, Throwable t, Object... args) {
+        public void info(String message, Throwable t) {
         }
 
-        public void info(String message, Object... args) {
+        public void info(String message) {
         }
     }
 }

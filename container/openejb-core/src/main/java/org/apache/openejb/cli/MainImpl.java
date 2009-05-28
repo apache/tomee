@@ -19,6 +19,7 @@ package org.apache.openejb.cli;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.OpenEjbVersion;
+import org.apache.openejb.util.OptionsLog;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -180,6 +181,7 @@ public class MainImpl implements Main {
         SystemInstance systemInstance = null;
         try {
             SystemInstance.init(System.getProperties());
+            OptionsLog.install();
             systemInstance = SystemInstance.get();
         } catch (Exception e) {
             e.printStackTrace();

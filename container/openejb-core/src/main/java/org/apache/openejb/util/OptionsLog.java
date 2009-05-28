@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 
 /**
  * @version $Rev$ $Date$
@@ -25,6 +26,10 @@ public class OptionsLog implements Options.Log {
 
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("options"), OptionsLog.class);
 
+    public static void install() {
+        SystemInstance.get().getOptions().setLogger(new OptionsLog());
+    }
+    
     public boolean isDebugEnabled() {
         return logger.isDebugEnabled();
     }
@@ -37,27 +42,27 @@ public class OptionsLog implements Options.Log {
         return logger.isWarningEnabled();
     }
 
-    public void debug(String message, Object... args) {
-        logger.debug(message, args);
+    public void debug(String message) {
+        logger.debug(message);
     }
 
-    public void debug(String message, Throwable t, Object... args) {
-        logger.debug(message, t, args);
+    public void debug(String message, Throwable t) {
+        logger.debug(message, t);
     }
 
-    public void info(String message, Object... args) {
-        logger.info(message, args);
+    public void info(String message) {
+        logger.info(message);
     }
 
-    public void info(String message, Throwable t, Object... args) {
-        logger.info(message, t, args);
+    public void info(String message, Throwable t) {
+        logger.info(message, t);
     }
 
-    public void warning(String message, Object... args) {
-        logger.warning(message, args);
+    public void warning(String message) {
+        logger.warning(message);
     }
 
-    public void warning(String message, Throwable t, Object... args) {
-        logger.warning(message, t, args);
+    public void warning(String message, Throwable t) {
+        logger.warning(message, t);
     }
 }

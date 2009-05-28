@@ -18,10 +18,34 @@
 package org.apache.openejb.core;
 
 import junit.framework.TestCase;
+import org.apache.openejb.loader.SystemInstance;
 
 public class TempClassLoaderTest extends TestCase {
     public void test() throws Exception {
         ClassLoader tempCL = new TempClassLoader(getClass().getClassLoader());
+        Class<?> clazz;
+
+        // normal classes should be loaded by the temp class loader
+        clazz = tempCL.loadClass(TempClassLoaderTest.class.getName());
+        assertSame(tempCL, clazz.getClassLoader());
+
+        // classes in java.* should not be loaded by the temp class loader
+        clazz = tempCL.loadClass(javax.persistence.EntityManager.class.getName());
+        assertNotSame(tempCL, clazz.getClassLoader());
+
+        // classes in javax.* should not be loaded by the temp class loader
+        clazz = tempCL.loadClass(java.lang.String.class.getName());
+        assertNotSame(tempCL, clazz.getClassLoader());
+
+        // annotations should not be loaded by the temp class loader
+        clazz = tempCL.loadClass(SampleAnnotation.class.getName());
+        assertSame(tempCL, clazz.getClassLoader());
+    }
+
+    public void _testHackEnabled() throws Exception {
+        TempClassLoader tempCL = new TempClassLoader(getClass().getClassLoader());
+        tempCL.skip(TempClassLoader.Skip.ANNOTATIONS);
+        
         Class<?> clazz;
 
         // normal classes should be loaded by the temp class loader

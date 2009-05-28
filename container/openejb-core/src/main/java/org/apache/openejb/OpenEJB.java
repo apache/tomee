@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.transaction.*;
-import javax.transaction.SystemException;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
@@ -32,6 +31,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEjbVersion;
 import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.OptionsLog;
 
 /**
  * @version $Rev$ $Date$
@@ -71,6 +71,7 @@ public final class OpenEJB {
 
             try {
                 SystemInstance.init(initProps);
+                OptionsLog.install();
             } catch (Exception e) {
                 throw new OpenEJBException(e);
             }

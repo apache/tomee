@@ -23,6 +23,7 @@ import javax.ejb.Handle;
 import javax.rmi.PortableRemoteObject;
 
 import org.apache.openejb.test.object.ObjectGraph;
+import org.apache.openejb.test.object.Color;
 
 import java.rmi.RemoteException;
 
@@ -947,6 +948,98 @@ public class StatelessRmiIiopTests extends StatelessTestClient{
                 assertEquals(expected[i], actual[i]);
             }
         } catch (RemoteException e) {
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+/*-------------------------------------------------*/
+/*  Enum                                           */
+/*-------------------------------------------------*/
+
+    public void test60_returnColor() {
+        try {
+            Color expected = Color.GREEN;
+
+            Color actual = (Color) PortableRemoteObject.narrow(ejbObject.returnColor(expected), Color.class);
+
+            assertNotNull("The Color returned is null", actual);
+
+            assertEquals(expected, actual);
+
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
+
+    public void test61_returnColor2() {
+        try {
+            Color expected = Color.GREEN;
+
+            Color actual = (Color) PortableRemoteObject.narrow(ejbObject.returnColor(), Color.class);
+
+            assertNotNull("The Color returned is null", actual);
+
+            assertEquals(expected, actual);
+
+        } catch (Exception e) {
+            fail("Received Exception " + e.getClass() + " : " + e.getMessage());
+        }
+    }
+
+    public void test62_returnNestedColor() {
+        try{
+            Color expected = Color.GREEN;
+
+            ObjectGraph graph = ejbObject.returnObjectGraph(new ObjectGraph(expected));
+
+            assertNotNull("The ObjectGraph is null", graph);
+
+            Color actual = (Color) graph.getObject();
+
+            assertNotNull("The Color returned is null", actual);
+
+            assertEquals(expected, actual);
+
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test63_returnNestedColor2() {
+        try{
+            Color expected = Color.GREEN;
+
+            ObjectGraph graph = ejbObject.returnNestedColor();
+
+            assertNotNull("The ObjectGraph is null", graph);
+
+            Color actual = (Color) graph.getObject();
+
+            assertNotNull("The Color returned is null", actual);
+
+            assertEquals(expected, actual);
+
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test64_returnColorArray() {
+        try{
+
+            Color expected[] = new Color[]{Color.GREEN, Color.RED, Color.BLUE};
+
+            Color[] actual = ejbObject.returnColorArray(expected);
+
+            assertNotNull("The Color array returned is null", actual);
+
+            assertEquals(expected.length, actual.length);
+            
+            for (int i = 0; i < expected.length; i++) {
+                assertEquals(expected[i], actual[i]);
+            }
+
+        } catch (Exception e){
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }

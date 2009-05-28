@@ -22,10 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Set;
 
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.Opcodes;
 import org.apache.xbean.asm.commons.EmptyVisitor;
+import org.apache.openejb.util.OptionsLog;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 
 /**
  * ClassLoader implementation that allows classes to be temporarily
@@ -42,8 +46,20 @@ import org.apache.xbean.asm.commons.EmptyVisitor;
  */
 // Note: this class is a fork from OpenJPA
 public class TempClassLoader extends URLClassLoader {
+    private Set<Skip> skip;
+
     public TempClassLoader(ClassLoader parent) {
         super(new URL[0], parent);
+
+        Options options = SystemInstance.get().getOptions();
+        skip = options.getAll("openejb.tempclassloader.skip", Skip.NONE);
+    }
+
+    /*
+     * Needed for testing
+     */
+    public void skip(Skip s) {
+        this.skip.add(s);
     }
 
     public Class loadClass(String name) throws ClassNotFoundException {
@@ -98,7 +114,11 @@ public class TempClassLoader extends URLClassLoader {
 
         // Annotation classes must be loaded by the normal classloader
         // So must Enum classes to prevent problems with the sun jdk.
-        if (isAnnotationClass(bytes) || isEnum(bytes)) {
+        if (skip.contains(Skip.ANNOTATIONS) && isAnnotationClass(bytes)) {
+            return Class.forName(name, resolve, getClass().getClassLoader());
+        }
+
+        if (skip.contains(Skip.ENUMS) && isEnum(bytes)) {
             return Class.forName(name, resolve, getClass().getClassLoader());
         }
 
@@ -119,7 +139,11 @@ public class TempClassLoader extends URLClassLoader {
             return super.loadClass(name, resolve);
         }
     }
-    
+
+    public static enum Skip {
+        NONE, ANNOTATIONS, ENUMS
+    }
+
     /**
      * Fast-parse the given class bytecode to determine if it is an
      * enum class.

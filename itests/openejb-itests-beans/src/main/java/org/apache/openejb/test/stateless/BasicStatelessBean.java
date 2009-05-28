@@ -140,7 +140,8 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
     /**
      * @throws javax.ejb.CreateException
      */
-    @MeasureSensible(MeasureSensivity.RESULT)  
+// TODO: Illustrates    
+    @MeasureSensible(MeasureSensivity.RESULT)
     public void ejbCreateObject() throws javax.ejb.CreateException {
         testAllowedOperations("ejbCreate");
         this.name = "nameless automaton";

@@ -19,6 +19,7 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.loader.OpenEJBInstance;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.OptionsLog;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -65,6 +66,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         if (openejb.isInitialized()) return;
         bootedOpenEJB = true;
         SystemInstance.init(properties);
+        OptionsLog.install();
         SystemInstance.get().setProperty("openejb.embedded", "true");
         openejb.init(properties);
     }

@@ -27,6 +27,7 @@ import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.test.object.ObjectGraph;
+import org.apache.openejb.test.object.Color;
 
 /**
  * 
@@ -408,6 +409,28 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean{
         return data;
     }
 
+
+    /*-------------------------------------------------*/
+    /*  Enum                                           */
+    /*-------------------------------------------------*/
+
+    public Color returnColor(Color data) {
+        return data;
+    }
+
+    public Color returnColor() {
+        return Color.GREEN;
+    }
+
+    public ObjectGraph returnNestedColor() {
+        return new ObjectGraph(Color.GREEN);
+    }
+
+    public Color[] returnColorArray(Color[] data) {
+        return data;
+    }
+
+
     /*-------------------------------------------------*/
     /*  ObjectGraph                                         */  
     /*-------------------------------------------------*/
@@ -423,7 +446,7 @@ public class RmiIiopStatelessBean implements javax.ejb.SessionBean{
     public String remove(String arg) {
         return arg;
     }
-    
+
     //    
     // Remote interface methods
     //=============================
