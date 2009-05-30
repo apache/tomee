@@ -44,7 +44,7 @@
 
   <!-- Build Classpath -->
   <artifact:dependencies pathId="classpath.main">
-    <dependency groupId="org.apache.openejb" artifactId="javaee-api" version="5.0-1"/>
+    <dependency groupId="org.apache.openejb" artifactId="javaee-api" version="5.0-2"/>
   </artifact:dependencies>
 
   <!-- Test Build Classpath -->

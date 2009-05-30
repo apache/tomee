@@ -257,6 +257,7 @@
   </build>
 
   <modules>
+    <module>deps</module>
     <module>api</module>
     <module>itests</module>
     <module>container</module>

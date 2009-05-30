@@ -65,6 +65,23 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-antrun-plugin</artifactId>
+	<executions>
+	  <execution>
+	    <phase>package</phase>
+	    <goals>
+	      <goal>run</goal>
+	    </goals>
+	    <configuration>
+	      <tasks>
+		<unzip src="${project.build.directory}/javaee-api-${pom.version}.jar" dest="${project.build.directory}/classes"/>
+	      </tasks>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
     </plugins>
   </build>
 
