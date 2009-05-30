@@ -59,7 +59,7 @@ public class WebModule implements WsModule {
                 contextRoot = contextRoot.substring(0, contextRoot.length() - ".war".length());
             }
         }
-        if (contextRoot.startsWith(System.getProperty("file.separator"))) contextRoot = contextRoot.substring(1);
+        if (contextRoot.startsWith("/")) contextRoot = contextRoot.substring(1);
         this.contextRoot = contextRoot;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
