@@ -16,26 +16,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
-<!-- $Rev$ $Date$ -->
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.altdd.Movie</class>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.1.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>webapps</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Web Examples </name>
-  <modules>
-    <module>ejb-examples</module>
-<!--    <module>applet</module> -->
-    <module>ejb-webservice</module>
-    <module>jsf</module>
-    <module>struts</module>
-    <module>moviefun</module>
-  </modules>
-
-</project>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
+</persistence>
