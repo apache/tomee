@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- $Rev: 634170 $ $Date: 2008-03-05 21:30:10 -0800 (Wed, 05 Mar 2008) $ -->
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="false"
+         version="2.5">
+
+  <servlet>
+    <servlet-name>ActionServlet</servlet-name>
+    <servlet-class>org.superbiz.moviefun.ActionServlet</servlet-class>
+  </servlet>
+
+
+  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+      <ns1:getMoviesResponse xmlns:ns1="http://superbiz.org/wsdl">
+        <return>
+          <director>David Dobkin</director>
+          <genre>Comedy</genre>
+          <id>101</id>
+          <rating>7</rating>
+          <title>Wedding Crashers</title>
+          <year>2005</year>
+        </return>
+        <return>
+          <director>Todd Phillips</director>
+          <genre>Action</genre>
+          <id>102</id>
+          <rating>6</rating>
+          <title>Starsky &amp; Hutch</title>
+          <year>2004</year>
+        </return>
+        <return>
+          <director>David Dobkin</director>
+          <genre>Action</genre>
+          <id>103</id>
+          <rating>6</rating>
+          <title>Shanghai Knights</title>
+          <year>2003</year>
+        </return>
+        <return>
+          <director>Wes Anderson</director>
+          <genre>Comedy</genre>
+          <id>105</id>
+          <rating>8</rating>
+          <title>The Royal Tenenbaums</title>
+          <year>2001</year>
+        </return>
+        <return>
+          <director>Ben Stiller</director>
+          <genre>Comedy</genre>
+          <id>106</id>
+          <rating>6</rating>
+          <title>Zoolander</title>
+          <year>2001</year>
+        </return>
+        <return>
+          <director>Tom Dey</director>
+          <genre>Comedy</genre>
+          <id>107</id>
+          <rating>7</rating>
+          <title>Shanghai Noon</title>
+          <year>2000</year>
+        </return>
+      </ns1:getMoviesResponse>
+    </soap:Body>
+  </soap:Envelope>
+
+
+</web-app>
