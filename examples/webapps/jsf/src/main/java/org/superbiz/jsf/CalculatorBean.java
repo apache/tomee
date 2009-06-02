@@ -21,7 +21,7 @@ package org.superbiz.jsf;
 import javax.ejb.EJB;
 
 public class CalculatorBean {
-	@EJB(name="CalculatorImplLocal")
+	@EJB
 	Calculator calculator;
 	private double x;
 	private double y;
