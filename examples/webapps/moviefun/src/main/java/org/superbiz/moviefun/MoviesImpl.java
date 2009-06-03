@@ -17,6 +17,7 @@
 package org.superbiz.moviefun;
 
 import javax.ejb.Stateless;
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -29,6 +30,9 @@ import java.util.List;
         serviceName = "MoviesWebService",
         targetNamespace = "http://superbiz.org/wsdl")
 public class MoviesImpl implements Movies {
+
+    @EJB
+    private Notifier notifier;
 
     @PersistenceContext(unitName = "movie-unit")
     private EntityManager entityManager;
@@ -44,6 +48,8 @@ public class MoviesImpl implements Movies {
     public void deleteMovieId(long id) throws Exception {
         Movie movie = entityManager.find(Movie.class, id);
         entityManager.remove(movie);
+
+        notifier.notify("Deleted Movie \"" + movie.getTitle() + "\" (" + movie.getYear() + ")");
     }
 
     public List<Movie> getMovies() throws Exception {
