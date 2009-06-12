@@ -16,8 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.*;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
@@ -509,9 +508,23 @@ public class AnnotationDeployer implements DynamicDeployer {
                 ejbModule.getEjbJar().setAssemblyDescriptor(assemblyDescriptor);
             }
 
-            for (Class<?> exceptionClass : finder.findAnnotatedClasses(ApplicationException.class)) {
+            // https://issues.apache.org/jira/browse/OPENEJB-980
+            startupLogger.debug("Searching for inherited application exceptions (see OPENEJB-980) - it doesn't care whether inherited is true/false");  
+            List<Class> appExceptions;
+            appExceptions = finder.findInheritedAnnotatedClasses(ApplicationException.class);
+            for (Class<?> exceptionClass : appExceptions) {
+                startupLogger.debug("...handling " + exceptionClass);  
                 if (assemblyDescriptor.getApplicationException(exceptionClass) == null) {
                     ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
+                    // OPENEJB-980
+                    if (annotation == null) {
+                        Class<?> parentExceptionClass = exceptionClass;
+                        while (annotation == null) {
+                            parentExceptionClass = parentExceptionClass.getSuperclass();
+                            annotation = parentExceptionClass.getAnnotation(ApplicationException.class);
+                        }
+                    }
+                    startupLogger.debug("...adding " + exceptionClass + " with rollback=" + annotation.rollback());  
                     assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
                 }
             }

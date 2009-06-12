@@ -47,7 +47,9 @@ public class AnnotationDeployerTest {
         assertThat(appEx.getRollback(), is(true));
 
         appEx = assemblyDescriptor.getApplicationException(ValueRequiredException.class);
-        assertThat(appEx, nullValue());
+        assertThat(appEx, notNullValue());
+        assertThat(appEx.getExceptionClass(), is(ValueRequiredException.class.getName()));
+        assertThat(appEx.getRollback(), is(true));
     }
 
     @ApplicationException(rollback = true)
