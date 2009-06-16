@@ -34,7 +34,7 @@
   <name>OpenEJB</name>
   <packaging>pom</packaging>
 
-  <version>3.1.1-SNAPSHOT</version>
+  <version>3.1.2-SNAPSHOT</version>
 
   <description>
     Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB Server.
