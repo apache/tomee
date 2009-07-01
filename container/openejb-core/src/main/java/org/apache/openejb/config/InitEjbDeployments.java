@@ -177,11 +177,15 @@ public class InitEjbDeployments implements DynamicDeployer {
         return bean instanceof EntityBean && ((EntityBean) bean).getPersistenceType() == PersistenceType.CONTAINER;
     }
 
-
     private String formatDeploymentId(EnterpriseBean bean, Map<String, String> contextData, StringTemplate template) {
         contextData.put("ejbType", bean.getClass().getSimpleName());
-        contextData.put("ejbClass", bean.getClass().getName());
-        contextData.put("ejbClass.simpleName", bean.getClass().getSimpleName());
+        contextData.put("ejbClass", bean.getEjbClass());
+        
+        // we don't have the ejb class object (only the string name) so we have 
+        // to extract the simple name from the FQN of the class
+        int simpleNameIdx = bean.getEjbClass().lastIndexOf(".");
+        contextData.put("ejbClass.simpleName", bean.getEjbClass().substring(simpleNameIdx + 1));
+       
         contextData.put("ejbName", bean.getEjbName());
         return template.apply(contextData);
     }
