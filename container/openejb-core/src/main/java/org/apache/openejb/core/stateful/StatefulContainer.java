@@ -846,6 +846,7 @@ public class StatefulContainer implements RpcContainer {
 
             // Invoke afterBegin
             ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_BEGIN);
+            callContext.setCurrentAllowedStates(StatefulContext.getStates());
             ThreadContext oldCallContext = ThreadContext.enter(callContext);
             try {
 
