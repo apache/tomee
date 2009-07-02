@@ -278,7 +278,7 @@ public class EntityInstanceManager {
 
         // primary key is null if its a servicing a home methods (create, find, ejbHome)
         TransactionPolicy txPolicy = callContext.getTransactionPolicy();
-        if (callContext.getPrimaryKey() != null && txPolicy != null && txPolicy.isTransactionActive()) {
+        if (primaryKey != null && txPolicy != null && txPolicy.isTransactionActive()) {
 
             Key key = new Key(callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
             SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
