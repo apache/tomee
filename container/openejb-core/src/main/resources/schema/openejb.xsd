@@ -181,7 +181,7 @@
   <!-- Container Types -->
   <xsd:simpleType name="ContainerTypes">
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="BMP_ENTITY|CMP_ENTITY|STATEFUL|STATELESS"/>
+      <xsd:pattern value="BMP_ENTITY|CMP_ENTITY|STATEFUL|STATELESS|MESSAGE"/>
     </xsd:restriction>
   </xsd:simpleType>
 
