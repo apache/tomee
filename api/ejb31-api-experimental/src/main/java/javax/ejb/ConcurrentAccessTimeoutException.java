@@ -33,7 +33,4 @@ public class ConcurrentAccessTimeoutException extends javax.ejb.ConcurrentAccess
         super(string);
     }
 
-    public ConcurrentAccessTimeoutException(String string, Exception exception) {
-        super(string, exception);
-    }
 }

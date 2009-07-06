@@ -22,5 +22,5 @@
 package javax.ejb;
 
 public enum LockType {
-    WRITE, READ;
+    READ, WRITE;
 }

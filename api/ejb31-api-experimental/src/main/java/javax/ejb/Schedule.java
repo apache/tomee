@@ -46,5 +46,8 @@ public @interface Schedule {
 
 	String second() default "0";
 
-	java.lang.String year() default "*";
+	java.lang.String timezone() default "";
+
+    java.lang.String year() default "*";
+
 }
