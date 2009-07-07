@@ -19,13 +19,13 @@ package org.apache.openejb.core.ivm.naming;
 import java.io.PrintStream;
 
 public class NameNode implements java.io.Serializable {
-    private String atomicName;
-    private int atomicHash;
+    private final String atomicName;
+    private final int atomicHash;
     private NameNode lessTree;
     private NameNode grtrTree;
     private NameNode subTree;
     private NameNode parentTree;
-    private NameNode parent;
+    private final NameNode parent;
     private Object myObject;
     private transient IvmContext myContext;
     private boolean unbound;
@@ -90,10 +90,10 @@ public class NameNode implements java.io.Serializable {
                     subTree.bind(name, obj);
             } else {
                 if (subTree != null) {
-                    throw new javax.naming.NameAlreadyBoundException();
+                    throw new javax.naming.NameAlreadyBoundException(name.toString());
                 }
                 if (myObject != null){
-                    throw new javax.naming.NameAlreadyBoundException();
+                    throw new javax.naming.NameAlreadyBoundException(name.toString());
                 }
                 unbound = false;
                 myObject = obj;// bind the object to this node
