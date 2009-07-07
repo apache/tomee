@@ -21,7 +21,6 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.core.CoreDeploymentInfo;

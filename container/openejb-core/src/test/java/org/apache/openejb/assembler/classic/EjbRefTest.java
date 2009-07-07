@@ -47,10 +47,6 @@ public class EjbRefTest extends TestCase {
     private Assembler assembler;
     private ConfigurationFactory config;
 
-    public void asList(Object... objects){
-        Arrays.asList(objects);
-    }
-
     protected void setUp() throws Exception {
         config = new ConfigurationFactory();
         assembler = new Assembler();

@@ -25,7 +25,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.net.URI;
@@ -60,7 +59,7 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
                 try {
                     ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                     Context context = containerSystem.getJNDIContext();
-                    Object obj = context.lookup("java:openejb/Resource/" + resouceId);
+                    Object obj = context.lookup("openejb/Resource/" + resouceId);
                     if (!(obj instanceof DataSource)) {
                         throw new IllegalArgumentException("Resource with id " + resouceId +
                                 " is not a DataSource, but is " + obj.getClass().getName());
