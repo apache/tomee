@@ -86,7 +86,7 @@ public class LazyEjbReference extends Reference {
             case REMOTE: type = InterfaceType.BUSINESS_REMOTE; break;
         }
 
-        String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
+        String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
 
         if (useCrossClassLoaderRef && isRemote(deploymentInfo)) {
             reference = new CrossClassLoaderJndiReference(jndiName);

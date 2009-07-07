@@ -51,10 +51,10 @@ public class JdbcConfigTest extends TestCase {
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        DataSource managedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Resource/Default JDBC Database");
+        DataSource managedDS = (DataSource) containerSystem.getJNDIContext().lookup("openejb/Resource/Default JDBC Database");
         assertNotNull("managedDS is null", managedDS);
 
-        DataSource unmanagedDS = (DataSource) containerSystem.getJNDIContext().lookup("java:openejb/Resource/Default Unmanaged JDBC Database");
+        DataSource unmanagedDS = (DataSource) containerSystem.getJNDIContext().lookup("openejb/Resource/Default Unmanaged JDBC Database");
         assertNotNull("unmanagedDS is null", unmanagedDS);
 
         // test without a transaction

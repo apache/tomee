@@ -336,7 +336,7 @@ public class ServiceManager {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
             NamingEnumeration<Binding> namingEnumeration = null;
             try {
-                namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/resourceAdapter");
+                namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/resourceAdapter");
             } catch (NamingException ignored) {
                 // no resource adapters were created
             }

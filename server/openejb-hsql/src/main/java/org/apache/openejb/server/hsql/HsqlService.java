@@ -98,7 +98,7 @@ public class HsqlService implements ServerService, SelfManaging {
         if (!disabled && containerSystem != null) {
             NamingEnumeration<Binding> bindings = null;
             try {
-                bindings = containerSystem.getJNDIContext().listBindings("java:openejb/Resource/");
+                bindings = containerSystem.getJNDIContext().listBindings("openejb/Resource/");
                 Set<String> dbnames = new TreeSet<String>();
                 for (Binding binding : Collections.list(bindings)) {
                     Object value = binding.getObject();

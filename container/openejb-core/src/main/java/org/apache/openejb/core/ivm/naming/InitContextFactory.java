@@ -29,7 +29,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 
 /**
- * @Depricated Use org.apache.openejb.client.LocalInitialContextFactory
+ * @deprecated Use org.apache.openejb.client.LocalInitialContextFactory
  */
 public class InitContextFactory implements javax.naming.spi.InitialContextFactory {
 
@@ -59,7 +59,7 @@ public class InitContextFactory implements javax.naming.spi.InitialContextFactor
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         Context context = containerSystem.getJNDIContext();
-        context = (Context) context.lookup("java:openejb/local");
+        context = (Context) context.lookup("openejb/local");
         return context;
 
     }
