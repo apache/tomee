@@ -18,11 +18,12 @@ package org.apache.openejb.core;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.naming.Context;
 
 /**
  * @org.apache.xbean.XBean element="containerSystem"
@@ -31,7 +32,9 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     Map<Object, DeploymentInfo> deployments = new ConcurrentHashMap<Object, DeploymentInfo>();
     Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
     Map<String, WebDeploymentInfo> webDeployments = new ConcurrentHashMap<String, WebDeploymentInfo>();
-    IvmContext jndiRootContext = null;
+    private final Context jndiContext;
+
+
     /**
      * Constructs a CoreContainerSystem and initializes the root JNDI context.
      * It also creates three sub contexts, namely
@@ -42,24 +45,24 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
      * </ul>
      *
      *@throws RuntimeException if there is a problem during initialization of the root context
+     * @param jndiFactory
      */
-    public CoreContainerSystem() {
+    public CoreContainerSystem(JndiFactory jndiFactory) {
 
+        if (jndiFactory == null) {
+            throw new NullPointerException("JndiFactory required");
+        }
+        jndiContext = jndiFactory.createRootContext();
         try {
-
-            jndiRootContext = IvmContext.createRootContext();
-
-            jndiRootContext.bind("openejb/local/.", "");
-            jndiRootContext.bind("openejb/remote/.", "");
-            jndiRootContext.bind("openejb/client/.", "");
-            jndiRootContext.bind("openejb/Deployment/.", "");
+            jndiContext.bind("openejb/local/.", "");
+            jndiContext.bind("openejb/remote/.", "");
+            jndiContext.bind("openejb/client/.", "");
+            jndiContext.bind("openejb/Deployment/.", "");
         }
         catch (javax.naming.NamingException exception) {
-            throw new RuntimeException();
+            throw new RuntimeException(exception);
         }
-
-        // todo this should be in a start method because publishing an external reference in the constructor is very dangerous
-        SystemInstance.get().setComponent(org.apache.openejb.spi.ContainerSystem.class, this);
+        SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);
     }
     /**
      * Returns the DeploymentInfo for an EJB with the given deploymentID.
@@ -114,7 +117,7 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         this.webDeployments.remove(info.getId());
     }
 
-    public javax.naming.Context getJNDIContext() {
-        return jndiRootContext;
+    public Context getJNDIContext() {
+        return jndiContext;
     }
 }

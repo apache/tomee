@@ -113,7 +113,8 @@ public class PersistenceBuilder {
             if (System.getProperty("duct tape") == null){
 
                 try {
-                    if (!jtaDataSourceId.startsWith("java:openejb/Resource/")) jtaDataSourceId = "java:openejb/Resource/"+jtaDataSourceId;
+                    if (!jtaDataSourceId.startsWith("java:openejb/Resource/")
+                            && !jtaDataSourceId.startsWith("openejb/Resource/")) jtaDataSourceId = "openejb/Resource/"+jtaDataSourceId;
 
                     Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
                     DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
