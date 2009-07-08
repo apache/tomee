@@ -18,10 +18,10 @@ package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.util.Classes.packageName;
 
-import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.NameAlreadyBoundException;
+import javax.naming.Context;
 import javax.jms.MessageListener;
 
 import org.apache.openejb.DeploymentInfo;
@@ -33,6 +33,7 @@ import org.apache.openejb.util.Strings;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
@@ -54,12 +55,14 @@ public class JndiBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
+    private final JndiFactory jndiFactory;
     private final Context context;
     private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
     private static final String JNDINAME_FAILONCOLLISION = "openejb.jndiname.failoncollision";
     private final boolean failOnCollision;
 
-    public JndiBuilder(Context context) {
+    public JndiBuilder(JndiFactory jndiFactory, Context context) {
+        this.jndiFactory = jndiFactory;
         this.context = context;
         failOnCollision = SystemInstance.get().getOptions().get(JNDINAME_FAILONCOLLISION, true);
     }
@@ -351,7 +354,7 @@ public class JndiBuilder {
             if (MessageListener.class.equals(deployment.getMdbInterface())) {
 
                 String destinationId = deployment.getDestinationId();
-                String jndiName = "java:openejb/Resource/" + destinationId;
+                String jndiName = "openejb/Resource/" + destinationId;
                 Reference reference = new IntraVmJndiReference(jndiName);
 
                 String deploymentId = deployment.getDeploymentID().toString();

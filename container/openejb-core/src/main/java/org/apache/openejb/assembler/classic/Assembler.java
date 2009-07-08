@@ -25,25 +25,26 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.naming.NameAlreadyBoundException;
-import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
@@ -67,39 +68,41 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.xbean.finder.ResourceFinder;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.CoreUserTransaction;
+import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
-import org.apache.openejb.core.transaction.SimpleWorkManager;
-import org.apache.openejb.core.transaction.SimpleBootstrapContext;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
-import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.ivm.naming.IvmContext;
+import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
+import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
+import org.apache.openejb.core.transaction.SimpleBootstrapContext;
+import org.apache.openejb.core.transaction.SimpleWorkManager;
+import org.apache.openejb.core.transaction.TransactionPolicyFactory;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.AsmParameterNameLoader;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.OpenEJBErrorHandler;
-import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.References;
-import org.apache.openejb.util.AsmParameterNameLoader;
+import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
@@ -110,9 +113,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         AsmParameterNameLoader.install();
     }
 
-    public static final String JAVA_OPENEJB_NAMING_CONTEXT = "java:openejb/";
+    public static final String JAVA_OPENEJB_NAMING_CONTEXT = "openejb/";
 
-    public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = "java:openejb/PersistenceUnit/";
+    public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = "openejb/PersistenceUnit/";
 
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
@@ -187,6 +190,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     protected OpenEjbConfiguration config;
 
     public Assembler() {
+        this(new IvmJndiFactory());
+    }
+
+    public Assembler(JndiFactory jndiFactory) {
         persistenceClassLoaderHandler = new PersistenceClassLoaderHandlerImpl();
 
         installNaming();
@@ -195,10 +202,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         system.setComponent(Assembler.class, this);
 
-        containerSystem = new CoreContainerSystem();
+        containerSystem = new CoreContainerSystem(jndiFactory);
         system.setComponent(ContainerSystem.class, containerSystem);
 
-        jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
+        jndiBuilder = new JndiBuilder(jndiFactory, containerSystem.getJNDIContext());
 
         setConfiguration(new OpenEjbConfiguration());
 
@@ -608,24 +615,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build().lookup("comp/env");
 
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/env", context);
+                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/env", context);
                 if (clientInfo.codebase != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
+                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
                 }
                 if (clientInfo.mainClass != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
+                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
                 }
                 if (clientInfo.callbackHandler != null) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/callbackHandler", clientInfo.callbackHandler);
+                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/callbackHandler", clientInfo.callbackHandler);
                 }
-                containerSystem.getJNDIContext().bind("java:openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
+                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
 
                 for (String clientClassName : clientInfo.remoteClients) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientClassName, clientInfo.moduleId);
+                    containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                 }
                 
                 for (String clientClassName : clientInfo.localClients) {
-                    containerSystem.getJNDIContext().bind("java:openejb/client/" + clientClassName, clientInfo.moduleId);
+                    containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                 }
             }
 
@@ -744,7 +751,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         NamingEnumeration<Binding> namingEnumeration = null;
         try {
-            namingEnumeration = containerSystem.getJNDIContext().listBindings("java:openejb/Resource");
+            namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/Resource");
         } catch (NamingException ignored) {
             // no resource adapters were created
         }
@@ -950,7 +957,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         InitialContext cntx = result;
 
         try {
-            containerSystem.getJNDIContext().bind("java:openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
+            containerSystem.getJNDIContext().bind("openejb/remote_jndi_contexts/" + contextInfo.id, cntx);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind " + contextInfo.service + " with id " + contextInfo.id, e);
         }
@@ -981,11 +988,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
-        try {
-            this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service + "/" + serviceInfo.id, service);
-        } catch (NamingException e) {
-            throw new OpenEJBException(messages.format("assembler.cannotBindServiceWithId", serviceInfo.service, serviceInfo.id), e);
-        }
+        bindService(serviceInfo, service);
 
         setSystemInstanceComponent(interfce, service);
 
@@ -999,6 +1002,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         config.containerSystem.containers.add(serviceInfo);
 
         logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
+    }
+
+    private void bindService(ServiceInfo serviceInfo, Object service) throws OpenEJBException {
+        try {
+            this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service + "/" + serviceInfo.id, service);
+        } catch (NamingException e) {
+            throw new OpenEJBException(messages.format("assembler.cannotBindServiceWithId", serviceInfo.service, serviceInfo.id), e);
+        }
     }
 
     public void removeContainer(String containerId) {
@@ -1032,11 +1043,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         ProxyManager.registerFactory(serviceInfo.id, (ProxyFactory) service);
         ProxyManager.setDefaultFactory(serviceInfo.id);
 
-        try {
-            this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service + "/" + serviceInfo.id, service);
-        } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
-        }
+        bindService(serviceInfo, service);
 
         setSystemInstanceComponent(interfce, service);
 
@@ -1060,7 +1067,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             Object resourceAdapter = null;
             try {
-                resourceAdapter = containerSystem.getJNDIContext().lookup("java:openejb/Resource/" + id);
+                resourceAdapter = containerSystem.getJNDIContext().lookup("openejb/Resource/" + id);
             } catch (NamingException e) {
                 // handled below
             }
@@ -1167,7 +1174,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            containerSystem.getJNDIContext().bind("java:openejb/Resource/" + serviceInfo.id, service);
+            containerSystem.getJNDIContext().bind("openejb/Resource/" + serviceInfo.id, service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
         }
@@ -1204,11 +1211,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Class interfce = serviceInterfaces.get(serviceInfo.service);
         checkImplementation(interfce, service.getClass(), serviceInfo.service, serviceInfo.id);
 
-        try {
-            this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service + "/" + serviceInfo.id, service);
-        } catch (NamingException e) {
-            throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
-        }
+        bindService(serviceInfo, service);
 
         setSystemInstanceComponent(interfce, service);
 
@@ -1270,8 +1273,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         try {
             this.containerSystem.getJNDIContext().bind(JAVA_OPENEJB_NAMING_CONTEXT + serviceInfo.service, service);
-            this.containerSystem.getJNDIContext().bind("java:comp/UserTransaction", new CoreUserTransaction((TransactionManager) service));
-            this.containerSystem.getJNDIContext().bind("java:comp/TransactionManager", service);
+            this.containerSystem.getJNDIContext().bind("comp/UserTransaction", new CoreUserTransaction((TransactionManager) service));
+            this.containerSystem.getJNDIContext().bind("comp/TransactionManager", service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind " + serviceInfo.service + " with id " + serviceInfo.id, e);
         }
@@ -1304,7 +1307,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         SystemInstance.get().setComponent(TransactionSynchronizationRegistry.class, synchronizationRegistry);
 
         try {
-            this.containerSystem.getJNDIContext().bind("java:comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
+            this.containerSystem.getJNDIContext().bind("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind java:comp/TransactionSynchronizationRegistry", e);
         }

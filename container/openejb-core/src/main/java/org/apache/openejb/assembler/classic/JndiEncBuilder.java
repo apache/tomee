@@ -22,6 +22,7 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
+import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -121,27 +122,8 @@ public class JndiEncBuilder {
 
     public Context build() throws OpenEJBException {
         Map<String, Object> bindings = buildMap();
-
-        Context context;
-        if (System.getProperty("openejb.naming","ivm").equals("xbean")) {
-            context = createXBeanWritableContext(bindings);
-        } else {
-            context = createIvmContext();
-
-            // bind the bindings
-            for (Iterator iterator = bindings.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String name = (String) entry.getKey();
-                Object value = entry.getValue();
-                if (value == null) continue;
-                try {
-                    context.bind(name, value);
-                } catch (NamingException e) {
-                    throw new org.apache.openejb.SystemException("Unable to bind '" + name + "' into bean's enc.", e);
-                }
-            }
-        }
-        return context;
+        JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
+        return jndiFactory.createComponentContext(bindings);
     }
 
     public Map<String, Object> buildMap() throws OpenEJBException {
@@ -179,7 +161,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null){
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, useCrossClassLoaderRef);
             } else {
-                String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_REMOTE);
+                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_REMOTE);
                 if (useCrossClassLoaderRef && referenceInfo.externalReference) {
                     reference = new CrossClassLoaderJndiReference(jndiName);
                 } else {
@@ -198,7 +180,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null){
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
-                String jndiName = "java:openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_LOCAL);
+                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_LOCAL);
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
@@ -262,10 +244,10 @@ public class JndiEncBuilder {
             } else if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
-                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceID;
+                String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "java:openejb/Resource/" + referenceInfo.referenceName;
+                String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
@@ -300,10 +282,10 @@ public class JndiEncBuilder {
             } else if (referenceInfo.location != null){
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
-                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceID;
+                String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "java:openejb/Resource/" + referenceInfo.resourceEnvRefName;
+                String jndiName = "openejb/Resource/" + referenceInfo.resourceEnvRefName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             if (reference != null) {
@@ -318,7 +300,7 @@ public class JndiEncBuilder {
                 continue;
             }
 
-            String jndiName = "java:openejb/PersistenceUnit/" + referenceInfo.unitId;
+            String jndiName = "openejb/PersistenceUnit/" + referenceInfo.unitId;
             Reference reference = new IntraVmJndiReference(jndiName);
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
@@ -430,37 +412,6 @@ public class JndiEncBuilder {
         return bindings;
     }
 
-    private WritableContext createXBeanWritableContext(Map<String, Object> bindings) {
-        boolean hasEnv = false;
-        for (String name : bindings.keySet()) {
-            if (name.startsWith("java:comp/env")) {
-                hasEnv = true;
-                break;
-            }
-        }
-        if (!hasEnv) bindings.put("java:comp/env/dummy", "dummy");
-
-        WritableContext context = null;
-        try {
-            context = new WritableContext("", bindings);
-        } catch (NamingException e) {
-            throw new IllegalStateException(e);
-        }
-        return context;
-    }
-
-    private IvmContext createIvmContext() {
-        IvmContext context = new IvmContext();
-        try {
-//            context.createSubcontext("comp");
-            // todo remove this... IvmContext seems to drop empty nodes
-            context.bind("java:comp/env/dummy", "dummy");
-        } catch (NamingException e) {
-            throw new IllegalStateException("Unable to create subcontext 'java:comp/env'.  Exception:"+e.getMessage(),e);
-        }
-        return context;
-    }
-
     public static boolean bindingExists(Context context, Name contextName) {
         try {
             return context.lookup(contextName) != null;
@@ -471,7 +422,7 @@ public class JndiEncBuilder {
 
     private Reference buildReferenceLocation(ReferenceLocationInfo location) {
         if (location.jndiProviderId != null){
-            String subContextName = "java:openejb/remote_jndi_contexts/" + location.jndiProviderId;
+            String subContextName = "openejb/remote_jndi_contexts/" + location.jndiProviderId;
             return new JndiReference(subContextName, location.jndiName);
         } else {
             return new JndiUrlReference(location.jndiName);

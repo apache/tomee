@@ -19,6 +19,7 @@ package org.apache.openejb.spi;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.WebDeploymentInfo;
+import org.apache.openejb.core.JndiFactory;
 
 import javax.naming.Context;
 import javax.xml.namespace.QName;
@@ -34,8 +35,7 @@ public interface ContainerSystem {
 
     public Container [] containers();
 
-    public Context getJNDIContext();
-
     WebDeploymentInfo getWebDeploymentInfo(String id);
 
+    Context getJNDIContext();
 }

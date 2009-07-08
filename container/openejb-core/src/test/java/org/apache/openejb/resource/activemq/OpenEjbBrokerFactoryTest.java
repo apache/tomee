@@ -121,7 +121,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
         assertSame(dataSource, new InitialContext().lookup("openejb/Resource/TestDs"));
 
         CoreContainerSystem containerSystem = new CoreContainerSystem(new IvmJndiFactory());
-        containerSystem.getJNDIFactory().bind("openejb/Resource/TestDs", dataSource);
+        containerSystem.getJNDIContext().bind("openejb/Resource/TestDs", dataSource);
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
 
         properties.put("DataSource", "TestDs");
