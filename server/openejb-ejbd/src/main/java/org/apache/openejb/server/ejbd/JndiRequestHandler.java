@@ -72,15 +72,17 @@ import org.omg.CORBA.ORB;
 class JndiRequestHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
-    private Context ejbJndiTree;
+    private final Context ejbJndiTree;
     private Context clientJndiTree;
-    private Context deploymentsJndiTree;
+    private final Context deploymentsJndiTree;
     private final ClusterableRequestHandler clusterableRequestHandler;
+    private Context rootContext;
 
     JndiRequestHandler(EjbDaemon daemon) throws Exception {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
+        rootContext = containerSystem.getJNDIContext();
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
         } catch (NamingException e) {
@@ -151,7 +153,11 @@ class JndiRequestHandler {
 
     private Context getContext(JNDIRequest req) throws NamingException {
         Context context;
-        if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
+        String name = req.getRequestString();
+
+        if (name.startsWith("openejb/Deployment/")) {
+            context = rootContext;
+        } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
             context = deploymentsJndiTree;
         } else if (req.getModuleId() != null && clientJndiTree != null) {
             context = (Context) clientJndiTree.lookup(req.getModuleId());
