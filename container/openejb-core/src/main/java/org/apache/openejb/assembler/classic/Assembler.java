@@ -205,7 +205,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         containerSystem = new CoreContainerSystem(jndiFactory);
         system.setComponent(ContainerSystem.class, containerSystem);
 
-        jndiBuilder = new JndiBuilder(jndiFactory, containerSystem.getJNDIContext());
+        jndiBuilder = new JndiBuilder(containerSystem.getJNDIContext());
 
         setConfiguration(new OpenEjbConfiguration());
 
