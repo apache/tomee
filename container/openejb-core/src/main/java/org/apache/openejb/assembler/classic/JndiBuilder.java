@@ -55,14 +55,12 @@ public class JndiBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
-    private final JndiFactory jndiFactory;
     private final Context context;
     private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
     private static final String JNDINAME_FAILONCOLLISION = "openejb.jndiname.failoncollision";
     private final boolean failOnCollision;
 
-    public JndiBuilder(JndiFactory jndiFactory, Context context) {
-        this.jndiFactory = jndiFactory;
+    public JndiBuilder(Context context) {
         this.context = context;
         failOnCollision = SystemInstance.get().getOptions().get(JNDINAME_FAILONCOLLISION, true);
     }
