@@ -894,10 +894,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            IvmContext ivmContext = (IvmContext) globalContext;
-            ivmContext.prune("openejb/Deployment");
-            ivmContext.prune("openejb/local");
-            ivmContext.prune("openejb/remote");
+            if (globalContext instanceof IvmContext) {
+                IvmContext ivmContext = (IvmContext) globalContext;
+                ivmContext.prune("openejb/Deployment");
+                ivmContext.prune("openejb/local");
+                ivmContext.prune("openejb/remote");
+            }
         } catch (NamingException e) {
             undeployException.getCauses().add(new Exception("Unable to prune openejb/Deployments and openejb/local namespaces, this could cause future deployments to fail.", e));
         }
