@@ -160,6 +160,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * @version $Rev$ $Date$
@@ -1522,22 +1524,69 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
 
+            /*
+             * Collect all interfaces explicitly declared via xml.
+             * We will subtract these from the interfaces implemented
+             * by the bean and do annotation scanning on the remainder.
+             */
+            List<String> descriptor = new ArrayList<String>();
+            descriptor.add(sessionBean.getHome());
+            descriptor.add(sessionBean.getRemote());
+            descriptor.add(sessionBean.getLocalHome());
+            descriptor.add(sessionBean.getLocal());
+            descriptor.addAll(sessionBean.getBusinessLocal());
+            descriptor.addAll(sessionBean.getBusinessRemote());
+            descriptor.add(sessionBean.getServiceEndpoint());
+
+            BusinessInterfaces xml = new BusinessInterfaces();
+            xml.addLocals(sessionBean.getBusinessLocal(), ejbModule.getClassLoader());
+            xml.addRemotes(sessionBean.getBusinessRemote(), ejbModule.getClassLoader());
+
+            /**
+             * Anything declared as both <business-local> and <business-remote> is invalid in strict mode
+             */
+            if (strict) for (Class interfce : xml.local) {
+                if (xml.remote.contains(interfce)) {
+                    validation.fail(ejbName, "xml.localRemote.conflict", interfce.getName());
+                }
+            }
+
+            /**
+             * Merge the xml declared business interfaces into the complete set
+             */
+            BusinessInterfaces all = new BusinessInterfaces();
+            all.local.addAll(xml.local);
+            all.remote.addAll(xml.remote);
+
             for (Class<?> clazz : ancestors(beanClass)) {
                 /*
-                 * Collect all interfaces explicitly declared via xml.
-                 * We will subtract these from the interfaces implemented
-                 * by the bean and do annotation scanning on the remainder.
+                 * @WebService
+                 * @WebServiceProvider
                  */
-                List<String> xmlDeclared = new ArrayList<String>();
-                xmlDeclared.add(sessionBean.getHome());
-                xmlDeclared.add(sessionBean.getRemote());
-                xmlDeclared.add(sessionBean.getLocalHome());
-                xmlDeclared.add(sessionBean.getLocal());
+                if (sessionBean.getServiceEndpoint() == null) {
+                    Class defaultEndpoint = DeploymentInfo.ServiceEndpoint.class;
 
-                if (strict) { // when not being strict, thse
-                    xmlDeclared.addAll(sessionBean.getBusinessLocal());
-                    xmlDeclared.addAll(sessionBean.getBusinessRemote());
-                    xmlDeclared.add(sessionBean.getServiceEndpoint());
+                    for (Class interfce : clazz.getInterfaces()) {
+                        if (interfce.isAnnotationPresent(WebService.class)) {
+                            defaultEndpoint = interfce;
+                        }
+                    }
+
+                    WebService webService = clazz.getAnnotation(WebService.class);
+                    if (webService != null) {
+
+                        String className = webService.endpointInterface();
+
+                        if (!className.equals("")) {
+                            sessionBean.setServiceEndpoint(className);
+                        } else {
+                            sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                        }
+                    } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
+                        sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                    } else if (!defaultEndpoint.equals(DeploymentInfo.ServiceEndpoint.class)) {
+                        sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                    }
                 }
 
                 /*
@@ -1552,148 +1601,202 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (!name.equals("java.io.Serializable") &&
                             !name.equals("java.io.Externalizable") &&
                             !name.startsWith("javax.ejb.") &&
-                            !xmlDeclared.contains(interfce.getName())) {
+                            !descriptor.contains(interfce.getName())) {
                         interfaces.add(interfce);
                     }
                 }
 
-                List<Class> declared = new ArrayList<Class>();
-
-                /*
-                 * @Remote
+                /**
+                 * Anything discovered and delcared in a previous loop
+                 * or at the beginning in the deployment descriptor is
+                 * not eligable to be redefined.
                  */
-                List<Class> remotes = new ArrayList<Class>();
-                Remote remote = clazz.getAnnotation(Remote.class);
-                if (remote != null) {
-                    if (remote.value().length == 0) {
-                        if (interfaces.size() != 1) {
-                            validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
-                        } else if (strict && clazz.getAnnotation(Local.class) != null) {
-                            validation.fail(ejbName, "ann.remoteLocal.ambiguous", join(", ", interfaces));
-                        } else if (strict && interfaces.get(0).getAnnotation(Local.class) != null) {
-                            validation.fail(ejbName, "ann.remoteLocal.conflict", join(", ", interfaces));
-                        } else {
-                            if (validateRemoteInterface(interfaces.get(0), validation, ejbName)) {
-                                remotes.add(interfaces.get(0));
-                            }
-                            declared.add(interfaces.get(0));
-                        }
-                    } else for (Class interfce : remote.value()) {
-                        if (validateRemoteInterface(interfce, validation, ejbName)) {
-                            remotes.add(interfce);
-                        }
-                        declared.add(interfce);
-                    }
-                }
+                interfaces.removeAll(all.local);
+                interfaces.removeAll(all.remote);
 
-                if (strict) interfaces.removeAll(declared);
-                
-                /*
-                 * @Local
+                /**
+                 * OK, now start checking the class metadata
                  */
-                List<Class> locals = new ArrayList<Class>();
                 Local local = clazz.getAnnotation(Local.class);
-                if (local != null) {
-                    if (local.value().length == 0) {
-                        if (interfaces.size() != 1) {
-                            validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
-                        } else if (strict && clazz.getAnnotation(Remote.class) != null) {
-                            validation.fail(ejbName, "ann.localRemote.ambiguous", join(", ", interfaces));
-                        } else if (strict && interfaces.get(0).getAnnotation(Remote.class) != null) {
-                            validation.fail(ejbName, "ann.localRemote.conflict", join(", ", interfaces));
-                        } else {
-                            if (validateLocalInterface(interfaces.get(0), validation, ejbName)) {
-                                locals.add(interfaces.get(0));
-                            }
-                            declared.add(interfaces.get(0));
-                        }
-                    } else for (Class interfce : local.value()) {
-                        if (validateLocalInterface(interfce, validation, ejbName)) {
-                            locals.add(interfce);
-                        }
-                        declared.add(interfce);
-                    }
-                }
+                Remote remote = clazz.getAnnotation(Remote.class);
 
-                if (strict) interfaces.removeAll(declared);
+                boolean impliedLocal = local != null && local.value().length == 0;
+                boolean impliedRemote = remote != null && remote.value().length == 0;
 
-                /*
-                 * @WebService
-                 * @WebServiceProvider
+                /**
+                 * This set holds the values of @Local and @Remote
+                 * when applied to the bean class itself
+                 *
+                 * These declarations override any similar declaration
+                 * on the interface.
                  */
-                if (sessionBean.getServiceEndpoint() == null) {
-                    WebService webService = clazz.getAnnotation(WebService.class);
-                    if (webService != null) {
-                        String endpointInterfaceName = webService.endpointInterface();
-                        if (!endpointInterfaceName.equals("")) {
-                            try {
-                                sessionBean.setServiceEndpoint(endpointInterfaceName);
-                                Class endpointInterface = Class.forName(endpointInterfaceName, false, ejbModule.getClassLoader());
-                                declared.add(endpointInterface);
-                            } catch (ClassNotFoundException e) {
-                                throw new IllegalStateException("Class not found @WebService.endpointInterface: " + endpointInterfaceName, e);
-                            }
-                        } else {
-                            sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
-                        }
-                    } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
-                        sessionBean.setServiceEndpoint(DeploymentInfo.ServiceEndpoint.class.getName());
+                BusinessInterfaces bean = new BusinessInterfaces();
+                if (local != null) bean.local.addAll(asList(local.value()));
+                if (remote != null) bean.remote.addAll(asList(remote.value()));
+
+                if (strict) for (Class interfce : bean.local) {
+                    if (bean.remote.contains(interfce)) {
+                        validation.fail(ejbName, "ann.localRemote.conflict", interfce.getName());
                     }
-                }
-
-                if (strict) interfaces.removeAll(declared);
-
-                /*
-                 * The remainder of the interfaces are checked for annotations in this order:
-                 * 1. @WebService
-                 * 2. @Remote
-                 * 3. Else assumed to be @Local
-                 */
-                for (Class interfce : interfaces) {
-                    if (interfce.isAnnotationPresent(WebService.class)) {
-                        if (sessionBean.getServiceEndpoint() == null){
-                            sessionBean.setServiceEndpoint(interfce.getName());
-                        } else if (sessionBean.getServiceEndpoint().equals(DeploymentInfo.ServiceEndpoint.class.getName())) {
-                            sessionBean.setServiceEndpoint(interfce.getName());
-                        }
-                        declared.add(interfce);
-                    }
-                }
-
-                if (strict) interfaces.removeAll(declared);
-
-                for (Class interfce : interfaces) {
-                    if (interfce.isAnnotationPresent(Remote.class)) {
-                        remotes.add(interfce);
-                        declared.add(interfce);
-                    }
-                }
-
-                if (strict) interfaces.removeAll(declared);
-
-                for (Class interfce : interfaces) {
-                    if (interfce.isAnnotationPresent(Local.class)) {
-                        locals.add(interfce);
-                        declared.add(interfce);
-                    }
-                }
-
-                if (!strict){
-                    // Treat the rest of the unannotated and undeclared interfaces implicitly as local interfaces
-                    interfaces.removeAll(declared);
-                    locals.addAll(interfaces);
                 }
 
                 /**
-                 * The 'interfaces' list should now be empty and all interfaces
-                 * of the bean sorted into either the remote or local bucket.
+                 * Anything listed explicitly via @Local or @Remote
+                 * on the bean class does not need to be investigated.
+                 * We do not need to check these interfaces for @Local or @Remote
                  */
-                for (Class interfce : remotes) {
-                    sessionBean.addBusinessRemote(interfce.getName());
+                interfaces.removeAll(bean.local);
+                interfaces.removeAll(bean.remote);
+
+                if (impliedLocal || impliedRemote) {
+                    if (interfaces.size() == 1) {
+                        Class<?> interfce = interfaces.remove(0);
+
+                        if (strict && impliedLocal && impliedRemote) {
+                            /**
+                             * Cannot imply @Local and @Remote at the same time with strict mode on
+                             */
+                            validation.fail(ejbName, "ann.localRemote.ambiguous", interfce.getName());
+                        } else {
+                            if (impliedLocal) bean.local.add(interfce);
+                            if (impliedRemote) bean.remote.add(interfce);
+                        }
+
+                    } else { // invalid
+                        /**
+                         * Cannot imply either @Local or @Remote and list multiple interfaces
+                         */
+                        if (impliedLocal) validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
+                        if (impliedRemote) validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
+
+                        /**
+                         * This bean is invalid, so do not bother looking at the other interfaces or the superclass
+                         */
+                        return;
+                    }
                 }
 
-                for (Class interfce : locals) {
-                    sessionBean.addBusinessLocal(interfce.getName());
+
+                /**
+                 * OK, now start checking the metadata of the interfaces implemented by this class
+                 */
+            
+
+                /**
+                 * This set holds the list of interfaces that the bean implements
+                 * that are annotated either as @Local or @Remote
+                 *
+                 * If the interface is annotated to the contrary in the bean class
+                 * the bean class meta data wins, therefore we track these separately
+                 *
+                 * Ultimately, the deployment descriptor wins over all, so we have tracked
+                 * those declarations separately as well.
+                 */
+                BusinessInterfaces implemented = new BusinessInterfaces();
+
+                for (Class interfce : interfaces) {
+                    boolean isLocal = interfce.isAnnotationPresent(Local.class);
+                    boolean isRemote = interfce.isAnnotationPresent(Remote.class);
+
+                    if (strict && isLocal && isRemote) {
+                        validation.fail(ejbName, "ann.localRemote.conflict", interfce.getName());
+                    } else {
+                        if (isLocal) implemented.local.add(interfce);
+                        if (isRemote) implemented.remote.add(interfce);
+                    }
+                }
+
+                interfaces.removeAll(implemented.local);
+                interfaces.removeAll(implemented.remote);
+
+
+
+                /**
+                 * Merge in class-level metadata.
+                 *
+                 * We've already merged in the xml metadata, so that
+                 * metadata will win over this metadata.
+                 */
+
+                // remove anything we've already seen
+                bean.local.removeAll(all.local);
+                bean.local.removeAll(all.remote);
+                bean.remote.removeAll(all.remote);
+                bean.remote.removeAll(all.local);
+
+                // validate the things we are going to add
+                for (Class interfce : bean.local) validateLocalInterface(interfce, validation, ejbName);
+                for (Class interfce : bean.remote) validateRemoteInterface(interfce, validation, ejbName);
+
+                // add finally, add them
+                all.local.addAll(bean.local);
+                all.remote.addAll(bean.remote);
+
+
+                /**
+                 * Merge in interface-level metadata
+                 *
+                 * We've already merged in the xml metadata *and* class metadata,
+                 * so both of those will win over this metadata.
+                 */
+
+                // remove anything we've already seen
+                implemented.local.removeAll(all.local);
+                implemented.local.removeAll(all.remote);
+                implemented.remote.removeAll(all.remote);
+                implemented.remote.removeAll(all.local);
+
+                // validate the things we are going to add
+                for (Class interfce : implemented.local) validateLocalInterface(interfce, validation, ejbName);
+                for (Class interfce : implemented.remote) validateRemoteInterface(interfce, validation, ejbName);
+
+                // add the rest
+                all.local.addAll(implemented.local);
+                all.remote.addAll(implemented.remote);
+
+
+                /**
+                 * Track any interfaces we didn't use
+                 */
+                all.unspecified.addAll(interfaces);
+            }
+
+            // Finally, add all the business interfaces we found
+            for (Class interfce : all.local) sessionBean.addBusinessLocal(interfce);
+            for (Class interfce : all.remote) sessionBean.addBusinessRemote(interfce);
+
+            // Anything unspecified?  Let's throw it in as local.
+            //
+            // This covers the required case where a bean is declared implementing
+            // one interface and does not use @Local or @Remote anywhere nor does
+            // it specify the business-local or business-remote elements in the ejb-jar.xml
+            //
+            // It goes a little beyond that, but no one has ever complained about having
+            // more local interfaces.
+            for (Class interfce : all.unspecified) sessionBean.addBusinessLocal(interfce);
+
+        }
+
+        private static class BusinessInterfaces {
+            private Set<Class> local = new LinkedHashSet<Class>();
+            private Set<Class> remote = new LinkedHashSet<Class>();
+            private Set<Class> unspecified = new LinkedHashSet<Class>();
+
+            public void addLocals(Collection<String> names, ClassLoader loader){
+                add(loader, names, local);
+            }
+
+            public void addRemotes(Collection<String> names, ClassLoader loader){
+                add(loader, names, remote);
+            }
+
+            private void add(ClassLoader loader, Collection<String> names, Set<Class> classes) {
+                for (String className : names) {
+                    try {
+                        classes.add(loader.loadClass(className));
+                    } catch (Throwable t) {
+                        // handled in validation
+                    }
                 }
             }
         }
