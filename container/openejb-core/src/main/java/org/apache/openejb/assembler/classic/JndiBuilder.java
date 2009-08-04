@@ -215,6 +215,7 @@ public class JndiBuilder {
             contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
             contextData.put("interfaceType", type.getAnnotationName());
             contextData.put("interfaceType.annotationName", type.getAnnotationName());
+            contextData.put("interfaceType.annotationNameLC",type.getAnnotationName().toLowerCase());
             contextData.put("interfaceType.xmlName", type.getXmlName());
             contextData.put("interfaceType.xmlNameCc", type.getXmlNameCc());
             contextData.put("interfaceType.openejbLegacyName", type.getOpenejbLegacy());
