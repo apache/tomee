@@ -104,6 +104,12 @@ public class ReportValidationResults implements DynamicDeployer {
 
             logger.error("Invalid "+context.getModuleType()+"(path="+context.getJarPath()+")");
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
+        } else if (context.hasWarnings()) {
+            if (context.getWarnings().length == 1) {
+                logger.warning(context.getWarnings().length +" warning for "+context.getModuleType()+"(path="+context.getJarPath()+")");
+            } else {
+                logger.warning(context.getWarnings().length +" warnings for "+context.getModuleType()+"(path="+context.getJarPath()+")");
+            }
         }
     }
 
