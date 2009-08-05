@@ -688,14 +688,24 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(className);
                     remoteClients.add(clazz);
+
+                    ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
+
+                    buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
                 } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Unable to load Client main-class: " + className, e);
+                    /**
+                     * Some ClientModule are discovered only because the jar uses a Main-Class
+                     * entry in the MANIFEST.MF file.  Lots of jars do this that are not used as
+                     * java ee application clients, so lets not make this a failure unless it
+                     * has a META-INF/application-client.xml which tells us it is in fact
+                     * expected to be a ClientModule and not just some random jar.
+                     */
+                    if (clientModule.getApplicationClient() == null) {
+                        getValidationContext().warn("client.missingMainClass", className);
+                    } else {
+                        getValidationContext().fail("client.missingMainClass", className);
+                    }
                 }
-
-                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
-
-                buildAnnotatedRefs(client, inheritedClassFinder, classLoader);
-
             }
 
             for (String className : clientModule.getRemoteClients()) {
