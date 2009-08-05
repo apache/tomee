@@ -284,18 +284,16 @@ public class AnnotationDeployer implements DynamicDeployer {
         public ClientModule deploy(ClientModule clientModule) throws OpenEJBException {
 
             if (clientModule.getApplicationClient() == null){
-                if (clientModule.getRemoteClients().size() > 0 || clientModule.getLocalClients().size() > 0) {
-                    clientModule.setApplicationClient(new ApplicationClient());
-                }
+                clientModule.setApplicationClient(new ApplicationClient());
             }
             
             // Lots of jars have main classes so this might not even be an app client.
             // We're not going to scrape it for @LocalClient or @RemoteClient annotations
             // unless they flag us specifically by adding a META-INF/application-client.xml
-            // this will have been read in as the JAXB ApplicationClient object below.
-            // This applies only to jars that have just been flagged as ClientModules,
-            // EjbModules are also scraped for @LocalClient and @RemoteClient annotations
-            if (clientModule.getFinder() == null && clientModule.getApplicationClient() == null) return clientModule;
+            //
+            // ClientModules that already have a ClassFinder have been generated automatically
+            // from an EjbModule, so we don't skip those ever.
+            if (clientModule.getFinder() == null && clientModule.getAltDDs().containsKey("application-client.xml"))
 
             if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
 
@@ -700,10 +698,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                      * has a META-INF/application-client.xml which tells us it is in fact
                      * expected to be a ClientModule and not just some random jar.
                      */
-                    if (clientModule.getApplicationClient() == null) {
-                        getValidationContext().warn("client.missingMainClass", className);
+                    if (clientModule.getAltDDs().containsKey("application-client.xml")) {
+                        getValidationContext().fail("client", "client.missingMainClass", className);
                     } else {
-                        getValidationContext().fail("client.missingMainClass", className);
+                        getValidationContext().warn("client", "client.missingMainClass", className);
                     }
                 }
             }
