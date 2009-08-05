@@ -302,8 +302,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             ClassFinder finder = clientModule.getFinder();
 
             if (finder == null) {
-                if (clientModule.getJarLocation() != null) {
-                    try {
+                try {
+                    if (clientModule.getJarLocation() != null) {
                         String location = clientModule.getJarLocation();
                         File file = new File(location);
 
@@ -314,17 +314,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                             url = new URL(location);
                         }
                         finder = new ClassFinder(clientModule.getClassLoader(), url);
-                    } catch (MalformedURLException e) {
-                        startupLogger.warning("startup.scrapeFailedForModule", clientModule.getJarLocation());
-                        return clientModule;
-                    }
-                } else {
-                    try {
+                    } else {
                         finder = new ClassFinder(clientModule.getClassLoader());
-                    } catch (Exception e) {
-                        startupLogger.warning("Unable to scrape for @LocalClient or @RemoteClient annotations. ClassFinder failed.", e);
-                        return clientModule;
                     }
+                } catch (MalformedURLException e) {
+                    startupLogger.warning("startup.scrapeFailedForClientModule.url", clientModule.getJarLocation());
+                    return clientModule;
+                } catch (Exception e) {
+                    startupLogger.warning("startup.scrapeFailedForClientModule", e, clientModule.getJarLocation());
+                    return clientModule;
                 }
             }
 
