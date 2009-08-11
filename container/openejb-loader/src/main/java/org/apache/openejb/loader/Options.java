@@ -24,8 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Collections;
 
 /**
  * The purpose of this class is to provide a more strongly typed version of a
@@ -44,6 +43,29 @@ import java.util.concurrent.atomic.AtomicReference;
  * - When a property is found: the property name and value.  Info level.
  * - When a property value cannot be parsed: the property name and invalid value. Warn level.
  *
+ * Logging the user supplied values onto INFO is really nice as it shows up in the standard
+ * log output and allows us to easily see which values the user has changed from the default.
+ * It's rather impossible to diagnose issues without this information.
+ *
+ * ENUM SETS:
+ *
+ * Properties that accept a Set of enum values automatically accept ALL and NONE in
+ * addition to the explicitly created enum items.
+ *
+ * Using ALL. This allows users to have an easy way to imply "all" without having to
+ * hardcode an the entire list of enum items and protects against the case where that
+ * list may grow in the future.
+ *
+ * Using NONE.  This allows users an alternative to using an empty string when explicitly
+ * specifying that none of the options should be used.
+ *
+ * In the internal code, this allows us to have these concepts in all enum options
+ * without us having to add NONE or ALL enum items explicitly which leads to strange code.
+ *
+ * Additionally TRUE is an alias for ALL and FALSE an alias for NONE.  This allows options
+ * that used to support only true/false values to be further defined in the future without
+ * breaking compatibility.
+ * 
  * @version $Rev$ $Date$
  */
 public class Options {
@@ -150,21 +172,38 @@ public class Options {
 
     public <T extends Enum<T>> Set<T> getAll(String property, T... defaultValue) {
         EnumSet<T> defaults = EnumSet.copyOf(Arrays.asList(defaultValue));
-        return get(property, defaults);
+        return getAll(property, defaults);
     }
 
-    public <T extends Enum<T>> Set<T> get(String property, Set<T> defaultValue) {
-
-        String value = properties.getProperty(property);
-
-        if (value == null) return parent.get(property, (Set) defaultValue);
-
+    public <T extends Enum<T>> Set<T> getAll(String property, Set<T> defaultValue) {
         Class<T> enumType;
         try {
             T t = defaultValue.iterator().next();
             enumType = (Class<T>) t.getClass();
         } catch (Exception e) {
             throw new IllegalArgumentException("Must supply a default for property " + property);
+        }
+
+        return getAll(property, defaultValue, enumType);
+    }
+
+    public <T extends Enum<T>> Set<T> getAll(String property, Class<T> enumType) {
+        return getAll(property, Collections.EMPTY_SET, enumType);
+    }
+
+    protected <T extends Enum<T>> Set<T> getAll(String property, Set<T> defaultValue, Class<T> enumType) {
+        String value = properties.getProperty(property);
+
+        if (value == null) return parent.getAll(property, defaultValue, enumType);
+
+        // Shorthand for specifying ALL or NONE for any option
+        // that allows for multiple values of the enum
+        if ("all".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            log(property, value);
+            return EnumSet.allOf(enumType);
+        } else if ("none".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+            log(property, value);
+            return EnumSet.noneOf(enumType);
         }
 
         try {
@@ -175,10 +214,10 @@ public class Options {
                 s = s.trim();
                 set.add(valueOf(enumType, s.toUpperCase()));
             }
-            return set;
+            return logAll(property, set);
         } catch (IllegalArgumentException e) {
             warn(property, value);
-            return parent.get(property, (Set) defaultValue);
+            return parent.getAll(property, defaultValue, enumType);
         }
     }
 
@@ -214,12 +253,22 @@ public class Options {
     }
 
     private <V> V log(String property, V value) {
+        if (!getLogger().isInfoEnabled()) return value;
+
         if (value instanceof Class) {
             Class clazz = (Class) value;
             getLogger().info("Using \'" + property + "=" + clazz.getName() + "\'");
         } else {
             getLogger().info("Using \'" + property + "=" + value + "\'");
         }
+        return value;
+    }
+
+    public <T extends Enum<T>> Set<T> logAll(String property, Set<T> value) {
+        if (!getLogger().isInfoEnabled()) return value;
+
+        getLogger().info("Using \'" + property + "=" + join(", ", lowercase(value)) + "\'");
+
         return value;
     }
 
@@ -310,16 +359,21 @@ public class Options {
         }
 
         @Override
-        public <T extends Enum<T>> Set<T> get(String property, Set<T> defaults) {
+        protected <T extends Enum<T>> Set<T> getAll(String property, Set<T> defaults, Class<T> enumType) {
             if (getLogger().isDebugEnabled()) {
-                Iterator<T> iterator = defaults.iterator();
-                String possibleValues = "";
-                if (iterator.hasNext()) {
-                    T v = iterator.next();
-                    possibleValues = "  Possible values are: " + possibleValues(v);
-                }
+                String possibleValues = "  Possible values are: " + possibleValues(enumType);
 
-                String defaultValues = join(", ", lowercase(defaults));
+                possibleValues += " or NONE or ALL";
+
+                String defaultValues;
+
+                if (defaults.size() == 0) {
+                    defaultValues = "NONE";
+                } else if (defaults.size() == enumType.getEnumConstants().length) {
+                    defaultValues = "ALL";
+                } else {
+                    defaultValues = join(", ", lowercase(defaults));
+                }
 
                 getLogger().debug("Using default \'" + property + "=" + defaultValues + "\'" + possibleValues);
             }
