@@ -53,7 +53,7 @@
     <repository>
       <id>eclipselink-repo</id>
       <name>EclipseLink Repository</name>
-      <url>http://ftp.kaist.ac.kr/eclipse/rt/eclipselink/maven.repo</url>
+      <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
     </repository>
   </repositories>
   <dependencies>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.2</version>
       <scope>test</scope>
     </dependency>
 
