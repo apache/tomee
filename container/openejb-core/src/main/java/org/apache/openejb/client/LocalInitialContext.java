@@ -250,9 +250,6 @@ public class LocalInitialContext extends ContextWrapper {
 
         if (injections == null) throw new NamingException("Unable to find injection meta-data for "+obj.getClass().getName()+".  Ensure that class was annotated with @"+ LocalClient.class.getName()+" and was successfully discovered and deployed.  See http://openejb.apache.org/3.0/local-client-injection.html");
 
-        Map<String,Object> env = Debug.contextToMap(context);
-
-
         try {
             InjectionProcessor processor = new InjectionProcessor(obj, injections, context);
 
