@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.URLs;
 
@@ -41,6 +42,7 @@ public class AltDDPrefixTest extends TestCase {
      * @throws Exception
      */
     public void testTestOnlyModule() throws Exception {
+	System.out.println("*** testTestOnlyModule ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "test");
         ConfigurationFactory factory = new ConfigurationFactory();
@@ -53,6 +55,7 @@ public class AltDDPrefixTest extends TestCase {
     }
 
     public void testMultitplePrefixes() throws Exception {
+	System.out.println("*** testMultitplePrefixes ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
         ConfigurationFactory factory = new ConfigurationFactory();
@@ -73,6 +76,55 @@ public class AltDDPrefixTest extends TestCase {
         assertEquals("EjbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size()", 4, ejbJar.enterpriseBeans.get(0).jndiEnc.envEntries.size());
 
 
+    }
+    
+    /**
+     * OPENEJB-1059: altdd does not work with a persistence.xml when no embedded
+     * in EjbModule/Client module.
+     * 
+     * @throws Exception if something wrong happen
+     */
+    public void testPersistenceUnit() throws Exception {
+	System.out.println("*** testPersistenceUnit ***");
+        Assembler assmbler = new Assembler();
+        SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
+        File file = URLs.toFile(resource);
+        AppInfo appInfo = factory.configureApplication(file);
+        assertNotNull(appInfo);
+        assertEquals(0, appInfo.ejbJars.size());
+        assertEquals(1, appInfo.persistenceUnits.size());
+        
+        PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
+        assertTrue(info.id.startsWith("footest-unit ")); // a space must be present before hashcode
+
+//        appInfo = factory.configureApplication(file);
+    }
+
+    /**
+     * OPENEJB-1059: altdd does not work with a persistence.xml when no embedded
+     * in EjbModule/Client module.
+     * 
+     * @throws Exception if something wrong happen
+     */
+    public void testPersistenceUnitWithAllDD() throws Exception {
+	System.out.println("*** testPersistenceUnitWithAllDD ***");
+        Assembler assmbler = new Assembler();
+        // TODO should be better to add a remove property method
+        SystemInstance.get().setProperty("openejb.altdd.prefix", "");
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
+        File file = URLs.toFile(resource);
+        AppInfo appInfo = factory.configureApplication(file);
+        assertNotNull(appInfo);
+        assertEquals(0, appInfo.ejbJars.size());
+        assertEquals(1, appInfo.persistenceUnits.size());
+        
+        PersistenceUnitInfo info = appInfo.persistenceUnits.get(0);
+        assertTrue(info.id.startsWith("unit ")); // a space must be present before hashcode
     }
 
     public class OrangeBean implements OrangeLocal {

@@ -47,6 +47,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options.Log;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
@@ -200,7 +201,6 @@ public class DeploymentLoader {
         ClassLoader tmpClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{appUrl}, OpenEJB.class.getClassLoader());
 
         ResourceFinder finder = new ResourceFinder("", tmpClassLoader, appUrl);
-
         Map<String, URL> appDescriptors = getDescriptors(finder);
 
         try {
@@ -943,41 +943,41 @@ public class DeploymentLoader {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected static void addPersistenceUnits(AppModule appModule, URL... urls) {
-        try {
-            // any class loader will do here since we are not calling class loading methods of resource finder
-            ResourceFinder finder = new ResourceFinder("", ClassLoader.getSystemClassLoader(), urls);
-            List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
-            if (persistenceUrls == null) {
-                persistenceUrls = new ArrayList<URL>();
-                appModule.getAltDDs().put("persistence.xml", persistenceUrls);
-            }
-            persistenceUrls.addAll(finder.findAll("META-INF/persistence.xml"));
-        } catch (IOException e) {
-            logger.warning("Cannot load persistence-units from 'META-INF/persistence.xml' : " + e.getMessage(), e);
+    protected static void addPersistenceUnits(AppModule appModule, URL... urls) throws OpenEJBException {
+	
+	// OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been 
+	// processed by the altdd code, so anything in here should not cause OPENEJB-1059 
+	List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+        if (persistenceUrls == null) {
+            persistenceUrls = new ArrayList<URL>();
+            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+        }
+        
+        // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
+        // delegates to xbean finder for going throughout the list
+        ResourceFinder finder = new ResourceFinder("", ClassLoader.getSystemClassLoader(), urls);
+        Map<String, URL> descriptors = getDescriptors(finder);
+
+        // if a persistence.xml has been found, just pull it to the list
+        if (descriptors.containsKey("persistence.xml")) {
+            persistenceUrls.add(descriptors.get("persistence.xml"));
         }
     }
 
     private static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
 
         ResourceFinder finder = new ResourceFinder(moduleUrl);
-
         return getDescriptors(finder);
     }
 
     private static Map<String, URL> getDescriptors(ResourceFinder finder) throws OpenEJBException {
         try {
 
-            return altDDSources(finder.getResourcesMap("META-INF/"));
+            return altDDSources(finder.getResourcesMap("META-INF/"), true);
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }
-    }
-
-    private static Map<String, URL> altDDSources(Map<String, URL> map) {
-
-        return altDDSources(map, true);
     }
 
     public static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
@@ -1009,6 +1009,7 @@ public class DeploymentLoader {
 
         if (log) {
             for (Map.Entry<String, URL> alt : alts.entrySet()) {
+//        	module.getValidation().warn("DeploymentLoader", "altdd.overriden", alt.getKey(), alt.getValue().toExternalForm());
                 logger.info("AltDD " + alt.getKey() + " -> " + alt.getValue().toExternalForm());
             }
         }
@@ -1107,7 +1108,6 @@ public class DeploymentLoader {
 
     public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
-
         Map<String, URL> descriptors = altDDSources(finder.getResourcesMap("META-INF/"), false);
 
         String path = baseUrl.getPath();
@@ -1209,4 +1209,5 @@ public class DeploymentLoader {
         }
         return baseUrl;
     }
+    
 }
