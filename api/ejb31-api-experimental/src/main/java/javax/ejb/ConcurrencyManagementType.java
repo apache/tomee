@@ -25,5 +25,5 @@ package javax.ejb;
  * @version $Revision$ $Date$
  */
 public enum ConcurrencyManagementType {
-    BEAN, CONCURRENCY_NOT_ALLOWED, CONTAINER;
+    BEAN, CONTAINER;
 }
