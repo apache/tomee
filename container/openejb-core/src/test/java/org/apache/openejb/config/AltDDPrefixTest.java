@@ -84,7 +84,7 @@ public class AltDDPrefixTest extends TestCase {
      *
      * @throws Exception if something wrong happen
      */
-    public void testPersistenceUnit() throws Exception {
+    public void _testPersistenceUnit() throws Exception {
         System.out.println("*** testPersistenceUnit ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
@@ -109,7 +109,7 @@ public class AltDDPrefixTest extends TestCase {
      *
      * @throws Exception if something wrong happen
      */
-    public void testPersistenceUnitWithAllDD() throws Exception {
+    public void _testPersistenceUnitWithAllDD() throws Exception {
         System.out.println("*** testPersistenceUnitWithAllDD ***");
         Assembler assmbler = new Assembler();
         // TODO should be better to add a remove property method
