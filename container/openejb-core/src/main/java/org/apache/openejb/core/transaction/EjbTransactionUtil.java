@@ -142,15 +142,15 @@ public final class EjbTransactionUtil {
         txPolicy.setRollbackOnly();
 
         // Throw InvalidateReferenceException
-        if (txPolicy.isNewTransaction()) {
-            // no transaction or in a new transaction for this method call
-            RemoteException re = new RemoteException("The bean encountered a non-application exception", sysException);
-            throw new InvalidateReferenceException(re);
-        } else {
+        if (txPolicy.isClientTransaction()) {
             // using caller's transaction
             String message = "The transaction has been marked rollback only because the bean encountered a non-application exception :" + sysException.getClass().getName() + " : " + sysException.getMessage();
             TransactionRolledbackException txException = new TransactionRolledbackException(message, sysException);
             throw new InvalidateReferenceException(txException);
+        } else {
+            // no transaction or in a new transaction for this method call
+            RemoteException re = new RemoteException("The bean encountered a non-application exception", sysException);
+            throw new InvalidateReferenceException(re);
         }
     }
 
