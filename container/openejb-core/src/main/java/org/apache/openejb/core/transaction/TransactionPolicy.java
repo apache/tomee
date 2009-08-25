@@ -39,7 +39,7 @@ public interface TransactionPolicy {
     TransactionType getTransactionType();
 
     /**
-     * Is this a new transaction and not an inhreited transaction?  Some
+     * Is this a new transaction and not an inhreited transaction or no transaction?  Some
      * TransactionTypes, such as Required or Supported, use the caller's
      * transaction instead of starting a new transaction.  If there is no active
      * transaction (e.g., TransactionType is NotSupported), this method will
@@ -47,6 +47,18 @@ public interface TransactionPolicy {
      * @return true if this not an inherited transaction
      */
     boolean isNewTransaction();
+
+
+    /**
+     * Is this policy running in an inhreited transaction?  Some
+     * TransactionTypes, such as Required or Supported, use the caller's
+     * transaction instead of starting a new transaction.  If there is no active
+     * transaction (e.g., TransactionType is NotSupported), this method will
+     * return false.
+     *
+     * @return true if this is an inherited transaction
+     */
+    boolean isClientTransaction();
 
     /**
      * Is there a actual transaction active?

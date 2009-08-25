@@ -54,6 +54,10 @@ public class TxMandatory extends JtaTransactionPolicy {
         return false;
     }
 
+    public boolean isClientTransaction() {
+        return true;
+    }
+
     protected Transaction getCurrentTrasaction() {
         return clientTx;
     }

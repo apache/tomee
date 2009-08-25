@@ -53,6 +53,10 @@ public class TxNotSupported extends JtaTransactionPolicy {
         return false;
     }
 
+    public boolean isClientTransaction() {
+        return false;
+    }
+    
     protected Transaction getCurrentTrasaction() {
         return null;
     }

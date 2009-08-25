@@ -48,7 +48,11 @@ public class TxSupports extends JtaTransactionPolicy {
     }
 
     public boolean isNewTransaction() {
-        return clientTx == null;
+        return false;
+    }
+
+    public boolean isClientTransaction() {
+        return clientTx != null;
     }
 
     protected Transaction getCurrentTrasaction() {

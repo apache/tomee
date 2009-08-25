@@ -86,6 +86,11 @@ public class SpringTransactionPolicy implements TransactionPolicy {
         return getTransactionStatus().isNewTransaction();
     }
 
+    public boolean isClientTransaction() {
+        DefaultTransactionStatus status = getTransactionStatus();
+        return status.hasTransaction() && !status.isNewSynchronization();
+    }
+
     public boolean isTransactionActive() {
         return !getTransactionStatus().isCompleted() && getTransactionStatus().hasTransaction();
     }

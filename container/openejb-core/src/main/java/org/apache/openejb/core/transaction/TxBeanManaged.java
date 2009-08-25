@@ -38,6 +38,10 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         return false;
     }
 
+    public boolean isClientTransaction() {
+        return false;
+    }
+
     protected Transaction getCurrentTrasaction() {
         try {
             return getTransaction();
