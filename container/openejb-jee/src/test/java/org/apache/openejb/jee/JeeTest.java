@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Revision$ $Date$
@@ -83,6 +84,33 @@ public class JeeTest extends TestCase {
         marshaller.marshal(object, baos);
 
         System.out.println("time: " + (System.currentTimeMillis() - start));
+    }
+
+    public void testEjbJarMdb20() throws Exception {
+        String fileName = "ejb-jar-mdb-2.0.xml";
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
+        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+
+        EjbJar ejbJar = (EjbJar) o;
+
+        MessageDrivenBean bean = (MessageDrivenBean) ejbJar.getEnterpriseBean("MyMdb");
+
+        Properties properties = bean.getActivationConfig().toProperties();
+
+        assertEquals(4, properties.size());
+        /*
+      <message-selector>mySelector</message-selector>
+      <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+      <message-driven-destination>
+        <destination-type>javax.jms.Queue</destination-type>
+        <subscription-durability>Durable</subscription-durability>
+
+         */
+        assertEquals("mySelector", properties.get("messageSelector"));
+        assertEquals("Auto-acknowledge", properties.get("acknowledgeMode"));
+        assertEquals("javax.jms.Queue", properties.get("destinationType"));
+        assertEquals("Durable", properties.get("subscriptionDurability"));
     }
 
     public void testApplication() throws Exception {
