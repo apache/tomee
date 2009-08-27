@@ -33,6 +33,7 @@ import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
+import javax.ejb.NoSuchEJBException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -383,7 +384,6 @@ public class StatefulContainer implements RpcContainer {
             try {
                 // Obtain instance
                 instance = obtainInstance(primKey, callContext);
-                if (instance == null) throw new ApplicationException(new javax.ejb.NoSuchEJBException());
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
@@ -425,6 +425,8 @@ public class StatefulContainer implements RpcContainer {
                 } else {
                     returnValue = interceptorStack.invoke(args);
                 }
+            } catch (InvalidateReferenceException e) {
+                throw e;
             } catch (Throwable e) {
                 if (interfaceType.isBusiness()) {
                     retain = deploymentInfo.retainIfExeption(runMethod);
