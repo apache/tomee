@@ -91,6 +91,8 @@ import java.util.Map;
         "messagingType",
         "timeoutMethod",
         "transactionType",
+        "messageSelector",
+        "acknowledgeMode",
         "messageDrivenDestination",
         "messageDestinationType",
         "messageDestinationLink",
@@ -130,8 +132,6 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected NamedMethod timeoutMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
-    @XmlElement(name = "message-driven-destination")
-    protected MessageDrivenDestination messageDrivenDestination;
     @XmlElement(name = "message-destination-type")
     protected String messageDestinationType;
     @XmlElement(name = "message-destination-link")
@@ -300,12 +300,46 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.timeoutMethod = value;
     }
 
+
     public MessageDrivenDestination getMessageDrivenDestination() {
-        return messageDrivenDestination;
+        return null;
     }
 
+    @XmlElement(name = "message-driven-destination")
     public void setMessageDrivenDestination(MessageDrivenDestination value) {
-        this.messageDrivenDestination = value;
+        if (activationConfig == null) activationConfig = new ActivationConfig();
+        DestinationType destinationType = value.getDestinationType();
+        if (destinationType != null) {
+            activationConfig.addProperty("destinationType", destinationType.getvalue());
+        }
+        SubscriptionDurability subscriptionDurability = value.getSubscriptionDurability();
+        if (subscriptionDurability != null) {
+            activationConfig.addProperty("subscriptionDurability", subscriptionDurability.getvalue());
+        }
+    }
+
+    @XmlElement(name = "message-selector")
+    public String getMessageSelector() {
+        return null;
+    }
+
+    public void setMessageSelector(String messageSelector) {
+        if (messageSelector != null) {
+            if (activationConfig == null) activationConfig = new ActivationConfig();
+            activationConfig.addProperty("messageSelector", messageSelector);
+        }
+    }
+
+    @XmlElement(name = "acknowledge-mode")
+    public String getAcknowledgeMode() {
+        return null;
+    }
+
+    public void setAcknowledgeMode(String acknowledgeMode) {
+        if (acknowledgeMode != null) {
+            if (activationConfig == null) activationConfig = new ActivationConfig();
+            activationConfig.addProperty("acknowledgeMode", acknowledgeMode);
+        }
     }
 
     public TransactionType getTransactionType() {
@@ -350,23 +384,6 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     }
 
     public ActivationConfig getActivationConfig() {
-        // convert the message-driven-destination to activation-config-property
-        // OPENEJB-701 EJB 2.0 depricated message-driven-destination tag not supported
-        // https://issues.apache.org/jira/browse/OPENEJB-701
-        if (messageDrivenDestination != null) {
-            if (activationConfig == null) {
-                activationConfig = new ActivationConfig();
-            }
-            DestinationType destinationType = messageDrivenDestination.getDestinationType();
-            if (destinationType != null) {
-                activationConfig.addProperty("destinationType", destinationType.getvalue());
-            }
-            SubscriptionDurability subscriptionDurability = messageDrivenDestination.getSubscriptionDurability();
-            if (subscriptionDurability != null) {
-                activationConfig.addProperty("subscriptionDurability", subscriptionDurability.getvalue());
-            }
-            messageDrivenDestination = null;
-        }
         return activationConfig;
     }
 
