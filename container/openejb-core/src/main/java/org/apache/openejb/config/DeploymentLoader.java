@@ -1148,15 +1148,16 @@ public class DeploymentLoader {
             AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
 
             final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet();
-            
+
             AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
+                final String packageName = LocalClient.class.getName().replace("LocalClient", "");
                 public boolean accept(String annotationName) {
                     if (annotationName.startsWith("javax.ejb.")) {
                         if ("javax.ejb.Stateful".equals(annotationName)) return true;
                         if ("javax.ejb.Stateless".equals(annotationName)) return true;
                         if ("javax.ejb.Singleton".equals(annotationName)) return true;
                         if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
-                    } else if (annotationName.startsWith("org.apache.openejb.annotation.")){
+                    } else if (annotationName.startsWith(packageName)){
                         if (LocalClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                         if (RemoteClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                     }
