@@ -38,14 +38,17 @@ import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
-import org.codehaus.swizzle.stream.StringTemplate;
+import org.apache.openejb.util.StringTemplate;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 
 /**
@@ -160,18 +163,20 @@ public class JndiBuilder {
     // TODO: put these into the classpath and get them with xbean-finder
     public static class TemplatedStrategy implements JndiNameStrategy {
         private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
-        private org.codehaus.swizzle.stream.StringTemplate template;
+        private org.apache.openejb.util.StringTemplate template;
         private HashMap<String, EnterpriseBeanInfo> beanInfos;
 
         // Set in begin()
         private DeploymentInfo deploymentInfo;
         // Set in begin()
         private Map<String, StringTemplate> templates;
+        
+        private String format;
 
         public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
             Options options = new Options(ejbJarInfo.properties, SystemInstance.get().getOptions());
 
-            String format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
+            format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
 
             this.template = new StringTemplate(format);
 
@@ -222,6 +227,7 @@ public class JndiBuilder {
             contextData.put("interfaceClass", interfce.getName());
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
             contextData.put("interfaceClass.packageName", packageName(interfce));
+
             return template.apply(contextData);
         }
     }

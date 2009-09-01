@@ -17,31 +17,34 @@
 
 package org.apache.openejb.config;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Properties;
-import java.io.IOException;
+
+import junit.framework.TestCase;
 
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.loader.SystemInstance;
 
 public class JndiNameFormatTest extends TestCase {
 
-    public void setUp() throws OpenEJBException, NamingException, IOException {
-        System.setProperty("openejb.jndiname.format", "{ejbName}/{interfaceType.annotationNameLC}");
+	private Assembler assembler;
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+	private void deploy(String format) throws OpenEJBException, IOException, NamingException {
+		SystemInstance.get().setProperty("openejb.jndiname.format", format);
+
+		ConfigurationFactory config = new ConfigurationFactory();
+        assembler = new Assembler();
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
@@ -53,18 +56,61 @@ public class JndiNameFormatTest extends TestCase {
         app.getEjbModules().add(new EjbModule(ejbJar));
 
         assembler.createApplication(config.configureApplication(app));
-    }
+	}
 
     public void testShouldLookupDeployBeanWithLowercaseInterfaceName() throws Exception {
-        Properties p = new Properties();
+        deploy("{ejbName}/{interfaceType.annotationName.lc}");
+    	
+    	Properties p = new Properties();
         p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         InitialContext context = new InitialContext(p);
         Echo echo = (Echo) context.lookup("EchoImpl/remote");
 
         assertEquals("Echoing: This is a test", echo.echo("This is a test"));
+        assembler.destroy();
     }
 
+    public void testShouldLookupDeployBeanWithUppercaseInterfaceName() throws Exception {
+        deploy("{ejbName}/{interfaceType.annotationName.uc}");
+    	
+    	Properties p = new Properties();
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+
+        InitialContext context = new InitialContext(p);
+        Echo echo = (Echo) context.lookup("EchoImpl/REMOTE");
+
+        assertEquals("Echoing: This is a test", echo.echo("This is a test"));
+        assembler.destroy();
+    }
+
+    public void testShouldLookupDeployBeanWithCamelCaseInterfaceName() throws Exception {
+        deploy("{ejbName}/{interfaceType.annotationName.cc}");
+    	
+    	Properties p = new Properties();
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+
+        InitialContext context = new InitialContext(p);
+        Echo echo = (Echo) context.lookup("EchoImpl/Remote");
+
+        assertEquals("Echoing: This is a test", echo.echo("This is a test"));
+        assembler.destroy();
+    }
+
+    public void testShouldLookupDeployBeanLowerCaseClassNameAndUpperCaseInterfaceName() throws Exception {
+        deploy("{ejbName.lc}/{interfaceType.annotationName.uc}");
+    	
+    	Properties p = new Properties();
+        p.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+
+        InitialContext context = new InitialContext(p);
+        Echo echo = (Echo) context.lookup("echoimpl/REMOTE");
+
+        assertEquals("Echoing: This is a test", echo.echo("This is a test"));
+        assembler.destroy();
+    }
+
+    
     @Remote
     public static interface Echo {
         String echo(String input);
