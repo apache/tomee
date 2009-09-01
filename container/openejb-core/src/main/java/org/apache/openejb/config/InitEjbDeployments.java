@@ -31,7 +31,7 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.PersistenceType;
-import org.codehaus.swizzle.stream.StringTemplate;
+import org.apache.openejb.util.StringTemplate;
 
 public class InitEjbDeployments implements DynamicDeployer {
     public static Messages messages = new Messages("org.apache.openejb.util.resources");

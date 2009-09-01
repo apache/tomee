@@ -20,7 +20,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.codehaus.swizzle.stream.StringTemplate;
+import org.apache.openejb.util.StringTemplate;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
@@ -170,8 +170,8 @@ public class ServiceDaemon implements ServerService {
 
             DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
             if (agent != null && discoveryUriFormat != null) {
-                Map map = new HashMap();
-                map.put("port", port);
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("port", Integer.toString(port));
                 map.put("host", ip);
                 map.put("bind", ip);
                 String uriString = discoveryUriFormat.apply(map);

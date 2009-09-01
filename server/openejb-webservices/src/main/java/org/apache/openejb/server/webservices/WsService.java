@@ -44,7 +44,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Injection;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.codehaus.swizzle.stream.StringTemplate;
+import org.apache.openejb.util.StringTemplate;
 
 import javax.naming.Context;
 import java.util.Properties;
