@@ -4,7 +4,7 @@ As stated in the "JSR 220: Enterprise JavaBeansTM,Version 3.0 - EJB Core Contrac
 
 "Stateless session beans are session beans whose instances have no conversational state. This means that
 all bean instances are equivalent when they are not involved in servicing a client-invoked method.
-The term 'stateless' signiﬁes that an instance has no state for a speciﬁc client."
+The term 'stateless' signifies that an instance has no state for a specific client."
 
 With EJB 3.0, it's now possible to write stateless session bean without specifying a deployment descriptor; you basically have to write just
 
