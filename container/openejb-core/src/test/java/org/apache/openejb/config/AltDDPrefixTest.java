@@ -84,7 +84,7 @@ public class AltDDPrefixTest extends TestCase {
      *
      * @throws Exception if something wrong happen
      */
-    public void _testPersistenceUnit() throws Exception {
+    public void testPersistenceUnit() throws Exception {
         System.out.println("*** testPersistenceUnit ***");
         Assembler assmbler = new Assembler();
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
@@ -109,11 +109,11 @@ public class AltDDPrefixTest extends TestCase {
      *
      * @throws Exception if something wrong happen
      */
-    public void _testPersistenceUnitWithAllDD() throws Exception {
+    public void testPersistenceUnitWithAllDD() throws Exception {
         System.out.println("*** testPersistenceUnitWithAllDD ***");
         Assembler assmbler = new Assembler();
         // TODO should be better to add a remove property method
-        SystemInstance.get().setProperty("openejb.altdd.prefix", "");
+        SystemInstance.get().getProperties().remove("openejb.altdd.prefix");
         ConfigurationFactory factory = new ConfigurationFactory();
 
         URL resource = AltDDPrefixTest.class.getClassLoader().getResource("altddPU1");
