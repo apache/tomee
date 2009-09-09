@@ -953,14 +953,17 @@ public class DeploymentLoader {
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
 
-        // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
-        // delegates to xbean finder for going throughout the list
-        ResourceFinder finder = new ResourceFinder("", ClassLoader.getSystemClassLoader(), urls);
-        Map<String, URL> descriptors = getDescriptors(finder);
 
-        // if a persistence.xml has been found, just pull it to the list
-        if (descriptors.containsKey("persistence.xml")) {
-            persistenceUrls.add(descriptors.get("persistence.xml"));
+        for (URL url : urls) {
+            // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
+            // delegates to xbean finder for going throughout the list
+            ResourceFinder finder = new ResourceFinder("", appModule.getClassLoader(), url);
+            Map<String, URL> descriptors = getDescriptors(finder);
+
+            // if a persistence.xml has been found, just pull it to the list
+            if (descriptors.containsKey("persistence.xml")) {
+                persistenceUrls.add(descriptors.get("persistence.xml"));
+            }
         }
     }
 
