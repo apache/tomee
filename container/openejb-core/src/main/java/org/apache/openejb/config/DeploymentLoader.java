@@ -944,15 +944,15 @@ public class DeploymentLoader {
 
     @SuppressWarnings({"unchecked"})
     protected static void addPersistenceUnits(AppModule appModule, URL... urls) throws OpenEJBException {
-	
-	// OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been 
-	// processed by the altdd code, so anything in here should not cause OPENEJB-1059 
-	List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+
+        // OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been
+        // processed by the altdd code, so anything in here should not cause OPENEJB-1059
+        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
         if (persistenceUrls == null) {
             persistenceUrls = new ArrayList<URL>();
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
-        
+
         // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
         // delegates to xbean finder for going throughout the list
         ResourceFinder finder = new ResourceFinder("", ClassLoader.getSystemClassLoader(), urls);
