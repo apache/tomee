@@ -47,7 +47,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options.Log;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
@@ -410,6 +409,10 @@ public class DeploymentLoader {
     }
 
     protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws OpenEJBException {
+        return createClientModule(clientUrl, absolutePath, appClassLoader, moduleName, true);
+    }
+
+    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName, boolean log) throws OpenEJBException {
         ResourceFinder clientFinder = new ResourceFinder(clientUrl);
 
         URL manifestUrl = null;
@@ -431,7 +434,8 @@ public class DeploymentLoader {
         }
 
 //        if (mainClass == null) throw new IllegalStateException("No Main-Class defined in META-INF/MANIFEST.MF file");
-        Map<String, URL> descriptors = getDescriptors(clientUrl);
+
+        Map<String, URL> descriptors = getDescriptors(clientFinder, log);
 
         ApplicationClient applicationClient = null;
         URL clientXmlUrl = descriptors.get("application-client.xml");
@@ -467,7 +471,7 @@ public class DeploymentLoader {
             ejbModule.getWatchedResources().add(URLs.toFilePath(ejbJarXmlUrl));
         }
 
-        ejbModule.setClientModule(createClientModule(baseUrl, jarPath, classLoader, null));
+        ejbModule.setClientModule(createClientModule(baseUrl, jarPath, classLoader, null, false));
 
         // load webservices descriptor
         addWebservices(ejbModule);
@@ -958,11 +962,22 @@ public class DeploymentLoader {
             // OPENEJB-1059: looking for an altdd persistence.xml file in all urls
             // delegates to xbean finder for going throughout the list
             ResourceFinder finder = new ResourceFinder("", appModule.getClassLoader(), url);
-            Map<String, URL> descriptors = getDescriptors(finder);
+            Map<String, URL> descriptors = getDescriptors(finder, false);
 
             // if a persistence.xml has been found, just pull it to the list
             if (descriptors.containsKey("persistence.xml")) {
-                persistenceUrls.add(descriptors.get("persistence.xml"));
+                URL descriptor = descriptors.get("persistence.xml");
+
+                // don't add it if already present
+                if (persistenceUrls.contains(descriptor)) continue;
+
+                // log if it is an altdd
+                String urlString = descriptor.toExternalForm();
+                if (!urlString.contains("META-INF/persistence.xml")) {
+                    logger.info("AltDD persistence.xml -> " + urlString);
+                }
+                
+                persistenceUrls.add(descriptor);
             }
         }
     }
@@ -974,15 +989,26 @@ public class DeploymentLoader {
     }
 
     private static Map<String, URL> getDescriptors(ResourceFinder finder) throws OpenEJBException {
+        return getDescriptors(finder, true);
+    }
+
+    private static Map<String, URL> getDescriptors(ResourceFinder finder, boolean log) throws OpenEJBException {
         try {
 
-            return altDDSources(finder.getResourcesMap("META-INF/"), true);
+            return altDDSources(finder.getResourcesMap("META-INF/"), log);
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }
     }
 
+    /**
+     * Modifies the map passed in with all the alt dd URLs found
+     *
+     * @param map
+     * @param log
+     * @return the same map instance updated with alt dds
+     */
     public static Map<String, URL> altDDSources(Map<String, URL> map, boolean log) {
         String prefixes = SystemInstance.get().getProperty(OPENEJB_ALTDD_PREFIX);
 
@@ -1002,21 +1028,22 @@ public class DeploymentLoader {
                 URL value = entry.getValue();
                 if (key.startsWith(prefix)) {
                     key = key.substring(prefix.length());
-                    map.put(key, value);
 
-                    // for logging once all is resolved
                     alts.put(key, value);
                 }
             }
         }
 
-        if (log) {
-            for (Map.Entry<String, URL> alt : alts.entrySet()) {
-//        	module.getValidation().warn("DeploymentLoader", "altdd.overriden", alt.getKey(), alt.getValue().toExternalForm());
-                logger.info("AltDD " + alt.getKey() + " -> " + alt.getValue().toExternalForm());
-            }
-        }
+        for (Map.Entry<String, URL> alt : alts.entrySet()) {
+            String key = alt.getKey();
+            URL value = alt.getValue();
 
+            // don't add and log if the same key/value is already in the map
+            if (value.equals(map.get(key))) continue;
+            
+            if (log) logger.info("AltDD " + key + " -> " + value.toExternalForm());
+            map.put(key, value);
+        }
 
         return map;
     }
@@ -1213,5 +1240,5 @@ public class DeploymentLoader {
         }
         return baseUrl;
     }
-    
+
 }
