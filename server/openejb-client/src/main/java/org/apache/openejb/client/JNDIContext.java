@@ -56,6 +56,7 @@ public class JNDIContext implements InitialContextFactory, Context {
     private ClientMetaData client;
     private Hashtable env;
     private String moduleId;
+    private ClientInstance clientIdentity;
 
     public JNDIContext() {
     }
@@ -69,6 +70,7 @@ public class JNDIContext implements InitialContextFactory, Context {
         this.client = that.client;
         this.moduleId = that.moduleId;
         this.env = (Hashtable) that.env.clone();
+        this.clientIdentity = that.clientIdentity;
     }
 
     private JNDIResponse request(JNDIRequest req) throws Exception {

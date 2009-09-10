@@ -32,6 +32,10 @@ public class ClusterResponse implements Response {
     private ClusterMetaData updatedMetaData;
     private Throwable failure;
 
+    public ClusterResponse(Code responseCode) {
+        this.responseCode = responseCode;
+    }
+
     public ClusterResponse() {
     }
 

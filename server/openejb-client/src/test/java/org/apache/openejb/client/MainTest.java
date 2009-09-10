@@ -38,10 +38,11 @@ import java.util.TreeMap;
 import java.security.AccessController;
 
 public class MainTest extends TestCase {
-    static {
+
+    private static void initialize() {
         try {
             NamingManager.setInitialContextFactoryBuilder(new MockContextFactoryBuilder());
-        } catch (NamingException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -49,6 +50,7 @@ public class MainTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
+        initialize();
         LoginTestUtil.initialize();
 
         jndi.clear();
