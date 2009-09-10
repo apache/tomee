@@ -47,21 +47,15 @@ import javax.sql.DataSource;
 /** 
  * @version $Rev$ $Date$
  */
-public class JNDIContext implements Serializable, InitialContextFactory, Context {
+public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
 
-    private static final long serialVersionUID = 1L;
-
-    private transient String tail = "/";
-    private transient ServerMetaData server;
-    private transient ClientMetaData client;
-    private transient Hashtable env;
+    private String tail = "/";
+    private ServerMetaData server;
+    private ClientMetaData client;
+    private Hashtable env;
     private String moduleId;
-
-    JNDIContext(Hashtable environment) throws NamingException {
-        init(environment);
-    }
 
     public JNDIContext() {
     }
@@ -77,9 +71,6 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
         this.env = (Hashtable) that.env.clone();
     }
 
-    public void init(Hashtable environment) throws NamingException {
-    }
-
     private JNDIResponse request(JNDIRequest req) throws Exception {
         req.setServerHash(server.buildHash());
         
@@ -89,14 +80,6 @@ public class JNDIContext implements Serializable, InitialContextFactory, Context
             server.merge(response.getServer());
         }
         return response;
-    }
-
-    public static void print(String s) {
-
-    }
-
-    public static void println(String s) {
-
     }
 
     protected AuthenticationResponse requestAuthorization(AuthenticationRequest req) throws RemoteException {
