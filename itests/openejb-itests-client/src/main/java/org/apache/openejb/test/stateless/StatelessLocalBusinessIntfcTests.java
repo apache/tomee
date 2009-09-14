@@ -131,4 +131,34 @@ public class StatelessLocalBusinessIntfcTests extends StatelessTestClient {
         Object obj = businessLocal.remove();
         assertNotNull(obj);
     }
+    
+    /**
+     * Throw an (annotated) application exception and make sure the exception
+     * reaches the bean nicely.
+     */
+    public void test07_throwAnnotatedApplicationException(){
+        try{
+            businessLocal.throwAnnotatedApplicationException();
+        } catch (org.apache.openejb.test.AnnotatedApplicationException e){
+            //Good.  This is the correct behaviour
+            return;
+        } catch (Throwable e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+        fail("An AnnotatedApplicationException should have been thrown.");
+    }
+
+    /**
+     * After an (annotated) application exception we should still be able to
+     * use our bean
+     */
+    public void test08_invokeAfterAnnotatedApplicationException(){
+        try{
+            String expected = "Success";
+            String actual   = businessLocal.businessMethod("sseccuS");
+            assertEquals(expected, actual);
+        } catch (Throwable e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
 }
