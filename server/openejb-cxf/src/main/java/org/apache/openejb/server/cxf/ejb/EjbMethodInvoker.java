@@ -17,6 +17,15 @@
  */
 package org.apache.openejb.server.cxf.ejb;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.interceptor.InvocationContext;
+import javax.xml.ws.WebFault;
+import javax.xml.ws.handler.MessageContext;
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxws.context.WebServiceContextImpl;
@@ -24,18 +33,12 @@ import org.apache.cxf.jaxws.support.ContextPropertiesMapping;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.service.invoker.AbstractInvoker;
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
-import javax.interceptor.InvocationContext;
-import javax.xml.ws.handler.MessageContext;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EjbMethodInvoker extends AbstractInvoker {
     private static final Logger log = Logger.getInstance(LogCategory.CXF, EjbMethodInvoker.class);
@@ -71,8 +74,9 @@ public class EjbMethodInvoker extends AbstractInvoker {
 
         MessageContext ctx = ContextPropertiesMapping.createWebServiceContext(exchange);
         WebServiceContextImpl.setMessageContext(ctx);
-
+        
         try {
+            
             EjbInterceptor interceptor = new EjbInterceptor(params, method, this.bus, exchange);
             Object[] arguments = {ctx, interceptor};
 
@@ -90,8 +94,34 @@ public class EjbMethodInvoker extends AbstractInvoker {
             if (!method.getReturnType().getName().equals("void")) {
                 retList.add(res);
             }
-
+            
             return retList;
+         
+        // OPENEJB-965: must check if the application exception is a web fault.
+        } catch (ApplicationException e) {
+            // when no handler is defined, EjbInterceptor will directly delegate
+            // to #directEjbInvoke. So if an application exception is thrown by
+            // the end user, when must consider the ApplicationException as a 
+            // web fault if it contains the @WebFault exception
+            Throwable t = e.getCause();
+            if (t != null) {
+        	if (	t.getClass().isAssignableFrom(RuntimeException.class) &&
+        		t.getClass().isAnnotationPresent(javax.ejb.ApplicationException.class)) {
+        	    // it's not a checked exception so it can not be a WebFault 
+		    throw (RuntimeException)t;
+		    
+		} else if (!t.getClass().isAnnotationPresent(WebFault.class)) {
+		    // not a web fault even if it's an EJB ApplicationException
+		    exchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
+	            throw new Fault(t);
+		}
+        	
+            } else { // may not occurs ...
+        	t = e;
+            }
+            // TODO may be we can change to FaultMode.CHECKED_APPLICATION_FAULT
+            exchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
+            throw new Fault(t);
         } catch (Exception e) {
             exchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
             throw new Fault(e);
