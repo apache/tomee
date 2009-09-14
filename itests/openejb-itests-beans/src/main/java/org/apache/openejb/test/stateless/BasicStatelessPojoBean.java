@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.test.stateless;
 
+import org.apache.openejb.test.AnnotatedApplicationException;
 import org.apache.openejb.test.ApplicationException;
 import org.apache.openejb.test.object.OperationsPolicy;
 
@@ -51,6 +52,14 @@ public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal, Basi
      */
     public void throwApplicationException() throws ApplicationException {
         throw new ApplicationException("Testing ability to throw Application Exceptions");
+    }
+    
+    /**
+     * Throws an ApplicationException when invoked
+     *
+     */
+    public void throwAnnotatedApplicationException() {
+        throw new AnnotatedApplicationException("Testing ability to throw Application Exceptions (annotated)");
     }
 
     /**
