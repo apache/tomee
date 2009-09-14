@@ -681,6 +681,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (clientModule.getMainClass() != null){
                 String className = clientModule.getMainClass();
+                
+                // OPENEJB-1063: a Main-Class should use "." instead of "/"
+                // it wasn't check before jdk 1.5 so we can get old module with
+                // bad format http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4986512
+                // replace all "/" by "."
+                if (className.indexOf("/") != -1) { // className can't be null here
+                    className = className.replaceAll("/", ".");
+                    clientModule.setMainClass(className);
+		}
 
                 Class clazz;
                 try {
