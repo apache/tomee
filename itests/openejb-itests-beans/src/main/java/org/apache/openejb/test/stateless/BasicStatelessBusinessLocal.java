@@ -43,6 +43,12 @@ public interface BasicStatelessBusinessLocal {
     public void throwApplicationException() throws ApplicationException;
 
     /**
+     * Throws an Annotated ApplicationException when invoked
+     *
+     */
+    public void throwAnnotatedApplicationException();
+
+    /**
      * Throws a java.lang.NullPointerException when invoked
      * This is a system exception and should result in the
      * destruction of the instance and invalidation of the
