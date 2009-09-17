@@ -301,12 +301,12 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         } catch (HeuristicMixedException e) {
 
             txLogger.debug("A heuristic decision was made, some relevant updates have been committed while others have been rolled back: {0}", e.getMessage());
-            throw new ApplicationException(new RemoteException("A heuristic decision was made, some relevant updates have been committed while others have been rolled back").initCause(e));
+            throw new ApplicationException(new RemoteException("A heuristic decision was made, some relevant updates have been committed while others have been rolled back", e));
 
         } catch (HeuristicRollbackException e) {
 
             txLogger.debug("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back: {0}", e.getMessage());
-            throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back").initCause(e));
+            throw new ApplicationException(new RemoteException("A heuristic decision was made while commiting the transaction, some relevant updates have been rolled back", e));
 
         } catch (SecurityException e) {
 
