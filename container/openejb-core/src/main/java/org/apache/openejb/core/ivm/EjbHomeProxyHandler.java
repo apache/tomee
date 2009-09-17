@@ -229,7 +229,13 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                     if (interfaceType.isLocal()) {
                         throw (AccessLocalException)new AccessLocalException(exc.getMessage()).initCause(exc);
                     } else {
-                        throw new AccessException(exc.getMessage()).initCause(exc);
+                        try {
+                            throw new AccessException(exc.getMessage()).initCause(exc);
+                        } catch (IllegalStateException vmbug) {
+                            // Sun JDK 1.5 bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4871783
+                            // bug affects using initCause on any RemoteException subclasses in Sun 1.5_07 or lower
+                            throw new AccessException(exc.getMessage(), (Exception) exc);
+                        }
                     }
                 }
 
