@@ -153,7 +153,7 @@ public class EntityInstanceManager {
                     bean.ejbLoad();
                 } catch (NoSuchEntityException e) {
                     wrapper.disassociate();
-                    throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey).initCause(e));
+                    throw new InvalidateReferenceException(new NoSuchObjectException("Entity not found: " + primaryKey, e));
                 } catch (Exception e) {
                     logger.error("Exception encountered during ejbLoad():", e);
                     //djencks not sure about this dissociate call
