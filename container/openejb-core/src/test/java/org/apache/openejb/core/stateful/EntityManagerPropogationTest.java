@@ -31,11 +31,13 @@ import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openjpa.persistence.ArgumentException;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Remove;
 import javax.ejb.NoSuchEJBException;
 import javax.naming.InitialContext;
@@ -55,6 +57,9 @@ public class EntityManagerPropogationTest extends TestCase {
         _testExtendedRemove();
         _testNotTooExtended();
         _testTransaction();
+	_testSFTr2SFEx();
+	_testSFEx2SLTr2SFEx();
+	_testSLTr2SFEx();
     }
 
     public void _testExtended() throws Exception {
@@ -160,7 +165,65 @@ public class EntityManagerPropogationTest extends TestCase {
         }
 
     }
+    
+    public void _testSFTr2SFEx() throws Exception {
 
+        InitialContext ctx = new InitialContext();
+
+        Node node = (Node) ctx.lookup("TransactionToExtendedLocal");
+
+        try {
+//	    System.out.println("SFSB+TPC --> SFSB+EPC");
+	    node.createUntilLeaf(5, "Yellow");
+	    
+	    fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
+	    		"\n\t--> we cannot have two persistence contexts associated with the transaction");
+	    
+	} catch (EJBException e) {
+	    // OK
+//	    System.out.println(e.getMessage());
+	}
+
+    }
+    
+    public void _testSFEx2SLTr2SFEx() throws Exception {
+
+        InitialContext ctx = new InitialContext();
+
+        Node node = (Node) ctx.lookup("ExtendedToTransactionLocal");
+        
+        try {
+//	    System.out.println("SFSB+EPC --> SLSB+TPC --> SFSB+EPC");
+	    node.createUntilLeaf(6, "red");
+	    
+	} catch (EJBException e) {
+	    fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
+		"\n\t--> the SFSB+EPC is the one who starts the transaction and then calls the " +
+		"SLSB+TPC who then calls back to the SFSB+EPC \n\t--> IT SHOULD WORK ...");
+	}
+
+    }
+
+    public void _testSLTr2SFEx() throws Exception {
+
+        InitialContext ctx = new InitialContext();
+
+        Node node = (Node) ctx.lookup("TransactionToExtendedLocal");
+        
+        try {
+//            System.out.println("SLSB+TPC --> SFSB+EPC");
+	    node.createUntilLeaf(8, "Yellow");
+	    
+	    fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
+	    		"\n\t--> we cannot have two persistence contexts associated with the transaction");
+	    
+	} catch (EJBException e) {
+	    // OK
+//	    System.out.println(e.getMessage());
+	}
+
+    }
+    
     public void setUp() throws OpenEJBException, IOException, NamingException {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
         System.setProperty("openejb.embedded", "true");
@@ -181,6 +244,7 @@ public class EntityManagerPropogationTest extends TestCase {
         addStatefulBean(ejbJar, ExtendedContextBean.class, "Extendedx2", "Extendedx3");
         addStatefulBean(ejbJar, ExtendedContextBean.class, "Extendedx3", "Extendedx4");
         addStatefulBean(ejbJar, ExtendedContextBean.class, "Extendedx4", "Extendedx5");
+        addStatefulBean(ejbJar, ExtendedContextBean.class, "ExtendedToTransaction", "StatelessTransactionToExtended");
         addStatefulBean(ejbJar, ExtendedContextBean.class, "Extendedx5", "Extendedx6");
         ejbJar.addEnterpriseBean(new StatefulBean("Extendedx6", EndNodeBean.class));
 
@@ -190,11 +254,19 @@ public class EntityManagerPropogationTest extends TestCase {
         addStatefulBean(ejbJar, TransactionContextBean.class, "Transactionx3", "Transactionx4");
         addStatefulBean(ejbJar, TransactionContextBean.class, "Transactionx4", "Transactionx5");
         addStatefulBean(ejbJar, TransactionContextBean.class, "Transactionx5", "Transactionx6");
+        addStatefulBean(ejbJar, TransactionContextBean.class, "TransactionToExtended", "Extendedx5");
+        
+        addStatelessBean(ejbJar, TransactionContextBean.class, "StatelessTransactionToExtended", "Extendedx5");
         ejbJar.addEnterpriseBean(new StatefulBean("Transactionx6", EndNodeBean.class));
-
+        
         ejbJar.setAssemblyDescriptor(new AssemblyDescriptor());
         ejbJar.getAssemblyDescriptor().addApplicationException(IllegalArgumentException.class, false);
         ejbJar.getAssemblyDescriptor().addApplicationException(ArgumentException.class, false);
+        
+//        List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+
+//        declared.add(new ContainerTransaction(TransAttribute.REQUIRED, ExtendedContextBean.class.getName(), "Extendedx5", "*"));
+//        declared.add(new ContainerTransaction(TransAttribute.REQUIRED, ExtendedContextBean.class.getName(), "TransactionToExtended", "*"));        
 
         EjbModule ejbModule = new EjbModule(ejbJar);
 
@@ -220,6 +292,11 @@ public class EntityManagerPropogationTest extends TestCase {
 
     private void addStatefulBean(EjbJar ejbJar, Class<?> ejbClass, String name, String reference) {
         StatefulBean bean = ejbJar.addEnterpriseBean(new StatefulBean(name, ejbClass));
+        bean.getEjbLocalRef().add(new EjbLocalRef("child", reference));
+    }
+    
+    private void addStatelessBean(EjbJar ejbJar, Class<?> ejbClass, String name, String reference) {
+        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(name, ejbClass));
         bean.getEjbLocalRef().add(new EjbLocalRef("child", reference));
     }
 
@@ -262,9 +339,14 @@ public class EntityManagerPropogationTest extends TestCase {
         
         Color create(int id, String name);
 
+        void createUntilLeaf(int id, String name);
+
         boolean contains(Color bean);
 
         Node getChild();
+        
+        String getDelegateEntityManagerReference();
+        
     }
 
 
@@ -278,7 +360,6 @@ public class EntityManagerPropogationTest extends TestCase {
      * on the JTA propogation that also exists with an EXTENDED
      * persistence context
      */
-
     public static class ExtendedContextBean extends NodeBean {
 
         @PersistenceContext(unitName = "testUnit", type = EXTENDED)
@@ -309,11 +390,22 @@ public class EntityManagerPropogationTest extends TestCase {
             getEntityManager().persist(color);
             return color;
         }
+        
+        public void createUntilLeaf(int id, String name) {
+            this.create(id, name);
+            
+            // recursively call until the leaf is achieved
+            getChild().createUntilLeaf(id * 10 + 1, name);
+        }
 
         protected abstract EntityManager getEntityManager();
 
         public Node getChild() {
             return child;
+        }
+        
+        public String getDelegateEntityManagerReference() {
+            return getEntityManager().getDelegate().toString();
         }
 
         public boolean contains(Color bean) throws IllegalArgumentException {
@@ -337,7 +429,15 @@ public class EntityManagerPropogationTest extends TestCase {
             return null;
         }
 
+        public void createUntilLeaf(int id, String name) {
+            return;
+        }
+
         public Node getChild() {
+            return null;
+        }
+        
+        public String getDelegateEntityManagerReference() {
             return null;
         }
 
