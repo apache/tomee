@@ -58,7 +58,7 @@ public class TxMandatory extends JtaTransactionPolicy {
         return true;
     }
 
-    protected Transaction getCurrentTrasaction() {
+    protected Transaction getCurrentTransaction() {
         return clientTx;
     }
 

@@ -61,10 +61,10 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         return transactionType;
     }
 
-    protected abstract Transaction getCurrentTrasaction();
+    protected abstract Transaction getCurrentTransaction();
 
     public boolean isTransactionActive() {
-        Transaction trasaction = getCurrentTrasaction();
+        Transaction trasaction = getCurrentTransaction();
         if (trasaction == null) {
             return false;
         }
@@ -78,7 +78,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     public boolean isRollbackOnly() {
-        Transaction trasaction = getCurrentTrasaction();
+        Transaction trasaction = getCurrentTransaction();
         if (trasaction != null)  {
             try {
                 int status = trasaction.getStatus();
@@ -92,7 +92,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     public void setRollbackOnly() {
-        Transaction trasaction = getCurrentTrasaction();
+        Transaction trasaction = getCurrentTransaction();
         if (trasaction != null)  {
             setRollbackOnly(trasaction);
         } else {
@@ -179,7 +179,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     public void enlistResource(XAResource xaResource) throws SystemException {
-        Transaction transaction = getCurrentTrasaction();
+        Transaction transaction = getCurrentTransaction();
         if (transaction != null) {
             try {
                 if (transaction.enlistResource(xaResource)) {
