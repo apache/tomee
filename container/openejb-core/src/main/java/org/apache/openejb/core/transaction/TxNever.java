@@ -55,7 +55,7 @@ public class TxNever extends JtaTransactionPolicy {
         return false;
     }
     
-    protected Transaction getCurrentTrasaction() {
+    protected Transaction getCurrentTransaction() {
         return null;
     }
 
