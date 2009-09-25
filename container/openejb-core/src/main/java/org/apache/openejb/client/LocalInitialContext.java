@@ -130,9 +130,15 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void logout() {
-        if (clientIdentity != null) {
-            logger.info("Logging out");
-            ClientSecurity.setIdentity(null);
+        try {
+            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (clientIdentity != null) {
+                logger.info("Logging out");
+                securityService.logout(clientIdentity);
+                ClientSecurity.setIdentity(null);
+            }
+        } catch (LoginException e) {
+            throw new RuntimeException("User could not be logged out.", e);
         }
     }
 
