@@ -22,22 +22,22 @@ import javax.ejb.ApplicationException;
  * @version $Rev$
  */
 @ApplicationException
-//@WebFault // Not possible: a web fault must by a checked exception
+// @WebFault // Not possible: a web fault must by a checked exception
 public class WrongPasswordRuntimeException extends RuntimeException {
 
     public WrongPasswordRuntimeException() {
-	super();
+        super();
     }
 
     public WrongPasswordRuntimeException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public WrongPasswordRuntimeException(String message) {
-	super(message);
+        super(message);
     }
 
     public WrongPasswordRuntimeException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

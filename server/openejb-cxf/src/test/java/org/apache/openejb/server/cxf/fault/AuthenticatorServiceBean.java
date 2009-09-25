@@ -24,18 +24,20 @@ import javax.jws.WebService;
  * @version $Rev$
  */
 @Stateless
-@WebService(targetNamespace="http://superbiz.org/wsdl")
-@HandlerChain(file="handler.xml")
+@WebService(targetNamespace = "http://superbiz.org/wsdl")
+@HandlerChain(file = "handler.xml")
 public class AuthenticatorServiceBean implements AuthenticatorService {
 
-    public boolean authenticate(String name, String password) throws WrongPasswordException {
-	System.out.println(String.format("AuthenticatorServiceBean.authenticate(%s, %s)", name, password));
-	throw new WrongPasswordException("Checked exception");
+    public boolean authenticate(String name, String password)throws WrongPasswordException {
+        System.out.println(String.format("AuthenticatorServiceBean.authenticate(%s, %s)", 
+                                       name, password));
+        throw new WrongPasswordException("Checked exception");
     }
 
     public boolean authenticateRuntime(String name, String password) {
-	System.out.println(String.format("AuthenticatorServiceBean.authenticateRuntime(%s, %s)", name, password));
-	throw new WrongPasswordRuntimeException("Runtime exception");
+        System.out.println(String.format("AuthenticatorServiceBean.authenticateRuntime(%s, %s)", 
+                                        name, password));
+        throw new WrongPasswordRuntimeException("Runtime exception");
     }
 
 }
