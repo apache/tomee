@@ -29,21 +29,21 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
  */
 public class DummyInterceptor implements SOAPHandler<SOAPMessageContext> {
     public DummyInterceptor() {
-	super();
+        super();
     }
 
     public Set<QName> getHeaders() {
-	return Collections.emptySet();
+        return Collections.emptySet();
     }
 
     public void close(MessageContext mc) {
     }
 
     public boolean handleFault(SOAPMessageContext mc) {
-	return true;
+        return true;
     }
 
     public boolean handleMessage(SOAPMessageContext mc) {
-	return true;
+        return true;
     }
 }

@@ -21,7 +21,7 @@ import javax.jws.WebService;
 /**
  * @version $Rev$
  */
-@WebService(targetNamespace="http://superbiz.org/wsdl")
+@WebService(targetNamespace = "http://superbiz.org/wsdl")
 public interface AuthenticatorService {
 
     boolean authenticate(String name, String password) throws WrongPasswordException;
