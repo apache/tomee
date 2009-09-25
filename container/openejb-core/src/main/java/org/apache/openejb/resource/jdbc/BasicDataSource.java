@@ -17,16 +17,48 @@
  */
 package org.apache.openejb.resource.jdbc;
 
-import org.apache.openejb.loader.SystemInstance;
-
-import javax.sql.DataSource;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.File;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp.SQLNestedException;
+import org.apache.openejb.loader.SystemInstance;
 
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
+    
+    /**
+     * The password codec to be used to retrieve the plain text password from a
+     * ciphered value.
+     * 
+     * <em>The default is no codec.</em>. In other words, it means password is
+     * not ciphered. The {@link PlainTextPasswordCodec} can also be used.
+     */
+    private String passwordCodecClass = null;
+
+    /**
+     * Returns the password codec class name to use to retrieve plain text
+     * password.
+     * 
+     * @return the password codec class
+     */
+    public synchronized String getPasswordCodecClass() {
+        return this.passwordCodecClass;
+    }
+
+    /**
+     * <p>
+     * Sets the {@link #passwordCodecClass}.
+     * </p>
+     * 
+     * @param passwordCodecClass
+     *            password codec value
+     */
+    public synchronized void setPasswordCodecClass(String passwordCodecClass) {
+        this.passwordCodecClass = passwordCodecClass;
+    }
+    
 
     public synchronized String getUserName() {
         return super.getUsername();
@@ -35,7 +67,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     public synchronized void setUserName(String string) {
         super.setUsername(string);
     }
-
+    
     public synchronized String getJdbcDriver() {
         return super.getDriverClassName();
     }
@@ -61,6 +93,15 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
     protected synchronized DataSource createDataSource() throws SQLException {
         if (dataSource != null) {
             return dataSource;
+        }
+        
+        // check password codec if available
+        if (null != passwordCodecClass) {
+            PasswordCodec codec = getPasswordCodec();
+            String plainPwd = codec.decode(password.toCharArray());
+
+            // override previous password value
+            super.setPassword(plainPwd);
         }
 
         // get the plugin
@@ -88,5 +129,46 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
                 }
             }
         }
+    }
+    
+    /**
+     * Create a {@link PasswordCodec} instance from the
+     * {@link #passwordCodecClass}.
+     * 
+     * @return the password codec from the {@link #passwordCodecClass}
+     *         optionally set.
+     * @throws SQLException
+     *             if the driver can not be found.
+     */
+    private PasswordCodec getPasswordCodec() throws SQLException {
+        // Load the password codec class
+        Class pwdCodec = null;
+        try {
+            try {
+                pwdCodec = Class.forName(passwordCodecClass);
+
+            } catch (ClassNotFoundException cnfe) {
+                pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
+            }
+        } catch (Throwable t) {
+            String message = "Cannot load password codec class '" + passwordCodecClass + "'";
+            logWriter.println(message);
+            t.printStackTrace(logWriter);
+            throw new SQLNestedException(message, t);
+        }
+
+        // Create an instance
+        PasswordCodec codec = null;
+        try {
+            codec = (PasswordCodec) pwdCodec.newInstance();
+
+        } catch (Throwable t) {
+            String message = "Cannot create password codec instance";
+            logWriter.println(message);
+            t.printStackTrace(logWriter);
+            throw new SQLNestedException(message, t);
+        }
+
+        return codec;
     }
 }
