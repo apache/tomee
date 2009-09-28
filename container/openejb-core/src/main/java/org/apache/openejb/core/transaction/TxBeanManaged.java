@@ -42,7 +42,7 @@ public class TxBeanManaged extends JtaTransactionPolicy implements BeanTransacti
         return false;
     }
 
-    protected Transaction getCurrentTransaction() {
+    public Transaction getCurrentTransaction() {
         try {
             return getTransaction();
         } catch (SystemException e) {

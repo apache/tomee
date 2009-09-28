@@ -55,7 +55,7 @@ public class TxSupports extends JtaTransactionPolicy {
         return clientTx != null;
     }
 
-    protected Transaction getCurrentTransaction() {
+    public Transaction getCurrentTransaction() {
         return clientTx;
     }
 
