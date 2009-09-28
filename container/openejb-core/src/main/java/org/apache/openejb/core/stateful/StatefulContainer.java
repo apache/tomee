@@ -38,6 +38,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.Transaction;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
@@ -68,6 +69,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleAppli
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import org.apache.openejb.core.transaction.EjbUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.JtaTransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy.TransactionSynchronization;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
@@ -607,6 +609,8 @@ public class StatefulContainer implements RpcContainer {
             throw new SystemException(new NullPointerException("Cannot obtain an instance of the stateful session bean with a null session id"));
         }
 
+        Transaction currentTransaction = getTransaction(callContext);
+
         // Find the instance
         Instance instance = checkedOutInstances.get(primaryKey);
         if (instance == null) {
@@ -634,8 +638,16 @@ public class StatefulContainer implements RpcContainer {
                 // the bean is already being invoked; the only reentrant/concurrent operations allowed are Session synchronization callbacks
                 Operation currentOperation = callContext.getCurrentOperation();
                 if (currentOperation != Operation.AFTER_COMPLETION && currentOperation != Operation.BEFORE_COMPLETION) {
-                    throw new ApplicationException(new RemoteException("Concurrent calls not allowed"));
+                    throw new ApplicationException(new RemoteException("Concurrent calls not allowed."));
                 }
+            }
+
+            if (instance.getTransaction() != null){
+                if (!instance.getTransaction().equals(currentTransaction) && !instance.getLock().tryLock()) {
+                    throw new ApplicationException(new RemoteException("Instance is in a transaction and cannot be invoked outside that transaction.  See EJB 3.0 Section 4.4.4"));
+                }
+            } else {
+                instance.setTransaction(currentTransaction);
             }
 
             // Mark the instance in use so we can detect reentrant calls
@@ -643,6 +655,18 @@ public class StatefulContainer implements RpcContainer {
 
             return instance;
         }
+    }
+
+    private Transaction getTransaction(ThreadContext callContext) {
+        TransactionPolicy policy = callContext.getTransactionPolicy();
+
+        Transaction currentTransaction = null;
+        if (policy instanceof JtaTransactionPolicy) {
+            JtaTransactionPolicy jtaPolicy = (JtaTransactionPolicy) policy;
+
+            currentTransaction = jtaPolicy.getCurrentTransaction();
+        }
+        return currentTransaction;
     }
 
     private void releaseInstance(Instance instance) {
@@ -657,11 +681,13 @@ public class StatefulContainer implements RpcContainer {
         // no longer in use
         instance.setInUse(false);
 
-        // return to cache
-        cache.checkIn(instance.primaryKey);
+        if (instance.getTransaction() == null) {
+            // return to cache
+            cache.checkIn(instance.primaryKey);
 
-        // no longer checked out
-        checkedOutInstances.remove(instance.primaryKey);
+            // no longer checked out
+            checkedOutInstances.remove(instance.primaryKey);
+        }
     }
 
     private void discardInstance(ThreadContext threadContext) {
@@ -938,7 +964,7 @@ public class StatefulContainer implements RpcContainer {
                         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterCompletion, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
                         interceptorStack.invoke(status == Status.COMMITTED);
                     }
-
+                    instance.setTransaction(null);
                     releaseInstance(instance);
                 } catch (InvalidateReferenceException inv) {
                     // exception has alredy been handled

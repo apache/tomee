@@ -61,7 +61,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         return transactionType;
     }
 
-    protected abstract Transaction getCurrentTransaction();
+    public abstract Transaction getCurrentTransaction();
 
     public boolean isTransactionActive() {
         Transaction trasaction = getCurrentTransaction();

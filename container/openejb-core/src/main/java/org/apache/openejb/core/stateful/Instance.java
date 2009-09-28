@@ -21,8 +21,12 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Stack;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
+import javax.transaction.Transaction;
 
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
@@ -40,6 +44,8 @@ public class Instance implements Serializable {
 
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
+    private Stack<Transaction> transaction = new Stack<Transaction>();
+    private final Lock lock = new ReentrantLock();
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
@@ -81,6 +87,27 @@ public class Instance implements Serializable {
 
     public synchronized void setBeanTransaction(SuspendedTransaction beanTransaction) {
         this.beanTransaction = beanTransaction;
+    }
+
+    public synchronized Transaction getTransaction() {
+        return (transaction.size() > 0)? transaction.peek(): null;
+    }
+
+    public Lock getLock() {
+        return lock;
+    }
+
+    public synchronized void setTransaction(Transaction transaction) {
+        if (this.transaction.size() == 0 && transaction != null) {
+            lock.lock();
+            this.transaction.push(transaction);
+        } else if (this.transaction.size() != 0 && transaction == null) {
+            this.transaction.pop();
+            lock.unlock();
+        } else if (transaction != null){
+            this.transaction.push(transaction);
+        }
+
     }
 
     public synchronized Map<EntityManagerFactory, EntityManager> getEntityManagers(Index<EntityManagerFactory, Map> factories) {

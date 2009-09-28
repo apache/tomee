@@ -65,7 +65,7 @@ public class TxRequired extends JtaTransactionPolicy {
         return !isNewTransaction();
     }
 
-    protected Transaction getCurrentTransaction() {
+    public Transaction getCurrentTransaction() {
         return currentTx;
     }
 
