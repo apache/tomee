@@ -633,6 +633,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 
                 for (String clientClassName : clientInfo.localClients) {
                     containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
+                    logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
             }
 
