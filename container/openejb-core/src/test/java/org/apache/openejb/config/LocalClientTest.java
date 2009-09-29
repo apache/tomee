@@ -115,6 +115,10 @@ public class LocalClientTest extends TestCase {
         InitialContext context = new InitialContext(properties);
         context.bind("inject", this);
 
+        assertRefs();
+    }
+
+    protected void assertRefs() throws JMSException {
         // @EJB
         Reference reference = new Reference("test");
 
@@ -129,7 +133,7 @@ public class LocalClientTest extends TestCase {
         assertNotNull("The Topic is null", toopic);
 
         // @Resource Queue
-        assertNotNull("The Queue is null", quueue);        
+        assertNotNull("The Queue is null", quueue);
 
         // @Resource ConnectionFactory
         assertNotNull("The ConnectionFactory is null", coonnectionFactory);
