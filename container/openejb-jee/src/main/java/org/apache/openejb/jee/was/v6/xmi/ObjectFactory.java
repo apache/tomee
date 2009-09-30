@@ -26,53 +26,21 @@ public class ObjectFactory {
 
     private final static QName _MetaModel_QNAME = new QName("http://www.omg.org/XMI", "MetaModel");
     private final static QName _Delete_QNAME = new QName("http://www.omg.org/XMI", "Delete");
+    private final static QName _Add_QNAME = new QName("http://www.omg.org/XMI", "Add");
+    private final static QName _Model_QNAME = new QName("http://www.omg.org/XMI", "Model");
+    private final static QName _Replace_QNAME = new QName("http://www.omg.org/XMI", "Replace");
     private final static QName _XMI_QNAME = new QName("http://www.omg.org/XMI", "XMI");
     private final static QName _Documentation_QNAME = new QName("http://www.omg.org/XMI", "Documentation");
-    private final static QName _Add_QNAME = new QName("http://www.omg.org/XMI", "Add");
-    private final static QName _PackageReference_QNAME = new QName("http://www.omg.org/XMI", "PackageReference");
     private final static QName _Import_QNAME = new QName("http://www.omg.org/XMI", "Import");
-    private final static QName _Model_QNAME = new QName("http://www.omg.org/XMI", "Model");
-    private final static QName _Extension_QNAME = new QName("http://www.omg.org/XMI", "Extension");
-    private final static QName _Replace_QNAME = new QName("http://www.omg.org/XMI", "Replace");
     private final static QName _Difference_QNAME = new QName("http://www.omg.org/XMI", "Difference");
+    private final static QName _PackageReference_QNAME = new QName("http://www.omg.org/XMI", "PackageReference");
+    private final static QName _Extension_QNAME = new QName("http://www.omg.org/XMI", "Extension");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.openejb.jee.was.v6.xmi
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link Difference.Target }
-     * 
-     */
-    public Difference.Target createDifferenceTarget() {
-        return new Difference.Target();
-    }
-
-    /**
-     * Create an instance of {@link Difference }
-     * 
-     */
-    public Difference createDifference() {
-        return new Difference();
-    }
-
-    /**
-     * Create an instance of {@link Import }
-     * 
-     */
-    public Import createImport() {
-        return new Import();
-    }
-
-    /**
-     * Create an instance of {@link Model }
-     * 
-     */
-    public Model createModel() {
-        return new Model();
     }
 
     /**
@@ -84,11 +52,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Add }
+     * Create an instance of {@link Import }
      * 
      */
-    public Add createAdd() {
-        return new Add();
+    public Import createImport() {
+        return new Import();
     }
 
     /**
@@ -100,11 +68,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PackageReference }
+     * Create an instance of {@link Difference.Target }
      * 
      */
-    public PackageReference createPackageReference() {
-        return new PackageReference();
+    public Difference.Target createDifferenceTarget() {
+        return new Difference.Target();
+    }
+
+    /**
+     * Create an instance of {@link XMI }
+     * 
+     */
+    public XMI createXMI() {
+        return new XMI();
     }
 
     /**
@@ -116,14 +92,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MetaModel }
-     * 
-     */
-    public MetaModel createMetaModel() {
-        return new MetaModel();
-    }
-
-    /**
      * Create an instance of {@link Replace }
      * 
      */
@@ -132,19 +100,51 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Difference }
+     * 
+     */
+    public Difference createDifference() {
+        return new Difference();
+    }
+
+    /**
+     * Create an instance of {@link PackageReference }
+     * 
+     */
+    public PackageReference createPackageReference() {
+        return new PackageReference();
+    }
+
+    /**
+     * Create an instance of {@link MetaModel }
+     * 
+     */
+    public MetaModel createMetaModel() {
+        return new MetaModel();
+    }
+
+    /**
+     * Create an instance of {@link Add }
+     * 
+     */
+    public Add createAdd() {
+        return new Add();
+    }
+
+    /**
+     * Create an instance of {@link Model }
+     * 
+     */
+    public Model createModel() {
+        return new Model();
+    }
+
+    /**
      * Create an instance of {@link Documentation }
      * 
      */
     public Documentation createDocumentation() {
         return new Documentation();
-    }
-
-    /**
-     * Create an instance of {@link XMI }
-     * 
-     */
-    public XMI createXMI() {
-        return new XMI();
     }
 
     /**
@@ -166,6 +166,33 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Add }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Add")
+    public JAXBElement<Add> createAdd(Add value) {
+        return new JAXBElement<Add>(_Add_QNAME, Add.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Model }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Model")
+    public JAXBElement<Model> createModel(Model value) {
+        return new JAXBElement<Model>(_Model_QNAME, Model.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Replace }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Replace")
+    public JAXBElement<Replace> createReplace(Replace value) {
+        return new JAXBElement<Replace>(_Replace_QNAME, Replace.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link XMI }{@code >}}
      * 
      */
@@ -184,12 +211,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Add }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Import }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Add")
-    public JAXBElement<Add> createAdd(Add value) {
-        return new JAXBElement<Add>(_Add_QNAME, Add.class, null, value);
+    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Import")
+    public JAXBElement<Import> createImport(Import value) {
+        return new JAXBElement<Import>(_Import_QNAME, Import.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Difference }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Difference")
+    public JAXBElement<Difference> createDifference(Difference value) {
+        return new JAXBElement<Difference>(_Difference_QNAME, Difference.class, null, value);
     }
 
     /**
@@ -202,48 +238,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Import }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Import")
-    public JAXBElement<Import> createImport(Import value) {
-        return new JAXBElement<Import>(_Import_QNAME, Import.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Model }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Model")
-    public JAXBElement<Model> createModel(Model value) {
-        return new JAXBElement<Model>(_Model_QNAME, Model.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Extension }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Extension")
     public JAXBElement<Extension> createExtension(Extension value) {
         return new JAXBElement<Extension>(_Extension_QNAME, Extension.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Replace }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Replace")
-    public JAXBElement<Replace> createReplace(Replace value) {
-        return new JAXBElement<Replace>(_Replace_QNAME, Replace.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Difference }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.omg.org/XMI", name = "Difference")
-    public JAXBElement<Difference> createDifference(Difference value) {
-        return new JAXBElement<Difference>(_Difference_QNAME, Difference.class, null, value);
     }
 
 }
