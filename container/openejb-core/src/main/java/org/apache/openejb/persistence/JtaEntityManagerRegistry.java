@@ -88,7 +88,7 @@ public class JtaEntityManagerRegistry {
         if (extended) {
             EntityManager entityManager = getInheritedEntityManager(entityManagerFactory);
             if (entityManager == null) {
-                throw new IllegalStateException("InternalError: an entity manager should already be registered for this entended persistence unit");
+                throw new IllegalStateException("InternalError: an entity manager should already be registered for this extended persistence unit");
             }
 
             // if transaction is active, we need to register the entity manager with the transaction manager
