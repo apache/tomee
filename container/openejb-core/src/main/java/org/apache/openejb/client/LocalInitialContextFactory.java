@@ -82,7 +82,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
 
             Class localInitialContext = Class.forName("org.apache.openejb.client.LocalInitialContext", true, cl);
 
-            Constructor constructor = localInitialContext.getConstructor(Hashtable.class, this.getClass());
+            Constructor constructor = localInitialContext.getConstructor(Hashtable.class, LocalInitialContextFactory.class);
             context = (Context) constructor.newInstance(env, this);
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
