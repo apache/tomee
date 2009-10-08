@@ -4,7 +4,7 @@
 =========================================================================
 
 Apache OpenEJB
-Copyright 2006-2007 The Apache Software Foundation
+Copyright 2006-2009 The Apache Software Foundation
 
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
@@ -23,26 +23,14 @@ apply to these dependencies.
 ==  Apache OpenJPA Notice                                              ==
 =========================================================================
 
-   This product includes software developed by
-   The Apache Software Foundation (http://www.apache.org/).
-
-COPYRIGHT NOTICES
-
-* OpenJPA includes software developed by the SERP project
-    Copyright (c) 2002-2006, A. Abram White. All rights reserved.
+This product includes software developed by the SERP project
+Copyright (c) 2002-2006, A. Abram White. All rights reserved.
 
 =========================================================================
 ==  ASM Notice                                                         ==
 =========================================================================
 
 Copyright (c) 2000-2005 INRIA, France Telecom
-All rights reserved.
-
-=========================================================================
-==  Swizzle Stream Notice                                              ==
-=========================================================================
-
-Copyright (c) 2001-2007 David Blevins
 All rights reserved.
 
 =========================================================================
@@ -57,13 +45,6 @@ domain sources from:
 1) JSR166,
 2) package dl.util.concurrent,
 3) Doug Lea's "collections" package.
-
-=========================================================================
-==  Serp Notice                                                        ==
-=========================================================================
-
-Copyright (c) 2002, A. Abram White
-All rights reserved.
 
 =========================================================================
 ==  JAXB Notice                                                        ==
@@ -94,7 +75,7 @@ Copyright (c) 2004, Bull S.A.
 All rights reserved.
 
 =========================================================================
-==  SL4J Notice                                                        ==
+==  SLF4J Notice                                                        ==
 =========================================================================
 
 Copyright (c) 2004-2005 SLF4J.ORG
@@ -104,12 +85,6 @@ All rights reserved.
 =========================================================================
 ==  Apache CXF                                                         ==
 =========================================================================
-
-Apache CXF
-Copyright 2006-2007 Apache Software Foundation
-
-This product includes software developed at
-Apache Software Foundation (http://www.apache.org/).
 
 This product includes/uses software, Woodstox (http://woodstox.codehaus.org),
 developed by Codehaus  (http://www.codehaus.org/)
@@ -125,39 +100,10 @@ This product includes/uses software, Neethi,
 developed by The Apache Software Foundation  (http://www.apache.org/)
 License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-This product includes/uses software, Java Architecture for XML Binding (JAXB API),
-developed by Sun Microsystems  (http://www.sun.com/)
-License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
-
 This product includes software developed for SOAP with Attachments
 API for Java (SAAJ). The software is available from the GlassFish project
 (https://saaj.dev.java.net/)
 License: COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0  (http://www.sun.com/cddl/cddl.html)
-
-=========================================================================
-==  Woodstox Notice                                                    ==
-=========================================================================
-
-This product currently only contains code developed by authors
-of specific components, as identified by the source code files.
-
-Since product implements StAX API, it has dependencies to StAX API
-classes.
-
-For additional credits (generally to people who reported problems)
-see CREDITS file.
-
-=========================================================================
-==  WSDL4J Notice                                                      ==
-=========================================================================
-
-The Program includes all or portions of the following software which is
-subject to the Common Public License ("CPL Code").  This software
-consists of voluntary contributions made by many individuals on behalf of
-the WSDL4J project.
-
-You may download the source version of the WSDL4J component at
-http://sourceforge.net/projects/wsdl4j
 
 =========================================================================
 ==  Apache WS Commons Notice                                           ==
