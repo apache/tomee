@@ -16,24 +16,35 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>openejb</artifactId>
-    <groupId>org.apache.openejb</groupId>
-    <version>3.1.2-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>assembly</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Assembly</name>
+<!-- $Rev: 699189 $ $Date: 2008-09-26 01:16:00 -0500 (Fri, 26 Sep 2008) $ -->
 
-  <modules>
-    <module>openejb-itests-standalone-client</module>
-    <module>openejb-standalone</module>
-    <module>openejb-tomcat</module>
-    <module>javaee-api-libs</module>
-  </modules>
-</project>
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}/target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>README.txt</include>
+        <include>NOTICE.txt</include>
+        <include>LICENSE.txt</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
+      <outputDirectory>/</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+          <exclude>junit:junit</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
 
