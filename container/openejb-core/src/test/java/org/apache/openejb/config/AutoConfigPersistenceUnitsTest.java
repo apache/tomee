@@ -100,11 +100,11 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      *
      * <persistence-unit name="orange-unit">
      *      <jta-data-source>Orange</jta-data-source>
-     *      <non-jta-data-source>OrangeUnmanagedamanged</non-jta-data-source>
+     *      <non-jta-data-source>OrangeUnmanaged</non-jta-data-source>
      * </persistence-unit>
      * <persistence-unit name="lime-unit">
      *      <jta-data-source>Lime</jta-data-source>
-     *      <non-jta-data-source>LimeUnmanagedamanged</non-jta-data-source>
+     *      <non-jta-data-source>LimeUnmanaged</non-jta-data-source>
      * </persistence-unit>
      *
      * This is the happy path.
@@ -538,8 +538,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
-     * Existing data source "OrangeOne", not jta managed
-     * Existing data source "OrangeTwo", not jta managed
+     * Existing data source "OrangeOne", jta managed
+     * Existing data source "OrangeTwo", jta managed
      *
      * Persistence xml like so:
      *
@@ -596,7 +596,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
-     * Existing data source "OrangeOne", not jta managed
+     * Existing data source "OrangeOne", jta managed
      *
      * Persistence xml like so:
      *
@@ -663,16 +663,16 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
-     * Existing data source "Orange" not jta managed
+     * Existing data source "Orange" jta managed
      *
      * Persistence xml like so:
      *
      * <persistence-unit name="orange-unit">
-     *      <non-jta-data-source>Orange</non-jta-data-source>
+     *      <jta-data-source>Orange</jta-data-source>
      * </persistence-unit>
      *
-     * We should generate a <jta-data-source> based on
-     * the <non-jta-data-source>
+     * We should generate a <non-jta-data-source> based on
+     * the <jta-data-source>
      *
      * @throws Exception
      */
@@ -712,7 +712,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * </persistence-unit>
      *
      * We should generate a <jta-data-source> based on
-     * the <non-jta-data-source>
+     * the <non-jta-data-source>.  We should not select
+     * the Lime datasource which is for a different database.
      *
      * @throws Exception
      */
@@ -743,8 +744,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
-     * Existing data source "Orange", not jta managed
-     * Existing data source "Lime", jta managed
+     * Existing data source "Orange", jta managed
+     * Existing data source "Lime", non jta managed
      *
      * Persistence xml like so:
      *
@@ -753,7 +754,8 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * </persistence-unit>
      *
      * We should generate a <non-jta-data-source> based on
-     * the <jta-data-source>
+     * the <jta-data-source>.  We should not select the
+     * Lime datasource which is for a different database.
      *
      * @throws Exception
      */
@@ -789,6 +791,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     /**
      * Existing data source "Orange", not jta managed
      * Existing data source "Lime", jta managed
+     * Existing data source "JtaOrange", jta managed
      *
      * Persistence xml like so:
      *
@@ -821,8 +824,9 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
     }
 
     /**
-     * Existing data source "Orange", not jta managed
-     * Existing data source "Lime", jta managed
+     * Existing data source "Orange", jta managed
+     * Existing data source "Lime", not jta managed
+     * Existing data source "OrangeUnamanged", not jta managed
      *
      * Persistence xml like so:
      *
@@ -947,11 +951,13 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
      * <persistence-unit name="orange-unit">
      * </persistence-unit>
      *
-     * The <non-jta-data-source> should be auto linked
-     * to the Orange data source
+     * A set of default data sources should be generated
      *
-     * We should generate a <jta-data-source> based on
-     * the <non-jta-data-source>
+     * The <non-jta-data-source> should be auto linked
+     * to the Default JDBC Database data source
+     *
+     * The <jta-data-source> should be auto linked
+     * to the Default Unmanaged JDBC Database data source
      *
      * @throws Exception
      */
