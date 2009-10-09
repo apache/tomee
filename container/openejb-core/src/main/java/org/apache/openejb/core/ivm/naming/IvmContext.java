@@ -115,9 +115,7 @@ public class IvmContext implements Context, Serializable {
             if (prefix.equals("openejb")){
                 path = name.path();
                 return openejbURLContextFactory.getContext().lookup(path);
-            }
-
-            if (prefix.equals("java")){
+            } else if (prefix.equals("java")){
                 if (name.getComponent().equals("openejb")){
                     path = name.remaining().path();
                     return openejbURLContextFactory.getContext().lookup(path);
@@ -125,13 +123,10 @@ public class IvmContext implements Context, Serializable {
                     path = name.path();
                     return javaURLContextFactory.getContext().lookup(path);
                 }
+            } else {
+                // we don't know what the prefix means, throw an exception
+                throw new NamingException("Unknown JNDI name prefix '"+prefix +":'");
             }
-
-            // we don't know what the prefix means, default to JNDI
-
-            InitialContext initialContext = new InitialContext();
-            return initialContext.lookup(compositName);
-
         } else {
             /*
               the resolve method always starts with the comparison assuming that the first

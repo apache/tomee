@@ -178,6 +178,14 @@ public class JndiBuilder {
 
             format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
 
+            { // illegal format check
+                int index = format.indexOf(":");
+                if (index > -1) {
+                    logger.error("Illegal " + JNDINAME_FORMAT + " contains a colon ':'.  Everything before the colon will be removed, '" + format + "' ");
+                    format = format.substring(index + 1);
+                }
+            }
+
             this.template = new StringTemplate(format);
 
             beanInfos = new HashMap<String, EnterpriseBeanInfo>();
