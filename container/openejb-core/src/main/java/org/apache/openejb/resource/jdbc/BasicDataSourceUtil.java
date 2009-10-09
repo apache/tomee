@@ -96,16 +96,35 @@ public final class BasicDataSourceUtil {
     public static PasswordCodec getPasswordCodec(String passwordCodecClass) throws SQLException {
         // Load the password codec class
         Class pwdCodec = null;
-        try {
-            try {
-                pwdCodec = Class.forName(passwordCodecClass);
 
-            } catch (ClassNotFoundException cnfe) {
-                pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
-            }
+        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCodec
+        ResourceFinder finder = new ResourceFinder("META-INF/");
+        Map<String, Class> impls;
+        try {
+            impls = finder.mapAllImplementations(PasswordCodec.class);
+            
         } catch (Throwable t) {
-            String message = "Cannot load password codec class '" + passwordCodecClass + "'";
+            String message = 
+                "Password codec '" + passwordCodecClass + 
+                "' not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCodec.";
             throw new SQLNestedException(message, t);
+        }
+        pwdCodec = impls.get(passwordCodecClass);
+
+        // if not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCodec
+        // we can try to load the class.
+        if (null == pwdCodec) {
+            try {
+                try {
+                    pwdCodec = Class.forName(passwordCodecClass);
+                    
+                } catch (ClassNotFoundException cnfe) {
+                    pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
+                }
+            } catch (Throwable t) {
+                String message = "Cannot load password codec class '" + passwordCodecClass + "'";
+                throw new SQLNestedException(message, t);
+            }
         }
 
         // Create an instance
