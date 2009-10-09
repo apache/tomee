@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import org.apache.commons.dbcp.SQLNestedException;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.sql.SQLException;
@@ -80,5 +81,43 @@ public final class BasicDataSourceUtil {
         }
 
         return jdbcUrl;
+    }
+    
+    /**
+     * Create a {@link PasswordCodec} instance from the
+     * {@link #passwordCodecClass}.
+     * 
+     * @param passwordCodecClass the password codec to look for
+     * @return the password codec from the {@link #passwordCodecClass}
+     *         optionally set.
+     * @throws SQLException
+     *             if the driver can not be found.
+     */
+    public static PasswordCodec getPasswordCodec(String passwordCodecClass) throws SQLException {
+        // Load the password codec class
+        Class pwdCodec = null;
+        try {
+            try {
+                pwdCodec = Class.forName(passwordCodecClass);
+
+            } catch (ClassNotFoundException cnfe) {
+                pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
+            }
+        } catch (Throwable t) {
+            String message = "Cannot load password codec class '" + passwordCodecClass + "'";
+            throw new SQLNestedException(message, t);
+        }
+
+        // Create an instance
+        PasswordCodec codec = null;
+        try {
+            codec = (PasswordCodec) pwdCodec.newInstance();
+
+        } catch (Throwable t) {
+            String message = "Cannot create password codec instance";
+            throw new SQLNestedException(message, t);
+        }
+
+        return codec;
     }
 }

@@ -97,7 +97,7 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         
         // check password codec if available
         if (null != passwordCodecClass) {
-            PasswordCodec codec = getPasswordCodec();
+            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(passwordCodecClass);
             String plainPwd = codec.decode(password.toCharArray());
 
             // override previous password value
@@ -131,44 +131,4 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
     }
     
-    /**
-     * Create a {@link PasswordCodec} instance from the
-     * {@link #passwordCodecClass}.
-     * 
-     * @return the password codec from the {@link #passwordCodecClass}
-     *         optionally set.
-     * @throws SQLException
-     *             if the driver can not be found.
-     */
-    private PasswordCodec getPasswordCodec() throws SQLException {
-        // Load the password codec class
-        Class pwdCodec = null;
-        try {
-            try {
-                pwdCodec = Class.forName(passwordCodecClass);
-
-            } catch (ClassNotFoundException cnfe) {
-                pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
-            }
-        } catch (Throwable t) {
-            String message = "Cannot load password codec class '" + passwordCodecClass + "'";
-            logWriter.println(message);
-            t.printStackTrace(logWriter);
-            throw new SQLNestedException(message, t);
-        }
-
-        // Create an instance
-        PasswordCodec codec = null;
-        try {
-            codec = (PasswordCodec) pwdCodec.newInstance();
-
-        } catch (Throwable t) {
-            String message = "Cannot create password codec instance";
-            logWriter.println(message);
-            t.printStackTrace(logWriter);
-            throw new SQLNestedException(message, t);
-        }
-
-        return codec;
-    }
 }
