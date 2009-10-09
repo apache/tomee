@@ -17,6 +17,10 @@
  */
 package org.apache.openejb.resource.jdbc;
 
+import java.sql.SQLException;
+
+import javax.persistence.Basic;
+
 import junit.framework.TestCase;
 
 public class PasswordCodecTest extends TestCase {
@@ -33,6 +37,37 @@ public class PasswordCodecTest extends TestCase {
 		PasswordCodec codec = new StaticDESPasswordCodec();
 		char[] tmp = codec.encode(PLAIN_PWD);
 		assertEquals(PLAIN_PWD, codec.decode(tmp));
+    }
+	
+	public void testGetDataSourcePlugin() throws Exception {
+        // all current known plugins
+        assertPluginClass("PlainText", PlainTextPasswordCodec.class);
+        assertPluginClass("Static3DES", StaticDESPasswordCodec.class);
+
+        // null
+        try {
+            BasicDataSourceUtil.getPasswordCodec(null);
+            fail("Should throw an exception when no codec is found.");
+        } catch (Exception e) {
+            // OK
+        }
+
+        // empty string
+        try {
+            BasicDataSourceUtil.getPasswordCodec("");
+            fail("Should throw an exception when no codec is found.");
+        } catch (Exception e) {
+            // OK
+        }
+        
+        // try the FQN of the target codec
+        assertNotNull(BasicDataSourceUtil.getPasswordCodec(PlainTextPasswordCodec.class.getName()));
+    }
+
+    private void assertPluginClass(String pluginName, Class<? extends PasswordCodec> pluginClass) throws SQLException {
+        PasswordCodec plugin = BasicDataSourceUtil.getPasswordCodec(pluginName);
+        assertNotNull(plugin);
+        assertSame(pluginClass, plugin.getClass());
     }
     
 }
