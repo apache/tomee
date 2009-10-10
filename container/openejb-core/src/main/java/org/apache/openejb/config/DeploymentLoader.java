@@ -552,6 +552,30 @@ public class DeploymentLoader {
         }
 
         // determine war class path
+        URL[] webUrls = getWebappUrls(warFile);
+        ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
+
+        // create web module
+        WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
+        webModule.getAltDDs().putAll(descriptors);
+        webModule.getWatchedResources().add(warPath);
+        webModule.getWatchedResources().add(warFile.getAbsolutePath());
+        if (webXmlUrl != null && "file".equals(webXmlUrl.getProtocol())) {
+            webModule.getWatchedResources().add(URLs.toFilePath(webXmlUrl));
+        }
+
+        // find all tag libs
+        addTagLibraries(webModule);
+
+        // load webservices descriptor
+        addWebservices(webModule);
+
+        // load faces configuration files
+        addFacesConfigs(webModule);
+        return webModule;
+    }
+
+    public static URL[] getWebappUrls(File warFile) {
         List<URL> webClassPath = new ArrayList<URL>();
         File webInfDir = new File(warFile, "WEB-INF");
         try {
@@ -575,26 +599,7 @@ public class DeploymentLoader {
 
         // create the class loader
         URL[] webUrls = webClassPath.toArray(new URL[webClassPath.size()]);
-        ClassLoader warClassLoader = ClassLoaderUtil.createTempClassLoader(appId, webUrls, parentClassLoader);
-
-        // create web module
-        WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
-        webModule.getAltDDs().putAll(descriptors);
-        webModule.getWatchedResources().add(warPath);
-        webModule.getWatchedResources().add(warFile.getAbsolutePath());
-        if (webXmlUrl != null && "file".equals(webXmlUrl.getProtocol())) {
-            webModule.getWatchedResources().add(URLs.toFilePath(webXmlUrl));
-        }
-
-        // find all tag libs
-        addTagLibraries(webModule);
-
-        // load webservices descriptor
-        addWebservices(webModule);
-
-        // load faces configuration files
-        addFacesConfigs(webModule);
-        return webModule;
+        return webUrls;
     }
 
     private static void addWebservices(WsModule wsModule) throws OpenEJBException {

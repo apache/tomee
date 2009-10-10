@@ -21,7 +21,9 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.core.TempClassLoader;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.UrlSet;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
@@ -160,6 +162,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Iterator;
 
 /**
  * @version $Rev$ $Date$
@@ -347,31 +350,49 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
-            if (webApp != null && (webApp.isMetadataComplete() || !webApp.getServlet().isEmpty())) return webModule;
+            if (webApp != null && (webApp.isMetadataComplete())) return webModule;
 
             ClassFinder finder;
             try {
-                finder = new ClassFinder(webModule.getClassLoader());
+                File file = new File(webModule.getJarLocation());
+                URL[] urls = DeploymentLoader.getWebappUrls(file);
+                final ClassLoader webClassLoader = webModule.getClassLoader();
+                finder = new ClassFinder(webClassLoader, asList(urls));
+
+                ClassFinder finder2 = new ClassFinder(webClassLoader);
+                webModule.setFinder(finder);
             } catch (Exception e) {
                 startupLogger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. ClassFinder failed.", e);
                 return webModule;
             }
 
-            // TODO: Possible this class is also annotated @Stateless or @Singleton, in which case we maybe should skip it
+            if (webApp == null) {
+                webApp = new WebApp();
+                webModule.setWebApp(webApp);
+            }
+
+            List<String> existingServlets = new ArrayList<String>();
+            for (Servlet servlet : webApp.getServlet()) {
+                existingServlets.add(servlet.getServletClass());
+            }
+            
             List<Class> classes = new ArrayList<Class>();
             classes.addAll(finder.findAnnotatedClasses(WebService.class));
             classes.addAll(finder.findAnnotatedClasses(WebServiceProvider.class));
+
             for (Class<?> webServiceClass : classes) {
+                // If this class is also annotated @Stateless or @Singleton, we should skip it
+                if (webServiceClass.isAnnotationPresent(Singleton.class)) continue;
+                if (webServiceClass.isAnnotationPresent(Stateless.class)) continue;
+
                 int modifiers = webServiceClass.getModifiers();
                 if (!Modifier.isPublic(modifiers) || Modifier.isFinal(modifiers) || isAbstract(modifiers)) {
                     continue;
                 }
 
+                if (existingServlets.contains(webServiceClass.getName())) continue;
+
                 // create webApp and webservices objects if they don't exist already
-                if (webApp == null) {
-                    webApp = new WebApp();
-                    webModule.setWebApp(webApp);
-                }
 
                 // add new <servlet/> element
                 Servlet servlet = new Servlet();
@@ -810,7 +831,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * Classes added to this set will be scanned for annotations
              */
-            Set<Class<?>> classes = new HashSet<Class<?>>();
+            Set<Class> classes = new HashSet<Class>();
 
 
             ClassLoader classLoader = webModule.getClassLoader();
@@ -933,6 +954,38 @@ public class AnnotationDeployer implements DynamicDeployer {
                             throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
                         }
                     }
+                }
+            }
+
+            ClassFinder finder = webModule.getFinder();
+
+            if (finder != null) {
+                String[] webComponentAnnotations = {
+                        "javax.faces.bean.ManagedBean",
+                        "javax.servlet.annotation.WebServlet",
+                        "javax.servlet.annotation.WebServletContextListener",
+                        "javax.servlet.annotation.ServletFilter",
+                };
+
+                List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
+                for (String componentAnnotationName : webComponentAnnotations) {
+                    try {
+                        Class<?> clazz = classLoader.loadClass(componentAnnotationName);
+                        annotations.add(clazz.asSubclass(Annotation.class));
+                    } catch (ClassNotFoundException e) {
+                        logger.debug("Support not enabled: " + componentAnnotationName);
+                    }
+                }
+
+
+                for (Class<? extends Annotation> annotation : annotations) {
+                    logger.debug("Scanning for @" + annotation.getName());
+                    List<Class> list = finder.findAnnotatedClasses(annotation);
+                    if (logger.isDebugEnabled()) for (Class clazz : list) {
+                        logger.debug("Found " + clazz.getName());
+                    }
+                    
+                    classes.addAll(list);
                 }
             }
 
