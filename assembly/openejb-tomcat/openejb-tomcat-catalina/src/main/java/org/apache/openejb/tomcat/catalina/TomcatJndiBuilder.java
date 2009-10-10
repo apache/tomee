@@ -397,7 +397,6 @@ public class TomcatJndiBuilder {
 
         if (UserTransaction.class.getName().equals(ref.resourceEnvRefType)) {
             resourceEnv.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
-            resourceEnv.setType(ref.resourceEnvRefType);
         } else {
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
             resourceEnv.setProperty(NAME, ref.resourceEnvRefName);

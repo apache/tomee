@@ -23,13 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
-import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -49,8 +47,6 @@ public class WebModule implements WsModule {
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
-    private ClassFinder finder;
-
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -84,14 +80,6 @@ public class WebModule implements WsModule {
 
         this.moduleId = moduleId;
         validation = new ValidationContext(WebModule.class, jarLocation);
-    }
-
-    public ClassFinder getFinder() {
-        return finder;
-    }
-
-    public void setFinder(ClassFinder finder) {
-        this.finder = finder;
     }
 
     public ValidationContext getValidation() {
