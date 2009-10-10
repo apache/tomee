@@ -85,19 +85,19 @@ public final class BasicDataSourceUtil {
     
     /**
      * Create a {@link PasswordCipher} instance from the
-     * {@link #passwordCodecClass}.
+     * {@link #passwordCipherClass}.
      * 
-     * @param passwordCodecClass the password codec to look for
-     * @return the password codec from the {@link #passwordCodecClass}
+     * @param passwordCipherClass the password cipher to look for
+     * @return the password cipher from the {@link #passwordCipherClass}
      *         optionally set.
      * @throws SQLException
      *             if the driver can not be found.
      */
-    public static PasswordCipher getPasswordCipher(String passwordCodecClass) throws SQLException {
-        // Load the password codec class
-        Class pwdCodec = null;
+    public static PasswordCipher getPasswordCipher(String passwordCipherClass) throws SQLException {
+        // Load the password cipher class
+        Class pwdCipher = null;
 
-        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCodec
+        // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
         ResourceFinder finder = new ResourceFinder("META-INF/");
         Map<String, Class> impls;
         try {
@@ -105,24 +105,24 @@ public final class BasicDataSourceUtil {
             
         } catch (Throwable t) {
             String message = 
-                "Password codec '" + passwordCodecClass + 
-                "' not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCodec.";
+                "Password cipher '" + passwordCipherClass +
+                "' not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher.";
             throw new SQLNestedException(message, t);
         }
-        pwdCodec = impls.get(passwordCodecClass);
+        pwdCipher = impls.get(passwordCipherClass);
 
-        // if not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCodec
+        // if not found in META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
         // we can try to load the class.
-        if (null == pwdCodec) {
+        if (null == pwdCipher) {
             try {
                 try {
-                    pwdCodec = Class.forName(passwordCodecClass);
+                    pwdCipher = Class.forName(passwordCipherClass);
                     
                 } catch (ClassNotFoundException cnfe) {
-                    pwdCodec = Thread.currentThread().getContextClassLoader().loadClass(passwordCodecClass);
+                    pwdCipher = Thread.currentThread().getContextClassLoader().loadClass(passwordCipherClass);
                 }
             } catch (Throwable t) {
-                String message = "Cannot load password codec class '" + passwordCodecClass + "'";
+                String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
                 throw new SQLNestedException(message, t);
             }
         }
@@ -130,10 +130,10 @@ public final class BasicDataSourceUtil {
         // Create an instance
         PasswordCipher cipher = null;
         try {
-            cipher = (PasswordCipher) pwdCodec.newInstance();
+            cipher = (PasswordCipher) pwdCipher.newInstance();
 
         } catch (Throwable t) {
-            String message = "Cannot create password codec instance";
+            String message = "Cannot create password cipher instance";
             throw new SQLNestedException(message, t);
         }
 
