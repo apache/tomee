@@ -108,7 +108,7 @@ public class Cipher {
         try {
             ResourceFinder finder = new ResourceFinder("META-INF/");
             Map<String, Class> impls = finder.mapAllImplementations(PasswordCipher.class);
-            System.out.println("Available ciphers are: "+ Join.join(",", impls.keySet()));
+            System.out.println("Available ciphers are: "+ Join.join(", ", impls.keySet()));
         } catch (Exception dontCare) {
         }
     }
