@@ -78,22 +78,17 @@ public class Codec {
         }
 
         try {
-            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(line
-                    .getOptionValue("codec"));
+            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(line.getOptionValue("codec"));
 
             if (line.hasOption("decode")) {
                 String pwdArg = (String) line.getArgList().get(0);
                 char[] encodedPassword = pwdArg.toCharArray();
-                System.out.println(
-                        "The plain text value for " + pwdArg
-                        + " is " + codec.decode(encodedPassword));
+                System.out.println("The plain text value for " + pwdArg + " is " + codec.decode(encodedPassword));
 
             } else { // if option neither encode/decode is specified, we assume
                      // it is encode.
                 String plainPassword = (String) line.getArgList().get(0);
-                System.out.println(
-                        "The encode value for " + plainPassword
-                        + " is " + new String(codec.encode(plainPassword)));
+                System.out.println("The encode value for " + plainPassword + " is " + new String(codec.encode(plainPassword)));
             }
 
         } catch (SQLException e) {
@@ -108,13 +103,11 @@ public class Codec {
         formatter.printHelp("codec [options] <value>", "\n" + i18n("cmd.codec.description"), options, "\n");
     }
 
-    private static Option option(String shortOpt, String longOpt,
-            String description) {
+    private static Option option(String shortOpt, String longOpt, String description) {
         return OptionBuilder.withLongOpt(longOpt).withDescription(i18n(description)).create(shortOpt);
     }
 
-    private static Option option(String shortOpt, String longOpt,
-            String argName, String description) {
+    private static Option option(String shortOpt, String longOpt, String argName, String description) {
         return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description)).create(shortOpt);
     }
 
