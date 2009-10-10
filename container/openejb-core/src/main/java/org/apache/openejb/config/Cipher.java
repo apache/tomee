@@ -28,17 +28,17 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
-import org.apache.openejb.resource.jdbc.PasswordCodec;
+import org.apache.openejb.resource.jdbc.PasswordCipher;
 import org.apache.openejb.util.Messages;
 
 /**
- * Command line tool on top of the {@link PasswordCodec} interface. Basically,
- * it allows end user to encode/decode a string (ie. a password) using a codec
+ * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.PasswordCipher} interface. Basically,
+ * it allows end user to encrypt/decrypt a string (ie. a password) using a cipher
  * implementation.
  */
-public class Codec {
+public class Cipher {
 
-    private static Messages messages = new Messages(Codec.class);
+    private static Messages messages = new Messages(Cipher.class);
 
     public static void main(String[] args) throws SystemExitException {
 
@@ -46,10 +46,10 @@ public class Codec {
 
         // create the Options
         Options options = new Options();
-        options.addOption(option("h", "help", "cmd.codec.opt.help"));
-        options.addOption(option("i", "codec", "i", "cmd.codec.opt.impl"));
-        options.addOption(option("d", "decode", "cmd.codec.opt.decode"));
-        options.addOption(option("e", "encode", "cmd.codec.opt.encode"));
+        options.addOption(option("h", "help", "cmd.cipher.opt.help"));
+        options.addOption(option("c", "cipher", "c", "cmd.cipher.opt.impl"));
+        options.addOption(option("d", "decrypt", "cmd.cipher.opt.decrypt"));
+        options.addOption(option("e", "encrypt", "cmd.cipher.opt.encrypt"));
 
         CommandLine line;
         try {
@@ -65,34 +65,34 @@ public class Codec {
             return;
         }
 
-        if (!line.hasOption("codec")) {
-            System.out.println("Must specify the PasswordCodec implementation to use.");
+        if (!line.hasOption("cipher")) {
+            System.out.println("Must specify the PasswordCipher implementation to use.");
             help(options);
             return;
         }
 
         if (line.getArgList().size() != 1) {
-            System.out.println("Must specify either a plain text to encode, either a ciphered value to decode.");
+            System.out.println("Must specify either a plain text to encrypt, either a ciphered value to decrypt.");
             help(options);
             return;
         }
 
         try {
-            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(line.getOptionValue("codec"));
+            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(line.getOptionValue("cipher"));
 
-            if (line.hasOption("decode")) {
+            if (line.hasOption("decrypt")) {
                 String pwdArg = (String) line.getArgList().get(0);
-                char[] encodedPassword = pwdArg.toCharArray();
-                System.out.println("The plain text value for " + pwdArg + " is " + codec.decode(encodedPassword));
+                char[] encryptdPassword = pwdArg.toCharArray();
+                System.out.println("The plain text value for " + pwdArg + " is " + cipher.decrypt(encryptdPassword));
 
-            } else { // if option neither encode/decode is specified, we assume
-                     // it is encode.
+            } else { // if option neither encrypt/decrypt is specified, we assume
+                     // it is encrypt.
                 String plainPassword = (String) line.getArgList().get(0);
-                System.out.println("The encode value for " + plainPassword + " is " + new String(codec.encode(plainPassword)));
+                System.out.println("The encrypt value for " + plainPassword + " is " + new String(cipher.encrypt(plainPassword)));
             }
 
         } catch (SQLException e) {
-            System.out.println("Could not load password codec implementation class. Check your classpath.");
+            System.out.println("Could not load password cipher implementation class. Check your classpath.");
             throw new SystemExitException(-1);
         }
 
@@ -100,7 +100,7 @@ public class Codec {
 
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("codec [options] <value>", "\n" + i18n("cmd.codec.description"), options, "\n");
+        formatter.printHelp("cipher [options] <value>", "\n" + i18n("cmd.cipher.description"), options, "\n");
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {

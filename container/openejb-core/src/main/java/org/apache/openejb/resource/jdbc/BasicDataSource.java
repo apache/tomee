@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.SQLNestedException;
 import org.apache.openejb.loader.SystemInstance;
 
 public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
@@ -33,9 +32,9 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      * ciphered value.
      * 
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link PlainTextPasswordCodec} can also be used.
+     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
-    private String passwordCodecClass = null;
+    private String passwordCipher = null;
 
     /**
      * Returns the password codec class name to use to retrieve plain text
@@ -43,20 +42,20 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
      * 
      * @return the password codec class
      */
-    public synchronized String getPasswordCodecClass() {
-        return this.passwordCodecClass;
+    public synchronized String getPasswordCipher() {
+        return this.passwordCipher;
     }
 
     /**
      * <p>
-     * Sets the {@link #passwordCodecClass}.
+     * Sets the {@link #passwordCipher}.
      * </p>
      * 
-     * @param passwordCodecClass
+     * @param passwordCipher
      *            password codec value
      */
-    public synchronized void setPasswordCodecClass(String passwordCodecClass) {
-        this.passwordCodecClass = passwordCodecClass;
+    public synchronized void setPasswordCipher(String passwordCipher) {
+        this.passwordCipher = passwordCipher;
     }
     
 
@@ -96,9 +95,9 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
         }
         
         // check password codec if available
-        if (null != passwordCodecClass) {
-            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(passwordCodecClass);
-            String plainPwd = codec.decode(password.toCharArray());
+        if (null != passwordCipher) {
+            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+            String plainPwd = cipher.decrypt(password.toCharArray());
 
             // override previous password value
             super.setPassword(plainPwd);
@@ -130,5 +129,5 @@ public class BasicDataSource extends org.apache.commons.dbcp.BasicDataSource {
             }
         }
     }
-    
+
 }

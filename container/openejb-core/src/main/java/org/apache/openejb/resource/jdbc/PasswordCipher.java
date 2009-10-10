@@ -18,18 +18,18 @@
 package org.apache.openejb.resource.jdbc;
 
 /**
- * Implementations of {@link PasswordCodec} allow to encode and decode passwords
+ * Implementations of {@link PasswordCipher} allow to encode and decode passwords
  * used to connect to a database.
  * <p/>
  * Several implementations may exist, as several encryption algorithms may be
  * supported. One-way encryption algorithm (hash) can't be used as we need to
- * give a plain password to the database. {@link #encode(String)} method is not
+ * give a plain password to the database. {@link #encrypt(String)} method is not
  * mandatory as we don't need to encode a password, but it's useful to get the
  * encrypted value for a given plain text password. In the case you have
  * implemented both methods, you can use the PasswordCodec command line tool to
  * encode/decode a password.
  */
-public interface PasswordCodec {
+public interface PasswordCipher {
 
     /**
      * Encodes a given plain text password and returns the encoded password.
@@ -38,16 +38,16 @@ public interface PasswordCodec {
      *            The password to encode. May not be <code>null</code>, nor empty.
      * @return The encoded password.
      */
-    public char[] encode(String plainPassword);
+    public char[] encrypt(String plainPassword);
 
     /**
      * Decodes an encoded password and returns a plain text password.
      * 
-     * @param encodedPassword
+     * @param encryptedPassword
      *            The ciphered password to decode. May not be <code>null</code>,
      *            nor empty.
      * @return The plain text password.
      */
-    public String decode(char[] encodedPassword);
+    public String decrypt(char[] encryptedPassword);
 
 }

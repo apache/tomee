@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-main.class = org.apache.openejb.config.Codec
-name = codec
-description = Encode/Decode using the PasswordCodec.
+main.class = org.apache.openejb.config.Cipher
+name = cipher
+description = Encrypt a database password and print it to stdout.
 
 
