@@ -23,10 +23,10 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.openejb.util.Base64;
 
 /**
- * This {@link PasswordCodec} implementation uses a the Triple-DES encryption
+ * This {@link PasswordCipher} implementation uses a the Triple-DES encryption
  * algorithm.
  */
-public class StaticDESPasswordCodec implements PasswordCodec {
+public class StaticDESPasswordCipher implements PasswordCipher {
 
     private static final byte[] _3desData = { 
             (byte) 0x76, (byte) 0x6F, (byte) 0xBA, (byte) 0x39, (byte) 0x31, 
@@ -43,11 +43,11 @@ public class StaticDESPasswordCodec implements PasswordCodec {
     private static final String TRANSFORMATION = new String("DESede");
 
     /**
-     * @see PasswordCodec#encode(java.lang.String)
+     * @see PasswordCipher#encrypt(java.lang.String)
      * @throws RuntimeException
      *             in any case of error.
      */
-    public char[] encode(String plainPassword) {
+    public char[] encrypt(String plainPassword) {
         if ((null == plainPassword) || plainPassword.length() == 0) {
             throw new IllegalArgumentException("plainPassword cannot be null nor empty.");
         }
@@ -69,11 +69,11 @@ public class StaticDESPasswordCodec implements PasswordCodec {
     }
 
     /**
-     * @see PasswordCodec#decode(char[])
+     * @see PasswordCipher#decrypt(char[])
      * @throws RuntimeException
      *             in any case of error.
      */
-    public String decode(char[] encodedPassword) {
+    public String decrypt(char[] encodedPassword) {
         if ((null == encodedPassword) || encodedPassword.length == 0) {
             throw new IllegalArgumentException("encodedPassword cannot be null nor empty.");
         }

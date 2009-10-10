@@ -84,7 +84,7 @@ public final class BasicDataSourceUtil {
     }
     
     /**
-     * Create a {@link PasswordCodec} instance from the
+     * Create a {@link PasswordCipher} instance from the
      * {@link #passwordCodecClass}.
      * 
      * @param passwordCodecClass the password codec to look for
@@ -93,7 +93,7 @@ public final class BasicDataSourceUtil {
      * @throws SQLException
      *             if the driver can not be found.
      */
-    public static PasswordCodec getPasswordCodec(String passwordCodecClass) throws SQLException {
+    public static PasswordCipher getPasswordCipher(String passwordCodecClass) throws SQLException {
         // Load the password codec class
         Class pwdCodec = null;
 
@@ -101,7 +101,7 @@ public final class BasicDataSourceUtil {
         ResourceFinder finder = new ResourceFinder("META-INF/");
         Map<String, Class> impls;
         try {
-            impls = finder.mapAllImplementations(PasswordCodec.class);
+            impls = finder.mapAllImplementations(PasswordCipher.class);
             
         } catch (Throwable t) {
             String message = 
@@ -128,15 +128,15 @@ public final class BasicDataSourceUtil {
         }
 
         // Create an instance
-        PasswordCodec codec = null;
+        PasswordCipher cipher = null;
         try {
-            codec = (PasswordCodec) pwdCodec.newInstance();
+            cipher = (PasswordCipher) pwdCodec.newInstance();
 
         } catch (Throwable t) {
             String message = "Cannot create password codec instance";
             throw new SQLNestedException(message, t);
         }
 
-        return codec;
+        return cipher;
     }
 }

@@ -18,25 +18,25 @@
 package org.apache.openejb.resource.jdbc;
 
 /**
- * This {@link PlainTextPasswordCodec} is an {@link PasswordCodec}
+ * This {@link PlainTextPasswordCipher} is an {@link PasswordCipher}
  * implementation that does not use any encryption/decryption algorithm at all.
  */
-public class PlainTextPasswordCodec implements PasswordCodec {
+public class PlainTextPasswordCipher implements PasswordCipher {
 
     /**
-     * Returns the <code>encodedPassword</code> as plain text string.
+     * Returns the <code>encryptedPassword</code> as plain text string.
      * 
-     * @param encodedPassword
+     * @param encryptedPassword
      *            the encoded password
      * @return String the decoded password
      * 
-     * @see PasswordCodec#decode(char[])
+     * @see PasswordCipher#decrypt(char[])
      */
-    public String decode(char[] encodedPassword) {
-        if (null == encodedPassword) {
+    public String decrypt(char[] encryptedPassword) {
+        if (null == encryptedPassword) {
             throw new IllegalArgumentException("encodedPassword cannot be null.");
         }
-        return new String(encodedPassword);
+        return new String(encryptedPassword);
     }
 
     /**
@@ -46,9 +46,9 @@ public class PlainTextPasswordCodec implements PasswordCodec {
      *            the plain-text password
      * @return the plain-text password as character array
      * 
-     * @see PasswordCodec#encode(java.lang.String)
+     * @see PasswordCipher#encrypt(java.lang.String)
      */
-    public char[] encode(String plainPassword) {
+    public char[] encrypt(String plainPassword) {
         if (null == plainPassword) {
             throw new IllegalArgumentException("plainPassword cannot be null.");
         }

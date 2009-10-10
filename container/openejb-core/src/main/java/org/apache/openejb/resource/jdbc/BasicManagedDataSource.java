@@ -32,9 +32,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * ciphered value.
      * 
      * <em>The default is no codec.</em>. In other words, it means password is
-     * not ciphered. The {@link PlainTextPasswordCodec} can also be used.
+     * not ciphered. The {@link PlainTextPasswordCipher} can also be used.
      */
-    private String passwordCodecClass = null;
+    private String passwordCipher = null;
 
     /**
      * Returns the password codec class name to use to retrieve plain text
@@ -42,20 +42,20 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
      * 
      * @return the password codec class
      */
-    public synchronized String getPasswordCodecClass() {
-        return this.passwordCodecClass;
+    public synchronized String getPasswordCipher() {
+        return this.passwordCipher;
     }
 
     /**
      * <p>
-     * Sets the {@link #passwordCodecClass}.
+     * Sets the {@link #passwordCipher}.
      * </p>
      * 
-     * @param passwordCodecClass
+     * @param passwordCipher
      *            password codec value
      */
-    public synchronized void setPasswordCodecClass(String passwordCodecClass) {
-        this.passwordCodecClass = passwordCodecClass;
+    public synchronized void setPasswordCipher(String passwordCipher) {
+        this.passwordCipher = passwordCipher;
     }
     
     public synchronized String getUserName() {
@@ -94,9 +94,9 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
         }
         
         // check password codec if available
-        if (null != passwordCodecClass) {
-            PasswordCodec codec = BasicDataSourceUtil.getPasswordCodec(passwordCodecClass);
-            String plainPwd = codec.decode(password.toCharArray());
+        if (null != passwordCipher) {
+            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(passwordCipher);
+            String plainPwd = cipher.decrypt(password.toCharArray());
 
             // override previous password value
             super.setPassword(plainPwd);
@@ -132,5 +132,5 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
 
     protected void wrapTransactionManager() {
     }
-    
+
 }
