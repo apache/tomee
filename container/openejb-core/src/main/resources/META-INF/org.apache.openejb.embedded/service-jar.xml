@@ -310,6 +310,8 @@
 
     Password
 
+    PasswordCipher  PlainText
+
     # The connection properties that will be sent to the JDBC
     # driver when establishing new connections
     #
@@ -497,6 +499,8 @@
 
     #Password pass
     Password
+
+    PasswordCipher  PlainText
 
     # The connection properties that will be sent to the JDBC
     # driver when establishing new connections

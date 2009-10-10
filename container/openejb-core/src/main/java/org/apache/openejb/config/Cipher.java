@@ -17,6 +17,8 @@
 package org.apache.openejb.config;
 
 import java.sql.SQLException;
+import java.util.Map;
+import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,6 +32,8 @@ import org.apache.openejb.cli.SystemExitException;
 import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.PasswordCipher;
 import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.Join;
+import org.apache.xbean.finder.ResourceFinder;
 
 /**
  * Command line tool on top of the {@link org.apache.openejb.resource.jdbc.PasswordCipher} interface. Basically,
@@ -65,42 +69,54 @@ public class Cipher {
             return;
         }
 
-        if (!line.hasOption("cipher")) {
-            System.out.println("Must specify the PasswordCipher implementation to use.");
-            help(options);
-            return;
+        String cipherName = "Static3DES";
+        if (line.hasOption("cipher")) {
+            cipherName = line.getOptionValue("cipher");
         }
 
         if (line.getArgList().size() != 1) {
-            System.out.println("Must specify either a plain text to encrypt, either a ciphered value to decrypt.");
+            System.out.println("Must specify either a plain text to encrypt or a ciphered value to decrypt.");
             help(options);
             return;
         }
 
         try {
-            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(line.getOptionValue("cipher"));
+            PasswordCipher cipher = BasicDataSourceUtil.getPasswordCipher(cipherName);
 
             if (line.hasOption("decrypt")) {
                 String pwdArg = (String) line.getArgList().get(0);
                 char[] encryptdPassword = pwdArg.toCharArray();
-                System.out.println("The plain text value for " + pwdArg + " is " + cipher.decrypt(encryptdPassword));
+                System.out.println(cipher.decrypt(encryptdPassword));
 
             } else { // if option neither encrypt/decrypt is specified, we assume
                      // it is encrypt.
                 String plainPassword = (String) line.getArgList().get(0);
-                System.out.println("The encrypt value for " + plainPassword + " is " + new String(cipher.encrypt(plainPassword)));
+                System.out.println(new String(cipher.encrypt(plainPassword)));
             }
 
         } catch (SQLException e) {
             System.out.println("Could not load password cipher implementation class. Check your classpath.");
+
+            availableCiphers();
+
             throw new SystemExitException(-1);
         }
 
     }
 
+    private static void availableCiphers() {
+        try {
+            ResourceFinder finder = new ResourceFinder("META-INF/");
+            Map<String, Class> impls = finder.mapAllImplementations(PasswordCipher.class);
+            System.out.println("Available ciphers are: "+ Join.join(",", impls.keySet()));
+        } catch (Exception dontCare) {
+        }
+    }
+
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("cipher [options] <value>", "\n" + i18n("cmd.cipher.description"), options, "\n");
+        availableCiphers();
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {
