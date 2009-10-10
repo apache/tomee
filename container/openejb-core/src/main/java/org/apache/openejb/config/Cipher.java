@@ -116,6 +116,7 @@ public class Cipher {
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("cipher [options] <value>", "\n" + i18n("cmd.cipher.description"), options, "\n");
+        System.out.println("");
         availableCiphers();
     }
 
