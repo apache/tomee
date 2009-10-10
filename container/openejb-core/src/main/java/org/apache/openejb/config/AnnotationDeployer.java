@@ -21,9 +21,7 @@ import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
-import org.apache.openejb.core.TempClassLoader;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.UrlSet;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
@@ -349,20 +347,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();
-            if (webApp != null && (webApp.isMetadataComplete())) return webModule;
+            if (webApp != null && (webApp.isMetadataComplete() || !webApp.getServlet().isEmpty())) return webModule;
 
             ClassFinder finder;
             try {
-                final ClassLoader webClassLoader = webModule.getClassLoader();
-                ClassLoader parent = webClassLoader.getParent();
-
-                if (webClassLoader instanceof TempClassLoader) parent = parent.getParent();
-
-                UrlSet urlSet = new UrlSet(webClassLoader);
-                urlSet = urlSet.exclude(parent);
-                
-                finder = new ClassFinder(webClassLoader, urlSet.getUrls());
-                webModule.setFinder(finder);
+                finder = new ClassFinder(webModule.getClassLoader());
             } catch (Exception e) {
                 startupLogger.warning("Unable to scrape for @WebService or @WebServiceProvider annotations. ClassFinder failed.", e);
                 return webModule;
@@ -821,7 +810,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * Classes added to this set will be scanned for annotations
              */
-            Set<Class> classes = new HashSet<Class>();
+            Set<Class<?>> classes = new HashSet<Class<?>>();
 
 
             ClassLoader classLoader = webModule.getClassLoader();
@@ -944,38 +933,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                             throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
                         }
                     }
-                }
-            }
-
-            ClassFinder finder = webModule.getFinder();
-
-            if (finder != null) {
-                String[] webComponentAnnotations = {
-                        "javax.faces.bean.ManagedBean",
-                        "javax.servlet.annotation.WebServlet",
-                        "javax.servlet.annotation.WebServletContextListener",
-                        "javax.servlet.annotation.ServletFilter",
-                };
-
-                List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
-                for (String componentAnnotationName : webComponentAnnotations) {
-                    try {
-                        Class<?> clazz = classLoader.loadClass(componentAnnotationName);
-                        annotations.add(clazz.asSubclass(Annotation.class));
-                    } catch (ClassNotFoundException e) {
-                        logger.debug("Support not enabled: " + componentAnnotationName);
-                    }
-                }
-
-
-                for (Class<? extends Annotation> annotation : annotations) {
-                    logger.debug("Scanning for @" + annotation.getName());
-                    List<Class> list = finder.findAnnotatedClasses(annotation);
-                    if (logger.isDebugEnabled()) for (Class clazz : list) {
-                        logger.debug("Found " + clazz.getName());
-                    }
-                    
-                    classes.addAll(list);
                 }
             }
 
