@@ -32,6 +32,7 @@
   <properties>
     <openejb.osgi.import.pkg>
       org.apache.catalina*;resolution:=optional,
+      !sun.misc.*,
       *
     </openejb.osgi.import.pkg>
   </properties>
