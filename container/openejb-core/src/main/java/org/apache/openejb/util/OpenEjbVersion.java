@@ -26,8 +26,8 @@ import java.io.PrintStream;
  */
 public class OpenEjbVersion {
 
-    private final String copyright;//Copyright 1999-2006 (C) Apache OpenEJB Project, All Rights Reserved.
-    private final String url; //http://incubator.apache.org/openejb
+    private final String copyright;//Copyright 1999-2009 (C) Apache OpenEJB Project, All Rights Reserved.
+    private final String url; //http://openejb.apache.org
     private final String version;//${pom.version}
     private final String date;//@DATE-REPLACED-BY-MAVEN@
     private final String time;//@TIME-REPLACED-BY-MAVEN@
