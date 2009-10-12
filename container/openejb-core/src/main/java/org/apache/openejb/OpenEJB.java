@@ -102,8 +102,6 @@ public final class OpenEJB {
             logger.info("openejb.home = " + SystemInstance.get().getHome().getDirectory().getAbsolutePath());
             logger.info("openejb.base = " + SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
-            /* Obtain the Assembler impl.
-               Default is org.apache.openejb.assembler.classic.Assembler */
             String className = system.getOptions().get("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
 
             logger.debug("startup.instantiatingAssemblerClass", className);
