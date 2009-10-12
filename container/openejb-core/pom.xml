@@ -32,6 +32,11 @@
   <name>OpenEJB :: Container :: Core</name>
   <properties>
     <openejb.osgi.import.pkg>
+      oracle.toplink.*;resolution:=optional,
+      org.apache.openjpa.*;resolution:=optional,
+      org.eclipse.persistence.*;resolution:=optional,
+      org.hibernate.*;resolution:=optional,
+      org.quartz.*;resolution:=optional,
       javax.enterprise.deploy*;resolution:=optional,
       javax.jms*;resolution:=optional,
       javax.xml.registry*;resolution:=optional,
