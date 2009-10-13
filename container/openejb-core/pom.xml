@@ -190,18 +190,6 @@
           </excludes>
         </configuration>
       </plugin>
-	  <plugin>
-        <groupId>org.apache.felix</groupId>
-	    <artifactId>maven-bundle-plugin</artifactId>
-	    <configuration>
-	      <instructions>
-	        <Export-Package>${openejb.osgi.export}</Export-Package>
-	        <Import-Package>${openejb.osgi.import}</Import-Package>
-	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
-	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
-	      </instructions>
-	    </configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
