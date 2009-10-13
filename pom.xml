@@ -128,6 +128,12 @@
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-1</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>2.0.1</version>
+          <extensions>true</extensions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -145,6 +151,29 @@
         <configuration>
           <forkMode>always</forkMode>
         </configuration>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.felix</groupId>
+	<artifactId>maven-bundle-plugin</artifactId>
+	<configuration>
+	  <instructions>
+	    <Bundle-Name>Apache ${pom.name}</Bundle-Name>
+	    <Export-Package>${openejb.osgi.export}</Export-Package>
+	    <Import-Package>${openejb.osgi.import}</Import-Package>
+	    <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
+            <Implementation-Title>Apache OpenEJB</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.swizzle</groupId>
@@ -227,30 +256,6 @@
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
 	    </configuration>
-      </plugin>
-	  <plugin>
-        <groupId>org.apache.felix</groupId>
-	    <artifactId>maven-bundle-plugin</artifactId>
-	    <version>2.0.0</version>
-            <extensions>true</extensions>
-	    <configuration>
-	      <instructions>
-	        <Export-Package>${openejb.osgi.export}</Export-Package>
-	        <Import-Package>${openejb.osgi.import}</Import-Package>
-	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
-	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
-	        <Implementation-Version>${project.version}</Implementation-Version>
-	      </instructions>
-	    </configuration>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
