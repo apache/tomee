@@ -4,7 +4,7 @@
 // ------------------------------------------------------------------
 
 Apache OpenEJB
-Copyright 1999-2008 The Apache OpenEJB development community
+Copyright 1999-2009 The Apache OpenEJB development community
 
 This product includes/uses software, HSQLDB (http://hsqldb.org/)
 
