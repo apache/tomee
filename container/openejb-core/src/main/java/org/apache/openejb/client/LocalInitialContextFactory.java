@@ -76,7 +76,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
     }
 
     private Context getLocalInitialContext(Hashtable env) throws javax.naming.NamingException {
-        Context context = null;
+        Context context;
         try {
             ClassLoader cl = SystemInstance.get().getClassLoader();
 

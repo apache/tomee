@@ -32,6 +32,8 @@
   <name>OpenEJB :: Container :: Core</name>
   <properties>
     <openejb.osgi.import.pkg>
+      org.apache.activemq.ra;resolution:=optional,
+      org.apache.commons.dbcp.managed;resolution:=optional,
       oracle.toplink.*;resolution:=optional,
       org.apache.openjpa.*;resolution:=optional,
       org.eclipse.persistence.*;resolution:=optional,
@@ -46,6 +48,7 @@
       org.apache.commons.dbcp*;resolution:=optional,
       org.apache.xerces*;resolution:=optional,
       org.apache.xml.resolver*;resolution:=optional,
+      javax.transaction*,
       *
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
