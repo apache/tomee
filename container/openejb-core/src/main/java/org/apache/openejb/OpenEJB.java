@@ -57,7 +57,7 @@ public final class OpenEJB {
          * org.apache.openejb.core.ivm.naming.InitContextFactory
          */
         public Instance(Properties props) throws OpenEJBException {
-            this(props, null);
+            this(props, new org.apache.openejb.core.ServerFederation());
         }
 
         /**
@@ -77,22 +77,11 @@ public final class OpenEJB {
             }
             SystemInstance system = SystemInstance.get();
 
-            SafeToolkit toolkit = SafeToolkit.getToolkit("OpenEJB");
-
-            if (appServer == null) {
-                ApplicationServer defaultServer = (ApplicationServer) toolkit.newInstance("org.apache.openejb.core.ServerFederation");
-                appServer = defaultServer;
-            }
             system.setComponent(ApplicationServer.class, appServer);
 
-            /*
-            * Output startup message
-            */
             OpenEjbVersion versionInfo = OpenEjbVersion.get();
-
             if (system.getOptions().get("openejb.nobanner", true)) {
-                System.out.println("Apache OpenEJB " + versionInfo.getVersion() + "    build: " + versionInfo.getDate() + "-" + versionInfo.getTime());
-                System.out.println("" + versionInfo.getUrl());
+                versionInfo.print(System.out);
             }
 
             Logger logger2 = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -105,10 +94,10 @@ public final class OpenEJB {
             String className = system.getOptions().get("openejb.assembler", "org.apache.openejb.assembler.classic.Assembler");
 
             logger.debug("startup.instantiatingAssemblerClass", className);
-            Assembler assembler = null;
-
+            
+            Assembler assembler;
             try {
-                assembler = (Assembler) toolkit.newInstance(className);
+                assembler = (Assembler) SafeToolkit.getToolkit("OpenEJB").newInstance(className);
             } catch (OpenEJBException oe) {
                 logger.fatal("startup.assemblerCannotBeInstantiated", oe);
                 throw oe;
@@ -117,8 +106,6 @@ public final class OpenEJB {
                 logger.fatal(msg, t);
                 throw new OpenEJBException(msg, t);
             }
-
-            SystemInstance.get().setComponent(Assembler.class, assembler);
 
             try {
                 assembler.init(system.getProperties());
@@ -143,7 +130,6 @@ public final class OpenEJB {
             }
 
             ContainerSystem containerSystem = assembler.getContainerSystem();
-
             if (containerSystem == null) {
                 String msg = messages.message("startup.assemblerReturnedNullContainer");
                 logger.fatal(msg);
@@ -232,7 +218,7 @@ public final class OpenEJB {
             } else {
                 logger.debug("startup.transactionManager", transactionManager.getClass().getName());
             }
-            SystemInstance.get().setComponent(TransactionManager.class, transactionManager);
+            system.setComponent(TransactionManager.class, transactionManager);
 
             logger.debug("startup.ready");
 
