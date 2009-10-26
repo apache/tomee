@@ -64,6 +64,9 @@ public final class OpenEJB {
          * 2 usages
          */
         public Instance(Properties initProps, ApplicationServer appServer) throws OpenEJBException {
+            if (appServer == null) {
+                throw new IllegalArgumentException("appServer must not be null");
+            }
             initialized = new Exception("Initialized at "+new Date()).fillInStackTrace();
 
             Logger.configure();
@@ -230,13 +233,13 @@ public final class OpenEJB {
     }
 
     public static void destroy() {
-        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        assembler.destroy();
-
-        SystemInstance.get().removeComponent(ContainerSystem.class);
-        SystemInstance.get().removeComponent(Assembler.class);
-        SystemInstance.get().removeComponent(TransactionManager.class);
-        SystemInstance.get().removeComponent(SecurityService.class);
+//        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+//        assembler.destroy();
+//
+//        SystemInstance.get().removeComponent(ContainerSystem.class);
+//        SystemInstance.get().removeComponent(Assembler.class);
+//        SystemInstance.get().removeComponent(TransactionManager.class);
+//        SystemInstance.get().removeComponent(SecurityService.class);
         SystemInstance.reset();
         instance = null;
     }
@@ -267,7 +270,7 @@ public final class OpenEJB {
                 throw new OpenEJBException(msg);
             }
         } else {
-            instance = new Instance(initProps, appServer);
+            instance = appServer == null ? new Instance(initProps) : new Instance(initProps, appServer);
         }
     }
 
