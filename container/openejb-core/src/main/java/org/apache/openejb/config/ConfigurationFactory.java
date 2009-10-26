@@ -121,7 +121,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public ConfigurationFactory(boolean offline, DynamicDeployer preAutoConfigDeployer) {
         this.offline = offline;
-        deploymentLoader = new DeploymentLoader();
+        this.deploymentLoader = new DeploymentLoader();
 
         Options options = SystemInstance.get().getOptions();
 
