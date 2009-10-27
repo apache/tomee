@@ -85,7 +85,9 @@ public class SingletonContainer implements RpcContainer {
     }
 
     public void setAccessTimeout(Duration duration){
-        this.unit = duration.getUnit();
+        if (duration.getUnit() != null) {
+            this.unit = duration.getUnit();
+        }
         this.wait = duration.getTime();
     }
 
