@@ -20,7 +20,8 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -49,6 +50,8 @@
       org.apache.xerces*;resolution:=optional,
       org.apache.xml.resolver*;resolution:=optional,
       javax.transaction*;version=1.1,
+      javax.ejb*;version=3.1,
+      javax.xml.ws,
       *
     </openejb.osgi.import.pkg>
     <openejb.osgi.export>
