@@ -16,5 +16,6 @@
 main.class = org.apache.openejb.config.Cipher
 name = cipher
 description = Encrypt a database password and print it to stdout.
+description.pl = Zakoduj i wy\u015bwietl has\u0142o do bazy danych
 
 
