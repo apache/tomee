@@ -233,13 +233,8 @@ public final class OpenEJB {
     }
 
     public static void destroy() {
-//        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-//        assembler.destroy();
-//
-//        SystemInstance.get().removeComponent(ContainerSystem.class);
-//        SystemInstance.get().removeComponent(Assembler.class);
-//        SystemInstance.get().removeComponent(TransactionManager.class);
-//        SystemInstance.get().removeComponent(SecurityService.class);
+        Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+        assembler.destroy();
         SystemInstance.reset();
         instance = null;
     }
