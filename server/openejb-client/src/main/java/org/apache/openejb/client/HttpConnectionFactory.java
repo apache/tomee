@@ -50,7 +50,7 @@ public class HttpConnectionFactory implements ConnectionFactory {
             try {
                 params = MulticastConnectionFactory.URIs.parseParamters(uri);
             } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Invalid multicast uri " + uri.toString(), e);
+                throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
             httpURLConnection = (HttpURLConnection)url.openConnection();
