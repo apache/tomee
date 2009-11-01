@@ -23,8 +23,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.NoRouteToHostException;
-import java.util.Properties;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 /**
  * @version $Revision$ $Date$
@@ -45,8 +45,25 @@ public class HttpConnectionFactory implements ConnectionFactory {
         public HttpConnection(URI uri) throws IOException {
             this.uri = uri;
             URL url = uri.toURL();
+
+            Map<String, String> params;
+            try {
+                params = MulticastConnectionFactory.URIs.parseParamters(uri);
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Invalid multicast uri " + uri.toString(), e);
+            }
+
             httpURLConnection = (HttpURLConnection)url.openConnection();
             httpURLConnection.setDoOutput(true);
+
+            if (params.containsKey("connectTimeout")) {
+                httpURLConnection.setConnectTimeout(Integer.parseInt(params.get("connectTimeout")));
+            }
+
+            if (params.containsKey("readTimeout")) {
+                httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
+            }
+
             httpURLConnection.connect();
         }
 
