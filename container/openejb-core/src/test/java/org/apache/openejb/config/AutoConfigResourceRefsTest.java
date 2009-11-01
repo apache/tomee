@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * @version $Revision$ $Date$
  */
-public class AutoConfigTest extends TestCase {
+public class AutoConfigResourceRefsTest extends TestCase {
 
     public void test() throws Exception {
 
