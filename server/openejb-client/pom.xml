@@ -31,10 +31,10 @@
   <name>OpenEJB :: Server :: Client</name>
   <properties>
     <openejb.osgi.import.pkg>
-      *
+      javax.transaction;version="1.1",*
     </openejb.osgi.import.pkg>
     <openejb.osgi.require.bundle>
-      org.apache.openejb.openejb-core
+      org.apache.openejb.core
     </openejb.osgi.require.bundle>
   </properties>
   <build>
@@ -89,6 +89,11 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>5.0-2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
