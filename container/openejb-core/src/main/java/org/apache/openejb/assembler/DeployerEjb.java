@@ -26,6 +26,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 import javax.ejb.Stateless;
 import javax.ejb.Remote;
+import javax.ejb.TransactionManagement;
+import static javax.ejb.TransactionManagementType.BEAN;
 
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
@@ -41,6 +43,7 @@ import org.apache.openejb.loader.SystemInstance;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
+@TransactionManagement(BEAN)
 public class DeployerEjb implements Deployer {
     private final static File uniqueFile;
 
