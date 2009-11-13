@@ -17,7 +17,7 @@
 #
 cd "$(dirname "$0")"
 
-VERSION=3.1.2-SNAPSHOT
+VERSION=3.1.3-SNAPSHOT
 
 JAR=$PWD/../../itests/openejb-itests-app/target/openejb-itests-app-$VERSION.ear
 
