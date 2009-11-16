@@ -82,6 +82,10 @@ public class ServiceProvider {
     public ServiceProvider() {
     }
 
+    public ServiceProvider(Class clazz, String id, String service) {
+        this(clazz.getName(), id, service);
+    }
+
     public ServiceProvider(String className, String id, String service) {
         this.className = className;
         this.id = id;
