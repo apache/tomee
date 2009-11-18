@@ -41,7 +41,7 @@ public class Logger {
                 }
             }
 
-            if (factoryClass != null) {
+            if (factoryClass == null) {
                 try {
                     factoryClass = Class.forName(factoryName);
                 } catch (ClassNotFoundException e) {
@@ -186,7 +186,7 @@ public class Logger {
      */
     private String formatMessage(String message, Object... args) {
         if (args.length == 0) return message;
-        
+
         try {
             MessageFormat mf = messageFormatCache.compute(message);
             String msg = mf.format(args);
