@@ -27,6 +27,7 @@ import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.sys.Resource;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.loader.SystemInstance;
@@ -153,6 +154,124 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
 
         assertEquals(limeJta.id, limeUnit.jtaDataSource);
         assertEquals(limeNonJta.id, limeUnit.nonJtaDataSource);
+    }
+
+    /**
+     * Existing data source "orange-web", not controlled by us
+     * 
+     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Persistence xml like so:
+     *
+     * <persistence-unit name="orange-unit" />
+     *
+     * The orange-unit app should automatically use orange-web data source and create a new non-JtaManaged datasource
+     *
+     * @throws Exception
+     */
+    public void testFromWebAppThirdParty() throws Exception {
+        
+        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", null);
+        assertSame(supplied, resources.get(0));
+        
+        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        AppModule app = new AppModule(cl, "orange-app");
+        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        WebApp webApp = new WebApp();
+        webApp.setMetadataComplete(true);
+        app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
+
+        // Create app
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+        PersistenceUnitInfo unitInfo = appInfo.persistenceUnits.get(0);
+
+        //Check results
+        assertEquals(supplied.id, unitInfo.jtaDataSource);
+        assertNull(unitInfo.nonJtaDataSource);
+    }
+    /**
+     * Existing data source "orange-web", jta managed
+     * 
+     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Persistence xml like so:
+     *
+     * <persistence-unit name="orange-unit" />
+     *
+     * The orange-unit app should automatically use orange-web data source and create a new non-JtaManaged datasource
+     *
+     * @throws Exception
+     */
+    public void testFromWebAppJta() throws Exception {
+        
+        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", true);
+        assertSame(supplied, resources.get(0));
+        
+        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        AppModule app = new AppModule(cl, "orange-app");
+        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        WebApp webApp = new WebApp();
+        webApp.setMetadataComplete(true);
+        app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
+
+        // Create app
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+
+        // Check results
+        ResourceInfo generated = resources.get(1);
+        assertEquals(supplied.id + "NonJta", generated.id);
+        assertEquals(supplied.service, generated.service);
+        assertEquals(supplied.className, generated.className);
+        assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
+        assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
+        assertEquals("false", generated.properties.get("JtaManaged"));
+    }
+    
+    /**
+     * Existing data source "orange-web", non-jta managed
+     * 
+     * Application contains a web module with root context path as "orange-web" 
+     *
+     * Persistence xml like so:
+     *
+     * <persistence-unit name="orange-unit" />
+     *
+     * The orange-unit app should automatically use orange-web data source and create a new non-JtaManaged datasource
+     *
+     * @throws Exception
+     */
+    public void testFromWebAppNonJta() throws Exception {
+        
+        ResourceInfo supplied = addDataSource("orange-web", OrangeDriver.class, "jdbc:orange-web:some:stuff", false);
+        assertSame(supplied, resources.get(0));
+        
+        PersistenceUnit persistenceUnit = new PersistenceUnit("orange-unit");
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        AppModule app = new AppModule(cl, "orange-app");
+        app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
+        WebApp webApp = new WebApp();
+        webApp.setMetadataComplete(true);
+        app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-web"));
+
+        // Create app
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+
+        // Check results
+        ResourceInfo generated = resources.get(1);
+        assertEquals(supplied.id + "Jta", generated.id);
+        assertEquals(supplied.service, generated.service);
+        assertEquals(supplied.className, generated.className);
+        assertEquals(supplied.properties.get("JdbcDriver"), generated.properties.get("JdbcDriver"));
+        assertEquals(supplied.properties.get("JdbcUrl"), generated.properties.get("JdbcUrl"));
+        assertEquals("true", generated.properties.get("JtaManaged"));
     }
 
     /**

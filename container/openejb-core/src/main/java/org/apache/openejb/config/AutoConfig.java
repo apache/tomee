@@ -142,7 +142,7 @@ public class AutoConfig implements DynamicDeployer {
             deploy(webModule, appResources);
         }
         for (PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            deploy(persistenceModule);
+            deploy(appModule, persistenceModule);
         }
         return appModule;
     }
@@ -872,7 +872,7 @@ public class AutoConfig implements DynamicDeployer {
         throw new OpenEJBException("Unknown enterprise bean type " + enterpriseBean.getClass().getName());
     }
 
-    private void deploy(PersistenceModule persistenceModule) throws OpenEJBException {
+    private void deploy(AppModule app, PersistenceModule persistenceModule) throws OpenEJBException {
         if (!autoCreateResources) {
             return;
         }
@@ -1047,6 +1047,29 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
 
+            // No data sources were specified: If the app is running a web module, use it's context name as default
+            if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
+                String webContextRoot = null;
+                if (!app.getWebModules().isEmpty()) {
+                    webContextRoot = app.getWebModules().iterator().next().getContextRoot();
+                }
+
+                required.clear();
+                required.put("JtaManaged", "true");
+                jtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
+
+                required.clear();
+                required.put("JtaManaged", "false");
+                nonJtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
+                
+                // When no datasource was found with the context name with explicit JtaManaged set, try to find one with it unset
+                if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
+                    required.clear();
+                    required.put("JtaManaged", NONE);
+                    jtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
+                }
+            }
+            
             //
             //  If neither of the references are valid yet, then let's take
             //  the first valid datasource.
