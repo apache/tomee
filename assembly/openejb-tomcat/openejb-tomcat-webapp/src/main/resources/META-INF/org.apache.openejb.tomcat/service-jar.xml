@@ -80,7 +80,7 @@
 
   <!--
   # ==========================================================
-  # Default Stateless SessinBean Container
+  # Default Stateless SessionBean Container
   # ==========================================================
   -->
   <ServiceProvider
@@ -122,7 +122,7 @@
 
   <!--
   # ==========================================================
-  # Default Singleton SessinBean Container
+  # Default Singleton SessionBean Container
   # ==========================================================
   -->
   <ServiceProvider
@@ -139,7 +139,7 @@
 
   <!--
   # ==========================================================
-  # Default Stateful SessinBean Container
+  # Default Stateful SessionBean Container
   # ==========================================================
   -->
   <ServiceProvider
