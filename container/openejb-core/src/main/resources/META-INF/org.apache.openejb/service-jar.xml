@@ -187,6 +187,20 @@
 
   <!--
   # ==========================================================
+  # Default Managed SessionBean Container
+  # ==========================================================
+  -->
+  <ServiceProvider
+          id="Default Managed Container"
+          service="Container"
+          types="MANAGED"
+          constructor="id, securityService"
+          class-name="org.apache.openejb.core.managed.ManagedContainer">
+
+  </ServiceProvider>
+
+  <!--
+  # ==========================================================
   # Default Message Driven Container
   # ==========================================================
   -->

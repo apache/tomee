@@ -95,6 +95,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.Resources;
+import javax.annotation.ManagedBean;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
@@ -504,6 +505,29 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            for (Class<?> beanClass : finder.findAnnotatedClasses(ManagedBean.class)) {
+                ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
+                String ejbName = getEjbName(managed, beanClass);
+
+                // TODO: this is actually against the spec, but the requirement is rather silly
+                // (allowing @Stateful and @ManagedBean on the same class)
+                // If the TCK doesn't complain we should discourage it 
+                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass, ejbName, ejbModule)) continue;
+
+                EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
+                if (enterpriseBean == null) {
+                    enterpriseBean = new org.apache.openejb.jee.ManagedBean(ejbName, beanClass.getName());
+                    ejbJar.addEnterpriseBean(enterpriseBean);
+                }
+                if (enterpriseBean.getEjbClass() == null) {
+                    enterpriseBean.setEjbClass(beanClass.getName());
+                }
+                if (enterpriseBean instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) enterpriseBean;
+                    sessionBean.setSessionType(SessionType.MANAGED);
+                }
+            }
+
             List<Class> classes = finder.findAnnotatedClasses(MessageDriven.class);
             for (Class<?> beanClass : classes) {
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
@@ -570,6 +594,11 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private String getEjbName(Singleton singleton, Class<?> beanClass) {
             String ejbName = singleton.name().length() == 0 ? beanClass.getSimpleName() : singleton.name();
+            return ejbName;
+        }
+
+        private String getEjbName(ManagedBean managed, Class<?> beanClass) {
+            String ejbName = managed.value().length() == 0 ? beanClass.getSimpleName() : managed.value();
             return ejbName;
         }
 

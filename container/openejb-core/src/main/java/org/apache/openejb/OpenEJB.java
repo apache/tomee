@@ -187,6 +187,9 @@ public final class OpenEJB {
                             case STATEFUL:
                                 entry += "STATEFUL    ";
                                 break;
+                            case MANAGED:
+                                entry += "MANAGED     ";
+                                break;
                             case STATELESS:
                                 entry += "STATELESS   ";
                                 break;

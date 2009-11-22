@@ -23,7 +23,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
 public enum SessionType {
     @XmlEnumValue("Stateful") STATEFUL("Stateful"),
     @XmlEnumValue("Stateless") STATELESS("Stateless"),
-    @XmlEnumValue("Singleton") SINGLETON("Singleton");
+    @XmlEnumValue("Singleton") SINGLETON("Singleton"),
+    @XmlEnumValue("Managed") MANAGED("Managed");
 
     private final String name;
 

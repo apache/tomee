@@ -62,6 +62,8 @@ class EnterpriseBeanBuilder {
             ejbType = BeanType.STATELESS;
         } else if (bean.type == EnterpriseBeanInfo.SINGLETON) {
             ejbType = BeanType.SINGLETON;
+        } else if (bean.type == EnterpriseBeanInfo.MANAGED) {
+            ejbType = BeanType.MANAGED;
         } else if (bean.type == EnterpriseBeanInfo.MESSAGE) {
             ejbType = BeanType.MESSAGE_DRIVEN;
         } else if (bean.type == EnterpriseBeanInfo.ENTITY) {

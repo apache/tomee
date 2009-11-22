@@ -34,6 +34,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
+import org.apache.openejb.core.managed.ManagedObjectHandler;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -124,6 +125,10 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                     }
                     case SINGLETON: {
                         handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                        break;
+                    }
+                    case MANAGED: {
+                        handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
                         break;
                     }
                     default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());

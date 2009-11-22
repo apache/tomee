@@ -769,7 +769,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         try {
             // map the remove methods
-            if (componentType == BeanType.STATEFUL ) {
+            if (componentType == BeanType.STATEFUL || componentType == BeanType.MANAGED) {
 
                 Method beanMethod = null;
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass)) {

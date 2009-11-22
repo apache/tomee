@@ -14,18 +14,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+//
+// This source code implements specifications defined by the Java
+// Community Process. In order to remain compliant with the specification
+// DO NOT add / change / or delete method signatures!
+//
+package javax.annotation;
 
 /**
- * @version $Rev$ $Date$
+ * @version $Revision$ $Date$
  */
-public interface BeanTypes {
-
-    String BMP_ENTITY = "BMP_ENTITY";
-    String CMP_ENTITY = "CMP_ENTITY";
-    String STATEFUL = "STATEFUL";
-    String STATELESS = "STATELESS";
-    String SINGLETON = "SINGLETON";
-    String MANAGED = "MANAGED";
-    String MESSAGE = "MESSAGE";
+public @interface ManagedBean {
+    java.lang.String value() default ""; 
 }

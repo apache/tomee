@@ -400,6 +400,9 @@ public class OpenEJB implements ApplicationContextAware {
                         case SINGLETON:
                             entry += "SINGLETON   ";
                             break;
+                        case MANAGED:
+                            entry += "MANAGED     ";
+                            break;
                         case MESSAGE_DRIVEN:
                             entry += "MESSAGE     ";
                             break;

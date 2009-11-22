@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,18 +15,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.jee;
 
 /**
- * @version $Rev$ $Date$
+ * @version $Revision$ $Date$
  */
-public interface BeanTypes {
+public class ManagedBean extends SessionBean {
 
-    String BMP_ENTITY = "BMP_ENTITY";
-    String CMP_ENTITY = "CMP_ENTITY";
-    String STATEFUL = "STATEFUL";
-    String STATELESS = "STATELESS";
-    String SINGLETON = "SINGLETON";
-    String MANAGED = "MANAGED";
-    String MESSAGE = "MESSAGE";
+    public ManagedBean(String ejbName, String ejbClass) {
+        super(ejbName, ejbClass, SessionType.MANAGED);
+    }
+
+    public ManagedBean(Class<?> ejbClass) {
+        this(ejbClass.getSimpleName(), ejbClass.getName());
+    }
+
+    public ManagedBean(String name, Class<?> ejbClass) {
+        this(name, ejbClass.getName());
+    }
+
+    public ManagedBean() {
+        this(null, (String) null);
+    }
+
+    public void setSessionType(SessionType value) {
+    }
 }

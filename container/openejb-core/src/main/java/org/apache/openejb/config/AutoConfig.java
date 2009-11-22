@@ -863,6 +863,8 @@ public class AutoConfig implements DynamicDeployer {
                 return BeanTypes.STATEFUL;
             } else if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.SINGLETON) {
                 return BeanTypes.SINGLETON;
+            } else if (((org.apache.openejb.jee.SessionBean) enterpriseBean).getSessionType() == SessionType.MANAGED) {
+                return BeanTypes.MANAGED;
             } else {
                 return BeanTypes.STATELESS;
             }

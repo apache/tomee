@@ -62,6 +62,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
+import org.apache.openejb.assembler.classic.ManagedContainerInfo;
 import static org.apache.openejb.config.ServiceUtils.implies;
 import org.apache.openejb.config.sys.AbstractService;
 import org.apache.openejb.config.sys.ConnectionManager;
@@ -620,6 +621,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     static {
         defaultProviders.put(MdbContainerInfo.class, new DefaultService("MESSAGE", Container.class));
+        defaultProviders.put(ManagedContainerInfo.class, new DefaultService("MANAGED", Container.class));
         defaultProviders.put(StatefulSessionContainerInfo.class, new DefaultService("STATEFUL", Container.class));
         defaultProviders.put(StatelessSessionContainerInfo.class, new DefaultService("STATELESS", Container.class));
         defaultProviders.put(SingletonSessionContainerInfo.class, new DefaultService("SINGLETON", Container.class));
@@ -890,6 +892,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     static {
         containerTypes.put(BeanTypes.SINGLETON, SingletonSessionContainerInfo.class);
+        containerTypes.put(BeanTypes.MANAGED, ManagedContainerInfo.class);
         containerTypes.put(BeanTypes.STATELESS, StatelessSessionContainerInfo.class);
         containerTypes.put(BeanTypes.STATEFUL, StatefulSessionContainerInfo.class);
         containerTypes.put(BeanTypes.BMP_ENTITY, BmpEntityContainerInfo.class);
