@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,18 +15,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.spring;
 
-/**
- * @version $Rev$ $Date$
- */
-public interface BeanTypes {
+import java.util.Properties;
 
-    String BMP_ENTITY = "BMP_ENTITY";
-    String CMP_ENTITY = "CMP_ENTITY";
-    String STATEFUL = "STATEFUL";
-    String STATELESS = "STATELESS";
-    String SINGLETON = "SINGLETON";
-    String MANAGED = "MANAGED";
-    String MESSAGE = "MESSAGE";
+import org.apache.openejb.config.BeanTypes;
+
+@Exported
+public class ManagedContainer extends AbstractContainerProvider {
+
+    protected String getContainerType() {
+        return BeanTypes.MANAGED;
+    }
+
+    protected Properties getProperties() {
+        return new Properties();
+    }
 }

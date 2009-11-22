@@ -43,6 +43,7 @@ import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.MethodConcurrencyInfo;
 import org.apache.openejb.assembler.classic.MethodScheduleInfo;
 import org.apache.openejb.assembler.classic.ScheduleInfo;
+import org.apache.openejb.assembler.classic.ManagedBeanInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.CallbackMethod;
@@ -498,6 +499,20 @@ public class EjbJarInfoBuilder {
                 remove.beanMethod = toInfo(removeMethod.getBeanMethod());
                 remove.retainIfException = removeMethod.getRetainIfException();
                 stateful.removeMethods.add(remove);
+            }
+
+        } else if (s.getSessionType() == SessionType.MANAGED) {
+            bean = new ManagedBeanInfo();
+            ManagedBeanInfo managed = ((ManagedBeanInfo) bean);
+
+            copyCallbacks(s.getPostActivate(), managed.postActivate);
+            copyCallbacks(s.getPrePassivate(), managed.prePassivate);
+
+            for (RemoveMethod removeMethod : s.getRemoveMethod()) {
+                RemoveMethodInfo remove = new RemoveMethodInfo();
+                remove.beanMethod = toInfo(removeMethod.getBeanMethod());
+                remove.retainIfException = removeMethod.getRetainIfException();
+                managed.removeMethods.add(remove);
             }
 
         } else if (s.getSessionType() == SessionType.SINGLETON) {

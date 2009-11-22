@@ -63,6 +63,7 @@ public class CheckPersistenceRefs extends ValidationBase {
                 case STATEFUL: return "Stateful";
                 case STATELESS: return "Stateless";
                 case SINGLETON: return "Singleton";
+                case MANAGED: return "Managed";
                 default: throw new IllegalArgumentException("Uknown SessionBean type "+bean.getClass());
             }
         } else if (bean instanceof MessageDrivenBean) return "MessageDriven";

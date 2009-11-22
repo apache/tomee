@@ -83,6 +83,10 @@ public class IntraVmMetaData implements javax.ejb.EJBMetaData, java.io.Serializa
         return type == BeanType.SINGLETON;
     }
 
+    public boolean isManagedSession() {
+        return type == BeanType.MANAGED;
+    }
+
     public boolean isStatefulSession() {
         return type == BeanType.STATEFUL;
     }

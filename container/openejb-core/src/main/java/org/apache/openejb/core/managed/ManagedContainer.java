@@ -77,6 +77,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Duration;
 import org.apache.xbean.recipe.ConstructionException;
 
 public class ManagedContainer implements RpcContainer {
@@ -96,8 +97,8 @@ public class ManagedContainer implements RpcContainer {
     protected final Cache<Object, Instance> cache;
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
 
-    public ManagedContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache) {
-        this.cache = new SimpleCache<Object, Instance>();
+    public ManagedContainer(Object id, SecurityService securityService) throws SystemException {
+        this.cache = new SimpleCache<Object, Instance>(null, new SimplePassivater(), 1000, 50, new Duration("1 hour"));
         this.containerID = id;
         this.securityService = securityService;
         cache.setListener(new StatefulCacheListener());

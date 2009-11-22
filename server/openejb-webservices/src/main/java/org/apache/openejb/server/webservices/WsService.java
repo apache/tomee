@@ -425,6 +425,10 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
             return "StatefulBean";
         } else if (type == EnterpriseBeanInfo.STATELESS) {
             return "StatelessBean";
+        } else if (type == EnterpriseBeanInfo.SINGLETON) {
+            return "SingletonBean";
+        } else if (type == EnterpriseBeanInfo.MANAGED) {
+            return "ManagedBean";
         } else if (type == EnterpriseBeanInfo.MESSAGE) {
             return "MessageDrivenBean";
         } else if (type == EnterpriseBeanInfo.ENTITY) {
