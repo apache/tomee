@@ -144,13 +144,13 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     private void configureEmbedded() {
         URL resource = Thread.currentThread().getContextClassLoader().getResource(EMBEDDED_PROPERTIES_FILE);
         if (resource != null) PropertyConfigurator.configure(resource);
-        else System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
+        else System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING " + EMBEDDED_PROPERTIES_FILE + " FILE ");
     }
 
     private void installLoggingPropertiesFile(File loggingPropertiesFile) throws IOException {
         URL resource = Thread.currentThread().getContextClassLoader().getResource(DEFAULT_LOGGING_PROPERTIES_FILE);
         if (resource == null) {
-            System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING logging.properties FILE ");
+            System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING " + DEFAULT_LOGGING_PROPERTIES_FILE + " FILE ");
             return;
         }
         InputStream in = resource.openStream();
