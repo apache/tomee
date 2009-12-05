@@ -46,4 +46,23 @@ public class DurationTest extends TestCase {
         assertEquals(new Duration(123, null), new Duration("123"));
         assertEquals(new Duration(-1, null), new Duration("-1"));
     }
+
+    public void testUnitConversion() throws Exception {
+        assertEquals(2 * 1000, MILLISECONDS.convert(2, SECONDS));
+        assertEquals(2 * 1000 * 1000, MICROSECONDS.convert(2, SECONDS));
+        assertEquals(2 * 1000 * 1000 * 1000, NANOSECONDS.convert(2, SECONDS));
+
+        assertEquals(2, SECONDS.convert(2 * 1000 * 1000 * 1000, NANOSECONDS));
+        assertEquals(2, SECONDS.convert(2 * 1000 * 1000, MICROSECONDS));
+        assertEquals(2, SECONDS.convert(2 * 1000, MILLISECONDS));
+
+        // The verbose way of doing the above
+        assertEquals(2 * 1000, new Duration(2, SECONDS).getTime(MILLISECONDS));
+        assertEquals(2 * 1000 * 1000, new Duration(2, SECONDS).getTime(MICROSECONDS));
+        assertEquals(2 * 1000 * 1000 * 1000, new Duration(2, SECONDS).getTime(NANOSECONDS));
+
+        assertEquals(2, new Duration(2 * 1000 * 1000 * 1000, NANOSECONDS).getTime(SECONDS));
+        assertEquals(2, new Duration(2 * 1000 * 1000, MICROSECONDS).getTime(SECONDS));
+        assertEquals(2, new Duration(2 * 1000, MILLISECONDS).getTime(SECONDS));
+    }
 }
