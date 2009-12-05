@@ -57,7 +57,7 @@ public class MulticastSearch {
     }
 
     public URI search(Filter filter, long timeout, TimeUnit unit) throws IOException {
-        timeout = unit.convert(timeout, TimeUnit.MILLISECONDS);
+        timeout = TimeUnit.MILLISECONDS.convert(timeout, unit);
         long waited = 0;
 
         byte[] buf = new byte[BUFF_SIZE];

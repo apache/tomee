@@ -40,6 +40,10 @@ public class Duration {
         return time;
     }
 
+    public long getTime(TimeUnit unit) {
+        return this.unit.convert(time, unit);
+    }
+    
     public void setTime(long time) {
         this.time = time;
     }

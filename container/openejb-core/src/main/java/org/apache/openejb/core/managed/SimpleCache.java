@@ -80,7 +80,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         this.passivator = passivator;
         this.capacity = capacity;
         this.bulkPassivate = bulkPassivate;
-        this.timeOut = timeOut.getUnit().convert(timeOut.getTime(), TimeUnit.MILLISECONDS);
+        this.timeOut = timeOut.getTime(TimeUnit.MILLISECONDS);
     }
 
     public synchronized CacheListener<V> getListener() {
