@@ -59,6 +59,7 @@
     <module>jpa-eclipselink</module>
     <module>spring-integration</module>
     <module>telephone-stateful</module>
+    <module>quartz-app</module>
     <module>webservice-attachments</module>
     <module>webapps</module>
     <module>webservice-security</module>
