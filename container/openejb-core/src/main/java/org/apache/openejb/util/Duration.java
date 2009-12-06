@@ -41,7 +41,7 @@ public class Duration {
     }
 
     public long getTime(TimeUnit unit) {
-        return this.unit.convert(time, unit);
+        return unit.convert(this.time, this.unit);
     }
     
     public void setTime(long time) {
