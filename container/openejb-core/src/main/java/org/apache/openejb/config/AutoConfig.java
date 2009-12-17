@@ -1049,26 +1049,46 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
 
-            // No data sources were specified: If the app is running a web module, use it's context name as default
+            // No data sources were specified: 
+            // Look for defaults, see https://issues.apache.org/jira/browse/OPENEJB-1027
             if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
-                String webContextRoot = null;
-                if (!app.getWebModules().isEmpty()) {
-                    webContextRoot = app.getWebModules().iterator().next().getContextRoot();
+                // We check for data sources matching the following names:
+                // 1. The persistence unit id
+                // 2. The web module id
+                // 3. The web module context root
+                // 4. The application module id
+                List<String> ids = new ArrayList<String>();
+                ids.add(unit.getName());
+                for (WebModule webModule : app.getWebModules()) {
+                    ids.add(webModule.getModuleId());
+                    ids.add(webModule.getContextRoot());
                 }
-
-                required.clear();
-                required.put("JtaManaged", "true");
-                jtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
-
-                required.clear();
-                required.put("JtaManaged", "false");
-                nonJtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
+                ids.add(app.getModuleId());
                 
-                // When no datasource was found with the context name with explicit JtaManaged set, try to find one with it unset
-                if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
-                    required.clear();
-                    required.put("JtaManaged", NONE);
-                    jtaDataSourceId = findResourceId(webContextRoot, "DataSource", required, null);
+                // Search for a matching data source
+                for (String id : ids) {
+                    //Try finding a jta managed data source
+                    required.put("JtaManaged", "true");
+                    jtaDataSourceId = findResourceId(id, "DataSource", required, null);
+
+                    if (jtaDataSourceId == null) {
+                        //No jta managed data source found. Try finding a non-jta managed
+                        required.clear();
+                        required.put("JtaManaged", "false");
+                        nonJtaDataSourceId = findResourceId(id, "DataSource", required, null);
+                    }
+                    
+                    if (jtaDataSourceId == null && nonJtaDataSourceId == null) {
+                        // Neither jta nor non-jta managed data sources were found. try to find one with it unset
+                        required.clear();
+                        required.put("JtaManaged", NONE);
+                        jtaDataSourceId = findResourceId(id, "DataSource", required, null);
+                    }
+                    
+                    if (jtaDataSourceId != null || nonJtaDataSourceId != null) {
+                        //We have found a default. Exit the loop
+                        break;
+                    }
                 }
             }
             
