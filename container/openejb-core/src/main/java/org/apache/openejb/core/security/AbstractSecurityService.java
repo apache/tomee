@@ -61,10 +61,10 @@ import java.lang.reflect.Method;
 public abstract class AbstractSecurityService implements SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
     static private final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
     static protected final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
-    protected final String defaultUser = "guest";
-    protected final Subject defaultSubject;
-    protected final SecurityContext defaultContext;
+    protected String defaultUser = "guest";
     private String realmName = "PropertiesLogin";
+    protected Subject defaultSubject;
+    protected SecurityContext defaultContext;
 
     public AbstractSecurityService() {
         this(BasicJaccProvider.class.getName());
@@ -77,11 +77,12 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         ThreadContext.addThreadContextListener(this);
 
-        defaultSubject = createSubject(defaultUser);
-        defaultContext = new SecurityContext(defaultSubject);
+        // set the default subject and the default context
+        updateSecurityContext();
 
         SystemInstance.get().setComponent(BasicPolicyConfiguration.RoleResolver.class, this);
     }
+
 
     public String getRealmName() {
         return realmName;
@@ -90,7 +91,30 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     public void setRealmName(String realmName) {
         this.realmName = realmName;
     }
+    
+    /**
+     * @return the defaultUser
+     */
+    public String getDefaultUser() {
+        return defaultUser;
+    }
 
+    /**
+     * @param defaultUser the defaultUser to set
+     */
+    public void setDefaultUser(String defaultUser) {
+        this.defaultUser = defaultUser;
+        
+        // set the default subject and the default context for the new default user
+        updateSecurityContext();
+    }
+
+    // update the current subject and security context
+    private void updateSecurityContext() {
+        defaultSubject = createSubject(defaultUser);
+        defaultContext = new SecurityContext(defaultSubject);
+    }
+    
     public void init(Properties props) throws Exception {
     }
 

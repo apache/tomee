@@ -250,7 +250,10 @@
           id="Default Security Service"
           service="SecurityService"
           types="SecurityService"
-          class-name="org.apache.openejb.core.security.SecurityServiceImpl"/>
+          class-name="org.apache.openejb.core.security.SecurityServiceImpl">
+  
+    DefaultUser "guest"         
+  </ServiceProvider>
 
   <ServiceProvider
           id="PseudoSecurityService"
