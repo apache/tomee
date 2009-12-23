@@ -17,7 +17,8 @@
 package org.apache.openejb.core.security;
 
 import junit.framework.TestCase;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+
+import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
@@ -45,13 +46,10 @@ import java.util.Properties;
  */
 public class SecurityTest extends TestCase {
 
+    private Assembler configureAssembler(String defaultUser) throws Exception {
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
 
-    public void _test() throws Exception {
-    }
-
-    public void test() throws Exception {
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
-
+        
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
@@ -63,6 +61,11 @@ public class SecurityTest extends TestCase {
         serviceInfo.className = SecurityServiceImpl.class.getName();
         serviceInfo.id = "New Security Service";
         serviceInfo.properties = new Properties();
+        if (defaultUser != null) {
+            // override the default user
+            serviceInfo.properties.setProperty("DefaultUser", defaultUser);
+            
+        }
 
         assembler.createSecurityService(serviceInfo);
 
@@ -78,17 +81,21 @@ public class SecurityTest extends TestCase {
 
         assembler.createApplication(ejbJarInfo);
 
+        return assembler;
+    }
+
+    public void test() throws Exception {
+        Assembler assembler = configureAssembler(null);
+
         Properties props = new Properties();
         props.setProperty(Context.SECURITY_PRINCIPAL, "jonathan");
         props.setProperty(Context.SECURITY_CREDENTIALS, "secret");
 
         InitialContext ctx = new InitialContext(props);
 
-
         Project foo = (Project) ctx.lookup("FooBeanLocal");
 
         foo.svnCheckout("");
-
         foo.svnCommit("");
 
         try {
@@ -101,7 +108,10 @@ public class SecurityTest extends TestCase {
         assertTrue("not in role committer", foo.isCallerInRole("committer"));
         assertTrue("not in role community", foo.isCallerInRole("community"));
         assertFalse("in role contributor", foo.isCallerInRole("contributor"));
-
+        
+        ctx.close();
+        assembler.destroy();
+        
 //        Project bar = (Project) ctx.lookup("BarBeanLocal");
 //
 //        bar.svnCheckout("");
@@ -123,11 +133,67 @@ public class SecurityTest extends TestCase {
 //        assertFalse("in role committer", bar.isCallerInRole("committer"));
 //        assertFalse("in role community", bar.isCallerInRole("community"));
 //        assertTrue("not in role contributor", bar.isCallerInRole("contributor"));
+    }
+    
+    // When no credentials are provided, the default user/role should be "guest"
+    public void testUnauthenticatedUser() throws Exception {
+        Assembler assembler = configureAssembler(null);
 
+        // no credentials provided, the default user should be "guest"
+        Properties props = new Properties();
+
+        InitialContext ctx = new InitialContext(props);
+
+        Project foo = (Project) ctx.lookup("FooBeanLocal");
+
+        foo.svnCheckout("");
+        try {
+            foo.svnCommit("");
+            fail("Should not be allowed");
+        } catch (Exception e) {
+            // good.
+        }
+
+        assertFalse("in role committer", foo.isCallerInRole("committer"));
+        assertFalse("in role community", foo.isCallerInRole("community"));
+        assertFalse("in role contributor", foo.isCallerInRole("contributor"));
+        assertTrue("not in role guest", foo.isCallerInRole("guest"));
+        
+        ctx.close();
+        assembler.destroy();
+    }
+    
+    // Just to be sure we can override the default user (ie. guest)
+    public void testDefaultUser() throws Exception {
+        Assembler assembler = configureAssembler("public");
+
+        // no credentials provided, the default user should be "guest"
+        Properties props = new Properties();
+
+        InitialContext ctx = new InitialContext(props);
+
+        Project foo = (Project) ctx.lookup("FooBeanLocal");
+
+        foo.svnCheckout("");
+        try {
+            foo.svnCommit("");
+            fail("Should not be allowed");
+        } catch (Exception e) {
+            // good.
+        }
+
+        assertFalse("in role committer", foo.isCallerInRole("committer"));
+        assertFalse("in role community", foo.isCallerInRole("community"));
+        assertFalse("in role contributor", foo.isCallerInRole("contributor"));
+        assertFalse("in role guest", foo.isCallerInRole("guest"));
+        assertTrue("not in role public", foo.isCallerInRole("public"));
+        
+        ctx.close();
+        assembler.destroy();
     }
 
     @Stateless
-    @DeclareRoles({"committer", "contributor","community"})
+    @DeclareRoles({"committer", "contributor","community","guest","public"})
     public static class FooBean implements Project {
 
         @Resource
