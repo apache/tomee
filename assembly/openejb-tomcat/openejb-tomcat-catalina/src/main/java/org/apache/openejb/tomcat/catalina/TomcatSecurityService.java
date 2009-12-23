@@ -88,9 +88,8 @@ public class TomcatSecurityService  extends AbstractSecurityService {
                         roles.add(logicalRole);
                         break;
                     }
-                } else if (principal instanceof RunAsRole) {
-                    RunAsRole runAsRole = (RunAsRole) principal;
-                    String name = runAsRole.getName();
+                } else if (principal != null) {
+                    String name = principal.getName();
                     if (logicalRole.equals(name)) {
                         roles.add(logicalRole);
                     }
