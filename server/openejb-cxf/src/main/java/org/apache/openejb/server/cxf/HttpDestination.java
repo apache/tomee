@@ -18,6 +18,8 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.Binding;
+import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.security.SecurityContext;
@@ -27,8 +29,8 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.cxf.transport.http.HTTPSession;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.apache.openejb.server.webservices.WsConstants;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 
@@ -51,9 +53,15 @@ import java.util.logging.Logger;
 public class HttpDestination extends AbstractHTTPDestination {
     private MessageObserver messageObserver;
     private boolean passSecurityContext = false;
+    private CxfEndpoint endpoint;
 
     public HttpDestination(Bus bus, ConduitInitiator conduitInitiator, EndpointInfo endpointInfo) throws IOException {
         super(bus, conduitInitiator, endpointInfo, true);
+        this.endpoint = bus.getExtension(CxfEndpoint.class);
+    }
+    
+    private Binding getBinding() {
+        return this.endpoint.getEndpoint().getBinding();
     }
 
     public void setPassSecurityContext(boolean passSecurityContext) {
@@ -77,13 +85,13 @@ public class HttpDestination extends AbstractHTTPDestination {
         message.put(HttpResponse.class, response);
 
         final HttpServletRequest servletRequest = (HttpServletRequest) request.getAttribute(HttpRequest.SERVLET_REQUEST);
-        message.put(MessageContext.SERVLET_REQUEST, servletRequest);
+        message.put(HTTP_REQUEST, servletRequest);
 
         HttpServletResponse servletResponse = (HttpServletResponse) request.getAttribute(HttpRequest.SERVLET_RESPONSE);
-        message.put(MessageContext.SERVLET_RESPONSE, servletResponse);
+        message.put(HTTP_RESPONSE, servletResponse);
 
         ServletContext servletContext = (ServletContext) request.getAttribute(HttpRequest.SERVLET_CONTEXT);
-        message.put(MessageContext.SERVLET_CONTEXT, servletContext);
+        message.put(HTTP_CONTEXT, servletContext);
 
         if (this.passSecurityContext && servletRequest != null) {
             message.put(SecurityContext.class, new SecurityContext() {
@@ -107,6 +115,10 @@ public class HttpDestination extends AbstractHTTPDestination {
         if (servletRequest != null) {
             message.put(Message.ENCODING, getCharacterEncoding(servletRequest.getCharacterEncoding()));
         }
+        
+        ExchangeImpl exchange = new ExchangeImpl();
+        exchange.setInMessage(getBinding().createMessage(message));
+        exchange.setSession(new HTTPSession(servletRequest));
 
         getMessageObserver().onMessage(message);
     }

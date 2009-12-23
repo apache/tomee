@@ -35,7 +35,7 @@ public class PojoEndpoint extends CxfEndpoint {
     private InjectionProcessor<Object> injectionProcessor;
 
     public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance) {
-        super(bus, port, context, instance);
+    	super(bus, port, context, instance, null);
 
         String bindingURI = null;
         if (port.getBindingID() != null) {
