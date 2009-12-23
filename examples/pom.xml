@@ -64,6 +64,7 @@
     <module>webapps</module>
     <module>webservice-security</module>
     <module>webservice-ws-security</module>
+    <module>webservice-inheritance</module>
   </modules>
 
   <profiles>
