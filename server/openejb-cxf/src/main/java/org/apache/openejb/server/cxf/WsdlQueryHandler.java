@@ -22,9 +22,9 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.tools.common.extensions.soap.SoapAddress;
 import org.apache.cxf.tools.util.SOAPBindingUtil;
 import org.apache.cxf.transport.http.WSDLQueryHandler;
+import org.apache.cxf.wsdl.http.AddressType;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.xmlsoap.schemas.wsdl.http.AddressType;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;

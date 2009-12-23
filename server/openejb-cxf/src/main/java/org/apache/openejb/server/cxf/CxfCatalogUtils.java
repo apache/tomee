@@ -52,7 +52,7 @@ public final class CxfCatalogUtils {
         try {
             catalog.loadCatalog(catalogURL);
             logger.debug("Loaded " + catalogURL + " catalog.");
-            bus.setExtension(catalog.getCatalog(), Catalog.class);
+            bus.setExtension(catalog, OASISCatalogManager.class);
         } catch (IOException e) {
             logger.warning("Failed to load catalog file: " + catalogURL, e);
         }

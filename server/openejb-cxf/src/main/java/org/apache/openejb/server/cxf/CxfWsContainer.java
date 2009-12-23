@@ -19,51 +19,36 @@ package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
-import org.apache.openejb.util.Base64;
-import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.loader.SystemInstance;
 
-import javax.security.auth.login.LoginException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.security.Principal;
 
 public abstract class CxfWsContainer implements HttpListener {
     protected final Bus bus;
     protected final PortData port;
     protected HttpDestination destination;
     protected CxfEndpoint endpoint;
-
+    protected HttpTransportFactory httpTransportFactory;
 
     public CxfWsContainer(Bus bus, PortData port) {
         this.bus = bus;
         this.port = port;
-
+        
         List<String> ids = new ArrayList<String>();
         ids.add("http://schemas.xmlsoap.org/wsdl/soap/");
 
-        DestinationFactoryManager factoryManager = bus.getExtension(DestinationFactoryManager.class);
-        HttpTransportFactory factory = new HttpTransportFactory(bus);
-        factory.setTransportIds(ids);
-
-        factoryManager.registerDestinationFactory("http://cxf.apache.org/transports/http/configuration", factory);
-        factoryManager.registerDestinationFactory("http://cxf.apache.org/bindings/xformat", factory);
-        factoryManager.registerDestinationFactory("http://www.w3.org/2003/05/soap/bindings/HTTP/", factory);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/soap/http", factory);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/wsdl/http/", factory);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/wsdl/soap/http", factory);
+        httpTransportFactory = new HttpTransportFactory(bus);
+        httpTransportFactory.setTransportIds(ids);
+        httpTransportFactory.registerDestinationFactory();
     }
 
     public void start() {

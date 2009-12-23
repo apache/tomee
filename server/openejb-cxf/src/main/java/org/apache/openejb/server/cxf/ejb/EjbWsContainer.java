@@ -32,7 +32,7 @@ public class EjbWsContainer extends CxfWsContainer {
     }
 
     protected EjbEndpoint createEndpoint() {
-        EjbEndpoint ep = new EjbEndpoint(bus, port, deploymentInfo);
+    	EjbEndpoint ep = new EjbEndpoint(bus, port, deploymentInfo, httpTransportFactory);
         return ep;
     }
 

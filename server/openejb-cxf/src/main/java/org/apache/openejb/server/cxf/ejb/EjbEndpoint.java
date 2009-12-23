@@ -18,7 +18,6 @@
 package org.apache.openejb.server.cxf.ejb;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.binding.soap.SoapBinding;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.saaj.SAAJInInterceptor;
@@ -33,15 +32,11 @@ import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
+import org.apache.openejb.server.cxf.HttpTransportFactory;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
-import org.apache.openejb.server.cxf.ServerPasswordHandler;
-import org.apache.ws.security.handler.WSHandlerConstants;
-import org.apache.ws.security.WSConstants;
 
 import javax.xml.ws.WebServiceException;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * A web service endpoint which invokes an EJB container.
@@ -49,8 +44,8 @@ import java.util.HashMap;
 public class EjbEndpoint extends CxfEndpoint {
     private final DeploymentInfo deploymentInfo;
 
-    public EjbEndpoint(Bus bus, PortData portData, DeploymentInfo deploymentInfo) {
-        super(bus, portData, deploymentInfo.getJndiEnc(), deploymentInfo.getBeanClass());
+    public EjbEndpoint(Bus bus, PortData portData, DeploymentInfo deploymentInfo, HttpTransportFactory httpTransportFactory) {
+        super(bus, portData, deploymentInfo.getJndiEnc(), deploymentInfo.getBeanClass(), httpTransportFactory);
         this.deploymentInfo = deploymentInfo;
 
         String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());
