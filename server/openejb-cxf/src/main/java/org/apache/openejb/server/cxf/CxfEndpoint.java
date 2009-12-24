@@ -32,7 +32,6 @@ import org.apache.openejb.core.webservices.PortData;
 
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
-import javax.xml.ws.Endpoint;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
@@ -43,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-public abstract class CxfEndpoint extends Endpoint {
+public abstract class CxfEndpoint {
 	protected Bus bus;
 
 	protected PortData port;
