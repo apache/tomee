@@ -67,15 +67,8 @@ public class ConversionTest extends TestCase {
         String result = JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, root);
         String expected = readContent(getInputStream("geronimo-openejb-converted.xml"));
 
-
-        XMLUnit.setIgnoreWhitespace(true);
-        try {
-            Diff myDiff = new DetailedDiff(new Diff(expected, result));
-            assertTrue("Files are not similar " + myDiff, myDiff.similar());
-        } catch (AssertionFailedError e) {
-            assertEquals(expected, result);
-            throw e;
-        }
+        Diff myDiff = new DetailedDiff(new Diff(expected, result));
+        assertTrue("Files are not similar " + myDiff, myDiff.similar());
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName, java.lang.String expectedFile) throws Exception {
