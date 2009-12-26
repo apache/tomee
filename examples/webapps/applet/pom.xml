@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>5.0-2</version>
+      <version>5.0-3-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -110,7 +110,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>javaee-api</artifactId>
-                  <version>5.0-2</version>
+                  <version>5.0-3-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>javaee-api.jar</destFileName>
                 </artifactItem>
