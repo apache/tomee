@@ -81,9 +81,9 @@ public class SingletonLazyInstantiationTest extends TestCase {
             thread.start();
         }
 
-        finish.await(30, TimeUnit.SECONDS);
+        assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
-        assertEquals(1, MySingleton.instances.get());
+        assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
 
         // Invoke a business method just to be sure
         MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
@@ -109,9 +109,9 @@ public class SingletonLazyInstantiationTest extends TestCase {
             thread.start();
         }
 
-        finish.await(30, TimeUnit.SECONDS);
+        assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
-        assertEquals(1, MySingleton.instances.get());
+        assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
 
         // Invoke a business method just to be sure
         MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
@@ -136,23 +136,34 @@ public class SingletonLazyInstantiationTest extends TestCase {
 
         public void run() {
             try {
-                log("await");
+                log("waiting to start");
 
                 if (start != null) start.await(20, TimeUnit.SECONDS);
 
-                log("get");
+                log("looking up the singleton");
 
                 MySingletonLocal singletonLocal = (MySingletonLocal) context.lookup("MySingletonLocal");
 
                 // Have to invoke a method to ensure creation
                 singletonLocal.getId();
 
-                log("got " + singletonLocal);
+                log("singleton retrieved " + singletonLocal);
             } catch (NoSuchEJBException e) {
-                if (!exception.get()) throw new RuntimeException(e);
+                if (!exception.get()) {
+                    synchronized (System.out) {
+                        log("exception");
+                        e.printStackTrace(System.out);
+                    }
+                    throw new RuntimeException(e);
+                }
             } catch (Exception e) {
+                synchronized (System.out) {
+                    log("exception");
+                    e.printStackTrace(System.out);
+                }
                 throw new RuntimeException(e);
             } finally {
+                log("finished");
                 finish.countDown();
             }
         }
@@ -160,7 +171,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
     }
 
     public static void log(String s) {
-//        System.out.println(Thread.currentThread().getName() + " : " + s);
+        System.out.println(Thread.currentThread().getName() + " : " + s);
     }
 
 
@@ -175,6 +186,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
         @PostConstruct
         public void construct() throws Exception {
             id = instances.incrementAndGet();
+            log("constructing singleton: " + id);
             Thread.sleep(5000);
             if (exception.get()) throw new Exception("I threw an exception");
         }
