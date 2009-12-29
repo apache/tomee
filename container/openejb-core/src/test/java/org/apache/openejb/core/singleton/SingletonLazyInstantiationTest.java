@@ -72,7 +72,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
         Context context = new InitialContext();
 
         int threads = 2000;
-        CyclicBarrier start = new CyclicBarrier(threads);
+        CyclicBarrier start = new CyclicBarrier(threads + 1);
         CountDownLatch finish = new CountDownLatch(threads);
 
         for (int i = threads; i > 0; i--) {
@@ -81,6 +81,10 @@ public class SingletonLazyInstantiationTest extends TestCase {
             thread.start();
         }
 
+        start.await(30, TimeUnit.SECONDS);
+
+        assertFalse("All threads did not start", start.isBroken());
+        
         assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
         assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
@@ -100,7 +104,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
         Context context = new InitialContext();
 
         int threads = 200;
-        CyclicBarrier start = new CyclicBarrier(threads);
+        CyclicBarrier start = new CyclicBarrier(threads + 1);
         CountDownLatch finish = new CountDownLatch(threads);
 
         for (int i = threads; i > 0; i--) {
@@ -109,6 +113,10 @@ public class SingletonLazyInstantiationTest extends TestCase {
             thread.start();
         }
 
+        start.await(30, TimeUnit.SECONDS);
+
+        assertFalse("All threads did not start", start.isBroken());
+        
         assertTrue("Client threads did not complete", finish.await(30, TimeUnit.SECONDS));
 
         assertEquals("incorrect number of instances", 1, MySingleton.instances.get());
@@ -171,7 +179,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
     }
 
     public static void log(String s) {
-        System.out.println(Thread.currentThread().getName() + " : " + s);
+//        System.out.println(Thread.currentThread().getName() + " : " + s);
     }
 
 
