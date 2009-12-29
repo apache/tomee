@@ -71,7 +71,7 @@ public class SingletonLazyInstantiationTest extends TestCase {
     public void testSuccess() throws Exception {
         Context context = new InitialContext();
 
-        int threads = 2000;
+        int threads = 200;
         CyclicBarrier start = new CyclicBarrier(threads + 1);
         CountDownLatch finish = new CountDownLatch(threads);
 
