@@ -69,6 +69,14 @@
       <version>3.1.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
+         on Sun's internal copy of Xerces. See AXIS2-4228. -->
+    <dependency>
+      <groupId>com.sun.xml.parsers</groupId>
+      <artifactId>jaxp-ri</artifactId>
+      <version>1.4.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <!--
