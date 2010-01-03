@@ -43,7 +43,7 @@ public class LocalInitialContextFactory implements javax.naming.spi.InitialConte
         return getLocalInitialContext(env);
     }
 
-    private void init(Hashtable env) throws javax.naming.NamingException {
+    protected void init(Hashtable env) throws javax.naming.NamingException {
         if (openejb != null) {
             return;
         }

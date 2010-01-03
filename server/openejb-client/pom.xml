@@ -64,22 +64,6 @@
           </excludes>
         </configuration>
       </plugin>
-	  <plugin>
-        <groupId>org.apache.felix</groupId>
-	    <artifactId>maven-bundle-plugin</artifactId>
-	    <configuration>
-	      <instructions>
-	        <Bundle-Name>${artifactId}</Bundle-Name>
-	        <Bundle-SymbolicName>${openejb.osgi.symbolic.name}</Bundle-SymbolicName>
-	        <Export-Package>${openejb.osgi.export}</Export-Package>
-	        <Import-Package>${openejb.osgi.import}</Import-Package>
-	        <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
-	        <Implementation-Title>Apache OpenEJB</Implementation-Title>
-	        <Implementation-Version>${project.version}</Implementation-Version>
-            <Require-Bundle>${openejb.osgi.require.bundle}</Require-Bundle>
-	      </instructions>
-	    </configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
