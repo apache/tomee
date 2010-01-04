@@ -42,8 +42,8 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
     }
 
     @Test
-    public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
-        MethodLevelInterceptorOnlyIntf bean = (MethodLevelInterceptorOnlyIntf) initCtx.lookup("MethodLevelInterceptorOnlySLSBeanLocal");
+    public void testInterceptedGenerifiedBusinessIntfMethod() throws Exception {
+        MethodLevelInterceptorOnlyParent bean = (MethodLevelInterceptorOnlyParent) initCtx.lookup("MethodLevelInterceptorOnlySLSBeanLocal");
 
         assert bean != null;
 

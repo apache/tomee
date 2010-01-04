@@ -18,19 +18,16 @@ package org.superbiz.interceptors;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
-import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-@Local(MethodLevelInterceptorOnlyIntf.class)
+@Local(MethodLevelInterceptorOnlyParent.class)
 @Stateless
-public class MethodLevelInterceptorOnlySLSBean extends MethodLevelInterceptorOnlyParent implements MethodLevelInterceptorOnlyIntf {
+public class MethodLevelInterceptorOnlySLSBean implements MethodLevelInterceptorOnlyParent {
 
-    @Override
     @Interceptors(MethodLevelInterceptorOne.class)
-    public List<String> makePersistent(Entity entity) {
+    public List<String> makePersistent(String entity) {
         List<String> list = new ArrayList<String>();
         list.add("makePersistent");
         return list;

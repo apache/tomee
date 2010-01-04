@@ -16,12 +16,9 @@
  */
 package org.superbiz.interceptors;
 
-import javax.persistence.Entity;
 import java.util.List;
 
-public class MethodLevelInterceptorOnlyParent implements MethodLevelInterceptorOnlyIntf {
+public interface MethodLevelInterceptorOnlyParent extends MethodLevelInterceptorOnlyIntf<String> {
 
-    public List<String> makePersistent(Entity entity) {
-        return null;
-    }
+    public List<String> makePersistent(String entity);
 }
