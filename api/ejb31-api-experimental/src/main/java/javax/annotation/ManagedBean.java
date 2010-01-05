@@ -22,8 +22,10 @@
 package javax.annotation;
 
 /**
- * @version $Revision$ $Date$
+ * @version $Rev$ $Date$
  */
+@java.lang.annotation.Target({java.lang.annotation.ElementType.TYPE})
+@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 public @interface ManagedBean {
     java.lang.String value() default ""; 
 }
