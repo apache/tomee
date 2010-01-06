@@ -19,16 +19,20 @@ package org.apache.openejb.config;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
+import org.apache.openejb.jee.EnterpriseBean;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ejb.ApplicationException;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 
 /**
  * @version $Rev$ $Date$
@@ -86,17 +90,44 @@ public class AnnotationDeployerTest {
         Assert.assertEquals(MyMainClass.class.getName(), clientInfo.mainClass);
     }
 
+    /**
+     *  For https://issues.apache.org/jira/browse/OPENEJB-1128
+     */
+    @Test
+    public void interceptingGenericBusinessMethodCalls() throws Exception {
+        EjbJar ejbJar = new EjbJar("test-classes");
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setJarLocation(null);
+
+        AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
+        ejbModule = discvrAnnBeans.deploy(ejbModule);
+
+        final EnterpriseBean bean = ejbJar.getEnterpriseBean("InterceptedSLSBean");
+        assert bean != null;        
+    }
+
     @ApplicationException(rollback = true)
     public abstract class BusinessException extends Exception {
     }
 
     public class ValueRequiredException extends BusinessException {
     }
-    
+
     public static final class MyMainClass {
-	public static void main(String[] args) {
-	    
-	}
+        public static void main(String[] args) {
+        }
+    }
+
+    public static interface GenericInterface<T> {
+        T genericMethod(T t);
+    }
+
+    @Stateless
+    @Local(GenericInterface.class)
+    public static class InterceptedSLSBean implements GenericInterface<String> {
+        public String genericMethod(String s) {
+            return s;
+        }
     }
 
 }
