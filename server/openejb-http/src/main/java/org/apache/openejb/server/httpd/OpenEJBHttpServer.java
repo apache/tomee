@@ -74,7 +74,7 @@ public class OpenEJBHttpServer implements HttpServer {
 
         try {
             //TODO: if ssl change to https
-            URI socketURI = new URI("http://" + socket.getLocalAddress().getHostName() + ":" + socket.getLocalPort());
+            URI socketURI = new URI("http://" + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
             processRequest(socketURI, in, out);
         } catch (Throwable e) {
             log.error("Unexpected error", e);

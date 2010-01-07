@@ -136,7 +136,7 @@ public class ServiceManager {
         try {
             org.apache.log4j.MDC.put("SERVER", "main");
             InetAddress localhost = InetAddress.getLocalHost();
-            org.apache.log4j.MDC.put("HOST", localhost.getHostName());
+            org.apache.log4j.MDC.put("HOST", localhost.getHostAddress());
         } catch (Throwable e) {
         }
 
