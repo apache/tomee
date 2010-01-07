@@ -65,7 +65,7 @@ public class ServiceLogger implements ServerService {
         InetAddress client = socket.getInetAddress();
 
         try {
-            org.apache.log4j.MDC.put("HOST", client.getHostName());
+            org.apache.log4j.MDC.put("HOST", client.getHostAddress());
             org.apache.log4j.MDC.put("SERVER", getName());
         } catch (Throwable e) {
         }
@@ -76,7 +76,7 @@ public class ServiceLogger implements ServerService {
             next.service(socket);
 //            logSuccess();
         } catch (Exception e) {
-            logger.error("[failure] " + socket.getPort() + " - " + client.getHostName() + ": " + e.getMessage());
+            logger.error("[failure] " + socket.getPort() + " - " + client.getHostAddress() + ": " + e.getMessage());
 
             e.printStackTrace();
         }
