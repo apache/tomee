@@ -55,6 +55,7 @@ public class Cmp2Generator implements Opcodes {
     private final List<Method> selectMethods = new ArrayList<Method>();
     private final Class beanClass;
     private final PostCreateGenerator postCreateGenerator;
+    private static final String DELETED = "openejb_deleted";
 
     /**
      * Constructor for a Cmp2Generator.  This validates the
@@ -192,7 +193,7 @@ public class Cmp2Generator implements Opcodes {
 
         // private transient boolean deleted;
         {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, "deleted", "Z", null, null);
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_TRANSIENT, DELETED, "Z", null, null);
             fv.visitEnd();
         }
 
@@ -298,7 +299,7 @@ public class Cmp2Generator implements Opcodes {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "OpenEJB_isDeleted", "()Z", null, null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, implClassName, "deleted", "Z");
+        mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
         mv.visitInsn(IRETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
@@ -310,7 +311,7 @@ public class Cmp2Generator implements Opcodes {
 
         /* if (deleted) return; */
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, implClassName, "deleted", "Z");
+        mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
         Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(RETURN);
@@ -319,7 +320,7 @@ public class Cmp2Generator implements Opcodes {
         // deleted = true;
         mv.visitVarInsn(ALOAD, 0);
         mv.visitInsn(ICONST_1);
-        mv.visitFieldInsn(PUTFIELD, implClassName, "deleted", "Z");
+        mv.visitFieldInsn(PUTFIELD, implClassName, DELETED, "Z");
 
         for (CmrField cmrField : cmrFields) {
             // ${cmrField.accessor}.delete(${cmrField.name});
@@ -338,7 +339,7 @@ public class Cmp2Generator implements Opcodes {
 
         // if (deleted) return null;
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, implClassName, "deleted", "Z");
+        mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
         Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(ACONST_NULL);
@@ -391,7 +392,7 @@ public class Cmp2Generator implements Opcodes {
 
         // if (deleted) return;
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, implClassName, "deleted", "Z");
+        mv.visitFieldInsn(GETFIELD, implClassName, DELETED, "Z");
         Label notDeleted = new Label();
         mv.visitJumpInsn(IFEQ, notDeleted);
         mv.visitInsn(RETURN);
