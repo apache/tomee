@@ -27,7 +27,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Debug;
+import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
 
@@ -38,31 +38,27 @@ import javax.security.auth.login.LoginException;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.List;
-import java.util.Map;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @version $Rev$ $Date$
  */
 public class LocalInitialContext extends ContextWrapper {
 
-    private static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
-    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, LocalInitialContext.class);
+    public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, LocalInitialContext.class);
 
     private final LocalInitialContextFactory factory;
     private Properties properties;
     private Object clientIdentity;
-    private Object serviceManager;
 
     private static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
     private Close onClose;
     private Options options;
+    private ServiceManagerProxy serviceManager;
 
     public static enum Close {
         LOGOUT, DESTROY;
     }
-
 
     public LocalInitialContext(Hashtable env, LocalInitialContextFactory factory) throws NamingException {
         super(getContainerSystemEjbContext());
@@ -95,7 +91,9 @@ public class LocalInitialContext extends ContextWrapper {
     }
 
     private void destroy() throws NamingException {
-        stopNetworkServices();
+        if (serviceManager != null) {
+            serviceManager.stop();
+        }
         tearDownOpenEJB();
     }
 
@@ -146,69 +144,12 @@ public class LocalInitialContext extends ContextWrapper {
         if (!options.get(OPENEJB_EMBEDDED_REMOTABLE, false)) {
             return;
         }
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         try {
-            Class serviceManagerClass = classLoader.loadClass("org.apache.openejb.server.ServiceManager");
-
-            Method get = serviceManagerClass.getMethod("get");
-
-            try {
-                if (get.invoke(null) != null) return;
-            } catch (InvocationTargetException e) {
-                return;
-            }
-
-            logger.info("Starting network services");
-
-            Method getManager = serviceManagerClass.getMethod("getManager");
-            Method init = serviceManagerClass.getMethod("init");
-            Method start = serviceManagerClass.getMethod("start", boolean.class);
-
-            try {
-                serviceManager = getManager.invoke(null);
-            } catch (InvocationTargetException e) {
-                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to instantiate ServiceManager class 'org.apache.openejb.server.ServiceManager'.";
-                throw new IllegalStateException(msg, e);
-            }
-
-            try {
-                init.invoke(serviceManager);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to initialize ServiceManager.  Cause: " + cause.getClass().getName() + ": " + cause.getMessage();
-                throw new IllegalStateException(msg, cause);
-            }
-            try {
-                start.invoke(serviceManager, false);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, unable to start ServiceManager.  Cause: " + cause.getClass().getName() + ": " + cause.getMessage();
-                throw new IllegalStateException(msg, cause);
-            }
-        } catch (ClassNotFoundException e) {
-            String msg = "Enabling option '" + OPENEJB_EMBEDDED_REMOTABLE + "' requires class 'org.apache.openejb.server.ServiceManager' to be available.  Make sure you have the openejb-server-*.jar in your classpath and at least one protocol implementation such as openejb-ejbd-*.jar.";
-            throw new IllegalStateException(msg, e);
-        } catch (NoSuchMethodException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods not found on as expected on class 'org.apache.openejb.server.ServiceManager'.  This should never happen.";
-            throw new IllegalStateException(msg, e);
-        } catch (IllegalAccessException e) {
-            String msg = "Option Enabled '" + OPENEJB_EMBEDDED_REMOTABLE + "'.  Error, 'init' and 'start' methods cannot be accessed on class 'org.apache.openejb.server.ServiceManager'.  The VM SecurityManager settings must be adjusted.";
-            throw new IllegalStateException(msg, e);
-        }
-    }
-
-
-    private void stopNetworkServices() {
-        if (serviceManager != null){
-            logger.info("Stopping network services");
-            try {
-                Method stop = serviceManager.getClass().getMethod("stop");
-                stop.invoke(serviceManager);
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            serviceManager = new ServiceManagerProxy();
+            serviceManager.start();
+        } catch (ServiceManagerProxy.AlreadyStartedException e) {
+            logger.debug("Network services already started.  Ignoring option " + OPENEJB_EMBEDDED_REMOTABLE);            
         }
     }
 
