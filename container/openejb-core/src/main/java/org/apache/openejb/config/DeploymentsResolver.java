@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -43,7 +44,7 @@ public class DeploymentsResolver {
     static final String SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY = DEPLOYMENTS_CLASSPATH_PROPERTY;
     private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
-    private static final String CLASSPATH_REQUIRE_DESCRIPTOR = "openejb.deployments.classpath.require.descriptor";
+    private static final String CLASSPATH_REQUIRE_DESCRIPTOR = RequireDescriptors.PROPERTY;
     private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
     private static final String CLASSPATH_FILTER_SYSTEMAPPS = "openejb.deployments.classpath.filter.systemapps";
     private static final Logger logger = DeploymentLoader.logger;
@@ -155,7 +156,7 @@ public class DeploymentsResolver {
         Options options = SystemInstance.get().getOptions();
         String include = options.get(CLASSPATH_INCLUDE, "");
         String exclude = options.get(CLASSPATH_EXCLUDE, ".*");
-        boolean requireDescriptors = options.get(CLASSPATH_REQUIRE_DESCRIPTOR, false);
+        Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
         boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
         boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
@@ -246,15 +247,20 @@ public class DeploymentsResolver {
                 return;
             } else if (size < 20) {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
-            } else if (size < 50 && !requireDescriptors) {
-                logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
-            } else if (!requireDescriptors) {
-                logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
-                logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+            } else {
+                // Has the user allowed some module types to be discoverable via scraping?                                                                  
+                boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
+
+                if (size < 50 && willScrape) {
+                    logger.info("Inspecting classpath for applications: " + urls.size() + " urls. Consider adjusting your exclude/include.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                } else if (willScrape) {
+                    logger.warning("Inspecting classpath for applications: " + urls.size() + " urls.");
+                    logger.warning("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " + CLASSPATH_EXCLUDE + "='" + exclude + "', " + CLASSPATH_INCLUDE + "='" + include + "'");
+                }
             }
 
             long begin = System.currentTimeMillis();
-            processUrls(urls, classLoader, !requireDescriptors, base, jarList);
+            processUrls(urls, classLoader, requireDescriptors, base, jarList);
             long end = System.currentTimeMillis();
             long time = end - begin;
 
@@ -264,7 +270,7 @@ public class DeploymentsResolver {
                 if (filterSystemApps){
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
-                processUrls(unchecked.getUrls(), classLoader, false, base, jarList);
+                processUrls(unchecked.getUrls(), classLoader, requireDescriptors, base, jarList);
             }
 
             if (logger.isDebugEnabled()) {
@@ -305,12 +311,12 @@ public class DeploymentsResolver {
 
     }
 
-    private static void processUrls(List<URL> urls, ClassLoader classLoader, boolean searchForDescriptorlessApplications, FileUtils base, List<String> jarList) {
+    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<String> jarList) {
         for (URL url : urls) {
             Deployments deployment;
             String path;
             try {
-                Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, searchForDescriptorlessApplications);
+                Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {

@@ -1137,6 +1137,17 @@ public class DeploymentLoader {
     }
 
     public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
+        Set<RequireDescriptors> search = new HashSet<RequireDescriptors>();
+
+        if (!searchForDescriptorlessApplications) search.addAll(Arrays.asList(RequireDescriptors.values()));
+
+        return discoverModuleType(baseUrl, classLoader, search);
+    }
+
+    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptor) throws IOException, UnknownModuleTypeException {
+        final boolean scanPotentialEjbModules = !requireDescriptor.contains(RequireDescriptors.EJB);
+        final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
+
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
         Map<String, URL> descriptors = altDDSources(finder.getResourcesMap("META-INF/"), false);
 
@@ -1165,7 +1176,8 @@ public class DeploymentLoader {
         }
 
         URL manifestUrl = descriptors.get("MANIFEST.MF");
-        if (manifestUrl != null) {
+        if (scanPotentialClientModules && manifestUrl != null) {
+            // In this case scanPotentialClientModules really means "require application-client.xml"
             InputStream is = manifestUrl.openStream();
             Manifest manifest = new Manifest(is);
             String mainClass = manifest.getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
@@ -1174,7 +1186,7 @@ public class DeploymentLoader {
             }
         }
 
-        if (searchForDescriptorlessApplications) {
+        if (scanPotentialEjbModules || scanPotentialClientModules) {
             AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
 
             final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet();
@@ -1182,12 +1194,12 @@ public class DeploymentLoader {
             AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
                 final String packageName = LocalClient.class.getName().replace("LocalClient", "");
                 public boolean accept(String annotationName) {
-                    if (annotationName.startsWith("javax.ejb.")) {
+                    if (scanPotentialEjbModules && annotationName.startsWith("javax.ejb.")) {
                         if ("javax.ejb.Stateful".equals(annotationName)) return true;
                         if ("javax.ejb.Stateless".equals(annotationName)) return true;
                         if ("javax.ejb.Singleton".equals(annotationName)) return true;
                         if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
-                    } else if (annotationName.startsWith(packageName)){
+                    } else if (scanPotentialClientModules && annotationName.startsWith(packageName)){
                         if (LocalClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                         if (RemoteClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                     }
