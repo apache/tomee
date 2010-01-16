@@ -170,8 +170,16 @@ public class ClassLoaderUtil {
 
             List<URL> urls = new ArrayList<URL>();
             for (Object item : fileCache.keySet()) {
-                URL url = (URL) item;
-                if (isParent(jarLocation, URLs.toFile(url))) {
+                URL url = null;
+                if (item instanceof URL) {
+                    url = (URL) item;
+                } else if (item instanceof String) {
+                    url = new URL((String) item);
+                } else {
+                    logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
+                }
+
+                if (url != null && isParent(jarLocation, URLs.toFile(url))) {
                     urls.add(url);
                 }
             }
