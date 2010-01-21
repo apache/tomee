@@ -49,6 +49,7 @@ import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceRef;
+import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -72,6 +73,7 @@ import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Collection;
+import java.util.Iterator;
 import java.net.URI;
 
 public class AutoConfig implements DynamicDeployer {
@@ -328,9 +330,27 @@ public class AutoConfig implements DynamicDeployer {
 
                 Properties properties = mdb.getActivationConfig().toProperties();
 
+                String destination = properties.getProperty("destinationName");
+
+                if (destination != null) {
+                    mdb.getActivationConfig().addProperty("destination", destination);
+
+                    // Remove destinationName as it is not in the standard ActivationSpec 
+                    List<ActivationConfigProperty> list = mdb.getActivationConfig().getActivationConfigProperty();
+                    Iterator<ActivationConfigProperty> iterator = list.iterator();
+                    while (iterator.hasNext()) {
+                        ActivationConfigProperty configProperty = iterator.next();
+                        if (configProperty.getActivationConfigPropertyName().equals("destinationName")){
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                } else {
+                    destination = properties.getProperty("destination");
+                }
 
                 // destination
-                String destination = properties.getProperty("destination", properties.getProperty("destinationName"));
+//                String destination = properties.getProperty("destination", properties.getProperty("destinationName"));
                 if (destination == null) {
                     destination = ejbDeployment.getDeploymentId();
                     mdb.getActivationConfig().addProperty("destination", destination);
