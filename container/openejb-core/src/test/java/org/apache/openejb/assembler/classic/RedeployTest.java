@@ -39,6 +39,7 @@ public class RedeployTest extends TestCase {
         // create reference to openejb itests
         File file = JarLocation.jarLocation(BasicStatelessBean.class);
 
+        // These two objects pretty much encompas all the EJB Container
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
@@ -51,8 +52,12 @@ public class RedeployTest extends TestCase {
     }
 
     private void createAndDestroy(Assembler assembler, ConfigurationFactory config, File file) throws Exception {
+
+        // Deploy the file
         assembler.createApplication(config.configureApplication(file));
 
+
+        // Lookup and execute a bean
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
         InitialContext ctx = new InitialContext(properties);
@@ -60,8 +65,10 @@ public class RedeployTest extends TestCase {
         EncStatefulObject ejbObject = home.create("foo");
         ejbObject.lookupStringEntry();
 
+        // Undeploy the file
         assembler.destroyApplication(file.getCanonicalPath());
 
+        // Try and execute the bean after it's been undeployed -- should fail
         try {
             ejbObject.lookupStringEntry();
             fail("Proxy should no longer be valid");
