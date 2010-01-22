@@ -19,22 +19,15 @@ package org.apache.openejb.assembler.classic;
 import junit.framework.TestCase;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.test.stateful.AnnotatedFieldInjectionStatefulBean;
 import org.apache.openejb.test.stateful.EncStatefulHome;
 import org.apache.openejb.test.stateful.EncStatefulObject;
 import org.apache.openejb.test.stateless.BasicStatelessBean;
-import org.apache.openejb.loader.JarLocation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import java.io.File;
 import java.util.Properties;
 
@@ -46,33 +39,11 @@ public class RedeployTest extends TestCase {
         // create reference to openejb itests
         File file = JarLocation.jarLocation(BasicStatelessBean.class);
 
-        if (file == null) return;
-
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
-
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
-        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        // managed JDBC
-        assembler.createResource(config.configureService("Default JDBC Database", ResourceInfo.class));
-
-        // unmanaged JDBC
-        assembler.createResource(config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class));
-
-        // JMS
-        assembler.createResource(config.configureService("Default JMS Resource Adapter", ResourceInfo.class));
-        assembler.createResource(config.configureService("Default JMS Connection Factory", ResourceInfo.class));
-
-        // containers
-        assembler.createContainer(config.configureService(BmpEntityContainerInfo.class));
-        assembler.createContainer(config.configureService(CmpEntityContainerInfo.class));
-        assembler.createContainer(config.configureService(StatefulSessionContainerInfo.class));
-        assembler.createContainer(config.configureService(StatelessSessionContainerInfo.class));
-        assembler.createContainer(config.configureService(MdbContainerInfo.class));
 
         createAndDestroy(assembler, config, file);
         createAndDestroy(assembler, config, file);
