@@ -19,7 +19,8 @@ package org.apache.openejb.util;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -28,14 +29,59 @@ import junit.framework.TestCase;
 
 public class AsynchronousRunnerTest extends TestCase {
 
+    private static class TestExecutor implements Executor {
+        
+        private CountDownLatch countDownLatch; 
+        
+        public TestExecutor(CountDownLatch countDownLatch) {
+            this.countDownLatch = countDownLatch;
+        }
+
+        @Override
+        public void execute(final Runnable command) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        countDownLatch.await();
+                    } catch (InterruptedException e) {
+                        throw new IllegalStateException(e);
+                    }
+                    command.run();
+                }
+            };
+            new Thread(runnable).start();
+        }
+    }
+    
+    /**
+     * Tests the cancel method
+     */
+    public void testCancel() throws Exception {
+        CountDownLatch cdl = new CountDownLatch(1);
+        AsynchronousRunner asyncRunner = instantiate(cdl);
+        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
+        future.cancel(true);
+        assertTrue(future.isCancelled());
+        try {
+            future.get();
+            fail();
+        } catch (CancellationException e) {
+            //Ok
+        }
+    }
+    
     /**
      * A delayed get, sleeping until the result is complete
      */
     public void testDelayedGet() throws Exception {
-        AsynchronousRunner asyncRunner = instantiate(2000);
+        CountDownLatch cdl = new CountDownLatch(1);
+        AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertFalse(future.isDone());
-        Thread.sleep(2500);
+        cdl.countDown();
+        //Give some time for the execution to finish
+        Thread.sleep(500);
         assertTrue(future.isDone());
         assertEquals(expected(), future.get());
     }
@@ -44,7 +90,8 @@ public class AsynchronousRunnerTest extends TestCase {
      * A regular get, waiting for result to be complete
      */
     public void testGet() throws Exception {
-        AsynchronousRunner asyncRunner = instantiate();
+        CountDownLatch cdl = new CountDownLatch(0);
+        AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         assertEquals(expected(), future.get());
     }
@@ -53,7 +100,8 @@ public class AsynchronousRunnerTest extends TestCase {
      * A get with max timeout
      */
     public void testTimedGet() throws Exception {
-        AsynchronousRunner asyncRunner = instantiate(2000);
+        CountDownLatch cdl = new CountDownLatch(1);
+        AsynchronousRunner asyncRunner = instantiate(cdl);
         Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
         try {
             future.get(1, TimeUnit.SECONDS);
@@ -61,41 +109,23 @@ public class AsynchronousRunnerTest extends TestCase {
         } catch (TimeoutException e) {
             //Ok
         }
-        Thread.sleep(1500);
+        cdl.countDown();
+        //Give some time for the execution to finish
+        Thread.sleep(500);
         assertTrue(future.isDone());
         assertEquals(expected(), future.get());
-    }
-    
-    /**
-     * Tests the cancel method
-     */
-    public void testCancel() throws Exception {
-        AsynchronousRunner asyncRunner = instantiate(2000);
-        Future<Object> future = asyncRunner.runAsync(object(), method(), arguments());
-        future.cancel(true);
-        assertTrue(future.isCancelled());
-        try {
-            future.get();
-        } catch (CancellationException e) {
-            //Ok
-        }
     }
     
     private Object[] arguments() {
         return new Object[] {BigDecimal.ONE};
     }
-    
+
     private BigDecimal expected() {
         return new BigDecimal(11);
     }
     
-    private AsynchronousRunner instantiate() {
-        return instantiate(0);
-    }
-
-    private AsynchronousRunner instantiate(long timeout) {
-        System.setProperty("openejb.asynchronousRunnerSleep", "" + timeout);
-        return new AsynchronousRunner(Executors.newCachedThreadPool());
+    private AsynchronousRunner instantiate(final CountDownLatch cdl) {
+        return new AsynchronousRunner(new TestExecutor(cdl));
     }
     
     private Method method() {
