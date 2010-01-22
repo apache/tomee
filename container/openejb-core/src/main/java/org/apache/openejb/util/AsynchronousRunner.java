@@ -52,7 +52,6 @@ public class AsynchronousRunner {
         }
 
         public Object call() throws Exception {
-            Thread.sleep(sleepTime);
             return method.invoke(object, arguments);
         }
     }
@@ -70,11 +69,9 @@ public class AsynchronousRunner {
     }
 
     private Executor executor;
-    private long sleepTime;
 
     public AsynchronousRunner(Executor executor) {
         this.executor = executor;
-        sleepTime = Long.getLong("openejb.asynchronousRunnerSleep", 0);
     }
 
     /**
