@@ -37,10 +37,8 @@ public class AsynchronousRunnerTest extends TestCase {
             this.countDownLatch = countDownLatch;
         }
 
-        @Override
         public void execute(final Runnable command) {
             Runnable runnable = new Runnable() {
-                @Override
                 public void run() {
                     try {
                         countDownLatch.await();
