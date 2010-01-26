@@ -180,7 +180,9 @@ public class DeploymentsResolver {
             urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
 
-            urlSet = applyBuiltinExcludes(urlSet);
+            if (shouldFilter(include, exclude, requireDescriptors)) {
+                urlSet = applyBuiltinExcludes(urlSet);
+            }
             
             UrlSet prefiltered = urlSet;
             urlSet = urlSet.exclude(exclude);
@@ -261,6 +263,33 @@ public class DeploymentsResolver {
             logger.warning("Unable to search classpath for modules: Received Exception: " + e1.getClass().getName() + " " + e1.getMessage(), e1);
         }
 
+    }
+
+    /**
+     * The regular expressions involved in filtering can be costly
+     * In the normal case we will not scan anyway, so if not
+     * no point in optimizing the list of urls in the classpath
+     * 
+     * @param include
+     * @param exclude
+     * @param requireDescriptors
+     * @return
+     */
+    private static boolean shouldFilter(String include, String exclude, Set<RequireDescriptors> requireDescriptors) {
+        boolean includeNothing = include.equals("");
+        boolean excludeEverything = exclude.equals(".*");
+
+        //  If we are going to eliminate the entire classpath from
+        //  scanning anyway, no sense in taking the time to do it
+        //  bit by bit.  Return false
+        if (includeNothing && excludeEverything) return false;
+
+        //  If we are forcably requiring descriptors for all possible file types
+        //  then there is also no scanning and no point in filtering the
+        //  classpath down bit by bit.  Return false
+        if (requireDescriptors.size() == RequireDescriptors.values().length) return false;
+
+        return true;
     }
 
     private static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
