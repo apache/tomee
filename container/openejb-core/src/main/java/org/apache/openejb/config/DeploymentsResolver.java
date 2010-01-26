@@ -95,6 +95,14 @@ public class DeploymentsResolver {
             }
             return;
         }
+        
+        File raXml = new File(dir, "META-INF" + File.separator + "ra.xml"); 
+        if (raXml.exists()) { 
+        	if (!jarList.contains(dir.getAbsolutePath())) { 
+        		jarList.add(dir.getAbsolutePath()); 
+        	} 
+        	return;
+        } 
 
         ////////////////////////////////
         //
