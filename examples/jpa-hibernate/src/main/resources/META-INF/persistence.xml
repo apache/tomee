@@ -26,8 +26,6 @@
     <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-      <property name="hibernate.transaction.manager_lookup_class"
-                value="org.apache.openejb.hibernate.TransactionManagerLookup"/>
     </properties>
   </persistence-unit>
 </persistence>
