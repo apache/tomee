@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.EnumSet;
 
 /**
  * @version $Rev$ $Date$
@@ -278,7 +279,7 @@ public class DeploymentsResolver {
                 if (filterSystemApps){
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
-                processUrls(unchecked.getUrls(), classLoader, requireDescriptors, base, jarList);
+                processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
             }
 
             if (logger.isDebugEnabled()) {
