@@ -890,11 +890,6 @@
         <version>1.3-r699049</version>
       </dependency>
       <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>3.2</version>
-      </dependency>
-      <dependency>
         <groupId>axis</groupId>
         <artifactId>axis</artifactId>
         <version>1.4</version>
