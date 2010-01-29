@@ -39,10 +39,10 @@ public class CheckUserTransactionRefs extends ValidationBase {
     public void validate(EjbModule ejbModule) {
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
             if (bean.getTransactionType() == CONTAINER) {
-                Collection<ResourceRef> resRefs = bean.getResourceRef();
-                for (ResourceRef resRef : resRefs) {
-                    if ("javax.transaction.UserTransaction".equals(resRef.getResType())) {
-                        error(bean, "userResourceRef.forbiddenForCmtdBeans", resRef.getName());
+                Collection<ResourceEnvRef> resRefs = bean.getResourceEnvRef();
+                for (ResourceEnvRef resRef : resRefs) {
+                    if ("javax.transaction.UserTransaction".equals(resRef.getResourceEnvRefType())) {
+                        fail(bean, "userTransactionRef.forbiddenForCmtdBeans", resRef.getName());
                     }
                 }
             }
