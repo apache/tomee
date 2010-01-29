@@ -16,59 +16,59 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbModule;
+import junit.framework.TestCase;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.ValidationFailedException;
+import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.StatelessBean;
-import static org.apache.openejb.jee.TransactionType.CONTAINER;
-import static org.hamcrest.CoreMatchers.is;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.transaction.UserTransaction;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * @version $Rev$ $Date$
  */
-public class CheckUserTransactionRefsTest {
-
-    private EjbModule module;
-    private StatelessBean bean;
-
-    private CheckUserTransactionRefs rule;
-
-    @Before
-    public void initialize() {
-        bean = new StatelessBean("CheeseEjb", "org.acme.CheeseEjb");
-        bean.setTransactionType(CONTAINER);
-
-        module = new EjbModule(new EjbJar());
-        module.getEjbJar().addEnterpriseBean(bean);
-
-        rule = new CheckUserTransactionRefs();
-        rule.module = module;
-    }
+public class CheckUserTransactionRefsTest extends TestCase {
 
     @Test
-    public void testSLSBwithUserTransaction() {
+    public void testSLSBwithUserTransaction() throws Exception {
+
+        Assembler assembler = new Assembler();
+        ConfigurationFactory config = new ConfigurationFactory();
+
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
+
+        List<String> expectedKeys = new ArrayList<String>();
+        expectedKeys.add("userTransactionRef.forbiddenForCmtdBeans");
 
         // "@Resource UserTransaction tx" declaration
-        ResourceRef resourceRef = new ResourceRef();
-        resourceRef.setResRefName("org.acme.CheeseEjb/tx");
-        resourceRef.setResType("javax.transaction.UserTransaction");
-        resourceRef.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "org.acme.CheeseEjb/tx"));
-        bean.getResourceRef().add(resourceRef);
-
-        rule.validate(module);
-
-        Assert.assertThat(module.getValidation().getErrors().length, is(1));
-        Assert.assertThat(module.getValidation().getWarnings().length, is(0));
-        Assert.assertThat(module.getValidation().getFailures().length, is(0));
+        try {
+            config.configureApplication(ejbJar);
+        } catch (ValidationFailedException e) {
+            assertFailures(expectedKeys, e);
+        }
     }
 
-    @After
-    public void cleanUp() {
-        module = null;
+    @Stateless
+    @TransactionManagement(TransactionManagementType.CONTAINER)
+    public static class TestBean implements Callable {
+
+        @Resource
+        private UserTransaction userTransaction;
+
+        public Object call() throws Exception {
+            return null;
+        }
     }
+
 }
