@@ -52,17 +52,47 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
+ * <h1>Prerequisites</h1>
+ * <p/>
+ * System properties that must be set:
+ * <ul>
+ * <li/>openejb.home -> catalina.home
+ * <li/>openejb.base -> catalina.base
+ * <li/>openejb.war -> $openejb.war
+ * <li/>tomcat.version if not set
+ * <li/>tomcat.built if not set
+ * </ul>
+ *
+ * <h1>Integration Actions</h1>
+ *
+ * <ul>
+ * <li/>Setup ServiceJar: set openejb.provider.default -> org.apache.openejb.tomcat
+ * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml
+ * <li/>Init SystemInstance and OptionsLog
+ * <li/>
+ * <li/>
+ * </ul>
+ *
+ * See {@link org.apache.openejb.config.ServiceUtils#defaultProviderURL}
+ *
+ *
+ *
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
 public class TomcatLoader implements Loader {
     private EjbServer ejbServer;
     protected ServiceManager manager;
+    private final String platform;
+
+    public TomcatLoader() {
+        platform = "tomcat";
+    }
 
     public void init(Properties properties) throws Exception {
         // Enable System EJBs like the MEJB and DeployerEJB
         properties.setProperty("openejb.deployments.classpath", "true");
         properties.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
-        System.setProperty("openejb.provider.default", "org.apache.openejb.tomcat");
+        System.setProperty("openejb.provider.default", "org.apache.openejb." + platform);
 
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.

@@ -29,6 +29,7 @@ import org.apache.openejb.tomcat.common.TomcatVersion;
  *
  */
 public class Paths {
+
 	/**
 	 * The openejb webapp directory under <<tomcat-install>>/webapps
 	 */
@@ -99,7 +100,7 @@ public class Paths {
      * @param catalinaBaseDir the absolute path of the catalina base directory
      */
     public void setCatalinaBaseDir(String catalinaBaseDir) {
-        this.catalinaBaseDir = createFile(catalinaBaseDir);
+        setCatalinaBaseDir(createFile(catalinaBaseDir));
     }
     /**
      * Sets the catalina base directory
@@ -411,9 +412,9 @@ public class Paths {
         }
     }
 
-    private File createFile(String catalinaHomeDir) {
-        if (catalinaHomeDir != null && catalinaHomeDir.trim().length() > 0) {
-            return new File(catalinaHomeDir.trim());
+    private File createFile(String fileName) {
+        if (fileName != null && fileName.trim().length() > 0) {
+            return new File(fileName.trim());
         }
         return null;
     }

@@ -32,13 +32,16 @@ import java.util.Properties;
  *
  * Requires openejb.war to be set, the sets the following properties:
  *
- * set openejb.loader -> tomcat-system
+ * System properties:
  * set openejb.home -> catalina.home
  * set openejb.base -> catalina.base
- * set openejb.libs -> $openejb.war/lib
- *
+ * set openejb.war -> $openejb.war
  * set tomcat.version if not set
  * set tomcat.built if not set
+ *
+ * Local properties: 
+ * set openejb.loader -> tomcat-system
+ * set openejb.libs -> $openejb.war/lib
  *
  * With these properties setup, this class with construct an {@link Embedder}
  * using the "org.apache.openejb.tomcat.catalina.TomcatLoader" as the loader.
@@ -84,8 +87,9 @@ class TomcatHook {
         properties.setProperty("openejb.base", catalinaBase);
         System.setProperty("openejb.base", catalinaBase);
 
-        //TODO: why do we need this, this was already set. Thats how we create the File openejbWar
+        // Set the openejb.war property as a *System* property
         System.setProperty("openejb.war", openejbWar.getAbsolutePath());
+        
         // set the property openejb.libs to contain the absolute path of the lib directory of openejb webapp
         File libDir = new File(openejbWar, "lib");
         String libPath = libDir.getAbsolutePath();
@@ -121,7 +125,14 @@ class TomcatHook {
 
         try {
             // create the loader
+
+            // This init call affects only this WebappClassloader and is just required
+            // for runnig the Embedder.  The SystemInstance will be initialized more permanently
+            // in the parent classloader once the required libraries are added.
             SystemInstance.init(properties);
+
+            // This guy does the magic of squishing the openejb libraries into the parent classloader
+            // and kicking off the reall integration.
             Embedder embedder = new Embedder("org.apache.openejb.tomcat.catalina.TomcatLoader");
             embedder.init(properties);
         } catch (Exception e) {

@@ -33,6 +33,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-webapp-common</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${version}</version>
     </dependency>
