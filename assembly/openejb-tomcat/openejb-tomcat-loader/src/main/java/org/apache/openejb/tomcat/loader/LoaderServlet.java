@@ -24,9 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 
-/**
- * @author <a href="mailto:david.blevins@visi.com">David Blevins </a>
- */
 public class LoaderServlet extends HttpServlet {
     private static boolean embedded = false;
 
