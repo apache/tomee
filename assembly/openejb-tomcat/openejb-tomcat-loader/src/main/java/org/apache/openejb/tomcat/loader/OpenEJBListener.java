@@ -20,8 +20,6 @@ package org.apache.openejb.tomcat.loader;
 import java.io.File;
 import java.util.Properties;
 
-import javax.management.ObjectName;
-
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -32,6 +30,19 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 
+/**
+ * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
+ *
+ * This is an alternate way to load the Tomcat integration
+ * This approach is mutually exclussive to the {@link LoaderServlet}
+ *
+ * This class does nothing more than scrape around in
+ * Tomcat and look for the openejb.war so it can call the embedder
+ *
+ * This class can be installed in the Tomcat server.xml as an alternate
+ * way to bootstrap OpenEJB into Tomcat.  The benefit of this is that
+ * OpenEJB is guaranteed to start before all webapps. 
+ */
 public class OpenEJBListener implements LifecycleListener {
     static private boolean listenerInstalled;
 

@@ -24,6 +24,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 
+/**
+ * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
+ *
+ * This class gets the location of this webapp and assumes that it is
+ * the openejb.war file then calls the embedder.
+ *
+ * This method of bootstrapping is mutually exclussive to the {@link OpenEJBListener} approach
+ */
+//@Generic
 public class LoaderServlet extends HttpServlet {
     private static boolean embedded = false;
 
@@ -38,8 +47,10 @@ public class LoaderServlet extends HttpServlet {
 
         properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
 
+        //@Tomcat
         TomcatEmbedder.embed(properties, config.getClass().getClassLoader());
     }
+    
     /**
      * Retrieves all intialization parameters for this servlet and stores them in a java.util.Properties object.
      * @param config javax.servlet.ServletConfig
@@ -48,6 +59,7 @@ public class LoaderServlet extends HttpServlet {
     private Properties initParamsToProperties(ServletConfig config) {
         Properties properties = new Properties();
 
+        //@Tomcat
         // Set some defaults
         properties.setProperty("openejb.loader", "tomcat");
 
