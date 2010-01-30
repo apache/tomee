@@ -16,25 +16,31 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- $Rev$ $Date$ -->
+
+<!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>openejb-jetty</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.1.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>assembly</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Assembly</name>
-
-  <modules>
-    <module>openejb-itests-standalone-client</module>
-    <module>openejb-standalone</module>
-    <module>openejb-tomcat</module>
-    <module>openejb-jetty</module>
-    <module>javaee-api-libs</module>
-  </modules>
+  <artifactId>openejb-jetty-loader</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: Assembly :: Jetty :: Loader</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${version}</version>
+    </dependency>
+<!--
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+    </dependency>
+-->
+  </dependencies>
 </project>
 
