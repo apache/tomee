@@ -30,6 +30,7 @@
   <name>OpenEJB :: Assembly</name>
 
   <modules>
+    <module>openejb-webapp-common</module>
     <module>openejb-itests-standalone-client</module>
     <module>openejb-standalone</module>
     <module>openejb-tomcat</module>

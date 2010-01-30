@@ -290,7 +290,9 @@ public class Installer {
         //
         // conf/openejb.xml
         //
-        File openEjbXmlFile = new File(paths.getCatalinaConfDir(), "openejb.xml");
+        File confDir = paths.getCatalinaConfDir();
+
+        File openEjbXmlFile = new File(confDir, "openejb.xml");
         if (!openEjbXmlFile.exists()) {
             // read in the openejb.xml file from the openejb core jar
             String openEjbXml = readEntry(coreJar, "default.openejb.conf");
@@ -307,7 +309,7 @@ public class Installer {
         //
         String openejbLoggingProps = readEntry(coreJar, "logging.properties");
         if (openejbLoggingProps != null) {
-            File loggingPropsFile = new File(paths.getCatalinaConfDir(), "logging.properties");
+            File loggingPropsFile = new File(confDir, "logging.properties");
             String newLoggingProps = null;
             if (!loggingPropsFile.exists()) {
                 newLoggingProps = openejbLoggingProps;
