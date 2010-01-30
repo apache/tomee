@@ -24,6 +24,21 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+/**
+ * Ultimately this class does nothing lasting and just calls {@link TomcatHook#hook}
+ * 
+ * This class needs to know the path to the openejb.war file.
+ *
+ * With that information this class finds the openejb-loader jar in the openejb.war
+ * essentially creates a "mini-webapp" which is to say it creates a new WebappClassloader
+ * that contains the openejb-loader jar and then uses that classloader to reflectively
+ * call the {@link TomcatHook#hook} method which does all the work to load OpenEJB into Tomcat
+ *
+ * This messing around is required so that it doesn't matter if the {@link OpenEJBListener},
+ * which does not execute in a webapp classloader, or the {@link LoaderServlet}, which does,
+ * calls the TomcatEmbedder.  Either way the embedding process starts inside a WebappClassloader
+ * and keeps that very complex code just a little simpler.
+ */
 public class TomcatEmbedder {
 	/**
 	 * 
