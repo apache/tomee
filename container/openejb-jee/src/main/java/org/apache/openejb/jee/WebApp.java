@@ -49,6 +49,7 @@ import java.util.Map;
         "mimeMapping",
         "welcomeFileList",
         "errorPage",
+        "taglib",
         "jspConfig",
         "securityConstraint",
         "loginConfig",
@@ -94,6 +95,8 @@ public class WebApp implements JndiConsumer {
     protected List<MimeMapping> mimeMapping;
     @XmlElement(name = "welcome-file-list")
     protected List<WelcomeFileList> welcomeFileList;
+    @XmlElement(name = "taglib")
+    protected List<Taglib> taglib;
     @XmlElement(name = "error-page")
     protected List<ErrorPage> errorPage;
     @XmlElement(name = "jsp-config")
