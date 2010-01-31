@@ -125,6 +125,10 @@ public class JeeTest extends TestCase {
         marshalAndUnmarshal(WebApp.class, "web-example.xml");
     }
 
+    public void testWar2_3() throws Exception {
+        marshalAndUnmarshal(WebApp.class, "web_2.3-example.xml");
+    }
+
     public void testTld() throws Exception {
         marshalAndUnmarshal(TldTaglib.class, "tld-example.xml");
     }
@@ -238,7 +242,7 @@ public class JeeTest extends TestCase {
     private static class TestValidationEventHandler implements ValidationEventHandler {
         public boolean handleEvent(ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
-            return true;
+            return false; // if an error occurs we must be aware of
         }
     }
 }
