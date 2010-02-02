@@ -18,6 +18,7 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerFactory;
+import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
@@ -31,7 +32,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler {
+public class ActiveMQ5Factory implements BrokerFactoryHandler {
     private static final ThreadLocal<Properties> threadProperties = new ThreadLocal<Properties>();
 
     public static void setThreadProperties(Properties value) {
@@ -62,7 +63,7 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
                     Object obj = context.lookup("openejb/Resource/" + resouceId);
                     if (!(obj instanceof DataSource)) {
                         throw new IllegalArgumentException("Resource with id " + resouceId +
-                                " is not a DataSource, but is " + obj.getClass().getName());
+                            " is not a DataSource, but is " + obj.getClass().getName());
                     }
                     dataSource = (DataSource) obj;
                 } catch (NamingException e) {
@@ -81,13 +82,13 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
         return broker;
     }
 
-
     private Properties getLowerCaseProperties() {
-        Properties properties = threadProperties.get();
-        Properties newProperties = new Properties();
+        final Properties properties = threadProperties.get();
+        final Properties newProperties = new Properties();
         if (properties != null) {
+            Object key;
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                Object key = entry.getKey();
+                key = entry.getKey();
                 if (key instanceof String) {
                     key = ((String) key).toLowerCase();
                 }
@@ -96,4 +97,6 @@ public class OpenEjbBrokerFactory implements BrokerFactory.BrokerFactoryHandler 
         }
         return newProperties;
     }
+
+
 }
