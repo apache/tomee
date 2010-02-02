@@ -47,7 +47,7 @@ import org.hsqldb.jdbc.jdbcDataSource;
 
 public class OpenEjbBrokerFactoryTest extends TestCase {
     public void testBrokerUri() throws Exception {
-        final String prefix = ActiveMQFactory.getBrokerMetaFile();
+        final  String prefix = ActiveMQFactory.getBrokerMetaFile();
         assertEquals(prefix + "broker:(tcp://localhost:61616)?persistent=false",
                 getBrokerUri("broker:(tcp://localhost:61616)"));
         assertEquals(prefix + "broker:(tcp://localhost:61616)?useJmx=false&persistent=false",

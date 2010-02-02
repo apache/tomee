@@ -17,13 +17,13 @@
  */
 package org.apache.openejb.resource.activemq;
 
+import org.apache.openejb.util.URISupport;
+
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapterInternalException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapterInternalException;
-
-import org.apache.openejb.util.URISupport;
 
 
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
@@ -119,17 +119,18 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             try {
                 URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
                 compositeData.getParameters().put("persistent", "false");
-                setBrokerXmlConfig("openejb:" + compositeData.toURI());
+                setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
             } catch (URISyntaxException e) {
                 throw new ResourceAdapterInternalException("Invalid BrokerXmlConfig", e);
             }
         }
 
-        OpenEjbBrokerFactory.setThreadProperties(properties);
+        ActiveMQFactory.setThreadProperties(properties);
+
         try {
             super.start(bootstrapContext);
         } finally {
-            OpenEjbBrokerFactory.setThreadProperties(null);
+            ActiveMQFactory.setThreadProperties(null);
 
             // reset brokerXmlConfig
             if (brokerXmlConfig != null) {

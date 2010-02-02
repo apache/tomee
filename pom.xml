@@ -103,7 +103,7 @@
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.symbolic.name>${groupId}.${artifactId}</openejb.osgi.symbolic.name>
-    
+
     <!-- Used in assembly/openejb-tomcat* projects  -->
     <tomcatVersion>6.0.16</tomcatVersion>
 
@@ -291,7 +291,7 @@
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.0-alpha-3</version>
+            <version>1.0-alpha-4</version>
             <configuration>
               <passphrase>${gpg.passphrase}</passphrase>
             </configuration>
@@ -576,10 +576,15 @@
         <artifactId>log4j</artifactId>
         <version>1.2.12</version>
       </dependency>
-      <dependency>
+	    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>kahadb</artifactId>
+        <version>5.3.0</version>
+      </dependency>
+	    <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
-        <version>4.1.1</version>
+        <version>5.3.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -595,10 +600,10 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
+	    <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
-        <version>4.1.1</version>
+        <version>5.3.0</version>
         <exclusions>
           <exclusion>
             <groupId>activesoap</groupId>
