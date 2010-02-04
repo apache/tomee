@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.List;
 import java.util.Set;
+import java.util.Properties;
 import javax.naming.Context;
 import javax.ejb.ScheduleExpression;
 
@@ -140,6 +141,8 @@ public interface DeploymentInfo {
     public <T> T get(Class<T> type);
 
     public <T> T set(Class<T> type, T value);
+
+    public Properties getProperties();
 
     public boolean retainIfExeption(Method removeMethod);
 

@@ -18,6 +18,9 @@
 
 package org.apache.openejb.jee.oejb3;
 
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.EnterpriseBean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -71,8 +74,9 @@ public class OpenejbJar {
         return getEjbDeployment().size();
     }
 
-    public void addEjbDeployment(EjbDeployment ejbDeployment) {
+    public EjbDeployment addEjbDeployment(EjbDeployment ejbDeployment) {
         getEjbDeployment().add(ejbDeployment);
+        return ejbDeployment;
     }
 
     public void removeEjbDeployment(EjbDeployment ejbDeployment) {
@@ -85,5 +89,8 @@ public class OpenejbJar {
         }
         return properties;
     }
-    
+
+    public EjbDeployment addEjbDeployment(EnterpriseBean bean) {
+        return addEjbDeployment(new EjbDeployment(bean));
+    }
 }

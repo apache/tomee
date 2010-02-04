@@ -158,6 +158,8 @@ class EnterpriseBeanBuilder {
 
         deployment.getInjections().addAll(injections);
 
+        deployment.getProperties().putAll(bean.properties);
+
         // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
 

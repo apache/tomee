@@ -48,7 +48,9 @@ public class SocketConnectionFactory implements ConnectionFactory {
         Properties p = System.getProperties();
 
         size = getInt(p, "openejb.client.connectionpool.size", size);
+        size = getInt(p, "openejb.client.connection.pool.size", size);
         timeout = getInt(p, "openejb.client.connectionpool.timeout", timeout);
+        timeout = getInt(p, "openejb.client.connection.pool.timeout", timeout);
     }
 
     public static int getInt(Properties p, String property, int defaultValue){

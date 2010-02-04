@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.Map;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -52,12 +53,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         DeploymentInfo deployment = info.getDeploymentInfo();
         int idCode = -1;
 
-        EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+        EJBMetaDataImpl metaData = buildEjbMetaData(info, deployment, idCode);
         return metaData;
     }
 
@@ -74,12 +70,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
         }
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, deployment, idCode);
         Object primKey = info.getPrimaryKey();
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
@@ -108,12 +99,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
             e.printStackTrace();
         }
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, deployment, idCode);
 
         EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData);
 
@@ -133,12 +119,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
             e.printStackTrace();
         }
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, deployment, idCode);
         Object primKey = info.getPrimaryKey();
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
@@ -164,6 +145,8 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
                 idCode, convert(info.getInterfaceType()), info.getInterfaces());
+        eMetaData.loadProperties(deployment.getProperties());
+        
         Object primKey = info.getPrimaryKey();
 
         EJBObjectHandler hanlder = EJBObjectHandler.createEJBObjectHandler(eMetaData, getServerMetaData(), cMetaData, primKey);
@@ -198,16 +181,21 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
             e.printStackTrace();
         }
         ClientMetaData cMetaData = new ClientMetaData(securityIdentity);
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+        EJBMetaDataImpl eMetaData = buildEjbMetaData(info, deployment, idCode);
 
         EJBHomeHandler hanlder = EJBHomeHandler.createEJBHomeHandler(eMetaData, getServerMetaData(), cMetaData);
 
         return hanlder.createEJBHomeProxy();
     }
 
+    private EJBMetaDataImpl buildEjbMetaData(ProxyInfo info, DeploymentInfo deployment, int idCode) {
+        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
+                deployment.getRemoteInterface(),
+                deployment.getPrimaryKeyClass(),
+                deployment.getComponentType().toString(),
+                deployment.getDeploymentID().toString(),
+                idCode, convert(info.getInterfaceType()), null);
+        eMetaData.loadProperties(deployment.getProperties());
+        return eMetaData;
+    }
 }

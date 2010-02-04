@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
@@ -35,6 +36,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public int type;
 
+    public final Properties properties = new Properties();
+    
     public String codebase;
     public String description;
     public String displayName;

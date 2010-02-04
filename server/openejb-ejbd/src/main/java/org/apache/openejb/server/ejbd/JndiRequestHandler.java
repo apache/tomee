@@ -372,6 +372,8 @@ class JndiRequestHandler {
                         deployment.getComponentType().toString(),
                         deploymentID,
                         -1, convert(proxyInfo.getInterfaceType()), null);
+                metaData.loadProperties(deployment.getProperties());
+
                 res.setResult(metaData);
                 break;
             }
@@ -390,6 +392,8 @@ class JndiRequestHandler {
                         deploymentID,
                         -1, convert(proxyInfo.getInterfaceType()), proxyInfo.getInterfaces());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
+                metaData.loadProperties(deployment.getProperties());
+
                 res.setResult(metaData);
                 break;
             }
