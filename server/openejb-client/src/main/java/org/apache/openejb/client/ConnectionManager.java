@@ -18,6 +18,7 @@ package org.apache.openejb.client;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Properties;
 
 public class ConnectionManager {
 
@@ -44,9 +45,14 @@ public class ConnectionManager {
     }
 
 
-    public static Connection getConnection(ClusterMetaData cluster, ServerMetaData server) throws IOException {
+    public static Connection getConnection(ClusterMetaData cluster, ServerMetaData server, Request req) throws IOException {
         String name = cluster.getConnectionStrategy();
 
+        if (req instanceof EJBRequest) {
+            EJBRequest ejbRequest = (EJBRequest) req;
+            final Properties p = ejbRequest.getEjbMetaData().getProperties();
+            name = p.getProperty("openejb.client.connection.strategy", name);
+        }
         if (name == null) name = "default";
 
         ConnectionStrategy strategy = strategies.get(name);

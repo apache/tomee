@@ -37,8 +37,10 @@ public class EJBRequest implements ClusterableRequest {
     private transient Object clientIdentity;
     private transient String deploymentId;
     private transient int serverHash;
-
     private transient Body body;
+
+    // Only visible on the client side
+    private transient final EJBMetaDataImpl ejbMetaData;
 
     public static final int SESSION_BEAN_STATELESS = 6;
     public static final int SESSION_BEAN_STATEFUL = 7;
@@ -47,17 +49,23 @@ public class EJBRequest implements ClusterableRequest {
 
     public EJBRequest() {
         body = new Body(null);
+        ejbMetaData = null;
     }
 
     public EJBRequest(int requestMethod, EJBMetaDataImpl ejb, Method method, Object[] args, Object primaryKey) {
         body = new Body(ejb);
 
+        this.ejbMetaData = ejb;
         this.requestMethod = requestMethod;
         setDeploymentCode(ejb.deploymentCode);
         setDeploymentId(ejb.deploymentID);
         setMethodInstance(method);
         setMethodParameters(args);
         setPrimaryKey(primaryKey);
+    }
+
+    public EJBMetaDataImpl getEjbMetaData() {
+        return ejbMetaData;
     }
 
     public Class getInterfaceClass() {

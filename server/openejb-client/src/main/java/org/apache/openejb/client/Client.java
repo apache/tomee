@@ -75,7 +75,7 @@ public class Client {
 
         Connection conn = null;
         try {
-            conn = ConnectionManager.getConnection(cluster, server);
+            conn = ConnectionManager.getConnection(cluster, server, req);
         } catch (IOException e) {
             throw new RemoteException("Unable to connect",e);
         }

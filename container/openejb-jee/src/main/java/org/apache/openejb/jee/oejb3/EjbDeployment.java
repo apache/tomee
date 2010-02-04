@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee.oejb3;
 
+import org.apache.openejb.jee.EnterpriseBean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,9 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query"})
+@XmlType(propOrder = {"jndi","ejbLink", "resourceLink", "query", "properties"})
 @XmlRootElement(name = "ejb-deployment")
 public class EjbDeployment {
 
@@ -59,6 +62,10 @@ public class EjbDeployment {
     @XmlAttribute(name = "ejb-name")
     protected String ejbName;
 
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
+    
     public EjbDeployment() {
     }
 
@@ -66,6 +73,11 @@ public class EjbDeployment {
         this.containerId = containerId;
         this.deploymentId = deploymentId;
         this.ejbName = ejbName;
+    }
+
+    public EjbDeployment(EnterpriseBean bean) {
+        this.deploymentId = bean.getEjbName();
+        this.ejbName = bean.getEjbName();
     }
 
     public List<EjbLink> getEjbLink() {
@@ -164,5 +176,12 @@ public class EjbDeployment {
 
     public void addQuery(Query query) {
         getQuery().add(query);
+    }
+
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 }

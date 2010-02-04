@@ -76,7 +76,7 @@ public class SuperProperties extends Properties {
     protected LinkedHashMap<Object,Object> properties = new LinkedHashMap<Object,Object>();
 
     /**
-     * Comments for the properties.
+     * Comments for individual the properties.
      */
     protected LinkedHashMap<String,String> comments = new LinkedHashMap<String,String>();
 

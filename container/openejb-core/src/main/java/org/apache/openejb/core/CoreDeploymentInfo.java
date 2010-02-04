@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Properties;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
@@ -97,6 +98,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private String destinationId;
     private final Map<Class, Object> data = new HashMap<Class, Object>();
+
+    private final Properties properties = new Properties();
 
     private String ejbName;
     private String moduleId;
@@ -320,6 +323,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     @SuppressWarnings({"unchecked"})
     public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public List<Injection> getInjections() {

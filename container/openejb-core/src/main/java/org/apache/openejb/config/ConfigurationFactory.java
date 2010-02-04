@@ -282,6 +282,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
     }
 
+    /**
+     * Main loop that gets executed when OpenEJB starts up
+     * Reads config files and produces the basic "AST"
+     * the assembler needs to actually build the contianer system
+     *
+     * This method is called by the Assembler once at startup.
+     * 
+     * @return
+     * @throws OpenEJBException
+     */
     public OpenEjbConfiguration getOpenEjbConfiguration() throws OpenEJBException {
 
         if (sys != null) {
@@ -619,6 +629,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private static final Map<Class<? extends ServiceInfo>, Class<? extends Service>> types = new HashMap<Class<? extends ServiceInfo>, Class<? extends Service>>();
 
+    /**
+     * This is the magic that allows people to be really vague in their openejb.xml and not specify
+     * the provider for one of their declared services.  We look here for the default service id
+     *
+     * We then look in the default provider "namespace" that is setup, which will usually be either one of:
+     *
+     *   - org.apache.openejb
+     *   - org.apache.openejb.embedded
+     *   - org.apache.openejb.tomcat
+     *   - org.apache.openejb.jetty
+     *
+     * As in:
+     *
+     *   - META-INF/<provider>/service-jar.xml
+     * 
+     */
     static {
         defaultProviders.put(MdbContainerInfo.class, new DefaultService("MESSAGE", Container.class));
         defaultProviders.put(ManagedContainerInfo.class, new DefaultService("MANAGED", Container.class));
@@ -661,6 +687,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
 
+    /**
+     * This is the major piece of code that configures servics
+     * It merges the data from the <ServiceProvider> declaration
+     * with the data from the openejb.xml file (say <Resource>)
+     *
+     * The end result is a canonical (i.e. flattened) ServiceInfo
+     * The ServiceInfo will be of a specific type (ContainerInfo, ResourceInfo, etc)
+     * 
+     * @param service
+     * @param infoType
+     * @param <T>
+     * @return
+     * @throws OpenEJBException
+     */
     public <T extends ServiceInfo> T configureService(Service service, Class<? extends T> infoType) throws OpenEJBException {
         try {
             if (infoType == null) throw new NullPointerException("type");

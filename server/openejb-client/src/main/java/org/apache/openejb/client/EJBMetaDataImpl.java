@@ -19,8 +19,12 @@ package org.apache.openejb.client;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Map;
 
 import javax.ejb.EJBHome;
 
@@ -46,6 +50,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
     protected transient Class remoteClass;
 
     protected final transient List<Class> businessClasses = new ArrayList<Class>();
+
+    protected final transient Properties properties = new Properties();
 
     protected transient Class keyClass;
 
@@ -150,6 +156,10 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return businessClasses;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public Object getPrimaryKey() {
         return primaryKey;
     }
@@ -178,6 +188,20 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         }
 
         out.writeByte(interfaceType.ordinal());
+
+        if (properties.size() == 0) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            final ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+            properties.store(tmp, "");
+            tmp.close();
+            final byte[] bytes = tmp.toByteArray();
+            final int length = bytes.length;
+            out.writeInt(length);
+            out.write(bytes);
+        }
+
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
@@ -201,6 +225,15 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (version > 1) {
             byte typeIndex = in.readByte();
             interfaceType = InterfaceType.values()[typeIndex];
+        }
+
+        final boolean hasProperties = in.readBoolean();
+        if (hasProperties) {
+            final int bufferLength = in.readInt();
+            final byte[] buffer = new byte[bufferLength];
+            in.read(buffer);
+            final ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
+            properties.load(bais);
         }
     }
 
@@ -226,5 +259,16 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
             }
         }
         return sb.toString();
+    }
+
+    public void loadProperties(Properties properties) {
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey() instanceof String) {
+                String key = (String) entry.getKey();
+                if (key.startsWith("openejb.client.")){
+                    this.properties.put(key, entry.getValue());
+                }
+            }
+        }
     }
 }

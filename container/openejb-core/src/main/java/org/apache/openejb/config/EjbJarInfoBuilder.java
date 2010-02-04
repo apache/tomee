@@ -557,6 +557,7 @@ public class EjbJarInfoBuilder {
         TransactionType txType = s.getTransactionType();
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
         bean.serviceEndpoint = s.getServiceEndpoint();
+        bean.properties.putAll(d.getProperties());
 
         return bean;
     }
@@ -588,6 +589,7 @@ public class EjbJarInfoBuilder {
         bean.ejbName = mdb.getEjbName();
         TransactionType txType = mdb.getTransactionType();
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
+        bean.properties.putAll(d.getProperties());
 
         if (mdb.getMessagingType() != null) {
             bean.mdbInterface = mdb.getMessagingType();
@@ -669,6 +671,7 @@ public class EjbJarInfoBuilder {
         bean.primKeyField = e.getPrimkeyField();
         bean.persistenceType = e.getPersistenceType().toString();
         bean.reentrant = e.getReentrant() + "";
+        bean.properties.putAll(d.getProperties());
 
         CmpVersion cmpVersion = e.getCmpVersion();
         if (e.getPersistenceType() == PersistenceType.CONTAINER) {
