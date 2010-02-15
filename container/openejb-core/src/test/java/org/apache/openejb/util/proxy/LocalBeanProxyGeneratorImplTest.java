@@ -182,10 +182,6 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 		String name = "TestProxy";
 		byte[] cls = new LocalBeanProxyGeneratorImpl().generateProxy(SampleLocalBean.class, name);
 		
-		FileOutputStream os = new FileOutputStream("C:\\Temp\\TestProxy.class");
-		os.write(cls);
-		os.close();
-		
 		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 		TestClassLoader newCl = new TestClassLoader(oldCl);
 		Thread.currentThread().setContextClassLoader(newCl);
