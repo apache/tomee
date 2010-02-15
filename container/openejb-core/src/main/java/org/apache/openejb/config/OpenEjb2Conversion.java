@@ -121,6 +121,8 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 continue;
             }
 
+            deployment.getProperties().putAll(enterpriseBean.getProperties());
+            
             for (String name : enterpriseBean.getLocalJndiName()) {
                 deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(name, "LocalHome"));
             }

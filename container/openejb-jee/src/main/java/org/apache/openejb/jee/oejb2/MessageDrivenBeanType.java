@@ -17,9 +17,12 @@
 
 package org.apache.openejb.jee.oejb2;
 
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -59,6 +62,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-beanType", propOrder = {
     "ejbName",
+    "properties",
     "resourceAdapter",
     "activationConfig",
     "abstractNamingEntry",
@@ -74,6 +78,10 @@ public class MessageDrivenBeanType implements EnterpriseBean {
 
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
+
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
 
     @XmlElement(name = "resource-adapter",  namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", required = true)
     protected ResourceLocatorType resourceAdapter;
@@ -410,6 +418,13 @@ public class MessageDrivenBeanType implements EnterpriseBean {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 
 }
