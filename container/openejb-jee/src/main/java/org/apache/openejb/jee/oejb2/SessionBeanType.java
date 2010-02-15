@@ -17,8 +17,11 @@
 
 package org.apache.openejb.jee.oejb2;
 
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,6 +72,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "tssLink",
     "tss",
     "abstractNamingEntry",
+    "properties",
     "persistenceContextRef",
     "persistenceUnitRef",
     "ejbRef",
@@ -96,6 +100,10 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
     protected String tssLink;
     @XmlElement(name="tss", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2")
     protected PatternType tss;
+
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
 
     @XmlElementRef(name = "abstract-naming-entry", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", type = JAXBElement.class)
     protected List<JAXBElement<? extends AbstractNamingEntryType>> abstractNamingEntry;
@@ -453,4 +461,11 @@ public class SessionBeanType implements EnterpriseBean, RpcBean {
         this.id = value;
     }
 
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
+    }
+    
 }

@@ -17,8 +17,11 @@
 
 package org.apache.openejb.jee.oejb2;
 
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -118,6 +121,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "jndiName",
     "localJndiName",
     "jndi",
+    "properties",
     "tssLink",
     "tss",
     "tableName",
@@ -208,6 +212,11 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     @XmlElement()
     protected List<QueryType> query;
+
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
+
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -1196,4 +1205,11 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     }
 
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
+    }
+    
 }
