@@ -178,7 +178,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         } finally {
             if (bean != null) {
                 if (callContext.isDiscardInstance()) {
-                    instanceManager.discardInstance(callContext);
+                    instanceManager.discardInstance(callContext, bean);
                 } else {
                     instanceManager.poolInstance(callContext, bean);
                 }
