@@ -17,12 +17,13 @@
 package org.apache.openejb.core.stateless;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeoutException;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -41,11 +42,10 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
-import org.apache.openejb.util.LinkedListStack;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Stack;
+import org.apache.openejb.util.Pool;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -92,27 +92,25 @@ public class StatelessInstanceManager {
             throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
-        Stack pool = data.getPool();
-        
-        if(strictPooling){
-        	boolean acquired;
-            try {
-            	if(timeout.getTime() <= 0L){
-            		data.getSemaphore().acquire();
-            		acquired = true;
-            	} else {
-                    acquired = data.getSemaphore().tryAcquire(timeout.getTime(),timeout.getUnit());
-            	}
-            } catch (InterruptedException e2) {
-                throw new OpenEJBException("Unexpected Interruption of current thread: ",e2);
-            }
-            if(!acquired){
-            	throw new IllegalStateException("An invocation of the Stateless Session Bean "+deploymentInfo.getEjbName()+" has timed-out"); 
-            }
-        }
-        Object bean = pool.pop();
 
-        if (bean == null) {
+        final Pool<Instance> pool = data.getPool();
+
+        Instance instance = null;
+        try {
+            final Pool.Entry<Instance> entry = pool.pop(timeout.getTime(), timeout.getUnit());
+
+            if (entry != null){
+                instance = entry.get();
+                instance.setPoolEntry(entry);
+            }
+        } catch (TimeoutException e) {
+            throw new IllegalStateException("An invocation of the Stateless Session Bean "+deploymentInfo.getEjbName()+" has timed-out");
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+            throw new OpenEJBException("Unexpected Interruption of current thread: ", e);
+        }
+
+        if (instance == null) {
 
             Class beanClass = deploymentInfo.getBeanClass();
             ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
@@ -125,26 +123,26 @@ public class StatelessInstanceManager {
             BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
             try {
-                Context ctx = deploymentInfo.getJndiEnc();                
+                Context ctx = deploymentInfo.getJndiEnc();
                 SessionContext sessionContext;
                 // This needs to be synchronized as this code is multi-threaded.
                 // In between the lookup and the bind a bind may take place in another Thread.
                 // This is a fix for GERONIMO-3444
                 synchronized(this){
-                    try {                    
+                    try {
                         sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
                     } catch (NamingException e1) {
                         sessionContext = createSessionContext();
                         // TODO: This should work
                         ctx.bind("java:comp/EJBContext", sessionContext);
-                    }                  
+                    }
                 }
                 if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
                     callContext.setCurrentOperation(Operation.INJECTION);
-                    callContext.setCurrentAllowedStates(StatelessContext.getStates());                    
+                    callContext.setCurrentAllowedStates(StatelessContext.getStates());
                     objectRecipe.setProperty("sessionContext", sessionContext);
-                }     
-                
+                }
+
                 // This is a fix for GERONIMO-3444
                 synchronized(this){
                     try {
@@ -157,7 +155,7 @@ public class StatelessInstanceManager {
 
                 fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
 
-                bean = objectRecipe.create(beanClass.getClassLoader());
+                Object bean = objectRecipe.create(beanClass.getClassLoader());
                 Map unsetProperties = objectRecipe.getUnsetProperties();
                 if (unsetProperties.size() > 0) {
                     for (Object property : unsetProperties.keySet()) {
@@ -202,12 +200,12 @@ public class StatelessInstanceManager {
                     interceptorStack.invoke();
                 }
 
-                bean = new Instance(bean, interceptorInstances);
+                instance = new Instance(bean, interceptorInstances);
             } catch (Throwable e) {
-                if (e instanceof java.lang.reflect.InvocationTargetException) {
-                    e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
+                if (e instanceof InvocationTargetException) {
+                    e = ((InvocationTargetException) e).getTargetException();
                 }
-                String t = "The bean instance " + bean + " threw a system exception:" + e;
+                String t = "The bean instance " + instance + " threw a system exception:" + e;
                 logger.error(t, e);
                 throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
             } finally {
@@ -215,7 +213,7 @@ public class StatelessInstanceManager {
                 callContext.setCurrentAllowedStates(originalAllowedStates);
             }
         }
-        return bean;
+        return instance;
     }
 
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
@@ -283,23 +281,18 @@ public class StatelessInstanceManager {
      * @throws OpenEJBException
      */
     public void poolInstance(ThreadContext callContext, Object bean) throws OpenEJBException {
-        if (bean == null) {
-            throw new SystemException("Invalid arguments");
-        }
+        if (bean == null) throw new SystemException("Invalid arguments");
+        Instance instance = Instance.class.cast(bean);
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
-        Stack pool = data.getPool();
 
-        if (strictPooling) {
-            pool.push(bean);
-            data.getSemaphore().release();
+        Pool<Instance> pool = data.getPool();
+
+        if (instance.getPoolEntry() != null){
+            if (!pool.push(instance.getPoolEntry())) freeInstance(callContext, instance);
         } else {
-            if (pool.size() >= poolLimit) {
-                freeInstance(callContext, (Instance)bean);
-            } else {
-                pool.push(bean);
-            }
+            if (!pool.push(instance)) freeInstance(callContext, instance);
         }
     }
     
@@ -308,13 +301,18 @@ public class StatelessInstanceManager {
      * throwing a system exception
      * 
      * @param callContext
+     * @param bean
      */
-    public void discardInstance(ThreadContext callContext) {    	
-    	if (strictPooling) {
-    	    CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-            Data data = (Data) deploymentInfo.getContainerData();        
-            data.getSemaphore().release();            
-        }
+    public void discardInstance(ThreadContext callContext, Object bean) throws SystemException {
+        if (bean == null) throw new SystemException("Invalid arguments");
+        Instance instance = Instance.class.cast(bean);
+
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Data data = (Data) deploymentInfo.getContainerData();
+
+        Pool<Instance> pool = data.getPool();
+
+        pool.discard(instance.getPoolEntry());
     }
 
     private void freeInstance(ThreadContext callContext, Instance instance) {
@@ -343,31 +341,21 @@ public class StatelessInstanceManager {
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
         if (data == null) return;
-        Stack pool = data.getPool();
         //TODO ejbRemove on each bean in pool.
         //clean pool
         deploymentInfo.setContainerData(null);
     }
 
     private static final class Data {
-        private final Stack pool;
-        private Semaphore semaphore;
-        
+        private final Pool<Instance> pool;
+
         public Data(int poolLimit, boolean strictPooling) {
-            pool = new LinkedListStack(poolLimit);
-            if (strictPooling) {
-                semaphore = new Semaphore(poolLimit);
-            }
+            pool = new Pool<Instance>(poolLimit, 0, strictPooling);
         }
 
-        public Stack getPool() {
+        public Pool<Instance> getPool() {
             return pool;
         }
-        
-        public Semaphore getSemaphore(){
-        	return semaphore;
-        }
-                        
     }
 
 }
