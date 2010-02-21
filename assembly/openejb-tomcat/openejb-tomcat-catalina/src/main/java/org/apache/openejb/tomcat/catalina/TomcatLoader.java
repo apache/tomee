@@ -81,7 +81,7 @@ import java.util.Properties;
  */
 public class TomcatLoader implements Loader {
     private EjbServer ejbServer;
-    protected ServiceManager manager;
+    private ServiceManager manager;
     private final String platform;
 
     public TomcatLoader() {
@@ -100,7 +100,15 @@ public class TomcatLoader implements Loader {
         OptionsLog.install();
         
         // install conf/openejb.xml and conf/logging.properties files
-        installConfigFiles(properties);
+        String openejbWarDir = properties.getProperty("openejb.war");
+        if (openejbWarDir != null) {
+
+            Paths paths = new Paths(new File(openejbWarDir));
+            if (paths.verify()) {
+                Installer installer = new Installer(paths);
+                installer.installConfigFiles();
+            }
+        }
 
         // Not thread safe
         if (OpenEJB.isInitialized()) {
@@ -211,22 +219,6 @@ public class TomcatLoader implements Loader {
             ejbServer = null;
         }
         OpenEJB.destroy();
-    }
-    /**
-     * Verifies that all the required directories and jars are available
-     * Also, uses the {@link org.apache.openejb.tomcat.installer.Installer Installer} to install
-     * openejb configuration files under the <<tomcat-install>>/conf directory. i.e. openejb.xml and logging.properties files 
-     * @param properties contains the openejb.war property used to find the openejbWar directory
-     */
-    private void installConfigFiles(Properties properties) {
-        String openejbWarDir = properties.getProperty("openejb.war");
-        if (openejbWarDir == null) return;
-
-        Paths paths = new Paths(new File(openejbWarDir));
-        if (paths.verify()) {
-            Installer installer = new Installer(paths);
-            installer.installConfigFiles();
-        }
     }
 
     private void processRunningApplications(TomcatWebAppBuilder tomcatWebAppBuilder, StandardServer standardServer) {
