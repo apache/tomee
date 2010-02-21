@@ -17,26 +17,19 @@
  */
 package org.apache.openejb.tomcat.installer;
 
-import org.codehaus.swizzle.stream.DelimitedTokenReplacementInputStream;
-import org.codehaus.swizzle.stream.StringTokenHandler;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.webapp.common.Alerts;
+import org.apache.openejb.webapp.common.Installers;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.jar.JarFile;
 
 public class Installer {
+    private final Alerts alerts = new Alerts();
+
     public enum Status {
         NONE, INSTALLED, REBOOT_REQUIRED
     }
@@ -63,17 +56,16 @@ public class Installer {
     private final Paths paths;
     private Status status = Status.NONE;
 
-    // Thi may need to be redesigned but the goal is to provide some feedback on what happened
-    private final List<String> errors = new ArrayList<String>();
-    private final List<String> warnings = new ArrayList<String>();
-    private final List<String> infos = new ArrayList<String>();
-
     public Installer(Paths paths) {
         this.paths = paths;
 
         if (listenerInstalled && agentInstalled) {
             status = Status.INSTALLED;
         }
+    }
+
+    public void reset() {
+        alerts.reset();
     }
 
     public Status getStatus() {
@@ -87,7 +79,7 @@ public class Installer {
 
         installConfigFiles();
         
-        if (!hasErrors()) {
+        if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
     }
@@ -113,15 +105,15 @@ public class Installer {
 
         if (copyOpenEJBLoader) {
             try {
-                copyFile(paths.getOpenEJBTomcatLoaderJar(), destination);
-                addInfo("Copy " + paths.getOpenEJBTomcatLoaderJar().getName() + " to lib");
+                Installers.copyFile(paths.getOpenEJBTomcatLoaderJar(), destination);
+                alerts.addInfo("Copy " + paths.getOpenEJBTomcatLoaderJar().getName() + " to lib");
             } catch (IOException e) {
-                addError("Unable to copy OpenEJB Tomcat loader jar to Tomcat lib directory.  This will need to be performed manually.", e);
+                alerts.addError("Unable to copy OpenEJB Tomcat loader jar to Tomcat lib directory.  This will need to be performed manually.", e);
             }
         }
 
         // read server.xml
-        String serverXmlOriginal = readAll(paths.getServerXmlFile());
+        String serverXmlOriginal = Installers.readAll(paths.getServerXmlFile(), alerts);
 
         // server xml will be null if we couldn't read the file
         if (serverXmlOriginal == null) {
@@ -130,19 +122,19 @@ public class Installer {
 
         // does the server.xml contain our listener name... it is possible that they commented out our listener, but that would be a PITA to detect
         if (serverXmlOriginal.contains("org.apache.openejb.tomcat.loader.OpenEJBListener")) {
-            addWarning("OpenEJB Listener already declared in Tomcat server.xml file.");
+            alerts.addWarning("OpenEJB Listener already declared in Tomcat server.xml file.");
             return;
         }
 
         // if we can't backup the file, do not modify it
-        if (!backup(paths.getServerXmlFile())) {
+        if (!Installers.backup(paths.getServerXmlFile(), alerts)) {
             return;
         }
 
         // add our listener
         String newServerXml = null;
         try {
-            newServerXml = replace(serverXmlOriginal,
+            newServerXml = Installers.replace(serverXmlOriginal,
                     "<Server",
                     "<Server",
                     ">",
@@ -150,12 +142,12 @@ public class Installer {
                             "  <!-- OpenEJB plugin for Tomcat -->\r\n" +
                             "  <Listener className=\"org.apache.openejb.tomcat.loader.OpenEJBListener\" />");
         } catch (IOException e) {
-            addError("Error while adding listener to server.xml file", e);
+            alerts.addError("Error while adding listener to server.xml file", e);
         }
 
         // overwrite server.xml
-        if (writeAll(paths.getServerXmlFile(), newServerXml)) {
-            addInfo("Add OpenEJB listener to server.xml");
+        if (Installers.writeAll(paths.getServerXmlFile(), newServerXml, alerts)) {
+            alerts.addInfo("Add OpenEJB listener to server.xml");
         }
     }
 
@@ -181,10 +173,10 @@ public class Installer {
 
         if (copyJavaagentJar) {
             try {
-                copyFile(paths.getOpenEJBJavaagentJar(), javaagentJar);
-                addInfo("Copy " + paths.getOpenEJBJavaagentJar().getName() + " to lib");
+                Installers.copyFile(paths.getOpenEJBJavaagentJar(), javaagentJar);
+                alerts.addInfo("Copy " + paths.getOpenEJBJavaagentJar().getName() + " to lib");
             } catch (IOException e) {
-                addError("Unable to copy OpenEJB javaagent jar to Tomcat lib directory.  This will need to be performed manually.", e);
+                alerts.addError("Unable to copy OpenEJB javaagent jar to Tomcat lib directory.  This will need to be performed manually.", e);
             }
         }
 
@@ -194,7 +186,7 @@ public class Installer {
         //
 
         // read the catalina sh file
-        String catalinaShOriginal = readAll(paths.getCatalinaShFile());
+        String catalinaShOriginal = Installers.readAll(paths.getCatalinaShFile(), alerts);
 
         // catalina sh will be null if we couldn't read the file
         if (catalinaShOriginal == null) {
@@ -203,12 +195,12 @@ public class Installer {
 
         // does the catalina sh contain our comment... it is possible that they commented out the magic script code, but there is no way to detect that
         if (catalinaShOriginal.contains("Add OpenEJB javaagent")) {
-            addWarning("OpenEJB javaagent already declared in Tomcat catalina.sh file.");
+            alerts.addWarning("OpenEJB javaagent already declared in Tomcat catalina.sh file.");
             return;
         }
 
         // if we can't backup the file, do not modify it
-        if (!backup(paths.getCatalinaShFile())) {
+        if (!Installers.backup(paths.getCatalinaShFile(), alerts)) {
             return;
         }
 
@@ -223,8 +215,8 @@ public class Installer {
                 "# ----- Execute The Requested Command");
 
         // overwrite the catalina.sh file
-        if (writeAll(paths.getCatalinaShFile(), newCatalinaSh)) {
-            addInfo("Add OpenEJB JavaAgent to catalina.sh");
+        if (Installers.writeAll(paths.getCatalinaShFile(), newCatalinaSh, alerts)) {
+            alerts.addInfo("Add OpenEJB JavaAgent to catalina.sh");
         }
 
         //
@@ -232,7 +224,7 @@ public class Installer {
         //
 
         // read the catalina bat file
-        String catalinaBatOriginal = readAll(paths.getCatalinaBatFile());
+        String catalinaBatOriginal = Installers.readAll(paths.getCatalinaBatFile(), alerts);
 
         // catalina bat will be null if we couldn't read the file
         if (catalinaBatOriginal == null) {
@@ -241,12 +233,12 @@ public class Installer {
 
         // does the catalina bat contain our comment... it is possible that they commented out the magic script code, but there is no way to detect that
         if (catalinaBatOriginal.contains("Add OpenEJB javaagent")) {
-            addWarning("OpenEJB javaagent already declared in Tomcat catalina.bat file.");
+            alerts.addWarning("OpenEJB javaagent already declared in Tomcat catalina.bat file.");
             return;
         }
 
         // if we can't backup the file, do not modify it
-        if (!backup(paths.getCatalinaBatFile())) {
+        if (!Installers.backup(paths.getCatalinaBatFile(), alerts)) {
             return;
         }
 
@@ -261,8 +253,8 @@ public class Installer {
                 "rem ----- Execute The Requested Command");
 
         // overwrite the catalina.bat file
-        if (writeAll(paths.getCatalinaBatFile(), newCatalinaBat)) {
-            addInfo("Add OpenEJB JavaAgent to catalina.bat");
+        if (Installers.writeAll(paths.getCatalinaBatFile(), newCatalinaBat, alerts)) {
+            alerts.addInfo("Add OpenEJB JavaAgent to catalina.bat");
         }
     }
     /**
@@ -276,13 +268,17 @@ public class Installer {
      * configuration, then this method will just leave the logging.properties file alone
      */
     public void installConfigFiles() {
-        if (paths.getOpenEJBCoreJar() == null) {
+        final File openejbCoreJar = paths.getOpenEJBCoreJar();
+        final File confDir = paths.getCatalinaConfDir();
+        final Alerts alerts = this.alerts;
+
+        if (openejbCoreJar == null) {
             // the core jar contains the config files
             return;
         }
         JarFile coreJar;
         try {
-            coreJar = new JarFile(paths.getOpenEJBCoreJar());
+            coreJar = new JarFile(openejbCoreJar);
         } catch (IOException e) {
             return;
         }
@@ -290,15 +286,14 @@ public class Installer {
         //
         // conf/openejb.xml
         //
-        File confDir = paths.getCatalinaConfDir();
 
         File openEjbXmlFile = new File(confDir, "openejb.xml");
         if (!openEjbXmlFile.exists()) {
             // read in the openejb.xml file from the openejb core jar
-            String openEjbXml = readEntry(coreJar, "default.openejb.conf");
+            String openEjbXml = Installers.readEntry(coreJar, "default.openejb.conf", alerts);
             if (openEjbXml != null) {
-                if (writeAll(openEjbXmlFile, openEjbXml)) {
-                    addInfo("Copy openejb.xml to conf");
+                if (Installers.writeAll(openEjbXmlFile, openEjbXml, alerts)) {
+                    alerts.addInfo("Copy openejb.xml to conf");
                 }
             }
         }
@@ -307,14 +302,14 @@ public class Installer {
         //
         // conf/logging.properties
         //
-        String openejbLoggingProps = readEntry(coreJar, "logging.properties");
+        String openejbLoggingProps = Installers.readEntry(coreJar, "logging.properties", alerts);
         if (openejbLoggingProps != null) {
             File loggingPropsFile = new File(confDir, "logging.properties");
             String newLoggingProps = null;
             if (!loggingPropsFile.exists()) {
                 newLoggingProps = openejbLoggingProps;
             } else {
-                String loggingPropsOriginal = readAll(loggingPropsFile);
+                String loggingPropsOriginal = Installers.readAll(loggingPropsFile, alerts);
                 if (!loggingPropsOriginal.toLowerCase().contains("openejb")) {
                     // strip off license header
                     String[] strings = openejbLoggingProps.split("## --*", 3);
@@ -331,120 +326,14 @@ public class Installer {
                 }
             }
             if (newLoggingProps != null) {
-                if (writeAll(loggingPropsFile, newLoggingProps)) {
-                    addInfo("Append OpenEJB config to logging.properties");
+                if (Installers.writeAll(loggingPropsFile, newLoggingProps, alerts)) {
+                    alerts.addInfo("Append OpenEJB config to logging.properties");
                 }
             }
         }
     }
 
-    private String readEntry(JarFile jarFile, String name) {
-        ZipEntry entry = jarFile.getEntry(name);
-        if (entry == null) return null;
-        InputStream in = null;
-        try {
-            in = jarFile.getInputStream(entry);
-            String text = readAll(in);
-            return text;
-        } catch (Exception e) {
-            addError("Unable to read " + name + " from " + jarFile.getName());
-            return null;
-        } finally {
-            close(in);
-        }
-    }
-
-    private String replace(String inputText, String begin, String newBegin, String end, String newEnd) throws IOException {
-        BeginEndTokenHandler tokenHandler = new BeginEndTokenHandler(newBegin, newEnd);
-
-        ByteArrayInputStream in = new ByteArrayInputStream(inputText.getBytes());
-
-        InputStream replacementStream = new DelimitedTokenReplacementInputStream(in, begin, end, tokenHandler, true);
-        String newServerXml = readAll(replacementStream);
-        close(replacementStream);
-        return newServerXml;
-    }
-
-    private boolean backup(File source) {
-        try {
-            File backupFile = new File(source.getParent(), source.getName() + ".original");
-            if (!backupFile.exists()) {
-                copyFile(source, backupFile);
-            }
-            return true;
-        } catch (IOException e) {
-            addError("Unable to backup " + source.getAbsolutePath() + "; No changes will be made to this file");
-            return false;
-        }
-    }
-
-    private void copyFile(File source, File destination) throws IOException {
-        File destinationDir = destination.getParentFile();
-        if (!destinationDir.exists() && !destinationDir.mkdirs()) {
-            throw new java.io.IOException("Cannot create directory : " + destinationDir);
-        }
-
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(source);
-            out = new FileOutputStream(destination);
-            writeAll(in, out);
-        } finally {
-            close(in);
-            close(out);
-        }
-    }
-
-    private boolean writeAll(File file, String text) {
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(file);
-            writeAll(new ByteArrayInputStream(text.getBytes()), fileOutputStream);
-            return true;
-        } catch (Exception e) {
-            addError("Unable to write to " + file.getAbsolutePath(), e);
-            return false;
-        } finally {
-            close(fileOutputStream);
-        }
-    }
-
-    private void writeAll(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[4096];
-        int count;
-        while ((count = in.read(buffer)) > 0) {
-            out.write(buffer, 0, count);
-        }
-        out.flush();
-    }
-
-    private String readAll(File file) {
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
-            String text = readAll(in);
-            return text;
-        } catch (Exception e) {
-            addError("Unable to read " + file.getAbsolutePath());
-            return null;
-        } finally {
-            close(in);
-        }
-    }
-
-    private String readAll(InputStream in) throws IOException {
-        // SwizzleStream block read methods are broken so read byte at a time
-        StringBuilder sb = new StringBuilder();
-        int i = in.read();
-        while (i != -1) {
-            sb.append((char) i);
-            i = in.read();
-        }
-        return sb.toString();
-    }
-
-    private static Object invokeStaticNoArgMethod(String className, String propertyName) {
+    public static Object invokeStaticNoArgMethod(String className, String propertyName) {
         try {
             Class<?> clazz = loadClass(className, Installer.class.getClassLoader());
             Method method = clazz.getMethod(propertyName);
@@ -455,7 +344,7 @@ public class Installer {
         }
     }
 
-    private static Class<?> loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
+    public static Class<?> loadClass(String className, ClassLoader classLoader) throws ClassNotFoundException {
         LinkedList<ClassLoader> loaders = new LinkedList<ClassLoader>();
         for (ClassLoader loader = classLoader; loader != null; loader = loader.getParent()) {
             loaders.addFirst(loader);
@@ -470,79 +359,4 @@ public class Installer {
         return null;
     }
 
-    private void close(Closeable thing) {
-        if (thing != null) {
-            try {
-                thing.close();
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-    private static class BeginEndTokenHandler extends StringTokenHandler {
-        private final String begin;
-        private final String end;
-
-        public BeginEndTokenHandler(String begin, String end) {
-            this.begin = begin;
-            this.end = end;
-        }
-
-        public String handleToken(String token) throws IOException {
-            String result = begin + token + end;
-            return result;
-        }
-    }
-
-    public void reset() {
-        errors.clear();
-        warnings.clear();
-        infos.clear();
-    }
-
-    public boolean hasErrors() {
-        return !errors.isEmpty();
-    }
-
-
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    private void addError(String message) {
-        errors.add(message);
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    private void addError(String message, Exception e) {
-        // todo add exception somehow
-        System.out.println(message);
-    }
-
-    public boolean hasWarnings() {
-        return !warnings.isEmpty();
-    }
-
-
-    public List<String> getWarnings() {
-        return warnings;
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    private void addWarning(String message) {
-        System.out.println(message);
-    }
-
-    public boolean hasInfos() {
-        return !infos.isEmpty();
-    }
-
-
-    public List<String> getInfos() {
-        return infos;
-    }
-
-    private void addInfo(String message) {
-        infos.add(message);
-    }
 }
