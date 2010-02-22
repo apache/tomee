@@ -16,18 +16,23 @@
  */
 package org.superbiz.txrollback;
 
-import java.util.List;
+import javax.ejb.ApplicationException;
 
-public interface Movies {
-    void addMovie(Movie movie) throws Exception;
+@ApplicationException
+public class CustomRuntimeException extends RuntimeException {
 
-    void deleteMovie(Movie movie) throws Exception;
+    public CustomRuntimeException() {
+    }
 
-    List<Movie> getMovies() throws Exception;
+    public CustomRuntimeException(String s) {
+        super(s);
+    }
 
-    void callSetRollbackOnly();
+    public CustomRuntimeException(String s, Throwable throwable) {
+        super(s, throwable);
+    }
 
-    void throwUncheckedException();
-
-    void throwApplicationException();
+    public CustomRuntimeException(Throwable throwable) {
+        super(throwable);
+    }
 }

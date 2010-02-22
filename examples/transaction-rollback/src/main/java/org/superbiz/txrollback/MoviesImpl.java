@@ -17,19 +17,25 @@
 package org.superbiz.txrollback;
 
 import javax.ejb.Stateful;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
+import javax.annotation.Resource;
 import java.util.List;
 
 //START SNIPPET: code
-@Stateful(name = "Movies")
+@Stateless(name = "Movies")
 public class MoviesImpl implements Movies {
 
     @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.TRANSACTION)
     private EntityManager entityManager;
 
+    @Resource
+    private SessionContext sessionContext;
+    
     public void addMovie(Movie movie) throws Exception {
         entityManager.persist(movie);
     }
@@ -41,5 +47,17 @@ public class MoviesImpl implements Movies {
     public List<Movie> getMovies() throws Exception {
         Query query = entityManager.createQuery("SELECT m from Movie as m");
         return query.getResultList();
+    }
+
+    public void callSetRollbackOnly() {
+        sessionContext.setRollbackOnly();
+    }
+
+    public void throwUncheckedException() {
+        throw new RuntimeException("Throwing unchecked exceptions will rollback a transaction");
+    }
+
+    public void throwApplicationException() {
+        throw new CustomRuntimeException("This is marked @ApplicationException, so no TX rollback");
     }
 }

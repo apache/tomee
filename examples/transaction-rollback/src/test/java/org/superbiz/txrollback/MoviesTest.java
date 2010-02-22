@@ -26,6 +26,10 @@ import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import java.util.List;
 import java.util.Properties;
 
@@ -62,6 +66,13 @@ public class MoviesTest extends TestCase {
         initialContext.close();
     }
 
+    /**
+     * Standard successful transaction scenario.  The data created inside
+     * the transaction is visible after the transaction completes.
+     *
+     * Note that UserTransaction is only usable by Bean-Managed Transaction
+     * beans, which can be specified with @TransactionManagement(BEAN)
+     */
     public void testCommit() throws Exception {
 
         userTransaction.begin();
@@ -84,7 +95,11 @@ public class MoviesTest extends TestCase {
 
     }
 
-    public void testRollback() throws Exception {
+    /**
+     * Standard transaction rollback scenario.  The data created inside
+     * the transaction is not visible after the transaction completes.
+     */
+    public void testUserTransactionRollback() throws Exception {
 
         userTransaction.begin();
 
@@ -106,5 +121,110 @@ public class MoviesTest extends TestCase {
 
     }
 
+    /**
+     * Transaction is marked for rollback inside the bean via
+     * calling the javax.ejb.SessionContext.setRollbackOnly() method
+     *
+     * This is the cleanest way to make a transaction rollback.
+     */
+    public void testMarkedRollback() throws Exception {
+
+        userTransaction.begin();
+
+        try {
+            entityManager.persist(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+            entityManager.persist(new Movie("Joel Coen", "Fargo", 1996));
+            entityManager.persist(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+            List<Movie> list = movies.getMovies();
+            assertEquals("List.size()", 3, list.size());
+
+            movies.callSetRollbackOnly();
+        } finally {
+            try {
+                userTransaction.commit();
+                fail("A RollbackException should have been thrown");
+            } catch (RollbackException e) {
+                // Pass
+            }
+        }
+
+        // Transaction was rolled back
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 0, list.size());
+
+    }
+
+    /**
+     * Throwing an unchecked exception from a bean will cause
+     * the container to call setRollbackOnly() and discard the
+     * bean instance from further use without calling any @PreDestroy
+     * methods on the bean instance.
+     */
+    public void testExceptionBasedRollback() throws Exception {
+
+        userTransaction.begin();
+
+        try {
+            entityManager.persist(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+            entityManager.persist(new Movie("Joel Coen", "Fargo", 1996));
+            entityManager.persist(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+            List<Movie> list = movies.getMovies();
+            assertEquals("List.size()", 3, list.size());
+
+            try {
+                movies.throwUncheckedException();
+            } catch (RuntimeException e) {
+                // Good, this will cause the tx to rollback
+            }
+        } finally {
+            try {
+                userTransaction.commit();
+                fail("A RollbackException should have been thrown");
+            } catch (RollbackException e) {
+                // Pass
+            }
+        }
+
+        // Transaction was rolled back
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 0, list.size());
+
+    }
+
+    /**
+     * It is still possible to throw unchecked (runtime) exceptions
+     * without dooming the transaction by marking the exception
+     * with the @ApplicationException annotation or in the ejb-jar.xml
+     * deployment descriptor via the <application-exception> tag
+     */
+    public void testCommit2() throws Exception {
+
+        userTransaction.begin();
+
+        try {
+            entityManager.persist(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+            entityManager.persist(new Movie("Joel Coen", "Fargo", 1996));
+            entityManager.persist(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+            List<Movie> list = movies.getMovies();
+            assertEquals("List.size()", 3, list.size());
+
+            try {
+                movies.throwApplicationException();
+            } catch (RuntimeException e) {
+                // This will *not* cause the tx to rollback
+                // because it is marked as an @ApplicationException
+            }
+        } finally {
+            userTransaction.commit();
+        }
+
+        // Transaction was committed
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 3, list.size());
+
+    }
 }
 //END SNIPPET: code
