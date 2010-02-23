@@ -18,11 +18,11 @@
 package org.apache.openejb.junit.context;
 
 import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.junit.annotations.ContextConfig;
-import org.apache.openejb.junit.annotations.Property;
-import org.apache.openejb.junit.annotations.RunTestAs;
-import org.apache.openejb.junit.annotations.TestResource;
-import org.apache.openejb.junit.annotations.TestResourceTypes;
+import org.apache.openejb.junit.ContextConfig;
+import org.apache.openejb.junit.Property;
+import org.apache.openejb.junit.RunTestAs;
+import org.apache.openejb.junit.TestResource;
+import org.apache.openejb.junit.TestResourceTypes;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -242,7 +242,7 @@ public class OpenEjbTestContext implements TestContext {
     }
 
     /**
-     * Loads the configuration file specified in the {@link ContextConfig} annotation
+     * Loads the configuration file specified in the {@link org.apache.openejb.junit.ContextConfig} annotation
      * into the specified Properties instance
      *
      * @param env
