@@ -31,8 +31,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * To make your own runner, extend this class replacing {@link #newTestContext(java.lang.Class) }
- * and {@link #newTestContext(java.lang.Class, java.lang.reflect.Method) }, which
+ * To make your own runner, extend this class replacing {@link #newTestContext(String)}  }
+ * and {@link #newTestContext(java.lang.reflect.Method, String)}  }, which
  * would return an implementation of {@link TestContext}
  *
  * @author quintin
@@ -82,7 +82,6 @@ public class OpenEjbRunner extends Runner {
     }
 
     /**
-     * @param clazz
      * @return a new class level context
      * @see #newTestContext(java.lang.String)
      */
@@ -100,7 +99,7 @@ public class OpenEjbRunner extends Runner {
      * context for no reason, and not free the memory throughout the run, though this
      * is probably quite rare and doesn't really matter.
      *
-     * @param clazz
+     * @param roleName
      * @return a new class level context
      */
     public TestContext newTestContext(String roleName) {
@@ -111,7 +110,7 @@ public class OpenEjbRunner extends Runner {
     }
 
     /**
-     * @param clazz
+     * @param method
      * @param method
      * @return a new method level context
      * @see #newTestContext(java.lang.reflect.Method, java.lang.String)
@@ -130,9 +129,8 @@ public class OpenEjbRunner extends Runner {
      * factory, a factory and a context. Either that or you need to specify the
      * factory class in every test.
      *
-     * @param clazz
      * @param method
-     * @param role   Role to execute the context in.
+     * @param roleName   Role to execute the context in.
      * @return a new method level context
      */
     public TestContext newTestContext(Method method, String roleName) {
