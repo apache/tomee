@@ -79,7 +79,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public boolean inProxyMap = false;
 
-    private transient WeakReference<CoreDeploymentInfo> deploymentInfo;
+    private transient WeakReference<DeploymentInfo> deploymentInfo;
 
     public transient RpcContainer container;
 
@@ -112,7 +112,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         this.deploymentID = deploymentInfo.getDeploymentID();
         this.interfaceType = interfaceType;
         this.primaryKey = pk;
-        this.setDeploymentInfo((CoreDeploymentInfo) deploymentInfo);
+        this.setDeploymentInfo(deploymentInfo);
 
         if (interfaces == null || interfaces.size() == 0) {
             InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
@@ -543,8 +543,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public abstract org.apache.openejb.ProxyInfo getProxyInfo();
 
-    public CoreDeploymentInfo getDeploymentInfo() {
-        CoreDeploymentInfo info = deploymentInfo.get();
+    public DeploymentInfo getDeploymentInfo() {
+        DeploymentInfo info = deploymentInfo.get();
         if (info == null|| info.isDestroyed()){
             invalidateReference();
             throw new IllegalStateException("Bean '"+deploymentID+"' has been undeployed.");
@@ -552,12 +552,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         return info;
     }
 
-    public void setDeploymentInfo(CoreDeploymentInfo deploymentInfo) {
-        this.deploymentInfo = new WeakReference<CoreDeploymentInfo>(deploymentInfo);
+    public void setDeploymentInfo(DeploymentInfo deploymentInfo) {
+        this.deploymentInfo = new WeakReference<DeploymentInfo>(deploymentInfo);
     }
 
     public Hashtable getLiveHandleRegistry() {
-        CoreDeploymentInfo deploymentInfo = getDeploymentInfo();
+        DeploymentInfo deploymentInfo = getDeploymentInfo();
         ProxyRegistry proxyRegistry = deploymentInfo.get(ProxyRegistry.class);
         if (proxyRegistry == null){
             proxyRegistry = new ProxyRegistry();
@@ -578,7 +578,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         in.defaultReadObject();
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        setDeploymentInfo((CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentID));
+        setDeploymentInfo(containerSystem.getDeploymentInfo(deploymentID));
         container = (RpcContainer) getDeploymentInfo().getContainer();
 
         if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {

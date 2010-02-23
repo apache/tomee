@@ -25,6 +25,7 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.security.auth.Subject;
@@ -139,7 +140,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        CoreDeploymentInfo callingDeploymentInfo = (oldContext != null)? oldContext.getDeploymentInfo(): null;
+        DeploymentInfo callingDeploymentInfo = (oldContext != null)? oldContext.getDeploymentInfo(): null;
         Subject runAsSubject = getRunAsSubject(callingDeploymentInfo);
         if (runAsSubject != null) {
 
@@ -158,7 +159,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         newContext.set(SecurityContext.class, securityContext);
     }
 
-    protected Subject getRunAsSubject(CoreDeploymentInfo callingDeploymentInfo) {
+    protected Subject getRunAsSubject(DeploymentInfo callingDeploymentInfo) {
         if (callingDeploymentInfo == null) return null;
 
         String runAsRole = callingDeploymentInfo.getRunAs();
@@ -222,7 +223,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
         try {
-            CoreDeploymentInfo deployment = threadContext.getDeploymentInfo();
+            DeploymentInfo deployment = threadContext.getDeploymentInfo();
 
             securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
         } catch (AccessControlException e) {
@@ -253,7 +254,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         try {
 
-            CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+            DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
 
             String ejbName = deploymentInfo.getEjbName();
 

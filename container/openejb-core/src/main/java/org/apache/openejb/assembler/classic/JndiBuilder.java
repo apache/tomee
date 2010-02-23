@@ -32,8 +32,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.ivm.naming.BusinessLocalReference;
 import org.apache.openejb.core.ivm.naming.BusinessRemoteReference;
 import org.apache.openejb.core.ivm.naming.ObjectReference;
@@ -45,10 +43,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 
 /**
@@ -270,8 +265,7 @@ public class JndiBuilder {
         }
     }
 
-    public void bind(EjbJarInfo ejbJarInfo, DeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo, JndiNameStrategy strategy) {
-        CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentInfo;
+    public void bind(EjbJarInfo ejbJarInfo, DeploymentInfo deployment, EnterpriseBeanInfo beanInfo, JndiNameStrategy strategy) {
 
         Bindings bindings = new Bindings();
         deployment.set(Bindings.class, bindings);
@@ -304,7 +298,7 @@ public class JndiBuilder {
 
                 ObjectReference ref = new ObjectReference(deployment.getEJBLocalHome());
 
-                String name = strategy.getName(deploymentInfo.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
+                String name = strategy.getName(deployment.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, localHomeInterface);
 
                 name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getLocalInterface().getName());

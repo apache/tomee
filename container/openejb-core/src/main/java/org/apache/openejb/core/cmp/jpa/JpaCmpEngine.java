@@ -126,7 +126,7 @@ public class JpaCmpEngine implements CmpEngine {
         TransactionPolicy txPolicy = startTransaction("persist", callContext);
         creating.get().add(bean);
         try {
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
             EntityManager entityManager = getEntityManager(deploymentInfo);
 
             entityManager.persist(bean);
@@ -147,7 +147,7 @@ public class JpaCmpEngine implements CmpEngine {
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         TransactionPolicy txPolicy = startTransaction("load", callContext);
         try {
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
             // Try to load it from the entity manager

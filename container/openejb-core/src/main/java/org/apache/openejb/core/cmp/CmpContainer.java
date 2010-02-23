@@ -209,6 +209,10 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
+    public Object getEjbInstance(DeploymentInfo deployInfo, Object primaryKey) {
+        return getEjbInstance((CoreDeploymentInfo)deployInfo, primaryKey);
+    }
+    
     public Object getEjbInstance(CoreDeploymentInfo deployInfo, Object primaryKey) {
         ThreadContext callContext = new ThreadContext(deployInfo, primaryKey);
 
@@ -289,7 +293,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private EntityBean createNewInstance(ThreadContext callContext) {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
         try {
             EntityBean bean = (EntityBean) deploymentInfo.getCmpImplClass().newInstance();
             return bean;
@@ -476,7 +480,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
@@ -518,7 +522,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
@@ -537,7 +541,7 @@ public class CmpContainer implements RpcContainer {
                 callContext.setCurrentOperation(Operation.HOME);
                 callContext.setCurrentAllowedStates(EntityContext.getStates());
 
-                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                Method runMethod = ((CoreDeploymentInfo)deploymentInfo).getMatchingBeanMethod(callMethod);
 
                 try {
                     returnValue = runMethod.invoke(bean, args);
@@ -574,7 +578,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
@@ -647,7 +651,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
@@ -658,7 +662,7 @@ public class CmpContainer implements RpcContainer {
             }
 
             // rebuild the primary key
-            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+            KeyGenerator kg = ((CoreDeploymentInfo)deploymentInfo).getKeyGenerator();
             Object primaryKey = kg.getPrimaryKey(bean);
 
             // create a new ProxyInfo based on the deployment info and primary key
@@ -674,14 +678,14 @@ public class CmpContainer implements RpcContainer {
     }
 
     private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
         try {
             List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
 
-            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+            KeyGenerator kg = ((CoreDeploymentInfo)deploymentInfo).getKeyGenerator();
 
             // The following block of code is responsible for returning ProxyInfo object(s) for each
             // matching entity bean found by the query.  If its a multi-value find operation a Vector
@@ -810,7 +814,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
 
@@ -831,7 +835,7 @@ public class CmpContainer implements RpcContainer {
     }
 
     private void cancelTimers(ThreadContext threadContext) {
-        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Object primaryKey = threadContext.getPrimaryKey();
 
         // stop timers
