@@ -63,20 +63,20 @@ public class LocalClientTest extends TestCase {
     @Resource
     private DataSource daataSource;
 
-    @Resource
-    private Queue quueue;
-
-    @Resource
-    private Topic toopic;
-
-    @Resource
-    private ConnectionFactory coonnectionFactory;
-
-    @Resource
-    private QueueConnectionFactory queueCoonnectionFactory;
-
-    @Resource
-    private TopicConnectionFactory topicCoonnectionFactory;
+//    @Resource
+//    private Queue quueue;
+//
+//    @Resource
+//    private Topic toopic;
+//
+//    @Resource
+//    private ConnectionFactory coonnectionFactory;
+//
+//    @Resource
+//    private QueueConnectionFactory queueCoonnectionFactory;
+//
+//    @Resource
+//    private TopicConnectionFactory topicCoonnectionFactory;
 
     @PersistenceUnit
     private EntityManagerFactory emf;
@@ -129,23 +129,23 @@ public class LocalClientTest extends TestCase {
         // @Resource DataSource
         assertNotNull("The DataSource is null", daataSource);
 
-        // @Resource Topic
-        assertNotNull("The Topic is null", toopic);
-
-        // @Resource Queue
-        assertNotNull("The Queue is null", quueue);
-
-        // @Resource ConnectionFactory
-        assertNotNull("The ConnectionFactory is null", coonnectionFactory);
-        testJmsConnection(coonnectionFactory.createConnection());
-
-        // @Resource QueueConnectionFactory
-        assertNotNull("The QueueConnectionFactory is null", queueCoonnectionFactory);
-        testJmsConnection(queueCoonnectionFactory.createConnection());
-
-        // @Resource TopicConnectionFactory
-        assertNotNull("The TopicConnectionFactory is null", queueCoonnectionFactory);
-        testJmsConnection(queueCoonnectionFactory.createConnection());
+//        // @Resource Topic
+//        assertNotNull("The Topic is null", toopic);
+//
+//        // @Resource Queue
+//        assertNotNull("The Queue is null", quueue);
+//
+//        // @Resource ConnectionFactory
+//        assertNotNull("The ConnectionFactory is null", coonnectionFactory);
+//        testJmsConnection(coonnectionFactory.createConnection());
+//
+//        // @Resource QueueConnectionFactory
+//        assertNotNull("The QueueConnectionFactory is null", queueCoonnectionFactory);
+//        testJmsConnection(queueCoonnectionFactory.createConnection());
+//
+//        // @Resource TopicConnectionFactory
+//        assertNotNull("The TopicConnectionFactory is null", queueCoonnectionFactory);
+//        testJmsConnection(queueCoonnectionFactory.createConnection());
 
         // @Resource UserTransaction
         assertNotNull("The UserTransaction is null", useerTransaction);
