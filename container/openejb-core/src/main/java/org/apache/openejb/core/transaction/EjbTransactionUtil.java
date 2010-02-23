@@ -22,10 +22,10 @@ import java.rmi.RemoteException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -51,7 +51,7 @@ public final class EjbTransactionUtil {
      */
     public static TransactionPolicy createTransactionPolicy(TransactionType type, ThreadContext threadContext) throws SystemException, ApplicationException {
         // start the new transaction policy
-        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         TransactionPolicy txPolicy = deploymentInfo.getTransactionPolicyFactory().createTransactionPolicy(type);
 
         // save previous EJB ThreadContext transaction policy so it can be restored later

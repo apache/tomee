@@ -21,6 +21,7 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -30,6 +31,8 @@ import java.util.Set;
 import java.util.Properties;
 import javax.naming.Context;
 import javax.ejb.ScheduleExpression;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
 
 public interface DeploymentInfo {
 
@@ -126,6 +129,28 @@ public interface DeploymentInfo {
     public EjbTimerService getEjbTimerService();
 
     public ExceptionType getExceptionType(Throwable e);
+
+    EJBHome getEJBHome();
+
+    EJBLocalHome getEJBLocalHome();
+
+    BusinessLocalHome getBusinessLocalHome();
+
+    BusinessLocalHome getBusinessLocalHome(List<Class> interfaces);
+
+    BusinessRemoteHome getBusinessRemoteHome();
+
+    BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces);
+
+    String getDestinationId();
+
+    boolean isDestroyed();
+
+    boolean isBeanManagedConcurrency();
+
+    List<Class> getObjectInterface(Class homeInterface);
+
+    TransactionPolicyFactory getTransactionPolicyFactory();
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();

@@ -23,10 +23,10 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.spi.ObjectFactory;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.DeploymentInfo;
 
 public class javaURLContextFactory implements ObjectFactory {
 
@@ -41,7 +41,7 @@ public class javaURLContextFactory implements ObjectFactory {
             return containerSystem.getJNDIContext();
         }
 
-        CoreDeploymentInfo di = callContext.getDeploymentInfo();
+        DeploymentInfo di = callContext.getDeploymentInfo();
         if (di != null) {
             return di.getJndiEnc();
         } else {

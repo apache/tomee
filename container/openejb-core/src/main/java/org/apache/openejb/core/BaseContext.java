@@ -116,7 +116,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public Object lookup(String name) {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Context jndiEnc = deploymentInfo.getJndiEnc();
         try {
             jndiEnc = (Context) jndiEnc.lookup("java:comp/env");
@@ -223,14 +223,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
         public EJBHome getEJBHome() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
-            CoreDeploymentInfo di = threadContext.getDeploymentInfo();
+            DeploymentInfo di = threadContext.getDeploymentInfo();
 
             return di.getEJBHome();
         }
 
         public EJBLocalHome getEJBLocalHome() {
             ThreadContext threadContext = ThreadContext.getThreadContext();
-            CoreDeploymentInfo di = threadContext.getDeploymentInfo();
+            DeploymentInfo di = threadContext.getDeploymentInfo();
 
             return di.getEJBLocalHome();
         }

@@ -28,6 +28,7 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.BeanType;
+import org.apache.openejb.DeploymentInfo;
 
 public class ManagedUserTransaction implements UserTransaction {
     private final UserTransaction userTransaction;
@@ -49,7 +50,7 @@ public class ManagedUserTransaction implements UserTransaction {
         }
 
         // get the deployment info
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         if (deploymentInfo.getComponentType() != BeanType.MANAGED) {
             // some other non-stateful ejb is using our user transaction
             return;
