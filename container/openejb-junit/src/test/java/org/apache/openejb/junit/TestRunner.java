@@ -17,8 +17,8 @@
 
 package org.apache.openejb.junit;
 
-import org.apache.openejb.junit.annotations.TestResource;
-import org.apache.openejb.junit.annotations.TestResourceTypes;
+import org.apache.openejb.junit.TestResource;
+import org.apache.openejb.junit.TestResourceTypes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

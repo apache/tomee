@@ -18,7 +18,7 @@
  *  Pretoria
  *  0041
  */
-package org.apache.openejb.junit.annotations;
+package org.apache.openejb.junit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,16 +30,9 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TestSecurity {
-    public static final String UNAUTHENTICATED = "";
-
+public @interface RunTestAs {
     /**
-     * List of roles for which the test should succeed.
+     * Role as which the test should be run
      */
-    String[] authorized() default {};
-
-    /**
-     * List of roles for which the test should fail with an EJBAccessException
-     */
-    String[] unauthorized() default {};
+    String value();
 }

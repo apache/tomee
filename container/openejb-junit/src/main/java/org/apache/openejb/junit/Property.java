@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.openejb.junit.annotations;
+package org.apache.openejb.junit;
 
 /**
  * @author quintin

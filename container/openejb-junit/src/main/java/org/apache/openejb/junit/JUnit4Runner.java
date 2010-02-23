@@ -17,7 +17,7 @@
 
 package org.apache.openejb.junit;
 
-import org.apache.openejb.junit.annotations.TestSecurity;
+import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit.context.ContextWrapperStatement;
 import org.apache.openejb.junit.context.TestContext;
 import org.apache.openejb.junit.model.MultiStatementExecutor;

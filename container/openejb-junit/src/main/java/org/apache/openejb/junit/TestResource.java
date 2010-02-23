@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.openejb.junit.annotations;
+package org.apache.openejb.junit;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author quintin
  */
-public interface TestResourceTypes {
-    public static final String CONTEXT_CONFIG = "org.apache.openejb.junit.context-config";
-
-    public static final String INITIALCONTEXT = "org.apache.openejb.junit.initial-context";
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TestResource {
+    String value();
 }
