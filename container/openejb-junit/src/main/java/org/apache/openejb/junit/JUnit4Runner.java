@@ -20,7 +20,6 @@ package org.apache.openejb.junit;
 import org.apache.openejb.junit.TestSecurity;
 import org.apache.openejb.junit.context.ContextWrapperStatement;
 import org.apache.openejb.junit.context.TestContext;
-import org.apache.openejb.junit.model.MultiStatementExecutor;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.internal.runners.statements.Fail;
@@ -30,6 +29,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import javax.ejb.EJBAccessException;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author quintin
@@ -160,6 +161,21 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
             }.run();
         } catch (Throwable e) {
             return new Fail(e);
+        }
+    }
+
+    public static class MultiStatementExecutor extends Statement {
+        private List<Statement> statements = new ArrayList<Statement>();
+
+        @Override
+        public void evaluate() throws Throwable {
+            for (Statement statement : statements) {
+                statement.evaluate();
+            }
+        }
+
+        public void addStatement(Statement statement) {
+            statements.add(statement);
         }
     }
 }
