@@ -31,9 +31,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * To make your own runner, extend this class replacing {@link #newTestContext(String)}  }
- * and {@link #newTestContext(java.lang.reflect.Method, String)}  }, which
- * would return an implementation of {@link TestContext}
  *
  * @author quintin
  */
@@ -57,6 +54,7 @@ public class OpenEjbRunner extends Runner {
      * @throws InitializationError
      */
     public OpenEjbRunner(Class<?> testClazz) throws InitializationError {
+        this.testClazz = testClazz;
         try {
             delegate = getDelegateRunner(testClazz);
         }
@@ -79,34 +77,6 @@ public class OpenEjbRunner extends Runner {
         } else {
             return new JUnit4Runner(this, testClazz);
         }
-    }
-
-    /**
-     * @return a new class level context
-     * @see #newTestContext(java.lang.String)
-     */
-    public TestContext newTestContext() {
-        return newTestContext((String) null);
-    }
-
-    /**
-     * This implementation returns a singleton context. Contexts can be reused and aren't
-     * attached to a specific instance, so in cases where none of the test's methods
-     * have their own configurations, we don't need to construct a new context with
-     * every call. This counts even for classes where only some methods have their
-     * own contexts, we still benefit from reuse. In those few cases where there is
-     * only a single method that doesn't have configuration, we might store the
-     * context for no reason, and not free the memory throughout the run, though this
-     * is probably quite rare and doesn't really matter.
-     *
-     * @param roleName
-     * @return a new class level context
-     */
-    public TestContext newTestContext(String roleName) {
-        if (classTestContext == null) {
-            classTestContext = new OpenEjbTestContext(testClazz);
-        }
-        return classTestContext;
     }
 
     /**
@@ -135,7 +105,10 @@ public class OpenEjbRunner extends Runner {
      */
     public TestContext newTestContext(Method method, String roleName) {
         if (method == null) {
-            return newTestContext(roleName);
+            if (classTestContext == null) {
+                classTestContext = new OpenEjbTestContext(testClazz);
+            }
+            return classTestContext;
         } else {
             return new OpenEjbTestContext(method, roleName);
         }
