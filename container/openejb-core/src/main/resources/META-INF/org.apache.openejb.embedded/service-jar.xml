@@ -80,18 +80,31 @@
           id="Default Stateless Container"
           service="Container"
           types="STATELESS"
-          constructor="id, securityService, TimeOut, PoolSize, StrictPooling"
+          constructor="id, securityService, TimeOut, PoolMin, PoolSize, StrictPooling"
           class-name="org.apache.openejb.core.stateless.StatelessContainer">
 
-    # Specifies the time to wait between invocations. This
-    # value is measured in milliseconds. A value of 5 would
-    # result in a time-out of 5 milliseconds between invocations.
-    # A value of zero would mean no timeout.
+    # Specifies the time an invokation should wait for an instance
+    # of the pool to become available. This measured by default in
+    # milliseconds, but other time units can be specified, such as
+    # nanoseconds, microsecons, seconds or minutes.  After the timeout
+    # is reached, if an instance in the pool cannot be obtained, the
+    # method invocation will fail.
 
-    TimeOut 0
+    TimeOut = 0 milliseconds
+
+    # Specifies the minimum number of bean instances that should be
+    # in the pool for each bean.  Pools are prefilled to the minimum
+    # on startup.  Pool "shrinking" is achived through WeakReferences
+    # and natural vm garbage collection. All but the minimum are allowed
+    # to be garbage collected by the VM when memory is needed.
+
+    PoolMin 0
 
     # Specifies the size of the bean pools for this
-    # stateless SessionBean container.
+    # stateless SessionBean container.  If StrictPooling is not
+    # used, instances will still be created beyond this number if
+    # there is demand, but they will not be returned to the pool
+    # and instead will be immediately destroyed.
 
     PoolSize 10
 
