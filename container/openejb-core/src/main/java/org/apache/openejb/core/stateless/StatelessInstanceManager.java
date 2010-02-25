@@ -35,6 +35,7 @@ import javax.xml.ws.WebServiceContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -342,7 +343,13 @@ public class StatelessInstanceManager {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
-        Data data = new Data(poolLimit, this.strictPooling, poolMin);
+        Options options = new Options(deploymentInfo.getProperties());
+
+        int max = options.get("PoolSize", poolLimit);
+        boolean strict = options.get("StrictPooling", this.strictPooling);
+        int min = options.get("PoolMin", poolMin);
+
+        Data data = new Data(max, strict, min);
         deploymentInfo.setContainerData(data);      
     }
 
