@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -60,14 +61,21 @@ public class StatelessInstanceManager {
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private SecurityService securityService;
+    private int poolMin = 0;
 
-    public StatelessInstanceManager(SecurityService securityService, Duration timeout, int poolSize, boolean strictPooling) {
+    public StatelessInstanceManager(SecurityService securityService, Duration timeout, int poolMin, int poolMax, boolean strictPooling) {
         this.securityService = securityService;
-        this.poolLimit = poolSize;
+        this.poolLimit = poolMax;
         this.strictPooling = strictPooling;
         this.timeout = timeout;
+        this.poolMin = poolMin;
+
+        if (timeout.getUnit() == null) timeout.setUnit(TimeUnit.MILLISECONDS);
+        if (this.poolMin > poolLimit) {
+            throw new IllegalArgumentException("Minimum pool size cannot be larger than the maximum pool size: min="+ this.poolMin +", max="+poolLimit);
+        }
         
-        if (strictPooling && poolSize < 1) {
+        if (strictPooling && poolMax < 1) {
             throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
         }
 
@@ -334,7 +342,7 @@ public class StatelessInstanceManager {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
-        Data data = new Data(poolLimit, this.strictPooling);
+        Data data = new Data(poolLimit, this.strictPooling, poolMin);
         deploymentInfo.setContainerData(data);      
     }
 
@@ -349,8 +357,8 @@ public class StatelessInstanceManager {
     private static final class Data {
         private final Pool<Instance> pool;
 
-        public Data(int poolLimit, boolean strictPooling) {
-            pool = new Pool<Instance>(poolLimit, 0, strictPooling);
+        public Data(int poolLimit, boolean strictPooling, int min) {
+            pool = new Pool<Instance>(poolLimit, min, strictPooling);
         }
 
         public Pool<Instance> getPool() {
