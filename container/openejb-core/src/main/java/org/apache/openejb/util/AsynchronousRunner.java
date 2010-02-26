@@ -28,47 +28,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Utility class used to invoke methods asynchronously, using a given {@link Executor}.
- * For debugging purposes, a system property named openejb.asynchronousRunner.sleepTime
- * may be set to a long value, indicating a time the execution will wait before actually
- * running the method
- * @author Apache Software Foundation
  */
 public class AsynchronousRunner {
 
-    /**
-     * A {@link Callable} implementation which just delegates the execution using 
-     * {@link Method#invoke(Object, Object...)}
-     * @author luis
-     */
-    private class MethodInvoker implements Callable<Object> {
-        private Object object;
-        private Method method;
-        private Object[] arguments;
-
-        public MethodInvoker(Object object, Method method, Object[] arguments) {
-            this.object = object;
-            this.method = method;
-            this.arguments = arguments;
-        }
-
-        public Object call() throws Exception {
-            return method.invoke(object, arguments);
-        }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        Collection<String> object = new ArrayList<String>();
-        Method method = object.getClass().getMethod("add", Object.class);
-        Object[] arguments = {"Item 1"};
-        
-        AsynchronousRunner asyncRunner = new AsynchronousRunner(Executors.newCachedThreadPool());
-        Future<Object> future = asyncRunner.runAsync(object, method, arguments);
-        future.cancel(true);
-        Object result = future.get(5001, TimeUnit.MILLISECONDS);
-        System.out.println(result);
-    }
-
-    private Executor executor;
+    private final Executor executor;
 
     public AsynchronousRunner(Executor executor) {
         this.executor = executor;
@@ -88,4 +51,24 @@ public class AsynchronousRunner {
         return futureTask;
     }
 
+    /**
+     * A {@link Callable} implementation which just delegates the execution using
+     * {@link Method#invoke(Object, Object[])}
+     * @author luis
+     */
+    private class MethodInvoker implements Callable<Object> {
+        private Object object;
+        private Method method;
+        private Object[] arguments;
+
+        public MethodInvoker(Object object, Method method, Object[] arguments) {
+            this.object = object;
+            this.method = method;
+            this.arguments = arguments;
+        }
+
+        public Object call() throws Exception {
+            return method.invoke(object, arguments);
+        }
+    }
 }
