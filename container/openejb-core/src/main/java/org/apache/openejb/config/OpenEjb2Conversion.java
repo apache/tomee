@@ -104,6 +104,9 @@ public class OpenEjb2Conversion implements DynamicDeployer {
     }
 
     public void convertEjbRefs(EjbJar ejbJar, OpenejbJar openejbJar, OpenejbJarType openejbJarType) {
+
+        openejbJar.getProperties().putAll(openejbJarType.getProperties());
+
         Map<String, EnterpriseBean> ejbs = ejbJar.getEnterpriseBeansByEjbName();
         Map<String, EjbDeployment> deployments =  openejbJar.getDeploymentsByEjbName();
 

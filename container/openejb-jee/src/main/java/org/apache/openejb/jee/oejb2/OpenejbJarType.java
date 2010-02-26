@@ -19,6 +19,7 @@ package org.apache.openejb.jee.oejb2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,8 +28,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 
 /**
@@ -74,6 +77,7 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "openejb-jarType", namespace = "http://openejb.apache.org/xml/ns/openejb-jar-2.2", propOrder = {
     "environment",
+    "properties",
     "cmpConnectionFactory",
     "ejbQlCompilerFactory",
     "dbSyntaxFactory",
@@ -87,6 +91,10 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 })
 public class OpenejbJarType {
 
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected Properties properties;
+    
     @XmlElement(name = "environment", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected EnvironmentType environment;
 
@@ -263,5 +271,12 @@ public class OpenejbJarType {
             persistence = new ArrayList<Persistence>();
         }
         return persistence;
+    }
+
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        return properties;
     }
 }

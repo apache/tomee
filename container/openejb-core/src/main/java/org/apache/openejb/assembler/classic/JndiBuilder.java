@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
+import java.util.Properties;
 import java.lang.reflect.Constructor;
 
 
@@ -167,6 +168,8 @@ public class JndiBuilder {
         private Map<String, StringTemplate> templates;
         
         private String format;
+        private Map<String, String> appContext;
+        private HashMap<String,String> beanContext;
 
         public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
             Options options = new Options(ejbJarInfo.properties, SystemInstance.get().getOptions());
@@ -187,6 +190,19 @@ public class JndiBuilder {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
                 beanInfos.put(beanInfo.ejbDeploymentId, beanInfo);
             }
+
+            appContext = new HashMap<String, String>();
+            putAll(appContext, SystemInstance.get().getProperties());
+            putAll(appContext, ejbJarInfo.properties);
+        }
+
+        private void putAll(Map<String, String> map, Properties properties) {
+            for (Map.Entry<Object, Object> e : properties.entrySet()) {
+                if (!(e.getValue() instanceof String)) continue;
+                if (!(e.getKey() instanceof String)) continue;
+
+                map.put((String) e.getKey(), (String) e.getValue());
+            }
         }
 
         public void begin(DeploymentInfo deploymentInfo) {
@@ -203,6 +219,16 @@ public class JndiBuilder {
             }
             beanInfo.jndiNames.clear();
             beanInfo.jndiNamess.clear();
+
+            beanContext = new HashMap<String, String>(appContext);
+            putAll(beanContext, deploymentInfo.getProperties());
+            beanContext.put("moduleId", deploymentInfo.getModuleID());
+            beanContext.put("ejbType", deploymentInfo.getComponentType().name());
+            beanContext.put("ejbClass", deploymentInfo.getBeanClass().getName());
+            beanContext.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
+            beanContext.put("ejbClass.packageName", packageName(deploymentInfo.getBeanClass()));
+            beanContext.put("ejbName", deploymentInfo.getEjbName());
+            beanContext.put("deploymentId", deploymentInfo.getDeploymentID().toString());
         }
 
         public void end() {
@@ -213,14 +239,7 @@ public class JndiBuilder {
             if (template == null) template = templates.get(type.getAnnotationName());
             if (template == null) template = templates.get("");
 
-            Map<String,String> contextData = new HashMap<String,String>();
-            contextData.put("moduleId", deploymentInfo.getModuleID());
-            contextData.put("ejbType", deploymentInfo.getComponentType().name());
-            contextData.put("ejbClass", deploymentInfo.getBeanClass().getName());
-            contextData.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
-            contextData.put("ejbClass.packageName", packageName(deploymentInfo.getBeanClass()));
-            contextData.put("ejbName", deploymentInfo.getEjbName());
-            contextData.put("deploymentId", deploymentInfo.getDeploymentID().toString());
+            Map<String,String> contextData = new HashMap<String,String>(beanContext);
             contextData.put("interfaceType", type.getAnnotationName());
             contextData.put("interfaceType.annotationName", type.getAnnotationName());
             contextData.put("interfaceType.annotationNameLC",type.getAnnotationName().toLowerCase());
