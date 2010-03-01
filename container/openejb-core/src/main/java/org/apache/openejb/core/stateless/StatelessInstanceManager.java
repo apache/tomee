@@ -102,11 +102,9 @@ public class StatelessInstanceManager {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
 
-        final Pool<Instance> pool = data.getPool();
-
         Instance instance = null;
         try {
-            final Pool.Entry<Instance> entry = pool.pop(timeout.getTime(), timeout.getUnit());
+            final Pool.Entry<Instance> entry = data.poolPop();
 
             if (entry != null){
                 instance = entry.get();
@@ -349,7 +347,11 @@ public class StatelessInstanceManager {
         boolean strict = options.get("StrictPooling", this.strictPooling);
         int min = options.get("PoolMin", poolMin);
 
-        Data data = new Data(max, strict, min);
+        String timeString = options.get("Timeout", this.timeout.toString());
+        timeString = options.get("AccessTimeout", timeString);
+        Duration accessTimeout = new Duration(timeString);
+
+        Data data = new Data(max, strict, min, accessTimeout);
         deploymentInfo.setContainerData(data);      
     }
 
@@ -363,9 +365,19 @@ public class StatelessInstanceManager {
 
     private static final class Data {
         private final Pool<Instance> pool;
+        private Duration accessTimeout;
 
-        public Data(int poolLimit, boolean strictPooling, int min) {
+        public Data(int poolLimit, boolean strictPooling, int min, Duration accessTimeout) {
+            this.accessTimeout = accessTimeout;
             pool = new Pool<Instance>(poolLimit, min, strictPooling);
+        }
+
+        public Duration getAccessTimeout() {
+            return accessTimeout;
+        }
+
+        public Pool.Entry<Instance> poolPop() throws InterruptedException, TimeoutException {
+            return pool.pop(accessTimeout.getTime(), accessTimeout.getUnit());
         }
 
         public Pool<Instance> getPool() {
