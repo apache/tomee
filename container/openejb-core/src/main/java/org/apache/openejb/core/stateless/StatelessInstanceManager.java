@@ -119,108 +119,113 @@ public class StatelessInstanceManager {
 
         if (instance == null) {
 
-            Class beanClass = deploymentInfo.getBeanClass();
-            ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
-            objectRecipe.allow(Option.FIELD_INJECTION);
-            objectRecipe.allow(Option.PRIVATE_PROPERTIES);
-            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-            objectRecipe.allow(Option.NAMED_PARAMETERS);
-
-            Operation originalOperation = callContext.getCurrentOperation();
-            BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
-
-            try {
-                Context ctx = deploymentInfo.getJndiEnc();
-                SessionContext sessionContext;
-                // This needs to be synchronized as this code is multi-threaded.
-                // In between the lookup and the bind a bind may take place in another Thread.
-                // This is a fix for GERONIMO-3444
-                synchronized(this){
-                    try {
-                        sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
-                    } catch (NamingException e1) {
-                        sessionContext = createSessionContext();
-                        // TODO: This should work
-                        ctx.bind("java:comp/EJBContext", sessionContext);
-                    }
-                }
-                if (javax.ejb.SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
-                    callContext.setCurrentOperation(Operation.INJECTION);
-                    callContext.setCurrentAllowedStates(StatelessContext.getStates());
-                    objectRecipe.setProperty("sessionContext", sessionContext);
-                }
-
-                // This is a fix for GERONIMO-3444
-                synchronized(this){
-                    try {
-                        ctx.lookup("java:comp/WebServiceContext");
-                    } catch (NamingException e) {
-                        WebServiceContext wsContext = new EjbWsContext(sessionContext);
-                        ctx.bind("java:comp/WebServiceContext", wsContext);
-                    }
-                }
-
-                fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
-
-                Object bean = objectRecipe.create(beanClass.getClassLoader());
-                Map unsetProperties = objectRecipe.getUnsetProperties();
-                if (unsetProperties.size() > 0) {
-                    for (Object property : unsetProperties.keySet()) {
-                        logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
-                    }
-                }
-
-                HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-                for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
-                    if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
-
-                    Class clazz = interceptorData.getInterceptorClass();
-                    ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
-                    interceptorRecipe.allow(Option.FIELD_INJECTION);
-                    interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
-                    interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-                    interceptorRecipe.allow(Option.NAMED_PARAMETERS);
-
-                    fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
-
-                    try {
-                        Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
-                        interceptorInstances.put(clazz.getName(), interceptorInstance);
-                    } catch (ConstructionException e) {
-                        throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
-                    }
-                }
-
-                interceptorInstances.put(beanClass.getName(), bean);
-
-                callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
-                callContext.setCurrentAllowedStates(StatelessContext.getStates());
-                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-                InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
-                interceptorStack.invoke();
-
-                if (bean instanceof SessionBean){
-                    callContext.setCurrentOperation(Operation.CREATE);
-                    callContext.setCurrentAllowedStates(StatelessContext.getStates());
-                    Method create = deploymentInfo.getCreateMethod();
-                    interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
-                    interceptorStack.invoke();
-                }
-
-                instance = new Instance(bean, interceptorInstances);
-            } catch (Throwable e) {
-                if (e instanceof InvocationTargetException) {
-                    e = ((InvocationTargetException) e).getTargetException();
-                }
-                String t = "The bean instance " + instance + " threw a system exception:" + e;
-                logger.error(t, e);
-                throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
-            } finally {
-                callContext.setCurrentOperation(originalOperation);
-                callContext.setCurrentAllowedStates(originalAllowedStates);
-            }
+            instance = ceateInstance(callContext);
         }
         return instance;
+    }
+
+    private Instance ceateInstance(ThreadContext callContext) throws org.apache.openejb.ApplicationException {
+        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        Class beanClass = deploymentInfo.getBeanClass();
+        ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
+        objectRecipe.allow(Option.FIELD_INJECTION);
+        objectRecipe.allow(Option.PRIVATE_PROPERTIES);
+        objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        objectRecipe.allow(Option.NAMED_PARAMETERS);
+
+        Operation originalOperation = callContext.getCurrentOperation();
+        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
+
+        try {
+            Context ctx = deploymentInfo.getJndiEnc();
+            SessionContext sessionContext;
+            // This needs to be synchronized as this code is multi-threaded.
+            // In between the lookup and the bind a bind may take place in another Thread.
+            // This is a fix for GERONIMO-3444
+            synchronized(this){
+                try {
+                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
+                } catch (NamingException e1) {
+                    sessionContext = createSessionContext();
+                    // TODO: This should work
+                    ctx.bind("java:comp/EJBContext", sessionContext);
+                }
+            }
+            if (SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
+                callContext.setCurrentOperation(Operation.INJECTION);
+                callContext.setCurrentAllowedStates(StatelessContext.getStates());
+                objectRecipe.setProperty("sessionContext", sessionContext);
+            }
+
+            // This is a fix for GERONIMO-3444
+            synchronized(this){
+                try {
+                    ctx.lookup("java:comp/WebServiceContext");
+                } catch (NamingException e) {
+                    WebServiceContext wsContext = new EjbWsContext(sessionContext);
+                    ctx.bind("java:comp/WebServiceContext", wsContext);
+                }
+            }
+
+            fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
+
+            Object bean = objectRecipe.create(beanClass.getClassLoader());
+            Map unsetProperties = objectRecipe.getUnsetProperties();
+            if (unsetProperties.size() > 0) {
+                for (Object property : unsetProperties.keySet()) {
+                    logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
+                }
+            }
+
+            HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
+            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+                if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
+
+                Class clazz = interceptorData.getInterceptorClass();
+                ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
+                interceptorRecipe.allow(Option.FIELD_INJECTION);
+                interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
+                interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+                interceptorRecipe.allow(Option.NAMED_PARAMETERS);
+
+                fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
+
+                try {
+                    Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
+                    interceptorInstances.put(clazz.getName(), interceptorInstance);
+                } catch (ConstructionException e) {
+                    throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
+                }
+            }
+
+            interceptorInstances.put(beanClass.getName(), bean);
+
+            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+            callContext.setCurrentAllowedStates(StatelessContext.getStates());
+            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+            interceptorStack.invoke();
+
+            if (bean instanceof SessionBean){
+                callContext.setCurrentOperation(Operation.CREATE);
+                callContext.setCurrentAllowedStates(StatelessContext.getStates());
+                Method create = deploymentInfo.getCreateMethod();
+                interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
+                interceptorStack.invoke();
+            }
+
+            return new Instance(bean, interceptorInstances);
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
+            String t = "The bean instance " + deploymentInfo.getDeploymentID() + " threw a system exception:" + e;
+            logger.error(t, e);
+            throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
+        } finally {
+            callContext.setCurrentOperation(originalOperation);
+            callContext.setCurrentAllowedStates(originalAllowedStates);
+        }
     }
 
     private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
@@ -352,7 +357,16 @@ public class StatelessInstanceManager {
         Duration accessTimeout = new Duration(timeString);
 
         Data data = new Data(max, strict, min, accessTimeout);
-        deploymentInfo.setContainerData(data);      
+        deploymentInfo.setContainerData(data);
+
+        try {
+            ThreadContext ctx = new ThreadContext(deploymentInfo, null);
+            for (int i = 0; i < min; i++) {
+                data.getPool().add(ceateInstance(ctx));
+            }
+        } catch (OpenEJBException e) {
+            logger.error("Unable to pre-fill pool to mimimum size: " + min + " for deployment '" + deploymentInfo.getDeploymentID() + "'", e);
+        }
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
