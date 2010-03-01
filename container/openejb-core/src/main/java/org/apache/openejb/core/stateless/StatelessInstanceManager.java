@@ -359,13 +359,16 @@ public class StatelessInstanceManager {
         Data data = new Data(max, strict, min, accessTimeout);
         deploymentInfo.setContainerData(data);
 
+        ThreadContext ctx = new ThreadContext(deploymentInfo, null);
+        ThreadContext oldCallContext = ThreadContext.enter(ctx);
         try {
-            ThreadContext ctx = new ThreadContext(deploymentInfo, null);
             for (int i = 0; i < min; i++) {
                 data.getPool().add(ceateInstance(ctx));
             }
         } catch (OpenEJBException e) {
             logger.error("Unable to pre-fill pool to mimimum size: " + min + " for deployment '" + deploymentInfo.getDeploymentID() + "'", e);
+        } finally {
+             ThreadContext.exit(oldCallContext);
         }
     }
 

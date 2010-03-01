@@ -203,6 +203,7 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
         statelessContainerInfo.properties.setProperty("PoolSize", "10");
+        statelessContainerInfo.properties.setProperty("PoolMin", "2");
         statelessContainerInfo.properties.setProperty("StrictPooling", "true");
         assembler.createContainer(statelessContainerInfo);
 
