@@ -41,6 +41,7 @@ public class ConnectionManager {
         strategies.register("sticky", new StickyConnectionStrategy());
         strategies.register("random", new RandomConnectionStrategy());
         strategies.register("roundrobin", new RoundRobinConnectionStrategy());
+        strategies.register("round-robin", strategies.get("roundrobin"));
         strategies.register("default", strategies.get("sticky"));
     }
 
