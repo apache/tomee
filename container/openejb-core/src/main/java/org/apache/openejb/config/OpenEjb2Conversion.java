@@ -55,6 +55,8 @@ import org.apache.openejb.jee.oejb2.EjbRefType;
 import org.apache.openejb.jee.oejb2.PatternType;
 import org.apache.openejb.jee.oejb2.EjbLocalRefType;
 import org.apache.openejb.jee.oejb2.Jndi;
+import org.apache.openejb.jee.oejb2.SessionBeanType;
+import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
@@ -122,6 +124,37 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             if (deployment == null) {
                 // todo warn no such ejb in the ejb-jar.xml
                 continue;
+            }
+            
+            // Add WS Security
+            if (enterpriseBean instanceof SessionBeanType) {
+                SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
+                WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
+                
+                if (webServiceSecurityType == null) break;
+                
+                if (webServiceSecurityType.getRealmName() != null) {
+                    deployment.addProperty("webservice.security.realm", webServiceSecurityType.getRealmName());
+                }
+
+                if (webServiceSecurityType.getSecurityRealmName() != null) {
+                    deployment.addProperty("webservice.security.securityRealm", webServiceSecurityType.getSecurityRealmName());
+                }
+                
+                if (webServiceSecurityType.getTransportGuarantee() != null) {
+                    deployment.addProperty("webservice.security.transportGarantee", webServiceSecurityType.getTransportGuarantee().value());
+                } else {
+                    deployment.addProperty("webservice.security.transportGarantee", "NONE");
+                }
+                
+                if (webServiceSecurityType.getAuthMethod() != null) {
+                    deployment.addProperty("webservice.security.authMethod", webServiceSecurityType.getAuthMethod().value());
+                } else {
+                    deployment.addProperty("webservice.security.authMethod", "NONE");
+                }
+                
+                deployment.getProperties().putAll(webServiceSecurityType.getProperties());
+                
             }
 
             deployment.getProperties().putAll(enterpriseBean.getProperties());

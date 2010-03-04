@@ -26,54 +26,72 @@
             <ejb-name>CalculatorImplTimestamp1way</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplTimestamp2ways</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplUsernameTokenPlainPassword</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplUsernameTokenHashedPassword</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplUsernameTokenPlainPasswordEncrypt</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplSign</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplEncrypt2ways</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplSign2ways</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
         <session>
             <ejb-name>CalculatorImplEncryptAndSign2ways</ejb-name>
             <service-endpoint>org.superbiz.calculator.CalculatorWs</service-endpoint>
             <ejb-class>org.superbiz.calculator.CalculatorImpl</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
         </session>
 
     </enterprise-beans>

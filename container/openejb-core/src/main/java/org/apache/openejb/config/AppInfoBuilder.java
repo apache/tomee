@@ -42,6 +42,7 @@ import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.util.References;
 import org.apache.openejb.util.CircularReferencesException;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.Property;
@@ -63,20 +64,15 @@ import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.PortComponent;
 import org.apache.openejb.jee.ServiceImplBean;
-import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.SessionBeanType;
-import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
 
 import javax.xml.bind.JAXBException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.LinkedHashSet;
-import java.util.HashMap;
 import java.net.URL;
 import java.io.File;
 import java.io.IOException;
@@ -629,64 +625,45 @@ class AppInfoBuilder {
     }
 
     void configureWebserviceSecurity(WebAppInfo info, WebModule module) {
-	Object altDD = module.getAltDDs().get("openejb-jar.xml");
-	List<PortInfo> infoList = info.portInfos;
-	
-	configureWebserviceScurity(infoList, altDD);
+        // no security to configure for WebModule 
+        // --> this method should be removed
     }
     
     /*
      * left package-local for a unit test
      */
     void configureWebserviceSecurity(EjbJarInfo ejbJarInfo, EjbModule ejbModule) {
-	Object altDD = ejbModule.getAltDDs().get("openejb-jar.xml");
+        Object altDD = ejbModule.getOpenejbJar();
 	List<PortInfo> infoList = ejbJarInfo.portInfos;
 	
 	configureWebserviceScurity(infoList, altDD);
     }
     
     private void configureWebserviceScurity(List<PortInfo> infoList, Object altDD) {
-	if (altDD == null || (! (altDD instanceof OpenejbJarType))) return;
+        if (altDD == null || (! (altDD instanceof OpenejbJar))) return;
         
-        OpenejbJarType openejbJarType = (OpenejbJarType) altDD;
-        
-        Map<String, org.apache.openejb.jee.oejb2.EnterpriseBean> beans = new HashMap<String, org.apache.openejb.jee.oejb2.EnterpriseBean>();
-        for (org.apache.openejb.jee.oejb2.EnterpriseBean enterpriseBean : openejbJarType.getEnterpriseBeans()) {
-            beans.put(enterpriseBean.getEjbName(), enterpriseBean);
-        }
+        OpenejbJar openejbJar = (OpenejbJar) altDD;
+        Map<String, EjbDeployment> deploymentsByEjbName = openejbJar.getDeploymentsByEjbName();
         
         for (PortInfo portInfo : infoList) {
-
-            org.apache.openejb.jee.oejb2.EnterpriseBean bean = beans.get(portInfo.serviceLink);
+            EjbDeployment deployment = deploymentsByEjbName.get(portInfo.serviceLink);
             
-            if (bean == null) continue; /* TODO: throw something? */
-            if (!(bean instanceof SessionBeanType)) continue; /* TODO: throw something? */ 
-            
-            SessionBeanType sessionBean = (SessionBeanType) bean;
-            WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
-
-            if (webServiceSecurityType == null) {
-                //TODO: this ok?
-                continue;
-            }
-
-            portInfo.realmName = webServiceSecurityType.getRealmName();
-            portInfo.securityRealmName = webServiceSecurityType.getSecurityRealmName();
-            if (webServiceSecurityType.getTransportGuarantee() != null) {
-                portInfo.transportGuarantee = webServiceSecurityType.getTransportGuarantee().value();
+            if (deployment == null) continue;
+            portInfo.realmName = deployment.getProperties().getProperty("webservice.security.realm");
+            portInfo.securityRealmName = deployment.getProperties().getProperty("webservice.security.securityRealm");
+            if (deployment.getProperties().getProperty("webservice.security.transportGarantee") != null) {
+                portInfo.transportGuarantee = deployment.getProperties().getProperty("webservice.security.transportGarantee");
             } else {
                 portInfo.transportGuarantee = "NONE";
             }
 
-            if (webServiceSecurityType.getAuthMethod() != null) {
-                portInfo.authMethod = webServiceSecurityType.getAuthMethod().value();
+            if (deployment.getProperties().getProperty("webservice.security.authMethod") != null) {
+                portInfo.authMethod = deployment.getProperties().getProperty("webservice.security.authMethod");
             } else {
                 portInfo.authMethod = "NONE";
             }
-            portInfo.properties = webServiceSecurityType.getProperties();
-            
+            portInfo.properties = deployment.getProperties();
         }
-
     }
     
     private static boolean skipMdb(EnterpriseBeanInfo bean) {
