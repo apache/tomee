@@ -184,4 +184,8 @@ public class EjbDeployment {
         }
         return properties;
     }
+    
+    public void addProperty(String key, String value) {
+        getProperties().setProperty(key, value);
+    }
 }

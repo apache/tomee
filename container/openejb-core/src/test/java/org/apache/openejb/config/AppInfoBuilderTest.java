@@ -22,12 +22,14 @@ import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.oejb2.*;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.util.List;
 import java.util.Properties;
 
 public class AppInfoBuilderTest extends TestCase {
+    
     public void testShouldAddSecurityDetailsToPortInfo() throws Exception {
         EjbJar ejbJar = new EjbJar();
         SessionBean sessionBean = new SessionBean();
@@ -35,27 +37,20 @@ public class AppInfoBuilderTest extends TestCase {
         sessionBean.setEjbClass("org.superbiz.MySessionBean");
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
-
-        OpenejbJarType openejbJarType = new OpenejbJarType();
-        SessionBeanType openejbSessionBean = new SessionBeanType();
-        openejbSessionBean.setEjbName("MySessionBean");
-
-        WebServiceSecurityType serviceSecurityType = new WebServiceSecurityType();
-        serviceSecurityType.setAuthMethod(AuthMethodType.BASIC);
-        serviceSecurityType.setRealmName("MyRealm");
-        serviceSecurityType.setSecurityRealmName("MySecurityRealm");
-        serviceSecurityType.setTransportGuarantee(TransportGuaranteeType.NONE);
         
-        Properties props = new Properties();
-        props.put("wss4j.in.action", "Timestamp");
-        props.put("wss4j.out.action", "Timestamp");
-        serviceSecurityType.setProperties(props);
+        OpenejbJar openejbJar = new OpenejbJar();
+        EjbDeployment ejbDeployment = new EjbDeployment();
+        openejbJar.addEjbDeployment(ejbDeployment);
+        
+        ejbDeployment.setEjbName("MySessionBean");
+        ejbDeployment.addProperty("webservice.security.realm", "MyRealm");
+        ejbDeployment.addProperty("webservice.security.securityRealm", "MySecurityRealm");
+        ejbDeployment.addProperty("webservice.security.transportGarantee", TransportGuaranteeType.NONE.value());
+        ejbDeployment.addProperty("webservice.security.authMethod", AuthMethodType.BASIC.value());
+        ejbDeployment.addProperty("wss4j.in.action", "Timestamp");
+        ejbDeployment.addProperty("wss4j.out.action", "Timestamp");
 
-        openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
-        openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
-
-        EjbModule ejbModule =  new EjbModule(ejbJar, new OpenejbJar());
-        ejbModule.getAltDDs().put("openejb-jar.xml", openejbJarType);
+        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
@@ -82,23 +77,14 @@ public class AppInfoBuilderTest extends TestCase {
         sessionBean.setEjbClass("org.superbiz.MySessionBean");
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
+        
+        OpenejbJar openejbJar = new OpenejbJar();
+        EjbDeployment ejbDeployment = new EjbDeployment();
+        openejbJar.addEjbDeployment(ejbDeployment);
+        
+        ejbDeployment.setEjbName("MySessionBean");
 
-        OpenejbJarType openejbJarType = new OpenejbJarType();
-        SessionBeanType openejbSessionBean = new SessionBeanType();
-        openejbSessionBean.setEjbName("MySessionBean");
-
-        WebServiceSecurityType serviceSecurityType = new WebServiceSecurityType();
-        serviceSecurityType.setAuthMethod(null);
-        serviceSecurityType.setRealmName(null);
-        serviceSecurityType.setSecurityRealmName(null);
-        serviceSecurityType.setTransportGuarantee(null);
-        serviceSecurityType.setProperties(null);
-
-        openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
-        openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
-
-        EjbModule ejbModule =  new EjbModule(ejbJar, new OpenejbJar());
-        ejbModule.getAltDDs().put("openejb-jar.xml", openejbJarType);
+        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
@@ -125,22 +111,13 @@ public class AppInfoBuilderTest extends TestCase {
         sessionBean.setRemote("org.superbiz.MySession");
         ejbJar.addEnterpriseBean(sessionBean);
 
-        OpenejbJarType openejbJarType = new OpenejbJarType();
-        SessionBeanType openejbSessionBean = new SessionBeanType();
-        openejbSessionBean.setEjbName("MySessionBean");
+        OpenejbJar openejbJar = new OpenejbJar();
+        EjbDeployment ejbDeployment = new EjbDeployment();
+        openejbJar.addEjbDeployment(ejbDeployment);
+        
+        ejbDeployment.setEjbName("MySessionBean");
 
-        WebServiceSecurityType serviceSecurityType = new WebServiceSecurityType();
-        serviceSecurityType.setAuthMethod(null);
-        serviceSecurityType.setRealmName(null);
-        serviceSecurityType.setSecurityRealmName(null);
-        serviceSecurityType.setTransportGuarantee(null);
-        serviceSecurityType.setProperties(null);
-
-        openejbSessionBean.setWebServiceSecurity(serviceSecurityType);
-        openejbJarType.getEnterpriseBeans().add(openejbSessionBean);
-
-        EjbModule ejbModule =  new EjbModule(ejbJar, new OpenejbJar());
-        ejbModule.getAltDDs().put("openejb-jar.xml", openejbJarType);
+        EjbModule ejbModule =  new EjbModule(ejbJar, openejbJar);
 
         EjbJarInfo ejbJarInfo = new EjbJarInfo();
         PortInfo portInfo = new PortInfo();
