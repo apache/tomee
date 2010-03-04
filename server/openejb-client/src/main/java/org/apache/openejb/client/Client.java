@@ -252,10 +252,10 @@ public class Client {
         } catch (RemoteException e) {
             throw e;
         } catch (IOException e){
+            Set<URI> failed = getFailed();
+            failed.add(conn.getURI());
+            conn.discard();
             if (retry){
-                Set<URI> failed = getFailed();
-                failed.add(conn.getURI());
-                conn.discard();
                 try {
                     processRequest(req, res, server);
                 } catch (RemoteFailoverException re) {
