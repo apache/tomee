@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @version $Rev$ $Date$
@@ -29,28 +31,31 @@ public class DirectoryMonitor {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_DEPLOY, DirectoryMonitor.class.getPackage().getName());
 
-    private boolean run;
+    private final int pollIntervalMillis;
 
-    private int pollIntervalMillis;
+    private final File target;
 
-    private File directory;
+    private final Listener listener;
 
-    private Listener listener;
+    private final Map files = new HashMap();
 
-    private Map files = new HashMap();
+    private final Timer timer;
 
-    public DirectoryMonitor(final File directory, final Listener listener, final int pollIntervalMillis, final Logger logger) {
+    public DirectoryMonitor(final File target, final Listener listener, final int pollIntervalMillis) {
         assert listener == null : "No listener specified";
-        assert directory.isDirectory() : "File specified is not a directory. " + directory.getAbsolutePath();
-        assert directory.canRead() : "Directory specified cannot be read. " + directory.getAbsolutePath();
+        assert target.isDirectory() : "File specified is not a directory. " + target.getAbsolutePath();
+        assert target.canRead() : "Directory specified cannot be read. " + target.getAbsolutePath();
         assert pollIntervalMillis > 0 : "Poll Interval must be above zero.";
 
-        this.directory = directory;
+
+        this.target = target;
         this.listener = listener;
         this.pollIntervalMillis = pollIntervalMillis;
+
+        this.timer = new Timer(this.getClass().getSimpleName());
     }
 
-    public Logger getLogger() {
+    private Logger getLogger() {
         return logger;
     }
 
@@ -58,59 +63,48 @@ public class DirectoryMonitor {
         return pollIntervalMillis;
     }
 
-    public File getDirectory() {
-        return directory;
+    public File getTarget() {
+        return target;
     }
 
     public Listener getListener() {
         return listener;
     }
 
-    public synchronized boolean isRunning() {
-        return run;
-    }
-
     public synchronized void stop() {
-        this.run = false;
+        timer.cancel();
     }
 
-    public void run() {
-        run = true;
+    public void start() {
         initialize();
 
         getLogger().debug("Scanner running.  Polling every " + pollIntervalMillis + " milliseconds.");
 
-        while (run) {
-            try {
-                scanDirectory();
+        timer.scheduleAtFixedRate(new TimerTask(){
+            public void run() {
+                try {
+                    scan();
+                }
+                catch (Exception e) {
+                    getLogger().error("Scan failed.", e);
+                }
             }
-            catch (Exception e) {
-                getLogger().error("Scan failed.", e);
-            }
+        }, pollIntervalMillis, pollIntervalMillis);
 
-            try {
-                Thread.sleep(pollIntervalMillis);
-            }
-            catch (InterruptedException ignore) {
-                // empty
-            }
-        }
     }
 
-    public void initialize() {
-        getLogger().debug("Doing initial scan of " + directory.getAbsolutePath());
+    private void initialize() {
+        getLogger().debug("Doing initial scan of " + target.getAbsolutePath());
 
-        File parent = directory;
-        File[] children = parent.listFiles();
+        File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
 
-        for (int i = 0; children != null && i < children.length; i++) {
-            File child = children[i];
+        for (File file : files) {
 
-            if (!child.canRead()) {
+            if (!file.canRead()) {
                 continue;
             }
 
-            FileInfo now = newInfo(child);
+            FileInfo now = newInfo(file);
             now.setChanging(false);
         }
     }
@@ -124,24 +118,23 @@ public class DirectoryMonitor {
     /**
      * Looks for changes to the immediate contents of the directory we're watching.
      */
-    public void scanDirectory() {
-        File parent = directory;
-        File[] children = parent.listFiles();
+    public void scan() {
 
-        HashSet<String> missingFilesList = new HashSet(files.keySet());
+        File[] files = (target.isDirectory()) ? target.listFiles(): new File[]{target};
 
-        for (int i = 0; children != null && i < children.length; i++) {
-            File child = children[i];
+        HashSet<String> missingFilesList = new HashSet(this.files.keySet());
 
-            missingFilesList.remove(child.getAbsolutePath());
+        for (File file : files) {
 
-            if (!child.canRead()) {
-                getLogger().debug("not readable " + child.getName());
+            missingFilesList.remove(file.getAbsolutePath());
+
+            if (!file.canRead()) {
+                getLogger().debug("not readable " + file.getName());
                 continue;
             }
 
-            FileInfo oldStatus = oldInfo(child);
-            FileInfo newStatus = newInfo(child);
+            FileInfo oldStatus = oldInfo(file);
+            FileInfo newStatus = newInfo(file);
 
             newStatus.diff(oldStatus);
 
@@ -156,10 +149,10 @@ public class DirectoryMonitor {
             } else if (oldStatus.isNewFile()) {
                 // Used to be changing, now in (hopefully) its final state
                 getLogger().info("New File: " + newStatus);
-                newStatus.setNewFile(!listener.fileAdded(child));
+                newStatus.setNewFile(!listener.fileAdded(file));
             } else if (oldStatus.isChanging()) {
                 getLogger().info("Updated File: " + newStatus);
-                listener.fileUpdated(child);
+                listener.fileUpdated(file);
 
                 missingFilesList.remove(oldStatus.getPath());
             }
@@ -171,7 +164,7 @@ public class DirectoryMonitor {
             getLogger().info("File removed: " + path);
 
             if (listener.fileRemoved(new File(path))) {
-                files.remove(path);
+                this.files.remove(path);
             }
         }
     }
