@@ -61,7 +61,7 @@ public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
 
     //
-    // Magic to get our proider wrapper installed with the PortRefData
+    // Magic to get our provider wrapper installed with the PortRefData
     //
 
     private static ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
@@ -104,7 +104,7 @@ public class ProviderWrapper extends Provider {
 
 
     //
-    // Provider wappre implementation
+    // Provider wapper implementation
     //
 
     private final Provider delegate;
@@ -112,7 +112,7 @@ public class ProviderWrapper extends Provider {
 
     public ProviderWrapper() {
         delegate = findProvider();
-        portRefs = threadPortRefs.get().portRefData;
+        portRefs = (threadPortRefs.get() == null) ? null : threadPortRefs.get().portRefData;
     }
 
     public Provider getDelegate() {
@@ -121,7 +121,12 @@ public class ProviderWrapper extends Provider {
 
     public ServiceDelegate createServiceDelegate(URL wsdlDocumentLocation, QName serviceName, Class serviceClass) {
         ServiceDelegate serviceDelegate = delegate.createServiceDelegate(wsdlDocumentLocation, serviceName, serviceClass);
-        serviceDelegate = new ServiceDelegateWrapper(serviceDelegate);
+        // the PortRef list is bound to this thread when using @WebServiceRef injection
+        // When using the JAX-WS API we don't need to wrap the ServiceDelegate
+        if (threadPortRefs.get() != null) {
+            serviceDelegate = new ServiceDelegateWrapper(serviceDelegate);
+            
+        }
         return serviceDelegate;
     }
 
