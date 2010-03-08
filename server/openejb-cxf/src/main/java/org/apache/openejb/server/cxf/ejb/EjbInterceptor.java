@@ -127,14 +127,9 @@ public class EjbInterceptor {
             // install default interceptors
             chain.add(new ServiceInvokerInterceptor());
             chain.add(new OutgoingChainInterceptor());
-            
-            // add JAX-WS interceptors
+
             // See http://cwiki.apache.org/CXF20DOC/interceptors.html
-            chain.add(new AttachmentInInterceptor());
-            chain.add(new StaxInInterceptor());
-            chain.add(new ReadHeadersInterceptor(bus));
-            chain.add(new SoapActionInInterceptor());
-            chain.add(new SoapHeaderInterceptor());
+            // install Holder and Wrapper interceptors
             chain.add(new WrapperClassInInterceptor());
             chain.add(new HolderInInterceptor());
 
@@ -178,22 +173,13 @@ public class EjbInterceptor {
     }
 
     private void reserialize(SoapMessage message) throws Exception {
-	// If we just remove XMLStreamReader from the message content, we
-	// only need to add the StaxInInterceptor to re serialize the message
-	// Then we must reset the InputStream to allow re serialization by the StaxInInterceptor
-	message.removeContent(XMLStreamReader.class);
-	InputStream is = message.getContent(InputStream.class);
-	is.reset();
-	
-//	SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
-//	if (soapMessage == null) {
-//	    return;
-//	}
-//
-//        XMLStreamReader xmlReader = message.getContent(XMLStreamReader.class);
-//        StaxUtils.readDocElements(soapMessage.getSOAPPart().getEnvelope(), xmlReader, true);
-//        DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart().getEnvelope());
-//        xmlReader = StaxUtils.createXMLStreamReader(bodySource);
-//        message.setContent(XMLStreamReader.class, xmlReader);
+        SOAPMessage soapMessage = message.getContent(SOAPMessage.class);
+        if (soapMessage == null) {
+            return;
+        }
+
+        DOMSource bodySource = new DOMSource(soapMessage.getSOAPPart());
+        XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(bodySource);
+        message.setContent(XMLStreamReader.class, xmlReader);
     }
 }
