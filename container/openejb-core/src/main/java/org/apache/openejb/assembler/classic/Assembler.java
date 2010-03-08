@@ -606,13 +606,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
-                // determind the injections
+                // determine the injections
                 InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
                 JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, classLoader);
-                jndiEncBuilder.setClient(true);
+                // if there is at least a remote client classes
+                // or if there is no local client classes
+                // then, we can set the client flag
+                if ((clientInfo.remoteClients.size() > 0) || (clientInfo.localClients.size() == 0)) {
+                    jndiEncBuilder.setClient(true);
+
+                }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build().lookup("comp/env");
 
