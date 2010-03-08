@@ -27,7 +27,11 @@ import javax.xml.ws.Holder;
  * This is an EJB 3 style pojo stateless session bean
  * Every stateless session bean implementation must be annotated
  * using the annotation @Stateless
- * This EJB has a single interface: CalculatorWs a webservice interface.
+ * This EJB has a 2 interfaces: 
+ * <ul>
+ *   <li>CalculatorWs a webservice interface</li>
+ *   <li>CalculatorLocal a local interface</li>
+ * </ul>
  */
 //START SNIPPET: code
 @Stateless
