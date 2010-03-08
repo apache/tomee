@@ -20,16 +20,26 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceRef;
+
+import org.apache.openejb.api.LocalClient;
 
 import junit.framework.TestCase;
 
+@LocalClient
 public class CalculatorTest extends TestCase {
 
+    @WebServiceRef(
+            wsdlLocation="http://127.0.0.1:4204/CalculatorImpl?wsdl"
+    )
+    private CalculatorWs calculatorWs;
+    
     //START SNIPPET: setup	
     private InitialContext initialContext;
     
@@ -42,6 +52,8 @@ public class CalculatorTest extends TestCase {
         properties.setProperty("openejb.embedded.remotable", "true");
         
         initialContext = new InitialContext(properties);
+        initialContext.bind("inject", this);
+
     }
     //END SNIPPET: setup    
 
@@ -67,6 +79,18 @@ public class CalculatorTest extends TestCase {
 	assertEquals(6, calc.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
 	assertEquals(userIdHolder.value, returnCodeHolder.value);
 	assertTrue(date.before(datetimeHolder.value));
+    }
+    
+    public void testWebServiceRefInjection() throws Exception {
+        assertEquals(10, calculatorWs.sum(4,6));
+        assertEquals(12, calculatorWs.multiply(3,4));
+        
+        Holder<String> userIdHolder = new Holder<String>("jane");
+        Holder<String> returnCodeHolder = new Holder<String>();
+        Holder<Date> datetimeHolder = new Holder<Date>(date);
+        assertEquals(6, calculatorWs.factorial(3, userIdHolder, returnCodeHolder, datetimeHolder));
+        assertEquals(userIdHolder.value, returnCodeHolder.value);
+        assertTrue(date.before(datetimeHolder.value));
     }
 
     public void testCalculatorViaRemoteInterface() throws Exception {

@@ -30,11 +30,13 @@ import javax.xml.ws.Holder;
 
 /**
  * This is an EJB 3 webservice interface
- * A webservice interface must be annotated with the @Local
+ * A webservice interface must be annotated with the @WebService
  * annotation.
  */
 //START SNIPPET: code
-@WebService(targetNamespace = "http://superbiz.org/wsdl")
+@WebService(
+        name="CalculatorWs",
+        targetNamespace = "http://superbiz.org/wsdl")
 public interface CalculatorWs {
 
     public int sum(int add1, int add2);
