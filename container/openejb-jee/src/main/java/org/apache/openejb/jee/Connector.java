@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +37,7 @@ import java.util.Map;
 @XmlRootElement(name = "connector")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connectorType", propOrder = {
+        "moduleName",
         "descriptions",
         "displayNames",
         "icon",
@@ -42,10 +45,13 @@ import java.util.Map;
         "eisType",
         "resourceAdapterVersion",
         "license",
-        "resourceAdapter"
+        "resourceAdapter",
+        "requiredWorkContext"
 })
 public class Connector {
 
+    @XmlElement(name = "module-name")
+    protected String moduleName;
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
@@ -53,27 +59,39 @@ public class Connector {
     @XmlElement(name = "icon", required = true)
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
-    @XmlElement(name = "vendor-name", required = true)
-    protected String vendorName;
-    @XmlElement(name = "eis-type", required = true)
-    protected String eisType;
-    @XmlElement(name = "resourceadapter-version", required = true)
-    protected String resourceAdapterVersion;
+    @XmlElement(name = "vendor-name")
+    protected String vendorName = "";
+    @XmlElement(name = "eis-type")
+    protected String eisType = "";
+    @XmlElement(name = "resourceadapter-version")
+    protected String resourceAdapterVersion = "";
     protected License license;
     @XmlElement(name = "resourceadapter", required = true)
     protected ResourceAdapter resourceAdapter;
+    @XmlElement(name = "required-work-context")
+    protected List<String> requiredWorkContext;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
     @XmlAttribute(required = true)
     protected String version;
+    @XmlAttribute(name = "metadata-complete")
+    protected Boolean metadataComplete;
 
     public Connector() {
     }
 
     public Connector(String id) {
         this.id = id;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     @XmlElement(name = "description", required = true)
@@ -164,6 +182,13 @@ public class Connector {
         return resourceAdapter;
     }
 
+    public List<String> getRequiredWorkContext() {
+        if (requiredWorkContext == null) {
+            requiredWorkContext = new ArrayList<String>();
+        }
+        return requiredWorkContext;
+    }
+
     public String getId() {
         return id;
     }
@@ -174,7 +199,7 @@ public class Connector {
 
     public String getVersion() {
         if (version == null) {
-            return "1.5";
+            return "1.6";
         } else {
             return version;
         }
@@ -184,4 +209,11 @@ public class Connector {
         this.version = value;
     }
 
+    public Boolean isMetadataComplete() {
+        return metadataComplete;
+    }
+
+    public void setMetadataComplete(Boolean metadataComplete) {
+        this.metadataComplete = metadataComplete;
+    }
 }

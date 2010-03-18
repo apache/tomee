@@ -133,8 +133,12 @@ public class JeeTest extends TestCase {
         marshalAndUnmarshal(TldTaglib.class, "tld-example.xml");
     }
 
-    public void testRar() throws Exception {
-        marshalAndUnmarshal(Connector.class, "connector-example.xml");
+    public void testRar15() throws Exception {
+        marshalAndUnmarshal(Connector.class, "connector-1.5-example.xml");
+    }
+    
+    public void testRar16() throws Exception {
+        marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml");
     }
 
     /**
