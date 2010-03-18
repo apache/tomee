@@ -51,9 +51,9 @@ import java.util.List;
 })
 public class OutboundResourceAdapter {
 
-    @XmlElement(name = "connection-definition", required = true)
+    @XmlElement(name = "connection-definition")
     protected List<ConnectionDefinition> connectionDefinition;
-    @XmlElement(name = "transaction-support", required = true)
+    @XmlElement(name = "transaction-support")
     protected TransactionSupportType transactionSupport;
     @XmlElement(name = "authentication-mechanism")
     protected List<AuthenticationMechanism> authenticationMechanism;

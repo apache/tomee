@@ -36,7 +36,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activationspecType", propOrder = {
         "activationSpecClass",
-        "requiredConfigProperty"
+        "requiredConfigProperty",
+        "configProperty"
 })
 public class ActivationSpec {
 
@@ -44,6 +45,8 @@ public class ActivationSpec {
     protected String activationSpecClass;
     @XmlElement(name = "required-config-property")
     protected List<RequiredConfigProperty> requiredConfigProperty;
+    @XmlElement(name = "config-property")
+    protected List<ConfigProperty> configProperty;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -80,7 +83,14 @@ public class ActivationSpec {
         getRequiredConfigProperty().add(property);
         return property;
     }
-    
+
+    public List<ConfigProperty> getConfigProperty() {
+        if (configProperty == null) {
+            configProperty = new ArrayList<ConfigProperty>();
+        }
+        return configProperty;
+    }
+
     public String getId() {
         return id;
     }

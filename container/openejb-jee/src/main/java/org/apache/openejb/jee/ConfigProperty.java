@@ -46,7 +46,10 @@ import java.util.List;
         "description",
         "configPropertyName",
         "configPropertyType",
-        "configPropertyValue"
+        "configPropertyValue",
+        "configPropertyIgnore",
+        "configPropertySupportsDynamicUpdates",
+        "configPropertyConfidential"
 })
 public class ConfigProperty {
 
@@ -57,6 +60,12 @@ public class ConfigProperty {
     protected String configPropertyType;
     @XmlElement(name = "config-property-value")
     protected String configPropertyValue;
+    @XmlElement(name = "config-property-ignore")
+    protected Boolean configPropertyIgnore;
+    @XmlElement(name = "config-property-supports-dynamic-updates")
+    protected Boolean configPropertySupportsDynamicUpdates;
+    @XmlElement(name = "config-property-confidential")
+    protected Boolean configPropertyConfidential;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -91,6 +100,30 @@ public class ConfigProperty {
 
     public void setConfigPropertyValue(String value) {
         this.configPropertyValue = value;
+    }
+
+    public Boolean isConfigPropertyConfidential() {
+        return configPropertyConfidential;
+    }
+
+    public void setConfigPropertyConfidential(Boolean configPropertyConfidential) {
+        this.configPropertyConfidential = configPropertyConfidential;
+    }
+
+    public Boolean isConfigPropertyIgnore() {
+        return configPropertyIgnore;
+    }
+
+    public void setConfigPropertyIgnore(Boolean configPropertyIgnore) {
+        this.configPropertyIgnore = configPropertyIgnore;
+    }
+
+    public Boolean isConfigPropertySupportsDynamicUpdates() {
+        return configPropertySupportsDynamicUpdates;
+    }
+
+    public void setConfigPropertySupportsDynamicUpdates(Boolean configPropertySupportsDynamicUpdates) {
+        this.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
     }
 
     public String getId() {
