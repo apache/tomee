@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executor;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -48,6 +51,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Pool;
+import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -55,33 +59,47 @@ import org.apache.xbean.recipe.Option;
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    protected int poolLimit = 0;
     protected Duration timeout;
     protected int beanCount = 0;
-    protected boolean strictPooling = false;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
     private SecurityService securityService;
-    private int poolMin = 0;
+    private final Pool.Builder poolBuilder;
+    private final Executor executor;
 
-    public StatelessInstanceManager(SecurityService securityService, Duration timeout, int poolMin, int poolMax, boolean strictPooling) {
+    public StatelessInstanceManager(SecurityService securityService, Duration timeout, Pool.Builder poolBuilder, int callbackThreads) {
         this.securityService = securityService;
-        this.poolLimit = poolMax;
-        this.strictPooling = strictPooling;
         this.timeout = timeout;
-        this.poolMin = poolMin;
-
-        if (timeout.getUnit() == null) timeout.setUnit(TimeUnit.MILLISECONDS);
-        if (this.poolMin > poolLimit) {
-            throw new IllegalArgumentException("Minimum pool size cannot be larger than the maximum pool size: min="+ this.poolMin +", max="+poolLimit);
-        }
+        this.poolBuilder = poolBuilder;
         
-        if (strictPooling && poolMax < 1) {
-            throw new IllegalArgumentException("Cannot use strict pooling with a pool size less than one.  Strict pooling blocks threads till an instance in the pool is available.  Please increase the pool size or set strict pooling to false");
-        }
+        if (timeout.getUnit() == null) timeout.setUnit(TimeUnit.MILLISECONDS);
 
+        executor = new ThreadPoolExecutor(callbackThreads, callbackThreads*2,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>());
     }
 
+    private class StatelessSupplier implements Pool.Supplier<Instance> {
+        private final CoreDeploymentInfo deploymentInfo;
+
+        private StatelessSupplier(CoreDeploymentInfo deploymentInfo) {
+            this.deploymentInfo = deploymentInfo;
+        }
+
+        public void discard(Instance instance) {
+            ThreadContext ctx = new ThreadContext(deploymentInfo, null);
+            ThreadContext oldCallContext = ThreadContext.enter(ctx);
+            try {
+                freeInstance(ctx, instance);
+            } finally {
+                 ThreadContext.exit(oldCallContext);
+            }
+        }
+
+        public Instance create() {
+            return createInstance(deploymentInfo);
+        }
+    }
     /**
      * Removes an instance from the pool and returns it for use
      * by the container in business methods.
@@ -348,28 +366,41 @@ public class StatelessInstanceManager {
     public void deploy(CoreDeploymentInfo deploymentInfo) {
         Options options = new Options(deploymentInfo.getProperties());
 
-        int max = options.get("PoolSize", poolLimit);
-        boolean strict = options.get("StrictPooling", this.strictPooling);
-        int min = options.get("PoolMin", poolMin);
+        final Pool.Builder builder = new Pool.Builder(poolBuilder);
 
         String timeString = options.get("Timeout", this.timeout.toString());
         timeString = options.get("AccessTimeout", timeString);
         Duration accessTimeout = new Duration(timeString);
 
-        Data data = new Data(max, strict, min, accessTimeout);
+        final ObjectRecipe recipe = PassthroughFactory.recipe(builder);
+        recipe.setAllProperties(deploymentInfo.getProperties());
+
+        builder.setSupplier(new StatelessSupplier(deploymentInfo));
+        builder.setExecutor(executor);
+        
+        Data data = new Data(builder.build(), accessTimeout);
         deploymentInfo.setContainerData(data);
 
+        final int min = builder.getMin();
+        
+        for (int i = 0; i < min; i++) {
+            Instance obj = createInstance(deploymentInfo);
+            if (obj != null) data.getPool().add(obj);
+        }
+    }
+
+    private Instance createInstance(CoreDeploymentInfo deploymentInfo) {
         ThreadContext ctx = new ThreadContext(deploymentInfo, null);
         ThreadContext oldCallContext = ThreadContext.enter(ctx);
         try {
-            for (int i = 0; i < min; i++) {
-                data.getPool().add(ceateInstance(ctx));
-            }
+            return ceateInstance(ctx);
         } catch (OpenEJBException e) {
-            logger.error("Unable to pre-fill pool to mimimum size: " + min + " for deployment '" + deploymentInfo.getDeploymentID() + "'", e);
+            logger.error("Unable to fill pool to mimimum size: for deployment '" + deploymentInfo.getDeploymentID() + "'", e);
         } finally {
              ThreadContext.exit(oldCallContext);
         }
+
+        return null;
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
@@ -384,9 +415,9 @@ public class StatelessInstanceManager {
         private final Pool<Instance> pool;
         private Duration accessTimeout;
 
-        public Data(int poolLimit, boolean strictPooling, int min, Duration accessTimeout) {
+        public Data(Pool<Instance> pool, Duration accessTimeout) {
             this.accessTimeout = accessTimeout;
-            pool = new Pool<Instance>(poolLimit, min, strictPooling);
+            this.pool = pool;
         }
 
         public Duration getAccessTimeout() {

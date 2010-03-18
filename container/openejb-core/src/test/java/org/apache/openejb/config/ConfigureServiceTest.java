@@ -113,7 +113,7 @@ public class ConfigureServiceTest extends TestCase {
         ContainerInfo myStatelessContainer = factory.configureService(container,  ContainerInfo.class);
 
         assertNotNull(myStatelessContainer);
-        assertEquals("org.apache.openejb.core.stateless.StatelessContainer", myStatelessContainer.className);
+        assertEquals("org.apache.openejb.core.stateless.StatelessContainerFactory", myStatelessContainer.className);
     }
 
     public void testConfigureServiceAddedPropertyViaURI() throws Exception {
