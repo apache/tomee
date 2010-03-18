@@ -20,6 +20,7 @@ package org.apache.openejb;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.AsmParameterNameLoader;
+import org.apache.openejb.util.PassthroughFactory;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -96,7 +97,7 @@ public class InjectionProcessor<T> {
         ObjectRecipe objectRecipe;
         if (suppliedInstance != null) {
             clazz = (Class<? extends T>) suppliedInstance.getClass();
-            objectRecipe = getInstanceRecipe(suppliedInstance);
+            objectRecipe = PassthroughFactory.recipe(suppliedInstance);
         } else {
             objectRecipe = new ObjectRecipe(clazz);
         }
@@ -202,24 +203,6 @@ public class InjectionProcessor<T> {
         }
         
         return context;
-    }
-    
-    private static ObjectRecipe getInstanceRecipe(Object instance) {
-        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.class);
-        recipe.setFactoryMethod("create");
-
-        String param = "instance"+recipe.hashCode();
-
-        recipe.setConstructorArgNames(new String[]{param});
-        recipe.setProperty(param, instance);
-
-        return recipe;
-    }
-
-    public static class PassthroughFactory {
-        public static Object create(Object instance) {
-            return instance;
-        }
     }
 
 }

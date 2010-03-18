@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,28 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core.transaction;
+package org.apache.openejb.util;
 
-import javax.ejb.TransactionAttributeType;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.openejb.InjectionProcessor;
 
-public enum TransactionType {
-    Mandatory,
-    Never,
-    NotSupported,
-    Required,
-    RequiresNew,
-    Supports,
-    BeanManaged;
+/**
+ * @version $Rev$ $Date$
+*/
+public class PassthroughFactory {
 
-    public static TransactionType get(TransactionAttributeType type) {
-        switch (type) {
-            case REQUIRED: return Required;
-            case REQUIRES_NEW: return RequiresNew;
-            case MANDATORY: return Mandatory;
-            case NEVER: return Never;
-            case NOT_SUPPORTED: return NotSupported;
-            case SUPPORTS: return Supports;
-            default: throw new IllegalStateException("Uknown TransactionAttributeType"+ type);
-        }
+    public static Object create(Object instance) {
+        return instance;
+    }
+
+    public static ObjectRecipe recipe(Object instance) {
+        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.class);
+        recipe.setFactoryMethod("create");
+
+        String param = "instance"+recipe.hashCode();
+
+        recipe.setConstructorArgNames(new String[]{param});
+        recipe.setProperty(param, instance);
+
+        return recipe;
     }
 }

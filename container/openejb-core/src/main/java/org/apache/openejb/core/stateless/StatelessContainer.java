@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -48,6 +47,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.Pool;
 import org.apache.xbean.finder.ClassFinder;
 
 /**
@@ -62,11 +62,11 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     private Object containerID = null;
     private SecurityService securityService;
 
-    public StatelessContainer(Object id, SecurityService securityService, Duration timeOut, int poolMin, int poolSize, boolean strictPooling) throws OpenEJBException {
+    public StatelessContainer(Object id, SecurityService securityService, Duration accessTimeout, Pool.Builder poolBuilder, int callbackThreads) {
         this.containerID = id;
         this.securityService = securityService;
 
-        instanceManager = new StatelessInstanceManager(securityService, timeOut, poolMin, poolSize, strictPooling);
+        instanceManager = new StatelessInstanceManager(securityService, accessTimeout, poolBuilder, callbackThreads);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;

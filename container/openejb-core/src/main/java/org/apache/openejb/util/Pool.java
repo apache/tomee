@@ -25,13 +25,15 @@ import java.util.NoSuchElementException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.LinkedBlockingQueue;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
@@ -49,49 +51,121 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Pool<T> {
 
     private final LinkedList<Entry> pool = new LinkedList<Entry>();
-    private final Semaphore maxPolicy;
-    private final Semaphore minPolicy;
-    private final int max;
+    private final Semaphore instances;
+    private final Semaphore available;
+    private final Semaphore minimum;
     private final Executor executor;
+    private final long maxAge;
+    private final AtomicInteger poolVersion = new AtomicInteger();
+    private final Supplier<T> supplier;
 
-    private final Supplier<T> supplier = null;
-    
-    public Pool(int max, int min, boolean strict) {
-        this(max, min, strict, 0, 0, 0, null);
+    public static class Builder<T> {
+
+        private int max = 10;
+        private int min = 0;
+        private boolean strict = true;
+        private Duration maxAge = new Duration(0, MILLISECONDS);
+        private Duration idleTimeout =  new Duration(0, MILLISECONDS);
+        private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
+        private Supplier<T> supplier;
+        private Executor executor;
+
+        public Builder(Builder<T> that) {
+            this.max = that.max;
+            this.min = that.min;
+            this.strict = that.strict;
+            this.maxAge = that.maxAge;
+            this.idleTimeout = that.idleTimeout;
+            this.interval = that.interval;
+            this.executor = that.executor;
+            this.supplier = that.supplier;
+        }
+
+        public Builder() {
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public void setPoolMax(int max) {
+            this.max = max;
+        }
+
+        /**
+         * Alias for pool size
+         * @param max
+         * @return
+         */
+        public void setPoolSize(int max) {
+            setPoolMax(max);
+        }
+
+        public void setPoolMin(int min) {
+            this.min = min;
+        }
+
+        public void setStrictPooling(boolean strict) {
+            this.strict = strict;
+        }
+
+        public void setMaxAge(Duration maxAge) {
+            this.maxAge = maxAge;
+        }
+
+        public void setIdleTimeout(Duration idleTimeout) {
+            this.idleTimeout = idleTimeout;
+        }
+
+        public void setPollInterval(Duration interval) {
+            this.interval = interval;
+        }
+
+        public void setSupplier(Supplier<T> supplier) {
+            this.supplier = supplier;
+        }
+
+        public void setExecutor(Executor executor) {
+            this.executor = executor;
+        }
+
+        public Pool<T> build() {
+            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier);
+        }
     }
 
-    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor) {
+    public Pool(int max, int min, boolean strict) {
+        this(max, min, strict, 0, 0, 0, null, null);
+    }
+    
+    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor, Supplier<T> supplier) {
         if (min > max) greater("max", max, "min", min);
         if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
-        this.max = max;
-        this.minPolicy = new Semaphore(min);
-        if (strict) {
-            this.maxPolicy = new Semaphore(max);
-        } else {
-            this.maxPolicy = null;
-        }
+        this.executor = executor != null ? executor : createExecutor();
+        this.supplier = supplier != null ? supplier : new NoSupplier();
+        this.available = (strict) ? new Semaphore(max) : new Overdraft();
+        this.minimum = new Semaphore(min);
+        this.instances = new Semaphore(max);
+        this.maxAge = maxAge;
 
-        if (interval == 0) {
-            interval = 60 * 1000; // one minute
-        }
+        if (interval == 0) interval = 5 * 60 * 1000; // five minutes
 
-        final boolean timeouts = maxAge > 0 || idleTimeout > 0;
-
-        this.executor = timeouts ? (executor != null) ? executor : createExecutor() : null;
-
-        if (timeouts) {
-
-            final Timer timer = new Timer("PoolEviction", true);
-            timer.scheduleAtFixedRate(new Eviction(maxAge, idleTimeout), idleTimeout, interval);
-        }
+        final Timer timer = new Timer("PoolEviction", true);
+        timer.scheduleAtFixedRate(new Eviction(idleTimeout, max), idleTimeout, interval);
     }
 
-    private ThreadPoolExecutor createExecutor() {
-        return new ThreadPoolExecutor(0, 10, 60 * 60, TimeUnit.SECONDS, new LinkedBlockingQueue());
+    private Executor createExecutor() {
+        return new ThreadPoolExecutor(5, 10,
+                                      0L, TimeUnit.SECONDS,
+                                      new LinkedBlockingQueue<Runnable>());
     }
 
     private void greater(String maxName, long max, String minName, long min) {
         throw new IllegalArgumentException(minName + " cannot be greater than " + maxName + ": " + minName + "=" + min + ", " + maxName + "=" + max);
+    }
+
+    public void flush() {
+        poolVersion.incrementAndGet();
     }
 
     /**
@@ -107,9 +181,7 @@ public class Pool<T> {
      * @throws TimeoutException      if no instance could be obtained within the timeout
      */
     public Entry<T> pop(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
-        if (maxPolicy != null) {
-            if (!maxPolicy.tryAcquire(timeout, unit)) throw new TimeoutException("Waited " + timeout + " " + unit);
-        }
+        if (!available.tryAcquire(timeout, unit)) throw new TimeoutException("Waited " + timeout + " " + unit);
 
         Entry<T> entry = null;
         while (entry == null) {
@@ -144,7 +216,7 @@ public class Pool<T> {
      * @return true of the item as added
      */
     public boolean add(T obj) {
-        return (maxPolicy == null || maxPolicy.tryAcquire()) && push(obj);
+        return add(obj, 0);
     }
 
     /**
@@ -155,7 +227,14 @@ public class Pool<T> {
      * @return true of the item as added
      */
     public boolean add(T obj, int offset) {
-        return (maxPolicy == null || maxPolicy.tryAcquire()) && push(new Entry<T>(obj, offset));
+        if (available.tryAcquire()) {
+
+            if (push(obj, offset)) return true;
+
+            available.release();
+        }
+
+        return false;
     }
 
     /**
@@ -168,7 +247,7 @@ public class Pool<T> {
      * @return false if the pool max size was exceeded
      */
     public boolean push(T obj) {
-        return push(new Entry<T>(obj));
+        return push(obj, 0);
     }
 
     /**
@@ -177,40 +256,59 @@ public class Pool<T> {
      * <p/>
      * Failure to do so will increase the max pool size by one.
      *
-     * @param entry entry that was popped from the pool
-     * @return true of the item as added
+     * @param obj object to push onto the pool
+     * @param offset
+     * @return false if the pool max size was exceeded
      */
+    private boolean push(T obj, int offset) {
+        if (instances.tryAcquire()){
+            return push(new Entry<T>(obj, offset, poolVersion.get()));
+        }
+        return false;
+    }
+
     public boolean push(Entry<T> entry) {
 
         boolean added = false;
+        boolean release = true;
 
-        if (entry != null) {
+        try {
+            if (entry == null) return added;
+
             final T obj = entry.active.getAndSet(null);
 
-            if (entry.hard.get() == null && minPolicy.tryAcquire()) {
+            final long age = System.currentTimeMillis() - entry.created;
+
+            final boolean aged = maxAge > 0 && age > maxAge;
+            final boolean flushed = entry.version != this.poolVersion.get();
+
+            if (aged || flushed) {
+                if (entry.hasHardReference()) {
+                    // Don't release the lock, this
+                    // entry will be directly replaced
+                    release = false;
+                    executor.execute(new Replace(entry));
+                }
+            } else if (entry.hard.get() == null && minimum.tryAcquire()) {
                 entry.hard.set(obj);
-                synchronized (pool) {
-                    if (pool.size() < max) {
-                        pool.addFirst(entry);
-                        added = true;
-                    }
-                }
-                if (!added) {
-                    minPolicy.release();
-                }
+
+                if (!(added = insert(entry))) minimum.release();
             } else {
-                synchronized (pool) {
-                    if (pool.size() < max) {
-                        pool.addLast(entry);
-                        added = true;
-                    }
-                }
+                added = insert(entry);
             }
+        } finally {
+            if (release) available.release();
         }
 
-        if (maxPolicy != null) maxPolicy.release();
-
         return added;
+    }
+
+    private boolean insert(Entry<T> entry) {
+        synchronized (pool) {
+//            if (pool.size() >= max) return false;
+            pool.addFirst(entry);
+        }
+        return true;
     }
 
     /**
@@ -225,14 +323,15 @@ public class Pool<T> {
 
     public void discard(Entry<T> entry) {
         if (entry != null) {
-            final T obj = entry.active.getAndSet(null);
+            final T obj = entry.get();
 
             if (entry.hard.compareAndSet(obj, null)) {
-                minPolicy.release();
+                minimum.release();
             }
+            instances.release();
         }
 
-        if (maxPolicy != null) maxPolicy.release();
+        available.release();
     }
 
     /**
@@ -260,7 +359,7 @@ public class Pool<T> {
     public static class Entry<T> {
         private final long created;
         private long used;
-
+        private final int version;
         private final SoftReference<T> soft;
         private final AtomicReference<T> hard = new AtomicReference<T>();
 
@@ -275,32 +374,19 @@ public class Pool<T> {
          * object wrapped by this Entry.
          * <p/>
          * This helps ensure that when an Entry is returned to the pool it is
-         * always safe to call {@link java.util.concurrent.Semaphore#release()} which increases the
-         * permit size by one.
-         *
-         * @param obj object that this Entry will wrap
-         */
-        private Entry(T obj) {
-            this(obj, 0);
-        }
-
-        /**
-         * Constructor is private so that it is impossible for an Entry object
-         * to exist without there being a corresponding permit issued for the
-         * object wrapped by this Entry.
-         * <p/>
-         * This helps ensure that when an Entry is returned to the pool it is
          * always safe to call {@link Semaphore#release()} which increases the
          * permit size by one.
          *
          * @param obj    object that this Entry will wrap
          * @param offset creation time offset, used for maxAge
+         * @param version
          */
-        private Entry(T obj, int offset) {
+        private Entry(T obj, int offset, int version) {
             this.soft = new SoftReference<T>(obj);
             this.active.set(obj);
             this.created = System.currentTimeMillis() + offset;
             this.used = created;
+            this.version = version;
         }
 
         public T get() {
@@ -319,22 +405,35 @@ public class Pool<T> {
 
     private final class Eviction extends TimerTask {
 
-        private final long maxAge;
+        private final AtomicInteger previousVersion = new AtomicInteger(poolVersion.get());
         private final long idleTimeout;
+        private final boolean timeouts;
+        private final int max;
 
-        private Eviction(long maxAge, long idleTimeout) {
-            this.maxAge = maxAge;
+        private Eviction(long idleTimeout, int max) {
             this.idleTimeout = idleTimeout;
+            timeouts = maxAge > 0 || idleTimeout > 0;
+            this.max = max;
         }
 
         public void run() {
 
+            final int currentVersion = poolVersion.get();
+
+            final boolean isCurrent = previousVersion.getAndSet(currentVersion) == currentVersion;
+
+            // No timeouts to enforce?
+            // Pool version not changed?
+            // Just return
+            if (!timeouts && isCurrent) return;
+            
             final long now = System.currentTimeMillis();
 
             final List<Entry<T>> entries = new ArrayList(max);
 
+            // Pull all the entries from the pool
             try {
-                while (true) entries.add(pop(0, TimeUnit.MILLISECONDS));
+                while (true) entries.add(pop(0, MILLISECONDS));
             } catch (InterruptedException e) {
                 Thread.interrupted();
             } catch (TimeoutException e) {
@@ -342,27 +441,35 @@ public class Pool<T> {
             }
 
 
-            final List<Expired> expiredList = new ArrayList<Expired>(max);
-
-            { // Expire aged instances
-
-                // Any "null" entries are immediately returned
-                // Any non-aged "min" refs are immediately returned
+            { // Immediately return all "null" instances to free up locks
 
                 final Iterator<Entry<T>> iter = entries.iterator();
                 while (iter.hasNext()) {
-                    Entry<T> entry = iter.next();
-
+                    final Entry<T> entry = iter.next();
                     if (entry == null) {
                         // return the lock immediately
                         push(entry);
                         iter.remove();
-                        continue;
                     }
+                }
 
-                    long age = now - entry.created;
+            }
 
-                    if (maxAge > 0 && age > maxAge) {
+            final List<Expired> expiredList = new ArrayList<Expired>(max);
+
+            { // Expire aged instances, enforce pool "versioning"
+
+                // Any non-aged "min" refs are immediately returned
+
+                final Iterator<Entry<T>> iter = entries.iterator();
+                while (iter.hasNext()) {
+                    final Entry<T> entry = iter.next();
+
+                    // is too old || is old version?
+                    final boolean aged = maxAge > 0 && now - entry.created > maxAge;
+                    final boolean flushed = entry.version != currentVersion;
+
+                    if (aged || flushed) {
 
                         // Entry is too old, expire it
 
@@ -419,7 +526,7 @@ public class Pool<T> {
 
                 final long idle = now - entry.used;
 
-                if (idle > idleTimeout) {
+                if (idleTimeout > 0 && idle > idleTimeout) {
                     // too lazy -- timed out 
                     final Expired expired = new Expired(entry);
 
@@ -448,32 +555,32 @@ public class Pool<T> {
 
         }
 
-        private class Expired {
-            private final Entry<T> entry;
-            private final AtomicBoolean discarded = new AtomicBoolean();
+    }
 
-            private Expired(Entry<T> entry) {
-                this.entry = entry;
-            }
+    private class Expired {
+        private final Entry<T> entry;
+        private final AtomicBoolean discarded = new AtomicBoolean();
 
-            public boolean tryDiscard() {
-                if (discarded.getAndSet(true)) return false;
+        private Expired(Entry<T> entry) {
+            this.entry = entry;
+        }
 
-                discard(entry);
+        public boolean tryDiscard() {
+            if (discarded.getAndSet(true)) return false;
 
-                return true;
-            }
+            discard(entry);
 
+            return true;
+        }
 
-            public boolean replaceMinEntry(Entry<T> replacement) {
-                if (!entry.hasHardReference()) return false;
-                if (replacement.hasHardReference()) return false;
-                if (discarded.getAndSet(true)) return false;
+        public boolean replaceMinEntry(Entry<T> replacement) {
+            if (!entry.hasHardReference()) return false;
+            if (replacement.hasHardReference()) return false;
+            if (discarded.getAndSet(true)) return false;
 
-                discardAndReplace(entry, replacement);
+            discardAndReplace(entry, replacement);
 
-                return true;
-            }
+            return true;
         }
     }
 
@@ -487,12 +594,17 @@ public class Pool<T> {
         public void run() {
             try {
                 final T t = supplier.create();
-                final Entry entry = new Entry(t);
-                entry.hard.set(t);
-                push(entry);
+
+                if (t == null) {
+                    discard(expired);
+                } else {
+                    final Entry entry = new Entry(t, 0 , poolVersion.get());
+                    entry.hard.set(t);
+                    push(entry);
+                }
             } catch (Throwable e) {
-                // Possibly re-try
-                // TODO: log creation failure
+                // Retry and logging should be done in
+                // the Supplier implementation
                 discard(expired);
             }
         }
@@ -516,5 +628,78 @@ public class Pool<T> {
 
         T create();
 
+    }
+
+    private static class NoSupplier implements Supplier {
+        public void discard(Object o) {
+        }
+
+        public Object create() {
+            return null;
+        }
+    }
+
+    private static final class Overdraft extends Semaphore {
+        public Overdraft() {
+            super(0);
+        }
+
+        @Override
+        public void acquire() throws InterruptedException {
+        }
+
+        @Override
+        public void acquireUninterruptibly() {
+        }
+
+        @Override
+        public boolean tryAcquire() {
+            return true;
+        }
+
+        @Override
+        public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException {
+            return true;
+        }
+
+        @Override
+        public void release() {
+        }
+
+        @Override
+        public void acquire(int permits) throws InterruptedException {
+        }
+
+        @Override
+        public void acquireUninterruptibly(int permits) {
+        }
+
+        @Override
+        public boolean tryAcquire(int permits) {
+            return true;
+        }
+
+        @Override
+        public boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException {
+            return true;
+        }
+
+        @Override
+        public void release(int permits) {
+        }
+
+        @Override
+        public int availablePermits() {
+            return 0;
+        }
+
+        @Override
+        public int drainPermits() {
+            return 0;
+        }
+
+        @Override
+        protected void reducePermits(int reduction) {
+        }
     }
 }
