@@ -16,15 +16,7 @@
  */
 package org.apache.openejb.jee;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
+import javax.xml.bind.annotation.*;
 import java.util.List;
 
 /**
@@ -37,97 +29,30 @@ import java.util.List;
  * elements, and an optional set of administered objects.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "resourceadapterType", propOrder = {
-    "resourceAdapterClass",
-    "configProperty",
-    "outboundResourceAdapter",
-    "inboundResourceAdapter",
-    "adminObject",
-    "securityPermission"
-})
-public class ResourceAdapter {
-
-    @XmlElement(name = "resourceadapter-class")
-    protected String resourceAdapterClass;
-    @XmlElement(name = "config-property")
-    protected List<ConfigProperty> configProperty;
-    @XmlElement(name = "outbound-resourceadapter")
-    protected OutboundResourceAdapter outboundResourceAdapter;
-    @XmlElement(name = "inbound-resourceadapter")
-    protected InboundResource inboundResourceAdapter;
-    @XmlElement(name = "adminobject")
-    protected List<AdminObject> adminObject;
-    @XmlElement(name = "security-permission")
-    protected List<SecurityPermission> securityPermission;
-    @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    protected String id;
+//@XmlType(name = "resourceadapterType", propOrder = {
+//    "resourceAdapterClass",
+//    "configProperty",
+//    "outboundResourceAdapter",
+//    "inboundResourceAdapter",
+//    "adminObject",
+//    "securityPermission"
+//})
+public class ResourceAdapter extends ResourceAdapterBase {
 
     public ResourceAdapter() {
     }
 
-    public ResourceAdapter(String resourceAdapterClass) {
-        this.resourceAdapterClass = resourceAdapterClass;
-    }
-
     public ResourceAdapter(Class resourceAdapterClass) {
-        this(resourceAdapterClass.getName());
+        super(resourceAdapterClass);
     }
 
-    public String getResourceAdapterClass() {
-        return resourceAdapterClass;
+    public ResourceAdapter(String resourceAdapterClass) {
+        super(resourceAdapterClass);
     }
 
-    public void setResourceAdapterClass(String value) {
-        this.resourceAdapterClass = value;
-    }
-
+    @XmlElement(name = "config-property")
     public List<ConfigProperty> getConfigProperty() {
-        if (configProperty == null) {
-            configProperty = new ArrayList<ConfigProperty>();
-        }
-        return this.configProperty;
-    }
-
-    public OutboundResourceAdapter getOutboundResourceAdapter() {
-        return outboundResourceAdapter;
-    }
-
-    public OutboundResourceAdapter setOutboundResourceAdapter(OutboundResourceAdapter value) {
-        this.outboundResourceAdapter = value;
-        return outboundResourceAdapter;
-    }
-
-    public InboundResource getInboundResourceAdapter() {
-        return inboundResourceAdapter;
-    }
-
-    public InboundResource setInboundResourceAdapter(InboundResource value) {
-        this.inboundResourceAdapter = value;
-        return inboundResourceAdapter;
-    }
-
-    public List<AdminObject> getAdminObject() {
-        if (adminObject == null) {
-            adminObject = new ArrayList<AdminObject>();
-        }
-        return this.adminObject;
-    }
-
-    public List<SecurityPermission> getSecurityPermission() {
-        if (securityPermission == null) {
-            securityPermission = new ArrayList<SecurityPermission>();
-        }
-        return this.securityPermission;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String value) {
-        this.id = value;
+        return super.getConfigProperty();
     }
 
 }
