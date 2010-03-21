@@ -22,29 +22,24 @@ import javax.xml.bind.annotation.*;
  * The connectorType defines a resource adapter.
  */
 @XmlRootElement(name = "connector")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 //@XmlType(name = "connectorType", propOrder = {
-//        "moduleName",
-//        "descriptions",
 //        "displayNames",
+//        "descriptions",
 //        "icon",
 //        "vendorName",
+//        "version",
 //        "eisType",
-//        "resourceAdapterVersion",
+//        "version",
 //        "license",
-//        "resourceAdapter",
-//        "requiredWorkContext"
+//        "resourceAdapter"
 //})
-public class Connector extends ConnectorBase {
+public class Connector10 extends ConnectorBase {
 
-    public Connector() {
+    public Connector10() {
     }
 
-    public Connector(String id) {
-        super(id);
-    }
-
-    @XmlElement(name = "resourceadapter-version")
+    @XmlElement(name = "version")
     public String getResourceAdapterVersion() {
         return resourceAdapterVersion;
     }
@@ -54,22 +49,22 @@ public class Connector extends ConnectorBase {
     }
 
     @XmlElement(name = "resourceadapter", required = true)
-    public ResourceAdapter getResourceAdapter() {
-        if (resourceAdapter == null) {
-            resourceAdapter = new ResourceAdapter();
+    public ResourceAdapter10 getResourceAdapter() {
+        if (resourceAdapter == null){
+            resourceAdapter = new ResourceAdapter10();
         }
-        return (ResourceAdapter) resourceAdapter;
+        return (ResourceAdapter10) resourceAdapter;
     }
 
-    public ResourceAdapter setResourceAdapter(ResourceAdapter resourceAdapter16) {
-        this.resourceAdapter = resourceAdapter16;
-        return (ResourceAdapter) this.resourceAdapter;
+    public ResourceAdapter10 setResourceAdapter(ResourceAdapter10 value) {
+        this.resourceAdapter = value;
+        return (ResourceAdapter10) resourceAdapter;
     }
 
-    @XmlAttribute(required = true)
+    @XmlElement(name="spec-version")
     public String getVersion() {
         if (version == null) {
-            return "1.6";
+            return "1.0";
         } else {
             return version;
         }
@@ -78,5 +73,5 @@ public class Connector extends ConnectorBase {
     public void setVersion(String value) {
         this.version = value;
     }
-    
+
 }
