@@ -21,11 +21,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.OutputStream;
+import java.io.BufferedOutputStream;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.EnvProps;
+import org.apache.openejb.core.ivm.EjbObjectInputStream;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -65,7 +70,9 @@ public class SimplePassivater implements PassivationStrategy {
             File sessionFile = new File(sessionDirectory, filename);
 
             logger.info("Passivating to file " + sessionFile);
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(sessionFile));
+            OutputStream out = new FileOutputStream(sessionFile);
+            out = new BufferedOutputStream(out);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
 
             oos.writeObject(state);// passivate just the bean instance
             oos.close();
@@ -94,7 +101,9 @@ public class SimplePassivater implements PassivationStrategy {
             if (sessionFile.exists()) {
                 logger.info("Activating from file " + sessionFile);
 
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(sessionFile));
+                InputStream in = new FileInputStream(sessionFile);
+                in = new BufferedInputStream(in);
+                ObjectInputStream ois = new EjbObjectInputStream(in);
                 Object state = ois.readObject();
                 ois.close();
                 sessionFile.delete();
