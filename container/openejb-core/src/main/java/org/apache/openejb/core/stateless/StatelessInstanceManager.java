@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Executor;
+import java.io.Flushable;
+import java.io.IOException;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -164,7 +166,7 @@ public class StatelessInstanceManager {
                 try {
                     sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
                 } catch (NamingException e1) {
-                    sessionContext = createSessionContext();
+                    sessionContext = createSessionContext(deploymentInfo);
                     // TODO: This should work
                     ctx.bind("java:comp/EJBContext", sessionContext);
                 }
@@ -292,8 +294,14 @@ public class StatelessInstanceManager {
         }
     }
 
-    private SessionContext createSessionContext() {
-        return new StatelessContext(securityService);
+    private SessionContext createSessionContext(CoreDeploymentInfo deploymentInfo) {
+        final Data data = (Data) deploymentInfo.getContainerData();
+        
+        return new StatelessContext(securityService, new Flushable(){
+            public void flush() throws IOException {
+                data.getPool().flush();
+            }
+        });
     }
 
     /**
@@ -382,10 +390,19 @@ public class StatelessInstanceManager {
         deploymentInfo.setContainerData(data);
 
         final int min = builder.getMin();
-        
+        long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
+        double maxAgeOffset = builder.getMaxAgeOffset();
+
         for (int i = 0; i < min; i++) {
             Instance obj = createInstance(deploymentInfo);
-            if (obj != null) data.getPool().add(obj);
+            if (obj != null) {
+                long offset = (long) (maxAge / min * i * maxAgeOffset);
+
+                if (offset >= maxAge){
+                    offset = offset % maxAge;
+                }
+                data.getPool().add(obj, (long) offset);
+            }
         }
     }
 

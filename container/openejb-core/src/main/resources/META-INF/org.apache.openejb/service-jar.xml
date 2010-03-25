@@ -144,6 +144,50 @@
 
     MaxAge = 0 hours
 
+    # Applies to MaxAge usage and would rarely be changed, but is a
+    # nice feature to understand.
+    #
+    # When the container first starts and the pool is filled to the
+    # minimum size, all those "minimum" instances will have the same
+    # creation time and therefore all expire at the same time dictated
+    # by the MaxAge setting.  To protect against this sudden drop
+    # scenario and provide a more gradual expiration from the start
+    # the container will spread out the age of the instances that fill
+    # the pool to the minimum using an offset.
+    #
+    # The MaxAgeOffset is not the final value of the offset, but
+    # rather it is used in creating the offset and allows the
+    # spreading to push the initial ages into the future or into the
+    # past.  The pool is filled at startup as follows:
+    #
+    #  for (int i = 0; i < poolMin; i++) {
+    #    long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
+    #    pool.add(new Bean(), ageOffset));
+    #  }
+    #
+    # The default MaxAgeOffset is -1 which causes the initial
+    # instances in the pool to live a bit longer before expiring.  As
+    # a concrete example, let's say the PoolMin is 4 and the MaxAge is
+    # 100 years.  The generated offsets for the four instances created
+    # at startup would be 0, -25, -50, -75.  So the first instance
+    # would be "born" at age 0, die at 100, living 100 years.  The
+    # second instance would be born at -25, die at 100, living a total
+    # of 125 years.  The third would live 150 years.  The fourth 175
+    # years.
+    #
+    # A MaxAgeOffset of 1 would cause instances to be "born" older
+    # and therefore die sooner.  Using the same example PoolMin of 4
+    # and MaxAge of 100 years, the life spans of these initial four
+    # instances would be 100, 75, 50, and 25 years respectively.
+    #
+    # A MaxAgeOffset of 0 will cause no "spreading" of the age of the
+    # first instances used to fill the pool to the minimum and these
+    # instances will of course reach their MaxAge at the same time.
+    # It is possible to set to decimal values such as -0.5, 0.5, -1.2,
+    # or 1.2.
+
+    MaxAgeOffset = -1
+
     # Specifies the maximum time that an instance should be allowed to
     # sit idly in the pool without use before it should be retired and
     # removed.

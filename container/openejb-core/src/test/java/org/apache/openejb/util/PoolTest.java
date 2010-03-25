@@ -25,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -84,21 +85,25 @@ public class PoolTest extends TestCase {
 
     }
 
-    private void drainCheckPush(int max, int min, Pool<String> pool) throws InterruptedException {
-        final List<Pool.Entry<String>> list = drain(pool);
+    private <T> void drainCheckPush(int max, int min, Pool<T> pool) throws InterruptedException {
+        final List<Pool.Entry<T>> list = drain(pool);
         checkMax(max, list);
         checkMin(min, list);
         push(pool, list);
     }
 
-    private void discard(Pool<String> pool, List<Pool.Entry<String>> list) {
-        for (Pool.Entry<String> entry : list) {
+    private <T> void discard(Pool<T> pool, List<Pool.Entry<T>> list) {
+        for (Pool.Entry<T> entry : list) {
             pool.discard(entry);
         }
     }
 
-    private void push(Pool<String> pool, List<Pool.Entry<String>> list) {
-        for (Pool.Entry<String> entry : list) {
+    private <T> void push(Pool<T> pool, List<Pool.Entry<T>> list) {
+        for (Pool.Entry<T> entry : list) {
+            if (entry != null && entry.get() instanceof CounterBean) {
+                CounterBean bean = (CounterBean) entry.get();
+                bean.push();
+            }
             pool.push(entry);
         }
     }
@@ -219,19 +224,23 @@ public class PoolTest extends TestCase {
 
         final int min = 4;
         final int max = 9;
-        final int idleTimeout = 500;
+        final int idleTimeout = 1000;
+        final int sweepInterval = idleTimeout / 4;
 
-        final CountDownLatch discarded = new CountDownLatch(max - min);
+        final List<CounterBean> discarded = new CopyOnWriteArrayList<CounterBean>();
+        final CountDownLatch discard = new CountDownLatch(max - min);
         final CountDownLatch hold = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
         builder.setPoolMin(min);
         builder.setPoolMax(max);
         builder.setIdleTimeout(new Duration(idleTimeout, TimeUnit.MILLISECONDS));
-        builder.setPollInterval(new Duration(idleTimeout / 2, TimeUnit.MILLISECONDS));
-        builder.setSupplier(new Pool.Supplier() {
-            public void discard(Object o) {
-                discarded.countDown();
+        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setSupplier(new Pool.Supplier<CounterBean>() {
+            public void discard(CounterBean bean) {
+                bean.discard();
+                discarded.add(bean);
+                discard.countDown();
                 try {
                     // Executor should have enough threads
                     // to execute removes on all the
@@ -242,7 +251,7 @@ public class PoolTest extends TestCase {
                 }
             }
 
-            public Object create() {
+            public CounterBean create() {
                 // Should never be called
                 return new CounterBean();
             }
@@ -266,8 +275,21 @@ public class PoolTest extends TestCase {
         }
 
 
-        discarded.await();
-//        assertTrue(discarded.await(idleTimeout * 2, TimeUnit.MILLISECONDS));
+        assertTrue(discard.await(60, TimeUnit.SECONDS));
+
+        // All non-min instances should have been removed
+        // no more, no less
+        assertEquals(max - min, discarded.size());
+
+        for (CounterBean bean : discarded) {
+            final long inactive = bean.discarded - bean.accessed;
+
+            // Actual idle time should not be less than our setting
+            assertTrue("timed out too soon", inactive >= idleTimeout);
+
+            // It shouldn't be too much more either
+            assertTrue("timed out too long", inactive < idleTimeout + (sweepInterval * 2));
+        }
 
         { // Pool should only have min number of non-null entries
             final List entries = drain(pool, 100);
@@ -285,22 +307,25 @@ public class PoolTest extends TestCase {
 
         final int min = 4;
         final int max = 9;
-        final int poll = 200;
+        final int sweepInterval = 200;
 
-        final CountDownLatch discarded = new CountDownLatch(max);
+        final List<CounterBean> discarded = new CopyOnWriteArrayList<CounterBean>();
+        final CountDownLatch discard = new CountDownLatch(max);
         final CountDownLatch created = new CountDownLatch(min);
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
         builder.setPoolMin(min);
         builder.setPoolMax(max);
-        builder.setPollInterval(new Duration(poll, TimeUnit.MILLISECONDS));
-        builder.setSupplier(new Pool.Supplier() {
-            public void discard(Object o) {
-                discarded.countDown();
+        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setSupplier(new Pool.Supplier<CounterBean>() {
+            public void discard(CounterBean bean) {
+                bean.discard();
+                discarded.add(bean);
+                discard.countDown();
             }
 
-            public Object create() {
+            public CounterBean create() {
                 try {
                     createInstances.await();
                 } catch (InterruptedException e) {
@@ -334,7 +359,18 @@ public class PoolTest extends TestCase {
         pool.flush();
 
         // Wait for the Evictor to come around and sweep out the pool
-        assertTrue(discarded.await(poll * 10, TimeUnit.MILLISECONDS));
+        assertTrue(discard.await(60, TimeUnit.SECONDS));
+
+        // All instances should have been removed
+        assertEquals(max, discarded.size());
+
+        for (CounterBean bean : discarded) {
+            final long flushTime = bean.discarded - bean.accessed;
+
+            // It shouldn't be too much more either
+            assertTrue("flush took too long", flushTime < (sweepInterval * 2));
+        }
+
 
         // Minimum instances are still being created
         // The rest of the pool should be empty (null)
@@ -389,7 +425,7 @@ public class PoolTest extends TestCase {
         createInstances.countDown();
 
         // Wait for the "min" instance creation to complete
-        assertTrue(created.await(poll * 10, TimeUnit.MILLISECONDS));
+        assertTrue(created.await(sweepInterval * 10, TimeUnit.MILLISECONDS));
 
         { // Pool should be full again
             final List entries = drain(pool, 100);
@@ -405,10 +441,11 @@ public class PoolTest extends TestCase {
         System.out.println("PoolTest.testMaxAge");
         final int min = 4;
         final int max = 9;
-        final int maxAge = 500;
-        final int poll = maxAge / 2;
+        final int maxAge = 1000;
+        final int sweepInterval = maxAge / 4;
 
-        final CountDownLatch discarded = new CountDownLatch(max);
+        final List<CounterBean> discarded = new CopyOnWriteArrayList<CounterBean>();
+        final CountDownLatch discard = new CountDownLatch(max);
         final CountDownLatch created = new CountDownLatch(min);
         final CountDownLatch createInstances = new CountDownLatch(1);
 
@@ -416,10 +453,12 @@ public class PoolTest extends TestCase {
         builder.setPoolMin(min);
         builder.setPoolMax(max);
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
-        builder.setPollInterval(new Duration(poll, MILLISECONDS));
+        builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<CounterBean>() {
-            public void discard(CounterBean o) {
-                countDown(discarded, o);
+            public void discard(CounterBean bean) {
+                bean.discard();
+                discarded.add(bean);
+                countDown(discard, bean);
             }
 
             public CounterBean create() {
@@ -454,7 +493,20 @@ public class PoolTest extends TestCase {
         }
 
         // Now wait for the instances in the pool to expire
-        assertTrue(discarded.await(maxAge * 4, TimeUnit.MILLISECONDS));
+        assertTrue(discard.await(60, TimeUnit.SECONDS));
+
+        // All instances should have been removed
+        assertEquals(max, discarded.size());
+
+        for (CounterBean bean : discarded) {
+            final long age = bean.discarded - bean.created;
+
+            // Actual idle time should not be less than our setting
+            assertTrue("died too soon", age >= maxAge);
+
+            // It shouldn't be too much more either
+            assertTrue("lived too long", age < maxAge + (sweepInterval * 2));
+        }
 
         // Minimum instances are still being created
         // The rest of the pool should be empty (null)
@@ -510,7 +562,7 @@ public class PoolTest extends TestCase {
         createInstances.countDown();
 
         // Wait for the "min" instance creation to complete
-        assertTrue(created.await(poll * 10, TimeUnit.MILLISECONDS));
+        assertTrue(created.await(sweepInterval * 10, TimeUnit.MILLISECONDS));
 
         { // Pool should be full again
             final List entries = drain(pool, 100);
@@ -534,6 +586,9 @@ public class PoolTest extends TestCase {
 
     /**
      * What happens if we fail to create a "min" instance after a flush?
+     *
+     * The pool should naturally balance itself out by promoting regular instances
+     * to "min" instance as things are popped and pushed to and from the pool.
      *
      * @throws Exception exception
      */
@@ -687,6 +742,9 @@ public class PoolTest extends TestCase {
     /**
      * What happens if we fail to create a "min" instance after a maxAge expiration?
      *
+     * The pool should naturally balance itself out by promoting regular instances
+     * to "min" instance as things are popped and pushed to and from the pool.
+     *
      * @throws Exception exception
      */
     public void testMaxAgeFailedCreation() throws Exception {
@@ -837,6 +895,290 @@ public class PoolTest extends TestCase {
     }
 
 
+    /**
+     * When an item is in use, it should still be flushed
+     * upon return to the pool if the pool was flushed
+     *
+     * Active items should still be flushed the moment they
+     * become inactive (returned to the pool).
+     *
+     * @throws Exception
+     */
+    public void testFlushOnReturn() throws Exception {
+
+        final int min = 4;
+        final int max = 9;
+
+        // Effectively disable sweeping the pool and 
+        // verify that Flush is still enforced by the
+        // simple act of trying to return a flushed
+        // item to the pool
+
+        final int sweepInterval = Integer.MAX_VALUE;
+
+        final CountDownLatch created = new CountDownLatch(min);
+        final CountDownLatch createInstances = new CountDownLatch(1);
+
+        final Pool.Builder builder = new Pool.Builder();
+        builder.setPoolMin(min);
+        builder.setPoolMax(max);
+        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setSupplier(new Pool.Supplier<CounterBean>() {
+            public void discard(CounterBean bean) {
+                bean.discard();
+            }
+
+            public CounterBean create() {
+                try {
+                    createInstances.await();
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+                try {
+                    return new CounterBean();
+                } finally {
+                    created.countDown();
+                }
+            }
+        });
+
+
+        final Pool pool = builder.build();
+
+        // Fill pool to max
+        CounterBean.instances.set(0);
+        for (int i = 0; i < max; i++) {
+            assertTrue(pool.add(new CounterBean()));
+        }
+
+
+        { // Should have a full, non-null pool
+            final List entries = drain(pool, 100);
+            checkMin(min, entries);
+            checkEntries(max, entries);
+            push(pool, entries);
+        }
+
+        {
+            // Drain pool again, flush, then try and return them
+            final List<Pool.Entry<CounterBean>> entries = drain(pool, 100);
+            checkEntries(max, entries);
+
+            // Now call flush
+            pool.flush();
+
+            for (Pool.Entry<CounterBean> entry : entries) {
+                assertFalse("entry should not be accepted", pool.push(entry));
+            }
+        }
+
+
+        // Minimum instances are still being created
+        // The rest of the pool should be empty (null)
+        {
+            final List entries = drain(pool, 100);
+            // Should have "non-min" number of entries
+            checkMax(max - min, entries);
+
+            // Nothing should be a "min" item as those
+            // are still being created
+            checkMin(0, entries);
+
+            // And as the pool was just drained all the
+            // entries we get should be null
+            checkNull(entries);
+
+            push(pool, entries);
+        }
+
+        CounterBean.instances.set(0);
+
+        // Try and trick the pool into adding more "min" items
+        // Fill the pool as much as we can -- should only let us
+        // fill to the max factoring in the "min" instances that
+        // are currently being created
+        {
+            final List entries = drain(pool, 100);
+
+            // Should reject the instance we try to add
+
+            assertFalse(pool.add(new CounterBean()));
+
+
+            // Empty the pool
+            discard(pool, entries);
+
+
+            // Now count how many instances it lets us add
+            CounterBean.instances.set(0);
+            while (pool.add(new CounterBean())) ;
+
+            // As the "min" instances are still being created
+            // it should only let us fill max - min, then + 1
+            // to account for the instance that gets rejected
+            // and terminates the while loop
+            final int expected = max - min + 1;
+
+            assertEquals(expected, CounterBean.instances.getAndSet(0));
+        }
+
+        // Ok, let the "min" instance creation threads continue
+        createInstances.countDown();
+
+        // Wait for the "min" instance creation to complete
+        assertTrue(created.await(60, TimeUnit.SECONDS));
+
+        { // Pool should be full again
+            final List entries = drain(pool, 100);
+            checkMin(min, entries);
+            checkEntries(max, entries);
+            push(pool, entries);
+        }
+
+        //  -- DONE --
+    }
+
+    /**
+     * When an item is in use, it should still be expired
+     * upon return to the pool if the item has lived too long
+     *
+     * Active items that have lived too long should still be
+     * expired the moment they become inactive (returned to the pool).
+     *
+     * @throws Exception
+     */
+    public void testMaxAgeOnReturn() throws Exception {
+        System.out.println("PoolTest.testMaxAgeOnReturn");
+        final int min = 4;
+        final int max = 9;
+        final int maxAge = 200;
+        final int sweepInterval = Integer.MAX_VALUE;
+
+        final CountDownLatch created = new CountDownLatch(min);
+        final CountDownLatch createInstances = new CountDownLatch(1);
+
+        final Pool.Builder builder = new Pool.Builder();
+        builder.setPoolMin(min);
+        builder.setPoolMax(max);
+        builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
+        builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
+        builder.setSupplier(new Pool.Supplier<CounterBean>() {
+            public void discard(CounterBean bean) {
+                bean.discard();
+            }
+
+            public CounterBean create() {
+                try {
+                    createInstances.await();
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+                try {
+                    return new CounterBean();
+                } finally {
+                    created.countDown();
+                }
+            }
+        });
+
+
+        final Pool pool = builder.build();
+
+        // Fill pool to max
+        CounterBean.instances.set(0);
+        for (int i = 0; i < max; i++) {
+            assertTrue(pool.add(new CounterBean()));
+        }
+
+
+        { // Should have a full, non-null pool
+            final List entries = drain(pool, 100);
+            checkMin(min, entries);
+            checkEntries(max, entries);
+            push(pool, entries);
+        }
+
+        {
+            // Drain pool again, flush, then try and return them
+            final List<Pool.Entry<CounterBean>> entries = drain(pool, 100);
+            checkEntries(max, entries);
+
+            // Now wait for max age
+            Thread.sleep(maxAge);
+
+            for (Pool.Entry<CounterBean> entry : entries) {
+                assertFalse("entry should not be accepted", pool.push(entry));
+            }
+        }
+
+        // Minimum instances are still being created
+        // The rest of the pool should be empty (null)
+        {
+            final List entries = drain(pool, 100);
+
+            // Nothing should be a "min" item as those
+            // are still being created
+            checkMin(0, entries);
+
+            // And as the pool was just drained all the
+            // entries we get should be null
+            checkNull(entries);
+
+            // Should have "non-min" number of entries
+            checkMax(max - min, entries);
+
+            push(pool, entries);
+        }
+
+        CounterBean.instances.set(0);
+
+        // Try and trick the pool into adding more "min" items
+        // Fill the pool as much as we can -- should only let us
+        // fill to the max factoring in the "min" instances that
+        // are currently being created
+        {
+            final List entries = drain(pool, 100);
+
+            checkMax(max - min, entries);
+
+            // Should reject the instance we try to add
+
+            assertFalse(pool.add(new CounterBean()));
+
+
+            // Empty the pool
+            discard(pool, entries);
+
+
+            // Now count how many instances it lets us add
+            CounterBean.instances.set(0);
+            while (pool.add(new CounterBean())) ;
+
+            // As the "min" instances are still being created
+            // it should only let us fill max - min, then + 1
+            // to account for the instance that gets rejected
+            // and terminates the while loop
+            final int expected = max - min + 1;
+
+            assertEquals(expected, CounterBean.instances.getAndSet(0));
+        }
+
+        // Ok, let the "min" instance creation threads continue
+        createInstances.countDown();
+
+        // Wait for the "min" instance creation to complete
+        assertTrue(created.await(60, TimeUnit.SECONDS));
+
+        { // Pool should be full again
+            final List entries = drain(pool, 100);
+            checkMin(min, entries);
+            checkEntries(max, entries);
+            push(pool, entries);
+        }
+
+        //  -- DONE --
+    }
+
     private <T> void checkMax(int max, List<Pool.Entry<T>> entries) {
         assertEquals(max, entries.size());
     }
@@ -860,9 +1202,9 @@ public class PoolTest extends TestCase {
         return list;
     }
 
-    private void checkEntries(int expected, List<Pool.Entry<String>> entries) {
+    private <T> void checkEntries(int expected, List<Pool.Entry<T>> entries) {
         int found = 0;
-        for (Pool.Entry<String> entry : entries) {
+        for (Pool.Entry<T> entry : entries) {
             if (entry == null) continue;
             found++;
             assertNotNull(entry.get());
@@ -892,13 +1234,52 @@ public class PoolTest extends TestCase {
         public static AtomicInteger instances = new AtomicInteger();
 
         private int count;
+        private final long created;
+        private long accessed;
+        private long discarded;
 
         public CounterBean() {
+            created = System.currentTimeMillis();
             count = instances.incrementAndGet();
+        }
+
+        public long getCreated() {
+            return created;
+        }
+
+        public long getAccessed() {
+            return accessed;
+        }
+
+        public long getDiscarded() {
+            return discarded;
+        }
+
+        public void push() {
+            accessed = System.currentTimeMillis();
+        }
+
+        public void discard() {
+            discarded = System.currentTimeMillis();
         }
 
         public int count() {
             return count;
+        }
+
+    }
+
+    public void testOffset() {
+        int maxAge = 100;
+        int poolMin = 4;
+
+        double maxAgeOffset = -1.2;
+
+        for (int i = 0; i < poolMin; i++) {
+
+            long offset = (long) (maxAge / poolMin * i * maxAgeOffset) % maxAge ;
+
+            System.out.println("" + offset);
         }
 
     }
