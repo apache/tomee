@@ -216,6 +216,15 @@
 
     PollInterval = 5 minutes
 
+    # When sweeping the pool for expired instances a thread pool is
+    # used to process calling @PreDestroy on expired instances as well
+    # as creating new instances as might be required to fill the pool
+    # to the minimum after a Flush or MaxAge expiration.  The
+    # CallbackThreads setting dictates the size of the thread pool and
+    # is shared by all beans deployed in the container.
+
+    CallbackThreads = 5
+
   </ServiceProvider>
 
 
