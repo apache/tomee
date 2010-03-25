@@ -396,11 +396,7 @@ public class StatelessInstanceManager {
         for (int i = 0; i < min; i++) {
             Instance obj = createInstance(deploymentInfo);
             if (obj != null) {
-                long offset = (long) (maxAge / min * i * maxAgeOffset);
-
-                if (offset >= maxAge){
-                    offset = offset % maxAge;
-                }
+                long offset = ((long) (maxAge / min * i * maxAgeOffset)) % maxAge;
                 data.getPool().add(obj, (long) offset);
             }
         }
