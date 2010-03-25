@@ -21,19 +21,24 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
+import java.io.Flushable;
+import java.io.IOException;
+
 /**
  * @version $Rev$ $Date$
  */
-public class StatelessContext extends BaseSessionContext {
+public class StatelessContext extends BaseSessionContext implements Flushable {
 
     protected final static State[] states = new State[Operation.values().length];
+    private final Flushable flushable;
 
     public static State[] getStates() {
         return states;
     }
 
-    public StatelessContext(SecurityService securityService) {
+    public StatelessContext(SecurityService securityService, Flushable flushable) {
         super(securityService);
+        this.flushable = flushable;
     }
 
     protected State getState() {
@@ -64,4 +69,7 @@ public class StatelessContext extends BaseSessionContext {
         states[Operation.PRE_DESTROY.ordinal()] = new LifecycleSessionState();
     }
 
+    public void flush() throws IOException {
+        flushable.flush();
+    }
 }

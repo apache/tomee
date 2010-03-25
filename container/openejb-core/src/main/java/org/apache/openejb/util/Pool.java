@@ -65,6 +65,7 @@ public class Pool<T> {
         private int min = 0;
         private boolean strict = true;
         private Duration maxAge = new Duration(0, MILLISECONDS);
+        private double maxAgeOffset = -1;
         private Duration idleTimeout =  new Duration(0, MILLISECONDS);
         private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
         private Supplier<T> supplier;
@@ -79,6 +80,7 @@ public class Pool<T> {
             this.interval = that.interval;
             this.executor = that.executor;
             this.supplier = that.supplier;
+            this.maxAgeOffset = that.maxAgeOffset;
         }
 
         public Builder() {
@@ -111,6 +113,18 @@ public class Pool<T> {
 
         public void setMaxAge(Duration maxAge) {
             this.maxAge = maxAge;
+        }
+
+        public Duration getMaxAge() {
+            return maxAge;
+        }
+
+        public void setMaxAgeOffset(double maxAgeOffset) {
+            this.maxAgeOffset = maxAgeOffset;
+        }
+
+        public double getMaxAgeOffset() {
+            return maxAgeOffset;
         }
 
         public void setIdleTimeout(Duration idleTimeout) {
@@ -226,7 +240,7 @@ public class Pool<T> {
      * @param offset creation time offset, used for maxAge
      * @return true of the item as added
      */
-    public boolean add(T obj, int offset) {
+    public boolean add(T obj, long offset) {
         if (available.tryAcquire()) {
 
             if (push(obj, offset)) return true;
@@ -260,7 +274,7 @@ public class Pool<T> {
      * @param offset
      * @return false if the pool max size was exceeded
      */
-    private boolean push(T obj, int offset) {
+    private boolean push(T obj, long offset) {
         if (instances.tryAcquire()){
             return push(new Entry<T>(obj, offset, poolVersion.get()));
         }
@@ -297,7 +311,12 @@ public class Pool<T> {
                 added = insert(entry);
             }
         } finally {
-            if (release) available.release();
+            if (release) {
+
+                available.release();
+
+                if (entry != null && !added) instances.release();
+            }
         }
 
         return added;
@@ -381,7 +400,7 @@ public class Pool<T> {
          * @param offset creation time offset, used for maxAge
          * @param version
          */
-        private Entry(T obj, int offset, int version) {
+        private Entry(T obj, long offset, int version) {
             this.soft = new SoftReference<T>(obj);
             this.active.set(obj);
             this.created = System.currentTimeMillis() + offset;
