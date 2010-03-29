@@ -160,7 +160,7 @@
     # spreading to push the initial ages into the future or into the
     # past.  The pool is filled at startup as follows:
     #
-    #  for (int i = 0; i < poolMin; i++) {
+    #  for (int i = 0; i &lt; poolMin; i++) {
     #    long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
     #    pool.add(new Bean(), ageOffset));
     #  }
