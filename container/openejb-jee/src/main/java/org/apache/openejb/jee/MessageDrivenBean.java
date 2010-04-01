@@ -109,6 +109,7 @@ import java.util.Map;
         "persistenceUnitRef",
         "postConstruct",
         "preDestroy",
+        "securityRoleRef",
         "securityIdentity"
         })
 public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
@@ -162,6 +163,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
     protected List<LifecycleCallback> preDestroy;
+    @XmlElement(name = "security-role-ref", required = true)
+    protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
     protected SecurityIdentity securityIdentity;
     @XmlAttribute
@@ -553,6 +556,12 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         getPreDestroy().add(new LifecycleCallback(ejbClass, method));
     }
 
+    public List<SecurityRoleRef> getSecurityRoleRef() {
+        if (securityRoleRef == null) {
+            securityRoleRef = new ArrayList<SecurityRoleRef>();
+        }
+        return this.securityRoleRef;
+    }
 
     public SecurityIdentity getSecurityIdentity() {
         return securityIdentity;

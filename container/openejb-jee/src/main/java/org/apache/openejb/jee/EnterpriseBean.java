@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.List;
+
 /**
  * @version $Revision$ $Date$
  */
@@ -41,6 +43,8 @@ public interface EnterpriseBean extends JndiConsumer, Lifecycle {
 
     public void setEjbClass(Class value);
 
+    List<SecurityRoleRef> getSecurityRoleRef();
+
     public SecurityIdentity getSecurityIdentity();
 
     public void setSecurityIdentity(SecurityIdentity value);
@@ -52,5 +56,4 @@ public interface EnterpriseBean extends JndiConsumer, Lifecycle {
     public TransactionType getTransactionType();
 
     public void setTransactionType(TransactionType type);
-
 }

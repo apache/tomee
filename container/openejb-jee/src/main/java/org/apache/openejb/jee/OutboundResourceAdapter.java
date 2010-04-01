@@ -58,7 +58,7 @@ public class OutboundResourceAdapter {
     @XmlElement(name = "authentication-mechanism")
     protected List<AuthenticationMechanism> authenticationMechanism;
     @XmlElement(name = "reauthentication-support")
-    protected boolean reauthenticationSupport;
+    protected Boolean reauthenticationSupport;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -89,14 +89,14 @@ public class OutboundResourceAdapter {
     /**
      * Gets the value of the reauthenticationSupport property.
      */
-    public boolean isReauthenticationSupport() {
+    public Boolean isReauthenticationSupport() {
         return reauthenticationSupport;
     }
 
     /**
      * Sets the value of the reauthenticationSupport property.
      */
-    public void setReauthenticationSupport(boolean value) {
+    public void setReauthenticationSupport(Boolean value) {
         this.reauthenticationSupport = value;
     }
 
