@@ -101,6 +101,36 @@ public class PoolTest extends TestCase {
 
     }
 
+    public void testNonStrictDiscard() throws Exception {
+        System.out.println("PoolTest.testNonStrictDiscard");
+
+        final Pool.Builder builder = new Pool.Builder();
+        builder.setPoolMin(0);
+        builder.setPoolMax(0);
+        builder.setStrictPooling(false);
+        builder.setSupplier(new Pool.Supplier<Bean>() {
+            public void discard(Bean bean) {
+                bean.discard();
+            }
+
+            public Bean create() {
+                // Should never be called
+                return new Bean();
+            }
+        });
+
+
+        final Pool pool = builder.build().start();
+
+        assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
+
+        final Bean bean = new Bean();
+
+        assertFalse(pool.push(bean));
+
+        assertTrue(bean.discarded > 0);
+    }
+
     private <T> void drainCheckPush(int max, int min, Pool<T> pool) throws InterruptedException {
         final List<Pool.Entry<T>> list = drain(pool);
         checkMax(max, list);
