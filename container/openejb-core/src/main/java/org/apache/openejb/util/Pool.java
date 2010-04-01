@@ -58,6 +58,10 @@ public class Pool<T> {
     private final long maxAge;
     private final AtomicInteger poolVersion = new AtomicInteger();
     private final Supplier<T> supplier;
+    private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
+    private Pool<T>.Eviction evictor;
+    private long interval;
+    private final boolean debug = false;
 
     public static class Builder<T> {
 
@@ -163,9 +167,23 @@ public class Pool<T> {
         this.maxAge = maxAge;
 
         if (interval == 0) interval = 5 * 60 * 1000; // five minutes
+        this.interval = interval;
+        
+        evictor = new Eviction(idleTimeout, max);
+    }
 
-        final Timer timer = new Timer("PoolEviction", true);
-        timer.scheduleAtFixedRate(new Eviction(idleTimeout, max), idleTimeout, interval);
+    public Pool start() {
+        if (timer.compareAndSet(null, new Timer("PoolEviction@" + hashCode(), true))) {
+            timer.get().scheduleAtFixedRate(evictor, 0, this.interval);
+        }
+        return this;
+    }
+
+    public void stop() {
+        Timer timer = this.timer.get();
+        if (this.timer.compareAndSet(timer, null)) {
+            timer.cancel();
+        }
     }
 
     private Executor createExecutor() {
@@ -215,6 +233,9 @@ public class Pool<T> {
                 final boolean notBusy = entry.active.compareAndSet(null, obj);
 
                 if (notBusy) return entry;
+            } else {
+                // the SoftReference was garbage collected
+                instances.release();
             }
 
             entry = null;
@@ -241,13 +262,23 @@ public class Pool<T> {
      * @return true of the item as added
      */
     public boolean add(T obj, long offset) {
-        if (available.tryAcquire()) {
+        try {
+            if (available.tryAcquire(100, MILLISECONDS)) {
 
-            if (push(obj, offset)) return true;
+                try {
+                    if (push(obj, offset)) return true;
+                    available.release();
+                } catch (RuntimeException e) {
+                    available.release();
+                    throw e;
+                }
+            }
 
-            available.release();
+            return false;
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+            e.printStackTrace();
         }
-
         return false;
     }
 
@@ -282,14 +313,19 @@ public class Pool<T> {
     }
 
     public boolean push(Entry<T> entry) {
+        return push(entry, false);
+    }
 
+    private boolean push(Entry<T> entry, boolean sweeper) {
         boolean added = false;
         boolean release = true;
+
+        final T obj = (entry == null) ? null : entry.active.getAndSet(null);
 
         try {
             if (entry == null) return added;
 
-            final T obj = entry.active.getAndSet(null);
+            if (!sweeper) entry.markLastUsed();
 
             final long age = System.currentTimeMillis() - entry.created;
 
@@ -303,12 +339,14 @@ public class Pool<T> {
                     release = false;
                     executor.execute(new Replace(entry));
                 }
-            } else if (entry.hard.get() == null && minimum.tryAcquire()) {
-                entry.hard.set(obj);
-
-                if (!(added = insert(entry))) minimum.release();
             } else {
-                added = insert(entry);
+                // make this a "min" instance if we can
+                if (!entry.hasHardReference() && minimum.tryAcquire()) entry.hard.set(obj);
+
+                synchronized (pool) {
+                    pool.addFirst(entry);
+                }
+                added = true;
             }
         } finally {
             if (release) {
@@ -319,16 +357,29 @@ public class Pool<T> {
             }
         }
 
+        if (!added && obj != null) {
+            if (sweeper) {
+                // if the caller is the PoolEviction thread, we do not
+                // want to be calling discard() directly and should just
+                // queue it up instead.
+                executor.execute(new Discard(entry));
+            } else {
+                supplier.discard(obj);
+            }
+        }
+        
         return added;
     }
 
-    private boolean insert(Entry<T> entry) {
-        synchronized (pool) {
-//            if (pool.size() >= max) return false;
-            pool.addFirst(entry);
-        }
-        return true;
-    }
+//    private void println(String s) {
+//        Thread thread = Thread.currentThread();
+//        PrintStream out = System.out;
+//        synchronized (out) {
+//            String s1 = thread.getName();
+//            out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s - %3$s\n", System.currentTimeMillis(), s1, s);
+//            out.flush();
+//        }
+//    }
 
     /**
      * Used when a call to pop() was made that returned null
@@ -342,11 +393,11 @@ public class Pool<T> {
 
     public void discard(Entry<T> entry) {
         if (entry != null) {
-            final T obj = entry.get();
 
-            if (entry.hard.compareAndSet(obj, null)) {
+            if (entry.hasHardReference()) {
                 minimum.release();
             }
+            
             instances.release();
         }
 
@@ -401,6 +452,7 @@ public class Pool<T> {
          * @param version
          */
         private Entry(T obj, long offset, int version) {
+            if (obj == null) throw new NullPointerException("entry is null");
             this.soft = new SoftReference<T>(obj);
             this.active.set(obj);
             this.created = System.currentTimeMillis() + offset;
@@ -412,6 +464,14 @@ public class Pool<T> {
             return active.get();
         }
 
+        public void markLastUsed() {
+            used = System.currentTimeMillis();
+        }
+
+        public long getUsed() {
+            return used;
+        }
+
         /**
          * Largely for testing purposes
          *
@@ -419,6 +479,17 @@ public class Pool<T> {
          */
         public boolean hasHardReference() {
             return hard.get() != null;
+        }
+
+        @Override
+        public String toString() {
+            long now = System.currentTimeMillis();
+            return "Entry{" +
+                    "min=" + (hard.get() != null) +
+                    ", age=" + (now - created) +
+                    ", idle=" + (now - used) +
+                    ", bean=" + soft.get() +
+                    '}';
         }
     }
 
@@ -467,7 +538,7 @@ public class Pool<T> {
                     final Entry<T> entry = iter.next();
                     if (entry == null) {
                         // return the lock immediately
-                        push(entry);
+                        push(entry, true);
                         iter.remove();
                     }
                 }
@@ -504,7 +575,7 @@ public class Pool<T> {
                         // This is an item from the "minimum" pool
                         // and therefore cannot timeout in the next
                         // algorithm.  Return it immediately.
-                        push(entry);
+                        push(entry, true);
                         iter.remove();
                     }
                 }
@@ -554,7 +625,7 @@ public class Pool<T> {
                     expired.tryDiscard();
 
                 } else {
-                    push(entry);
+                    push(entry, true);
                 }
             }
 

@@ -99,7 +99,7 @@
 
     # Specifies the minimum number of bean instances that should be
     # in the pool for each bean.  Pools are prefilled to the minimum
-    # on startup.  Pool "shrinking" is achived through WeakReferences
+    # on startup.  Pool "shrinking" is achived through SoftReferences
     # and natural vm garbage collection. All but the minimum are allowed
     # to be garbage collected by the VM when memory is needed.
 
@@ -194,7 +194,7 @@
     #
     # Note that all instances in the pool, excluding the minimum, are
     # eligible for garbage collection by the virtual machine as per
-    # the rules of java.lang.ref.WeakReference, so the use of an
+    # the rules of java.lang.ref.SoftReference, so the use of an
     # IdleTimeout is not required to conserve JVM-managed memory or
     # shrink the pool.
     #

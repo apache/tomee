@@ -328,9 +328,9 @@ public class StatelessInstanceManager {
         Pool<Instance> pool = data.getPool();
 
         if (instance.getPoolEntry() != null){
-            if (!pool.push(instance.getPoolEntry())) freeInstance(callContext, instance);
+            pool.push(instance.getPoolEntry());
         } else {
-            if (!pool.push(instance)) freeInstance(callContext, instance);
+            pool.push(instance);
         }
     }
     
@@ -395,11 +395,17 @@ public class StatelessInstanceManager {
 
         for (int i = 0; i < min; i++) {
             Instance obj = createInstance(deploymentInfo);
-            if (obj != null) {
-                long offset = ((long) (maxAge / min * i * maxAgeOffset)) % maxAge;
-                data.getPool().add(obj, (long) offset);
-            }
+
+            if (obj == null) continue;
+
+            long offset = 0;
+
+            if (maxAge > 0) offset = ((long) (maxAge / min * i * maxAgeOffset)) % maxAge;
+
+            data.getPool().add(obj, offset);
         }
+
+        data.getPool().start();
     }
 
     private Instance createInstance(CoreDeploymentInfo deploymentInfo) {
@@ -419,8 +425,8 @@ public class StatelessInstanceManager {
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
         if (data == null) return;
-        //TODO ejbRemove on each bean in pool.
-        //clean pool
+        data.getPool().stop();
+        //TODO *maybe* call ejbRemove on each bean in pool.
         deploymentInfo.setContainerData(null);
     }
 
