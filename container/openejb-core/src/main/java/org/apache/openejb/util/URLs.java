@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.MalformedURLException;
@@ -42,7 +43,7 @@ public class URLs {
             }
         }
 
-        return new File(URLDecoder.decode(path));
+        return new File(URI.create(path).getPath());
     }
 
     public static String toFilePath(URL url) {
