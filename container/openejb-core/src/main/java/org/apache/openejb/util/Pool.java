@@ -525,26 +525,18 @@ public class Pool<T> {
 
             // Pull all the entries from the pool
             try {
-                while (true) entries.add(pop(0, MILLISECONDS));
+                while (true) {
+                    final Entry<T> entry = pop(0, MILLISECONDS);
+                    if (entry == null) {
+                        push(entry, true);
+                        break;
+                    }
+                    entries.add(entry);
+                }
             } catch (InterruptedException e) {
                 Thread.interrupted();
             } catch (TimeoutException e) {
                 // pool has been drained
-            }
-
-
-            { // Immediately return all "null" instances to free up locks
-
-                final Iterator<Entry<T>> iter = entries.iterator();
-                while (iter.hasNext()) {
-                    final Entry<T> entry = iter.next();
-                    if (entry == null) {
-                        // return the lock immediately
-                        push(entry, true);
-                        iter.remove();
-                    }
-                }
-
             }
 
             final List<Expired> expiredList = new ArrayList<Expired>(max);
