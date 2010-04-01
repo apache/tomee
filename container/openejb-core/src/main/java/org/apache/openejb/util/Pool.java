@@ -309,6 +309,8 @@ public class Pool<T> {
         if (instances.tryAcquire()){
             return push(new Entry<T>(obj, offset, poolVersion.get()));
         }
+
+        if (obj != null) supplier.discard(obj);
         return false;
     }
 
@@ -701,14 +703,16 @@ public class Pool<T> {
     }
 
     private class Discard implements Runnable {
-        private final Entry<T> expired;
+        private final T expired;
 
         private Discard(Entry<T> expired) {
-            this.expired = expired;
+            this.expired = expired.get();
+
+            if (expired == null) throw new NullPointerException("entry.get() cannot be null");
         }
 
         public void run() {
-            supplier.discard(expired.get());
+            supplier.discard(expired);
         }
     }
 
