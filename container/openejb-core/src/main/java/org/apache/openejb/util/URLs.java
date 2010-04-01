@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.util;
 
+import static org.apache.openejb.loader.JarLocation.decode;
+
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
@@ -28,27 +28,28 @@ import java.net.MalformedURLException;
 public class URLs {
 
     public static File toFile(URL url) {
-
-        String path = url.getPath();
-
-        if (path.contains("!")){
-            path = path.substring(0, path.indexOf('!'));
-        }
-
-        if (path.startsWith("file:")){
+        if ("jar".equals(url.getProtocol())) {
             try {
-                url = new URL(path);
-                path = url.getPath();
-            } catch (MalformedURLException e) {
-            }
-        }
+                String spec = url.getFile();
 
-        return new File(URI.create(path).getPath());
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                return toFile(new URL(spec.substring(0, separator++)));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if ("file".equals(url.getProtocol())) {
+            return new File(decode(url.getFile()));
+        } else {
+            throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+        }
     }
 
     public static String toFilePath(URL url) {
         return toFile(url).getAbsolutePath();
     }
-
-
 }

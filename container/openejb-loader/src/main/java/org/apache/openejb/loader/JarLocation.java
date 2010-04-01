@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.loader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.net.URI;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 
 /**
  * @version $Rev$ $Date$
@@ -34,29 +34,86 @@ public class JarLocation {
         try {
             String classFileName = clazz.getName().replace(".", "/") + ".class";
 
-            URL classURL = clazz.getClassLoader().getResource(classFileName);
-
-            URI uri = null;
-            String url = classURL.toExternalForm();
-            if (url.contains(" ")) {
-                url = url.replaceAll(" ", "%20");
-            }
-            uri = new URI(url);
-
-            if (uri.getPath() == null){
-                uri = new URI(uri.getRawSchemeSpecificPart());
-            }
-
-            String path = uri.getPath();
-            if (path.contains("!")){
-                path = path.substring(0, path.indexOf('!'));
+            ClassLoader loader = clazz.getClassLoader();
+            URL url;
+            if (loader != null) {
+                url = loader.getResource(classFileName);
             } else {
-                path = path.substring(0, path.length() - classFileName.length());
+                url = clazz.getResource(classFileName);
             }
 
-            return new File(URLDecoder.decode(path));
+            if (url == null) {
+                throw new IllegalStateException("classloader.getResource(classFileName) returned a null URL");
+            }
+
+            if ("jar".equals(url.getProtocol())) {
+                String spec = url.getFile();
+
+                int separator = spec.indexOf('!');
+                /*
+                 * REMIND: we don't handle nested JAR URLs
+                 */
+                if (separator == -1) throw new MalformedURLException("no ! found in jar url spec:" + spec);
+
+                url = new URL(spec.substring(0, separator++));
+
+                return new File(decode(url.getFile()));
+
+            } else if ("file".equals(url.getProtocol())) {
+                String path = url.getFile();
+                path = path.substring(0, path.length() - classFileName.length());
+                return new File(decode(path));
+            } else {
+                throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
+            }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
+
+
+    public static String decode(String fileName) {
+        if (fileName.indexOf('%') == -1) return fileName;
+
+        StringBuilder result = new StringBuilder(fileName.length());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        for (int i = 0; i < fileName.length();) {
+            char c = fileName.charAt(i);
+
+            if (c == '%') {
+                out.reset();
+                do {
+                    if (i + 2 >= fileName.length()) {
+                        throw new IllegalArgumentException("Incomplete % sequence at: " + i);
+                    }
+
+                    int d1 = Character.digit(fileName.charAt(i + 1), 16);
+                    int d2 = Character.digit(fileName.charAt(i + 2), 16);
+
+                    if (d1 == -1 || d2 == -1) {
+                        throw new IllegalArgumentException("Invalid % sequence (" + fileName.substring(i, i + 3) + ") at: " + String.valueOf(i));
+                    }
+
+                    out.write((byte) ((d1 << 4) + d2));
+
+                    i += 3;
+
+                } while (i < fileName.length() && fileName.charAt(i) == '%');
+
+
+                result.append(out.toString());
+
+                continue;
+            } else {
+                result.append(c);
+            }
+
+            i++;
+        }
+        return result.toString();
+    }
+
 }
