@@ -97,14 +97,6 @@
 
     AccessTimeout = 0 milliseconds
 
-    # Specifies the minimum number of bean instances that should be
-    # in the pool for each bean.  Pools are prefilled to the minimum
-    # on startup.  Pool "shrinking" is achived through SoftReferences
-    # and natural vm garbage collection. All but the minimum are allowed
-    # to be garbage collected by the VM when memory is needed.
-
-    PoolMin 0
-
     # Specifies the size of the bean pools for this stateless
     # SessionBean container.  If StrictPooling is not used, instances
     # will still be created beyond this number if there is demand, but
@@ -112,6 +104,23 @@
     # immediately destroyed.
 
     PoolSize 10
+
+    # Specifies the minimum number of bean instances that should be
+    # in the pool for each bean.  Pools are prefilled to the minimum
+    # on startup.  Pool "shrinking" is achived through SoftReferences
+    # and natural vm garbage collection. All but the minimum are allowed
+    # to be garbage collected by the VM when memory is needed.
+    #
+    # The minimum pool size is rigidly maintained.  The minimum side
+    # of the pool is not eligible for IdleTimeout, but is subject to
+    # MaxAge and flushing.  When the pool is flushed, the pool is
+    # immediately refilled to the minimum size with MaxAgeOffset
+    # applied.  When an instance from the minimum side of the pool
+    # reaches it's MaxAge, it is also immediately replaced.
+    # Replacement is done in a background queue using the number of
+    # threads specified by CallbackThreads.
+    
+    PoolMin 0
 
     # StrictPooling tells the container what to do when the pool
     # reaches it's maximum size and there are incoming requests that
@@ -143,6 +152,18 @@
     # "1 hour and 27 minutes and 10 seconds"
 
     MaxAge = 0 hours
+
+    # Instances from the minimum side of the pool are always replaced
+    # when they reach their MaxAge.  When this option is enabled, any
+    # instances in the pool that expire due to reaching their MaxAge
+    # will be replaced immediately so that the pool will remain at
+    # it's current size.  Replacement is done in a background queue so
+    # that incoming threads will not have to wait for instance
+    # creation.  The aim of his option is to prevent user requests
+    # from paying the instance creation cost as MaxAge is enforced,
+    # potentially while under heavy load.
+
+    ReplaceAged = true
 
     # Applies to MaxAge usage and would rarely be changed, but is a
     # nice feature to understand.

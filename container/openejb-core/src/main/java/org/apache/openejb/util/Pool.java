@@ -59,9 +59,11 @@ public class Pool<T> {
     private final AtomicInteger poolVersion = new AtomicInteger();
     private final Supplier<T> supplier;
     private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
-    private Pool<T>.Eviction evictor;
-    private long interval;
-    
+    private final Sweeper sweeper;
+    private final long interval;
+    private final boolean replaceAged;
+    private double maxAgeOffset;
+
     public static class Builder<T> {
 
         private int max = 10;
@@ -73,6 +75,7 @@ public class Pool<T> {
         private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
+        private boolean replaceAged;
 
         public Builder(Builder<T> that) {
             this.max = that.max;
@@ -84,6 +87,7 @@ public class Pool<T> {
             this.executor = that.executor;
             this.supplier = that.supplier;
             this.maxAgeOffset = that.maxAgeOffset;
+            this.replaceAged = that.replaceAged;
         }
 
         public Builder() {
@@ -91,6 +95,10 @@ public class Pool<T> {
 
         public int getMin() {
             return min;
+        }
+
+        public void setReplaceAged(boolean replaceAged) {
+            this.replaceAged = replaceAged;
         }
 
         public void setPoolMax(int max) {
@@ -147,15 +155,15 @@ public class Pool<T> {
         }
 
         public Pool<T> build() {
-            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier);
+            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, false);
         }
     }
 
     public Pool(int max, int min, boolean strict) {
-        this(max, min, strict, 0, 0, 0, null, null);
+        this(max, min, strict, 0, 0, 0, null, null, false);
     }
     
-    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor, Supplier<T> supplier) {
+    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor, Supplier<T> supplier, boolean replaceAged) {
         if (min > max) greater("max", max, "min", min);
         if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
         this.executor = executor != null ? executor : createExecutor();
@@ -164,16 +172,16 @@ public class Pool<T> {
         this.minimum = new Semaphore(min);
         this.instances = new Semaphore(max);
         this.maxAge = maxAge;
-
+        this.replaceAged = replaceAged;
         if (interval == 0) interval = 5 * 60 * 1000; // five minutes
         this.interval = interval;
         
-        evictor = new Eviction(idleTimeout, max);
+        sweeper = new Sweeper(idleTimeout, max);
     }
 
     public Pool start() {
         if (timer.compareAndSet(null, new Timer("PoolEviction@" + hashCode(), true))) {
-            timer.get().scheduleAtFixedRate(evictor, 0, this.interval);
+            timer.get().scheduleAtFixedRate(sweeper, 0, this.interval);
         }
         return this;
     }
@@ -309,7 +317,7 @@ public class Pool<T> {
             return push(new Entry<T>(obj, offset, poolVersion.get()));
         }
 
-        if (obj != null) supplier.discard(obj);
+        if (obj != null) supplier.discard(obj, Event.FULL);
         return false;
     }
 
@@ -320,6 +328,7 @@ public class Pool<T> {
     private boolean push(Entry<T> entry, boolean sweeper) {
         boolean added = false;
         boolean release = true;
+        Event event = Event.FULL;
 
         final T obj = (entry == null) ? null : entry.active.getAndSet(null);
 
@@ -334,7 +343,9 @@ public class Pool<T> {
             final boolean flushed = entry.version != this.poolVersion.get();
 
             if (aged || flushed) {
-                if (entry.hasHardReference()) {
+                if (aged) event = Event.AGED;
+                if (flushed) event = Event.FLUSHED;
+                if (entry.hasHardReference() || aged && replaceAged) {
                     // Don't release the lock, this
                     // entry will be directly replaced
                     release = false;
@@ -364,9 +375,9 @@ public class Pool<T> {
                 // if the caller is the PoolEviction thread, we do not
                 // want to be calling discard() directly and should just
                 // queue it up instead.
-                executor.execute(new Discard(obj));
+                executor.execute(new Discard(obj, event));
             } else {
-                supplier.discard(obj);
+                supplier.discard(obj, event);
             }
         }
         
@@ -495,14 +506,14 @@ public class Pool<T> {
         }
     }
 
-    private final class Eviction extends TimerTask {
+    private final class Sweeper extends TimerTask {
 
         private final AtomicInteger previousVersion = new AtomicInteger(poolVersion.get());
         private final long idleTimeout;
         private final boolean timeouts;
         private final int max;
 
-        private Eviction(long idleTimeout, int max) {
+        private Sweeper(long idleTimeout, int max) {
             this.idleTimeout = idleTimeout;
             timeouts = maxAge > 0 || idleTimeout > 0;
             this.max = max;
@@ -558,10 +569,10 @@ public class Pool<T> {
                         // Entry is too old, expire it
 
                         iter.remove();
-                        final Expired expired = new Expired(entry);
+                        final Expired expired = new Expired(entry, aged ? Event.AGED : Event.FLUSHED);
                         expiredList.add(expired);
 
-                        if (!expired.entry.hasHardReference()) {
+                        if (!expired.entry.hasHardReference() && !(aged && replaceAged)) {
                             expired.tryDiscard();
                         }
 
@@ -612,7 +623,7 @@ public class Pool<T> {
 
                 if (idleTimeout > 0 && idle > idleTimeout) {
                     // too lazy -- timed out 
-                    final Expired expired = new Expired(entry);
+                    final Expired expired = new Expired(entry, Event.AGED);
 
                     expiredList.add(expired);
 
@@ -629,24 +640,40 @@ public class Pool<T> {
             // If there are any "min" pool instances left over
             // we need to queue up creation of a replacement
 
-            for (Expired expired : expiredList) {
-                executor.execute(new Discard(expired.entry.get()));
+            List<Expired> replace = new ArrayList<Expired>();
 
-                if (expired.entry.hasHardReference()) {
-                    executor.execute(new Replace(expired.entry));
+            for (Expired expired : expiredList) {
+                executor.execute(new Discard(expired.entry.get(), expired.event));
+
+                if (expired.entry.hasHardReference() || expired.aged() && replaceAged) {
+                    replace.add(expired);
                 }
             }
 
+            for (int i = 0; i < replace.size(); i++) {
+                long offset = maxAge > 0 ? ((long) (maxAge / replace.size() * i * maxAgeOffset)) % maxAge : 0l;
+                executor.execute(new Replace(replace.get(i).entry, offset));
+            }
         }
 
+    }
+
+    public static enum Event {
+        FULL, IDLE, AGED, FLUSHED
     }
 
     private class Expired {
         private final Entry<T> entry;
         private final AtomicBoolean discarded = new AtomicBoolean();
+        private final Event event;
 
-        private Expired(Entry<T> entry) {
+        private Expired(Entry<T> entry, Event event) {
             this.entry = entry;
+            this.event = event;
+        }
+
+        public boolean aged() {
+            return event == Event.AGED;
         }
 
         public boolean tryDiscard() {
@@ -670,9 +697,15 @@ public class Pool<T> {
 
     private class Replace implements Runnable {
         private final Entry<T> expired;
+        private final long offset;
 
         private Replace(Entry<T> expired) {
+            this(expired, 0);
+        }
+
+        private Replace(Entry<T> expired, long offset) {
             this.expired = expired;
+            this.offset = offset;
         }
 
         public void run() {
@@ -682,8 +715,8 @@ public class Pool<T> {
                 if (t == null) {
                     discard(expired);
                 } else {
-                    final Entry entry = new Entry(t, 0 , poolVersion.get());
-                    entry.hard.set(t);
+                    final Entry entry = new Entry(t, offset, poolVersion.get());
+                    if (expired.hasHardReference()) entry.hard.set(t);
                     push(entry);
                 }
             } catch (Throwable e) {
@@ -696,27 +729,29 @@ public class Pool<T> {
 
     private class Discard implements Runnable {
         private final T expired;
+        private final Event event;
 
-        private Discard(T expired) {
+        private Discard(T expired, Event event) {
             if (expired == null) throw new NullPointerException("expired object cannot be null");
             this.expired = expired;
+            this.event = event;
         }
 
         public void run() {
-            supplier.discard(expired);
+            supplier.discard(expired, event);
         }
     }
 
     public static interface Supplier<T> {
 
-        void discard(T t);
+        void discard(T t, Event reason);
 
         T create();
 
     }
 
     private static class NoSupplier implements Supplier {
-        public void discard(Object o) {
+        public void discard(Object o, Event reason) {
         }
 
         public Object create() {
