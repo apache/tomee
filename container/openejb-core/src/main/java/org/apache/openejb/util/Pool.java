@@ -61,8 +61,7 @@ public class Pool<T> {
     private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
     private Pool<T>.Eviction evictor;
     private long interval;
-    private final boolean debug = false;
-
+    
     public static class Builder<T> {
 
         private int max = 10;
@@ -339,6 +338,7 @@ public class Pool<T> {
                     // Don't release the lock, this
                     // entry will be directly replaced
                     release = false;
+                    entry.active.set(obj);
                     executor.execute(new Replace(entry));
                 }
             } else {
@@ -364,7 +364,7 @@ public class Pool<T> {
                 // if the caller is the PoolEviction thread, we do not
                 // want to be calling discard() directly and should just
                 // queue it up instead.
-                executor.execute(new Discard(entry));
+                executor.execute(new Discard(obj));
             } else {
                 supplier.discard(obj);
             }
@@ -630,7 +630,7 @@ public class Pool<T> {
             // we need to queue up creation of a replacement
 
             for (Expired expired : expiredList) {
-                executor.execute(new Discard(expired.entry));
+                executor.execute(new Discard(expired.entry.get()));
 
                 if (expired.entry.hasHardReference()) {
                     executor.execute(new Replace(expired.entry));
@@ -697,10 +697,9 @@ public class Pool<T> {
     private class Discard implements Runnable {
         private final T expired;
 
-        private Discard(Entry<T> expired) {
-            this.expired = expired.get();
-
-            if (expired == null) throw new NullPointerException("entry.get() cannot be null");
+        private Discard(T expired) {
+            if (expired == null) throw new NullPointerException("expired object cannot be null");
+            this.expired = expired;
         }
 
         public void run() {

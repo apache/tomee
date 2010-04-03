@@ -1233,14 +1233,14 @@ public class PoolTest extends TestCase {
 
     private void await(CountDownLatch latch, int timeout, TimeUnit seconds) throws InterruptedException {
         if (!latch.await(timeout, seconds)) {
-            String path = "<dump-failed>";
-            try {
-                File tmp = File.createTempFile(PoolTest.class.getSimpleName(), "-dump.txt");
-                path = HeapDump.to(tmp.getAbsolutePath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            fail("latch.await timed out: heap dumped here: "+ path);
+//            String path = "<dump-failed>";
+//            try {
+//                File tmp = File.createTempFile(PoolTest.class.getSimpleName(), "-dump.txt");
+//                path = HeapDump.to(tmp.getAbsolutePath());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            fail("latch.await timed out: "+ latch);
         }
     }
 
