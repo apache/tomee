@@ -27,8 +27,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -109,7 +107,7 @@ public class PoolTest extends TestCase {
         builder.setPoolMax(0);
         builder.setStrictPooling(false);
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
             }
 
@@ -285,7 +283,7 @@ public class PoolTest extends TestCase {
         builder.setIdleTimeout(new Duration(idleTimeout, TimeUnit.MILLISECONDS));
         builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 discard.countDown();
@@ -371,7 +369,7 @@ public class PoolTest extends TestCase {
         builder.setPoolMax(max);
         builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 discard.countDown();
@@ -507,7 +505,7 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
                 discarded.add(bean);
                 countDown(discard, bean, "discarded");
@@ -659,7 +657,7 @@ public class PoolTest extends TestCase {
         builder.setPoolMax(max);
         builder.setPollInterval(new Duration(poll, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier() {
-            public void discard(Object o) {
+            public void discard(Object o, Pool.Event reason) {
                 discarded.countDown();
             }
 
@@ -816,7 +814,7 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setPollInterval(new Duration(poll, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean o) {
+            public void discard(Bean o, Pool.Event reason) {
                 countDown(discarded, o, "discarded");
             }
 
@@ -976,7 +974,7 @@ public class PoolTest extends TestCase {
         builder.setPoolMax(max);
         builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
             }
 
@@ -1115,7 +1113,7 @@ public class PoolTest extends TestCase {
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
         builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
-            public void discard(Bean bean) {
+            public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
             }
 

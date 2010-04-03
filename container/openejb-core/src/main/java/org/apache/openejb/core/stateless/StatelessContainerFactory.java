@@ -97,6 +97,14 @@ public class StatelessContainerFactory {
         pool.setPollInterval(interval);
     }
 
+    public void setReplaceAged(boolean replaceAged) {
+        pool.setReplaceAged(replaceAged);
+    }
+
+    public void setMaxAgeOffset(double maxAgeOffset) {
+        pool.setMaxAgeOffset(maxAgeOffset);
+    }
+
     public StatelessContainer create() {
         return new StatelessContainer(id, securityService, accessTimeout, pool, callbackThreads);
     }

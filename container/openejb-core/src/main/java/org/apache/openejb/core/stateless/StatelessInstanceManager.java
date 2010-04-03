@@ -88,7 +88,7 @@ public class StatelessInstanceManager {
             this.deploymentInfo = deploymentInfo;
         }
 
-        public void discard(Instance instance) {
+        public void discard(Instance instance, Pool.Event reason) {
             ThreadContext ctx = new ThreadContext(deploymentInfo, null);
             ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
@@ -398,9 +398,7 @@ public class StatelessInstanceManager {
 
             if (obj == null) continue;
 
-            long offset = 0;
-
-            if (maxAge > 0) offset = ((long) (maxAge / min * i * maxAgeOffset)) % maxAge;
+            long offset = maxAge > 0 ? ((long) (maxAge / min * i * maxAgeOffset)) % maxAge : 0l;
 
             data.getPool().add(obj, offset);
         }
