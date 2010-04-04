@@ -184,7 +184,7 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
 
     /**
      * Message listener method, business method interceptor method
-     * and imeout callback method
+     * and timeout callback method
      */
     protected static class BusinessTimeoutMdbState extends State {
         @Override
@@ -194,11 +194,6 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
 
         @Override
         public EJBLocalHome getEJBLocalHome() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
             throw new IllegalStateException();
         }
 

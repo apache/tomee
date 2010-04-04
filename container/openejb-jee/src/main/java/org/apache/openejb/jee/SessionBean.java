@@ -135,7 +135,7 @@ import java.util.Arrays;
         "securityIdentity",
         "dependsOn"
         })
-public class SessionBean implements EnterpriseBean, RemoteBean, Session, TimerConsumer {
+public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
