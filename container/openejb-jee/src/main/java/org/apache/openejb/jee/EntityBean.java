@@ -160,7 +160,7 @@ import java.util.Map;
         "securityIdentity",
         "query"
         })
-public class EntityBean implements EnterpriseBean, RemoteBean {
+public class EntityBean implements RemoteBean {
 
     @XmlTransient
     protected TextMap description = new TextMap();
