@@ -211,6 +211,17 @@ public class Duration {
         throw new IllegalArgumentException("Illegal duration format: '" + text + "'.  Valid examples are '10s' or '10 seconds'.");
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(time);
+        if (unit != null) {
+            sb.append(" ");
+            sb.append(unit);
+        }
+        return sb.toString();
+    }
+
     private static Unit parseUnit(String u) {
         if (u.length() == 0) return null;
 
