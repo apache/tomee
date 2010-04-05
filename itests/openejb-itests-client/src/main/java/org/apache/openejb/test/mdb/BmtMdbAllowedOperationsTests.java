@@ -197,6 +197,7 @@ public class BmtMdbAllowedOperationsTests extends MdbTestClient {
             OperationsPolicy policy = new OperationsPolicy();
             policy.allow( OperationsPolicy.Context_getUserTransaction );
             policy.allow( OperationsPolicy.Context_getCallerPrincipal );
+            policy.allow( OperationsPolicy.Context_isCallerInRole );
             policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
