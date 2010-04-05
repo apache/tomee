@@ -65,4 +65,14 @@ public class DurationTest extends TestCase {
         assertEquals(2, new Duration(2 * 1000 * 1000, MICROSECONDS).getTime(SECONDS));
         assertEquals(2, new Duration(2 * 1000, MILLISECONDS).getTime(SECONDS));
     }
+
+    public void testMultiple() throws Exception {
+
+        assertEquals(new Duration(2300, MILLISECONDS), Duration.parse("2 seconds and 300 milliseconds"));
+        assertEquals(new Duration(2300, MILLISECONDS), Duration.parse("2 seconds, 300 milliseconds"));
+        assertEquals(new Duration(2300, MILLISECONDS), Duration.parse("2 seconds,300 milliseconds"));
+
+        assertEquals(new Duration(125, SECONDS), Duration.parse("2 minutes and 5 seconds"));
+
+    }
 }

@@ -33,7 +33,101 @@ public class Duration {
     }
 
     public Duration(String string) {
-        parse(string, this);
+        String[] strings = string.split(",| and ");
+
+        Duration total = new Duration();
+
+        for (String s : strings) {
+            Duration part = new Duration();
+            s = s.trim();
+
+            StringBuilder t = new StringBuilder();
+            StringBuilder u = new StringBuilder();
+
+            int i = 0;
+
+            // get the number
+            for (; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (Character.isDigit(c) || i == 0 && c == '-') {
+                    t.append(c);
+                } else {
+                    break;
+                }
+            }
+
+            if (t.length() == 0) {
+                invalidFormat(s);
+            }
+
+            // skip whitespace
+            for (; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (Character.isWhitespace(c)) {
+                } else {
+                    break;
+                }
+            }
+
+            // get time unit text part
+            for (; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (Character.isLetter(c)) {
+                    u.append(c);
+                } else {
+                    invalidFormat(s);
+                }
+            }
+
+            part.time = Integer.parseInt(t.toString());
+
+            Unit unit1 = parseUnit(u.toString());
+
+            if (unit1 != null) switch (unit1) {
+                case days: {
+                    part.time *= 60 * 60 * 24;
+                    part.unit = TimeUnit.SECONDS;
+                }
+                ;
+                break;
+                case hours: {
+                    part.time *= 60 * 60;
+                    part.unit = TimeUnit.SECONDS;
+                }
+                ;
+                break;
+                case minutes: {
+                    part.time *= 60;
+                    part.unit = TimeUnit.SECONDS;
+                }
+                ;
+                break;
+                case seconds: {
+                    part.unit = TimeUnit.SECONDS;
+                }
+                ;
+                break;
+                case milliseconds: {
+                    part.unit = TimeUnit.MILLISECONDS;
+                }
+                ;
+                break;
+                case microseconds: {
+                    part.unit = TimeUnit.MICROSECONDS;
+                }
+                ;
+                break;
+                case nanoseconds: {
+                    part.unit = TimeUnit.NANOSECONDS;
+                }
+                ;
+                break;
+            }
+            total = total.add(part);
+        }
+
+        this.time = total.time;
+        this.unit = total.unit;
     }
 
     public long getTime() {
@@ -43,7 +137,7 @@ public class Duration {
     public long getTime(TimeUnit unit) {
         return unit.convert(this.time, this.unit);
     }
-    
+
     public void setTime(long time) {
         this.time = time;
     }
@@ -56,128 +150,65 @@ public class Duration {
         this.unit = unit;
     }
 
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        final Duration duration = (Duration) o;
+//
+//        if (time != duration.time) return false;
+//        if (unit != duration.unit) return false;
+//
+//        return true;
+//    }
+
+    //
+    private static class Normalize {
+        private long a;
+        private long b;
+        private TimeUnit base;
+
+        private Normalize(Duration a, Duration b) {
+            this.base = lowest(a, b);
+            this.a = a.unit == null ? a.time : base.convert(a.time, a.unit);
+            this.b = b.unit == null ? b.time : base.convert(b.time, b.unit);
+        }
+
+        private static TimeUnit lowest(Duration a, Duration b) {
+            if (a.unit == null) return b.unit;
+            if (b.unit == null) return a.unit;
+            if (a.time == 0) return b.unit;
+            if (b.time == 0) return a.unit;
+            return TimeUnit.values()[Math.min(a.unit.ordinal(), b.unit.ordinal())];
+        }
+    }
+
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final Duration duration = (Duration) o;
+        final Duration that = (Duration) o;
 
-        if (time != duration.time) return false;
-        if (unit != duration.unit) return false;
-
-        return true;
+        Normalize n = new Normalize(this, that);
+        return n.a == n.b;
     }
 
-    public int hashCode() {
-        int result;
-        result = (int) (time ^ (time >>> 32));
-        result = 29 * result + (unit != null ? unit.hashCode() : 0);
-        return result;
+    public Duration add(Duration that) {
+        Normalize n = new Normalize(this, that);
+        return new Duration(n.a + n.b, n.base);
     }
 
-    public String toString() {
-        if (unit == null){
-            return time + "";
-        } else {
-            return time + " " + unit;
-        }
+    public Duration subtract(Duration that) {
+        Normalize n = new Normalize(this, that);
+        return new Duration(n.a - n.b, n.base);
     }
 
     public static Duration parse(String text) {
-        Duration d = new Duration();
-        parse(text, d);
-        return d;
-    }
-
-    private static void parse(String text, Duration d) {
-        text = text.trim();
-
-        StringBuilder t = new StringBuilder();
-        StringBuilder u = new StringBuilder();
-
-        int i = 0;
-
-        // get the number
-        for (; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (Character.isDigit(c) || i == 0 && c == '-') {
-                t.append(c);
-            } else {
-                break;
-            }
-        }
-
-        if (t.length() == 0){
-            invalidFormat(text);
-        }
-
-        // skip whitespace
-        for (; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (Character.isWhitespace(c)) {
-            } else {
-                break;
-            }
-        }
-
-        // get time unit text part
-        for (; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (Character.isLetter(c)) {
-                u.append(c);
-            } else {
-                invalidFormat(text);
-            }
-        }
-
-        d.time = Integer.parseInt(t.toString());
-
-        Unit unit = parseUnit(u.toString());
-
-        if (unit != null) switch (unit) {
-            case days: {
-                d.time *= 60 * 60 * 24;
-                d.unit = TimeUnit.SECONDS;
-            }
-            ;
-            break;
-            case hours: {
-                d.time *= 60 * 60;
-                d.unit = TimeUnit.SECONDS;
-            }
-            ;
-            break;
-            case minutes: {
-                d.time *= 60;
-                d.unit = TimeUnit.SECONDS;
-            }
-            ;
-            break;
-            case seconds: {
-                d.unit = TimeUnit.SECONDS;
-            }
-            ;
-            break;
-            case milliseconds: {
-                d.unit = TimeUnit.MILLISECONDS;
-            }
-            ;
-            break;
-            case microseconds: {
-                d.unit = TimeUnit.MICROSECONDS;
-            }
-            ;
-            break;
-            case nanoseconds: {
-                d.unit = TimeUnit.NANOSECONDS;
-            }
-            ;
-            break;
-        }
+        return new Duration(text);
     }
 
     private static void invalidFormat(String text) {
-        throw new IllegalArgumentException("Illegal duration format: '"+text+"'.  Valid examples are '10s' or '10 seconds'.");
+        throw new IllegalArgumentException("Illegal duration format: '" + text + "'.  Valid examples are '10s' or '10 seconds'.");
     }
 
     private static Unit parseUnit(String u) {
