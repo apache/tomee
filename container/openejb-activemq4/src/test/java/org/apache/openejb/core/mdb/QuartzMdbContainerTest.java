@@ -109,7 +109,8 @@ public class QuartzMdbContainerTest extends TestCase {
 
         List expected = Arrays.asList(Lifecycle.values());
 
-        Assert.assertEquals(Join.join("\n", expected), Join.join("\n", lifecycle));
+        Assert.assertEquals(expected.get(0), lifecycle.get(0));
+        Assert.assertEquals(expected.get(1), lifecycle.get(1));
 
     }
 
