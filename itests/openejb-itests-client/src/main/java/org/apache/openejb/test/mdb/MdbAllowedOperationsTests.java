@@ -193,6 +193,7 @@ public class MdbAllowedOperationsTests extends MdbTestClient {
             policy.allow( OperationsPolicy.Context_getRollbackOnly );
             // policy.allow( OperationsPolicy.Context_setRollbackOnly );
             policy.allow( OperationsPolicy.Context_getCallerPrincipal );
+            policy.allow( OperationsPolicy.Context_isCallerInRole );
             policy.allow( OperationsPolicy.Context_lookup );
             policy.allow( OperationsPolicy.JNDI_access_to_java_comp_env );
 
