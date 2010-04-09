@@ -46,13 +46,27 @@ import java.util.concurrent.CountDownLatch;
 public class EchoNet {
 
     public static void main(String[] args) throws Exception {
-        Server a = new Server(4444).start();
-        Server b = new Server(5555).start();
-        Server c = new Server(6666).start();
-        a.connect(b);
-        c.connect(b);
 
-        // A and C should hookup through B
+        final int INITIAL_PORT = 3000;
+        int maxServers = 3;
+
+        if (args.length > 0)
+            maxServers = Integer.parseInt(args[0]);
+
+        if (maxServers < 1) {
+            System.out.println("number of servers must be greater than zero");
+            return;
+        }
+
+        Server lastServer = new Server(INITIAL_PORT).start();
+        for (int i=1; i<maxServers; i++) {
+            Server newServer = new Server(INITIAL_PORT+i).start();
+            
+            if (lastServer != null) 
+                newServer.connect(lastServer);
+
+            lastServer = newServer;
+        }
 
         new CountDownLatch(1).await();
     }
@@ -226,7 +240,8 @@ public class EchoNet {
                 String text = new String(buf, 0, end, "UTF-8");
 
                 int newPos = read.position() - end;
-                System.arraycopy(buf, end + 1, buf, 0, newPos);
+                System.arraycopy(buf, end + 1, buf, 0, newPos-1);
+                
                 read.position(newPos - 1);
 
                 return text;
