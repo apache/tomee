@@ -185,7 +185,7 @@ public class MultipointServer {
             String text = new String(buf, 0, end, "UTF-8");
 
             int newPos = read.position() - end;
-            System.arraycopy(buf, end + 1, buf, 0, newPos);
+            System.arraycopy(buf, end + 1, buf, 0, newPos - 1);
             read.position(newPos - 1);
 
             return text;
