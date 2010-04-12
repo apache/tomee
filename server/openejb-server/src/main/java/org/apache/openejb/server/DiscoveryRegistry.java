@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.io.IOException;
 
 /**
@@ -38,8 +39,8 @@ import java.io.IOException;
  */
 public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
-    private final List<DiscoveryAgent> agents = new ArrayList<DiscoveryAgent>();
-    private final List<DiscoveryListener> listeners = new ArrayList<DiscoveryListener>();
+    private final List<DiscoveryAgent> agents = new CopyOnWriteArrayList<DiscoveryAgent>();
+    private final List<DiscoveryListener> listeners = new CopyOnWriteArrayList<DiscoveryListener>();
     private final Map<String, URI> services = new ConcurrentHashMap<String, URI>();
     private final Map<String, URI> registered = new ConcurrentHashMap<String, URI>();
 
