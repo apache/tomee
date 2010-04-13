@@ -49,7 +49,6 @@ public class Tracker {
     private final long exponentialBackoff;
     private final boolean useExponentialBackOff;
 
-
     public Tracker(String group, long heartRate, int maxMissedHeartbeats, long reconnectDelay, long maxReconnectDelay, int maxReconnectAttempts, long exponentialBackoff) {
         this.group = group;
         this.groupPrefix = group + ":";

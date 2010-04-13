@@ -16,44 +16,50 @@
  */
 package org.apache.openejb.server.discovery;
 
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.ClosedChannelException;
-import java.nio.ByteBuffer;
-import java.net.URI;
-import java.net.ServerSocket;
-import java.net.InetSocketAddress;
-import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
-import java.util.List;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @version $Rev$ $Date$
-*/
+ */
 public class MultipointServer {
+    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
+
     private final int port;
     private final Selector selector;
     private final URI me;
 
     private final Tracker tracker;
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
+    private final LinkedList<URI> connect = new LinkedList<URI>();
+    private final LinkedList<URI> connections = new LinkedList<URI>();
+
 
     public MultipointServer(int port, Tracker tracker) throws IOException {
+        if (tracker == null) throw new NullPointerException("tracker cannot be null");
         this.port = port;
-
         this.tracker = tracker;
         me = URI.create("conn://localhost:" + port);
 
@@ -72,7 +78,7 @@ public class MultipointServer {
     }
 
     public MultipointServer start() {
-        if (running.compareAndSet(false, true)){
+        if (running.compareAndSet(false, true)) {
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     _run();
@@ -122,12 +128,14 @@ public class MultipointServer {
         }
 
         public void setURI(URI uri) {
-            seen(uri);
+            connected(uri);
             this.uri = uri;
         }
 
         private void trace(String str) {
-            System.out.println(message(str));
+//            System.out.println();
+            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), message(str));
+
             if (log.isDebugEnabled()) {
                 log.debug(message(str));
             }
@@ -233,9 +241,8 @@ public class MultipointServer {
         GREETING, LISTING, HEARTBEAT
     }
 
-    List<URI> seen = new ArrayList<URI>();
-
     private final AtomicBoolean running = new AtomicBoolean();
+
     private void _run() {
         while (running.get()) {
             try {
@@ -284,6 +291,8 @@ public class MultipointServer {
                         Session session = (Session) key.attachment();
                         session.channel.finishConnect();
 
+                        connected(session.uri);
+
                         // when you are a client, first say high to everyone
                         // before accepting data
 
@@ -317,7 +326,7 @@ public class MultipointServer {
 
                                 session.println("welcome");
 
-                                ArrayList<URI> list = new ArrayList<URI>(seen);
+                                ArrayList<URI> list = connections();
 
                                 // When they read themselves on the list
                                 // they'll know it's time to list their URIs
@@ -348,7 +357,7 @@ public class MultipointServer {
 
                                     // they listed me, means they want my list
                                     if (uri.equals(me)) {
-                                        ArrayList<URI> list = new ArrayList<URI>(seen);
+                                        ArrayList<URI> list = connections();
 
                                         for (URI reported : session.listed) {
                                             list.remove(reported);
@@ -369,7 +378,7 @@ public class MultipointServer {
 
                                         session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
 
-                                    } else if (!seen.contains(uri)) {
+                                    } else {
                                         try {
                                             connect(uri);
                                         } catch (Exception e) {
@@ -459,18 +468,54 @@ public class MultipointServer {
                 }
             }
 
+            URI uri = null;
+            while ((uri = pending()) != null) {
+
+                int port = uri.getPort();
+                String host = uri.getHost();
+
+                try {
+                    println("open " + uri);
+
+                    SocketChannel socketChannel = SocketChannel.open();
+                    socketChannel.configureBlocking(false);
+
+                    InetSocketAddress address = new InetSocketAddress(host, port);
+
+                    socketChannel.connect(address);
+
+                    Session session = new Session(socketChannel, address, uri);
+                    session.ops(java.nio.channels.SelectionKey.OP_CONNECT);
+
+                    // seen - needs to get maintained as "connected"
+                    // TODO remove from seen
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private ArrayList<URI> connections() {
+        synchronized (connect) {
+            return new ArrayList<URI>(connections);
         }
     }
 
     private void close(SelectionKey key) {
         Session session = (Session) key.attachment();
-        seen.remove(session.uri);
+
+        synchronized (connect) {
+            connections.remove(session.uri);
+        }
+        
         key.cancel();
         try {
             key.channel().close();
         } catch (IOException cex) {
         }
     }
+
 
     public void connect(MultipointServer s) throws Exception {
         connect(s.port);
@@ -483,32 +528,25 @@ public class MultipointServer {
     public void connect(URI uri) throws Exception {
         if (me.equals(uri)) return;
 
-        int port = uri.getPort();
-        String host = uri.getHost();
-
-        try {
-            println("open " + uri);
-
-            SocketChannel socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
-
-            InetSocketAddress address = new InetSocketAddress(host, port);
-
-            socketChannel.connect(address);
-
-            Session session = new Session(socketChannel, address, uri);
-            session.ops(java.nio.channels.SelectionKey.OP_CONNECT);
-
-            // seen - needs to get maintained as "connected"
-            // TODO remove from seen
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        synchronized (connect) {
+            if (!connections.contains(uri)) {
+                connect.addLast(uri);
+            }
         }
     }
 
-    private void seen(URI uri) {
+    private URI pending() {
+        synchronized (connect) {
+            if (connect.size() > 0) return connect.removeFirst();
+        }
+        return null;
+    }
+
+    private void connected(URI uri) {
+        synchronized (connect){
+            connections.add(uri);
+        }
         println("seen " + uri);
-        seen.add(uri);
     }
 
     private void println(String s) {
