@@ -16,28 +16,6 @@
  */
 package org.apache.openejb.server.discovery;
 
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URI;
-import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
-import java.nio.channels.SelectionKey;
-import static java.nio.channels.SelectionKey.OP_CONNECT;
-import static java.nio.channels.SelectionKey.OP_READ;
-import static java.nio.channels.SelectionKey.OP_WRITE;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -47,22 +25,27 @@ public class EchoNet {
 
     public static void main(String[] args) throws Exception {
 
-        final int INITIAL_PORT = 3000;
-        int maxServers = 3;
+        final int multiple = 1111;
+        final int base = 3;
+
+        int servers = 3;
 
         if (args.length > 0)
-            maxServers = Integer.parseInt(args[0]);
+            servers = Integer.parseInt(args[0]);
 
-        if (maxServers < 1) {
+        if (servers < 1) {
             System.out.println("number of servers must be greater than zero");
             return;
         }
 
-        MultipointServer lastServer = new MultipointServer(INITIAL_PORT, new Tracker.Builder().build()).start();
-        for (int i=1; i<maxServers; i++) {
-            MultipointServer newServer = new MultipointServer(INITIAL_PORT+i, new Tracker.Builder().build()).start();
-            
-            if (lastServer != null) 
+        // get out of the 1000 port range
+        servers += base;
+        
+        MultipointServer lastServer = null;
+        for (int i = base; i < servers; i++) {
+            MultipointServer newServer = new MultipointServer(multiple * i, new Tracker.Builder().build()).start();
+
+            if (lastServer != null)
                 newServer.connect(lastServer);
 
             lastServer = newServer;
