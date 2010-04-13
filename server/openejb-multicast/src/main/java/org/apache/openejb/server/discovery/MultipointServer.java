@@ -107,7 +107,7 @@ public class MultipointServer {
         private final List<URI> listed = new ArrayList<URI>();
 
         private ByteBuffer write;
-        private State state = State.GREETING;
+        private State state = State.OPEN;
         private URI uri;
         public boolean hangup;
 
@@ -124,7 +124,7 @@ public class MultipointServer {
 
         public void state(int ops, State state) {
             this.state = state;
-            key.interestOps(ops);
+            if (ops > 0) key.interestOps(ops);
         }
 
         public void setURI(URI uri) {
@@ -143,8 +143,13 @@ public class MultipointServer {
             StringBuilder sb = new StringBuilder();
             sb.append(port);
             sb.append(" ");
-            if ((key.interestOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ) sb.append("<");
-            if ((key.interestOps() & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) sb.append(">");
+            if (key.isValid()) {
+                if ((key.interestOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ) sb.append("<");
+                if ((key.interestOps() & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE) sb.append(">");
+                if ((key.interestOps() == 0)) sb.append("-");
+            } else {
+                sb.append(":");
+            }
             sb.append(" ");
             sb.append(uri.getPort());
             sb.append(" ");
@@ -236,7 +241,7 @@ public class MultipointServer {
     }
 
     private static enum State {
-        GREETING, LISTING, HEARTBEAT
+        OPEN, GREETING, LISTING, HEARTBEAT, CLOSED
     }
 
     private final AtomicBoolean running = new AtomicBoolean();
@@ -275,10 +280,10 @@ public class MultipointServer {
                         SocketChannel client = server.accept();
                         InetSocketAddress address = (InetSocketAddress) client.socket().getRemoteSocketAddress();
 
-                        println("accept " + address.getPort());
                         client.configureBlocking(false);
 
                         Session session = new Session(client, address, null);
+                        session.trace("accept");
                         session.state(java.nio.channels.SelectionKey.OP_READ, State.GREETING);
                     }
 
@@ -288,7 +293,7 @@ public class MultipointServer {
 
                         Session session = (Session) key.attachment();
                         session.channel.finishConnect();
-
+                        session.trace("connected");
                         connected(session);
 
                         // when you are a client, first say high to everyone
@@ -377,7 +382,8 @@ public class MultipointServer {
                                     } else if (uri.equals(session.uri)) {
 
                                         if (session.hangup) {
-                                            println("Hanging up duplicate " + session);
+                                            session.state(0, State.CLOSED);
+                                            session.trace("hangup");
                                             hangup(key);
                                         } else {
                                             session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
@@ -457,7 +463,16 @@ public class MultipointServer {
                         }
                     }
 
+                } catch (ClosedChannelException ex) {
+                    synchronized (connect) {
+                        Session session = (Session) key.attachment();
+                        if (session.state != State.CLOSED) {
+                            close(key);        
+                        }
+                    }
                 } catch (IOException ex) {
+                    Session session = (Session) key.attachment();
+                    session.trace(ex.getClass().getSimpleName() + ": " + ex.getMessage());
                     close(key);
                 }
 
@@ -510,6 +525,9 @@ public class MultipointServer {
     private void close(SelectionKey key) {
         Session session = (Session) key.attachment();
 
+        session.state(0, State.CLOSED);
+        session.trace("closed");
+        
         synchronized (connect) {
             connections.remove(session.uri);
         }
@@ -523,6 +541,7 @@ public class MultipointServer {
             key.channel().close();
         } catch (IOException cex) {
         }
+
     }
 
 
@@ -538,7 +557,7 @@ public class MultipointServer {
         if (me.equals(uri)) return;
 
         synchronized (connect) {
-            if (!connections.containsKey(uri)) {
+            if (!connections.containsKey(uri) && !connect.contains(uri)) {
                 connect.addLast(uri);
             }
         }
@@ -552,11 +571,12 @@ public class MultipointServer {
     }
 
     private void connected(Session session) {
+
         synchronized (connect) {
             Session duplicate = connections.get(session.uri);
 
             if (duplicate != null) {
-                println("duplicate " + session);
+                session.trace("duplicate");
 
                 // At this point we know we have two sockets open
                 // to the client, one created by them and one created
