@@ -130,30 +130,31 @@ public class OpenEjb2Conversion implements DynamicDeployer {
             if (enterpriseBean instanceof SessionBeanType) {
                 SessionBeanType sessionBean = (SessionBeanType) enterpriseBean;
                 WebServiceSecurityType webServiceSecurityType = sessionBean.getWebServiceSecurity();
-                
-                if (webServiceSecurityType == null) break;
-                
-                if (webServiceSecurityType.getRealmName() != null) {
-                    deployment.addProperty("webservice.security.realm", webServiceSecurityType.getRealmName());
-                }
 
-                if (webServiceSecurityType.getSecurityRealmName() != null) {
-                    deployment.addProperty("webservice.security.securityRealm", webServiceSecurityType.getSecurityRealmName());
+                if (webServiceSecurityType != null) {
+
+                    if (webServiceSecurityType.getRealmName() != null) {
+                        deployment.addProperty("webservice.security.realm", webServiceSecurityType.getRealmName());
+                    }
+
+                    if (webServiceSecurityType.getSecurityRealmName() != null) {
+                        deployment.addProperty("webservice.security.securityRealm", webServiceSecurityType.getSecurityRealmName());
+                    }
+
+                    if (webServiceSecurityType.getTransportGuarantee() != null) {
+                        deployment.addProperty("webservice.security.transportGarantee", webServiceSecurityType.getTransportGuarantee().value());
+                    } else {
+                        deployment.addProperty("webservice.security.transportGarantee", "NONE");
+                    }
+
+                    if (webServiceSecurityType.getAuthMethod() != null) {
+                        deployment.addProperty("webservice.security.authMethod", webServiceSecurityType.getAuthMethod().value());
+                    } else {
+                        deployment.addProperty("webservice.security.authMethod", "NONE");
+                    }
+
+                    deployment.getProperties().putAll(webServiceSecurityType.getProperties());
                 }
-                
-                if (webServiceSecurityType.getTransportGuarantee() != null) {
-                    deployment.addProperty("webservice.security.transportGarantee", webServiceSecurityType.getTransportGuarantee().value());
-                } else {
-                    deployment.addProperty("webservice.security.transportGarantee", "NONE");
-                }
-                
-                if (webServiceSecurityType.getAuthMethod() != null) {
-                    deployment.addProperty("webservice.security.authMethod", webServiceSecurityType.getAuthMethod().value());
-                } else {
-                    deployment.addProperty("webservice.security.authMethod", "NONE");
-                }
-                
-                deployment.getProperties().putAll(webServiceSecurityType.getProperties());
                 
             }
 
