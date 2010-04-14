@@ -28,9 +28,20 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb2.OpenejbJarType;
+import org.apache.openejb.jee.oejb2.SessionBeanType;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
+import javax.ejb.EJBHome;
+import javax.ejb.RemoteHome;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.LocalHome;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  * @version $Rev$ $Date$
@@ -58,21 +69,90 @@ public class JndiNameTest extends TestCase {
 
         EjbDeployment ejbDeployment = new EjbDeployment(null, "FooBean", "FooBean");
         ejbDeployment.getJndi().add(new Jndi("thename", "Local"));
+        ejbDeployment.getJndi().add(new Jndi("anothername", "Remote"));
+        ejbDeployment.getJndi().add(new Jndi("loldstyle", "LocalHome"));
+        ejbDeployment.getJndi().add(new Jndi("roldstyle", "RemoteHome"));
         ejbModule.getOpenejbJar().addEjbDeployment(ejbDeployment);
 
         assembler.createApplication(config.configureApplication(ejbModule));
 
         InitialContext initialContext = new InitialContext();
-        Object o = initialContext.lookup("thename");
+        assertName(initialContext, Orange.class, "thename");
+        assertName(initialContext, Red.class, "anothername");
+        assertName(initialContext, LHYellow.class, "loldstyle");
+        assertName(initialContext, RHGreen.class, "roldstyle");
+    }
+
+    public void testOpenejbJar2() throws Exception {
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        SystemInstance.get().setProperty("duct tape","true");
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        // containers
+        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        assembler.createContainer(statelessContainerInfo);
+
+        // Setup the descriptor information
+
+        EjbModule ejbModule = new EjbModule(new EjbJar(), null);
+        ejbModule.getEjbJar().addEnterpriseBean(new StatelessBean(FooBean.class));
+
+        OpenejbJarType v2 = new OpenejbJarType();
+        SessionBeanType ejbDeployment = new SessionBeanType();
+        ejbDeployment.setEjbName("FooBean");
+        ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("thename", "Local"));
+        ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("anothername", "Remote"));
+        ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("loldstyle", "LocalHome"));
+        ejbDeployment.getJndi().add(new org.apache.openejb.jee.oejb2.Jndi("roldstyle", "RemoteHome"));
+        v2.getEnterpriseBeans().add(ejbDeployment);
+        ejbModule.getAltDDs().put("openejb-jar.xml", v2);
+
+        assembler.createApplication(config.configureApplication(ejbModule));
+
+        InitialContext initialContext = new InitialContext();
+        assertName(initialContext, Orange.class, "thename");
+        assertName(initialContext, Red.class, "anothername");
+        assertName(initialContext, LHYellow.class, "loldstyle");
+        assertName(initialContext, RHGreen.class, "roldstyle");
+    }
+
+    private void assertName(InitialContext initialContext, Class<?> clazz, String name) throws NamingException {
+        Object o = initialContext.lookup(name);
         assertNotNull(o);
+        assertTrue(clazz.isAssignableFrom(o.getClass()));
     }
 
     @Local
-    public static interface Foo {
-
+    public static interface Orange {
     }
 
-    public static class FooBean implements Foo {
+    @Remote
+    public static interface Red {
+    }
+
+    public static interface RHGreen extends EJBHome {
+        RGreen create();
+    }
+
+    public static interface RGreen extends EJBObject {
+    }
+
+    public static interface LHYellow extends EJBLocalHome {
+        LYellow create();
+    }
+
+    public static interface LYellow extends EJBLocalObject {
+    }
+
+    @RemoteHome(RHGreen.class)
+    @LocalHome(LHYellow.class)
+    public static class FooBean implements Orange, Red {
 
     }
 }
