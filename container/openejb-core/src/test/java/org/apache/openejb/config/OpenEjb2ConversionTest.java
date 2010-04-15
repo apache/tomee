@@ -16,128 +16,102 @@
  */
 package org.apache.openejb.config;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
 import junit.framework.TestCase;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.custommonkey.xmlunit.Diff;
+import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @version $Rev$ $Date$
  */
 public class OpenEjb2ConversionTest extends TestCase {
-    public void testItests22() throws Exception {
-        convert("convert/oej2/cmp/itest-2.2/itest-2.2-");
+
+    public void testSimple() throws Exception {
+        String prefix = "convert/oej2/simple/";
+        
+        AppModule appModule = deploy(prefix);
+
+        // compare the results to the expected results
+        EjbModule ejbModule = appModule.getEjbModules().get(0);
+
+        assertJaxb(prefix + "geronimo-openejb.xml", ejbModule.getAltDDs().get("geronimo-openejb.xml"), GeronimoEjbJarType.class);
+        assertJaxb(prefix + "openejb-jar-expected.xml", ejbModule.getOpenejbJar(), OpenejbJar.class);
     }
-    
+
+    public void testItests22() throws Exception {
+        convertCmp("convert/oej2/cmp/itest-2.2/itest-2.2-");
+    }
+
     public void testItests22Pojo() throws Exception {
-        convert("convert/oej2/cmp/itest-2.2/itest-2.2-pojo-");
+        convertCmp("convert/oej2/cmp/itest-2.2/itest-2.2-pojo-");
     }
 
     public void testDaytrader() throws Exception {
-        convert("convert/oej2/cmp/daytrader/daytrader-");
+        convertCmp("convert/oej2/cmp/daytrader/daytrader-");
     }
 
     public void testOneToOne() throws Exception {
-        convert("convert/oej2/cmp/onetoone/simplepk/");
+        convertCmp("convert/oej2/cmp/onetoone/simplepk/");
     }
 
     public void testOneToOneUni() throws Exception {
-        convert("convert/oej2/cmp/onetoone/simplepk/unidirectional-");
+        convertCmp("convert/oej2/cmp/onetoone/simplepk/unidirectional-");
     }
 
     public void testOneToMany() throws Exception {
-        convert("convert/oej2/cmp/onetomany/simplepk/");
+        convertCmp("convert/oej2/cmp/onetomany/simplepk/");
     }
 
     public void testOneToManyUni() throws Exception {
-        convert("convert/oej2/cmp/onetomany/simplepk/one-unidirectional-");
+        convertCmp("convert/oej2/cmp/onetomany/simplepk/one-unidirectional-");
     }
 
     public void testManyToOneUni() throws Exception {
-        convert("convert/oej2/cmp/onetomany/simplepk/many-unidirectional-");
+        convertCmp("convert/oej2/cmp/onetomany/simplepk/many-unidirectional-");
     }
 
     public void testManyToMany() throws Exception {
-        convert("convert/oej2/cmp/manytomany/simplepk/");
+        convertCmp("convert/oej2/cmp/manytomany/simplepk/");
     }
 
     public void testManyToManyUni() throws Exception {
-        convert("convert/oej2/cmp/manytomany/simplepk/unidirectional-");
+        convertCmp("convert/oej2/cmp/manytomany/simplepk/unidirectional-");
     }
 
-    private EntityMappings convert(String prefix) throws Exception {
-        return convert(prefix + "ejb-jar.xml", prefix + "openejb-jar.xml", prefix + "orm.xml");
-    }
-
-    private EntityMappings convert(String ejbJarFileName, String openejbJarFileName, String expectedFileName) throws Exception {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(ejbJarFileName);
-        EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, new ByteArrayInputStream(readContent(in).getBytes()));
-
-        // create and configure the module
-        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, ejbJar, new OpenejbJar());
-        InitEjbDeployments initEjbDeployments = new InitEjbDeployments();
-        initEjbDeployments.deploy(ejbModule);
-        AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
-        appModule.getEjbModules().add(ejbModule);
-
-        // add the altDD
-        ejbModule.getAltDDs().put("openejb-jar.xml", getClass().getClassLoader().getResource(openejbJarFileName));
-
-        // convert the cmp declarations into jpa entity declarations
-        CmpJpaConversion cmpJpaConversion = new CmpJpaConversion();
-        cmpJpaConversion.deploy(appModule);
-//        EntityMappings entityMappings = cmpJpaConversion.generateEntityMappings(ejbModule);
-
-        // load the openejb-jar.xml file
-//        String openejbJarXml = readContent(getClass().getClassLoader().getResourceAsStream(openejbJarFileName));
-//        JAXBElement element = (JAXBElement) JaxbOpenejbJar2.unmarshal(OpenejbJarType.class, new ByteArrayInputStream(openejbJarXml.getBytes()));
-//        OpenejbJarType openejbJarType = (OpenejbJarType) element.getValue();
-
-        // fill in the jpa entity declarations with database mappings from the openejb-jar.xml file
-        OpenEjb2Conversion openEjb2Conversion = new OpenEjb2Conversion();
-        openEjb2Conversion.deploy(appModule);
-//        openEjb2CmpConversion.mergeEntityMappings(entityMappings, openejbJarType);
+    private void convertCmp(String prefix) throws Exception {
+        AppModule appModule = deploy(prefix);
 
         // compare the results to the expected results
-        if (expectedFileName != null) {
-            in = getClass().getClassLoader().getResourceAsStream(expectedFileName);
-            String expected = readContent(in);
-            String actual = toString(appModule.getCmpMappings());
-            Diff myDiff = new Diff(expected, actual);
-            assertTrue("Files are similar " + myDiff, myDiff.similar());
-        }
-        return appModule.getCmpMappings();
+        assertJaxb(prefix + "orm.xml", appModule.getCmpMappings(), EntityMappings.class);
     }
 
+    private  void assertJaxb(String expectedFile, Object object, Class<?> type) throws IOException, JAXBException, SAXException {
+        assertSame(type, object.getClass());
+        String expected = read(expectedFile);
 
-    private String toString(EntityMappings entityMappings) throws JAXBException {
-        JAXBContext entityMappingsContext = JAXBContextFactory.newInstance(EntityMappings.class);
+        String actual = toString(object, type);
 
-        Marshaller marshaller = entityMappingsContext.createMarshaller();
-        marshaller.setProperty("jaxb.formatted.output", true);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(entityMappings, baos);
-
-        String actual = new String(baos.toByteArray());
-        return actual.trim();
+//        System.out.println("expected = " + expected);
+//        System.out.println("actual = " + actual);
+        
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
-
-    private String readContent(InputStream in) throws IOException {
+    private String read(String name) throws IOException {
+        InputStream in = getClass().getClassLoader().getResource(name).openStream();
         StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
         int i = in.read();
@@ -147,5 +121,42 @@ public class OpenEjb2ConversionTest extends TestCase {
         }
         return sb.toString().trim();
     }
+
+    private AppModule deploy(String prefix) throws OpenEJBException {
+        return deploy(prefix + "ejb-jar.xml", prefix + "openejb-jar.xml");
+    }
+
+    private AppModule deploy(String ejbJarFileName, String openejbJarFileName) throws OpenEJBException {
+        // create and configure the module
+        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, null, null);
+        AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
+        appModule.getEjbModules().add(ejbModule);
+
+        // add the altDD
+        ejbModule.getAltDDs().put("ejb-jar.xml", getClass().getClassLoader().getResource(ejbJarFileName));
+        ejbModule.getAltDDs().put("openejb-jar.xml", getClass().getClassLoader().getResource(openejbJarFileName));
+
+        DynamicDeployer[] deployers = {new ReadDescriptors(), new InitEjbDeployments(), new CmpJpaConversion(), new OpenEjb2Conversion()};
+
+        for (DynamicDeployer deployer : deployers) {
+            deployer.deploy(appModule);
+        }
+        return appModule;
+    }
+
+
+    private String toString(Object object, Class<?> type) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContextFactory.newInstance(type);
+
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty("jaxb.formatted.output", true);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(object, baos);
+
+        String actual = new String(baos.toByteArray());
+        return actual.trim();
+    }
+
 
 }

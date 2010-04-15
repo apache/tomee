@@ -37,6 +37,9 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
-        return new String(out.toByteArray());
+
+        // First comment is added by properties.store() 
+        String string = new String(out.toByteArray());
+        return string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
     }
 }

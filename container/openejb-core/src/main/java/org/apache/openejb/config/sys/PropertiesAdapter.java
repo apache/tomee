@@ -36,9 +36,18 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
     }
 
     public String marshal(Properties properties) throws Exception {
+        if (properties == null) return null;
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         properties.store(out, null);
-        return new String(out.toByteArray());
-    }
 
+        String string = new String(out.toByteArray());
+
+        if (!(properties instanceof SuperProperties)) {
+            // First comment is added by properties.store()
+            string = string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
+        }
+
+        return string; 
+    }
 }
