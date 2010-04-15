@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.JAXBElement;
 import java.util.List;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ import java.util.ArrayList;
     "service",
     "persistence"
 })
+@XmlRootElement(name = "ejb-jar")
 public class GeronimoEjbJarType {
 
     @XmlElement(namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")

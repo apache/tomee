@@ -18,6 +18,7 @@ package org.apache.openejb.jee.oejb2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
@@ -52,15 +53,20 @@ public class JaxbOpenejbJar2 {
     }
 
     public static <T>String marshal(Class<T> type, Object object) throws JAXBException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        marshal(type, object, out);
+
+        return new String(out.toByteArray());
+    }
+
+    public static <T>void marshal(Class<T> type, Object object, OutputStream out) throws JAXBException {
         JAXBContext ctx2 = getContext(type);
         Marshaller marshaller = ctx2.createMarshaller();
 
         marshaller.setProperty("jaxb.formatted.output", true);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(object, baos);
-
-        return new String(baos.toByteArray());
+        marshaller.marshal(object, out);
     }
 
     public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {

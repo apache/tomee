@@ -57,6 +57,10 @@ import org.apache.openejb.jee.oejb2.EjbLocalRefType;
 import org.apache.openejb.jee.oejb2.Jndi;
 import org.apache.openejb.jee.oejb2.SessionBeanType;
 import org.apache.openejb.jee.oejb2.WebServiceSecurityType;
+import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
+import org.apache.openejb.jee.oejb2.RpcBean;
+import org.apache.openejb.jee.oejb2.TssLinkType;
+import org.apache.openejb.jee.oejb2.WebServiceBindingType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.EjbLink;
@@ -459,6 +463,52 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 }
             }
         }
+    }
+
+    /**
+     * Actually called from ReadDescriptors as Geronimo needs this info early
+     * @param o2
+     * @return
+     */
+    public static GeronimoEjbJarType convertToGeronimoOpenejbXml(OpenejbJarType o2) {
+        GeronimoEjbJarType g2 = new GeronimoEjbJarType();
+
+        g2.setEnvironment(o2.getEnvironment());
+        g2.setSecurity(o2.getSecurity());
+        g2.getService().addAll(o2.getService());
+        g2.getMessageDestination().addAll(o2.getMessageDestination());
+        g2.getPersistence().addAll(o2.getPersistence());
+
+        for (org.apache.openejb.jee.oejb2.EnterpriseBean bean : o2.getEnterpriseBeans()) {
+            g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
+            g2.getPersistenceContextRef().addAll(bean.getPersistenceContextRef());
+            g2.getPersistenceUnitRef().addAll(bean.getPersistenceUnitRef());
+            g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
+            g2.getEjbRef().addAll(bean.getEjbRef());
+            g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
+            g2.getResourceRef().addAll(bean.getResourceRef());
+            g2.getServiceRef().addAll(bean.getServiceRef());
+
+            if (bean instanceof RpcBean) {
+                RpcBean rpcBean = (RpcBean) bean;
+                if (rpcBean.getTssLink() != null){
+                    g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
+                }
+            }
+
+            if (bean instanceof SessionBeanType) {
+                SessionBeanType sb = (SessionBeanType) bean;
+                WebServiceBindingType b = new WebServiceBindingType();
+                b.setEjbName(sb.getEjbName());
+                b.setWebServiceAddress(sb.getWebServiceAddress());
+                b.setWebServiceVirtualHost(sb.getWebServiceVirtualHost());
+                b.setWebServiceSecurity(sb.getWebServiceSecurity());
+                if (b.containsData()){
+                    g2.getWebServiceBinding().add(b);
+                }
+            }
+        }
+        return g2;
     }
 
     private class EntityData {

@@ -32,14 +32,9 @@ import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.oejb2.EnterpriseBean;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
-import org.apache.openejb.jee.oejb2.RpcBean;
-import org.apache.openejb.jee.oejb2.SessionBeanType;
-import org.apache.openejb.jee.oejb2.TssLinkType;
-import org.apache.openejb.jee.oejb2.WebServiceBindingType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.xml.sax.Attributes;
@@ -135,43 +130,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     OpenejbJarType o2 = (OpenejbJarType) element.getValue();
                     ejbModule.getAltDDs().put("openejb-jar.xml", o2);
 
-                    GeronimoEjbJarType g2 = new GeronimoEjbJarType();
-
-                    g2.setEnvironment(o2.getEnvironment());
-                    g2.setSecurity(o2.getSecurity());
-                    g2.getService().addAll(o2.getService());
-                    g2.getMessageDestination().addAll(o2.getMessageDestination());
-                    g2.getPersistence().addAll(o2.getPersistence());
-
-                    for (EnterpriseBean bean : o2.getEnterpriseBeans()) {
-                        g2.getAbstractNamingEntry().addAll(bean.getAbstractNamingEntry());
-                        g2.getPersistenceContextRef().addAll(bean.getPersistenceContextRef());
-                        g2.getPersistenceUnitRef().addAll(bean.getPersistenceUnitRef());
-                        g2.getEjbLocalRef().addAll(bean.getEjbLocalRef());
-                        g2.getEjbRef().addAll(bean.getEjbRef());
-                        g2.getResourceEnvRef().addAll(bean.getResourceEnvRef());
-                        g2.getResourceRef().addAll(bean.getResourceRef());
-                        g2.getServiceRef().addAll(bean.getServiceRef());
-
-                        if (bean instanceof RpcBean) {
-                            RpcBean rpcBean = (RpcBean) bean;
-                            if (rpcBean.getTssLink() != null){
-                                g2.getTssLink().add(new TssLinkType(rpcBean.getEjbName(), rpcBean.getTssLink(), rpcBean.getJndiName()));
-                            }
-                        }
-
-                        if (bean instanceof SessionBeanType) {
-                            SessionBeanType sb = (SessionBeanType) bean;
-                            WebServiceBindingType b = new WebServiceBindingType();
-                            b.setEjbName(sb.getEjbName());
-                            b.setWebServiceAddress(sb.getWebServiceAddress());
-                            b.setWebServiceVirtualHost(sb.getWebServiceVirtualHost());
-                            b.setWebServiceSecurity(sb.getWebServiceSecurity());
-                            if (b.containsData()){
-                                g2.getWebServiceBinding().add(b);
-                            }
-                        }
-                    }
+                    GeronimoEjbJarType g2 = OpenEjb2Conversion.convertToGeronimoOpenejbXml(o2);
 
                     ejbModule.getAltDDs().put("geronimo-openejb.xml", g2);
                 } catch (final Exception v2ParsingException) {
