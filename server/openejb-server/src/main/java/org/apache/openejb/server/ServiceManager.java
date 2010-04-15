@@ -131,11 +131,6 @@ public abstract class ServiceManager {
 
                 service = (ServerService) recipe.create(serviceClass.getClassLoader());
 
-                if (service instanceof DiscoveryAgent){
-                    DiscoveryAgent agent = (DiscoveryAgent) service;
-                    registry.addDiscoveryAgent(agent);
-                }
-
                 if (!(service instanceof SelfManaging)) {
                     service = new ServicePool(service, serviceName, serviceProperties);
                     service = new ServiceLogger(service);
@@ -145,6 +140,11 @@ public abstract class ServiceManager {
 
                 service.init(serviceProperties);
                     
+                if (service instanceof DiscoveryAgent){
+                    DiscoveryAgent agent = (DiscoveryAgent) service;
+                    registry.addDiscoveryAgent(agent);
+                }
+
                 return service;
             } catch (Throwable t) {
                 logger.error("service.instantiation.err", t, serviceClass.getName(), t.getClass().getName(), t.getMessage());
