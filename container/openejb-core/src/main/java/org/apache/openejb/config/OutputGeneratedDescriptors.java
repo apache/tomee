@@ -21,6 +21,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.JaxbJavaee;
+import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
+import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
@@ -59,6 +61,8 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 if (ejbModule.getOpenejbJar() != null) {
                     writeOpenejbJar(ejbModule);
                 }
+
+                writeGeronimoOpenejb(ejbModule);
             }
         }
 
@@ -90,6 +94,26 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
             try {
                 JaxbOpenejbJar3.marshal(OpenejbJar.class, openejbJar, out);
                 logger.info("Dumping Generated openejb-jar.xml to: " + tempFile.getAbsolutePath());
+            } catch (JAXBException e) {
+            } finally {
+                out.close();
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private void writeGeronimoOpenejb(EjbModule ejbModule) {
+        try {
+            GeronimoEjbJarType geronimoEjbJarType = (GeronimoEjbJarType) ejbModule.getAltDDs().get("geronimo-openejb.xml");
+
+            if (geronimoEjbJarType == null) return;
+
+            File tempFile = File.createTempFile("geronimo-openejb-", ejbModule.getModuleId() + ".xml");
+            FileOutputStream fout = new FileOutputStream(tempFile);
+            BufferedOutputStream out = new BufferedOutputStream(fout);
+            try {
+                JaxbOpenejbJar2.marshal(GeronimoEjbJarType.class, geronimoEjbJarType, out);
+                logger.info("Dumping Generated geronimo-openejb.xml to: " + tempFile.getAbsolutePath());
             } catch (JAXBException e) {
             } finally {
                 out.close();
