@@ -17,18 +17,35 @@
 package org.apache.openejb.server.discovery;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
  */
 public class EchoNet {
 
+    public static void _main(String[] args) throws Exception {
+        MultipointServer a = new MultipointServer(1111, new Tracker.Builder().build()).start();
+        MultipointServer b = new MultipointServer(3333, new Tracker.Builder().build()).start();
+        a.connect(b);
+        b.connect(a);
+        a.connect(b);
+        b.connect(a);
+        a.connect(b);
+        b.connect(a);
+        a.connect(b);
+        b.connect(a);
+    }
+
     public static void main(String[] args) throws Exception {
 
-        final int multiple = 1111;
-        final int base = 3;
+        final int multiple = 1;
+        final int base = 2000;
+//        final int multiple = 1111;
+//        final int base = 1;
 
-        int servers = 3;
+        int servers = 50;
 
         if (args.length > 0)
             servers = Integer.parseInt(args[0]);
@@ -54,5 +71,59 @@ public class EchoNet {
         new CountDownLatch(1).await();
     }
 
+
+    public static class Calc {
+        public static void main(String[] args) {
+            Set<Item> set = new HashSet<Item>();
+
+            int x = 150;
+
+            for (int i = 1; i <= x; i++) {
+                for (int j = 1; j <= x; j++) {
+                    if (i==j) continue;
+
+                    Item item = new Item(i, j);
+                    boolean b = set.add(item);
+//                    if (b) System.out.println("item = " + item);
+                }
+            }
+
+            // 100 4950
+            System.out.println(x + " ? " + 2 + " = " + set.size());
+        }
+
+
+        static class Item {
+            int a;
+            int b;
+
+            Item(int a, int b) {
+                this.a = a;
+                this.b = b;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass()) return false;
+
+                Item set = (Item) o;
+
+                if (a == set.a && b == set.b) return true;
+                if (a == set.b && b == set.a) return true;
+
+                return false;
+            }
+
+            @Override
+            public int hashCode() {
+                return 1;
+            }
+
+            @Override
+            public String toString() {
+                return a + " " + b;
+            }
+        }
+    }
 }
 

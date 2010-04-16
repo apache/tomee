@@ -67,6 +67,10 @@ public class Tracker {
     private Map<String, ServiceVitals> discoveredServices = new ConcurrentHashMap<String, ServiceVitals>();
     private DiscoveryListener discoveryListener;
 
+    public long getHeartRate() {
+        return heartRate;
+    }
+
     public void setDiscoveryListener(DiscoveryListener discoveryListener) {
         this.discoveryListener = discoveryListener;
     }
@@ -307,7 +311,7 @@ public class Tracker {
     public static class Builder {
         private String group = "default";
         private int maxMissedHeartbeats = 10;
-        private long heartRate = 500;
+        private long heartRate = 5000;
         // ---------------------------------
         // Listenting specific settings
         private long reconnectDelay = 1000 * 5;
