@@ -110,9 +110,11 @@ public class MultipointServer {
         private State state = State.OPEN;
         private URI uri;
         public boolean hangup;
+        private final boolean client;
 
         public Session(SocketChannel channel, InetSocketAddress address, URI uri) throws ClosedChannelException {
             this.channel = channel;
+            this.client = uri != null;
             this.uri = uri != null ? uri : URI.create("conn://" + address.getHostName() + ":" + address.getPort());
             this.key = channel.register(selector, 0, this);
         }
@@ -212,10 +214,12 @@ public class MultipointServer {
             return "Session{" +
                     "uri=" + uri +
                     ", state=" + state +
+                    ", owner=" + port +
+                    ", s=" + (client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                    ", c=" + (!client ? channel.socket().getPort() : channel.socket().getLocalPort()) +
+                    ", " + (client ? "client" : "server") +
                     '}';
         }
-
-        private final long rate = 3000;
 
         private long last = 0;
 
@@ -225,7 +229,7 @@ public class MultipointServer {
             long now = System.currentTimeMillis();
             long delay = now - last;
 
-            if (delay > rate) {
+            if (delay > tracker.getHeartRate()) {
                 last = now;
                 heartbeat();
             }
@@ -294,7 +298,6 @@ public class MultipointServer {
                         Session session = (Session) key.attachment();
                         session.channel.finishConnect();
                         session.trace("connected");
-                        connected(session);
 
                         // when you are a client, first say high to everyone
                         // before accepting data
@@ -343,6 +346,8 @@ public class MultipointServer {
                                 session.write(list);
 
                                 session.state(java.nio.channels.SelectionKey.OP_WRITE, State.LISTING);
+
+                                session.trace("STARTING");
 
 
                             }
@@ -439,8 +444,9 @@ public class MultipointServer {
 
                                     } else {
 
-                                        session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
+                                        session.trace("DONE");
 
+                                        session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
                                     }
                                 }
                             }
@@ -488,29 +494,36 @@ public class MultipointServer {
                 }
             }
 
-            URI uri = null;
-            while ((uri = pending()) != null) {
+            synchronized (connect) {
+                while (connect.size() > 0) {
 
-                int port = uri.getPort();
-                String host = uri.getHost();
+                    URI uri = connect.removeFirst();
 
-                try {
-                    println("open " + uri);
+                    if (connections.containsKey(uri)) continue;
 
-                    SocketChannel socketChannel = SocketChannel.open();
-                    socketChannel.configureBlocking(false);
+                    int port = uri.getPort();
+                    String host = uri.getHost();
 
-                    InetSocketAddress address = new InetSocketAddress(host, port);
+                    try {
+                        println("open " + uri);
 
-                    socketChannel.connect(address);
+                        SocketChannel socketChannel = SocketChannel.open();
+                        socketChannel.configureBlocking(false);
 
-                    Session session = new Session(socketChannel, address, uri);
-                    session.ops(java.nio.channels.SelectionKey.OP_CONNECT);
+                        InetSocketAddress address = new InetSocketAddress(host, port);
 
-                    // seen - needs to get maintained as "connected"
-                    // TODO remove from seen
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                        socketChannel.connect(address);
+
+                        Session session = new Session(socketChannel, address, uri);
+                        session.ops(java.nio.channels.SelectionKey.OP_CONNECT);
+                        session.trace("client");
+                        connections.put(session.uri, session);
+                        
+                        // seen - needs to get maintained as "connected"
+                        // TODO remove from seen
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
@@ -518,7 +531,9 @@ public class MultipointServer {
 
     private ArrayList<URI> connections() {
         synchronized (connect) {
-            return new ArrayList<URI>(connections.keySet());
+            ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
+            list.addAll(connect);
+            return list;
         }
     }
 
@@ -526,10 +541,19 @@ public class MultipointServer {
         Session session = (Session) key.attachment();
 
         session.state(0, State.CLOSED);
-        session.trace("closed");
-        
-        synchronized (connect) {
-            connections.remove(session.uri);
+
+        if (session.hangup) {
+            // This was a duplicate connection and was closed
+            // do not remove this URI from the 'connections'
+            // map as this particular session is not in that
+            // map -- only the good session that will not be
+            // closed is in there.
+            session.trace("hungup");
+        } else {
+            session.trace("closed");
+            synchronized (connect) {
+                connections.remove(session.uri);
+            }
         }
 
         hangup(key);
@@ -563,17 +587,11 @@ public class MultipointServer {
         }
     }
 
-    private URI pending() {
-        synchronized (connect) {
-            if (connect.size() > 0) return connect.removeFirst();
-        }
-        return null;
-    }
-
     private void connected(Session session) {
 
         synchronized (connect) {
             Session duplicate = connections.get(session.uri);
+//            Session duplicate = null;
 
             if (duplicate != null) {
                 session.trace("duplicate");
@@ -585,13 +603,44 @@ public class MultipointServer {
 
                 Session[] sessions = {session, duplicate};
                 Arrays.sort(sessions, new Comparator<Session>() {
+                    // Goal: Keep the connection with the lowest port number
+                    ///
+                    // Low vs high is not very significant.  The critical
+                    // part is that they both choose the same connection.
+                    //
+                    // Port numbers are seen on both sides.  There are two
+                    // ports (one client and one server) for each connection.
+                    //
+                    // Both sides will agree to kill the connection with the
+                    // lowest server port.  If those are the same, then both
+                    // sides will agree to kill the connection with the lowest
+                    // client port.  If those are the same, we still close a
+                    // connection and hope for the best.  If both connections
+                    // are killed we will try again next time another node
+                    // lists the server and we notice we are not connected.
+                    //
                     public int compare(Session a, Session b) {
-                        return rank(a) - rank(b);
+                        int serverRank = server(a) - server(b);
+                        if (serverRank != 0) return serverRank;
+                        return client(a) - client(b);
+                    }
+
+                    private int server(Session a) {
+                        Socket socket = a.channel.socket();
+                        return a.client? socket.getPort(): socket.getLocalPort();
+                    }
+
+                    private int client(Session a) {
+                        Socket socket = a.channel.socket();
+                        return !a.client? socket.getPort(): socket.getLocalPort();
                     }
                 });
 
                 session = sessions[0];
                 duplicate = sessions[1];
+
+                session.trace(session + "@" + session.hashCode() + " KEEP");
+                duplicate.trace(duplicate + "@" + duplicate.hashCode() + " KILL");
 
                 duplicate.hangup = true;
             }
@@ -602,10 +651,13 @@ public class MultipointServer {
 
     private int rank(Session session) {
         Socket socket = session.channel.socket();
+        
         return socket.getLocalPort() + socket.getPort();
     }
 
     private void println(String s) {
-        System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
+        if (s.matches(".*(Listening|DONE|KEEP|KILL)")) {
+            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
+        }
     }
 }
