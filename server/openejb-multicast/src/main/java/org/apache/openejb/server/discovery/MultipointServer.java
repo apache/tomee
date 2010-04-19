@@ -134,7 +134,7 @@ public class MultipointServer {
         }
 
         private void trace(String str) {
-            println(message(str));
+//            println(message(str));
 
             if (log.isDebugEnabled()) {
                 log.debug(message(str));
@@ -649,15 +649,9 @@ public class MultipointServer {
         }
     }
 
-    private int rank(Session session) {
-        Socket socket = session.channel.socket();
-        
-        return socket.getLocalPort() + socket.getPort();
-    }
-
     private void println(String s) {
-        if (s.matches(".*(Listening|DONE|KEEP|KILL)")) {
-            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
-        }
+//        if (s.matches(".*(Listening|DONE|KEEP|KILL)")) {
+//            System.out.format("%1$tH:%1$tM:%1$tS.%1$tL - %2$s\n", System.currentTimeMillis(), s);
+//        }
     }
 }
