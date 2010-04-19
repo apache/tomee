@@ -311,7 +311,7 @@ public class Tracker {
     public static class Builder {
         private String group = "default";
         private int maxMissedHeartbeats = 10;
-        private long heartRate = 5000;
+        private long heartRate = 500;
         // ---------------------------------
         // Listenting specific settings
         private long reconnectDelay = 1000 * 5;
