@@ -28,6 +28,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -91,7 +92,13 @@ public class JpaCmpEngine implements CmpEngine {
         EntityManager entityManager = null;
         try {
             entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("java:comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
-        } catch (NamingException ignroed) {
+        } catch (NamingException ignored) {
+            //TODO see OPENEJB-1259 temporary hack until geronimo jndi integration works better
+            try {
+                entityManager = (EntityManager) new InitialContext().lookup("java:comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
+            } catch (NamingException ignored2) {
+                //ignore
+            }
         }
 
         if (entityManager == null) {
