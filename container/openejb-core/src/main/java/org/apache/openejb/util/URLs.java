@@ -16,9 +16,11 @@
  */
 package org.apache.openejb.util;
 
+
+import static org.apache.openejb.loader.JarLocation.decode;
+
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -42,11 +44,7 @@ public class URLs {
                 throw new IllegalStateException(e);
             }
         } else if ("file".equals(url.getProtocol())) {
-            try {
-                return new File(url.toURI().getPath());
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("bad url " + url.toExternalForm(), e);
-            }
+            return new File(decode(url.getFile()));
         } else {
             throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
         }
