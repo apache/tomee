@@ -184,6 +184,7 @@ public class EntityBean implements RemoteBean {
     protected PersistenceType persistenceType;
     @XmlElement(name = "prim-key-class", required = true)
     protected String primKeyClass;
+    @XmlJavaTypeAdapter(type = boolean.class, value = BooleanAdapter.class)
     @XmlElement(required = true)
     protected boolean reentrant;
     @XmlElement(name = "cmp-version", defaultValue = "2.x")
