@@ -194,6 +194,7 @@
           </formats>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
@@ -215,6 +216,7 @@
           </execution>
         </executions>
       </plugin>
+-->
       <!-- Add NOTICE and LICENSE to generated JAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
