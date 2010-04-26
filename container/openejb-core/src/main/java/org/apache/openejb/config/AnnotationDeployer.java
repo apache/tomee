@@ -309,7 +309,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         URL url;
                         if (file.exists()) {
-                            url = file.toURL();
+                            url = file.toURI().toURL();
                         } else {
                             url = new URL(location);
                         }
@@ -416,7 +416,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     URL url;
                     if (file.exists()) {
-                        url = file.toURL();
+                        url = file.toURI().toURL();
                     } else {
                         url = new URL(location);
                     }

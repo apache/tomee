@@ -571,7 +571,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
                     // EJB deployment descriptors
                     try {
-                        ResourceFinder ejbResourceFinder = new ResourceFinder("", standardContext.getLoader().getClassLoader(), file.toURL());
+                        ResourceFinder ejbResourceFinder = new ResourceFinder("", standardContext.getLoader().getClassLoader(), file.toURI().toURL());
                         Map<String, URL> descriptors = ejbResourceFinder.getResourcesMap("META-INF/");
                         descriptors = DeploymentLoader.altDDSources(descriptors, true);
                         ejbModule.getAltDDs().putAll(descriptors);
@@ -721,7 +721,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 							logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file "+location);
 	                    try {
 	                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
-	                        URL url = file.toURL();
+	                        URL url = file.toURI().toURL();
 	                        facesConfigLocations.add(url);
 	                       
 	                    } catch (IOException e) {
@@ -741,7 +741,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         	if(facesConfigFile.exists()){
         		try {
 					facesConfigFile = facesConfigFile.getCanonicalFile().getAbsoluteFile();
-					URL url = facesConfigFile.toURL();
+					URL url = facesConfigFile.toURI().toURL();
 					facesConfigLocations.add(url);
 				} catch (IOException e) {
 					// TODO: kmalhi:: Remove the printStackTrace after testing

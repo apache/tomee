@@ -117,7 +117,7 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
 
         for (String jarName : jarNames) {
-            this.addJarToPath(new File(dir, jarName).toURL());
+            this.addJarToPath(new File(dir, jarName).toURI().toURL());
         }
         rebuild();
     }

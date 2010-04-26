@@ -212,7 +212,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     }
 
     private URL toUrl(File root) throws MalformedURLException {
-        URL url = root.toURL();
+        URL url = root.toURI().toURL();
 
         try {
             url.toURI();

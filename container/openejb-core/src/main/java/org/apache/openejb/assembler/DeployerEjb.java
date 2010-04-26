@@ -135,7 +135,7 @@ public class DeployerEjb implements Deployer {
                         String value = (String) entry.getValue();
                         File dd = new File(value);
                         if (dd.canRead()) {
-                            module.getAltDDs().put(name, dd.toURL());
+                            module.getAltDDs().put(name, dd.toURI().toURL());
                         } else {
                             module.getAltDDs().put(name, value);
                         }

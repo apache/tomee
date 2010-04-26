@@ -395,7 +395,7 @@ public class WsDeployer implements DynamicDeployer {
             return new URL(module.getJarLocation());
         }
 
-        URL baseUrl = file.toURL();
+        URL baseUrl = file.toURI().toURL();
         if (file.isFile()) {
             baseUrl = new URL("jar", null, baseUrl.toExternalForm() + "!/");
         }

@@ -55,9 +55,9 @@ public class Main {
         // Create a child class loader containing the application jar
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
-            classLoader = new URLClassLoader(new URL[]{file.toURL()});
+            classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()});
         } else {
-            classLoader = new URLClassLoader(new URL[]{file.toURL()}, classLoader);
+            classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, classLoader);
         }
         Thread.currentThread().setContextClassLoader(classLoader);
 

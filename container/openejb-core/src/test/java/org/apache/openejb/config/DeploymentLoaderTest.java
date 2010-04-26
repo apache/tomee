@@ -41,12 +41,12 @@ public class DeploymentLoaderTest extends TestCase {
          * - META-INF/test.env-entry.properties
          */
         Map<String, URL> original = new HashMap<String, URL>();
-        original.put("ejb-jar.xml", new File("META-INF/ejb-jar.xml").toURL());
-        original.put("test.ejb-jar.xml", new File("META-INF/test.ejb-jar.xml").toURL());
-        original.put("footest.ejb-jar.xml", new File("META-INF/footest.ejb-jar.xml").toURL());
-        original.put("bartest.ejb-jar.xml", new File("META-INF/bartest.ejb-jar.xml").toURL());
-        original.put("persistence.xml", new File("META-INF/persistence.xml").toURL());
-        original.put("test.env-entry.properties", new File("META-INF/test.env-entry.properties").toURL());
+        original.put("ejb-jar.xml", new File("META-INF/ejb-jar.xml").toURI().toURL());
+        original.put("test.ejb-jar.xml", new File("META-INF/test.ejb-jar.xml").toURI().toURL());
+        original.put("footest.ejb-jar.xml", new File("META-INF/footest.ejb-jar.xml").toURI().toURL());
+        original.put("bartest.ejb-jar.xml", new File("META-INF/bartest.ejb-jar.xml").toURI().toURL());
+        original.put("persistence.xml", new File("META-INF/persistence.xml").toURI().toURL());
+        original.put("test.env-entry.properties", new File("META-INF/test.env-entry.properties").toURI().toURL());
 
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
 

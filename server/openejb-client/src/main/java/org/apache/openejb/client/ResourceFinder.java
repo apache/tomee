@@ -863,7 +863,7 @@ public class ResourceFinder {
             for (File file : files) {
                 if (!file.isDirectory()) {
                     String name = file.getName();
-                    URL url = file.toURL();
+                    URL url = file.toURI().toURL();
                     resources.put(name, url);
                 }
             }

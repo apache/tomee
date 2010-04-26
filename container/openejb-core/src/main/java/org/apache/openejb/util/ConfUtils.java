@@ -43,7 +43,7 @@ public class ConfUtils {
             File loginConfig = ConfUtils.install(resource, name);
 
             if (loginConfig != null){
-                resource = loginConfig.toURL();
+                resource = loginConfig.toURI().toURL();
             }
         } catch (IOException e) {
         }
