@@ -479,7 +479,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
             File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
-                classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, new URL []{generatedJar.toURL()}, classLoader);
+                classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
@@ -1373,7 +1373,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private URL toUrl(String jarPath) throws OpenEJBException {
         try {
-            return new File(jarPath).toURL();
+            return new File(jarPath).toURI().toURL();
         } catch (MalformedURLException e) {
             throw new OpenEJBException(messages.format("cl0001", jarPath, e.getMessage()), e);
         }

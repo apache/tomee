@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -174,7 +175,7 @@ public class ClassLoaderUtil {
                 if (item instanceof URL) {
                     url = (URL) item;
                 } else if (item instanceof String) {
-                    url = new URL((String) item);
+                    url = new URI((String) item).toURL();
                 } else {
                     logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
                 }

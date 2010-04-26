@@ -102,7 +102,7 @@ public class ValidationTable {
         try {
             conn = getConnection();
 
-            String jarFileURL = jar.toURL().toExternalForm();
+            String jarFileURL = jar.toURI().toURL().toExternalForm();
 
             PreparedStatement stmt = conn.prepareStatement(_selectValidated);
             stmt.setString(1, jarFileURL);
@@ -156,7 +156,7 @@ public class ValidationTable {
         try {
             conn = getConnection();
             File jar = SystemInstance.get().getBase().getFile(jarFile);
-            String jarFileURL = jar.toURL().toExternalForm();
+            String jarFileURL = jar.toURI().toURL().toExternalForm();
 
             PreparedStatement stmt = null;
             if (_getLastValidated(jarFileURL) != 0L) {

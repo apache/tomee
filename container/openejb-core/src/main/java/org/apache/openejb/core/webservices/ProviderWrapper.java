@@ -450,7 +450,7 @@ public class ProviderWrapper extends Provider {
                 OutputStream out = new FileOutputStream(tempFile);
                 out.write(ProviderWrapper.class.getName().getBytes());
                 out.close();
-                PROVIDER_URL = tempFile.toURL();
+                PROVIDER_URL = tempFile.toURI().toURL();
             } catch (IOException e) {
                 throw new RuntimeException("Cound not create openejb-jaxws-provider file");
             }

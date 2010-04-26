@@ -56,8 +56,8 @@ public class DefaultHttpBean implements HttpBean {
 
         try {
             //OpenEJB Home and Base folders
-            URL base = SystemInstance.get().getBase().getDirectory().toURL();
-            URL home = SystemInstance.get().getHome().getDirectory().toURL();
+            URL base = SystemInstance.get().getBase().getDirectory().toURI().toURL();
+            URL home = SystemInstance.get().getHome().getDirectory().toURI().toURL();
 
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 

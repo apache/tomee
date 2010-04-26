@@ -205,7 +205,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                 URL moduleBaseUrl = null;
                 try {
-                    moduleBaseUrl = new File(ejbJar.jarPath).toURL();
+                    moduleBaseUrl = new File(ejbJar.jarPath).toURI().toURL();
                 } catch (MalformedURLException e) {
                     logger.error("Invalid ejb jar location " + ejbJar.jarPath, e);
                 }
@@ -290,7 +290,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
         URL moduleBaseUrl = null;
         try {
-            moduleBaseUrl = new File(webApp.codebase).toURL();
+            moduleBaseUrl = new File(webApp.codebase).toURI().toURL();
         } catch (MalformedURLException e) {
             logger.error("Invalid ejb jar location " + webApp.codebase, e);
         }

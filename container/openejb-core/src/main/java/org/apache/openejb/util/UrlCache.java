@@ -104,7 +104,7 @@ public class UrlCache {
             // if the url was successfully cached, process it's manifest classpath
             if (file != null) {
                 try {
-                    cachedUrls.add(file.toURL());
+                    cachedUrls.add(file.toURI().toURL());
 
                     // push the manifest classpath on the stack (make sure to maintain the order)
                     List<URL> manifestClassPath = getManifestClassPath(url, file);
@@ -162,7 +162,7 @@ public class UrlCache {
             // Create absolute file URL
             sourceFile = sourceFile.getAbsoluteFile();
             try {
-                url = sourceFile.toURL();
+                url = sourceFile.toURI().toURL();
             } catch (MalformedURLException ignored) {
             }
         }

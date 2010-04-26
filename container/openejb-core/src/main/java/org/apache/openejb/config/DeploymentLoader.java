@@ -111,7 +111,7 @@ public class DeploymentLoader {
                     try {
                         tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
                         JarExtractor.copy(URLs.toFile(baseUrl), tmpFile);
-                        tempURL = tmpFile.toURL();
+                        tempURL = tmpFile.toURI().toURL();
                     } catch (Exception e) {
                         throw new OpenEJBException(e);
                     }
@@ -311,7 +311,7 @@ public class DeploymentLoader {
                     // unpack the resource adapter archive
                     File rarFile = toFile(entry.getValue());
                     rarFile = unpack(rarFile);
-                    entry.setValue(rarFile.toURL());
+                    entry.setValue(rarFile.toURI().toURL());
 
                     scanDir(appDir, rarLibs, "");
                 } catch (MalformedURLException e) {
@@ -579,7 +579,7 @@ public class DeploymentLoader {
         List<URL> webClassPath = new ArrayList<URL>();
         File webInfDir = new File(warFile, "WEB-INF");
         try {
-            webClassPath.add(new File(webInfDir, "classes").toURL());
+            webClassPath.add(new File(webInfDir, "classes").toURI().toURL());
         } catch (MalformedURLException e) {
             logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
         }
@@ -589,7 +589,7 @@ public class DeploymentLoader {
             for (File file : libDir.listFiles()) {
                 if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
                     try {
-                        webClassPath.add(file.toURL());
+                        webClassPath.add(file.toURI().toURL());
                     } catch (MalformedURLException e) {
                         logger.warning("War path bad: " + file, e);
                     }
@@ -621,7 +621,7 @@ public class DeploymentLoader {
         URL moduleUrl;
         try {
             File jarFile = new File(wsModule.getJarLocation());
-            moduleUrl = jarFile.toURL();
+            moduleUrl = jarFile.toURI().toURL();
             if (jarFile.isFile()) {
                 moduleUrl = new URL("jar", "", -1, moduleUrl + "!/");
             }
@@ -679,7 +679,7 @@ public class DeploymentLoader {
                     try {
                         File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
                         if (location.endsWith(".jar")) {
-                            URL url = file.toURL();
+                            URL url = file.toURI().toURL();
                             tldLocations.add(url);
                         } else {
                             Set<URL> urls = scanJarForTagLibs(file);
@@ -746,7 +746,7 @@ public class DeploymentLoader {
 							logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file "+location);
 	                    try {
 	                        File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
-	                        URL url = file.toURL();
+	                        URL url = file.toURI().toURL();
 	                        facesConfigLocations.add(url);
 	                       
 	                    } catch (IOException e) {
@@ -766,7 +766,7 @@ public class DeploymentLoader {
         	if(facesConfigFile.exists()){
         		try {
 					facesConfigFile = facesConfigFile.getCanonicalFile().getAbsoluteFile();
-					URL url = facesConfigFile.toURL();
+					URL url = facesConfigFile.toURI().toURL();
 					facesConfigLocations.add(url);
 				} catch (IOException e) {
 					// TODO: kmalhi:: Remove the printStackTrace after testing
@@ -859,7 +859,7 @@ public class DeploymentLoader {
             } else if (file.getName().endsWith(".tld")) {
                 try {
                     file = file.getCanonicalFile().getAbsoluteFile();
-                    urls.add(file.toURL());
+                    urls.add(file.toURI().toURL());
                 } catch (IOException e) {
                     logger.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
                 }
@@ -878,7 +878,7 @@ public class DeploymentLoader {
         try {
             jarFile = new JarFile(file);
 
-            URL jarFileUrl = new URL("jar", "", -1, file.toURL().toExternalForm() + "!/");
+            URL jarFileUrl = new URL("jar", "", -1, file.toURI().toURL().toExternalForm() + "!/");
             for (JarEntry entry : Collections.list(jarFile.entries())) {
                 String name = entry.getName();
                 if (!name.startsWith("META-INF/") || !name.endsWith(".tld")) {
@@ -1055,7 +1055,7 @@ public class DeploymentLoader {
         // and the jar file does not contain a directory entry for the uri
 
         if (warFile.isFile()) {
-            URL jarURL = new URL("jar", "", -1, warFile.toURL() + "!/");
+            URL jarURL = new URL("jar", "", -1, warFile.toURI().toURL() + "!/");
             try {
                 JarFile jarFile = new JarFile(warFile);
                 for (JarEntry entry : Collections.list(jarFile.entries())) {
@@ -1072,7 +1072,7 @@ public class DeploymentLoader {
             if (webInfDir.isDirectory()) {
                 for (File file : webInfDir.listFiles()) {
                     if (!file.isDirectory()) {
-                        descriptors.put(file.getName(), file.toURL());
+                        descriptors.put(file.getName(), file.toURI().toURL());
                     }
                 }
             }
@@ -1128,7 +1128,7 @@ public class DeploymentLoader {
             } else {
                 String name = file.getName();
                 try {
-                    files.put(path + name, file.toURL());
+                    files.put(path + name, file.toURI().toURL());
                 } catch (MalformedURLException e) {
                     logger.warning("EAR path bad: " + path + name, e);
                 }
@@ -1246,7 +1246,7 @@ public class DeploymentLoader {
     protected static URL getFileUrl(File jarFile) throws OpenEJBException {
         URL baseUrl;
         try {
-            baseUrl = jarFile.toURL();
+            baseUrl = jarFile.toURI().toURL();
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Malformed URL to app. " + e.getMessage(), e);
         }
