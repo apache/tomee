@@ -201,6 +201,14 @@
           <artifactId>spring-support</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context-support</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-tx</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.xmlbeans</groupId>
           <artifactId>xmlbeans</artifactId>
         </exclusion>
