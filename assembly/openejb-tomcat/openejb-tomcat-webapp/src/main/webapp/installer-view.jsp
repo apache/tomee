@@ -95,7 +95,7 @@
                 <img border='0' height='3' width='360' src='images/line_light.gif'><br>
                 <table width='360' cellspacing='4' cellpadding='4' border='0'>
 <%
-    for (String info : installer.messages.getInfos()) {
+    for (String info : installer.getAlerts().getInfos()) {
 %>
                     <tr>
                         <td><font size='2'><%= info %></font></td>
@@ -113,7 +113,7 @@
 <%
         } else {
             List<String> errors = new ArrayList<String>(paths.getErrors());
-            errors.addAll(installer.messages.getErrors());
+            errors.addAll(installer.getAlerts().getErrors());
             if (!errors.isEmpty()) {
 %>          Installation Failed<br><br>
             <FONT SIZE='2'>
