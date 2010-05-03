@@ -64,6 +64,10 @@ public class Installer {
         }
     }
 
+    public Alerts getAlerts() {
+        return alerts;
+    }
+    
     public void reset() {
         alerts.reset();
     }
