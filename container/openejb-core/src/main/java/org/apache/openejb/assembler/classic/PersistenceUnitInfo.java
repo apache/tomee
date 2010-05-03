@@ -36,4 +36,7 @@ public class PersistenceUnitInfo extends InfoObject {
     public final Properties properties = new Properties();
     public String persistenceUnitRootUrl;
     public final Set<String> watchedResources = new TreeSet<String>();
+    public String persistenceXMLSchemaVersion;
+    public String sharedCacheMode;
+    public String validationMode;
 }

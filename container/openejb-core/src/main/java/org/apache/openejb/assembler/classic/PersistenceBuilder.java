@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.io.File;
 import java.util.HashMap;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -133,7 +134,18 @@ public class PersistenceBuilder {
 
         // Handle Properties
         unitInfo.setProperties(info.properties);
-
+        
+        // Schema version of the persistence.xml file
+        unitInfo.setPersistenceXMLSchemaVersion(info.persistenceXMLSchemaVersion);
+        
+        // Second-level cache mode for the persistence unit
+        SharedCacheMode sharedCacheMode = Enum.valueOf(SharedCacheMode.class, info.sharedCacheMode);
+        unitInfo.setSharedCacheMode(sharedCacheMode);
+        
+        // The validation mode to be used for the persistence unit
+        ValidationMode validationMode = Enum.valueOf(ValidationMode.class, info.validationMode);
+        unitInfo.setValidationMode(validationMode);
+        
         // Persistence Unit Transaction Type
         if (transactionTypeEnv != null) {
             try {
