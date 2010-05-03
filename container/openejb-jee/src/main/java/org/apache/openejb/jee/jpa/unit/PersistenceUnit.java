@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.jee.jpa.unit;
 
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlType;
@@ -88,6 +90,8 @@ import java.util.ArrayList;
     "jarFile",
     "clazz",
     "excludeUnlistedClasses",
+    "sharedCacheMode",
+    "validationMode",
     "properties"
 })
 public class PersistenceUnit {
@@ -109,6 +113,10 @@ public class PersistenceUnit {
     protected List<String> clazz;
     @XmlElement(name = "exclude-unlisted-classes", defaultValue = "false")
     protected Boolean excludeUnlistedClasses;
+    @XmlElement(name = "shared-cache-mode")
+    protected SharedCacheMode sharedCacheMode;
+    @XmlElement(name = "validation-mode")
+    protected ValidationMode validationMode;
     protected Properties properties;
     @XmlAttribute(required = true)
     protected String name;
@@ -221,5 +229,13 @@ public class PersistenceUnit {
         this.transactionType = value;
     }
 
+    public SharedCacheMode getSharedCacheMode() {
+     // TODO: Is this the correct default?
+        return (sharedCacheMode == null) ? SharedCacheMode.NONE : sharedCacheMode;
+    }
 
+    public ValidationMode getValidationMode() {
+        return (validationMode == null) ? ValidationMode.AUTO : validationMode;
+    }
+    
 }
