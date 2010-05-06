@@ -87,6 +87,7 @@ import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
 import static org.apache.openejb.util.Join.join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -1037,11 +1038,13 @@ public class AnnotationDeployer implements DynamicDeployer {
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
 
+            Map<String, EjbDeployment> deployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
             ClassLoader classLoader = ejbModule.getClassLoader();
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
-
+                EjbDeployment ejbDeployment = deployments.get(ejbName);
+                
                 Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(bean.getEjbClass());
