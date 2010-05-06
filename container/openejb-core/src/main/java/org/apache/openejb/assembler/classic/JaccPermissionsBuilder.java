@@ -291,7 +291,8 @@ public class JaccPermissionsBuilder {
     public void addPossibleEjbMethodPermissions(Permissions permissions, String ejbName, String methodInterface, Class clazz) throws OpenEJBException {
         if (clazz == null) return;
         for (java.lang.reflect.Method method : clazz.getMethods()) {
-            permissions.add(new EJBMethodPermission(ejbName, methodInterface, method));
+            String methodIface = ("LocalBean".equals(methodInterface) || "LocalBeanHome".equals(methodInterface)) ? null : methodInterface;
+            permissions.add(new EJBMethodPermission(ejbName, methodIface, method));
         }
     }
 

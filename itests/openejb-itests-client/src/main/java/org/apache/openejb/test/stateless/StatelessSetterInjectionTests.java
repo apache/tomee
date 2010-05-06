@@ -269,4 +269,24 @@ public class StatelessSetterInjectionTests extends StatefulTestClient {
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+
+    public void test24_lookupStatelessLocalBean() {
+        try{
+            ejbObject.lookupStatelessBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test25_lookupStatefulLocalBean() {
+        try{
+            ejbObject.lookupStatelessBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
 }

@@ -26,6 +26,9 @@ import javax.jms.MessageListener;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ivm.naming.*;
+import org.apache.openejb.core.ivm.naming.openejb.BusinessLocalBeanReference;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -111,6 +114,7 @@ public class JndiBuilder {
             REMOTE_HOME(InterfaceType.EJB_HOME, "RemoteHome", "home", ""),
             LOCAL_HOME(InterfaceType.EJB_LOCAL_HOME, "LocalHome", "local-home", "Local"),
             BUSINESS_LOCAL(InterfaceType.BUSINESS_LOCAL, "Local", "business-local", "BusinessLocal"),
+            LOCALBEAN(InterfaceType.LOCALBEAN, "LocalBean", "localbean", "LocalBean"),
             BUSINESS_REMOTE(InterfaceType.BUSINESS_REMOTE, "Remote", "business-remote", "BusinessRemote"),
             SERVICE_ENDPOINT(InterfaceType.SERVICE_ENDPOINT, "Endpoint", "service-endpoint", "ServiceEndpoint");
 
@@ -286,6 +290,7 @@ public class JndiBuilder {
 
     public void bind(EjbJarInfo ejbJarInfo, DeploymentInfo deployment, EnterpriseBeanInfo beanInfo, JndiNameStrategy strategy) {
 
+        CoreDeploymentInfo cdi = (CoreDeploymentInfo) deployment;
         Bindings bindings = new Bindings();
         deployment.set(Bindings.class, bindings);
 
@@ -377,6 +382,25 @@ public class JndiBuilder {
         }
 
         try {
+            if (cdi.isLocalbean()) {
+                Class beanClass = deployment.getBeanClass();
+
+                DeploymentInfo.BusinessLocalBeanHome home = deployment.getBusinessLocalBeanHome();
+                BusinessLocalBeanReference ref = new BusinessLocalBeanReference(home);
+
+                optionalBind(bindings, ref, "openejb/Deployment/" + format(deployment.getDeploymentID(), beanClass.getName(), InterfaceType.LOCALBEAN));
+
+                String internalName = "openejb/Deployment/" + format(deployment.getDeploymentID(), beanClass.getName(), InterfaceType.BUSINESS_LOCALBEAN_HOME);
+                bind(internalName, ref, bindings, beanInfo, beanClass);
+
+                String name = strategy.getName(beanClass, JndiNameStrategy.Interface.LOCALBEAN);
+                bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
+            }
+        } catch (NamingException e) {
+            throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
+        }
+
+        try {
             if (MessageListener.class.equals(deployment.getMdbInterface())) {
 
                 String destinationId = deployment.getDestinationId();
@@ -414,7 +438,7 @@ public class JndiBuilder {
 
     private void bind(String name, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo, Class intrface) throws NamingException {
 
-        if (name.startsWith("openejb/local/") || name.startsWith("openejb/remote/")) {
+        if (name.startsWith("openejb/local/") || name.startsWith("openejb/remote/") || name.startsWith("openejb/localbean/")) {
 
             String externalName = name.replaceFirst("openejb/[^/]+/", "");
 

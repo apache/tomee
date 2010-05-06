@@ -22,8 +22,8 @@
 
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
-         version="3.0" metadata-complete="false">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+         version="3.1" metadata-complete="false">
 
   <description>
     This ejb-jar file contains assembled enterprise beans that are
@@ -1644,6 +1644,7 @@
       <ejb-class>org.apache.openejb.test.stateful.BasicStatefulPojoBean</ejb-class>
       <business-local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</business-local>
       <business-remote>org.apache.openejb.test.stateful.BasicStatefulBusinessRemote</business-remote>
+      <local-bean/>
       <session-type>Stateful</session-type>
       <init-method>
         <bean-method>
@@ -1824,9 +1825,21 @@
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-local-ref>
       <resource-ref>
@@ -2039,6 +2052,16 @@
         </injection-target>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
@@ -2046,6 +2069,16 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.FieldInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>
@@ -2275,6 +2308,16 @@
         </injection-target>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>stateful/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
@@ -2282,6 +2325,16 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateful/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateful.SetterInjectionStatefulBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>
@@ -2761,6 +2814,7 @@
       <remote>org.apache.openejb.test.stateless.BasicStatelessObject</remote>
       <local-home>org.apache.openejb.test.stateless.BasicStatelessLocalHome</local-home>
       <local>org.apache.openejb.test.stateless.BasicStatelessLocalObject</local>
+      <local-bean/>
       <business-local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</business-local>
       <business-remote>org.apache.openejb.test.stateless.BasicStatelessBusinessRemote</business-remote>
       <ejb-class>org.apache.openejb.test.stateless.BasicStatelessPojoBean</ejb-class>
@@ -3011,6 +3065,12 @@
         <local>org.apache.openejb.test.stateless.BasicStatelessBusinessLocal</local>
         <ejb-link>BasicStatelessPojoBean</ejb-link>
       </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+      </ejb-local-ref>
       <ejb-ref>
         <ejb-ref-name>stateless/beanReferences/stateless-business-remote</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
@@ -3021,6 +3081,12 @@
         <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
         <ejb-link>BasicStatefulPojoBean</ejb-link>
       </ejb-local-ref>
       <ejb-ref>
@@ -3231,6 +3297,16 @@
         </injection-target>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
@@ -3238,6 +3314,16 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.FieldInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>
@@ -3467,6 +3553,16 @@
         </injection-target>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateless-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateless.BasicStatelessPojoBean</local>
+        <ejb-link>BasicStatelessPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statelessBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>stateless/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
@@ -3474,6 +3570,16 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>stateless/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.stateless.SetterInjectionStatelessBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>
@@ -5392,6 +5498,7 @@
       <local>org.apache.openejb.test.singleton.BasicSingletonLocalObject</local>
       <business-local>org.apache.openejb.test.singleton.BasicSingletonBusinessLocal</business-local>
       <business-remote>org.apache.openejb.test.singleton.BasicSingletonBusinessRemote</business-remote>
+      <local-bean/>  
       <ejb-class>org.apache.openejb.test.singleton.BasicSingletonPojoBean</ejb-class>
       <session-type>Singleton</session-type>
       <transaction-type>Container</transaction-type>
@@ -5607,6 +5714,12 @@
         <ejb-ref-name>singleton/beanReferences/singleton-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.singleton.BasicSingletonBusinessLocal</local>
+        <ejb-link>BasicSingletonPojoBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>singleton/beanReferences/singleton-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.singleton.BasicSingletonPojoBean</local>
         <ejb-link>BasicSingletonPojoBean</ejb-link>
       </ejb-local-ref>
       <ejb-ref>
@@ -5829,6 +5942,16 @@
         </injection-target>
       </ejb-local-ref>
       <ejb-local-ref>
+        <ejb-ref-name>singleton/beanReferences/singleton-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.singleton.BasicSingletonPojoBean</local>
+        <ejb-link>BasicSingletonPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
+          <injection-target-name>singletonBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
         <ejb-ref-name>singleton/beanReferences/stateful-business-local</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>org.apache.openejb.test.stateful.BasicStatefulBusinessLocal</local>
@@ -5836,6 +5959,16 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>singleton/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.singleton.FieldInjectionSingletonBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>
@@ -6072,6 +6205,26 @@
         <injection-target>
           <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
           <injection-target-name>statefulBusinessLocal</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+        <ejb-local-ref>
+        <ejb-ref-name>singleton/beanReferences/singleton-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.singleton.BasicSingletonPojoBean</local>
+        <ejb-link>BasicSingletonPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-name>singletonBusinessLocalBean</injection-target-name>
+        </injection-target>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>singleton/beanReferences/stateful-business-localbean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>org.apache.openejb.test.stateful.BasicStatefulPojoBean</local>
+        <ejb-link>BasicStatefulPojoBean</ejb-link>
+        <injection-target>
+          <injection-target-class>org.apache.openejb.test.singleton.SetterInjectionSingletonBean</injection-target-class>
+          <injection-target-name>statefulBusinessLocalBean</injection-target-name>
         </injection-target>
       </ejb-local-ref>
       <resource-ref>

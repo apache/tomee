@@ -23,6 +23,7 @@ import javax.ejb.SessionContext;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Stack;
+import java.util.ArrayList;
 
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
@@ -33,6 +34,7 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EmptyType;
 
 /**
  * @version $Revision$ $Date$
@@ -59,6 +61,22 @@ public class SingletonContainerTest extends TestCase {
 
             // Check the lifecycle of the bean
             assertEquals(join("\n", expected), join("\n", lifecycle));
+        }{
+            WidgetBean.lifecycle.clear();
+
+            Object object = ctx.lookup("WidgetBeanLocalBean");
+
+            assertTrue("instanceof widget", object instanceof WidgetBean);
+
+            WidgetBean widget = (WidgetBean) object;
+
+            // Do a business method...
+            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            assertNotNull("lifecycle", lifecycle);
+            assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
+
+           // Check the lifecycle of the bean
+            assertEquals(Lifecycle.CONSTRUCTOR + "\n" + Lifecycle.BUSINESS_METHOD + "\n", join("\n", lifecycle));
         }
         {
 
@@ -102,6 +120,7 @@ public class SingletonContainerTest extends TestCase {
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
+        bean.setLocalBean(new EmptyType());
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);

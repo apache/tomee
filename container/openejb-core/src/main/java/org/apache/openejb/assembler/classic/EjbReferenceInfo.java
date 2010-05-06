@@ -27,4 +27,5 @@ public class EjbReferenceInfo extends InjectableInfo {
     public String link;
 
     public ReferenceLocationInfo location;
+    public boolean localbean;
 }

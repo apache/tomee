@@ -23,6 +23,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 
 import javax.annotation.Resource;
 import javax.ejb.CreateException;
@@ -88,9 +89,13 @@ public class AnnotatedFieldInjectionSingletonBean {
     @EJB
     private BasicSingletonBusinessLocal singletonBusinessLocal;
     @EJB
+    private BasicSingletonPojoBean singletonBusinessLocalBean;
+    @EJB
     private BasicSingletonBusinessRemote singletonBusinessRemote;
     @EJB
     private BasicStatefulBusinessLocal statefulBusinessLocal;
+    @EJB
+    private BasicStatefulPojoBean statefulBusinessLocalBean;
     @EJB
     private BasicStatefulBusinessRemote statefulBusinessRemote;
 
@@ -130,6 +135,14 @@ public class AnnotatedFieldInjectionSingletonBean {
         }
     }
 
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", singletonBusinessLocalBean);
+        } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupSingletonBusinessRemote() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessRemote is null", singletonBusinessRemote);
@@ -141,6 +154,14 @@ public class AnnotatedFieldInjectionSingletonBean {
     public void lookupStatefulBusinessLocal() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
+        } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }

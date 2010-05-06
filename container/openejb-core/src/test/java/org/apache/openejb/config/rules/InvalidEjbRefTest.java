@@ -54,6 +54,12 @@ public class InvalidEjbRefTest extends TestCase {
         fooBean.addBusinessLocal(FooLocal.class.getName());
         fooBean.addBusinessRemote(FooRemote.class.getName());
 
+        StatelessBean fooImpl = ejbJar.addEnterpriseBean(new StatelessBean(FooImpl.class));
+        fooImpl.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
+        fooImpl.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
+        fooImpl.addBusinessLocal(FooLocal.class.getName());
+        fooImpl.addBusinessRemote(FooRemote.class.getName());
+
         List<String> expectedKeys = new ArrayList<String>();
         expectedKeys.add("ann.ejb.ejbObject");
         expectedKeys.add("ann.ejb.ejbLocalObject");
@@ -76,7 +82,7 @@ public class InvalidEjbRefTest extends TestCase {
 
 
     public static class EjbRefBean implements EjbRefBeanLocal {
-        // invalid
+        // valid because fooBean will be a LocalBean (because it has no interfaces)
         @EJB
         private FooBean fooBean;
 
@@ -111,6 +117,11 @@ public class InvalidEjbRefTest extends TestCase {
         // invalid
         @EJB
         private FooClass fooClass;
+
+
+        // invalid because we refer to the bean class, but this bean is not a LocalBeanm
+        @EJB
+        private FooImpl fooImpl;
     }
 
     public static interface EjbRefBeanLocal {
@@ -148,5 +159,8 @@ public class InvalidEjbRefTest extends TestCase {
 
     public static class FooClass {
 
+    }
+    
+    public static class FooImpl implements FooLocal {
     }
 }

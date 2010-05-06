@@ -150,6 +150,19 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
         }
     }
 
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessPojoBean object = (BasicStatelessPojoBean) ejbContext.lookup("stateless/beanReferences/stateful-business-localbean");
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupStatefulBusinessRemote() throws TestFailureException{
         try{
             try{
@@ -482,4 +495,19 @@ public class ContextLookupStatelessBean implements javax.ejb.SessionBean {
     public String remove(String arg) {
         return arg;
     }
+
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            BasicStatelessPojoBean object = (BasicStatelessPojoBean) ejbContext.lookup("stateless/beanReferences/stateless-business-localbean");
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+
+    }
+    
 }

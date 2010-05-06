@@ -18,6 +18,7 @@ package org.apache.openejb.server.ejbd;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -344,16 +345,22 @@ class JndiRequestHandler {
         try {
             handler = (BaseEjbProxyHandler) ProxyManager.getInvocationHandler(object);
         } catch (Exception e) {
-            // Not a proxy.  See if it's serializable and send it
-            if (object instanceof java.io.Serializable){
-                res.setResponseCode(ResponseCodes.JNDI_OK);
-                res.setResult(object);
-                return;
-            } else {
-                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
-                NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" + object.getClass().getName() + ", toString=" + object);
-                res.setResult(new ThrowableArtifact(namingException));
-                return;
+            try {
+                Field field = object.getClass().getDeclaredField("invocationHandler");
+                field.setAccessible(true);
+                handler = (BaseEjbProxyHandler) field.get(object);
+            } catch (Exception e1) {
+                // Not a proxy.  See if it's serializable and send it
+                if (object instanceof java.io.Serializable){
+                    res.setResponseCode(ResponseCodes.JNDI_OK);
+                    res.setResult(object);
+                    return;
+                } else {
+                    res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
+                    NamingException namingException = new NamingException("Expected an ejb proxy, found unknown object: type=" + object.getClass().getName() + ", toString=" + object);
+                    res.setResult(new ThrowableArtifact(namingException));
+                    return;
+                }
             }
         }
 
@@ -400,6 +407,12 @@ class JndiRequestHandler {
             case BUSINESS_LOCAL: {
                 res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
                 NamingException namingException = new NamingException("Not remotable: '" + name + "'. Business Local interfaces are not remotable as per the EJB specification.  To disable this restriction, set the system property 'openejb.remotable.businessLocals=true' in the server.");
+                res.setResult(new ThrowableArtifact(namingException));
+                break;
+            }
+            case LOCALBEAN: {
+                res.setResponseCode(ResponseCodes.JNDI_NAMING_EXCEPTION);
+                NamingException namingException = new NamingException("Not remotable: '" + name + "'. LocalBean classes are not remotable as per the EJB specification.");
                 res.setResult(new ThrowableArtifact(namingException));
                 break;
             }

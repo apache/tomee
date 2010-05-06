@@ -33,6 +33,7 @@ import javax.ejb.EJBHome;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
+import org.apache.openejb.AppClassLoader;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
@@ -42,6 +43,7 @@ import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
@@ -134,7 +136,11 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             proxyInterfaces.addAll(handler.getInterfaces());
             proxyInterfaces.add(IntraVmProxy.class);
 
-            return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
+            if (InterfaceType.LOCALBEAN.equals(objectInterfaceType)) {
+                return LocalBeanProxyFactory.newProxyInstance((AppClassLoader) handler.getDeploymentInfo().getClassLoader(), handler.getDeploymentInfo().getBeanClass(), handler);
+            } else {
+                return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
+            }
 
         } catch (IllegalAccessException iae) {
             throw new RuntimeException("Could not create IVM proxy for " + getInterfaces().get(0), iae);

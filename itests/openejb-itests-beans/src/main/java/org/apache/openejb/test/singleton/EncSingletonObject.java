@@ -32,9 +32,11 @@ public interface EncSingletonObject extends javax.ejb.EJBObject{
     public void lookupSingletonBean() throws TestFailureException, RemoteException;
 
     public void lookupSingletonBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException, RemoteException;
     public void lookupSingletonBusinessRemote() throws TestFailureException, RemoteException;
     public void lookupStatefulBusinessLocal() throws TestFailureException, RemoteException;
     public void lookupStatefulBusinessRemote() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException, RemoteException;
  
     public void lookupResource() throws TestFailureException, RemoteException;
     public void lookupJMSConnectionFactory() throws TestFailureException, RemoteException;

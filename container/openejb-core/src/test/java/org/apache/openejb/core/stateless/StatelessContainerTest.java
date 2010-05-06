@@ -18,19 +18,17 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.assembler.classic.cmd.Info2Properties;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EmptyType;
 import org.apache.openejb.jee.StatelessBean;
 
 import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -60,6 +58,26 @@ public class StatelessContainerTest extends TestCase {
 
             // Check the lifecycle of the bean
             assertEquals(join("\n", expected), join("\n", lifecycle));
+        }
+        {
+            WidgetBean.lifecycle.clear();
+
+            Object object = ctx.lookup("WidgetBeanLocalBean");
+
+            assertTrue("instanceof widgetbean", object instanceof WidgetBean);
+
+            WidgetBean widget = (WidgetBean) object;
+
+            // Do a business method...
+            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            assertNotNull("lifecycle", lifecycle);
+            assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
+
+            // Check the lifecycle of the bean
+            List localBeanExpected = new ArrayList();
+            localBeanExpected.add(0, Lifecycle.CONSTRUCTOR);
+            localBeanExpected.addAll(expected);
+            assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
         }
         {
 
@@ -109,6 +127,7 @@ public class StatelessContainerTest extends TestCase {
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
+        bean.setLocalBean(new EmptyType());
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);

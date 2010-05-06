@@ -670,6 +670,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (Exception e1) {
                 logger.debug("createApplication.undeployFailed", e1, appInfo.jarPath);
             }
+
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.jarPath), t);
         }
     }

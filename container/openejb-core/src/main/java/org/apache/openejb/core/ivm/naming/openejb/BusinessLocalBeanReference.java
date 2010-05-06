@@ -14,12 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.assembler.classic;
+package org.apache.openejb.core.ivm.naming.openejb;
 
-public class SingletonBeanInfo extends EnterpriseBeanInfo {
-    public boolean localbean; 
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.ivm.naming.Reference;
 
-    public SingletonBeanInfo() {
-        type = SINGLETON;
+/**
+ * @version $Rev$ $Date$
+ */
+public class BusinessLocalBeanReference extends Reference {
+
+    private final DeploymentInfo.BusinessLocalBeanHome businessHome;
+
+    public BusinessLocalBeanReference(DeploymentInfo.BusinessLocalBeanHome localBeanHome) {
+        this.businessHome = localBeanHome;
     }
+
+    public Object getObject() throws javax.naming.NamingException {
+        return businessHome.create();
+    }
+
 }

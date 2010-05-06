@@ -27,11 +27,13 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.SessionBean;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ejb.ApplicationException;
 import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 /**
@@ -106,6 +108,31 @@ public class AnnotationDeployerTest {
         assert bean != null;        
     }
 
+    /**
+     * For https://issues.apache.org/jira/browse/OPENEJB-1188
+     * @throws Exception
+     */
+    @Test
+    public void testLocalBean() throws Exception {
+        EjbJar ejbJar = new EjbJar("test-classes");
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setJarLocation(null);
+
+        AppModule appModule = new AppModule(Thread.currentThread().getContextClassLoader(), "myapp");
+        appModule.getEjbModules().add(ejbModule);
+
+        AnnotationDeployer annotationDeployer = new AnnotationDeployer();
+        appModule = annotationDeployer.deploy(appModule);
+
+        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestLocalBean");
+        assert bean != null;
+        assert (((SessionBean)bean).getLocalBean() != null);
+
+        bean = ejbJar.getEnterpriseBean("InterceptedSLSBean");
+        assert bean != null;
+        assert (((SessionBean)bean).getLocalBean() == null);        
+    }
+
     @ApplicationException(rollback = true)
     public abstract class BusinessException extends Exception {
     }
@@ -127,6 +154,14 @@ public class AnnotationDeployerTest {
     public static class InterceptedSLSBean implements GenericInterface<String> {
         public String genericMethod(String s) {
             return s;
+        }
+    }
+
+    @Stateless
+    @LocalBean
+    public static class TestLocalBean {
+        public String echo(String input) {
+            return input;
         }
     }
 

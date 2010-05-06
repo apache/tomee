@@ -119,9 +119,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
         }
 
-        this.setDoIntraVmCopy(!interfaceType.isLocal());
+        this.setDoIntraVmCopy(!interfaceType.isLocal() && !interfaceType.isLocalBean());
 
-        if (!interfaceType.isLocal()){
+        if (!interfaceType.isLocal()&& !interfaceType.isLocalBean()){
             setDoIntraVmCopy(REMOTE_COPY_ENABLED);
         }
 
@@ -165,6 +165,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         // it's interface.
         Class mainInterface = getMainInterface();
         if (interfaceType.isHome()) return mainInterface;
+        if (interfaceType.isLocalBean()) return mainInterface;
 
         Class declaringClass = method.getDeclaringClass();
 

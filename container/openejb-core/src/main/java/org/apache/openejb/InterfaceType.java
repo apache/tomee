@@ -25,10 +25,12 @@ public enum InterfaceType {
     EJB_LOCAL_HOME("LocalHome"),
     EJB_LOCAL("Local"),
     BUSINESS_LOCAL("Local"),
+    LOCALBEAN("LocalBean"),
     BUSINESS_LOCAL_HOME("LocalHome"),
     BUSINESS_REMOTE("Remote"),
     BUSINESS_REMOTE_HOME("Home"),
     SERVICE_ENDPOINT("ServiceEndpoint"),
+    BUSINESS_LOCALBEAN_HOME("LocalBeanHome"),
     UNKNOWN("Unknown");
 
     private final String specName;
@@ -46,6 +48,7 @@ public enum InterfaceType {
             case EJB_HOME: return true;
             case EJB_LOCAL_HOME: return true;
             case BUSINESS_LOCAL_HOME: return true;
+            case BUSINESS_LOCALBEAN_HOME: return true;
             case BUSINESS_REMOTE_HOME: return true;
         }
         return false;
@@ -87,6 +90,15 @@ public enum InterfaceType {
         return false;
     }
 
+    public boolean isLocalBean() {
+        switch(this){
+            case LOCALBEAN: return true;
+            case BUSINESS_LOCALBEAN_HOME: return true;
+        }
+        return false;
+
+    }
+
     public InterfaceType getCounterpart() {
         switch(this){
             case EJB_HOME: return InterfaceType.EJB_OBJECT;
@@ -97,6 +109,8 @@ public enum InterfaceType {
             case EJB_LOCAL: return InterfaceType.EJB_LOCAL_HOME;
             case BUSINESS_REMOTE: return InterfaceType.BUSINESS_REMOTE_HOME;
             case BUSINESS_LOCAL: return InterfaceType.BUSINESS_LOCAL_HOME;
+            case BUSINESS_LOCALBEAN_HOME: return InterfaceType.LOCALBEAN;
+            case LOCALBEAN: return InterfaceType.BUSINESS_LOCALBEAN_HOME;
             default: throw new IllegalArgumentException("InterfaceType has no counterpart: " + this);
         }
     }

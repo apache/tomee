@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.*;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.jee.EmptyType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.TempClassLoader;
@@ -114,6 +115,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EJBs;
 import javax.ejb.Init;
 import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.LocalHome;
 import javax.ejb.MessageDriven;
 import javax.ejb.PostActivate;
@@ -1462,6 +1464,17 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
                 inheritedClassFinder = createInheritedClassFinder(classes.toArray(new Class<?>[classes.size()]));
+            }
+
+            for (EnterpriseBean bean : enterpriseBeans) {
+                Class<?> clazz;
+                try {
+                    clazz = classLoader.loadClass(bean.getEjbClass());
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBException("Unable to load bean class: " + bean.getEjbClass(), e);
+                }
+
+                ClassFinder inheritedClassFinder = createInheritedClassFinder(clazz);
 
                 /*
                  * @EJB
@@ -1471,10 +1484,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @PersistenceContext
                  */
                 buildAnnotatedRefs(bean, inheritedClassFinder, classLoader);
-
-
                 processWebServiceClientHandlers(bean, classLoader);
             }
+
 
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
                 Class<?> clazz;
@@ -1831,6 +1843,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             // It goes a little beyond that, but no one has ever complained about having
             // more local interfaces.
             for (Class interfce : all.unspecified) sessionBean.addBusinessLocal(interfce);
+
+            if (beanClass.getAnnotation(LocalBean.class) != null || beanClass.getInterfaces().length == 0) {
+                sessionBean.setLocalBean(new EmptyType());
+            }
 
         }
 
@@ -2337,7 +2353,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 interfce = (member == null) ? null : member.getType();
             }
 
-            if (interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
+            boolean localbean = isLocalBean(interfce);
+
+            if ((!localbean) && interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
                 return;
             }
 
@@ -2362,6 +2380,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     }
                     ejbRef.setRefType(EjbReference.Type.LOCAL);
+                } else if (localbean) {
+                    ejbRef.setRefType(EjbReference.Type.LOCAL);
+                    ejbRef.setRemote(interfce.getName());
                 } else {
                     ejbRef.setRemote(interfce.getName());
                     if (interfce.getAnnotation(Local.class) != null) {
@@ -2417,6 +2438,27 @@ public class AnnotationDeployer implements DynamicDeployer {
                     consumer.getEjbLocalRef().add(new EjbLocalRef(ejbRef));
                     break;
             }
+        }
+
+        private boolean isLocalBean(Class clazz) {
+            DeploymentModule module = getModule();
+            if (module instanceof EjbModule) {
+                Set<String> localbeans = new HashSet<String>();
+                EjbModule ejbModule = (EjbModule) module;
+                for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+                    if (bean instanceof SessionBean) {
+                        if (((SessionBean) bean).getLocalBean() != null) {
+                            localbeans.add(bean.getEjbClass());
+                        }
+                    }
+                }
+
+                if (localbeans.contains(clazz.getName())) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private boolean isValidEjbInterface(String b, Class clazz, String refName) {

@@ -80,6 +80,8 @@ public interface DeploymentInfo {
 
     public Class getBusinessLocalInterface();
 
+    public Class getBusinessLocalBeanInterface();
+
     public Class getBusinessRemoteInterface();
 
     public List<Class> getBusinessLocalInterfaces();
@@ -136,6 +138,8 @@ public interface DeploymentInfo {
 
     BusinessLocalHome getBusinessLocalHome();
 
+    BusinessLocalBeanHome getBusinessLocalBeanHome();
+
     BusinessLocalHome getBusinessLocalHome(List<Class> interfaces);
 
     BusinessRemoteHome getBusinessRemoteHome();
@@ -153,6 +157,10 @@ public interface DeploymentInfo {
     TransactionPolicyFactory getTransactionPolicyFactory();
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
+        Object create();
+    }
+
+    public interface BusinessLocalBeanHome extends javax.ejb.EJBLocalHome {
         Object create();
     }
 

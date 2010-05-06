@@ -43,10 +43,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
-import org.apache.openejb.test.stateless.BasicStatelessHome;
-import org.apache.openejb.test.stateless.BasicStatelessObject;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessLocal;
-import org.apache.openejb.test.stateless.BasicStatelessBusinessRemote;
+import org.apache.openejb.test.stateless.*;
 
 /**
  *
@@ -156,6 +153,24 @@ public class EncStatefulBean implements javax.ejb.SessionBean, SessionSynchroniz
         }
     }
 
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            Object o = ctx.lookup("java:comp/env/stateful/beanReferences/stateless-business-localbean");
+            BasicStatelessPojoBean object = (BasicStatelessPojoBean) o;
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
+            } catch (Exception e){
+                e.printStackTrace();
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupStatelessBusinessRemote() throws TestFailureException{
         try{
             try{
@@ -180,6 +195,22 @@ public class EncStatefulBean implements javax.ejb.SessionBean, SessionSynchroniz
 
             BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateful/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class );
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            InitialContext ctx = new InitialContext();
+            Assert.assertNotNull("The InitialContext is null", ctx );
+
+            BasicStatefulPojoBean object = (BasicStatefulPojoBean) javax.rmi.PortableRemoteObject.narrow( ctx.lookup("java:comp/env/stateful/beanReferences/stateful-business-localbean"), BasicStatefulPojoBean.class );
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }

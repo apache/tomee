@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.LinkResolver;
 
 import java.net.URI;
@@ -113,6 +114,30 @@ public class EjbResolver {
         }
         for (String businessLocal : bean.businessLocal) {
             addInterfaces(new Interfaces(businessLocal, Type.LOCAL, bean.ejbDeploymentId));
+        }
+
+        boolean isLocalBean = false;
+        if (bean instanceof StatelessBeanInfo) {
+            StatelessBeanInfo statelessBean = (StatelessBeanInfo) bean;
+            if (statelessBean.localbean) {
+                isLocalBean = true;
+            }
+        }
+        if (bean instanceof StatefulBeanInfo) {
+            StatefulBeanInfo statefulBean = (StatefulBeanInfo) bean;
+            if (statefulBean.localbean) {
+                isLocalBean = true;
+            }
+        }
+        if (bean instanceof SingletonBeanInfo) {
+            SingletonBeanInfo singletonBeanInfo = (SingletonBeanInfo) bean;
+            if (singletonBeanInfo.localbean) {
+                isLocalBean = true;
+            }
+        }
+
+        if (isLocalBean) {
+            addInterfaces(new Interfaces(bean.ejbClass, Type.LOCAL, bean.ejbDeploymentId));
         }
     }
 

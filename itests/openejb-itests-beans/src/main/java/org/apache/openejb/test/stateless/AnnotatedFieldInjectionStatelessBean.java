@@ -23,6 +23,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 
 import javax.annotation.Resource;
 import javax.ejb.CreateException;
@@ -92,7 +93,11 @@ public class AnnotatedFieldInjectionStatelessBean {
     @EJB
     private BasicStatefulBusinessLocal statefulBusinessLocal;
     @EJB
+    private BasicStatefulPojoBean statefulBusinessLocalBean;
+    @EJB
     private BasicStatefulBusinessRemote statefulBusinessRemote;
+    @EJB
+    private BasicStatelessPojoBean statelessBusinessLocalBean;
 
 
     public void ejbCreate() throws CreateException {
@@ -141,6 +146,14 @@ public class AnnotatedFieldInjectionStatelessBean {
     public void lookupStatefulBusinessLocal() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal);
+        } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException {
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean);
         } catch (AssertionFailedError afe) {
             throw new TestFailureException(afe);
         }
@@ -319,4 +332,14 @@ public class AnnotatedFieldInjectionStatelessBean {
         }
 
     }
+
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException{
+        try {
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statelessBusinessLocalBean);
+        } catch (AssertionFailedError afe) {
+            throw new TestFailureException(afe);
+        }
+
+    }
+    
 }

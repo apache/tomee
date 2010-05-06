@@ -269,4 +269,25 @@ public class SingletonSetterInjectionTests extends StatefulTestClient {
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+
+    public void test24_lookupStatefulBusinessLocalBean() {
+        try{
+            ejbObject.lookupStatefulBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test25_lookupSingletonBusinessLocalBean() {
+        try{
+            ejbObject.lookupSingletonBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
 }

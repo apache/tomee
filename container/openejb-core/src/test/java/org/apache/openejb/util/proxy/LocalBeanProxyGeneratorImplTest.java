@@ -17,17 +17,17 @@
 
 package org.apache.openejb.util.proxy;
 
-import java.io.FileOutputStream;
+import junit.framework.TestCase;
+import org.apache.openejb.AppClassLoader;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
 
 public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	
@@ -155,42 +155,12 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 		}
 	}
 
-	private class TestClassLoader extends ClassLoader {
-		
-		public TestClassLoader() {
-			super();
-		}
-
-		public TestClassLoader(ClassLoader parent) {
-			super(parent);
-		}
-
-		public Class addClass(String name, byte[] cls) {
-			Class c = defineClass(name, cls, 0, cls.length);
-			return c;
-		}
-	}
-	
-	private SampleLocalBean loadProxy() throws Exception {
-		SampleLocalBean bean = new SampleLocalBean();
-		TestInvocationHandler invocationHandler = new TestInvocationHandler(bean);
-		
-		return loadProxy(invocationHandler);
-	}
-
 	private SampleLocalBean loadProxy(TestInvocationHandler invocationHandler) throws Exception {
-		String name = "TestProxy";
-		byte[] cls = new LocalBeanProxyGeneratorImpl().generateProxy(SampleLocalBean.class, name);
-		
 		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-		TestClassLoader newCl = new TestClassLoader(oldCl);
-		Thread.currentThread().setContextClassLoader(newCl);
-		newCl.addClass(name, cls);
-		
-		Class<?> proxyClass = newCl.loadClass(name);
-		
-		SampleLocalBean proxy = (SampleLocalBean) proxyClass.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
-		return proxy;
+        AppClassLoader cl = new AppClassLoader(new URL[] { }, oldCl);
+
+        Class cls = new LocalBeanProxyGeneratorImpl().createProxy(SampleLocalBean.class, cl);
+        return (SampleLocalBean) cls.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
 	}
 
 	public void testShouldReturnCorrectMethodSignatures() throws Exception {
