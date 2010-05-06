@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.util.proxy;
 
-import org.apache.openejb.AppClassLoader;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 
 public class LocalBeanProxyFactory {
 
-    public static Object newProxyInstance(AppClassLoader cl, Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
+    public static Object newProxyInstance(ClassLoader cl, Class interfce, java.lang.reflect.InvocationHandler h) throws IllegalArgumentException {
         try {
             Class proxyCls = new LocalBeanProxyGeneratorImpl().createProxy(interfce, cl);
             Constructor constructor = proxyCls.getConstructor(java.lang.reflect.InvocationHandler.class);

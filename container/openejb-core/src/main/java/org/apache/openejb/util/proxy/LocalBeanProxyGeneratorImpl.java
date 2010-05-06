@@ -17,14 +17,33 @@
 package org.apache.openejb.util.proxy;
 
 import org.apache.xbean.asm.*;
-import org.apache.openejb.AppClassLoader;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
 
-    public Class createProxy(Class<?> clsToProxy, AppClassLoader cl) {
+    private static final sun.misc.Unsafe unsafe;
+
+    static {
+        unsafe = (sun.misc.Unsafe) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                try {
+                    Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                    field.setAccessible(true);
+                    return field.get(null);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
+                }
+            }
+        });
+    }
+
+    public Class createProxy(Class<?> clsToProxy, ClassLoader cl) {
         String proxyName = generateProxyName(clsToProxy.getName());
         return createProxy(clsToProxy, proxyName, cl);
     }
@@ -33,24 +52,18 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         return clsName + "$LocalBeanProxy";
     }
 
-    private Class createProxy(Class<?> clsToProxy, String proxyName, AppClassLoader cl) {
+    private Class createProxy(Class<?> clsToProxy, String proxyName, ClassLoader cl) {
         String clsName = proxyName.replaceAll("\\.", "/");
 
-        if (cl.classDefined(proxyName)) {
-            try {
-                return cl.loadClass(proxyName);
-            } catch (Exception e) {
-            }
+        try {
+            return cl.loadClass(proxyName);
+        } catch (Exception e) {
         }
 
         try {
             byte[] proxyBytes = generateProxy(clsToProxy, clsName);
-            cl.addClass(proxyBytes, proxyName);
-            Class<?> proxy = cl.loadClass(proxyName);
-            return proxy;
+            return (Class<?>) unsafe.defineClass(proxyName, proxyBytes, 0, proxyBytes.length, cl, this.getClass().getProtectionDomain());
         } catch (ProxyGenerationException e) {
-            throw new InternalError(e.toString());
-        } catch (ClassNotFoundException e) {
             throw new InternalError(e.toString());
         }
     }
