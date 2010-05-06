@@ -62,9 +62,9 @@ public class ClassLoaderUtil {
         });
     }
 
-    public static AppClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
+    public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
         urls = urlCache.cacheUrls(appId, urls);
-        AppClassLoader classLoader = new AppClassLoader(urls, parent);
+        URLClassLoader classLoader = new URLClassLoader(urls, parent);
 
         List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
         if (classLoaders == null) {

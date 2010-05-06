@@ -16,9 +16,7 @@
  */
 package org.apache.openejb.util.proxy;
 
-import org.apache.openejb.AppClassLoader;
-
 public interface LocalBeanProxyGenerator {
-    public Class createProxy(Class<?> clsToProxy, AppClassLoader cl);
+    public Class createProxy(Class<?> clsToProxy, ClassLoader cl);
 }
 

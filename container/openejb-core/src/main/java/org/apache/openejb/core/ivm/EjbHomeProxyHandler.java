@@ -33,7 +33,6 @@ import javax.ejb.EJBHome;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.AppClassLoader;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
@@ -137,7 +136,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             proxyInterfaces.add(IntraVmProxy.class);
 
             if (InterfaceType.LOCALBEAN.equals(objectInterfaceType)) {
-                return LocalBeanProxyFactory.newProxyInstance((AppClassLoader) handler.getDeploymentInfo().getClassLoader(), handler.getDeploymentInfo().getBeanClass(), handler);
+                return LocalBeanProxyFactory.newProxyInstance(handler.getDeploymentInfo().getClassLoader(), handler.getDeploymentInfo().getBeanClass(), handler);
             } else {
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
             }

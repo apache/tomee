@@ -18,7 +18,6 @@
 package org.apache.openejb.util.proxy;
 
 import junit.framework.TestCase;
-import org.apache.openejb.AppClassLoader;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -156,8 +155,7 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	}
 
 	private SampleLocalBean loadProxy(TestInvocationHandler invocationHandler) throws Exception {
-		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        AppClassLoader cl = new AppClassLoader(new URL[] { }, oldCl);
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         Class cls = new LocalBeanProxyGeneratorImpl().createProxy(SampleLocalBean.class, cl);
         return (SampleLocalBean) cls.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
