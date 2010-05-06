@@ -279,4 +279,25 @@ public class SingletonJndiEncTests extends SingletonTestClient{
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+
+    public void test24_lookupStatefulBusinessLocalBean() {
+        try{
+            ejbObject.lookupStatefulBusinessLocal();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test25_lookupSingletonBusinessLocalBean() {
+        try{
+            ejbObject.lookupSingletonBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
 }

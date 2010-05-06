@@ -172,7 +172,6 @@ public class JndiEncBuilder {
         }
 
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
-
             Reference reference = null;
 
             if (referenceInfo.location != null) {
@@ -180,7 +179,7 @@ public class JndiEncBuilder {
             } else if (referenceInfo.ejbDeploymentId == null){
                 reference = new LazyEjbReference(new Ref(referenceInfo), moduleUri, false);
             } else {
-                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, InterfaceType.BUSINESS_LOCAL);
+                String jndiName = "openejb/Deployment/" + JndiBuilder.format(referenceInfo.ejbDeploymentId, referenceInfo.interfaceClassName, referenceInfo.localbean ? InterfaceType.LOCALBEAN : InterfaceType.BUSINESS_LOCAL);
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);

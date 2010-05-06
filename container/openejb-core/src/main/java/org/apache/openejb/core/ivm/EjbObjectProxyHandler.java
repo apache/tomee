@@ -218,6 +218,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType) {
+        
+
         return createProxy(deploymentInfo, primaryKey, interfaceType, null);
     }
 

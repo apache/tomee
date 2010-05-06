@@ -166,7 +166,7 @@ public class CheckClasses extends ValidationBase {
 
         if (beanClass.isAnnotationPresent(WebService.class)) return;
 
-        fail(b, "noInterfaceDeclared.session");
+        //fail(b, "noInterfaceDeclared.session");
     }
 
     private void check_hasDependentClasses(RemoteBean b, String className, String type) {

@@ -16,46 +16,56 @@
  */
 package org.apache.openejb.util.proxy;
 
-import java.lang.reflect.Method;
+import org.apache.xbean.asm.*;
+import org.apache.openejb.AppClassLoader;
 
-import org.apache.xbean.asm.ClassWriter;
-import org.apache.xbean.asm.FieldVisitor;
-import org.apache.xbean.asm.Label;
-import org.apache.xbean.asm.MethodVisitor;
-import org.apache.xbean.asm.Opcodes;
-import org.apache.xbean.asm.Type;
+import java.lang.reflect.Method;
 
 
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
 
-	private static Object nextUniqueNumberLock = new Object();
-	private final static String proxyClassNamePrefix = "$LocalBeanProxy";
-	private static long nextUniqueNumber = 0;
-	
-	private String generateProxyName() {
-		long num;
-		synchronized (nextUniqueNumberLock) {
-		    num = nextUniqueNumber++;
-		}
-		
-		return proxyClassNamePrefix + num;
-	}
+    public Class createProxy(Class<?> clsToProxy, AppClassLoader cl) {
+        String proxyName = generateProxyName(clsToProxy.getName());
+        return createProxy(clsToProxy, proxyName, cl);
+    }
 
-	public byte[] generateProxy(Class<?> clsToProxy) throws ProxyGenerationException {
-		String proxyName = generateProxyName();
-		return generateProxy(clsToProxy, proxyName);
-	}
+    private String generateProxyName(String clsName) {
+        return clsName + "$LocalBeanProxy";
+    }
 
-	public byte[] generateProxy(Class<?> clsToProxy, String proxyName) throws ProxyGenerationException {
+    private Class createProxy(Class<?> clsToProxy, String proxyName, AppClassLoader cl) {
+        String clsName = proxyName.replaceAll("\\.", "/");
+
+        if (cl.classDefined(proxyName)) {
+            try {
+                return cl.loadClass(proxyName);
+            } catch (Exception e) {
+            }
+        }
+
+        try {
+            byte[] proxyBytes = generateProxy(clsToProxy, clsName);
+            cl.addClass(proxyBytes, proxyName);
+            Class<?> proxy = cl.loadClass(proxyName);
+            return proxy;
+        } catch (ProxyGenerationException e) {
+            throw new InternalError(e.toString());
+        } catch (ClassNotFoundException e) {
+            throw new InternalError(e.toString());
+        }
+    }
+
+	private byte[] generateProxy(Class<?> clsToProxy, String proxyName) throws ProxyGenerationException {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		FieldVisitor fv;
 		MethodVisitor mv;
 
-		String clsToOverride = clsToProxy.getCanonicalName().replace('.', '/');
+		String clsToOverride = clsToProxy.getName().replaceAll("\\.", "/");
+        String proxyClassName = proxyName.replaceAll("\\.", "/");
 
-		// push class signature
-		cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyName, null, clsToOverride, null);
-		cw.visitSource(proxyName + ".java", null);
+        // push class signature
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, null);
+		cw.visitSource(clsToOverride + ".java", null);
 
 		// push InvocationHandler field
 		fv = cw.visitField(ACC_FINAL + ACC_PRIVATE, "invocationHandler", "Ljava/lang/reflect/InvocationHandler;", null, null);
@@ -76,7 +86,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		// loop through public methods, and push something to the class
 		Method[] methods = clsToProxy.getDeclaredMethods();
 		for (Method method : methods) {
-			processMethod(cw, method, proxyName);
+			processMethod(cw, method, proxyClassName, clsToOverride);
 		}
 		
 		byte[] clsBytes = cw.toByteArray();
@@ -84,7 +94,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 	}
 
 
-	private void processMethod(ClassWriter cw, Method method, String proxyName) throws ProxyGenerationException {
+	private void processMethod(ClassWriter cw, Method method, String proxyName, String clsToOverride) throws ProxyGenerationException {
 		if ("<init>".equals(method.getName())) {
 			return;
 		}
@@ -107,11 +117,11 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 			mv.visitTryCatchBlock(l0, l1, l2, "java/lang/reflect/InvocationTargetException");
 		}
 		
-		mv.visitTryCatchBlock(l0, l1, l3, "java/lang/Throwable");
+//		mv.visitTryCatchBlock(l0, l1, l3, "java/lang/Throwable");
 		
 		// push try code
 		mv.visitLabel(l0);
-		mv.visitLdcInsn(Type.getType("L" + proxyName + ";"));
+		mv.visitLdcInsn(Type.getType("L" + clsToOverride + ";"));
 		
 		// the following code generates the bytecode for this line of Java:
 		// Method method = <proxy>.class.getMethod("add", new Class[] { <array of function argument classes> });
@@ -261,19 +271,6 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 				}
 			}
 		}
-
-		// wrap any other exceptions with an UndeclaredThrowableException
-		mv.visitLabel(l3);
-		mv.visitVarInsn(ASTORE, length);
-		Label l8 = new Label();
-		mv.visitLabel(l8);
-		mv.visitTypeInsn(NEW, "java/lang/reflect/UndeclaredThrowableException");
-		mv.visitInsn(DUP);
-		mv.visitVarInsn(ALOAD, length);
-		mv.visitMethodInsn(INVOKESPECIAL, "java/lang/reflect/UndeclaredThrowableException", "<init>", "(Ljava/lang/Throwable;)V");
-		mv.visitInsn(ATHROW);
-		Label l9 = new Label();
-		mv.visitLabel(l9);
 
 		// finish this method
 		mv.visitMaxs(0, 0);

@@ -17,10 +17,7 @@
 package org.apache.openejb.test.singleton;
 
 import org.apache.openejb.test.TestFailureException;
-import org.apache.openejb.test.stateful.BasicStatefulHome;
-import org.apache.openejb.test.stateful.BasicStatefulObject;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
-import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.*;
 import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.entity.bmp.BasicBmpObject;
 
@@ -101,6 +98,19 @@ public class ContextLookupSingletonPojoBean {
         }
     }
 
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            BasicSingletonPojoBean object = (BasicSingletonPojoBean) getSessionContext().lookup("singleton/beanReferences/singleton-business-localbean");
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupSingletonBusinessRemote() throws TestFailureException{
         try{
             try{
@@ -119,6 +129,19 @@ public class ContextLookupSingletonPojoBean {
             try{
             BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) getSessionContext().lookup("singleton/beanReferences/stateful-business-local");
             Assert.assertNotNull("The EJB BusinessLocal is null", object );
+            } catch (Exception e){
+                Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+            }
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
+        try{
+            try{
+            BasicStatefulPojoBean object = (BasicStatefulPojoBean) getSessionContext().lookup("singleton/beanReferences/stateful-business-localbean");
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", object );
             } catch (Exception e){
                 Assert.fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
             }

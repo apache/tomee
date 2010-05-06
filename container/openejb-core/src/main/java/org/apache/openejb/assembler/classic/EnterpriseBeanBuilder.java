@@ -207,6 +207,7 @@ class EnterpriseBeanBuilder {
                 }
             }
             deployment.setExtendedEntityManagerFactories(new Index<EntityManagerFactory, Map>(extendedEntityManagerFactories));
+            deployment.setLocalbean(((StatefulBeanInfo) bean).localbean);
         }
 
         if (ejbType.isSession() || ejbType.isMessageDriven()) {
@@ -217,6 +218,11 @@ class EnterpriseBeanBuilder {
             deployment.setBeanManagedConcurrency("Bean".equalsIgnoreCase(bean.concurrencyType));
             deployment.getDependsOn().addAll(bean.dependsOn);
             deployment.setLoadOnStartup(bean.loadOnStartup);
+            deployment.setLocalbean(((SingletonBeanInfo) bean).localbean);
+        }
+
+        if (ejbType == BeanType.STATELESS) {
+            deployment.setLocalbean(((StatelessBeanInfo) bean).localbean);
         }
 
         if (ejbType.isEntity()) {

@@ -268,4 +268,25 @@ public class StatefulJndiEncTests extends StatefulTestClient{
             fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
         }
     }
+
+    public void test24_lookupStatelessBusinessLocalBean() {
+        try{
+            ejbObject.lookupStatelessBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
+    public void test25_lookupStatefulBusinessLocalBean() {
+        try{
+            ejbObject.lookupStatefulBusinessLocalBean();
+        } catch (TestFailureException e){
+            throw e.error;
+        } catch (Exception e){
+            fail("Received Exception "+e.getClass()+ " : "+e.getMessage());
+        }
+    }
+
 }

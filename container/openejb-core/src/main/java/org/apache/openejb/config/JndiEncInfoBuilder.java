@@ -19,6 +19,9 @@ package org.apache.openejb.config;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
+import org.apache.openejb.assembler.classic.StatefulBeanInfo;
+import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
@@ -79,8 +82,10 @@ public class JndiEncInfoBuilder {
 
     private final EjbResolver earResolver;
     private final Map<String, EjbResolver> ejbJarResolvers = new HashMap<String, EjbResolver>();
+    private AppInfo appInfo;
 
     public JndiEncInfoBuilder(AppInfo appInfo) {
+        this.appInfo = appInfo;
 
         // Global-scoped EJB Resolver
 
@@ -159,6 +164,7 @@ public class JndiEncInfoBuilder {
             info.link = ref.getEjbLink();
             info.location = buildLocationInfo(ref);
             info.targets.addAll(buildInjectionInfos(ref));
+            info.localbean = isIntefaceLocalBean(moduleId, info.interfaceClassName);
 
 
             if (info.location != null) {
@@ -189,6 +195,8 @@ public class JndiEncInfoBuilder {
                 }
                 continue;
             }
+
+//            info.localbean = isLocalBean(moduleId, deploymentId);
 
             EjbResolver.Scope scope = ejbResolver.getScope(deploymentId);
 
@@ -227,6 +235,7 @@ public class JndiEncInfoBuilder {
         l.link = r.link;
         l.location = r.location;
         l.targets.addAll(r.targets);
+        l.localbean = r.localbean;
         return l;
     }
 
@@ -412,6 +421,71 @@ public class JndiEncInfoBuilder {
 
     }
 
+    private boolean isIntefaceLocalBean(String moduleId, String interfaceClassName) {
+        EnterpriseBeanInfo beanInfo = getInterfaceBeanInfo(moduleId, interfaceClassName);
+        return isLocalBean(beanInfo) && beanInfo.ejbClass.equals(interfaceClassName);
+    }
+
+    private EnterpriseBeanInfo getInterfaceBeanInfo(String moduleId, String interfaceClassName) {
+        List<EjbJarInfo> ejbJars = appInfo.ejbJars;
+        for (EjbJarInfo ejbJar : ejbJars) {
+            if (!ejbJar.moduleId.equals(moduleId)) continue;
+
+            List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
+            for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
+                if (interfaceClassName.equals(enterpriseBean.ejbClass)
+                        || interfaceClassName.equals(enterpriseBean.local)
+                        || interfaceClassName.equals(enterpriseBean.remote)
+                        || (enterpriseBean.businessLocal != null && enterpriseBean.businessLocal.contains(interfaceClassName))
+                        || (enterpriseBean.businessRemote != null && enterpriseBean.businessRemote.contains(interfaceClassName))) {
+                    return enterpriseBean;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    private boolean isLocalBean(String moduleId, String deploymentId) {
+        EnterpriseBeanInfo beanInfo = getBeanInfo(moduleId, deploymentId);
+        return isLocalBean(beanInfo);
+    }
+
+    private boolean isLocalBean(EnterpriseBeanInfo beanInfo) {
+        if (beanInfo == null) return false;
+
+        if (beanInfo instanceof StatelessBeanInfo) {
+            StatelessBeanInfo statelessBeanInfo = (StatelessBeanInfo) beanInfo;
+            return statelessBeanInfo.localbean;
+        }
+        if (beanInfo instanceof StatefulBeanInfo) {
+            StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) beanInfo;
+            return statefulBeanInfo.localbean;
+        }
+        if (beanInfo instanceof SingletonBeanInfo) {
+            SingletonBeanInfo singletonBeanInfo = (SingletonBeanInfo) beanInfo;
+            return singletonBeanInfo.localbean;
+        }
+
+        return false;
+    }
+
+    private EnterpriseBeanInfo getBeanInfo(String moduleId, String deploymentId) {
+        List<EjbJarInfo> ejbJars = appInfo.ejbJars;
+        for (EjbJarInfo ejbJar : ejbJars) {
+            if (!ejbJar.moduleId.equals(moduleId)) continue;
+
+            List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
+            for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
+                if (enterpriseBean.ejbDeploymentId.equals(deploymentId)) {
+                    return enterpriseBean;
+                }
+            }
+        }
+
+        return null;
+    }
 
     private static class SimpleRef implements EjbResolver.Reference {
         private final String name;

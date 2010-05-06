@@ -21,7 +21,7 @@ import org.apache.openejb.DeploymentInfo;
 /**
  * @version $Rev$ $Date$
  */
-public class BusinessRemoteReference extends Reference {
+public class    BusinessRemoteReference extends Reference {
 
     private final DeploymentInfo.BusinessRemoteHome businessHome;
 

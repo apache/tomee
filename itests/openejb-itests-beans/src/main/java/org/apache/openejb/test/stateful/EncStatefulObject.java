@@ -32,8 +32,10 @@ public interface EncStatefulObject extends javax.ejb.EJBObject{
     public void lookupStatelessBean() throws TestFailureException, RemoteException;
 
     public void lookupStatelessBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatelessBusinessLocalBean() throws TestFailureException, RemoteException;
     public void lookupStatelessBusinessRemote() throws TestFailureException, RemoteException;
     public void lookupStatefulBusinessLocal() throws TestFailureException, RemoteException;
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException, RemoteException;
     public void lookupStatefulBusinessRemote() throws TestFailureException, RemoteException;
 
     public void lookupResource() throws TestFailureException, RemoteException;

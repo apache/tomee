@@ -157,6 +157,17 @@ public class StatefulContainer implements RpcContainer {
             }
         }
 
+        Class businessLocalBeanHomeInterface = deploymentInfo.getBusinessLocalBeanInterface();
+        if (businessLocalBeanHomeInterface != null) {
+            for (Method method : DeploymentInfo.BusinessLocalBeanHome.class.getMethods()) {
+                if (method.getName().startsWith("create")) {
+                    methods.put(method, MethodType.CREATE);
+                } else if (method.getName().equals("remove")) {
+                    methods.put(method, MethodType.REMOVE);
+                }
+            }
+        }
+
         Class businessRemoteHomeInterface = deploymentInfo.getBusinessRemoteInterface();
         if (businessRemoteHomeInterface != null) {
             for (Method method : DeploymentInfo.BusinessRemoteHome.class.getMethods()) {
@@ -317,7 +328,8 @@ public class StatefulContainer implements RpcContainer {
               
                 // Invoke create for legacy beans
                 if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) &&
-                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
+                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class) &&
+                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalBeanHome.class)) {
 
                     // Setup for business invocation
                     Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);

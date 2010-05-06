@@ -155,8 +155,23 @@ public class ReflectionInvocationContext implements InvocationContext {
             this.args = args;
         }
         public Object invoke() throws Exception {
-            Object value = method.invoke(target, args);
+            Method targetMethod = getMethod(target.getClass(), method.getName(), method.getParameterTypes());
+            targetMethod.setAccessible(true);
+            Object value = targetMethod.invoke(target, args);
             return value;
+        }
+
+        private Method getMethod(Class<?> cls, String methodName, Class<?>[] parameterTypes) throws NoSuchMethodException {
+            try {
+                Method method = cls.getDeclaredMethod(methodName, parameterTypes);
+                return method;
+            } catch (NoSuchMethodException e) {
+                if (! (Object.class.equals(cls))) {
+                    return getMethod(cls.getSuperclass(), methodName, parameterTypes);
+                }
+
+                throw e;
+            }
         }
 
         public String toString() {

@@ -23,6 +23,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -68,8 +69,10 @@ public class FieldInjectionSingletonBean implements SessionBean {
     private EntityManager eem;
     private EntityManager pem;
     private BasicSingletonBusinessLocal singletonBusinessLocal;
+    private BasicSingletonPojoBean singletonBusinessLocalBean;
     private BasicSingletonBusinessRemote singletonBusinessRemote;
     private BasicStatefulBusinessLocal statefulBusinessLocal;
+    private BasicStatefulPojoBean statefulBusinessLocalBean;
     private BasicStatefulBusinessRemote statefulBusinessRemote;
 
 
@@ -108,6 +111,14 @@ public class FieldInjectionSingletonBean implements SessionBean {
         }
     }
 
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", singletonBusinessLocalBean );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupSingletonBusinessRemote() throws TestFailureException{
         try{
             Assert.assertNotNull("The EJB BusinessRemote is null", singletonBusinessRemote );
@@ -119,6 +130,14 @@ public class FieldInjectionSingletonBean implements SessionBean {
     public void lookupStatefulBusinessLocal() throws TestFailureException{
         try{
             Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocal );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalBean );
         } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }

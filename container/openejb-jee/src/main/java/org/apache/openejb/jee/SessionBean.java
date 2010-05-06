@@ -108,6 +108,7 @@ import java.util.Arrays;
         "local",
         "businessLocal",
         "businessRemote",
+        "localBean",
         "serviceEndpoint",
         "ejbClass",
         "sessionType",
@@ -156,6 +157,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected LinkedHashSet<String> businessLocal;
     @XmlElement(name = "business-remote")
     protected LinkedHashSet<String> businessRemote;
+    @XmlElement(name = "local-bean")
+    protected EmptyType localBean;
     @XmlElement(name = "service-endpoint")
     protected String serviceEndpoint;
     @XmlElement(name = "ejb-class")
@@ -391,6 +394,14 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public void addBusinessRemote(Class businessRemote) {
         addBusinessRemote(businessRemote.getName());
+    }
+
+    public EmptyType getLocalBean() {
+        return localBean;
+    }
+
+    public void setLocalBean(EmptyType localBean) {
+        this.localBean = localBean;
     }
 
     public String getServiceEndpoint() {

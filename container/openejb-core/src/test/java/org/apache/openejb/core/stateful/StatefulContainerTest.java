@@ -25,12 +25,7 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.ejb.Local;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remote;
-import javax.ejb.Remove;
-import javax.ejb.SessionContext;
+import javax.ejb.*;
 import javax.naming.InitialContext;
 import javax.transaction.TransactionManager;
 
@@ -55,6 +50,15 @@ public class StatefulContainerTest extends TestCase {
 
     public void testBusinessLocalInterface() throws Exception {
         testBusinessLocalInterface(expectedLifecycle);
+    }
+    
+    public void testBusinessLocalBeanInterface() throws Exception {
+        List localbeanExpectedLifecycle = new ArrayList();
+        localbeanExpectedLifecycle.addAll(expectedLifecycle);
+        // can't avoid the extra constructor call
+        localbeanExpectedLifecycle.add(4, Lifecycle.CONSTRUCTOR);
+
+        testBusinessLocalBeanInterface(localbeanExpectedLifecycle);
     }
 
     public void testBusinessRemoteInterfaceInTx() throws Exception {
@@ -100,6 +104,40 @@ public class StatefulContainerTest extends TestCase {
         assertEquals(StatefulContainerTest.join("\n", expectedLifecycle) , join("\n", WidgetBean.lifecycle));
     }
 
+    protected void testBusinessLocalBeanInterface(List expectedLifecycle) throws Exception {
+
+        // Do a create...
+
+        InitialContext ctx = new InitialContext();
+        Object object = ctx.lookup("WidgetBeanLocalBean");
+
+        assertTrue("instanceof widget", object instanceof WidgetBean);
+
+        WidgetBean widget = (WidgetBean) object;
+
+        // Do a business method...
+        Stack<Object> actual = widget.getLifecycle();
+        assertNotNull("lifecycle", actual);
+
+        // test app exception
+        try {
+            widget.throwAppException();
+            fail("Expected application exception");
+        } catch (SQLException e) {
+            assertEquals("test", e.getMessage());
+        }
+
+        // Do another business method...
+        widget.afterAppException();
+
+        // Do a remove...
+        widget.destroy();
+
+        // Check the lifecycle of the bean
+
+        assertEquals(StatefulContainerTest.join("\n", expectedLifecycle) , join("\n", WidgetBean.lifecycle));
+    }
+
     public void testBusinessRemoteInterface() throws Exception {
         testBusinessRemoteInterface(expectedLifecycle);
     }
@@ -109,6 +147,21 @@ public class StatefulContainerTest extends TestCase {
         transactionManager.begin();
         try {
             testBusinessLocalInterface(inTxExpectedLifecycle);
+        } finally {
+            transactionManager.commit();
+        }
+    }
+
+    public void testBusinessLocalBeanInterfaceInTx() throws Exception {
+         List localbeanExpectedLifecycle = new ArrayList();
+        localbeanExpectedLifecycle.addAll(inTxExpectedLifecycle);
+        // can't avoid the extra constructor call
+        localbeanExpectedLifecycle.add(3, Lifecycle.CONSTRUCTOR);
+
+        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        transactionManager.begin();
+        try {
+            testBusinessLocalBeanInterface(localbeanExpectedLifecycle);
         } finally {
             transactionManager.commit();
         }
@@ -226,6 +279,7 @@ public class StatefulContainerTest extends TestCase {
         POST_ACTIVATE4, REMOVE, PRE_DESTROY,
     }
 
+    @LocalBean
     public static class WidgetBean implements Widget, RemoteWidget {
         private int activates = 0;
         private int passivates = 0;

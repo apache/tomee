@@ -20,6 +20,7 @@ import org.apache.openejb.test.entity.bmp.BasicBmpHome;
 import org.apache.openejb.test.stateful.BasicStatefulHome;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
 import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
 import org.apache.openejb.test.TestFailureException;
 
 import javax.ejb.SessionBean;
@@ -70,8 +71,10 @@ public class SetterInjectionSingletonBean implements SessionBean {
     private EntityManager eemField;
     private EntityManager pemField;
     private BasicSingletonBusinessLocal singletonBusinessLocalField;
+    private BasicSingletonPojoBean singletonBusinessLocalFieldBean;
     private BasicSingletonBusinessRemote singletonBusinessRemoteField;
     private BasicStatefulBusinessLocal statefulBusinessLocalField;
+    private BasicStatefulPojoBean statefulBusinessLocalFieldBean;
     private BasicStatefulBusinessRemote statefulBusinessRemoteField;
 
     public BasicStatefulBusinessLocal getStatefulBusinessLocal() {
@@ -80,6 +83,14 @@ public class SetterInjectionSingletonBean implements SessionBean {
 
     public void setStatefulBusinessLocal(BasicStatefulBusinessLocal statefulBusinessLocal) {
         this.statefulBusinessLocalField = statefulBusinessLocal;
+    }
+
+    public BasicStatefulPojoBean getStatefulBusinessLocalBean() {
+        return statefulBusinessLocalFieldBean;
+    }
+
+    public void setStatefulBusinessLocalBean(BasicStatefulPojoBean statefulBusinessLocalBean) {
+        this.statefulBusinessLocalFieldBean = statefulBusinessLocalBean;
     }
 
     public BasicStatefulBusinessRemote getStatefulBusinessRemote() {
@@ -96,6 +107,14 @@ public class SetterInjectionSingletonBean implements SessionBean {
 
     public void setSingletonBusinessLocal(BasicSingletonBusinessLocal singletonBusinessLocal) {
         this.singletonBusinessLocalField = singletonBusinessLocal;
+    }
+
+    public BasicSingletonPojoBean getSingletonBusinessLocalBean() {
+        return singletonBusinessLocalFieldBean;
+    }
+
+    public void setSingletonBusinessLocalBean(BasicSingletonPojoBean singletonBusinessLocalBean) {
+        this.singletonBusinessLocalFieldBean = singletonBusinessLocalBean;
     }
 
     public BasicSingletonBusinessRemote getSingletonBusinessRemote() {
@@ -309,6 +328,14 @@ public class SetterInjectionSingletonBean implements SessionBean {
         }
     }
 
+    public void lookupSingletonBusinessLocalBean() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", singletonBusinessLocalFieldBean );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
     public void lookupSingletonBusinessRemote() throws TestFailureException{
         try{
             Assert.assertNotNull("The EJB BusinessRemote is null", singletonBusinessRemoteField );
@@ -320,6 +347,14 @@ public class SetterInjectionSingletonBean implements SessionBean {
     public void lookupStatefulBusinessLocal() throws TestFailureException{
         try{
             Assert.assertNotNull("The EJB BusinessLocal is null", statefulBusinessLocalField );
+        } catch (AssertionFailedError afe){
+            throw new TestFailureException(afe);
+        }
+    }
+
+    public void lookupStatefulBusinessLocalBean() throws TestFailureException{
+        try{
+            Assert.assertNotNull("The EJB BusinessLocalBean is null", statefulBusinessLocalFieldBean );
         } catch (AssertionFailedError afe){
             throw new TestFailureException(afe);
         }

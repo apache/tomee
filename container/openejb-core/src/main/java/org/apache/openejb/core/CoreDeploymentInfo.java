@@ -35,7 +35,6 @@ import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.ejb.ScheduleExpression;
 import javax.ejb.SessionSynchronization;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
@@ -50,6 +49,9 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
+import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
+import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
+import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -57,6 +59,8 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.InvocationHandler;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 /**
  * @org.apache.xbean.XBean element="deployment"
@@ -132,6 +136,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
     private boolean loadOnStartup;
+    private boolean localbean;
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -144,19 +149,20 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
             case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
             case SERVICE_ENDPOINT: return getServiceEndpointInterface();
+            case LOCALBEAN: return getBeanClass();
+            case BUSINESS_LOCALBEAN_HOME: return DeploymentInfo.BusinessLocalBeanHome.class;
             default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
         }
     }
 
     public List<Class> getInterfaces(InterfaceType interfaceType) {
         switch(interfaceType){
-            case BUSINESS_LOCAL: return getBusinessLocalInterfaces();
             case BUSINESS_REMOTE: return getBusinessRemoteInterfaces();
-            default: {
-                List<Class> interfaces = new ArrayList<Class>();
-                interfaces.add(getInterface(interfaceType));
-                return interfaces;
-            }
+            case BUSINESS_LOCAL: return getBusinessLocalInterfaces();
+            default: 
+            List<Class> interfaces = new ArrayList<Class>();
+            interfaces.add(getInterface(interfaceType));
+            return interfaces;
         }
     }
 
@@ -521,6 +527,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public BusinessLocalHome getBusinessLocalHome() {
         return getBusinessLocalHome(getBusinessLocalInterfaces());
+    }
+
+    public BusinessLocalBeanHome getBusinessLocalBeanHome() {
+        List<Class> interfaces = new ArrayList<Class>();
+        interfaces.add(this.beanClass);
+        return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces);
     }
 
     public BusinessLocalHome getBusinessLocalHome(List<Class> interfaces) {
@@ -1080,5 +1092,21 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public boolean isSessionSynchronized() {
         return !isBeanManagedTransaction() && SessionSynchronization.class.isAssignableFrom(beanClass);
+    }
+
+    public boolean isLocalbean() {
+        return localbean;
+    }
+
+    public void setLocalbean(boolean localbean) {
+        this.localbean = localbean;
+    }
+
+    public Class getBusinessLocalBeanInterface() {
+        if (this.isLocalbean()) {
+            return this.beanClass;
+        }
+
+        return null;
     }
 }

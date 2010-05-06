@@ -259,6 +259,9 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
             String ejbName = deploymentInfo.getEjbName();
 
             String name = (type == null)? null: type.getSpecName();
+            if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {
+                name = null;
+            }
 
             Permission permission = new EJBMethodPermission(ejbName, name, method);
 
