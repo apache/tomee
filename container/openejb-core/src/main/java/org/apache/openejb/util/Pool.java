@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.monitoring.Managed;
+
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,120 +52,41 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Pool<T> {
 
+    // TODO: replace System.currentTimeMillis() with System.nanoTime()
+    
     private final LinkedList<Entry> pool = new LinkedList<Entry>();
     private final Semaphore instances;
     private final Semaphore available;
     private final Semaphore minimum;
     private final Executor executor;
+
+    @Managed
     private final long maxAge;
+
+    @Managed
     private final AtomicInteger poolVersion = new AtomicInteger();
+    
     private final Supplier<T> supplier;
     private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
     private final Sweeper sweeper;
+
+    @Managed
     private final long interval;
+
+    @Managed
     private final boolean replaceAged;
+
+    @Managed
     private double maxAgeOffset;
 
-    public static class Builder<T> {
-
-        private int max = 10;
-        private int min = 0;
-        private boolean strict = true;
-        private Duration maxAge = new Duration(0, MILLISECONDS);
-        private double maxAgeOffset = -1;
-        private Duration idleTimeout =  new Duration(0, MILLISECONDS);
-        private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
-        private Supplier<T> supplier;
-        private Executor executor;
-        private boolean replaceAged;
-
-        public Builder(Builder<T> that) {
-            this.max = that.max;
-            this.min = that.min;
-            this.strict = that.strict;
-            this.maxAge = that.maxAge;
-            this.idleTimeout = that.idleTimeout;
-            this.interval = that.interval;
-            this.executor = that.executor;
-            this.supplier = that.supplier;
-            this.maxAgeOffset = that.maxAgeOffset;
-            this.replaceAged = that.replaceAged;
-        }
-
-        public Builder() {
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public void setReplaceAged(boolean replaceAged) {
-            this.replaceAged = replaceAged;
-        }
-
-        public void setPoolMax(int max) {
-            this.max = max;
-        }
-
-        /**
-         * Alias for pool size
-         * @param max
-         * @return
-         */
-        public void setPoolSize(int max) {
-            setPoolMax(max);
-        }
-
-        public void setPoolMin(int min) {
-            this.min = min;
-        }
-
-        public void setStrictPooling(boolean strict) {
-            this.strict = strict;
-        }
-
-        public void setMaxAge(Duration maxAge) {
-            this.maxAge = maxAge;
-        }
-
-        public Duration getMaxAge() {
-            return maxAge;
-        }
-
-        public void setMaxAgeOffset(double maxAgeOffset) {
-            this.maxAgeOffset = maxAgeOffset;
-        }
-
-        public double getMaxAgeOffset() {
-            return maxAgeOffset;
-        }
-
-        public void setIdleTimeout(Duration idleTimeout) {
-            this.idleTimeout = idleTimeout;
-        }
-
-        public void setPollInterval(Duration interval) {
-            this.interval = interval;
-        }
-
-        public void setSupplier(Supplier<T> supplier) {
-            this.supplier = supplier;
-        }
-
-        public void setExecutor(Executor executor) {
-            this.executor = executor;
-        }
-
-        public Pool<T> build() {
-            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, false);
-        }
-    }
+    @Managed
+    private final Stats stats;
 
     public Pool(int max, int min, boolean strict) {
-        this(max, min, strict, 0, 0, 0, null, null, false);
+        this(max, min, strict, 0, 0, 0, null, null, false, -1);
     }
     
-    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor, Supplier<T> supplier, boolean replaceAged) {
+    public Pool(int max, int min, boolean strict, long maxAge, long idleTimeout, long interval, Executor executor, Supplier<T> supplier, boolean replaceAged, double maxAgeOffset) {
         if (min > max) greater("max", max, "min", min);
         if (maxAge != 0 && idleTimeout > maxAge) greater("MaxAge", maxAge, "IdleTimeout", idleTimeout);
         this.executor = executor != null ? executor : createExecutor();
@@ -172,11 +95,12 @@ public class Pool<T> {
         this.minimum = new Semaphore(min);
         this.instances = new Semaphore(max);
         this.maxAge = maxAge;
+        this.maxAgeOffset = maxAgeOffset;
         this.replaceAged = replaceAged;
         if (interval == 0) interval = 5 * 60 * 1000; // five minutes
         this.interval = interval;
-        
-        sweeper = new Sweeper(idleTimeout, max);
+        this.sweeper = new Sweeper(idleTimeout, max);
+        this.stats = new Stats(min, max, idleTimeout);
     }
 
     public Pool start() {
@@ -204,6 +128,7 @@ public class Pool<T> {
     }
 
     public void flush() {
+        stats.flushes.record();
         poolVersion.incrementAndGet();
     }
 
@@ -220,7 +145,10 @@ public class Pool<T> {
      * @throws TimeoutException      if no instance could be obtained within the timeout
      */
     public Entry<T> pop(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
-        if (!available.tryAcquire(timeout, unit)) throw new TimeoutException("Waited " + timeout + " " + unit);
+        if (!available.tryAcquire(timeout, unit)) {
+            stats.accessTimeouts.record();
+            throw new TimeoutException("Waited " + timeout + " " + unit);
+        }
 
         Entry<T> entry = null;
         while (entry == null) {
@@ -242,6 +170,7 @@ public class Pool<T> {
                 if (notBusy) return entry;
             } else {
                 // the SoftReference was garbage collected
+                stats.garbageCollected.record();
                 instances.release();
             }
 
@@ -317,7 +246,7 @@ public class Pool<T> {
             return push(new Entry<T>(obj, offset, poolVersion.get()));
         }
 
-        if (obj != null) supplier.discard(obj, Event.FULL);
+        if (obj != null) new Discard(obj, Event.FULL).run();
         return false;
     }
 
@@ -377,7 +306,7 @@ public class Pool<T> {
                 // queue it up instead.
                 executor.execute(new Discard(obj, event));
             } else {
-                supplier.discard(obj, event);
+                new Discard(obj, event).run();
             }
         }
         
@@ -521,6 +450,8 @@ public class Pool<T> {
 
         public void run() {
 
+            stats.sweeps.record();
+            
             final int currentVersion = poolVersion.get();
 
             final boolean isCurrent = previousVersion.getAndSet(currentVersion) == currentVersion;
@@ -723,6 +654,8 @@ public class Pool<T> {
                 // Retry and logging should be done in
                 // the Supplier implementation
                 discard(expired);
+            } finally {
+                stats.replaced.record();
             }
         }
     }
@@ -738,6 +671,12 @@ public class Pool<T> {
         }
 
         public void run() {
+            switch (event) {
+                case AGED: stats.aged.record(); break;
+                case FLUSHED: stats.flushed.record(); break;
+                case FULL: stats.overdrafts.record(); break;
+                case IDLE: stats.idleTimeouts.record(); break;
+            }
             supplier.discard(expired, event);
         }
     }
@@ -810,7 +749,7 @@ public class Pool<T> {
 
         @Override
         public int availablePermits() {
-            return 0;
+            return Integer.MAX_VALUE;
         }
 
         @Override
@@ -820,6 +759,162 @@ public class Pool<T> {
 
         @Override
         protected void reducePermits(int reduction) {
+        }
+    }
+
+    @Managed
+    private class Stats {
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event sweeps = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event flushes = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event accessTimeouts = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event garbageCollected = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event idleTimeouts = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event aged = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event flushed = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event overdrafts = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final org.apache.openejb.monitoring.Event replaced = new org.apache.openejb.monitoring.Event();
+
+        @Managed
+        private final int minSize;
+
+        @Managed
+        private final int maxSize;
+
+        @Managed
+        private long idleTimeout;
+
+        private Stats(int minSize, int maxSize, long idleTimeout) {
+            this.minSize = minSize;
+            this.maxSize = maxSize;
+            this.idleTimeout = idleTimeout;
+        }
+
+        @Managed
+        private long getAvailable() {
+            return available.availablePermits();
+        }
+
+        @Managed
+        private int getInstances() {
+            return maxSize - Pool.this.instances.availablePermits();
+        }
+
+        @Managed
+        private int getMinimumInstances() {
+            return minSize - minimum.availablePermits();
+        }
+    }
+
+    public static class Builder<T> {
+
+        private int max = 10;
+        private int min = 0;
+        private boolean strict = true;
+        private Duration maxAge = new Duration(0, MILLISECONDS);
+        private double maxAgeOffset = -1;
+        private Duration idleTimeout =  new Duration(0, MILLISECONDS);
+        private Duration interval =  new Duration(5 * 60, TimeUnit.SECONDS);
+        private Supplier<T> supplier;
+        private Executor executor;
+        private boolean replaceAged;
+
+        public Builder(Builder<T> that) {
+            this.max = that.max;
+            this.min = that.min;
+            this.strict = that.strict;
+            this.maxAge = that.maxAge;
+            this.idleTimeout = that.idleTimeout;
+            this.interval = that.interval;
+            this.executor = that.executor;
+            this.supplier = that.supplier;
+            this.maxAgeOffset = that.maxAgeOffset;
+            this.replaceAged = that.replaceAged;
+        }
+
+        public Builder() {
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public void setReplaceAged(boolean replaceAged) {
+            this.replaceAged = replaceAged;
+        }
+
+        public void setPoolMax(int max) {
+            this.max = max;
+        }
+
+        /**
+         * Alias for pool size
+         * @param max
+         * @return
+         */
+        public void setPoolSize(int max) {
+            setPoolMax(max);
+        }
+
+        public void setPoolMin(int min) {
+            this.min = min;
+        }
+
+        public void setStrictPooling(boolean strict) {
+            this.strict = strict;
+        }
+
+        public void setMaxAge(Duration maxAge) {
+            this.maxAge = maxAge;
+        }
+
+        public Duration getMaxAge() {
+            return maxAge;
+        }
+
+        public void setMaxAgeOffset(double maxAgeOffset) {
+            this.maxAgeOffset = maxAgeOffset;
+        }
+
+        public double getMaxAgeOffset() {
+            return maxAgeOffset;
+        }
+
+        public void setIdleTimeout(Duration idleTimeout) {
+            this.idleTimeout = idleTimeout;
+        }
+
+        public void setPollInterval(Duration interval) {
+            this.interval = interval;
+        }
+
+        public void setSupplier(Supplier<T> supplier) {
+            this.supplier = supplier;
+        }
+
+        public void setExecutor(Executor executor) {
+            this.executor = executor;
+        }
+
+        public Pool<T> build() {
+            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, false, maxAgeOffset);
         }
     }
 }
