@@ -1040,13 +1040,12 @@ public class AnnotationDeployer implements DynamicDeployer {
         public EjbModule deploy(EjbModule ejbModule) throws OpenEJBException {
             if (ejbModule.getEjbJar() != null && ejbModule.getEjbJar().isMetadataComplete()) return ejbModule;
 
-            Map<String, EjbDeployment> deployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
+//            Map<String, EjbDeployment> deployments = ejbModule.getOpenejbJar().getDeploymentsByEjbName();
             ClassLoader classLoader = ejbModule.getClassLoader();
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
-                EjbDeployment ejbDeployment = deployments.get(ejbName);
-                
+
                 Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(bean.getEjbClass());
