@@ -17,8 +17,10 @@
 package org.apache.openejb.monitoring;
 
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -27,6 +29,7 @@ import org.apache.openejb.util.Duration;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.interceptor.InvocationContext;
 
 /**
  * @version $Rev$ $Date$

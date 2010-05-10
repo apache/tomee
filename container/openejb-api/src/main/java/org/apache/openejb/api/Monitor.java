@@ -14,16 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.monitoring;
+package org.apache.openejb.api;
 
+import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
+/**
+ * Annotation that matches the <ejb-deployment> element in the openejb-jar.xml file
+ */
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
-public @interface Managed {
-    String description() default "";
-    boolean append() default false;
+public @interface Monitor {
+
+    int sample() default 2000;
+
 }
