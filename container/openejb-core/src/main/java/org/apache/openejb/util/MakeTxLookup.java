@@ -79,6 +79,14 @@ public class MakeTxLookup implements Opcodes {
             mv.visitMaxs(1, 1);
             mv.visitEnd();
         }
+        {
+            mv = cw.visitMethod(ACC_PUBLIC, "getTransactionIdentifier", "(Ljavax/transaction/Transaction;)Ljava/lang/Object;", null, null);
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitInsn(ARETURN);
+            mv.visitMaxs(1, 2);
+            mv.visitEnd();
+        }
         cw.visitEnd();
 
 
