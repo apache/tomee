@@ -133,7 +133,7 @@ public class ManagedMBean implements DynamicMBean {
         List<Method> managed = finder.findAnnotatedMethods(Managed.class);
         for (Method method : managed) {
             MethodMember member = new MethodMember(method, target, prefix);
-            if (!method.getName().matches("(get|is)[A-Z_].*")) {
+            if (!method.getName().matches("(get|is)([A-Z_].*|)")) {
                 operationsMap.put(member.getName(), member);
             } else {
                 attribute(new MethodMember(method, target, prefix));
@@ -338,10 +338,10 @@ public class ManagedMBean implements DynamicMBean {
             String method = getter.getName();
 
             StringBuilder name = new StringBuilder(method);
-
+            
             // remove 'get'
-            if (method.matches("get[A-Z].*")) name.delete(0, 3);
-            if (method.matches("is[A-Z].*")) name.delete(0, 2);
+            if (method.matches("get([A-Z].*|)")) name.delete(0, 3);
+            if (method.matches("is([A-Z].*|)")) name.delete(0, 2);
 
             if (!"".equals(prefix)) {
                 if (!"".equals(name.toString())) name.insert(0, ".");
