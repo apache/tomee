@@ -18,7 +18,13 @@
 package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
+import org.apache.xbean.finder.ClassFinder;
 
+import javax.interceptor.AroundInvoke;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,5 +102,19 @@ public class InterceptorData {
 
     public int hashCode() {
         return (clazz != null ? clazz.hashCode() : 0);
+    }
+
+    public static InterceptorData scan(Class<?> clazz) {
+        ClassFinder finder = new ClassFinder(clazz);
+
+        InterceptorData data = new InterceptorData(clazz);
+
+        data.aroundInvoke.addAll(finder.findAnnotatedMethods(AroundInvoke.class));
+        data.postConstruct.addAll(finder.findAnnotatedMethods(PostConstruct.class));
+        data.preDestroy.addAll(finder.findAnnotatedMethods(PreDestroy.class));
+        data.postActivate.addAll(finder.findAnnotatedMethods(PostActivate.class));
+        data.prePassivate.addAll(finder.findAnnotatedMethods(PrePassivate.class));
+
+        return data;
     }
 }

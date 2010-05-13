@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateful;
 
 import java.lang.reflect.Method;
+import java.lang.management.ManagementFactory;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.dgc.VMID;
@@ -33,12 +34,13 @@ import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.SessionSynchronization;
-import javax.ejb.NoSuchEJBException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
@@ -50,6 +52,9 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.ManagedMBean;
 import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
@@ -59,6 +64,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.stateful.Cache.CacheFilter;
 import org.apache.openejb.core.stateful.Cache.CacheListener;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy;
@@ -232,6 +238,17 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private synchronized void undeploy(final CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        Data data = (Data) deploymentInfo.getContainerData();
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (ObjectName objectName : data.jmxNames) {
+            try {
+                server.unregisterMBean(objectName);
+            } catch (Exception e) {
+                logger.error("Unable to unregister MBean "+objectName);
+            }
+        }
+
         deploymentsById.remove(deploymentInfo.getDeploymentID());
         deploymentInfo.setContainer(null);
         deploymentInfo.setContainerData(null);
@@ -241,11 +258,6 @@ public class StatefulContainer implements RpcContainer {
                 return deploymentInfo == instance.deploymentInfo;
             }
         });
-
-        StatefulContainerData data = (StatefulContainerData) deploymentInfo.getContainerData();
-        if (data != null) {
-            deploymentInfo.setContainerData(null);
-        }
     }
 
     private synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
@@ -253,7 +265,32 @@ public class StatefulContainer implements RpcContainer {
 
         deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
         deploymentInfo.setContainer(this);
-        deploymentInfo.setContainerData(new StatefulContainerData(new Index<Method, MethodType>(methods)));
+        Data data = new Data(new Index<Method, MethodType>(methods));
+        deploymentInfo.setContainerData(data);
+
+        // Create stats interceptor
+        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
+        deploymentInfo.addSystemInterceptor(stats);
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("EJBModule", deploymentInfo.getModuleID());
+        jmxName.set("StatefulSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", deploymentInfo.getEjbName());
+
+        // register the invocation stats interceptor
+        try {
+            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+            server.registerMBean(new ManagedMBean(stats), objectName);
+            data.jmxNames.add(objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
     }
 
     /**
@@ -275,7 +312,7 @@ public class StatefulContainer implements RpcContainer {
         // Use the backup way to determine call type if null was supplied.
         if (type == null) type = deployInfo.getInterfaceType(callInterface);
 
-        StatefulContainerData data = (StatefulContainerData) deployInfo.getContainerData();
+        Data data = (Data) deployInfo.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
         methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
 
@@ -575,7 +612,14 @@ public class StatefulContainer implements RpcContainer {
 
             // Create interceptors
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+
+            // Add the stats interceptor instance and other already created interceptor instances
+            for (InterceptorInstance interceptorInstance : deploymentInfo.getSystemInterceptors()) {
+                Class clazz = interceptorInstance.getData().getInterceptorClass();
+                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
+            }
+
+            for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) {
                     continue;
                 }
@@ -1067,10 +1111,11 @@ public class StatefulContainer implements RpcContainer {
         }
     }    
 
-    private static class StatefulContainerData {
+    private static class Data {
         private final Index<Method, MethodType> methodIndex;
-
-        private StatefulContainerData(Index<Method, MethodType> methodIndex) {
+        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        
+        private Data(Index<Method, MethodType> methodIndex) {
             this.methodIndex = methodIndex;
         }
 

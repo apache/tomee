@@ -48,10 +48,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
-import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
-import org.apache.openejb.core.stateless.StatelessEjbObjectHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -59,12 +57,7 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.proxy.InvocationHandler;
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
-/**
- * @org.apache.xbean.XBean element="deployment"
- */
 public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private boolean destroyed;
@@ -124,9 +117,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private TransactionPolicyFactory transactionPolicyFactory;
 
-    private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<MethodSchedule> methodSchedules = new ArrayList<MethodSchedule>();
+    private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
+    private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
+
+    private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>(); 
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
     private String jarPath;
@@ -718,19 +714,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return retain != null && retain;
     }
 
-    public List<InterceptorData> getMethodInterceptors(Method method) {
-        List<InterceptorData> interceptors = methodInterceptors.get(method);
-        if (interceptors == null) {
-            interceptors = new ArrayList<InterceptorData>();
-        }
-        return interceptors;
-    }
-
-    public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
-        methodInterceptors.put(method, interceptors);
-        this.interceptors.addAll(interceptors);
-    }
-
     public List<MethodSchedule> getMethodSchedules() {
         return methodSchedules;
     }
@@ -739,10 +722,29 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         methodSchedules.addAll(schedules);
     }
 
-    private final Set<InterceptorData> interceptors = new HashSet<InterceptorData>();
+    /**
+     * When an instance of an EJB is instantiated, everything in this list
+     * is also instatiated and tied to the bean instance.  Per spec, interceptors
+     * are supposed to have the same lifecycle as the bean they wrap.
+     *
+     * OpenEJB has the concept of interceptors which do not share the same lifecycle
+     * as the bean instance -- they may be instantiated elsewhere and simply applied
+     * to the bean.  The impact is that these interceptors must be multithreaded.
+     * It also means we do not add these interceptors to this list and expose them
+     * via different means.
+     *
+     * @return standard interceptors sharing the bean lifecycle
+     */
+    public Set<InterceptorData> getInstanceScopedInterceptors() {
+        return instanceScopedInterceptors;
+    }
 
-    public Set<InterceptorData> getAllInterceptors() {
-        return interceptors;
+    public void addSystemInterceptor(Object interceptor) {
+        systemInterceptors.add(new InterceptorInstance(interceptor));    
+    }
+
+    public List<InterceptorInstance> getSystemInterceptors() {
+        return systemInterceptors;
     }
 
     public List<InterceptorData> getCallbackInterceptors() {
@@ -752,7 +754,33 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
         this.callbackInterceptors.clear();
         this.callbackInterceptors.addAll(callbackInterceptors);
-        this.interceptors.addAll(callbackInterceptors);
+        this.instanceScopedInterceptors.addAll(callbackInterceptors);
+    }
+
+    public List<InterceptorData> getMethodInterceptors(Method method) {
+
+        List<InterceptorData> interceptors = methodInterceptors.get(method);
+
+        if (interceptors == null) interceptors = Collections.EMPTY_LIST;
+
+        if (systemInterceptors.size() <= 0) return interceptors;
+
+        // we have system interceptors to add to the beginning of the stack
+        
+        List<InterceptorData> datas = new ArrayList<InterceptorData>(systemInterceptors.size() + interceptors.size());
+
+        for (InterceptorInstance instance : systemInterceptors) {
+            datas.add(instance.getData());
+        }
+
+        datas.addAll(interceptors);
+        
+        return datas;
+    }
+
+    public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
+        methodInterceptors.put(method, interceptors);
+        this.instanceScopedInterceptors.addAll(interceptors);
     }
 
     public void createMethodMap() throws org.apache.openejb.SystemException {

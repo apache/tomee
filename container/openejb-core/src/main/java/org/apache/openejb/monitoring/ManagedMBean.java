@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 /**
  * @version $Rev$ $Date$
  */
-class ManagedMBean implements DynamicMBean {
+public class ManagedMBean implements DynamicMBean {
 
     private final List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>();
     private final List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>();
@@ -64,7 +64,7 @@ class ManagedMBean implements DynamicMBean {
     private MBeanParameterInfo excludeInfo;
     private MBeanParameterInfo includeInfo;
 
-    ManagedMBean(Object managed) {
+    public ManagedMBean(Object managed) {
         this(managed, "");
 
         try {

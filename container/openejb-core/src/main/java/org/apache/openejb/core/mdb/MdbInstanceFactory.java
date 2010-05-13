@@ -35,12 +35,12 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ConstructionException;
 import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.Option;
 
 /**
  * A MdbInstanceFactory creates instances of message driven beans for a single instance. This class differs from other
@@ -200,7 +200,14 @@ public class MdbInstanceFactory {
             Object bean = injectionProcessor.createInstance();
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+
+            // Add the stats interceptor instance and other already created interceptor instances
+            for (InterceptorInstance interceptorInstance : deploymentInfo.getSystemInterceptors()) {
+                Class clazz = interceptorInstance.getData().getInterceptorClass();
+                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
+            }
+
+            for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
 
                 Class clazz = interceptorData.getInterceptorClass();

@@ -19,6 +19,7 @@ package org.apache.openejb.monitoring;
 import org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.api.Monitor;
+import org.apache.openejb.core.interceptor.InterceptorData;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -38,10 +39,14 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StatsInterceptor {
 
+    public static final InterceptorData metadata = InterceptorData.scan(StatsInterceptor.class);
+
     private final Map<Method, Stats> map = new ConcurrentHashMap<Method, Stats>();
     private final AtomicLong invocations = new AtomicLong();
+    private final AtomicLong invocationTime = new AtomicLong();
 
     private Monitor monitor;
+    private final boolean enabled;
 
     public StatsInterceptor(Class<?> componentClass) {
 
@@ -50,15 +55,21 @@ public class StatsInterceptor {
         for (Method method : finder.findAnnotatedMethods(Monitor.class)) {
             map.put(method, new Stats(method, monitor));
         }
+        enabled = monitor != null || map.size() > 0;
     }
 
     public boolean isMonitoringEnabled() {
-        return monitor != null || map.size() > 0;
+        return enabled;
     }
 
     @Managed
-    public long getInvocations() {
+    public long getInvocationCount() {
         return invocations.get();
+    }
+
+    @Managed
+    public long getInvocationTime() {
+        return invocationTime.get();
     }
 
     @Managed
@@ -99,19 +110,25 @@ public class StatsInterceptor {
     private Object record(InvocationContext invocationContext) throws Exception {
         invocations.incrementAndGet();
 
-        Stats stats = stats(invocationContext);
+        Stats stats = enabled ? stats(invocationContext): null;
         long start = System.nanoTime();
-        try {
+        try{
             return invocationContext.proceed();
         } finally {
-            stats.record(start);
+            long time = millis(System.nanoTime() - start);
+            if (stats != null) stats.record(time);
+            invocationTime.addAndGet(time);
         }
+    }
+
+    private long millis(long nanos) {
+        return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
     }
 
     private Stats stats(InvocationContext invocationContext) {
         Method method = invocationContext.getMethod();
         Stats stats = map.get(method);
-        if (stats == null && monitor != null) {
+        if (stats == null) {
             stats = new Stats(method, monitor);
             map.put(method, stats);
         }
@@ -256,14 +273,10 @@ public class StatsInterceptor {
             return samples.getValues();
         }
 
-        public void record(long start) {
+        public void record(long time) {
             count.incrementAndGet();
-            long time = System.nanoTime() - start;
-            samples.addValue(millis(time));
+            samples.addValue(time);
         }
 
-        private long millis(long nanos) {
-            return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
-        }
     }
 }
