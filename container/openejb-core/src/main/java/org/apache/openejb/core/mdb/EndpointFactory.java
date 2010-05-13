@@ -26,8 +26,11 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
+import javax.management.ObjectName;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EndpointFactory implements MessageEndpointFactory {
     private final ActivationSpec activationSpec;
@@ -37,7 +40,8 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final ClassLoader classLoader;
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
-
+    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    
     public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, CoreDeploymentInfo deploymentInfo, MdbInstanceFactory instanceFactory, XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
         this.container = container;

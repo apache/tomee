@@ -17,7 +17,7 @@
 package org.apache.openejb.core.singleton;
 
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,16 +39,22 @@ import javax.ejb.NoSuchEJBException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -173,7 +179,14 @@ public class SingletonInstanceManager {
             }
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+
+            // Add the stats interceptor instance and other already created interceptor instances
+            for (InterceptorInstance interceptorInstance : deploymentInfo.getSystemInterceptors()) {
+                Class clazz = interceptorInstance.getData().getInterceptorClass();
+                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
+            }
+
+            for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
 
                 Class clazz = interceptorData.getInterceptorClass();
@@ -334,17 +347,57 @@ public class SingletonInstanceManager {
 
     public void deploy(CoreDeploymentInfo deploymentInfo) {
         Data data = new Data();
-        deploymentInfo.setContainerData(data);      
+        deploymentInfo.setContainerData(data);
+
+        // Create stats interceptor
+        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
+        deploymentInfo.addSystemInterceptor(stats);
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("EJBModule", deploymentInfo.getModuleID());
+        jmxName.set("SingletonSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", deploymentInfo.getEjbName());
+
+        // register the invocation stats interceptor
+        try {
+            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+            server.registerMBean(new ManagedMBean(stats), objectName);
+            data.add(objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
         if (data == null) return;
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (ObjectName objectName : data.jmxNames) {
+            try {
+                server.unregisterMBean(objectName);
+            } catch (Exception e) {
+                logger.error("Unable to unregister MBean "+objectName);
+            }
+        }
+
         deploymentInfo.setContainerData(null);
     }
 
     private static final class Data {
         private final AtomicReference<Future<Instance>> singleton = new AtomicReference<Future<Instance>>();
+        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+
+        public ObjectName add(ObjectName name) {
+            jmxNames.add(name);
+            return name;
+        }
     }
 
 

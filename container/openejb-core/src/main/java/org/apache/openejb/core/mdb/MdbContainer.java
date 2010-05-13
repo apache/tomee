@@ -24,6 +24,9 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.BaseContext;
@@ -51,8 +54,11 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.UnavailableException;
 import javax.resource.ResourceException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
@@ -135,6 +141,29 @@ public class MdbContainer implements RpcContainer {
         deploymentInfo.setContainerData(endpointFactory);
         deployments.put(deploymentId, deploymentInfo);
 
+        // Create stats interceptor
+        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
+        deploymentInfo.addSystemInterceptor(stats);
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("EJBModule", deploymentInfo.getModuleID());
+        jmxName.set("StatelessSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", deploymentInfo.getEjbName());
+
+        // register the invocation stats interceptor
+        try {
+            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+            server.registerMBean(new ManagedMBean(stats), objectName);
+            endpointFactory.jmxNames.add(objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
         // activate the endpoint
         try {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
@@ -205,6 +234,15 @@ public class MdbContainer implements RpcContainer {
             EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
             if (endpointFactory != null) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
+
+                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+                for (ObjectName objectName : endpointFactory.jmxNames) {
+                    try {
+                        server.unregisterMBean(objectName);
+                    } catch (Exception e) {
+                        logger.error("Unable to unregister MBean "+objectName);
+                    }
+                }
             }
         } finally {
             deploymentInfo.setContainer(null);

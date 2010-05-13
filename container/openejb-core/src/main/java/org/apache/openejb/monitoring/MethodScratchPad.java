@@ -17,16 +17,32 @@
 package org.apache.openejb.monitoring;
 
 import org.apache.openejb.api.Monitor;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
 
 import javax.interceptor.InvocationContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.MalformedObjectNameException;
+import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.lang.reflect.Method;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Properties;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.TreeMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -34,51 +50,96 @@ import java.util.concurrent.CountDownLatch;
  */
 public class MethodScratchPad {
     public static void main(String[] args) throws Exception {
-        new MethodScratchPad().main();
+        Runnable methods  = new Runnable() {
+            public void run() {
+                try {
+                    new MethodScratchPad().main();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Runnable pool = new Runnable() {
+            public void run() {
+                try {
+                    new ScratchPad().main();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        new Thread(methods).start();
+//        new Thread(pool).start();
     }
 
     public void main() throws Exception {
 
-        List<Context> contexts = new ArrayList<Context>();
-        Class<MyBean> clazz = MyBean.class;
-        contexts.add(new Context(clazz.getMethod("red")));
-        contexts.add(new Context(clazz.getMethod("red")));
-        contexts.add(new Context(clazz.getMethod("red")));
-        contexts.add(new Context(clazz.getMethod("red")));
-        contexts.add(new Context(clazz.getMethod("red")));
-        contexts.add(new Context(clazz.getMethod("blue")));
-        contexts.add(new Context(clazz.getMethod("blue")));
-        contexts.add(new Context(clazz.getMethod("blue")));
-        contexts.add(new Context(clazz.getMethod("green")));
-        contexts.add(new Context(clazz.getMethod("green")));
-        contexts.add(new Context(clazz.getMethod("orange")));
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        Assembler assembler = new Assembler();
+        ConfigurationFactory config = new ConfigurationFactory();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(MyBean.class));
+        assembler.createApplication(config.configureApplication(ejbJar));
+
+        javax.naming.Context context = new InitialContext();
+        Object bean = context.lookup("MyBeanLocal");
+
+        List<Method> methods = new ArrayList<Method>();
+        Class<?> clazz = MyBeanLocal.class;
+        methods.add(clazz.getMethod("red"));
+        methods.add(clazz.getMethod("red"));
+        methods.add(clazz.getMethod("red"));
+        methods.add(clazz.getMethod("red"));
+        methods.add(clazz.getMethod("red"));
+        methods.add(clazz.getMethod("blue"));
+        methods.add(clazz.getMethod("blue"));
+        methods.add(clazz.getMethod("blue"));
+        methods.add(clazz.getMethod("green"));
+        methods.add(clazz.getMethod("green"));
+        methods.add(clazz.getMethod("orange"));
 
         Random random = new Random();
-        StatsInterceptor interceptor = new StatsInterceptor(clazz);
 
-        interceptor.invoke(contexts.get(random(random, 0, contexts.size())));
-        interceptor.invoke(contexts.get(random(random, 0, contexts.size())));
-        
-        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        server.registerMBean(new ManagedMBean(interceptor), new ObjectName("something:name=Invocations"));
-
-        snooze(5000);
         while (true) {
-            interceptor.invoke(contexts.get(random(random, 0, contexts.size())));
+            methods.get(random(random, 0, methods.size())).invoke(bean);
         }
-//        new CountDownLatch(1).await();
-
     }
 
     @Monitor
-    public static class MyBean {
-        public void red(){}
-        public void green(){}
-        public void blue(){}
-        public void orange(){}
+    @Stateless
+    public static class MyBean implements MyBeanLocal {
+        public void red() {
+            snooze((int) (System.nanoTime() / 1000 % 287));
+        }
+
+        public void green() {
+            snooze((int) (System.nanoTime() / 1000 % 375));
+        }
+
+        public void blue() {
+            snooze((int) (System.nanoTime() / 1000 % 867));
+        }
+
+        public void orange() {
+            snooze((int) (System.nanoTime() / 1000 % 639));
+        }
     }
 
-    private void snooze(int millis) {
+    public static interface MyBeanLocal {
+        public void red();
+        public void green();
+        public void blue();
+        public void orange();
+    }
+
+    private static void snooze(int millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -90,42 +151,6 @@ public class MethodScratchPad {
         int i = random.nextInt();
         if (i < 0) i *= -1;
         return (i % (max - min)) + min;
-    }
-
-    private class Context implements InvocationContext {
-
-        private final Random random = new Random();
-
-        private final Method method;
-
-        private Context(Method method) {
-            this.method = method;
-        }
-
-        public Object getTarget() {
-            return null;
-        }
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public Object[] getParameters() {
-            return new Object[0];
-        }
-
-        public void setParameters(Object[] objects) {
-        }
-
-        public Map<String, Object> getContextData() {
-            return null;
-        }
-
-        public Object proceed() throws Exception {
-            snooze((int) (System.nanoTime() / 1000 % 1000));
-
-            return null;
-        }
     }
 
 }

@@ -18,6 +18,7 @@ package org.apache.openejb.core.stateless;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.management.ManagementFactory;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,10 +37,19 @@ import javax.ejb.SessionContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.InstanceNotFoundException;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -47,6 +57,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
@@ -198,7 +209,14 @@ public class StatelessInstanceManager {
             }
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-            for (InterceptorData interceptorData : deploymentInfo.getAllInterceptors()) {
+
+            // Add the stats interceptor instance and other already created interceptor instances
+            for (InterceptorInstance interceptorInstance : deploymentInfo.getSystemInterceptors()) {
+                Class clazz = interceptorInstance.getData().getInterceptorClass();
+                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
+            }
+
+            for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
 
                 Class clazz = interceptorData.getInterceptorClass();
@@ -393,6 +411,39 @@ public class StatelessInstanceManager {
         long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
         double maxAgeOffset = builder.getMaxAgeOffset();
 
+        // Create stats interceptor
+        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
+        deploymentInfo.addSystemInterceptor(stats);
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("EJBModule", deploymentInfo.getModuleID());
+        jmxName.set("StatelessSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", deploymentInfo.getEjbName());
+
+        // register the invocation stats interceptor
+        try {
+            ObjectName objectName = jmxName.set("j2eeType", "Invocations").build();
+            server.registerMBean(new ManagedMBean(stats), objectName);
+            data.add(objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
+        // register the pool
+        try {
+            ObjectName objectName = jmxName.set("j2eeType", "Pool").build();
+            server.registerMBean(new ManagedMBean(data.pool), objectName);
+            data.add(objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
+        // Finally, fill the pool and start it
         for (int i = 0; i < min; i++) {
             Instance obj = createInstance(deploymentInfo);
 
@@ -424,13 +475,25 @@ public class StatelessInstanceManager {
         Data data = (Data) deploymentInfo.getContainerData();
         if (data == null) return;
         data.getPool().stop();
+
         //TODO *maybe* call ejbRemove on each bean in pool.
+
         deploymentInfo.setContainerData(null);
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (ObjectName objectName : data.jmxNames) {
+            try {
+                server.unregisterMBean(objectName);
+            } catch (Exception e) {
+                logger.error("Unable to unregister MBean "+objectName);
+            }
+        }
     }
 
     private static final class Data {
         private final Pool<Instance> pool;
         private Duration accessTimeout;
+        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
         public Data(Pool<Instance> pool, Duration accessTimeout) {
             this.accessTimeout = accessTimeout;
@@ -447,6 +510,11 @@ public class StatelessInstanceManager {
 
         public Pool<Instance> getPool() {
             return pool;
+        }
+
+        public ObjectName add(ObjectName name) {
+            jmxNames.add(name);
+            return name;
         }
     }
 

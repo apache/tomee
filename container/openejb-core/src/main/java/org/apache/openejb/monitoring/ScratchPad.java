@@ -21,6 +21,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -66,7 +68,15 @@ public class ScratchPad {
         pool.add("");
         pool.add("");
 
-        server.registerMBean(new ManagedMBean(pool), new ObjectName("something:name=Pool"));
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("EJBModule", "FooModule");
+        map.put("J2EEApplication", "FooApp");
+        map.put("J2EEServer", "FooServer");
+        map.put("j2eeType", "StatelessSessionBean");
+        map.put("name", "Pool");
+
+        ObjectName objectName = new ObjectName("something", new Hashtable(map));
+        server.registerMBean(new ManagedMBean(pool), objectName);
 
 //        while ("".equals("")) {
 //            object.tick(System.currentTimeMillis() % 1000);
