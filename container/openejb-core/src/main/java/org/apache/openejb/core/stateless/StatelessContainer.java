@@ -62,11 +62,11 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     private Object containerID = null;
     private SecurityService securityService;
 
-    public StatelessContainer(Object id, SecurityService securityService, Duration accessTimeout, Pool.Builder poolBuilder, int callbackThreads) {
+    public StatelessContainer(Object id, SecurityService securityService, Duration accessTimeout, Duration closeTimeout, Pool.Builder poolBuilder, int callbackThreads) {
         this.containerID = id;
         this.securityService = securityService;
 
-        instanceManager = new StatelessInstanceManager(securityService, accessTimeout, poolBuilder, callbackThreads);
+        instanceManager = new StatelessInstanceManager(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads);
 
         for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
             org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;

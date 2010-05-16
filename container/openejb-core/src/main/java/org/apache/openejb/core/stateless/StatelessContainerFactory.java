@@ -32,6 +32,7 @@ public class StatelessContainerFactory {
     private SecurityService securityService;
     private Duration accessTimeout;
     private int callbackThreads = 5;
+    private Duration closeTimeout;
 
     public void setCallbackThreads(int callbackThreads) {
         this.callbackThreads = callbackThreads;
@@ -105,7 +106,11 @@ public class StatelessContainerFactory {
         pool.setMaxAgeOffset(maxAgeOffset);
     }
 
+    public void setCloseTimeout(Duration closeTimeout) {
+        this.closeTimeout = closeTimeout;
+    }
+
     public StatelessContainer create() {
-        return new StatelessContainer(id, securityService, accessTimeout, pool, callbackThreads);
+        return new StatelessContainer(id, securityService, accessTimeout, closeTimeout, pool, callbackThreads);
     }
 }

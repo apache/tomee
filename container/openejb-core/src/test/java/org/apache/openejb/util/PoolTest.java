@@ -259,6 +259,66 @@ public class PoolTest extends TestCase {
 
     }
 
+    public void testClose() throws Exception {
+        System.out.println("PoolTest.testClose");
+
+        final int min = 4;
+        final int max = 9;
+        final int sweepInterval = 200;
+        final int pause = 1000;
+
+        final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
+        final CountDownLatch discard = new CountDownLatch(max);
+        final Pool.Builder builder = new Pool.Builder();
+        builder.setPoolMin(min);
+        builder.setPoolMax(max);
+        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setSupplier(new Pool.Supplier<Bean>() {
+            public void discard(Bean bean, Pool.Event reason) {
+                try {
+                    Thread.sleep(pause);
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+                bean.discard();
+                discarded.add(bean);
+                discard.countDown();
+            }
+
+            public Bean create() {
+                return new Bean();
+            }
+        });
+
+
+        final Pool pool = this.pool = builder.build().start();
+
+        // Fill pool to max
+        Bean.instances.set(0);
+        for (int i = 0; i < max; i++) {
+            assertTrue(pool.add(new Bean()));
+        }
+
+
+        { // Should have a full, non-null pool
+            final List entries = drain(pool, 100);
+            checkMin(min, entries);
+            checkEntries(max, entries);
+            push(pool, entries);
+        }
+
+        long start = System.currentTimeMillis();
+        assertTrue(pool.close(10, TimeUnit.SECONDS));
+        long time = System.currentTimeMillis() - start;
+
+        // All instances should have been removed
+        assertEquals(max, discarded.size());
+
+        // Should have taken at least three seconds
+        assertTrue(time >= pause);
+
+    }
+
     /**
      * Tests the idle timeout as well as the Thread pool
      * used to invoke the discard/create jobs.
