@@ -244,6 +244,17 @@
 
     CallbackThreads = 5
 
+    # PostConstruct methods are invoked on all instances in the pool
+    # when the bean is undeployed and its pool is closed.  The
+    # CloseTimeout specifies the maximum time to wait for the pool to
+    # close and PostConstruct methods to be invoked.
+    #
+    # Usable time units: nanoseconds, microsecons, milliseconds,
+    # seconds, minutes, hours, days.  Or any combination such as
+    # "1 hour and 27 minutes and 10 seconds"
+
+    CloseTimeout = 5 minutes
+
   </ServiceProvider>
 
   <!--

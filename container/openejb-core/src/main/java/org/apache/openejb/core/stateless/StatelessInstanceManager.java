@@ -39,10 +39,6 @@ import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.InstanceNotFoundException;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
@@ -72,7 +68,8 @@ import org.apache.xbean.recipe.Option;
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    protected Duration timeout;
+    protected Duration accessTimeout;
+    protected Duration closeTimeout;
     protected int beanCount = 0;
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("StatefulInstanceManager");
@@ -80,12 +77,13 @@ public class StatelessInstanceManager {
     private final Pool.Builder poolBuilder;
     private final Executor executor;
 
-    public StatelessInstanceManager(SecurityService securityService, Duration timeout, Pool.Builder poolBuilder, int callbackThreads) {
+    public StatelessInstanceManager(SecurityService securityService, Duration accessTimeout, Duration closeTimeout, Pool.Builder poolBuilder, int callbackThreads) {
         this.securityService = securityService;
-        this.timeout = timeout;
+        this.accessTimeout = accessTimeout;
+        this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
         
-        if (timeout.getUnit() == null) timeout.setUnit(TimeUnit.MILLISECONDS);
+        if (accessTimeout.getUnit() == null) accessTimeout.setUnit(TimeUnit.MILLISECONDS);
 
         executor = new ThreadPoolExecutor(callbackThreads, callbackThreads*2,
                 0L, TimeUnit.MILLISECONDS,
@@ -394,9 +392,12 @@ public class StatelessInstanceManager {
 
         final Pool.Builder builder = new Pool.Builder(poolBuilder);
 
-        String timeString = options.get("Timeout", this.timeout.toString());
+        String timeString = options.get("Timeout", this.accessTimeout.toString());
         timeString = options.get("AccessTimeout", timeString);
         Duration accessTimeout = new Duration(timeString);
+
+        String s = options.get("CloseTimeout", this.closeTimeout.toString());
+        Duration closeTimeout = new Duration(s);
 
         final ObjectRecipe recipe = PassthroughFactory.recipe(builder);
         recipe.setAllProperties(deploymentInfo.getProperties());
@@ -404,7 +405,7 @@ public class StatelessInstanceManager {
         builder.setSupplier(new StatelessSupplier(deploymentInfo));
         builder.setExecutor(executor);
         
-        Data data = new Data(builder.build(), accessTimeout);
+        Data data = new Data(builder.build(), accessTimeout, closeTimeout);
         deploymentInfo.setContainerData(data);
 
         final int min = builder.getMin();
@@ -474,11 +475,6 @@ public class StatelessInstanceManager {
     public void undeploy(CoreDeploymentInfo deploymentInfo) {
         Data data = (Data) deploymentInfo.getContainerData();
         if (data == null) return;
-        data.getPool().stop();
-
-        //TODO *maybe* call ejbRemove on each bean in pool.
-
-        deploymentInfo.setContainerData(null);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (ObjectName objectName : data.jmxNames) {
@@ -488,16 +484,28 @@ public class StatelessInstanceManager {
                 logger.error("Unable to unregister MBean "+objectName);
             }
         }
+
+        try {
+            if (!data.closePool()) {
+                logger.error("Timed-out waiting for stateless pool to close: for deployment '" + deploymentInfo.getDeploymentID() + "'");
+            }
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
+        deploymentInfo.setContainerData(null);
     }
 
     private static final class Data {
         private final Pool<Instance> pool;
-        private Duration accessTimeout;
+        private final Duration accessTimeout;
+        private final Duration closeTimeout;
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 
-        public Data(Pool<Instance> pool, Duration accessTimeout) {
-            this.accessTimeout = accessTimeout;
+        private Data(Pool<Instance> pool, Duration accessTimeout, Duration closeTimeout) {
             this.pool = pool;
+            this.accessTimeout = accessTimeout;
+            this.closeTimeout = closeTimeout;
         }
 
         public Duration getAccessTimeout() {
@@ -510,6 +518,10 @@ public class StatelessInstanceManager {
 
         public Pool<Instance> getPool() {
             return pool;
+        }
+
+        public boolean closePool() throws InterruptedException {
+            return pool.close(closeTimeout.getTime(), closeTimeout.getUnit());
         }
 
         public ObjectName add(ObjectName name) {

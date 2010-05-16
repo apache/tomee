@@ -70,6 +70,8 @@ public class Pool<T> {
     private final AtomicReference<Timer> timer = new AtomicReference<Timer>();
     private final Sweeper sweeper;
 
+    private final CountingLatch out = new CountingLatch();
+
     @Managed
     private final long interval;
 
@@ -112,9 +114,13 @@ public class Pool<T> {
 
     public void stop() {
         Timer timer = this.timer.get();
-        if (this.timer.compareAndSet(timer, null)) {
+        if (timer != null && this.timer.compareAndSet(timer, null)) {
             timer.cancel();
         }
+    }
+
+    public boolean running() {
+        return timer.get() != null;
     }
 
     private Executor createExecutor() {
@@ -142,11 +148,28 @@ public class Pool<T> {
      * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
      * @throws InterruptedException  vm level thread interruption
      * @throws IllegalStateException if a permit could not be acquired
-     * @throws TimeoutException      if no instance could be obtained within the timeout
+     * @throws java.util.concurrent.TimeoutException      if no instance could be obtained within the timeout
      */
     public Entry<T> pop(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+        return pop(timeout, unit, true);
+    }
+
+    /**
+     * Any successful pop() call requires a corresponding push() or discard() call
+     * <p/>
+     * A pop() call that returns null is considered successful.
+     *
+     * @param timeout time to block while waiting for an instance
+     * @param unit    unit of time dicated by the timeout
+     * @param record should this be reflected in the stats
+     * @return an entry from the pool or null indicating permission to create and push() an instance into the pool
+     * @throws InterruptedException  vm level thread interruption
+     * @throws IllegalStateException if a permit could not be acquired
+     * @throws TimeoutException      if no instance could be obtained within the timeout
+     */
+    private Entry<T> pop(long timeout, TimeUnit unit, boolean record) throws InterruptedException, TimeoutException {
         if (!available.tryAcquire(timeout, unit)) {
-            stats.accessTimeouts.record();
+            if (record) stats.accessTimeouts.record();
             throw new TimeoutException("Waited " + timeout + " " + unit);
         }
 
@@ -346,6 +369,25 @@ public class Pool<T> {
         available.release();
     }
 
+    public boolean close(long timeout, TimeUnit unit) throws InterruptedException {
+        // drain all keys so no new instances will be accepted into the pool
+        while (instances.tryAcquire());
+        while (minimum.tryAcquire());
+
+        // Stop the sweeper thread
+        stop();
+
+        // flush and sweep
+        flush();
+        sweeper.run();
+
+        // Drain all leases
+        if (!(available instanceof Overdraft)) while (available.tryAcquire());
+
+        // Wait for any pending discards
+        return out.await(timeout, unit);
+    }
+
     /**
      * This internal method allows us to "swap" the status
      * of two entries before returning them to the pool.
@@ -468,7 +510,7 @@ public class Pool<T> {
             // Pull all the entries from the pool
             try {
                 while (true) {
-                    final Entry<T> entry = pop(0, MILLISECONDS);
+                    final Entry<T> entry = pop(0, MILLISECONDS, false);
                     if (entry == null) {
                         push(entry, true);
                         break;
@@ -640,6 +682,11 @@ public class Pool<T> {
         }
 
         public void run() {
+            if (!running()) {
+                discard(expired);
+                return;
+            }
+            
             try {
                 final T t = supplier.create();
 
@@ -665,6 +712,7 @@ public class Pool<T> {
         private final Event event;
 
         private Discard(T expired, Event event) {
+            out.countUp();
             if (expired == null) throw new NullPointerException("expired object cannot be null");
             this.expired = expired;
             this.event = event;
@@ -677,7 +725,11 @@ public class Pool<T> {
                 case FULL: stats.overdrafts.record(); break;
                 case IDLE: stats.idleTimeouts.record(); break;
             }
-            supplier.discard(expired, event);
+            try {
+                supplier.discard(expired, event);
+            } finally {
+                out.countDown();
+            }
         }
     }
 
