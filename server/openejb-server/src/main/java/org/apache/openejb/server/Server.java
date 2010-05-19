@@ -94,6 +94,7 @@ public class Server implements Service {
 
     public void stop() throws Exception {
         manager.stop();
+        OpenEJB.destroy();
     }
 
     public void addService(URI uri) {
