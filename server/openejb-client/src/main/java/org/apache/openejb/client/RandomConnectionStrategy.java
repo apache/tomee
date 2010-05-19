@@ -66,7 +66,7 @@ public class RandomConnectionStrategy implements ConnectionStrategy {
             }
         }
 
-        if (available.size() == 0 && !failed.contains(server.getLocation())){
+        if (available.size() == 0 && server.getLocation() != null && !failed.contains(server.getLocation())){
             return connect(cluster, server.getLocation());
         }
 

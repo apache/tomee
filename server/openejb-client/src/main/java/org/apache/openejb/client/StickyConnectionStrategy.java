@@ -67,7 +67,7 @@ public class StickyConnectionStrategy implements ConnectionStrategy {
 
         remaining.removeAll(failed);
 
-        if (remaining.size() == 0 && !failed.contains(server.getLocation())){
+        if (remaining.size() == 0 && server.getLocation() != null && !failed.contains(server.getLocation())){
             return connect(cluster, server.getLocation());
         }
 

@@ -56,6 +56,10 @@ public class ClusterMetaData implements Externalizable {
         return version;
     }
 
+    public void setConnectionStrategy(String connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
+    }
+
     public String getConnectionStrategy() {
         return connectionStrategy;
     }

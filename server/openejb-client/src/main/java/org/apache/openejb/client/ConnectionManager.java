@@ -37,6 +37,7 @@ public class ConnectionManager {
         factories.register("https", httpFactory);
 
         factories.register("multicast", new MulticastConnectionFactory());
+        factories.register("failover", new FailoverConnectionFactory());
         
         strategies.register("sticky", new StickyConnectionStrategy());
         strategies.register("random", new RandomConnectionStrategy());
