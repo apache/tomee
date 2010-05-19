@@ -93,7 +93,7 @@
 
   <properties>
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>3.7-SNAPSHOT</xbeanVersion>
+    <xbeanVersion>3.7</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
