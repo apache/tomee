@@ -21,6 +21,7 @@ import java.io.ObjectStreamException;
 import java.security.Identity;
 import java.security.Principal;
 import java.util.Properties;
+import java.util.Map;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -68,6 +69,10 @@ public abstract class BaseContext implements EJBContext, Serializable {
     
     protected abstract State getState();
 
+    public Map<String, Object> getContextData() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+    
     public EJBHome getEJBHome() {
         return getState().getEJBHome();
     }

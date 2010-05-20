@@ -17,6 +17,7 @@
 package org.apache.openejb.core.mdb;
 
 import java.security.Principal;
+import java.util.Map;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.MessageDrivenContext;

@@ -19,6 +19,8 @@ package org.apache.openejb.core.timer;
 import javax.ejb.EJBException;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
+import javax.ejb.TimerConfig;
+import javax.ejb.ScheduleExpression;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
@@ -51,7 +53,31 @@ public class TimerServiceWrapper implements TimerService {
     public Collection getTimers() throws IllegalStateException, EJBException {
         return getTimerService().getTimers();
     }
-    
+
+    public Timer createSingleActionTimer(long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createSingleActionTimer(l, timerConfig);
+    }
+
+    public Timer createSingleActionTimer(Date date, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createSingleActionTimer(date, timerConfig);
+    }
+
+    public Timer createIntervalTimer(long l, long l1, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createIntervalTimer(l, l1, timerConfig);
+    }
+
+    public Timer createIntervalTimer(Date date, long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createIntervalTimer(date, l, timerConfig);
+    }
+
+    public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createCalendarTimer(scheduleExpression);
+    }
+
+    public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return getTimerService().createCalendarTimer(scheduleExpression, timerConfig);
+    }
+
     private TimerService getTimerService() throws IllegalStateException {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
