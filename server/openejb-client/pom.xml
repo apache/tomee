@@ -73,11 +73,6 @@
       <version>6.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>ejb31-api-experimental</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.4_mail</artifactId>
       <optional>true</optional>

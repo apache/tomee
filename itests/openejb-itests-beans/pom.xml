@@ -34,11 +34,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>ejb31-api-experimental</artifactId>
-      <version>${version}</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
