@@ -37,6 +37,8 @@ public class Installer {
     private static final boolean listenerInstalled;
     private static final boolean agentInstalled;
 
+    private boolean force = false;
+
     static {
         // is the OpenEJB listener installed
         listenerInstalled = "OpenEJBListener".equals(SystemInstance.get().getProperty("openejb.embedder.source"));
@@ -64,6 +66,12 @@ public class Installer {
         }
     }
 
+    public Installer(Paths paths, boolean force) {
+        this (paths);
+        this.force = force;
+    }
+
+
     public Alerts getAlerts() {
         return alerts;
     }
@@ -89,7 +97,7 @@ public class Installer {
     }
 
     public void installListener() {
-        if (listenerInstalled) {
+        if (listenerInstalled && !force) {
 //            addInfo("OpenEJB Listener already installed");
             return;
         }
@@ -156,7 +164,7 @@ public class Installer {
     }
 
     public void installJavaagent() {
-        if (agentInstalled) {
+        if (agentInstalled && !force) {
 //            addInfo("OpenEJB Agent already installed");
             return;
         }
