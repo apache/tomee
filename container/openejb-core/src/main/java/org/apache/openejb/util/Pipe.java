@@ -15,6 +15,8 @@
  *  limitations under the License.
  */
 
+package org.apache.openejb.util;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
