@@ -30,6 +30,6 @@
     </bean>
 
     <bean name="first" class="org.apache.openejb.spring.LinkedBean">
-        <property name="next" ref="nextBean"/>
+        <property name="next" ref="next"/>
     </bean>
 </beans>
