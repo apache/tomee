@@ -36,6 +36,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,6 +53,8 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     private String host = "127.0.0.1";
     private int port = 4212;
 
+    private String initialServers = "";
+
     private long heartRate = 500;
 
     private Tracker tracker;
@@ -62,6 +65,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         Options options = new Options(props);
         host = props.getProperty("bind", host);
         port = options.get("port", port);
+        initialServers = options.get("initialServers", initialServers);
         heartRate = options.get("heart_rate", heartRate);
 
 
@@ -86,6 +90,10 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
     public int getPort() {
         return port;
+    }
+
+    public String getInitialServers() {
+        return initialServers;
     }
 
     public void setDiscoveryListener(DiscoveryListener listener) {
@@ -116,7 +124,14 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
         try {
             if (running.compareAndSet(false, true)) {
 
-                multipointServer = new MultipointServer(port, tracker);
+                multipointServer = new MultipointServer(host, port, tracker).start();
+
+                // Connect the initial set of peer servers
+                StringTokenizer st = new StringTokenizer(initialServers, ",");
+                while (st.hasMoreTokens()) {
+                    multipointServer.connect(URI.create("conn://"+st.nextToken()));
+                }
+
             }
         } catch (Exception e) {
             throw new ServiceException(e);
