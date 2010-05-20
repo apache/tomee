@@ -585,7 +585,7 @@
         <artifactId>kahadb</artifactId>
         <version>5.3.1</version>
       </dependency>
-	    <dependency>
+      <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
         <version>5.3.1</version>
@@ -604,7 +604,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-	    <dependency>
+      <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
         <version>5.3.1</version>
@@ -909,9 +909,9 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-          <groupId>wsdl4j</groupId>
-          <artifactId>wsdl4j</artifactId>
-          <version>1.6.1</version>
+        <groupId>wsdl4j</groupId>
+        <artifactId>wsdl4j</artifactId>
+        <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>
