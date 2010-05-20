@@ -19,6 +19,8 @@ package org.apache.openejb.core.timer;
 import javax.ejb.EJBException;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
+import javax.ejb.TimerConfig;
+import javax.ejb.ScheduleExpression;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -51,4 +53,29 @@ public class TimerServiceImpl implements TimerService {
     public Collection getTimers() throws IllegalStateException, EJBException {
         return ejbTimerService.getTimers(primaryKey);
     }
+
+    public Timer createSingleActionTimer(long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public Timer createSingleActionTimer(Date date, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public Timer createIntervalTimer(long l, long l1, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public Timer createIntervalTimer(Date date, long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
 }

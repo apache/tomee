@@ -58,6 +58,10 @@ public class ReflectionInvocationContext implements InvocationContext {
         }
     }
 
+    public Object getTimer() {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
     public Object getTarget() {
         return target;
     }

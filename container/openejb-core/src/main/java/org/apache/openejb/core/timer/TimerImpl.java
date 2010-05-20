@@ -19,6 +19,8 @@ package org.apache.openejb.core.timer;
 import javax.ejb.Timer;
 import javax.ejb.TimerHandle;
 import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.EJBException;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -59,7 +61,19 @@ public class TimerImpl implements Timer {
         checkState();
         return new TimerHandleImpl(timerData.getId(), timerData.getDeploymentId());
     }
-    
+
+    public ScheduleExpression getSchedule() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public boolean isPersistent() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    public boolean isCalendarTimer() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
     /**
      * Insure that timer methods can be invoked for the current operation on this Context.
      */

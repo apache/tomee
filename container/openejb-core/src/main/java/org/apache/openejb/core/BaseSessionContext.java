@@ -19,6 +19,7 @@ package org.apache.openejb.core;
 import java.security.Principal;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
@@ -48,6 +49,10 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
     public BaseSessionContext(SecurityService securityService, UserTransaction userTransaction) {
         super(securityService, userTransaction);
+    }
+
+    public boolean wasCancelCalled() {
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
