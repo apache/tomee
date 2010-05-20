@@ -21,9 +21,10 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.openejb.server.ServerService;
-import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.Server;
 import org.apache.openejb.client.RequestMethodConstants;
+import org.apache.openejb.loader.SystemInstance;
 
 public class AdminDaemon implements ServerService {
 
@@ -32,11 +33,9 @@ public class AdminDaemon implements ServerService {
 
     public void service(Socket socket) throws ServiceException, IOException {
         InputStream in = null;
-        InetAddress clientIP = null;
 
         try {
             in = socket.getInputStream();
-            clientIP = socket.getInetAddress();
 
             byte requestType = (byte) in.read();
 
@@ -49,7 +48,8 @@ public class AdminDaemon implements ServerService {
                 case RequestMethodConstants.STOP_REQUEST_quit:
                 case RequestMethodConstants.STOP_REQUEST_Stop:
                 case RequestMethodConstants.STOP_REQUEST_stop:
-                    ServiceManager.getManager().stop();
+                    Server server = SystemInstance.get().getComponent(Server.class);
+                    server.stop();
 
             }
 
