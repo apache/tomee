@@ -129,7 +129,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
                 // Connect the initial set of peer servers
                 StringTokenizer st = new StringTokenizer(initialServers, ",");
                 while (st.hasMoreTokens()) {
-                    multipointServer.connect(URI.create("conn://"+st.nextToken()));
+                    multipointServer.connect(URI.create("conn://"+st.nextToken().trim()));
                 }
 
             }
