@@ -457,6 +457,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
                     sessionBean.setSessionType(SessionType.SINGLETON);
+                    
+                    if (singleton.mappedName() != null) {
+                        sessionBean.setMappedName(singleton.mappedName());
+                    }
                 }
             }
 
