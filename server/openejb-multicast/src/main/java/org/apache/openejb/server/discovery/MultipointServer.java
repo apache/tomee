@@ -50,6 +50,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MultipointServer {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
 
+    private final String host;
     private final int port;
     private final Selector selector;
     private final URI me;
@@ -59,17 +60,21 @@ public class MultipointServer {
     private final LinkedList<URI> connect = new LinkedList<URI>();
     private final Map<URI, Session> connections = new HashMap<URI, Session>();
 
-
     public MultipointServer(int port, Tracker tracker) throws IOException {
+        this("localhost", port, tracker);
+    }
+
+    public MultipointServer(String host, int port, Tracker tracker) throws IOException {
         if (tracker == null) throw new NullPointerException("tracker cannot be null");
+        this.host = host;
         this.port = port;
         this.tracker = tracker;
-        me = URI.create("conn://localhost:" + port);
+        me = URI.create("conn://" + host + ":" + port);
 
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
 
         ServerSocket serverSocket = serverChannel.socket();
-        InetSocketAddress address = new InetSocketAddress(port);
+        InetSocketAddress address = new InetSocketAddress(host,port);
         serverSocket.bind(address);
         serverChannel.configureBlocking(false);
 
