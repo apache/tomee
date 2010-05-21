@@ -66,7 +66,10 @@ public class LinkResolver<E> {
     public E resolveLink(String link, URI moduleUri) {
         if (!link.contains("#")) {
             // check for a name in the current module
-            E value = byFullName.get(moduleUri.toString() + "#" + link);
+            E value = null;
+            if (moduleUri != null) {
+                value = byFullName.get(moduleUri.toString() + "#" + link);
+            }
             if (value != null) {
                 return value;
             }
