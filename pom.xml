@@ -102,7 +102,7 @@
     <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
-    <openejb.osgi.symbolic.name>${groupId}.${artifactId}</openejb.osgi.symbolic.name>
+    <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- Used in assembly/openejb-tomcat* projects  -->
     <tomcatVersion>6.0.16</tomcatVersion>
@@ -134,15 +134,22 @@
           <version>2.0.1</version>
           <extensions>true</extensions>
         </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rat-maven-plugin</artifactId>
+            <version>1.0-alpha-3</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
       <plugin>
@@ -157,7 +164,7 @@
 	<artifactId>maven-bundle-plugin</artifactId>
 	<configuration>
 	  <instructions>
-	    <Bundle-Name>Apache ${pom.name}</Bundle-Name>
+	    <Bundle-Name>Apache ${project.name}</Bundle-Name>
 	    <Export-Package>${openejb.osgi.export}</Export-Package>
 	    <Import-Package>${openejb.osgi.import}</Import-Package>
 	    <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
@@ -380,7 +387,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>rat-maven-plugin</artifactId>
-            <version>1.0-alpha-3</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -584,7 +590,7 @@
         <artifactId>kahadb</artifactId>
         <version>5.3.1</version>
       </dependency>
-      <dependency>
+	    <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-ra</artifactId>
         <version>5.3.1</version>
@@ -603,7 +609,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
+	    <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
         <version>5.3.1</version>
@@ -908,9 +914,9 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>wsdl4j</groupId>
-        <artifactId>wsdl4j</artifactId>
-        <version>1.6.1</version>
+          <groupId>wsdl4j</groupId>
+          <artifactId>wsdl4j</artifactId>
+          <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>
