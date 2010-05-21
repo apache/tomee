@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.jee.EnvEntry;
@@ -100,8 +101,10 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
     private void apply(JndiConsumer bean, EnvEntry newEntry, String componentName) {
         EnvEntry entry = bean.getEnvEntryMap().get(newEntry.getName());
         if (entry != null){
-            log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
-            entry.setEnvEntryValue(newEntry.getEnvEntryValue());
+            if (SystemInstance.get().getOptions().get("envprops.override", false)) {
+                log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
+                entry.setEnvEntryValue(newEntry.getEnvEntryValue());
+            }
             return;
         }
 
