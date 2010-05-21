@@ -180,7 +180,14 @@ public class ClassLoaderUtil {
                     logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
                 }
 
-                if (url != null && isParent(jarLocation, URLs.toFile(url))) {
+                File file = null;
+                try {
+                    file = URLs.toFile(url);
+                } catch (IllegalArgumentException e) {
+                    //unknown kind of url
+                    return;
+                }
+                if (url != null && isParent(jarLocation, file)) {
                     urls.add(url);
                 }
             }
