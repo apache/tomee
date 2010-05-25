@@ -27,6 +27,7 @@
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
     <version>6</version>
+    <relativePath />
   </parent>
 
   <groupId>org.apache.openejb</groupId>
