@@ -436,7 +436,7 @@ public class OpenEJB implements ApplicationContextAware {
     }
 
     private <T extends ServiceInfo> T initPassthrough(T info, String serviceType, Object instance) {
-        return initPassthrough("Spring Supplied " + serviceType, info, serviceType, instance);
+        return initPassthrough("Spring Supplied " + serviceType, info, serviceType, instance);
     }
 
     private <T extends ServiceInfo> T initPassthrough(String id, T info, String serviceType, Object instance) {
