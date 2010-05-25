@@ -30,27 +30,27 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * The entity element declares an entity bean. The declaration consists of: an
  * optional description; optional display name; optional small icon file name;
  * optional large icon file name; a unique name assigned to the enterprise bean
- * in the deployment descriptor; the names of the entity bean’s home and remote
- * interfaces, if any; the names of the entity bean’s local home and local
- * interface, if any; the entity bean’s implementation class; the entity bean’s
- * persistence management type; the entity bean’s primary key class name; an
- * indication of the entity bean’s reentrancy; an optional specification of the
- * entity bean’s cmp-version; an optional specification of the entity bean’s
+ * in the deployment descriptor; the names of the entity bean's home and remote
+ * interfaces, if any; the names of the entity bean's local home and local
+ * interface, if any; the entity bean's implementation class; the entity bean's
+ * persistence management type; the entity bean's primary key class name; an
+ * indication of the entity bean's reentrancy; an optional specification of the
+ * entity bean's cmp-version; an optional specification of the entity bean's
  * abstract schema name; an optional list of container-managed fields; an
  * optional specification of the primary key field; an optional declaration of
- * the bean’s environment entries; an optional declaration of the bean’s EJB
- * references; an optional declaration of the bean’s local EJB references; an
+ * the bean's environment entries; an optional declaration of the bean's EJB
+ * references; an optional declaration of the bean's local EJB references; an
  * optional declaration of the security role references; an optional declaration
- * of the security identity to be used for the execution of the bean’s methods;
- * an optional declaration of the bean’s resource manager connection factory
- * references; an optional declaration of the bean’s resource environment
+ * of the security identity to be used for the execution of the bean's methods;
+ * an optional declaration of the bean's resource manager connection factory
+ * references; an optional declaration of the bean's resource environment
  * references; an optional set of query declarations for finder and select
  * methods for an entity bean with cmp-version 2.x. The optional
  * abstract-schema-name element must be specified for an entity bean with
  * container managed persistence and cmp-version 2.x. The optional primkey-field
- * may be present in the descriptor if the entity’s persistence-type is
+ * may be present in the descriptor if the entity's persistence-type is
  * Container. The optional cmp-version element may be present in the descriptor
- * if the entity’s persistence-type is Container. If the persistence-type is
+ * if the entity's persistence-type is Container. If the persistence-type is
  * Container and the cmp-version element is not specified, its value defaults to
  * 2.x. The optional home and remote elements must be specified if the entity
  * bean cmp-version is 1.x. The optional local-home and local elements must be
@@ -60,8 +60,8 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * been defined for the entity bean. The other elements that are optional are
  * "optional" in the sense that they are omitted if the lists represented by
  * them are empty. At least one cmp-field element must be present in the
- * descriptor if the entity’s persistence-type is Container and the cmp-version
- * is 1.x, and none must not be present if the entity’s persistence-type is
+ * descriptor if the entity's persistence-type is Container and the cmp-version
+ * is 1.x, and none must not be present if the entity's persistence-type is
  * Bean.
  * 
  * 
