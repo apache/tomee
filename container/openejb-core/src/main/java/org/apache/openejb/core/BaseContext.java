@@ -124,7 +124,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         Context jndiEnc = deploymentInfo.getJndiEnc();
         try {
-            jndiEnc = (Context) jndiEnc.lookup("java:comp/env");
+            jndiEnc = (Context) jndiEnc.lookup("comp/env");
             return jndiEnc.lookup(name);
         } catch (NamingException e) {
             throw new IllegalArgumentException(e);

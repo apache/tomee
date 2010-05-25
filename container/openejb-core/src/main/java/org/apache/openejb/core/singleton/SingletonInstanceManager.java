@@ -143,11 +143,11 @@ public class SingletonInstanceManager {
             // This is a fix for GERONIMO-3444
             synchronized(this){
                 try {
-                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
+                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
                 } catch (NamingException e1) {
                     sessionContext = createSessionContext();
                     // TODO: This should work
-                    ctx.bind("java:comp/EJBContext", sessionContext);
+                    ctx.bind("comp/EJBContext", sessionContext);
                 }
             }
 
@@ -160,11 +160,11 @@ public class SingletonInstanceManager {
             // This is a fix for GERONIMO-3444
             synchronized(this){
                 try {
-                    ctx.lookup("java:comp/WebServiceContext");
+                    ctx.lookup("comp/WebServiceContext");
                 } catch (NamingException e) {
                     WebServiceContext wsContext;
                     wsContext = new EjbWsContext(sessionContext);
-                    ctx.bind("java:comp/WebServiceContext", wsContext);
+                    ctx.bind("comp/WebServiceContext", wsContext);
                 }
             }
 
@@ -262,7 +262,7 @@ public class SingletonInstanceManager {
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
             try {
                 String jndiName = injection.getJndiName();
-                Object object = context.lookup("java:comp/env/" + jndiName);
+                Object object = context.lookup("comp/env/" + jndiName);
                 String prefix;
                 if (usePrefix) {
                     prefix = injection.getTarget().getName() + "/";
