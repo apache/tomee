@@ -590,11 +590,11 @@ public class StatefulContainer implements RpcContainer {
             SessionContext sessionContext;
             synchronized (this) {
                 try {
-                    sessionContext = (SessionContext) ctx.lookup("java:comp/EJBContext");
+                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
                 } catch (NamingException e1) {
                     StatefulUserTransaction userTransaction = new StatefulUserTransaction(new EjbUserTransaction(), entityManagerRegistry);
                     sessionContext = new StatefulContext(securityService, userTransaction);
-                    ctx.bind("java:comp/EJBContext", sessionContext);
+                    ctx.bind("comp/EJBContext", sessionContext);
                 }
             }
 

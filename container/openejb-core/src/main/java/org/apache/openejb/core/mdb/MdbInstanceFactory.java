@@ -182,10 +182,10 @@ public class MdbInstanceFactory {
             MdbContext mdbContext;
             synchronized(this) {
                 try {
-                    mdbContext = (MdbContext) ctx.lookup("java:comp/EJBContext");
+                    mdbContext = (MdbContext) ctx.lookup("comp/EJBContext");
                 } catch (NamingException e) {
                     mdbContext = new MdbContext(securityService);
-                    ctx.bind("java:comp/EJBContext",mdbContext);
+                    ctx.bind("comp/EJBContext",mdbContext);
                 }
             }
 
@@ -257,7 +257,7 @@ public class MdbInstanceFactory {
             if (!injection.getTarget().isAssignableFrom(clazz)) continue;
             try {
                 String jndiName = injection.getJndiName();
-                Object object = context.lookup("java:comp/env/" + jndiName);
+                Object object = context.lookup("comp/env/" + jndiName);
                 if (object instanceof String) {
                     String string = (String) object;
                     // Pass it in raw so it could be potentially converted to

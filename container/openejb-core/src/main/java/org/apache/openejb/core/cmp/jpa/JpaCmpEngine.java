@@ -91,7 +91,7 @@ public class JpaCmpEngine implements CmpEngine {
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
         EntityManager entityManager = null;
         try {
-            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("java:comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
+            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
         } catch (NamingException ignored) {
             //TODO see OPENEJB-1259 temporary hack until geronimo jndi integration works better
             try {
