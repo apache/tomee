@@ -62,6 +62,7 @@ import java.util.List;
         "remote",
         "ejbLink",
         "mappedName",
+        "lookupName",
         "injectionTarget"
         })
 public class EjbRef implements EjbReference {
@@ -78,6 +79,8 @@ public class EjbRef implements EjbReference {
     protected String ejbLink;
     @XmlElement(name = "mapped-name")
     protected String mappedName;
+    @XmlElement(name = "lookup-name")
+    protected String lookupName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTarget> injectionTarget;
     @XmlAttribute
@@ -205,6 +208,14 @@ public class EjbRef implements EjbReference {
 
     public void setMappedName(String value) {
         this.mappedName = value;
+    }
+
+    public String getLookupName() {
+        return lookupName;
+    }
+
+    public void setLookupName(String lookupName) {
+        this.lookupName = lookupName;
     }
 
     public List<InjectionTarget> getInjectionTarget() {

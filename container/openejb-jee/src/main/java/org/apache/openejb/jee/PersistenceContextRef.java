@@ -69,6 +69,7 @@ import java.util.List;
         "persistenceContextType",
         "persistenceProperty",
         "mappedName",
+        "lookupName",
         "injectionTarget"
         })
 public class PersistenceContextRef implements JndiReference, PersistenceRef {
@@ -85,6 +86,8 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     protected List<Property> persistenceProperty;
     @XmlElement(name = "mapped-name")
     protected String mappedName;
+    @XmlElement(name = "lookup-name")
+    protected String lookupName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTarget> injectionTarget;
     @XmlAttribute
@@ -170,6 +173,14 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
     public void setMappedName(String value) {
         this.mappedName = value;
+    }
+
+    public String getLookupName() {
+        return lookupName;
+    }
+
+    public void setLookupName(String lookupName) {
+        this.lookupName = lookupName;
     }
 
     public List<InjectionTarget> getInjectionTarget() {

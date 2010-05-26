@@ -29,4 +29,7 @@ public interface JndiReference extends Injectable, Keyable<String> {
     String getMappedName();
     void setMappedName(String mappedName);
 
+    String getLookupName();
+
+    void setLookupName(String lookupName);
 }
