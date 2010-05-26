@@ -355,16 +355,19 @@ public class JndiEncInfoBuilder {
             if (env.getEnvEntryValue() == null) {
                 continue;
             }
-
-            if (env.getEnvEntryType() == null){
-                // TODO: Maybe Move this into the EnvEntry class
-                env.setEnvEntryType("java.lang.String");
-            }
+              //TODO this is wrong, need to infer type from injections.
+//            if (env.getEnvEntryType() == null){
+//                // TODO: Maybe Move this into the EnvEntry class
+//                env.setEnvEntryType("java.lang.String");
+//            }
             
             EnvEntryInfo info = new EnvEntryInfo();
 
             info.name = env.getEnvEntryName();
             info.type = env.getEnvEntryType();
+            if (info.type == null) {
+                info.type = "java.lang.String";
+            }
             info.value = env.getEnvEntryValue();
             info.location = buildLocationInfo(env);
             info.targets.addAll(buildInjectionInfos(env));
