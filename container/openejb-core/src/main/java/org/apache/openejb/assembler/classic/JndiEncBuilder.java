@@ -121,7 +121,10 @@ public class JndiEncBuilder {
     }
 
     public Context build() throws OpenEJBException {
-        Map<String, Object> bindings = buildMap();
+        Map<String, Object> bindings = null;
+        if (System.getProperty("duct tape") == null)  {
+            bindings = buildMap();
+        }
         JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
         return jndiFactory.createComponentContext(bindings);
     }
