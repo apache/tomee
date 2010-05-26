@@ -29,5 +29,8 @@
 
         <!-- unzip openejb.war -->
         <unzip src="${LOCAL_M2_REPO}/org/apache/openejb/openejb-tomcat-webapp/${openejb.version}/openejb-tomcat-webapp-${openejb.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/openejb"/>
+        
+        <!-- unzip examples.war -->
+        <unzip src="${LOCAL_M2_REPO}/org/superbiz/ejb-examples/${examples.version}/ejb-examples-${examples.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/ejb-examples"/>
     </target>
 </project>

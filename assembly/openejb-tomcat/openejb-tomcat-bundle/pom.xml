@@ -32,6 +32,7 @@
     <name>OpenEJB :: Assembly :: Tomcat :: Bundle</name>
     <properties>
         <tomcat.version>6.0.26</tomcat.version>
+        <examples.version>1.1-SNAPSHOT</examples.version>
     </properties>
     <dependencies>
         <dependency>
@@ -64,6 +65,7 @@
                                 <property name="LOCAL_M2_REPO" value="${settings.localRepository}"/>
                                 <property name="tomcat.version" value="${tomcat.version}"/>
                                 <property name="openejb.version" value="${project.version}"/>
+                                <property name="examples.version" value="${examples.version}"/>
 
                                 <ant antfile="${basedir}/build.xml">
                                     <target name="downloadtomcat"/>
