@@ -59,6 +59,7 @@ import java.util.List;
         "envEntryType",
         "envEntryValue",
         "mappedName",
+        "lookupName",
         "injectionTarget"
         })
 public class EnvEntry implements JndiReference {
@@ -76,6 +77,8 @@ public class EnvEntry implements JndiReference {
 
     @XmlElement(name = "mapped-name")
     protected String mappedName;
+    @XmlElement(name = "lookup-name")
+    protected String lookupName;
     @XmlElement(name = "injection-target", required = true)
     protected List<InjectionTarget> injectionTarget;
     @XmlAttribute
@@ -158,6 +161,14 @@ public class EnvEntry implements JndiReference {
 
     public void setMappedName(String value) {
         this.mappedName = value;
+    }
+
+    public String getLookupName() {
+        return lookupName;
+    }
+
+    public void setLookupName(String lookupName) {
+        this.lookupName = lookupName;
     }
 
     public List<InjectionTarget> getInjectionTarget() {
