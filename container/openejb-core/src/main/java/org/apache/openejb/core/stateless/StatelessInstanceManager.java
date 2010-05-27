@@ -395,9 +395,11 @@ public class StatelessInstanceManager {
         String timeString = options.get("Timeout", this.accessTimeout.toString());
         timeString = options.get("AccessTimeout", timeString);
         Duration accessTimeout = new Duration(timeString);
+        if (accessTimeout.getUnit() == null) accessTimeout.setUnit(TimeUnit.MILLISECONDS);
 
         String s = options.get("CloseTimeout", this.closeTimeout.toString());
         Duration closeTimeout = new Duration(s);
+        if (closeTimeout.getUnit() == null) closeTimeout.setUnit(TimeUnit.MILLISECONDS);
 
         final ObjectRecipe recipe = PassthroughFactory.recipe(builder);
         recipe.setAllProperties(deploymentInfo.getProperties());
