@@ -24,8 +24,6 @@ import java.util.Collections;
 public class SingletonBean extends SessionBean {
     public SingletonBean(String ejbName, String ejbClass) {
         super(ejbName, ejbClass, SessionType.SINGLETON);
-        postActivate = Collections.emptyList();
-        prePassivate = Collections.emptyList();
     }
 
     public SingletonBean(Class<?> ejbClass) {

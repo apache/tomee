@@ -25,8 +25,6 @@ import java.util.Collections;
 public class StatelessBean extends SessionBean {
     public StatelessBean(String ejbName, String ejbClass) {
         super(ejbName, ejbClass, SessionType.STATELESS);
-        postActivate = Collections.emptyList();
-        prePassivate = Collections.emptyList();
     }
 
     public StatelessBean(Class<?> ejbClass) {
