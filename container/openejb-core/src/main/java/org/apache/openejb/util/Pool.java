@@ -168,7 +168,9 @@ public class Pool<T> {
      * @throws TimeoutException      if no instance could be obtained within the timeout
      */
     private Entry<T> pop(long timeout, TimeUnit unit, boolean record) throws InterruptedException, TimeoutException {
-        if (!available.tryAcquire(timeout, unit)) {
+        if (timeout == -1) {
+             available.tryAcquire();
+        } else if (!available.tryAcquire(timeout, unit)) {
             if (record) stats.accessTimeouts.record();
             throw new TimeoutException("Waited " + timeout + " " + unit);
         }
