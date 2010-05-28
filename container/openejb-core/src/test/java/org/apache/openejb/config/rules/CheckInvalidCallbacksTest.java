@@ -20,16 +20,17 @@ import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
+import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.transaction.UserTransaction;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.interceptor.AroundInvoke;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -37,38 +38,55 @@ import java.util.concurrent.Callable;
 /**
  * @version $Rev$ $Date$
  */
-public class CheckUserTransactionRefsTest extends TestCase {
+public class CheckInvalidCallbacksTest extends TestCase {
 
     @Test
-    public void testSLSBwithUserTransaction() throws Exception {
+    public void test() throws Exception {
 
         Assembler assembler = new Assembler();
         ConfigurationFactory config = new ConfigurationFactory();
 
         EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
+        ejbJar.addEnterpriseBean(new SingletonBean("TestSingleton", TestBean.class));
 
         List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("userTransactionRef.forbiddenForCmtdBeans");
+        expectedKeys.add("ignoredStatefulAnnotation");
+        expectedKeys.add("ignoredStatefulAnnotation");
+        expectedKeys.add("ignoredStatefulAnnotation");
+        expectedKeys.add("ignoredStatefulAnnotation");
 
         // "@Resource UserTransaction tx" declaration
         try {
             config.configureApplication(ejbJar);
-            fail("A ValidationFailedException should have been thrown");
         } catch (ValidationFailedException e) {
-            assertFailures(expectedKeys, e);
+            assertWarnings(expectedKeys, e);
         }
     }
 
-    @Stateless
-    @TransactionManagement(TransactionManagementType.CONTAINER)
     public static class TestBean implements Callable {
-
-        @Resource
-        private UserTransaction userTransaction;
 
         public Object call() throws Exception {
             return null;
+        }
+
+        @AroundInvoke
+        public void invoke(){}
+
+        @PostConstruct
+        public void myConstruct() {
+        }
+
+        @PreDestroy
+        public void myDestroy() {
+        }
+
+        @PostActivate
+        public void myActivate() {
+        }
+
+        @PrePassivate
+        public void myPassivate() {
         }
     }
 
