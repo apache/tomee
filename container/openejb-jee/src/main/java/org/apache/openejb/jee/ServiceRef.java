@@ -55,8 +55,8 @@ import java.util.List;
         "handler",
         "handlerChains",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class ServiceRef implements JndiReference {
 

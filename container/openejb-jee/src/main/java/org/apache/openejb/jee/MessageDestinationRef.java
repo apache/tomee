@@ -74,8 +74,8 @@ import java.util.List;
         "messageDestinationUsage",
         "messageDestinationLink",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class MessageDestinationRef implements JndiReference {
 

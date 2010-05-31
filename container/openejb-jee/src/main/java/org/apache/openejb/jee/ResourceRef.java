@@ -68,8 +68,8 @@ import java.util.List;
         "resAuth",
         "resSharingScope",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class ResourceRef implements JndiReference {
 

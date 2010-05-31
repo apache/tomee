@@ -60,8 +60,8 @@ import java.util.List;
         "local",
         "ejbLink",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class EjbLocalRef implements EjbReference {
 

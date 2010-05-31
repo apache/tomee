@@ -62,8 +62,8 @@ import java.util.List;
         "remote",
         "ejbLink",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class EjbRef implements EjbReference {
 
