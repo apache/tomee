@@ -59,8 +59,8 @@ import java.util.List;
         "envEntryType",
         "envEntryValue",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class EnvEntry implements JndiReference {
 

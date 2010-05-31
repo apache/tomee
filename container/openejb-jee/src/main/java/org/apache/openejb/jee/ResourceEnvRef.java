@@ -65,8 +65,8 @@ import java.util.List;
         "resourceEnvRefName",
         "resourceEnvRefType",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class ResourceEnvRef implements JndiReference {
 

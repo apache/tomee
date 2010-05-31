@@ -62,8 +62,8 @@ import java.util.List;
         "persistenceUnitRefName",
         "persistenceUnitName",
         "mappedName",
-        "lookupName",
-        "injectionTarget"
+        "injectionTarget",
+        "lookupName"
         })
 public class PersistenceUnitRef implements JndiReference, PersistenceRef {
 
