@@ -16,45 +16,53 @@
  */
 package org.apache.openejb.core.singleton;
 
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
+import javax.ejb.Asynchronous;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
-import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.interceptor.AroundInvoke;
 
 import org.apache.openejb.ContainerType;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
-import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.util.Duration;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.asynch.AsynchMethodRunnable;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
-
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.xbean.finder.ClassFinder;
 
 /**
@@ -70,7 +78,9 @@ public class SingletonContainer implements RpcContainer {
     private SecurityService securityService;
     private long wait = 30;
     private TimeUnit unit = TimeUnit.SECONDS;
-
+    private BlockingQueue<Runnable> asynchQueue = new LinkedBlockingQueue<Runnable>();
+    private ThreadPoolExecutor asynchPool = new ThreadPoolExecutor(1, 20, 60, TimeUnit.SECONDS, asynchQueue);
+    private CompletionService<Object> asynchService = new ExecutorCompletionService<Object>(asynchPool);
 
     public SingletonContainer(Object id, SecurityService securityService) throws OpenEJBException {
         this.containerID = id;
@@ -182,6 +192,14 @@ public class SingletonContainer implements RpcContainer {
         // Use the backup way to determine call type if null was supplied.
         if (type == null) type = deployInfo.getInterfaceType(callInterface);
         
+        Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
+        if(runMethod.getAnnotation(Asynchronous.class) != null){
+        	// Need to invoke this bean asynchronously
+        	AsynchMethodRunnable asynch = new SingletonMethodRunnable(callMethod, runMethod, args, type, deployInfo, primKey);
+        	Future<Object> future = this.asynchService.submit(asynch);
+        	return future;
+        }
+        
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -203,9 +221,6 @@ public class SingletonContainer implements RpcContainer {
 
             callContext.setCurrentOperation(Operation.BUSINESS);
             callContext.setCurrentAllowedStates(SingletonContext.getStates());
-
-            Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
-
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
 
@@ -345,5 +360,30 @@ public class SingletonContainer implements RpcContainer {
 
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         return new ProxyInfo(deploymentInfo, null);
+    }
+    
+    public class SingletonMethodRunnable extends AsynchMethodRunnable{
+    	
+    	public SingletonMethodRunnable(
+				Method callMethod,
+				Method runMethod, Object[] args, InterfaceType type,
+				CoreDeploymentInfo deployInfo, Object primKey) {
+			super(callMethod, runMethod, args, type, deployInfo, primKey);
+		}
+
+		protected Object performInvoke(Object bean, ThreadContext callContext) throws OpenEJBException{
+    		return _invoke(this.callMethod, this.runMethod, this.args, (Instance)bean, callContext, this.type);
+    	}
+
+		@Override
+		protected Object createBean(ThreadContext callContext) throws OpenEJBException{
+			return instanceManager.getInstance(callContext);
+		}
+
+		@Override
+		protected void releaseBean(Object bean, ThreadContext callContext) throws OpenEJBException{
+			// Singleton doesn't have to do anything here
+		}
+    	
     }
 }
