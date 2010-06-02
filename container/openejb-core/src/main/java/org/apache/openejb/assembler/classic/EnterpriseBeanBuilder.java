@@ -29,6 +29,7 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.Classes;
+import org.apache.openejb.util.Duration;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -162,9 +164,14 @@ class EnterpriseBeanBuilder {
 
         // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
-        
-        deployment.setStatefulTimeout(bean.statefulTimeout);
-        deployment.setAccessTimeout(bean.accessTimeout);
+
+        if (bean.statefulTimeout != null) {
+            deployment.setStatefulTimeout(new Duration(bean.statefulTimeout.time, TimeUnit.valueOf(bean.statefulTimeout.unit)));
+        }
+
+        if (bean.accessTimeout != null) {
+            deployment.setAccessTimeout(new Duration(bean.accessTimeout.time, TimeUnit.valueOf(bean.accessTimeout.unit)));
+        }
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;

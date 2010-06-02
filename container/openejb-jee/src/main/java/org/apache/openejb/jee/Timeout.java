@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "access-timeoutType", propOrder = { "timeout", "unit" })
-public class AccessTimeout {
+public class Timeout {
 
 	@XmlElement(name = "timeout", required = true)
 	private Integer timeout;

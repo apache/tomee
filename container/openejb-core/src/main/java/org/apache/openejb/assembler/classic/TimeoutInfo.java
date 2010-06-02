@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,37 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.jee;
+package org.apache.openejb.assembler.classic;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "stateful-timeoutType", propOrder = { "timeout", "unit" })
-public class StatefulTimeout {
-
-	@XmlElement(name = "timeout", required = true)
-	private Integer timeout;
-
-	@XmlElement(name = "unit", required = true)
-	private String unit;
-
-	public Integer getTimeout() {
-		return timeout;
-	}
-
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-
+/**
+ * @version $Rev$ $Date$
+ */
+public class TimeoutInfo extends InfoObject {
+    public long time;
+    public String unit;
 }

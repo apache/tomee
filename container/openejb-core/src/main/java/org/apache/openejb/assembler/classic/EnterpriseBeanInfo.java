@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.openejb.util.Duration;
-
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public static final int ENTITY = 0;
@@ -78,6 +76,6 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public boolean loadOnStartup;
     public final List<String> dependsOn = new ArrayList<String>() ;
     
-    public Duration statefulTimeout;
-    public Duration accessTimeout;
+    public TimeoutInfo statefulTimeout;
+    public TimeoutInfo accessTimeout;
 }

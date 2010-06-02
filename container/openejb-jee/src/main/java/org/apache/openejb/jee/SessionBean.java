@@ -219,10 +219,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected List<String> dependsOn;
     
     @XmlElement(name = "stateful-timeout", required = true)
-    protected StatefulTimeout statefulTimeout;
+    protected Timeout statefulTimeout;
     
     @XmlElement(name = "access-timeout", required = true)
-    protected AccessTimeout accessTimeout;
+    protected Timeout accessTimeout;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -713,19 +713,19 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         this.id = value;
     }
 
-	public StatefulTimeout getStatefulTimeout() {
+	public Timeout getStatefulTimeout() {
 		return statefulTimeout;
 	}
 
-	public void setStatefulTimeout(StatefulTimeout statefulTimeout) {
+	public void setStatefulTimeout(Timeout statefulTimeout) {
 		this.statefulTimeout = statefulTimeout;
 	}
 
-	public AccessTimeout getAccessTimeout() {
+	public Timeout getAccessTimeout() {
 		return accessTimeout;
 	}
 
-	public void setAccessTimeout(AccessTimeout accessTimeout) {
+	public void setAccessTimeout(Timeout accessTimeout) {
 		this.accessTimeout = accessTimeout;
 	}
 
