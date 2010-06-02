@@ -549,7 +549,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         // check each url to determine if it is an ejb jar
         for (URL url : getUrls(standardContext)) {
             try {
-                Class moduleType = DeploymentLoader.discoverModuleType(url, standardContext.getLoader().getClassLoader(), true);
+                Class moduleType = new DeploymentLoader().discoverModuleType(url, standardContext.getLoader().getClassLoader(), true);
                 if (EjbModule.class.isAssignableFrom(moduleType)) {
                     File file;
                     if (url.getProtocol().equals("jar")) {
