@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ClassFinder;
 
 import java.util.Map;
@@ -37,7 +38,7 @@ public class ClientModule implements DeploymentModule {
     private ClassLoader classLoader;
     private String mainClass;
     private boolean ejbModuleGenerated;
-    private AtomicReference<ClassFinder> finder;
+    private AtomicReference<AbstractFinder> finder;
     private final Set<String> localClients = new HashSet<String>();
     private final Set<String> remoteClients = new HashSet<String>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
@@ -71,15 +72,15 @@ public class ClientModule implements DeploymentModule {
         this.ejbModuleGenerated = ejbModuleGenerated;
     }
 
-    public ClassFinder getFinder() {
+    public AbstractFinder getFinder() {
         return (finder != null)? finder.get(): null;
     }
 
-    public void setFinderReference(AtomicReference<ClassFinder> finder) {
+    public void setFinderReference(AtomicReference<AbstractFinder> finder) {
         this.finder = finder;
     }
 
-    public AtomicReference<ClassFinder> getFinderReference() {
+    public AtomicReference<AbstractFinder> getFinderReference() {
         return this.finder;
     }
 

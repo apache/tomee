@@ -20,6 +20,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ClassFinder;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class EjbModule implements WsModule {
     private OpenejbJar openejbJar;
     private Webservices webservices;
     private String moduleId;
-    private final AtomicReference<ClassFinder> finder = new AtomicReference<ClassFinder>();
+    private final AtomicReference<AbstractFinder> finder = new AtomicReference<AbstractFinder>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
@@ -96,11 +97,11 @@ public class EjbModule implements WsModule {
         this(classLoader, null, jarURI, ejbJar, openejbJar);
     }
 
-    public ClassFinder getFinder() {
+    public AbstractFinder getFinder() {
         return (finder != null)? finder.get(): null;
     }
 
-    public AtomicReference<ClassFinder> getFinderReference() {
+    public AtomicReference<AbstractFinder> getFinderReference() {
         return this.finder;
     }
 

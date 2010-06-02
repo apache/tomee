@@ -17,71 +17,69 @@
 package org.apache.openejb.config;
 
 import org.apache.xbean.finder.AbstractFinder;
-import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.BundleAnnotationFinder;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleReference;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 import java.io.File;
 import java.net.URL;
 
-import static java.util.Arrays.asList;
+import static org.apache.openejb.util.Join.join;
 
 /**
  * @version $Rev$ $Date$
  */
-public class AnnotationDeployer extends AbstractAnnotationDeployer {
+public class BundleAnnotationDeployer extends AbstractAnnotationDeployer implements DynamicDeployer {
 
-    public AnnotationDeployer() {
-        super(new DiscoverAnnotatedBeans());
+    public BundleAnnotationDeployer() {
+        super(new DiscoverAnnotatedBeans(getPackageAdmin()));
     }
 
+    private static PackageAdmin getPackageAdmin() {
+        ClassLoader cl = BundleAnnotationDeployer.class.getClassLoader();
+        Bundle bundle = getBundle(cl);
+        BundleContext bundleContext = bundle.getBundleContext();
+        ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
+        return (PackageAdmin) bundleContext.getService(sr);
+    }
+
+    private static Bundle getBundle(ClassLoader classLoader) {
+        return ((BundleReference) classLoader).getBundle();
+    }
+
+
     public static class DiscoverAnnotatedBeans extends AbstractDiscoverAnnotatedBeans {
+
+        public DiscoverAnnotatedBeans(PackageAdmin packageAdmin) {
+            this.packageAdmin = packageAdmin;
+        }
+
+        private final PackageAdmin packageAdmin;
 
         @Override
         protected AbstractFinder newFinder(ClientModule clientModule) throws Exception {
             AbstractFinder finder;
-            if (clientModule.getJarLocation() != null) {
-                String location = clientModule.getJarLocation();
-                File file = new File(location);
-
-                URL url;
-                if (file.exists()) {
-                    url = file.toURI().toURL();
-                } else {
-                    url = new URL(location);
-                }
-                finder = new ClassFinder(clientModule.getClassLoader(), url);
-            } else {
-                finder = new ClassFinder(clientModule.getClassLoader());
-            }
+            finder = new BundleAnnotationFinder(packageAdmin, getBundle(clientModule.getClassLoader()));
             return finder;
         }
 
         @Override
-        protected AbstractFinder newFinder(WebModule webModule) {
+        protected AbstractFinder newFinder(WebModule webModule) throws Exception {
             AbstractFinder finder;
             File file = new File(webModule.getJarLocation());
             URL[] urls = DeploymentLoader.getWebappUrls(file);
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            finder = new ClassFinder(webClassLoader, asList(urls));
+            finder = new BundleAnnotationFinder(packageAdmin, getBundle(webClassLoader));
             return finder;
         }
 
         @Override
         protected AbstractFinder newFinder(EjbModule ejbModule) throws Exception {
             AbstractFinder finder;
-            if (ejbModule.getJarLocation() != null) {
-                String location = ejbModule.getJarLocation();
-                File file = new File(location);
-
-                URL url;
-                if (file.exists()) {
-                    url = file.toURI().toURL();
-                } else {
-                    url = new URL(location);
-                }
-                finder = new ClassFinder(ejbModule.getClassLoader(), url);
-            } else {
-                finder = new ClassFinder(ejbModule.getClassLoader());
-            }
+            finder = new BundleAnnotationFinder(packageAdmin, getBundle(ejbModule.getClassLoader()));
             return finder;
         }
     }
