@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.openejb.client.proxy.InvocationHandler;
 
@@ -51,7 +52,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
 
     protected transient boolean inProxyMap = false;
 
-    protected transient boolean isInvalidReference = false;
+    protected transient AtomicBoolean isInvalidReference = new AtomicBoolean(false);
 
     protected transient EJBRequest request;
 
@@ -105,7 +106,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (isInvalidReference) {
+        if (isInvalidReference.get()) {
             if (remote || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
                 throw new NoSuchObjectException("reference is invalid");
             } else {
@@ -145,12 +146,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     }
 
     protected void invalidateReference() {
-        this.server = null;
-        this.client = null;
-//        this.ejb = null;
-        this.inProxyMap = false;
-        this.isInvalidReference = true;
-        this.primaryKey = null;
+        this.isInvalidReference.set(true);
     }
 
     protected static void invalidateAllHandlers(Object key) {

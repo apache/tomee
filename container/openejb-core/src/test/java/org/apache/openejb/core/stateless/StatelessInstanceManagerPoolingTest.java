@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -148,10 +149,9 @@ public class StatelessInstanceManagerPoolingTest extends TestCase {
         	public void run(){
         		try{
                     counter.race(startingLine, startPistol);
-                }catch (Exception ex){
+                }catch (ConcurrentAccessTimeoutException ex){
                     comment("Leap Start");
                     timeouts.countDown();
-                    assertEquals("An invocation of the Stateless Session Bean CounterBean has timed-out", ex.getMessage());
         		}
         	}
         };
