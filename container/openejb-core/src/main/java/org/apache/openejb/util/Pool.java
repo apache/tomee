@@ -943,6 +943,22 @@ public class Pool<T> {
             return maxAge;
         }
 
+        public boolean isStrict() {
+            return strict;
+        }
+
+        public Duration getIdleTimeout() {
+            return idleTimeout;
+        }
+
+        public Duration getInterval() {
+            return interval;
+        }
+
+        public boolean isReplaceAged() {
+            return replaceAged;
+        }
+
         public void setMaxAgeOffset(double maxAgeOffset) {
             this.maxAgeOffset = maxAgeOffset;
         }

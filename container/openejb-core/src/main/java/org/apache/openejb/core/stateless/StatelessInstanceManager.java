@@ -392,17 +392,17 @@ public class StatelessInstanceManager {
 
         final Pool.Builder builder = new Pool.Builder(poolBuilder);
 
-        String timeString = options.get("Timeout", this.accessTimeout.toString());
-        timeString = options.get("AccessTimeout", timeString);
-        Duration accessTimeout = new Duration(timeString);
-        if (accessTimeout.getUnit() == null) accessTimeout.setUnit(TimeUnit.MILLISECONDS);
+        Duration accessTimeout = getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS);
+        accessTimeout = getDuration(options, "AccessTimeout", accessTimeout, TimeUnit.MILLISECONDS);
 
-        String s = options.get("CloseTimeout", this.closeTimeout.toString());
-        Duration closeTimeout = new Duration(s);
-        if (closeTimeout.getUnit() == null) closeTimeout.setUnit(TimeUnit.MILLISECONDS);
+        Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
 
         final ObjectRecipe recipe = PassthroughFactory.recipe(builder);
         recipe.setAllProperties(deploymentInfo.getProperties());
+
+        setDefault(builder.getMaxAge(), TimeUnit.HOURS);
+        setDefault(builder.getIdleTimeout(), TimeUnit.MINUTES);
+        setDefault(builder.getInterval(), TimeUnit.MINUTES);
 
         builder.setSupplier(new StatelessSupplier(deploymentInfo));
         builder.setExecutor(executor);
@@ -458,6 +458,17 @@ public class StatelessInstanceManager {
         }
 
         data.getPool().start();
+    }
+
+    private void setDefault(Duration duration, TimeUnit unit) {
+        if (duration.getUnit() == null) duration.setUnit(unit);
+    }
+
+    private Duration getDuration(Options options, String property, Duration defaultValue, TimeUnit defaultUnit) {
+        String s = options.get(property, defaultValue.toString());
+        Duration duration = new Duration(s);
+        if (duration.getUnit() == null) duration.setUnit(defaultUnit);
+        return duration;
     }
 
     private Instance createInstance(CoreDeploymentInfo deploymentInfo) {
