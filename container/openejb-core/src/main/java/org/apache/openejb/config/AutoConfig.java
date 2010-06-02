@@ -86,6 +86,7 @@ public class AutoConfig implements DynamicDeployer {
         ignoredReferenceTypes.add("javax.ejb.SessionContext");
         ignoredReferenceTypes.add("javax.ejb.EntityContext");
         ignoredReferenceTypes.add("javax.ejb.MessageDrivenContext");
+        ignoredReferenceTypes.add("javax.ejb.EJBContext");
         ignoredReferenceTypes.add("javax.xml.ws.WebServiceContext");
         // URLs are automatically handled
         ignoredReferenceTypes.add("java.net.URL");
