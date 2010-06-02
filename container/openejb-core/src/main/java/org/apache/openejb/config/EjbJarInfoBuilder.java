@@ -17,7 +17,18 @@
  */
 package org.apache.openejb.config;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
 import org.apache.openejb.assembler.classic.CmrFieldInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -26,34 +37,38 @@ import org.apache.openejb.assembler.classic.EntityBeanInfo;
 import org.apache.openejb.assembler.classic.InitMethodInfo;
 import org.apache.openejb.assembler.classic.InterceptorBindingInfo;
 import org.apache.openejb.assembler.classic.InterceptorInfo;
+import org.apache.openejb.assembler.classic.JndiNameInfo;
+import org.apache.openejb.assembler.classic.ManagedBeanInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
+import org.apache.openejb.assembler.classic.MethodConcurrencyInfo;
 import org.apache.openejb.assembler.classic.MethodInfo;
 import org.apache.openejb.assembler.classic.MethodPermissionInfo;
+import org.apache.openejb.assembler.classic.MethodScheduleInfo;
 import org.apache.openejb.assembler.classic.MethodTransactionInfo;
 import org.apache.openejb.assembler.classic.NamedMethodInfo;
 import org.apache.openejb.assembler.classic.QueryInfo;
 import org.apache.openejb.assembler.classic.RemoveMethodInfo;
+import org.apache.openejb.assembler.classic.ScheduleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleInfo;
 import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
+import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
-import org.apache.openejb.assembler.classic.JndiNameInfo;
-import org.apache.openejb.assembler.classic.SingletonBeanInfo;
-import org.apache.openejb.assembler.classic.MethodConcurrencyInfo;
-import org.apache.openejb.assembler.classic.MethodScheduleInfo;
-import org.apache.openejb.assembler.classic.ScheduleInfo;
-import org.apache.openejb.assembler.classic.ManagedBeanInfo;
+import org.apache.openejb.jee.AccessTimeout;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
+import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
+import org.apache.openejb.jee.ConcurrencyType;
+import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.Icon;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.Interceptor;
@@ -63,6 +78,7 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.MethodSchedule;
 import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceType;
@@ -70,33 +86,21 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.ResultTypeMapping;
+import org.apache.openejb.jee.Schedule;
 import org.apache.openejb.jee.SecurityRole;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.StatefulTimeout;
 import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.ResultTypeMapping;
-import org.apache.openejb.jee.ApplicationException;
-import org.apache.openejb.jee.ConcurrencyType;
-import org.apache.openejb.jee.ContainerConcurrency;
-import org.apache.openejb.jee.MethodSchedule;
-import org.apache.openejb.jee.Schedule;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.jee.oejb3.Jndi;
+import org.apache.openejb.jee.oejb3.ResourceLink;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
@@ -561,6 +565,18 @@ public class EjbJarInfoBuilder {
         bean.transactionType = (txType != null)?txType.toString(): TransactionType.CONTAINER.toString();
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
+
+        final StatefulTimeout statefulTimeout = s.getStatefulTimeout();
+        if(statefulTimeout != null) {
+        	bean.statefulTimeout = new Duration(statefulTimeout.getTimeout(), 
+        			TimeUnit.valueOf(statefulTimeout.getUnit()));
+        }
+
+        final AccessTimeout accessTimeout = s.getAccessTimeout();
+        if(accessTimeout != null) {
+        	bean.accessTimeout = new Duration(accessTimeout.getTimeout(), 
+        			TimeUnit.valueOf(accessTimeout.getUnit()));
+        }
 
         return bean;
     }

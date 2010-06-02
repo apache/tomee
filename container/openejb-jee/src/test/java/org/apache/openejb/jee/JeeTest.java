@@ -17,22 +17,6 @@
  */
 package org.apache.openejb.jee;
 
-import junit.framework.TestCase;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLFilterImpl;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,6 +27,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import junit.framework.TestCase;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
  * @version $Revision$ $Date$
@@ -84,6 +86,22 @@ public class JeeTest extends TestCase {
         marshaller.marshal(object, baos);
 
         System.out.println("time: " + (System.currentTimeMillis() - start));
+    }
+    
+    public void testEjbTimeout() throws Exception {
+        String fileName = "ejb-jar-timeout.xml";
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
+        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+
+        EjbJar ejbJar = (EjbJar) o;
+        EnterpriseBean bean = ejbJar.getEnterpriseBean("A");
+
+        assertTrue("The bean A is not a SessionBean", bean instanceof SessionBean);
+        SessionBean sbean = (SessionBean) bean;
+
+		assertNotNull("Unable to get the AccessTimeout value", sbean.getAccessTimeout());
+		assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
     }
 
     public void testEjbJarMdb20() throws Exception {

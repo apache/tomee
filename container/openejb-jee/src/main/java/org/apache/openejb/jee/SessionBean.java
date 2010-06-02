@@ -18,22 +18,23 @@
 
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Arrays;
 
 
 /**
@@ -134,7 +135,9 @@ import java.util.Arrays;
         "prePassivate",
         "securityRoleRef",
         "securityIdentity",
-        "dependsOn"
+        "dependsOn",
+        "statefulTimeout",
+        "accessTimeout"
         })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
@@ -214,6 +217,12 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlElementWrapper(name = "depends-on")
     @XmlElement(name = "ejb-name")
     protected List<String> dependsOn;
+    
+    @XmlElement(name = "stateful-timeout", required = true)
+    protected StatefulTimeout statefulTimeout;
+    
+    @XmlElement(name = "access-timeout", required = true)
+    protected AccessTimeout accessTimeout;
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -703,5 +712,21 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     public void setId(String value) {
         this.id = value;
     }
+
+	public StatefulTimeout getStatefulTimeout() {
+		return statefulTimeout;
+	}
+
+	public void setStatefulTimeout(StatefulTimeout statefulTimeout) {
+		this.statefulTimeout = statefulTimeout;
+	}
+
+	public AccessTimeout getAccessTimeout() {
+		return accessTimeout;
+	}
+
+	public void setAccessTimeout(AccessTimeout accessTimeout) {
+		this.accessTimeout = accessTimeout;
+	}
 
 }

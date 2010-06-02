@@ -162,6 +162,9 @@ class EnterpriseBeanBuilder {
 
         // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
+        
+        deployment.setStatefulTimeout(bean.statefulTimeout);
+        deployment.setAccessTimeout(bean.accessTimeout);
 
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;

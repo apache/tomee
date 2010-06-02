@@ -25,17 +25,18 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Properties;
+
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
+import javax.ejb.SessionSynchronization;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.ejb.SessionSynchronization;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -52,8 +53,9 @@ import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.MethodSchedule;
-import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -133,6 +135,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
     private boolean loadOnStartup;
     private boolean localbean;
+    private Duration accessTimeout;
+    private Duration statefulTimeout;
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -1137,4 +1141,20 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         return null;
     }
+
+	public Duration getAccessTimeout() {
+		return accessTimeout;
+	}
+
+	public void setAccessTimeout(Duration accessTimeout) {
+		this.accessTimeout = accessTimeout;
+	}
+
+	public Duration getStatefulTimeout() {
+		return statefulTimeout;
+	}
+
+	public void setStatefulTimeout(Duration statefulTimeout) {
+		this.statefulTimeout = statefulTimeout;
+	}
 }
