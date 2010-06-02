@@ -34,6 +34,7 @@ import java.io.IOException;
 
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
@@ -43,6 +44,7 @@ import javax.management.MBeanServer;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -140,7 +142,10 @@ public class StatelessInstanceManager {
                 instance.setPoolEntry(entry);
             }
         } catch (TimeoutException e) {
-            throw new IllegalStateException("An invocation of the Stateless Session Bean "+deploymentInfo.getEjbName()+" has timed-out");
+            ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException("No instances available in Stateless Session Bean pool.  Waited " + data.accessTimeout.toString());
+            timeoutException.fillInStackTrace();
+
+            throw new ApplicationException(timeoutException);
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw new OpenEJBException("Unexpected Interruption of current thread: ", e);

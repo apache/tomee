@@ -28,8 +28,8 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URI;
 import java.util.Map;
-import java.util.Stack;
 import java.util.Properties;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -42,21 +42,42 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private static Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
-    private int timeout = 120;
+    private long timeout = 1000;
 
     public SocketConnectionFactory() {
-        Properties p = System.getProperties();
 
-        size = getInt(p, "openejb.client.connectionpool.size", size);
-        size = getInt(p, "openejb.client.connection.pool.size", size);
-        timeout = getInt(p, "openejb.client.connectionpool.timeout", timeout);
-        timeout = getInt(p, "openejb.client.connection.pool.timeout", timeout);
+        size = getSize();
+        timeout = getTimeout();
     }
 
-    public static int getInt(Properties p, String property, int defaultValue){
+    private long getTimeout() {
+        Properties p = System.getProperties();
+        long timeout = getLong(p, "openejb.client.connectionpool.timeout", this.timeout);
+        timeout = getLong(p, "openejb.client.connection.pool.timeout", timeout);
+        return timeout;
+    }
+
+    private int getSize() {
+        Properties p = System.getProperties();
+        int size = getInt(p, "openejb.client.connectionpool.size", this.size);
+        size = getInt(p, "openejb.client.connection.pool.size", size);
+        return size;
+    }
+
+    public static int getInt(Properties p, String property, int defaultValue) {
         String value = p.getProperty(property);
         try {
             if (value != null) return Integer.parseInt(value);
+            else return defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static long getLong(Properties p, String property, long defaultValue) {
+        String value = p.getProperty(property);
+        try {
+            if (value != null) return Long.parseLong(value);
             else return defaultValue;
         } catch (NumberFormatException e) {
             return defaultValue;
@@ -79,9 +100,10 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
 
         try {
-            conn.lock.tryLock(60 * 5, TimeUnit.SECONDS);
+            conn.lock.tryLock(2, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.interrupted();
+            pool.put(conn);
             throw new IOException("Connection busy");
         }
 
@@ -117,7 +139,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private Pool getPool(URI uri) {
         Pool pool = connections.get(uri);
         if (pool == null) {
-            pool = new Pool(size, timeout);
+            pool = new Pool(getSize(), getTimeout());
             connections.put(uri, pool);
         }
         return pool;
@@ -277,7 +299,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             this.semaphore = new Semaphore(size);
             this.pool = new Stack<SocketConnection>();
             this.timeout = timeout;
-            this.timeUnit = TimeUnit.SECONDS;
+            this.timeUnit = TimeUnit.MILLISECONDS;
 
             Object[] objects = new Object[size];
             for (int i = 0; i < objects.length; i++) {
@@ -294,7 +316,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 Thread.interrupted();
             }
 
-            throw new IllegalStateException("No connections available in pool (size " + size + ").  Waited for " + timeout + " seconds for a connection.");
+            throw new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " seconds for a connection.");
         }
 
         public void put(SocketConnection connection) {

@@ -113,7 +113,7 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         return ejbObject;
     }
 
-    public synchronized Object _invoke(Object p, Method m, Object[] a) throws Throwable {
+    public Object _invoke(Object p, Method m, Object[] a) throws Throwable {
 
         Object retValue = null;
         /*
@@ -179,8 +179,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             }
         } catch (Throwable oe) {
             if (remote) {
+                if (oe instanceof RemoteException) {
+                    throw (RemoteException) oe;
+                }
                 throw new RemoteException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage(), getCause(oe));
             } else {
+                if (oe instanceof EJBException) {
+                    throw (EJBException) oe; 
+                }
                 throw new EJBException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage()).initCause(getCause(oe));
             }
         }

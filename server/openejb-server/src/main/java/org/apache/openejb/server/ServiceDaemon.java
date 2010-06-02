@@ -53,7 +53,7 @@ public class ServiceDaemon implements ServerService {
 
     private SocketListener socketListener;
 
-    private int timeout;
+    private int timeout = 1000;
 
     private InetAddress address;
 
@@ -131,7 +131,7 @@ public class ServiceDaemon implements ServerService {
 
         secure = options.get("secure", false);
 
-        timeout = 1000;
+        timeout = options.get("timeout", timeout);
 
         next.init(props);
     }
