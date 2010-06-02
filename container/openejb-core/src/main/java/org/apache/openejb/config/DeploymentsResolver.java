@@ -362,7 +362,7 @@ public class DeploymentsResolver {
             Deployments deployment;
             String path;
             try {
-                Class<? extends DeploymentModule> moduleType = DeploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
+                Class<? extends DeploymentModule> moduleType = new DeploymentLoader().discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (url.getProtocol().equals("jar")) {
