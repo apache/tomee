@@ -132,7 +132,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ReadDescriptors());
 
-        chain.add(new AnnotationDeployer());
+        if (System.getProperty(DUCT_TAPE_PROPERTY) == null) {
+            chain.add(new AnnotationDeployer());
+        } else {
+            chain.add(new BundleAnnotationDeployer());
+        }
 
         chain.add(new GeneratedClientModules.Prune());
 

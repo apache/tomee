@@ -29,6 +29,7 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
+import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ClassFinder;
 
 /**
@@ -49,7 +50,7 @@ public class WebModule implements WsModule {
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
-    private ClassFinder finder;
+    private AbstractFinder finder;
 
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
@@ -86,11 +87,11 @@ public class WebModule implements WsModule {
         validation = new ValidationContext(WebModule.class, jarLocation);
     }
 
-    public ClassFinder getFinder() {
+    public AbstractFinder getFinder() {
         return finder;
     }
 
-    public void setFinder(ClassFinder finder) {
+    public void setFinder(AbstractFinder finder) {
         this.finder = finder;
     }
 
