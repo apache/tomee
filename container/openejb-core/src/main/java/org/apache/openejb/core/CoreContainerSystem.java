@@ -54,13 +54,21 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         }
         jndiContext = jndiFactory.createRootContext();
         try {
-            jndiContext.bind("openejb/local/.", "");
-            jndiContext.bind("openejb/remote/.", "");
-            jndiContext.bind("openejb/client/.", "");
-            jndiContext.bind("openejb/Deployment/.", "");
+            if (System.getProperty("duct tape") == null)  {
+                jndiContext.bind("openejb/local/.", "");
+                jndiContext.bind("openejb/remote/.", "");
+                jndiContext.bind("openejb/client/.", "");
+                jndiContext.bind("openejb/Deployment/.", "");
+            } else {
+                Context openejb = jndiContext.createSubcontext("openejb");
+                openejb.createSubcontext("local");
+                openejb.createSubcontext("remote");
+                openejb.createSubcontext("client");
+                openejb.createSubcontext("Deployment");
+            }
         }
         catch (javax.naming.NamingException exception) {
-            throw new RuntimeException(exception);
+            throw new RuntimeException("Could not initialize openejb core naming context", exception);
         }
         SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);
     }
