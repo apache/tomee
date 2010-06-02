@@ -79,6 +79,15 @@ import org.xml.sax.SAXException;
 public class DeploymentLoader {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
+    private String ddDir;
+
+    public DeploymentLoader() {
+        this("META-INF/");
+    }
+
+    public DeploymentLoader(String ddDir) {
+        this.ddDir = ddDir;
+    }
 
     public AppModule load(File jarFile) throws OpenEJBException {
         // verify we have a valid file
@@ -186,7 +195,7 @@ public class DeploymentLoader {
         }
     }
 
-    protected static AppModule createAppModule(File jarFile, String jarPath) throws OpenEJBException {
+    protected AppModule createAppModule(File jarFile, String jarPath) throws OpenEJBException {
         File appDir = unpack(jarFile);
         try {
             appDir = appDir.getCanonicalFile();
@@ -408,11 +417,11 @@ public class DeploymentLoader {
         }
     }
 
-    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws OpenEJBException {
+    protected ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName) throws OpenEJBException {
         return createClientModule(clientUrl, absolutePath, appClassLoader, moduleName, true);
     }
 
-    protected static ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName, boolean log) throws OpenEJBException {
+    protected ClientModule createClientModule(URL clientUrl, String absolutePath, ClassLoader appClassLoader, String moduleName, boolean log) throws OpenEJBException {
         ResourceFinder clientFinder = new ResourceFinder(clientUrl);
 
         URL manifestUrl = null;
@@ -453,7 +462,7 @@ public class DeploymentLoader {
         return clientModule;
     }
 
-    protected static EjbModule createEjbModule(URL baseUrl, String jarPath, ClassLoader classLoader, String moduleId) throws OpenEJBException {
+    protected EjbModule createEjbModule(URL baseUrl, String jarPath, ClassLoader classLoader, String moduleId) throws OpenEJBException {
         // read the ejb-jar.xml file
         Map<String, URL> descriptors = getDescriptors(baseUrl);
 
@@ -478,7 +487,7 @@ public class DeploymentLoader {
         return ejbModule;
     }
 
-    protected static void addWebModule(AppModule appModule, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+    protected void addWebModule(AppModule appModule, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
         WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
         appModule.getWebModules().add(webModule);
 
@@ -509,7 +518,7 @@ public class DeploymentLoader {
         // check each url to determine if it is an ejb jar
         for (URL ejbUrl : urls) {
             try {
-                Class moduleType = DeploymentLoader.discoverModuleType(ejbUrl, webClassLoader, true);
+                Class moduleType = discoverModuleType(ejbUrl, webClassLoader, true);
                 if (EjbModule.class.isAssignableFrom(moduleType)) {
                     File ejbFile = toFile(ejbUrl);
                     String absolutePath = ejbFile.getAbsolutePath();
@@ -902,7 +911,7 @@ public class DeploymentLoader {
         return urls;
     }
 
-    protected static ConnectorModule createConnectorModule(String appId, String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
+    protected  ConnectorModule createConnectorModule(String appId, String rarPath, ClassLoader parentClassLoader, String moduleId) throws OpenEJBException {
         URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         rarFile = unpack(rarFile);
@@ -947,7 +956,7 @@ public class DeploymentLoader {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected static void addPersistenceUnits(AppModule appModule, URL... urls) throws OpenEJBException {
+    protected void addPersistenceUnits(AppModule appModule, URL... urls) throws OpenEJBException {
 
         // OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been
         // processed by the altdd code, so anything in here should not cause OPENEJB-1059
@@ -982,20 +991,20 @@ public class DeploymentLoader {
         }
     }
 
-    private static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
+    private Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
 
         ResourceFinder finder = new ResourceFinder(moduleUrl);
         return getDescriptors(finder);
     }
 
-    private static Map<String, URL> getDescriptors(ResourceFinder finder) throws OpenEJBException {
+    private Map<String, URL> getDescriptors(ResourceFinder finder) throws OpenEJBException {
         return getDescriptors(finder, true);
     }
 
-    private static Map<String, URL> getDescriptors(ResourceFinder finder, boolean log) throws OpenEJBException {
+    private Map<String, URL> getDescriptors(ResourceFinder finder, boolean log) throws OpenEJBException {
         try {
 
-            return altDDSources(finder.getResourcesMap("META-INF/"), log);
+            return altDDSources(finder.getResourcesMap(ddDir), log);
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
@@ -1136,7 +1145,7 @@ public class DeploymentLoader {
         }
     }
 
-    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
+    public Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
         Set<RequireDescriptors> search = new HashSet<RequireDescriptors>();
 
         if (!searchForDescriptorlessApplications) search.addAll(Arrays.asList(RequireDescriptors.values()));
@@ -1144,12 +1153,12 @@ public class DeploymentLoader {
         return discoverModuleType(baseUrl, classLoader, search);
     }
 
-    public static Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptor) throws IOException, UnknownModuleTypeException {
+    public Class<? extends DeploymentModule> discoverModuleType(URL baseUrl, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptor) throws IOException, UnknownModuleTypeException {
         final boolean scanPotentialEjbModules = !requireDescriptor.contains(RequireDescriptors.EJB);
         final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
 
         ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
-        Map<String, URL> descriptors = altDDSources(finder.getResourcesMap("META-INF/"), false);
+        Map<String, URL> descriptors = altDDSources(finder.getResourcesMap(ddDir), false);
 
         String path = baseUrl.getPath();
         if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
