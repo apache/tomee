@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
@@ -54,7 +53,8 @@ import org.apache.openejb.assembler.classic.SecurityRoleReferenceInfo;
 import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
-import org.apache.openejb.jee.AccessTimeout;
+import org.apache.openejb.assembler.classic.TimeoutInfo;
+import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ApplicationException;
@@ -92,12 +92,10 @@ import org.apache.openejb.jee.SecurityRole;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.StatefulTimeout;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
 import org.apache.openejb.jee.oejb3.ResourceLink;
-import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -566,16 +564,18 @@ public class EjbJarInfoBuilder {
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
 
-        final StatefulTimeout statefulTimeout = s.getStatefulTimeout();
+        final Timeout statefulTimeout = s.getStatefulTimeout();
         if(statefulTimeout != null) {
-        	bean.statefulTimeout = new Duration(statefulTimeout.getTimeout(), 
-        			TimeUnit.valueOf(statefulTimeout.getUnit()));
+        	bean.statefulTimeout = new TimeoutInfo();
+            bean.statefulTimeout.time = statefulTimeout.getTimeout();
+            bean.statefulTimeout.unit = statefulTimeout.getUnit();
         }
 
-        final AccessTimeout accessTimeout = s.getAccessTimeout();
+        final Timeout accessTimeout = s.getAccessTimeout();
         if(accessTimeout != null) {
-        	bean.accessTimeout = new Duration(accessTimeout.getTimeout(), 
-        			TimeUnit.valueOf(accessTimeout.getUnit()));
+            bean.accessTimeout = new TimeoutInfo();
+            bean.accessTimeout.time = accessTimeout.getTimeout();
+            bean.accessTimeout.unit = accessTimeout.getUnit();
         }
 
         return bean;
