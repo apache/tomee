@@ -205,7 +205,7 @@ public class JndiEncInfoBuilder {
             if (ref.getRefType() == EjbReference.Type.UNKNOWN) {
                 EnterpriseBeanInfo otherBean = ejbResolver.getEnterpriseBeanInfo(deploymentId);
                 if (otherBean != null) {
-                    if (otherBean.businessLocal.contains(ref.getInterface())) {
+                    if (otherBean.businessLocal.contains(ref.getInterface()) || otherBean.ejbClass.equals(ref.getInterface())) {
                         ref.setRefType(EjbReference.Type.LOCAL);
                         jndiConsumer.getEjbRef().remove(ref);
                         jndiConsumer.getEjbLocalRef().add(new EjbLocalRef(ref));
@@ -432,7 +432,7 @@ public class JndiEncInfoBuilder {
     private EnterpriseBeanInfo getInterfaceBeanInfo(String moduleId, String interfaceClassName) {
         List<EjbJarInfo> ejbJars = appInfo.ejbJars;
         for (EjbJarInfo ejbJar : ejbJars) {
-            if (!ejbJar.moduleId.equals(moduleId)) continue;
+            if (!ejbJar.moduleId.equals(moduleId) && !(moduleId == null && appInfo.ejbJars.size() == 1)) continue;
 
             List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
             for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {
