@@ -61,6 +61,12 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
     protected transient ClientMetaData client;
 
     protected transient Object primaryKey;
+
+    /**
+     * The EJB spec requires that a different set of exceptions
+     * be thrown for the legacy EJBObject and EJBHome interfaces
+     * than newer @Remote interfaces
+     */
     protected final boolean remote;
 
     public EJBInvocationHandler() {
@@ -105,7 +111,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         }
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object... args) throws Throwable {
         if (isInvalidReference.get()) {
             if (remote || java.rmi.Remote.class.isAssignableFrom(method.getDeclaringClass())){
                 throw new NoSuchObjectException("reference is invalid");
@@ -114,8 +120,8 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             }
         }
 
-        Object returnObj = null;
-        returnObj = _invoke(proxy, method, args);
+        // BREAKPOINT -- nice place for a breakpoint
+        Object returnObj = _invoke(proxy, method, args);
         return returnObj;
     }
 
