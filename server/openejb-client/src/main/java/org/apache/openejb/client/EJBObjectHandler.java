@@ -115,46 +115,46 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     public Object _invoke(Object p, Method m, Object[] a) throws Throwable {
 
-        Object retValue = null;
-        /*
-         * This section is to be replaced by a more appropriate solution.
-         * This code is very temporary.
-         */
-
         try {
-            String methodName = m.getName();
+
             if (m.getDeclaringClass().equals(Object.class)) {
-                if (m.equals(TOSTRING)) {
-                    return "proxy=" + this;
-                } else if (m.equals(EQUALS)) {
 
-                    return equals(m, a, p);
+                if (m.equals(TOSTRING)) return "proxy=" + this;
 
-                } else if (m.equals(HASHCODE)) {
-                    return new Integer(this.hashCode());
-                } else {
-                    throw new UnsupportedOperationException("Unkown method: " + m);
-                }
+                else if (m.equals(EQUALS)) return equals(m, a, p);
+
+                else if (m.equals(HASHCODE)) return new Integer(this.hashCode());
+
+                else throw new UnsupportedOperationException("Unkown method: " + m);
+
             } else if (m.getDeclaringClass() == EJBObjectProxy.class) {
-                if (m.equals(GETHANDLER)) {
-                    return this;
-                } else if (methodName.equals("writeReplace")) {
-                    return new EJBObjectProxyHandle(this);
-                } else if (methodName.equals("readResolve")) {
 
-                } else {
-                    throw new UnsupportedOperationException("Unkown method: " + m);
-                }
+                if (m.equals(GETHANDLER)) return this;
+
+                else if (m.getName().equals("writeReplace")) return new EJBObjectProxyHandle(this);
+
+                else if (m.getName().equals("readResolve")) return null;
+
+                else throw new UnsupportedOperationException("Unkown method: " + m);
+
             } else if (m.getDeclaringClass() == javax.ejb.EJBObject.class) {
-                if (m.equals(GETHANDLE)) retValue = getHandle(m, a, p);
-                else if (m.equals(GETPRIMARYKEY)) retValue = getPrimaryKey(m, a, p);
-                else if (m.equals(ISIDENTICAL)) retValue = isIdentical(m, a, p);
-                else if (m.equals(GETEJBHOME)) retValue = getEJBHome(m, a, p);
-                else if (m.equals(REMOVE)) retValue = remove(m, a, p);
-                else
-                    throw new UnsupportedOperationException("Unkown method: " + m);
+
+                if (m.equals(GETHANDLE)) return getHandle(m, a, p);
+
+                else if (m.equals(GETPRIMARYKEY)) return getPrimaryKey(m, a, p);
+
+                else if (m.equals(ISIDENTICAL)) return isIdentical(m, a, p);
+
+                else if (m.equals(GETEJBHOME)) return getEJBHome(m, a, p);
+
+                else if (m.equals(REMOVE)) return remove(m, a, p);
+
+                else throw new UnsupportedOperationException("Unkown method: " + m);
+
             } else {
-                retValue = businessMethod(m, a, p);
+
+                return businessMethod(m, a, p);
+
             }
 
         } catch (SystemException e) {
@@ -177,20 +177,15 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
             } else {
                 throw new EJBException("Container has suffered a SystemException").initCause(getCause(se));
             }
-        } catch (Throwable oe) {
+        } catch (Throwable throwable) {
             if (remote) {
-                if (oe instanceof RemoteException) {
-                    throw (RemoteException) oe;
-                }
-                throw new RemoteException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage(), getCause(oe));
+                if (throwable instanceof RemoteException) throw throwable;
+                throw new RemoteException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage(), getCause(throwable));
             } else {
-                if (oe instanceof EJBException) {
-                    throw (EJBException) oe; 
-                }
-                throw new EJBException("Unknown Container Exception: " + oe.getClass().getName() + ": " + oe.getMessage()).initCause(getCause(oe));
+                if (throwable instanceof EJBException) throw throwable;
+                throw new EJBException("Unknown Container Exception: " + throwable.getClass().getName() + ": " + throwable.getMessage()).initCause(getCause(throwable));
             }
         }
-        return retValue;
     }
 
     protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable {
@@ -213,25 +208,11 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
     protected abstract Object remove(Method method, Object[] args, Object proxy) throws Throwable;
 
     protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
-//      checkAuthorization(method);
-//      return container.invoke(deploymentID, method, args, primaryKey, getThreadSpecificSecurityIdentity());
 
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
 
         EJBResponse res = request(req);
 
-//        if (method.getName().equals("test36_returnEJBHome2")) {
-//          System.out.println("\n\n----------------------------------------------------------");
-//          System.out.println(method.getName());
-//          Object obj = res.getResult();
-//          System.out.println("obj="+(obj==null));
-//          System.out.println("obj="+(obj.getClass()));
-//          System.out.println("obj="+(obj.getClass().getDeclaringClass()));
-//          Class[] ifs = obj.getClass().getInterfaces();
-//          for (int i=0; i < ifs.length; i++){
-//              System.out.println("ifs["+i+"] "+ifs[i]);
-//          }
-//        }
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
