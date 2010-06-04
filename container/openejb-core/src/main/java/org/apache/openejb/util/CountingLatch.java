@@ -16,11 +16,7 @@
  */
 package org.apache.openejb.util;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,8 +26,12 @@ public class CountingLatch {
 
      private final Sync sync;
 
-     public CountingLatch() {
-         this.sync = new Sync();
+    public CountingLatch() {
+        this(0);
+    }
+
+    public CountingLatch(int count) {
+         this.sync = new Sync(count);
      }
 
     public void await() throws InterruptedException {
@@ -55,8 +55,8 @@ public class CountingLatch {
      }
 
      private static final class Sync extends AbstractQueuedSynchronizer {
-         private Sync() {
-             setState(0);
+         private Sync(int count) {
+             setState(count);
          }
 
          public boolean tryReleaseShared(int releases) {

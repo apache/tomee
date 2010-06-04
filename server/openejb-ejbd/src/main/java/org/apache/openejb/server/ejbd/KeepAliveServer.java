@@ -132,7 +132,7 @@ public class KeepAliveServer implements ServerService {
                         session.usage.unlock();
                     }
                 } else {
-                    logger.info("Allowing graceful shutdown of " + session.socket.getInetAddress());
+                    logger.debug("Allowing graceful shutdown of " + session.socket.getInetAddress());
                 }
             }
         }

@@ -18,6 +18,7 @@ package org.apache.openejb.client;
 
 import static org.apache.openejb.client.Exceptions.newIOException;
 
+import javax.ejb.ConcurrentAccessTimeoutException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +30,9 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.net.URI;
@@ -41,12 +44,21 @@ public class Client {
 
     private static final ProtocolMetaData PROTOCOL_VERSION = new ProtocolMetaData("3.1");
 
+    private List<Class<? extends Throwable>> retryConditions = new CopyOnWriteArrayList();
     private static Client client = new Client();
     private boolean retry = false;
 
     public Client() {
-        String retryValue = System.getProperty("openejb.client.requestretry", retry + "");
+        String retryValue = System.getProperty("openejb.client.requestretry", getRetry() + "");
         retry = new Boolean(retryValue);
+    }
+
+    public static boolean addRetryCondition(Class<? extends Throwable> throwable) {
+        return client.retryConditions.add(throwable);
+    }
+
+    public static boolean removeRetryCondition(Class<? extends Throwable> throwable) {
+        return client.retryConditions.remove(throwable);
     }
 
     // This lame hook point if only of testing
@@ -249,18 +261,32 @@ public class Client {
                 throw new RemoteException("Error reading response from server (" + protocolMetaData.getSpec() + ") : " + e.getMessage(), e);
             }
 
+            if (retryConditions.size() > 0) {
+                if (res instanceof EJBResponse) {
+                    EJBResponse ejbResponse = (EJBResponse) res;
+                    if (ejbResponse.getResult() instanceof ThrowableArtifact) {
+                        ThrowableArtifact artifact = (ThrowableArtifact) ejbResponse.getResult();
+                        if (retryConditions.contains(artifact.getThrowable().getClass())) {
+                            throw new RetryException(res);
+                        }
+                    }
+                }
+            }
         } catch (RemoteException e) {
             throw e;
         } catch (IOException e){
             Set<URI> failed = getFailed();
             failed.add(conn.getURI());
             conn.discard();
-            if (retry){
+            if (e instanceof RetryException || getRetry()){
                 try {
                     processRequest(req, res, server);
                 } catch (RemoteFailoverException re) {
                     throw re;
                 } catch (RemoteException re) {
+                    if (e instanceof RetryException) {
+                        return ((RetryException) e).getResponse();
+                    }
                     throw new RemoteFailoverException("Cannot complete request.  Retry attempted on " + failed.size() + " servers", e);
                 }
             }
@@ -304,4 +330,7 @@ public class Client {
         return cluster;
     }
 
+    private boolean getRetry() {
+        return retry = new Boolean(System.getProperty("openejb.client.requestretry", retry + ""));
+    }
 }

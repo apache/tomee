@@ -21,15 +21,14 @@ import java.io.IOException;
 /**
  * @version $Rev$ $Date$
  */
-public class ConnectionPoolTimeoutException extends IOException {
-    public ConnectionPoolTimeoutException() {
+public class RetryException extends IOException {
+    private final Response response;
+
+    public RetryException(Response response) {
+        this.response = response;
     }
 
-    public ConnectionPoolTimeoutException(String s, Exception e) {
-        super(s, e);
-    }
-
-    public ConnectionPoolTimeoutException(String s) {
-        super(s);
+    public Response getResponse() {
+        return response;
     }
 }

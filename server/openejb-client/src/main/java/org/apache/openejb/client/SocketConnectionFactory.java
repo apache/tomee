@@ -139,7 +139,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     private Pool getPool(URI uri) {
         Pool pool = connections.get(uri);
         if (pool == null) {
-            pool = new Pool(getSize(), getTimeout());
+            pool = new Pool(uri, getSize(), getTimeout());
             connections.put(uri, pool);
         }
         return pool;
@@ -287,14 +287,16 @@ public class SocketConnectionFactory implements ConnectionFactory {
         }
     }
 
-    public static class Pool {
+    private static class Pool {
         private final Semaphore semaphore;
         private final Stack<SocketConnection> pool;
         private final long timeout;
         private final TimeUnit timeUnit;
         private final int size;
+        private final URI uri;
 
-        public Pool(int size, long timeout) {
+        private Pool(URI uri, int size, long timeout) {
+            this.uri = uri;
             this.size = size;
             this.semaphore = new Semaphore(size);
             this.pool = new Stack<SocketConnection>();
@@ -307,7 +309,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
             }
         }
 
-        public SocketConnection get() {
+        public SocketConnection get() throws IOException{
             try {
                 if (semaphore.tryAcquire(timeout, timeUnit)) {
                     return pool.pop();
@@ -322,6 +324,15 @@ public class SocketConnectionFactory implements ConnectionFactory {
         public void put(SocketConnection connection) {
             pool.push(connection);
             semaphore.release();
+        }
+
+        @Override
+        public String toString() {
+            return "Pool{" +
+                    "size=" + size +
+                    ", available=" + semaphore.availablePermits() +
+                    ", uri=" + uri +
+                    '}';
         }
     }
 }
