@@ -32,6 +32,7 @@
         <module>openejb-javaagent</module>
         <module>openejb-jee</module>
         <module>openejb-spring</module>
+        <module>openejb-osgi-core</module>
         <module>openejb-osgi</module>
         <module>openejb-activemq4</module>
         <module>openejb-junit</module>

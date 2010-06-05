@@ -98,13 +98,13 @@ public class EjbModule implements WsModule {
     }
 
     public AbstractFinder getFinder() {
-        return (finder != null)? finder.get(): null;
+        return finder.get();
     }
 
-    public AtomicReference<AbstractFinder> getFinderReference() {
-        return this.finder;
+    public void setFinder(AbstractFinder finder) {
+        this.finder.set(finder);
     }
-
+    
     public ClientModule getClientModule() {
         return clientModule;
     }
