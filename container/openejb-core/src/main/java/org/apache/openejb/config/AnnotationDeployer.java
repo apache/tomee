@@ -88,6 +88,7 @@ import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import static org.apache.openejb.util.Join.join;
@@ -132,6 +133,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.ejb.StatefulTimeout;
+import javax.ejb.AccessTimeout;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -1087,6 +1090,33 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @DeclareRoles
                  */
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
+
+                if (bean instanceof SessionBean) {
+                    SessionBean sessionBean = (SessionBean) bean;
+
+                    // Merge AccessTimeout value from XML - XML value takes precedence
+                    if(sessionBean.getAccessTimeout() == null) {
+                        final AccessTimeout annotation = clazz.getAnnotation(AccessTimeout.class);
+                        if(annotation != null) {
+                            final Timeout timeout = new Timeout();
+                            timeout.setTimeout(annotation.value());
+                            timeout.setUnit(annotation.unit().toString());
+                            sessionBean.setAccessTimeout(timeout);
+                        }
+                    }
+
+                    // Merge StatefulTimeout value from XML - XML value takes precedence
+                    if(sessionBean.getStatefulTimeout() == null) {
+                        final StatefulTimeout annotation = clazz.getAnnotation(StatefulTimeout.class);
+                        if(annotation != null) {
+                            final Timeout timeout = new Timeout();
+                            timeout.setTimeout(annotation.value());
+                            timeout.setUnit(annotation.unit().toString());
+                            sessionBean.setStatefulTimeout(timeout);
+                        }
+                    }
+                }
+
 
                 /*
                  * @Schedule
