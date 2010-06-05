@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
@@ -49,6 +50,8 @@ public class JaccPermissionsBuilder {
     }
 
     public void install(PolicyContext policyContext) throws OpenEJBException {
+        if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
+        
         try {
             PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 

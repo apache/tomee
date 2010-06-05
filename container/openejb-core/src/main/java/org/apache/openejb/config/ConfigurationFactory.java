@@ -95,7 +95,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     static final String CONFIGURATION_PROPERTY = "openejb.configuration";
     static final String CONF_FILE_PROPERTY = "openejb.conf.file";
     private static final String DEBUGGABLE_VM_HACKERY_PROPERTY = "openejb.debuggable-vm-hackery";
-    private static final String DUCT_TAPE_PROPERTY = "duct tape";
     protected static final String VALIDATION_SKIP_PROPERTY = "openejb.validation.skip";
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ConfigurationFactory.class);
     private static final Messages messages = new Messages(ConfigurationFactory.class);
@@ -161,7 +160,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         // By default all vendor support is enabled
         Set<Vendor> support = SystemInstance.get().getOptions().getAll("openejb.vendor.config", Vendor.values());
 
-        if (support.contains(Vendor.GERONIMO) || System.getProperty(DUCT_TAPE_PROPERTY) != null) {
+        if (support.contains(Vendor.GERONIMO) || SystemInstance.get().hasProperty("openejb.geronimo")) {
             chain.add(new OpenEjb2Conversion());
         }
 
@@ -173,7 +172,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             chain.add(new WlsConversion());
         }
 
-        if (System.getProperty(DUCT_TAPE_PROPERTY) != null){
+        if (SystemInstance.get().hasProperty("openejb.geronimo")){
             // must be after CmpJpaConversion since it adds new persistence-context-refs
             chain.add(new GeronimoMappedName());
         }

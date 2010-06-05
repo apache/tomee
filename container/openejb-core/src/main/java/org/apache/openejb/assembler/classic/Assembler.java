@@ -119,8 +119,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
-    public static final String DUCT_TAPE_PROPERTY = "duct tape";
-
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
     Messages messages = new Messages(Assembler.class.getPackage().getName());
 
@@ -241,7 +239,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public static void installNaming() {
-        if (System.getProperty(DUCT_TAPE_PROPERTY) != null) return;
+        if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
 
         /* Add IntraVM JNDI service /////////////////////*/
         Properties systemProperties = System.getProperties();
@@ -528,9 +526,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
-                if (System.getProperty(DUCT_TAPE_PROPERTY) == null) {
-                    jaccPermissionsBuilder.install(policyContext);
-                }
+                jaccPermissionsBuilder.install(policyContext);
 
                 MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder(classLoader, ejbJar);
                 TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);

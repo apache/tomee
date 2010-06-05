@@ -24,6 +24,7 @@ import static java.util.Arrays.asList;
 
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -869,7 +870,7 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private static boolean skipMdb(Object bean) {
-        return bean instanceof MessageDrivenBean && System.getProperty("duct tape") != null;
+        return bean instanceof MessageDrivenBean && SystemInstance.get().hasProperty("openejb.geronimo");
     }
 
     private static String getType(EnterpriseBean enterpriseBean) throws OpenEJBException {
