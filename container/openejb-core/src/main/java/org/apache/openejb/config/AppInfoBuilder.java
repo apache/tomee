@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.Container;
@@ -671,7 +672,7 @@ class AppInfoBuilder {
     }
     
     private static boolean skipMdb(EnterpriseBeanInfo bean) {
-        return bean instanceof MessageDrivenBeanInfo && System.getProperty("duct tape") != null;
+        return bean instanceof MessageDrivenBeanInfo && SystemInstance.get().hasProperty("openejb.geronimo");
     }
 
 }

@@ -66,6 +66,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.io.Serializable;
 
 /**
@@ -121,12 +122,13 @@ public class JndiEncBuilder {
     }
 
     public Context build() throws OpenEJBException {
-        Map<String, Object> bindings = null;
-        if (System.getProperty("duct tape") == null)  {
-            bindings = buildMap();
-        }
         JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
-        return jndiFactory.createComponentContext(bindings);
+
+        if (SystemInstance.get().hasProperty("openejb.geronimo")){
+            return jndiFactory.createComponentContext(new HashMap());
+        }
+
+        return jndiFactory.createComponentContext(buildMap());
     }
 
     public Map<String, Object> buildMap() throws OpenEJBException {

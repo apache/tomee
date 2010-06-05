@@ -248,7 +248,7 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(ref));
             infos.add(info);
 
-            if (System.getProperty("duct tape") != null) continue;
+            if (SystemInstance.get().hasProperty("openejb.geronimo")) continue;
 
             info.id = ref.getMappedName();
             info.serviceQName = ref.getServiceQname();

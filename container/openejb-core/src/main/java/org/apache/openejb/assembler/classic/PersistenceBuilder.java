@@ -111,7 +111,7 @@ public class PersistenceBuilder {
         String jtaDataSourceId = info.jtaDataSource;
         if (jtaDataSourceEnv != null) jtaDataSourceId = jtaDataSourceEnv;
         if (jtaDataSourceId != null) {
-            if (System.getProperty("duct tape") == null){
+            if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
 
                 try {
                     if (!jtaDataSourceId.startsWith("java:openejb/Resource/")
@@ -164,7 +164,7 @@ public class PersistenceBuilder {
         String nonJtaDataSourceId = info.nonJtaDataSource;
         if (nonJtaDataSourceEnv != null) nonJtaDataSourceId = nonJtaDataSourceEnv;
         if (nonJtaDataSourceId != null) {
-            if (System.getProperty("duct tape") == null){
+            if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
                 try {
                     if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) nonJtaDataSourceId = "java:openejb/Resource/"+nonJtaDataSourceId;
 

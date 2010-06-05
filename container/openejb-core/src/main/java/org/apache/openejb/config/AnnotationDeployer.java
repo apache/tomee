@@ -2865,7 +2865,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (System.getProperty("duct tape") != null) return;
+            if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
 
             if (serviceRef.getWsdlFile() == null && refType != null) {
                 serviceRef.setWsdlFile(JaxWsUtils.getServiceWsdlLocation(refType, classLoader));
@@ -2902,7 +2902,8 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @throws OpenEJBException
          */
         private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
-            if (System.getProperty("duct tape") != null) return;
+            if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
+            
             Set<Class<?>> processedClasses = new HashSet<Class<?>>();
             Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
             do {
