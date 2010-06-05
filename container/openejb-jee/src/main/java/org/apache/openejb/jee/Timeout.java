@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 public class Timeout {
 
 	@XmlElement(name = "timeout", required = true)
-	private Integer timeout;
+	private long timeout;
 
 	@XmlElement(name = "unit", required = true)
 	private String unit;
 
-	public Integer getTimeout() {
+	public long getTimeout() {
 		return timeout;
 	}
 
-	public void setTimeout(Integer timeout) {
+	public void setTimeout(long timeout) {
 		this.timeout = timeout;
 	}
 
