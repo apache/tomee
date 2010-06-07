@@ -20,6 +20,7 @@ import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.net.URL;
@@ -45,10 +46,15 @@ public class FinderFactory {
         return new FinderFactory();
     }
 
-    public static AbstractFinder createFinder(DeploymentModule module) throws Exception {
-        return factory.create(module);
+    private static FinderFactory get() {
+        FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);
+        return (factory != null)? factory: FinderFactory.factory;
     }
-    
+
+    public static AbstractFinder createFinder(DeploymentModule module) throws Exception {
+        return get().create(module);
+    }
+
     public AbstractFinder create(DeploymentModule module) throws Exception {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
