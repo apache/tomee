@@ -30,21 +30,7 @@ public class FinderFactory {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, FinderFactory.class);
 
-    private static final FinderFactory factory = singleton();
-
-    private static FinderFactory singleton() {
-        try {
-            ClassLoader loader = FinderFactory.class.getClassLoader();
-            Class<?> clazz = loader.loadClass("org.apache.openejb.core.osgi.BundleFinderFactory");
-            return (FinderFactory) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            logger.debug("Optional OSGi Bundle annotation scanning not installed");
-        } catch (Exception e) {
-            logger.error("Failed creating BundleFinderFactory", e);
-        }
-        
-        return new FinderFactory();
-    }
+    private static final FinderFactory factory = new FinderFactory();
 
     private static FinderFactory get() {
         FinderFactory factory = SystemInstance.get().getComponent(FinderFactory.class);

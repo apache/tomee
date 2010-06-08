@@ -33,23 +33,18 @@ public class BundleFinderFactory extends FinderFactory {
 
     @Override
     public AbstractFinder create(DeploymentModule module) throws Exception {
-        ClassLoader cl = BundleFinderFactory.class.getClassLoader();
         ClassLoader moduleCL = module.getClassLoader();
 
-        if (cl instanceof BundleReference && moduleCL instanceof BundleReference) {
-            Bundle bundle = getBundle(cl);
+        if (moduleCL instanceof BundleReference) {
+            Bundle bundle = ((BundleReference) moduleCL).getBundle();
             BundleContext bundleContext = bundle.getBundleContext();
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
             PackageAdmin packageAdmin = (PackageAdmin) bundleContext.getService(sr);
 
-            return new BundleAnnotationFinder(packageAdmin, getBundle(moduleCL));
+            return new BundleAnnotationFinder(packageAdmin, bundle);
         }
 
-        return super.create(module);
-    }
-
-    private Bundle getBundle(ClassLoader cl) {
-        return ((BundleReference) cl).getBundle();
+        throw new IllegalStateException("Module classloader is not a BundleReference. Only use BundleFactoryFinder in an pure osgi environment");
     }
 
 }

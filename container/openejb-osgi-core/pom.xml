@@ -28,6 +28,11 @@
     <artifactId>openejb-osgi-core</artifactId>
     <packaging>bundle</packaging>
     <name>OpenEJB :: Container :: Core :: OSGi</name>
+    <properties>
+      <openejb.osgi.export>
+        org.apache.openejb.osgi.core;version=${openejb.osgi.export.version}
+      </openejb.osgi.export>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.openejb</groupId>
