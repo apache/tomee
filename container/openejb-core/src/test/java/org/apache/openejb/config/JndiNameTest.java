@@ -86,7 +86,6 @@ public class JndiNameTest extends TestCase {
     public void testOpenejbJar2() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        SystemInstance.get().setProperty("openejb.geronimo","true");
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
