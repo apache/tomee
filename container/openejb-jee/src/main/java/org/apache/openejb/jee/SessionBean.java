@@ -118,6 +118,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "initMethod",
         "removeMethod",
         "transactionType",
+        "afterBeginMethod",
+        "beforeCompletionMethod",
+        "afterCompletionMethod",
         "concurrencyType",
         "aroundInvoke",
         "envEntry",
@@ -176,6 +179,12 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected List<RemoveMethod> removeMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
+    @XmlElement(name = "after-begin-method")
+    protected NamedMethod afterBeginMethod;
+    @XmlElement(name = "before-completion-method")
+    protected NamedMethod beforeCompletionMethod;
+    @XmlElement(name = "after-completion-method")
+    protected NamedMethod afterCompletionMethod;
     @XmlElement(name = "concurrency-type")
     protected ConcurrencyType concurrencyType;
     @XmlElement(name = "around-invoke", required = true)
@@ -217,10 +226,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlElementWrapper(name = "depends-on")
     @XmlElement(name = "ejb-name")
     protected List<String> dependsOn;
-    
+
     @XmlElement(name = "stateful-timeout", required = true)
     protected Timeout statefulTimeout;
-    
+
     @XmlElement(name = "access-timeout", required = true)
     protected Timeout accessTimeout;
 
@@ -228,6 +237,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    @XmlTransient
+    private List<LifecycleCallback> afterBegin;
+    @XmlTransient
+    private List<LifecycleCallback> beforeCompletion;
+    @XmlTransient
+    private List<LifecycleCallback> afterCompletion;
 
     public SessionBean() {
     }
@@ -477,6 +493,30 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public void setConcurrencyType(ConcurrencyType value) {
         this.concurrencyType = value;
+    }
+
+    public NamedMethod getAfterBeginMethod() {
+        return afterBeginMethod;
+    }
+
+    public void setAfterBeginMethod(NamedMethod afterBeginMethod) {
+        this.afterBeginMethod = afterBeginMethod;
+    }
+
+    public NamedMethod getBeforeCompletionMethod() {
+        return beforeCompletionMethod;
+    }
+
+    public void setBeforeCompletionMethod(NamedMethod beforeCompletionMethod) {
+        this.beforeCompletionMethod = beforeCompletionMethod;
+    }
+
+    public NamedMethod getAfterCompletionMethod() {
+        return afterCompletionMethod;
+    }
+
+    public void setAfterCompletionMethod(NamedMethod afterCompletionMethod) {
+        this.afterCompletionMethod = afterCompletionMethod;
     }
 
     public List<AroundInvoke> getAroundInvoke() {
@@ -729,4 +769,39 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 		this.accessTimeout = accessTimeout;
 	}
 
+	public void addAfterBegin(String method) {
+        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        getAfterBegin().add(new LifecycleCallback(ejbClass, method));
+    }
+
+    public void addAfterCompletion(String method) {
+        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        getAfterCompletion().add(new LifecycleCallback(ejbClass, method));
+    }
+
+    public void addBeforeCompletion(String method) {
+        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        getBeforeCompletion().add(new LifecycleCallback(ejbClass, method));
+    }
+
+    public List<LifecycleCallback> getAfterBegin() {
+        if (afterBegin == null) {
+            afterBegin = new ArrayList<LifecycleCallback>();
+        }
+        return afterBegin;
+    }
+
+    public List<LifecycleCallback> getAfterCompletion() {
+        if (afterCompletion == null) {
+            afterCompletion = new ArrayList<LifecycleCallback>();
+        }
+        return this.afterCompletion;
+    }
+
+    public List<LifecycleCallback> getBeforeCompletion() {
+        if (beforeCompletion == null) {
+            beforeCompletion = new ArrayList<LifecycleCallback>();
+        }
+        return this.beforeCompletion;
+    }
 }

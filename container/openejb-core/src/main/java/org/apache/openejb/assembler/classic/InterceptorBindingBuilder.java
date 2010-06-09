@@ -84,6 +84,9 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, info.prePassivate, interceptor.getPrePassivate());
             toMethods(clazz, info.postConstruct, interceptor.getPostConstruct());
             toMethods(clazz, info.preDestroy, interceptor.getPreDestroy());
+            toMethods(clazz, info.afterBegin, interceptor.getAfterBegin());
+            toMethods(clazz, info.beforeCompletion, interceptor.getBeforeCompletion());
+            toMethods(clazz, info.afterCompletion, interceptor.getAfterCompletion());
             interceptors.put(info.clazz, interceptor);
         }
     }
@@ -101,6 +104,10 @@ public class InterceptorBindingBuilder {
             StatefulBeanInfo stateful = (StatefulBeanInfo) beanInfo;
             toCallback(clazz, stateful.postActivate, beanAsInterceptor.getPostActivate());
             toCallback(clazz, stateful.prePassivate, beanAsInterceptor.getPrePassivate());
+
+            toCallback(clazz, stateful.afterBegin, beanAsInterceptor.getAfterBegin());
+            toCallback(clazz, stateful.beforeCompletion, beanAsInterceptor.getBeforeCompletion());
+            toCallback(clazz, stateful.afterCompletion, beanAsInterceptor.getAfterCompletion(), boolean.class);
         }
 
         for (Method method : deploymentInfo.getBeanClass().getMethods()) {
@@ -276,6 +283,9 @@ public class InterceptorBindingBuilder {
      *  - @PreDestroy <any-scope> void <method-name>()
      *  - @PrePassivate <any-scope> void <method-name>()
      *  - @PostActivate <any-scope> void <method-name>()
+     *  - @AfterBegin <any-scope> void <method-name>()
+     *  - @BeforeCompletion <any-scope> void <method-name>()
+     *  - @AfterCompletion <any-scope> void <method-name>(boolean)
      *
      * These apply to the bean class only, interceptor methods use InvocationContext as
      * a parameter.  The toMethods method is used for those.
@@ -284,10 +294,10 @@ public class InterceptorBindingBuilder {
      * @param callbackInfos
      * @param methods
      */
-    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
+    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods, Class... parameterTypes) {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
-                Method method = getMethod(clazz, callbackInfo.method);
+                Method method = getMethod(clazz, callbackInfo.method, parameterTypes);
                 if (callbackInfo.className == null){
                     methods.add(method);
                 } else if (method.getDeclaringClass().getName().equals(callbackInfo.className)){

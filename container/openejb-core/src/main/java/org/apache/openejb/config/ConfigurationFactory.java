@@ -127,6 +127,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         Chain chain = new Chain();
 
+        chain.add(new AppModulePreProcessor());
+
         chain.add(new GeneratedClientModules.Add());
 
         chain.add(new ReadDescriptors());
@@ -287,7 +289,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * the assembler needs to actually build the contianer system
      *
      * This method is called by the Assembler once at startup.
-     * 
+     *
      * @return
      * @throws OpenEJBException
      */
@@ -296,7 +298,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (sys != null) {
             return sys;
         }
-        
+
         if (configLocation != null) {
             openejb = JaxbOpenejb.readConfig(configLocation);
         } else {
@@ -642,7 +644,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * As in:
      *
      *   - META-INF/<provider>/service-jar.xml
-     * 
+     *
      */
     static {
         defaultProviders.put(MdbContainerInfo.class, new DefaultService("MESSAGE", Container.class));
@@ -693,7 +695,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      *
      * The end result is a canonical (i.e. flattened) ServiceInfo
      * The ServiceInfo will be of a specific type (ContainerInfo, ResourceInfo, etc)
-     * 
+     *
      * @param service
      * @param infoType
      * @param <T>

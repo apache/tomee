@@ -34,4 +34,15 @@ public interface Session extends Lifecycle {
 
     List<RemoveMethod> getRemoveMethod();
 
+    List<LifecycleCallback> getAfterBegin();
+
+    void addAfterBegin(String method);
+
+    List<LifecycleCallback> getBeforeCompletion();
+
+    void addBeforeCompletion(String method);
+
+    List<LifecycleCallback> getAfterCompletion();
+
+    void addAfterCompletion(String method);
 }

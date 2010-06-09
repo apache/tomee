@@ -64,7 +64,10 @@ import java.util.Map;
         "postConstruct",
         "preDestroy",
         "postActivate",
-        "prePassivate"
+        "prePassivate",
+        "afterBegin",
+        "beforeCompletion",
+        "afterCompletion"
         })
 public class Interceptor implements JndiConsumer, Session {
 
@@ -100,6 +103,12 @@ public class Interceptor implements JndiConsumer, Session {
     protected List<LifecycleCallback> postActivate;
     @XmlElement(name = "pre-passivate", required = true)
     protected List<LifecycleCallback> prePassivate;
+    @XmlElement(name = "after-begin", required = true)
+    protected List<LifecycleCallback> afterBegin;
+    @XmlElement(name = "before-completion", required = true)
+    protected List<LifecycleCallback> beforeCompletion;
+    @XmlElement(name = "after-completion", required = true)
+    protected List<LifecycleCallback> afterCompletion;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -322,6 +331,42 @@ public class Interceptor implements JndiConsumer, Session {
     public void addPrePassivate(String method){
         assert interceptorClass != null: "Set the interceptorClass before calling this method";
         getPrePassivate().add(new LifecycleCallback(interceptorClass, method));
+    }
+
+    public void addAfterBegin(String method) {
+        assert interceptorClass != null : "Set the interceptorClass before calling this method";
+        getAfterBegin().add(new LifecycleCallback(interceptorClass, method));
+    }
+
+    public void addAfterCompletion(String method) {
+        assert interceptorClass != null : "Set the interceptorClass before calling this method";
+        getAfterCompletion().add(new LifecycleCallback(interceptorClass, method));
+    }
+
+    public void addBeforeCompletion(String method) {
+        assert interceptorClass != null : "Set the interceptorClass before calling this method";
+        getBeforeCompletion().add(new LifecycleCallback(interceptorClass, method));
+    }
+
+    public List<LifecycleCallback> getAfterBegin() {
+        if (afterBegin == null) {
+            afterBegin = new ArrayList<LifecycleCallback>();
+        }
+        return this.afterBegin;
+    }
+
+    public List<LifecycleCallback> getAfterCompletion() {
+        if (afterCompletion == null) {
+            afterCompletion = new ArrayList<LifecycleCallback>();
+        }
+        return this.afterCompletion;
+    }
+
+    public List<LifecycleCallback> getBeforeCompletion() {
+        if (beforeCompletion == null) {
+            beforeCompletion = new ArrayList<LifecycleCallback>();
+        }
+        return this.beforeCompletion;
     }
 
     public List<InitMethod> getInitMethod() {

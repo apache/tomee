@@ -30,4 +30,8 @@ public class InterceptorInfo extends InfoObject{
 
     public final List<CallbackInfo> postActivate = new ArrayList<CallbackInfo>();
     public final List<CallbackInfo> prePassivate = new ArrayList<CallbackInfo>();
+
+    public final List<CallbackInfo> afterBegin = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> beforeCompletion = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> afterCompletion = new ArrayList<CallbackInfo>();
 }

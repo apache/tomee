@@ -135,6 +135,9 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.ejb.StatefulTimeout;
 import javax.ejb.AccessTimeout;
+import javax.ejb.AfterBegin;
+import javax.ejb.BeforeCompletion;
+import javax.ejb.AfterCompletion;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -231,6 +234,9 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
+
+        private final AppModulePreProcessor.SessionSynchronizationProcessor sessionSynchronizationProcessor = new AppModulePreProcessor.SessionSynchronizationProcessor();
+
         public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
                 "javax.ejb.SessionContext",
                 "javax.ejb.EntityContext",
@@ -295,7 +301,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (clientModule.getApplicationClient() == null){
                 clientModule.setApplicationClient(new ApplicationClient());
             }
-            
+
             // Lots of jars have main classes so this might not even be an app client.
             // We're not going to scrape it for @LocalClient or @RemoteClient annotations
             // unless they flag us specifically by adding a META-INF/application-client.xml
@@ -413,7 +419,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             AbstractFinder finder = ejbModule.getFinder();
-            
+
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
@@ -434,7 +440,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
                     sessionBean.setSessionType(SessionType.SINGLETON);
-                    
+
                     if (singleton.mappedName() != null) {
                         sessionBean.setMappedName(singleton.mappedName());
                     }
@@ -478,6 +484,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
+                    sessionSynchronizationProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -495,7 +502,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 // TODO: this is actually against the spec, but the requirement is rather silly
                 // (allowing @Stateful and @ManagedBean on the same class)
-                // If the TCK doesn't complain we should discourage it 
+                // If the TCK doesn't complain we should discourage it
                 if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
@@ -536,11 +543,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // https://issues.apache.org/jira/browse/OPENEJB-980
-            startupLogger.debug("Searching for inherited application exceptions (see OPENEJB-980) - it doesn't care whether inherited is true/false");  
+            startupLogger.debug("Searching for inherited application exceptions (see OPENEJB-980) - it doesn't care whether inherited is true/false");
             List<Class> appExceptions;
             appExceptions = finder.findInheritedAnnotatedClasses(ApplicationException.class);
             for (Class<?> exceptionClass : appExceptions) {
-                startupLogger.debug("...handling " + exceptionClass);  
+                startupLogger.debug("...handling " + exceptionClass);
                 if (assemblyDescriptor.getApplicationException(exceptionClass) == null) {
                     ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
                     // OPENEJB-980
@@ -551,7 +558,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             annotation = parentExceptionClass.getAnnotation(ApplicationException.class);
                         }
                     }
-                    startupLogger.debug("...adding " + exceptionClass + " with rollback=" + annotation.rollback());  
+                    startupLogger.debug("...adding " + exceptionClass + " with rollback=" + annotation.rollback());
                     assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
                 }
             }
@@ -702,7 +709,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (clientModule.getMainClass() != null){
                 String className = clientModule.getMainClass();
-                
+
                 // OPENEJB-1063: a Main-Class should use "." instead of "/"
                 // it wasn't check before jdk 1.5 so we can get old module with
                 // bad format http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4986512
@@ -1166,7 +1173,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 /*
-                 * Add any interceptors they may have referenced in xml but did not declare 
+                 * Add any interceptors they may have referenced in xml but did not declare
                  */
                 for (InterceptorBinding binding : assemblyDescriptor.getInterceptorBinding()) {
                     EjbJar ejbJar = ejbModule.getEjbJar();
@@ -1754,7 +1761,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /**
                  * OK, now start checking the metadata of the interfaces implemented by this class
                  */
-            
+
 
                 /**
                  * This set holds the list of interfaces that the bean implements
@@ -2076,6 +2083,36 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (bean instanceof org.apache.openejb.jee.Session) {
                 org.apache.openejb.jee.Session session = (org.apache.openejb.jee.Session) bean;
+
+                /*
+                 * @AfterBegin
+                 */
+                LifecycleCallback afterBegin = getFirst(session.getAfterBegin());
+                if (afterBegin == null) {
+                    for (Method method : classFinder.findAnnotatedMethods(AfterBegin.class)) {
+                        session.getAfterBegin().add(new LifecycleCallback(method));
+                    }
+                }
+
+                /*
+                 * @BeforeCompletion
+                 */
+                LifecycleCallback beforeCompletion = getFirst(session.getBeforeCompletion());
+                if (beforeCompletion == null) {
+                    for (Method method : classFinder.findAnnotatedMethods(BeforeCompletion.class)) {
+                        session.getBeforeCompletion().add(new LifecycleCallback(method));
+                    }
+                }
+
+                /*
+                 * @AfterCompletion
+                 */
+                LifecycleCallback afterCompletion = getFirst(session.getAfterCompletion());
+                if (afterCompletion == null) {
+                    for (Method method : classFinder.findAnnotatedMethods(AfterCompletion.class)) {
+                        session.getAfterCompletion().add(new LifecycleCallback(method));
+                    }
+                }
 
                 /*
                  * @PostActivate
@@ -2933,7 +2970,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          */
         private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
             if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
-            
+
             Set<Class<?>> processedClasses = new HashSet<Class<?>>();
             Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
             do {
