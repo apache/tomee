@@ -104,6 +104,27 @@ public class JeeTest extends TestCase {
 		assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
     }
 
+    public void testSessionSynchronization() throws Exception {
+        String fileName = "ejb-session-synchronization.xml";
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
+        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+
+        EjbJar ejbJar = (EjbJar) o;
+        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+
+        assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
+        SessionBean sbean = (SessionBean) bean;
+
+        assertNotNull("Unable to get the afterBegin value", sbean.getAfterBeginMethod());
+        assertNotNull("Unable to get the beforeCompletion value", sbean.getBeforeCompletionMethod());
+        assertNotNull("Unable to get the afterCompletion value", sbean.getAfterCompletionMethod());
+
+        assertNotNull("Unable to get the afterBegin value", sbean.getAfterBegin());
+        assertNotNull("Unable to get the beforeCompletion value", sbean.getBeforeCompletion());
+        assertNotNull("Unable to get the afterCompletion value", sbean.getAfterCompletion());
+    }
+
     public void testEjbJarMdb20() throws Exception {
         String fileName = "ejb-jar-mdb-2.0.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);

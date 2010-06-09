@@ -296,6 +296,10 @@ public class EjbJarInfoBuilder {
             copyCallbacks(s.getPostActivate(), info.postActivate);
             copyCallbacks(s.getPrePassivate(), info.prePassivate);
 
+            copyCallbacks(s.getAfterBegin(), info.afterBegin);
+            copyCallbacks(s.getBeforeCompletion(), info.beforeCompletion);
+            copyCallbacks(s.getAfterCompletion(), info.afterCompletion);
+
             ejbJar.interceptors.add(info);
         }
 
@@ -490,6 +494,10 @@ public class EjbJarInfoBuilder {
             copyCallbacks(s.getPostActivate(), stateful.postActivate);
             copyCallbacks(s.getPrePassivate(), stateful.prePassivate);
 
+            copyCallbacks(s.getAfterBegin(), stateful.afterBegin);
+            copyCallbacks(s.getBeforeCompletion(), stateful.beforeCompletion);
+            copyCallbacks(s.getAfterCompletion(), stateful.afterCompletion);
+
             for (InitMethod initMethod : s.getInitMethod()) {
                 InitMethodInfo init = new InitMethodInfo();
                 init.beanMethod = toInfo(initMethod.getBeanMethod());
@@ -523,7 +531,7 @@ public class EjbJarInfoBuilder {
             ConcurrencyType type = s.getConcurrencyType();
             bean.concurrencyType = (type != null) ? type.toString() : ConcurrencyType.CONTAINER.toString();
             bean.loadOnStartup = s.getLoadOnStartup();
-            // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn 
+            // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
             ((SingletonBeanInfo)bean).localbean = s.getLocalBean() != null;
         } else {

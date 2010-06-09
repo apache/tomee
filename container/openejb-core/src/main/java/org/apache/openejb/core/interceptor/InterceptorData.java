@@ -25,6 +25,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
+import javax.ejb.AfterBegin;
+import javax.ejb.BeforeCompletion;
+import javax.ejb.AfterCompletion;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,10 @@ public class InterceptorData {
 
     private final List<Method> postActivate = new ArrayList<Method>();
     private final List<Method> prePassivate = new ArrayList<Method>();
+
+    private final List<Method> afterBegin = new ArrayList<Method>();
+    private final List<Method> beforeCompletion = new ArrayList<Method>();
+    private final List<Method> afterCompletion = new ArrayList<Method>();
 
     public InterceptorData(Class clazz) {
         this.clazz = clazz;
@@ -73,6 +80,18 @@ public class InterceptorData {
         return prePassivate;
     }
 
+    public List<Method> getAfterBegin() {
+        return afterBegin;
+    }
+
+    public List<Method> getBeforeCompletion() {
+        return beforeCompletion;
+    }
+
+    public List<Method> getAfterCompletion() {
+        return afterCompletion;
+    }
+
     public List<Method> getMethods(Operation operation) {
         switch(operation) {
             case BUSINESS: return getAroundInvoke();
@@ -82,9 +101,9 @@ public class InterceptorData {
             case PRE_DESTROY: return getPreDestroy();
             case ACTIVATE: return getPostActivate();
             case PASSIVATE: return getPrePassivate();
-            case AFTER_BEGIN: return getAroundInvoke();
-            case AFTER_COMPLETION: return getAroundInvoke();
-            case BEFORE_COMPLETION: return getAroundInvoke();
+            case AFTER_BEGIN: return getAfterBegin();
+            case AFTER_COMPLETION: return getAfterCompletion();
+            case BEFORE_COMPLETION: return getBeforeCompletion();
         }
         return Collections.EMPTY_LIST;
     }
@@ -114,6 +133,9 @@ public class InterceptorData {
         data.preDestroy.addAll(finder.findAnnotatedMethods(PreDestroy.class));
         data.postActivate.addAll(finder.findAnnotatedMethods(PostActivate.class));
         data.prePassivate.addAll(finder.findAnnotatedMethods(PrePassivate.class));
+        data.afterBegin.addAll(finder.findAnnotatedMethods(AfterBegin.class));
+        data.beforeCompletion.addAll(finder.findAnnotatedMethods(BeforeCompletion.class));
+        data.afterCompletion.addAll(finder.findAnnotatedMethods(AfterCompletion.class));
 
         return data;
     }

@@ -71,6 +71,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Object[] getParameters() {
+        //TODO Need to figure out what is going on with afterCompletion call back here ?
         if (operation.isCallback()) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
@@ -124,10 +125,10 @@ public class ReflectionInvocationContext implements InvocationContext {
             Object nextInstance = interceptor.getInstance();
             Method nextMethod = interceptor.getMethod();
 
-            if (nextMethod.getParameterTypes().length > 0){
+            if (nextMethod.getParameterTypes().length == 1 && nextMethod.getParameterTypes()[0] == InvocationContext.class) {
                 return new InterceptorInvocation(nextInstance, nextMethod, this);
             } else {
-                return new LifecycleInvocation(nextInstance, nextMethod, this);
+                return new LifecycleInvocation(nextInstance, nextMethod, this, parameters);
             }
         } else if (method != null) {
             return new BeanInvocation(target, method, parameters);
@@ -198,8 +199,8 @@ public class ReflectionInvocationContext implements InvocationContext {
     private static class LifecycleInvocation extends Invocation {
         private final InvocationContext invocationContext;
 
-        public LifecycleInvocation(Object target, Method method, InvocationContext invocationContext) {
-            super(target, method, new Object[] {});
+        public LifecycleInvocation(Object target, Method method, InvocationContext invocationContext, Object[] args) {
+            super(target, method, args);
             this.invocationContext = invocationContext;
         }
 

@@ -34,7 +34,6 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
-import javax.ejb.SessionSynchronization;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.naming.Context;
@@ -82,6 +81,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final List<Method> postActivate = new ArrayList<Method>();
     private final List<Method> prePassivate = new ArrayList<Method>();
 
+    private final List<Method> afterBegin = new ArrayList<Method>();
+    private final List<Method> beforeCompletion= new ArrayList<Method>();
+    private final List<Method> afterCompletion = new ArrayList<Method>();
+
     private final List<Method> removeMethods = new ArrayList<Method>();
 
     private final Set<String> dependsOn = new LinkedHashSet<String>();
@@ -124,7 +127,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
 
-    private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>(); 
+    private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
     private String jarPath;
@@ -159,7 +162,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         switch(interfaceType){
             case BUSINESS_REMOTE: return getBusinessRemoteInterfaces();
             case BUSINESS_LOCAL: return getBusinessLocalInterfaces();
-            default: 
+            default:
             List<Class> interfaces = new ArrayList<Class>();
             interfaces.add(getInterface(interfaceType));
             return interfaces;
@@ -705,6 +708,18 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return removeMethods;
     }
 
+    public List<Method> getAfterBegin() {
+        return afterBegin;
+    }
+
+    public List<Method> getBeforeCompletion() {
+        return beforeCompletion;
+    }
+
+    public List<Method> getAfterCompletion() {
+        return afterCompletion;
+    }
+
     private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method,Boolean>();
 
     public void setRetainIfExeption(Method removeMethod, boolean retain){
@@ -744,7 +759,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public void addSystemInterceptor(Object interceptor) {
-        systemInterceptors.add(new InterceptorInstance(interceptor));    
+        systemInterceptors.add(new InterceptorInstance(interceptor));
     }
 
     public List<InterceptorInstance> getSystemInterceptors() {
@@ -770,7 +785,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         if (systemInterceptors.size() <= 0) return interceptors;
 
         // we have system interceptors to add to the beginning of the stack
-        
+
         List<InterceptorData> datas = new ArrayList<InterceptorData>(systemInterceptors.size() + interceptors.size());
 
         for (InterceptorInstance instance : systemInterceptors) {
@@ -778,7 +793,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
 
         datas.addAll(interceptors);
-        
+
         return datas;
     }
 
@@ -1123,7 +1138,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public boolean isSessionSynchronized() {
-        return !isBeanManagedTransaction() && SessionSynchronization.class.isAssignableFrom(beanClass);
+        return !isBeanManagedTransaction();
     }
 
     public boolean isLocalbean() {

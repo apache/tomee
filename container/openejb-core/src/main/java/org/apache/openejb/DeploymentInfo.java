@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Properties;
 import javax.naming.Context;
-import javax.ejb.ScheduleExpression;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 

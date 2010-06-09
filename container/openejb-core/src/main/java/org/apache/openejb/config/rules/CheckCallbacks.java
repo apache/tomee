@@ -33,11 +33,16 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.interceptor.InvocationContext;
+import javax.ejb.AfterBegin;
+import javax.ejb.AfterCompletion;
+import javax.ejb.BeforeCompletion;
 import javax.ejb.PrePassivate;
 import javax.ejb.PostActivate;
 import javax.ejb.Remove;
 import javax.ejb.Init;
+import javax.ejb.SessionSynchronization;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -79,7 +84,35 @@ public class CheckCallbacks extends ValidationBase {
                     for (LifecycleCallback callback : session.getPostActivate()) {
                         checkCallback(ejbClass, "PostActivate", callback, bean);
                     }
+
+                    checkSessionSynchronization(ejbClass, session);
+
+                    for (LifecycleCallback callback : session.getAfterBegin()) {
+                        checkCallback(ejbClass, "AfterBegin", callback, bean);
+                    }
+
+                    for (LifecycleCallback callback : session.getBeforeCompletion()) {
+                        checkCallback(ejbClass, "BeforeCompletion", callback, bean);
+                    }
+
+                    for (LifecycleCallback callback : session.getAfterCompletion()) {
+                        checkCallback(ejbClass, "AfterCompletion", callback, bean, boolean.class);
+                    }
+
                 } else {
+
+                    for (LifecycleCallback callback : session.getAfterBegin()) {
+                        ignoredStatefulAnnotation("afterBegin", bean, callback.getMethodName(), session.getSessionType().getName());
+                    }
+
+                    for (LifecycleCallback callback : session.getBeforeCompletion()) {
+                        ignoredStatefulAnnotation("beforeCompletion", bean, callback.getMethodName(), session.getSessionType().getName());
+                    }
+
+                    for (LifecycleCallback callback : session.getAfterCompletion()) {
+                        ignoredStatefulAnnotation("afterCompletion", bean, callback.getMethodName(), session.getSessionType().getName());
+                    }
+
                     for (LifecycleCallback callback : session.getPrePassivate()) {
                         ignoredStatefulAnnotation("PrePassivate", bean, callback.getMethodName(), session.getSessionType().getName());
                     }
@@ -113,6 +146,18 @@ public class CheckCallbacks extends ValidationBase {
 
                 for (Method method : finder.findAnnotatedMethods(Init.class)) {
                     ignoredStatefulAnnotation("Init", bean, method.getName(), bean.getClass().getSimpleName());
+                }
+
+                for (Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
+                    ignoredStatefulAnnotation("afterBegin", bean, method.getName(), bean.getClass().getSimpleName());
+                }
+
+                for (Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
+                    ignoredStatefulAnnotation("beforeCompletion", bean, method.getName(), bean.getClass().getSimpleName());
+                }
+
+                for (Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
+                    ignoredStatefulAnnotation("afterCompletion", bean, method.getName(), bean.getClass().getSimpleName());
                 }
             }
 
@@ -148,6 +193,18 @@ public class CheckCallbacks extends ValidationBase {
 
             for (LifecycleCallback callback : interceptor.getPostActivate()) {
                 checkCallback(interceptorClass, "PostActivate", callback, interceptor);
+            }
+
+            for (LifecycleCallback callback : interceptor.getAfterBegin()) {
+                checkCallback(interceptorClass, "AfterBegin", callback, interceptor);
+            }
+
+            for (LifecycleCallback callback : interceptor.getBeforeCompletion()) {
+                checkCallback(interceptorClass, "BeforeCompletion", callback, interceptor);
+            }
+
+            for (LifecycleCallback callback : interceptor.getAfterCompletion()) {
+                checkCallback(interceptorClass, "AfterCompletion", callback, interceptor);
             }
         }
     }
@@ -190,21 +247,26 @@ public class CheckCallbacks extends ValidationBase {
         warn(bean, "ignoredStatefulAnnotation", annotationType, beanType, methodName);
     }
 
-    private void checkCallback(Class ejbClass, String type, CallbackMethod callback, EnterpriseBean bean) {
+    private void checkCallback(Class ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
         try {
-            Method method = getMethod(ejbClass, callback.getMethodName());
+            Method method = getMethod(ejbClass, callback.getMethodName(), parameterTypes);
 
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
                 fail(bean, "callback.badReturnType", type, callback.getMethodName(), returnType.getName(), callback.getClassName());
             }
+
+            int methodModifiers = method.getModifiers();
+            if (Modifier.isFinal(methodModifiers) || Modifier.isStatic(methodModifiers)) {
+                fail(bean, "callback.badModifier", type, callback.getMethodName(), callback.getClassName());
+            }
         } catch (NoSuchMethodException e) {
             List<Method> possibleMethods = getMethods(ejbClass, callback.getMethodName());
 
             if (possibleMethods.size() == 0) {
                 fail(bean, "callback.missing", type, callback.getMethodName(), callback.getClassName());
-            } else if (possibleMethods.size() == 1) {
+            } else if (possibleMethods.size() != parameterTypes.length) {
                 fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), callback.getClassName());
             } else {
                 fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), callback.getClassName());
@@ -234,6 +296,19 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
+    private void checkSessionSynchronization(Class ejbClass, SessionBean bean) {
+        if (SessionSynchronization.class.isAssignableFrom(ejbClass)) {
+            if (bean.getAfterBeginMethod() != null || bean.getBeforeCompletionMethod() != null || bean.getAfterCompletionMethod() != null) {
+                fail(bean, "calllback.invalidSessionSynchronizationUse", ejbClass.getName());
+            } else {
+                ClassFinder classFinder = new ClassFinder(ejbClass);
+                if (classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0 || classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0
+                        || classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0) {
+                    fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
+                }
+            }
+        }
+    }
 
     private void checkTimeOut(Class ejbClass, NamedMethod timeout, EnterpriseBean bean) {
         if (timeout == null) return;

@@ -32,4 +32,8 @@ public class StatefulBeanInfo extends EnterpriseBeanInfo {
     public final List<RemoveMethodInfo> removeMethods = new ArrayList<RemoveMethodInfo>();
 
     public boolean localbean;
+
+    public final List<CallbackInfo> afterBegin = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> beforeCompletion = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> afterCompletion = new ArrayList<CallbackInfo>();
 }

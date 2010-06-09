@@ -33,7 +33,6 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -362,7 +361,7 @@ public class StatefulContainer implements RpcContainer {
 
                 // Register for synchronization callbacks
                 registerSessionSynchronization(instance, createContext);
-              
+
                 // Invoke create for legacy beans
                 if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) &&
                         !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class) &&
@@ -465,7 +464,7 @@ public class StatefulContainer implements RpcContainer {
                 if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
                     args = new Object[]{};
                 }
-                
+
                 // Initialize interceptor stack
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
@@ -881,7 +880,7 @@ public class StatefulContainer implements RpcContainer {
     /**
      * SessionSynchronizationCoordinator handles afterBegin, beforeCompletion and afterCompletion callbacks.
      *
-     * This class also is responsible for calling releaseInstance after the transaction completes. 
+     * This class also is responsible for calling releaseInstance after the transaction completes.
      */
     private class SessionSynchronizationCoordinator implements TransactionSynchronization {
         private final Map<Object, Synchronization> registry = new HashMap<Object, Synchronization>();
@@ -934,10 +933,8 @@ public class StatefulContainer implements RpcContainer {
             ThreadContext oldCallContext = ThreadContext.enter(callContext);
             try {
 
-                Method afterBegin = SessionSynchronization.class.getMethod("afterBegin");
-
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(afterBegin);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterBegin, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
+                List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
                 interceptorStack.invoke();
 
             } catch (Exception e) {
@@ -973,10 +970,9 @@ public class StatefulContainer implements RpcContainer {
                 try {
                     instance.setInUse(true);
 
-                    Method beforeCompletion = SessionSynchronization.class.getMethod("beforeCompletion");
-
-                    List<InterceptorData> interceptors = instance.deploymentInfo.getMethodInterceptors(beforeCompletion);
-                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, beforeCompletion, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
+                    CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+                    List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
                     interceptorStack.invoke();
 
                     instance.setInUse(false);
@@ -1014,10 +1010,10 @@ public class StatefulContainer implements RpcContainer {
                 try {
                     instance.setInUse(true);
                     if (synchronization.isCallSessionSynchronization()) {
-                        Method afterCompletion = SessionSynchronization.class.getMethod("afterCompletion", boolean.class);
 
-                        List<InterceptorData> interceptors = instance.deploymentInfo.getMethodInterceptors(afterCompletion);
-                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterCompletion, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
+                        CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+                        List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
                         interceptorStack.invoke(status == Status.COMMITTED);
                     }
                     instance.setTransaction(null);
@@ -1109,7 +1105,7 @@ public class StatefulContainer implements RpcContainer {
                 ThreadContext.exit(oldContext);
             }
         }
-    }    
+    }
 
     private static class Data {
         private final Index<Method, MethodType> methodIndex;
