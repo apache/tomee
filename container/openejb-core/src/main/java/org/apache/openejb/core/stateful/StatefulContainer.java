@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -33,6 +34,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -83,6 +85,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Duration;
 import org.apache.xbean.recipe.ConstructionException;
 
 public class StatefulContainer implements RpcContainer {
@@ -687,29 +690,37 @@ public class StatefulContainer implements RpcContainer {
         }
 
 
-        synchronized (instance) {
-            // Is the instance alreayd in use?
-            if (instance.isInUse()) {
-                // the bean is already being invoked; the only reentrant/concurrent operations allowed are Session synchronization callbacks
-                Operation currentOperation = callContext.getCurrentOperation();
-                if (currentOperation != Operation.AFTER_COMPLETION && currentOperation != Operation.BEFORE_COMPLETION) {
-                    throw new ApplicationException(new RemoteException("Concurrent calls not allowed."));
-                }
-            }
-
-            if (instance.getTransaction() != null){
-                if (!instance.getTransaction().equals(currentTransaction) && !instance.getLock().tryLock()) {
-                    throw new ApplicationException(new RemoteException("Instance is in a transaction and cannot be invoked outside that transaction.  See EJB 3.0 Section 4.4.4"));
-                }
-            } else {
-                instance.setTransaction(currentTransaction);
-            }
-
-            // Mark the instance in use so we can detect reentrant calls
-            instance.setInUse(true);
-
-            return instance;
+        final Duration accessTimeout = instance.deploymentInfo.getAccessTimeout();
+    	final Lock currLock = instance.getLock();
+    	final boolean lockAcquired;
+    	if(accessTimeout == null) {
+    		// returns immediately true if the lock is available 
+    		lockAcquired = currLock.tryLock();
+    	} else {
+    		// AccessTimeout annotation found. 
+    		// Trying to get the lock within the specified period. 
+    		try {
+				lockAcquired = currLock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
+			} catch (InterruptedException e) {
+				throw new ApplicationException("Unable to get lock.", e);
+			}
+    	}
+        // Did we acquire the lock to the current execution?
+        if (!lockAcquired) {
+        	 throw new ApplicationException(new ConcurrentAccessTimeoutException("Unable to get lock."));
         }
+        
+        if (instance.getTransaction() != null){
+            if (!instance.getTransaction().equals(currentTransaction) && !instance.getLock().tryLock()) {
+                throw new ApplicationException(new RemoteException("Instance is in a transaction and cannot be invoked outside that transaction.  See EJB 3.0 Section 4.4.4"));
+            }
+        } else {
+            instance.setTransaction(currentTransaction);
+        }
+
+        // Mark the instance in use so we can detect reentrant calls
+        instance.setInUse(true);
+        return instance;
     }
 
     private Transaction getTransaction(ThreadContext callContext) {
