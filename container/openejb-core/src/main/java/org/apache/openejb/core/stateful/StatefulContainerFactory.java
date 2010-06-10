@@ -18,9 +18,11 @@
 package org.apache.openejb.core.stateful;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.Map.Entry;
 
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -29,6 +31,7 @@ public class StatefulContainerFactory {
     private SecurityService securityService;
     private Cache<Object, Instance> cache;
     private Properties properties = new Properties();
+    private Duration accessTimeout = new Duration(0, TimeUnit.MILLISECONDS);
 
     public Object getId() {
         return id;
@@ -44,6 +47,14 @@ public class StatefulContainerFactory {
 
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
+    }
+
+    public Duration getAccessTimeout() {
+        return accessTimeout;
+    }
+
+    public void setAccessTimeout(Duration accessTimeout) {
+        this.accessTimeout = accessTimeout;
     }
 
     public Cache<Object, Instance> getCache() {
@@ -87,7 +98,7 @@ public class StatefulContainerFactory {
         if (cache == null) {
             buildCache();
         }
-        return new StatefulContainer(id, securityService, cache);
+        return new StatefulContainer(id, securityService, cache, accessTimeout);
     }
 
     private void buildCache() throws Exception {

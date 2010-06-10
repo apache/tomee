@@ -289,6 +289,18 @@
           factory-name="create"
           class-name="org.apache.openejb.core.stateful.StatefulContainerFactory">
 
+    # Specifies the maximum time an invocation could wait for the
+    # stateful bean instance to become available before giving up.
+    #
+    # After the timeout is reached a javax.ejb.ConcurrentAccessTimeoutException
+    # will be thrown.
+    #
+    # Usable time units: nanoseconds, microsecons, milliseconds,
+    # seconds, minutes, hours, days.  Or any combination such as
+    # "1 hour and 27 minutes and 10 seconds"
+
+    AccessTimeout = 0 milliseconds
+
     # The cache is responsible for managing stateful bean
     # instances.  The cache can page instances to disk as memory
     # is filled and can destroy abandoned instances.  A different
