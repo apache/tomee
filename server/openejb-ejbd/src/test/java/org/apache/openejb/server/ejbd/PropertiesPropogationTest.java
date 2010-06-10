@@ -18,11 +18,14 @@ package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.proxy.ProxyManager;
 import org.apache.openejb.client.proxy.InvocationHandler;
 import org.apache.openejb.client.EJBObjectHandler;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ServerFederation;
@@ -71,7 +74,26 @@ public class PropertiesPropogationTest extends TestCase {
         deployment.getProperties().put("color", "orange");
         deployment.getProperties().put("openejb.client.color", "red");
 
-        assembler.createApplication(config.configureApplication(ejbModule));
+        EjbJarInfo ejbJarInfo = config.configureApplication(ejbModule);
+        EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
+
+        assertTrue(beanInfo.properties.containsKey("color"));
+        assertTrue(beanInfo.properties.containsKey("openejb.client.color"));
+        assertEquals("orange", beanInfo.properties.get("color"));
+        assertEquals("red", beanInfo.properties.get("openejb.client.color"));
+        
+        assembler.createApplication(ejbJarInfo);
+
+        ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
+        DeploymentInfo info = cs.getDeploymentInfo("WidgetBean");
+        assertNotNull(info);
+
+        assertTrue(info.getProperties().containsKey("color"));
+        assertTrue(info.getProperties().containsKey("openejb.client.color"));
+
+        assertEquals("orange", info.getProperties().get("color"));
+        assertEquals("red", info.getProperties().get("openejb.client.color"));
+
 
         Properties props = new Properties();
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
