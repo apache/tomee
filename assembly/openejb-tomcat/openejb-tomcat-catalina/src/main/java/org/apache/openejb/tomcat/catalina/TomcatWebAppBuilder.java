@@ -97,24 +97,54 @@ import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Iterator;
 
+/**
+ * Web application builder.
+ * 
+ * @version $Rev$ $Date$
+ */
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
+    
+    /**Flag for ignore context*/
     public static final String IGNORE_CONTEXT = TomcatWebAppBuilder.class.getName() + ".IGNORE";
+    
+    /**Logger instance*/
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
-
+    
+    /**Context information for web applications*/
     private final TreeMap<String, ContextInfo> infos = new TreeMap<String, ContextInfo>();
+    
+    /**Global listener for Tomcat fired events.*/
     private final GlobalListenerSupport globalListenerSupport;
+    
+    /**OpenEJB configuration factory instance*/
     private final ConfigurationFactory configurationFactory;
+    
+    /**Tomcat host config elements*/
+    //Key is the host name
     private final Map<String,HostConfig> deployers = new TreeMap<String,HostConfig>();
+    
+    /**Deployed web applications*/
     // todo merge this map witth the infos map above
     private final Map<String,DeployedApplication> deployedApps = new TreeMap<String,DeployedApplication>();
+    
+    /**OpenEJB deployment loader instance*/
     private final DeploymentLoader deploymentLoader;
+    
+    /**OpenEJB assembler instance*/
     private Assembler assembler;
+    
+    /**OpenEJB container system*/
     private CoreContainerSystem containerSystem;
-
+    
+    /**
+     * Creates a new web application builder
+     * instance.
+     */
     public TomcatWebAppBuilder() {
         StandardServer standardServer = (StandardServer) ServerFactory.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
-
+        
+        //Getting host config listeners
         for (Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 Engine engine = (Engine) service.getContainer();
@@ -132,25 +162,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
 
-        // MBeanServer mbeanServer;
-        // List mbeanServers = MBeanServerFactory.findMBeanServer(null);
-        // if (mbeanServers.size() > 0) {
-        //     mbeanServer = (MBeanServer) mbeanServers.get(0);
-        // } else {
-        //     mbeanServer = MBeanServerFactory.createMBeanServer();
-        // }
-
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
     }
-
+    
+    /**
+     * Start operation.
+     */
     public void start() {
         globalListenerSupport.start();
 
     }
-
+    
+    /**
+     * Stop operation.
+     */
     public void stop() {
         globalListenerSupport.stop();
     }
@@ -158,7 +186,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     //
     // OpenEJB WebAppBuilder
     //
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
@@ -190,7 +221,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void undeployWebApps(AppInfo appInfo) throws Exception {
         for (WebAppInfo webApp : appInfo.webApps) {
             ContextInfo contextInfo = getContextInfo(webApp);
@@ -204,6 +238,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
     }
 
+
+    /**
+     * Deletes given directory.
+     * @param dir directory
+     */
     private void deleteDir(File dir) {
         if (dir == null) return;
         if (dir.isFile()) return;
@@ -217,26 +256,33 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         dir.delete();
     }
 
-    //
-    // Tomcat Listener
-    //
-
+    /**
+     * {@inheritDoc}
+     */
     public void init(StandardContext standardContext) {
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void beforeStart(StandardContext standardContext) {
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     // context class loader is now defined, but no classes should have been loaded
+    @SuppressWarnings("unchecked")
     public void start(StandardContext standardContext) {
         if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
-
+        
         Assembler assembler = getAssembler();
         if (assembler == null) {
             logger.warning("OpenEJB has not been initialized so war will not be scanned for nested modules " + standardContext.getPath());
             return;
         }
 
+        //Look for context info, maybe context is already scanned
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo == null) {
             AppModule appModule = loadApplication(standardContext);
@@ -288,13 +334,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void afterStart(StandardContext standardContext) {
         if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
 
         // if appInfo is null this is a failed deployment... just ignore
         ContextInfo contextInfo = getContextInfo(standardContext);
-        if (contextInfo.appInfo == null) return;
+        if(contextInfo != null && contextInfo.appInfo == null) return;
 
         WsService wsService = SystemInstance.get().getComponent(WsService.class);
         if (wsService != null) {
@@ -388,12 +437,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         standardContext.getPipeline().addValve(openejbValve);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void beforeStop(StandardContext standardContext) {
+        //No operation
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void stop(StandardContext standardContext) {
+        //No operation
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void afterStop(StandardContext standardContext) {
         if (standardContext.getServletContext().getAttribute(IGNORE_CONTEXT) != null) return;
 
@@ -408,9 +468,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         removeContextInfo(standardContext);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void destroy(StandardContext standardContext) {
+        //No operation
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void afterStop(StandardServer standardServer) {
         // clean ear based webapps after shutdown
         for (ContextInfo contextInfo : infos.values()) {
@@ -425,7 +492,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     public void checkHost(StandardHost standardHost) {
         if (standardHost.getAutoDeploy()) {
             // Undeploy any modified application
@@ -505,7 +575,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
     }
-
+    
+    /**
+     * Returns true if given application is deployed
+     * false otherwise.
+     * @param file web application file
+     * @param standardHost host
+     * @return true if given application is deployed
+     */
     private boolean isDeployed(File file, StandardHost standardHost) {
         if (deployedApps.containsKey(file.getAbsolutePath())) {
             return true;
@@ -520,10 +597,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         return file.isFile() && standardHost.findChild(name) != null;
     }
     
+    /**
+     * Returns true if given context is root web appliction
+     * false otherwise.
+     * @param standardContext tomcat context
+     * @return true if given context is root web appliction
+     */
     private boolean isRootApplication(StandardContext standardContext) {
-	return "".equals(standardContext.getPath());
+        return "".equals(standardContext.getPath());
     }
-
+    
+    /**
+     * Returns application base of the given host.
+     * @param standardHost tomcat host
+     * @return application base of the given host
+     */
     protected File appBase(StandardHost standardHost) {
         File file = new File(standardHost.getAppBase());
         if (!file.isAbsolute()) {
@@ -536,6 +624,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         return file;
     }
 
+    /**
+     * Creates an openejb {@link AppModule} instance
+     * from given tomcat context.
+     * @param standardContext tomcat context instance
+     * @return a openejb application module
+     */
     private AppModule loadApplication(StandardContext standardContext) {
         // create the web module
         WebModule webModule = createWebModule(standardContext);
@@ -568,7 +662,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     // create the ejb module and set its moduleId to the webapp context root name
                     EjbModule ejbModule = new EjbModule(webModule.getClassLoader(), getEjbModuleId(standardContext),file.getAbsolutePath(), null, null);
                     ejbModule.setClientModule(new ClientModule(null, ejbModule.getClassLoader(), ejbModule.getJarLocation(), null, ejbModule.getModuleId()));
-
+                                        
                     // EJB deployment descriptors
                     try {
                         ResourceFinder ejbResourceFinder = new ResourceFinder("", standardContext.getLoader().getClassLoader(), file.toURI().toURL());
@@ -612,6 +706,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 			ejbModuleId = ejbModuleId.substring(1);
 		return ejbModuleId;
 	}
+    
+    /**
+     * Creates a new {@link WebModule} instance from given
+     * tomcat context instance.
+     * @param standardContext tomcat context instance
+     * @return a openejb web module
+     */
     private WebModule createWebModule(StandardContext standardContext) {
         // todo replace this code with DeploymentLoader
         ServletContext servletContext = standardContext.getServletContext();
@@ -686,9 +787,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         return webModule;
     }
     /**
-     * Finds all faces configuration files and stores them in the WebModule
-     * @param webModule
-     * @throws OpenEJBException
+     * Finds all faces configuration files and stores them in the WebModule.
+     * @param webModule web module
+     * @throws OpenEJBException for exception
      */
     private static void addFacesConfigs(WebModule webModule) throws OpenEJBException {
     	//*************************IMPORTANT*******************************************
@@ -761,7 +862,12 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             }
         }
     }
-
+    
+    /**
+     * Remove jndi references from related info map.
+     * @param webApp web application instance
+     * @param name jndi reference name
+     */
     private void removeRef(WebApp webApp, String name) {
         webApp.getEnvEntryMap().remove(name);
         webApp.getEjbRefMap().remove(name);
@@ -773,6 +879,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         webApp.getResourceEnvRefMap().remove(name);
     }
 
+    /**
+     * Gets urls in a web application.
+     * @param standardContext context
+     * @return list of url
+     */
     private List<URL> getUrls(StandardContext standardContext) {
         List<URL> urls = null;
         try {
@@ -786,43 +897,70 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         return urls;
     }
 
-    //
-    // helper methods
-    //
-
+    /**
+     * Binds given object into given component context.
+     * @param comp context
+     * @param name name of the binding
+     * @param value binded object
+     */
     private void safeBind(Context comp, String name, Object value) {
         try {
             comp.bind(name, value);
         } catch (NamingException e) {
+            logger.error("Error in safeBind method",e);
         }
     }
-
+    
+    /**
+     * Gets openejb assembler instance.
+     * @return assembler
+     */
     private Assembler getAssembler() {
         if (assembler == null) {
             assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
         }
         return assembler;
     }
-
+    
+    /**
+     * Gets container system for openejb.
+     * @return openejb container system
+     */
     private CoreContainerSystem getContainerSystem() {
         if (containerSystem == null) {
             containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
         }
         return containerSystem;
     }
-
+    
+    /**
+     * Gets id of the context. Context id
+     * is host name + context root name.
+     * @param standardContext context instance
+     * @return id of the context
+     */
     private String getId(StandardContext standardContext) {
         String contextRoot = standardContext.getName();
         if (!contextRoot.startsWith("/")) contextRoot = "/" + contextRoot;
         return standardContext.getHostname() + contextRoot;
     }
-
+    
+    /**
+     * Gets context info for given context.
+     * @param standardContext context
+     * @return context info
+     */
     private ContextInfo getContextInfo(StandardContext standardContext) {
         String id = getId(standardContext);
         ContextInfo contextInfo = infos.get(id);
         return contextInfo;
     }
-
+    
+    /**
+     * Gets context info for given web app info.
+     * @param webAppInfo web application info
+     * @return context info
+     */
     private ContextInfo getContextInfo(WebAppInfo webAppInfo) {
         String host = webAppInfo.host;
         if (host == null) host = "localhost";
@@ -831,7 +969,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         ContextInfo contextInfo = infos.get(id);
         return contextInfo;
     }
-
+    
+    /**
+     * Add new context info.
+     * @param host host name
+     * @param standardContext context
+     * @return context info
+     */
     private ContextInfo addContextInfo(String host, StandardContext standardContext) {
         String contextRoot = standardContext.getName();
         if (!contextRoot.startsWith("/")) contextRoot = "/" + contextRoot;
@@ -843,7 +987,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
         return contextInfo;
     }
-
+    
+    /**
+     * Removes context info from map.
+     * @param standardContext context
+     */
     private void removeContextInfo(StandardContext standardContext) {
         String id = getId(standardContext);
         infos.remove(id);

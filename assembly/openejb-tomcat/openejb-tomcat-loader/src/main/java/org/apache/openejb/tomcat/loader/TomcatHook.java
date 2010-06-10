@@ -55,15 +55,31 @@ import java.util.Properties;
  * See org.apache.openejb.tomcat.catalina.TomcatLoader for the next part of the story
  */
 class TomcatHook {
-    @SuppressWarnings({"UnusedDeclaration"})
-    private static void hook(Properties properties) {
+    
+    /**
+     * Using openejb.war path, it sets several required
+     * system properties and init {@link SystemInstance#init(Properties)}
+     * 
+     * <p>
+     * This method is called from {@link TomcatEmbedder#embed(Properties, ClassLoader)}
+     * method from classloader that contains openejb-loader and openejb-tomcat-loader 
+     * with CatalinaClassLoader as the parent.
+     * </p>
+     * @param properties properties file
+     */
+    static void hook(Properties properties) {
+        
         // verify properties and make sure it contains the openejb.war property
         if (properties == null) throw new NullPointerException("properties is null");
-
+        
+        //Check openejb.war property
+        //This property is set by the LoaderServlet or OpenEJBListener
+        //When you deploy openejb.war into webapps/ directory of the tomcat
+        //Loader servlet automatically starts and initialize this property
         if (!properties.containsKey("openejb.war")) throw new IllegalArgumentException("properties must contain the openejb.war property");
 
         
-        // get the openejb directory (under webapps) using the openejb.war property
+        //Get the openejb directory (under webapps) using the openejb.war property
         File openejbWar = new File(properties.getProperty("openejb.war"));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
@@ -77,14 +93,18 @@ class TomcatHook {
         // set the openejb.loader property to tomcat-system
         properties.setProperty("openejb.loader", "tomcat-system");
 
-        // get the value of catalina.home and set it to openejb.home
+        // Get the value of catalina.home and set it to openejb.home
         String catalinaHome = System.getProperty("catalina.home");
         properties.setProperty("openejb.home", catalinaHome);
+        
+        //Sets system property for openejb.home
         System.setProperty("openejb.home", catalinaHome);
 
         //get the value of catalina.base and set it to openejb.base
         String catalinaBase = System.getProperty("catalina.base");
         properties.setProperty("openejb.base", catalinaBase);
+        
+        //Sets system property for openejb.base
         System.setProperty("openejb.base", catalinaBase);
 
         // Set the openejb.war property as a *System* property
@@ -93,6 +113,8 @@ class TomcatHook {
         // set the property openejb.libs to contain the absolute path of the lib directory of openejb webapp
         File libDir = new File(openejbWar, "lib");
         String libPath = libDir.getAbsolutePath();
+        
+        //Sets openejb.libs to openejb.war/lib folder
         properties.setProperty("openejb.libs", libPath);
 
         // System.setProperty("tomcat.version", "x.y.z.w");
@@ -123,6 +145,10 @@ class TomcatHook {
         } catch (Throwable e) {
         }
 
+        if( properties.getProperty("openejb.libs") == null){
+            throw new NullPointerException("openejb.libs property is not set");
+        }
+        
         try {
             // create the loader
 

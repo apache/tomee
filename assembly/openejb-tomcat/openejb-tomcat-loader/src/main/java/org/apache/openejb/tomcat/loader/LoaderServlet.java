@@ -32,19 +32,32 @@ import javax.servlet.http.HttpServlet;
  *
  * This method of bootstrapping is mutually exclussive to the {@link OpenEJBListener} approach
  */
-//@Generic
 public class LoaderServlet extends HttpServlet {
+    
+    //Default serial version id
+    private static final long serialVersionUID = 1L;
+    
+    /**Flag for starting embedded*/
     private static boolean embedded = false;
 
+    /**
+     * {@inheritDoc}
+     */
     public void init(ServletConfig config) throws ServletException {
         // only install once
         if (embedded) return;
         embedded = true;
-
+        
+        //Gets parameters from servlet initialization parameter
         Properties properties = initParamsToProperties(config);
+        
+        //Web application directory
         File webappDir = new File(getWebappPath(config));
+        
+        //Sets openejb.war property
         properties.setProperty("openejb.war", webappDir.getAbsolutePath());
-
+        
+        //Sets source of the embedder
         properties.setProperty("openejb.embedder.source", getClass().getSimpleName());
 
         //@Tomcat
@@ -64,8 +77,12 @@ public class LoaderServlet extends HttpServlet {
         properties.setProperty("openejb.loader", "tomcat");
 
         // Load in each init-param as a property
-        Enumeration enumeration = config.getInitParameterNames();
-        System.out.println("OpenEJB init-params:");
+        Enumeration<?> enumeration = config.getInitParameterNames();
+        System.out.println("OpenEJB Loader init-params:");
+        if(!enumeration.hasMoreElements()) {
+            System.out.println("\tThere are no initialization parameters.");
+        }
+        
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
             String value = config.getInitParameter(name);
