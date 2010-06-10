@@ -40,8 +40,15 @@ import java.util.Properties;
  * and keeps that very complex code just a little simpler.
  */
 public class TomcatEmbedder {
-	/**
-	 * 
+	
+    /**Prefix for jar openejb-loader*/
+    private static final String OPENEJB_LOADER_PREFIX = "openejb-loader";
+    
+    /**OpenEJB War name*/
+    private static final String OPENEJB_WAR_NAME = "openejb.war";
+    
+    /**
+	 * Starts to embed process. 
 	 * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
 	 * @param catalinaCl The ClassLoader which loaded the ServletConfig class
 	 */
@@ -49,11 +56,11 @@ public class TomcatEmbedder {
         if (catalinaCl == null) throw new NullPointerException("catalinaCl is null");
         if (properties == null) throw new NullPointerException("properties is null");
 
-        if (!properties.containsKey("openejb.war")) {
+        if (!properties.containsKey(OPENEJB_WAR_NAME)) {
             throw new IllegalArgumentException("properties must contain the openejb.war property");
         }
         // openejbWar represents the absolute path of the openejb webapp i.e. the openejb directory
-        File openejbWar = new File(properties.getProperty("openejb.war"));
+        File openejbWar = new File(properties.getProperty(OPENEJB_WAR_NAME));
         if (!openejbWar.isDirectory()) {
             throw new IllegalArgumentException("openejb.war is not a directory: " + openejbWar);
         }
@@ -77,7 +84,7 @@ public class TomcatEmbedder {
             // Use reflection to add the openejb-loader.jar file to the repository of WebappClassLoader. 
             // WebappClassLoader will now search for classes in this jar too
 
-            File jarFile = findOpenEJBJar(openejbWar, "openejb-loader");
+            File jarFile = findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX);
             String openejbLoaderUrl = jarFile.toURI().toString();
 
             webappClClass.getMethod("addRepository", String.class).invoke(childCl, openejbLoaderUrl);
@@ -86,6 +93,7 @@ public class TomcatEmbedder {
             webappClClass.getMethod("start").invoke(childCl);
 
             // TomcatHook.hook()
+            //This is loaded by childCl and is defined in the openejb-tomcat-loader
             Class<?> tomcatUtilClass = childCl.loadClass("org.apache.openejb.tomcat.loader.TomcatHook");
             Method hookMethod = tomcatUtilClass.getDeclaredMethod("hook", Properties.class);
             hookMethod.setAccessible(true);
@@ -96,12 +104,24 @@ public class TomcatEmbedder {
             Thread.currentThread().setContextClassLoader(oldCl);
         }
     }
-
+    
+    /**
+     * Return path to jar file that contains this class.
+     * <p>
+     * Normally, openejb.war/lib/openejb-tomcat-loader.jar
+     * </p>
+     * @return path to jar file that contains this class
+     */
     private static File getThisJar() {
         return jarLocation(TomcatEmbedder.class);
     }
 
-    private static File jarLocation(Class clazz) {
+    /**
+     * Return location of the jar file that contains given class.
+     * @param clazz class file
+     * @return location of the jar file that contains given class
+     */
+    private static File jarLocation(Class<?> clazz) {
         try {
             String classFileName = clazz.getName().replace(".", "/") + ".class";
 
@@ -135,7 +155,14 @@ public class TomcatEmbedder {
             throw new IllegalStateException(e);
         }
     }
-
+    
+    /**
+     * Gets path to jar file that has namePrefix
+     * and in the openejb.war/lib location.
+     * @param openejbWar path to openejb.war
+     * @param namePrefix prefix of the jar file
+     * @return path to file
+     */
     private static File findOpenEJBJar(File openejbWar, String namePrefix) {
         File openEJBLibDir = new File(openejbWar, "lib");
         if (openEJBLibDir == null) return null;
