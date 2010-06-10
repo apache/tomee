@@ -715,19 +715,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         });
 
-        // Sort all the singletons to the back of the list.  We want to make sure
-        // all non-singletons are created first so that if a singleton refers to them
-        // they are available.  We have to do this as @DependsOn only points to other
-        // Singleton beans.  If it listed non-Singlton beans, then we wouldn't need to
-        // pre-sort.
-        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
-            public int compare(DeploymentInfo a, DeploymentInfo b) {
-                int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
-                return aa - bb;
-            }
-        });
-
         // Now Sort all the MDBs to the back of the list.  The Resource Adapter
         // may attempt to use the MDB on endpointActivation and the MDB may have
         // references to other ejbs that would need to be available first.

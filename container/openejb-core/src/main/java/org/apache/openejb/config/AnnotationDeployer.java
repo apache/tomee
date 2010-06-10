@@ -1334,6 +1334,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                         processSessionInterfaces(sessionBean, clazz, ejbModule);
 
                         /*
+                         * Allow for all session bean types
+                         * @DependsOn
+                         */
+                        if (sessionBean.getDependsOn() == null) {
+                            DependsOn dependsOn = getInheritableAnnotation(clazz, DependsOn.class);
+                            if (dependsOn != null) {
+                                sessionBean.setDependsOn(dependsOn.value());
+                            } else {
+                                sessionBean.setDependsOn(Collections.EMPTY_LIST);
+                            }
+                        }
+
+                        /*
                          * Annotations specific to @Singleton beans
                          */
                         if (sessionBean.getSessionType() == SessionType.SINGLETON) {
@@ -1374,17 +1387,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 sessionBean.setLoadOnStartup(startup != null);
                             }
 
-                            /*
-                             * @DependsOn
-                             */
-                            if (sessionBean.getDependsOn() == null) {
-                                DependsOn dependsOn = getInheritableAnnotation(clazz, DependsOn.class);
-                                if (dependsOn != null) {
-                                    sessionBean.setDependsOn(dependsOn.value());
-                                } else {
-                                    sessionBean.setDependsOn(Collections.EMPTY_LIST);
-                                }
-                            }
                         }
                     }
                 }
