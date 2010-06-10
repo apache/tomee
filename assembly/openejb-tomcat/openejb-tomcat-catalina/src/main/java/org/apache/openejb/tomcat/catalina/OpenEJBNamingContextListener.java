@@ -276,7 +276,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         PassthroughFactory.add(resourceInfo, value);
         Assembler assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
 
-        logger.info("Importing a Tomcat Resource with id '" + resourceInfo.id +  "' of type '" + type + "'.");
+        logger.info("Importing a Tomcat Resource with id '" + resourceInfo.id + "' of type '" + type + "'.");
         try {
             assembler.createResource(resourceInfo);
         } catch (OpenEJBException e) {

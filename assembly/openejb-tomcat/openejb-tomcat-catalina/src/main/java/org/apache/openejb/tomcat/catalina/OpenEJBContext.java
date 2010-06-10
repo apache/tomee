@@ -31,22 +31,21 @@ import java.util.Hashtable;
 /**
  * {@link Context} implementation for using it
  * via Tomcat integration.
- * 
- * @version $Rev$ $Date$
  *
+ * @version $Rev$ $Date$
  */
 public class OpenEJBContext implements Context {
-    
+
     /**
      * Default constructor.
      */
-    public OpenEJBContext(){
+    public OpenEJBContext() {
         super();
     }
-    
+
     /**
      * {@inheritDoc}
-     */    
+     */
     public Object lookup(Name name) throws NamingException {
         return getThreadContext().lookup(name);
     }
@@ -60,35 +59,35 @@ public class OpenEJBContext implements Context {
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void bind(Name name, Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void bind(String name, Object obj) throws NamingException {
         getThreadContext().bind(name, obj);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void rebind(Name name, Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void rebind(String name, Object obj) throws NamingException {
         getThreadContext().rebind(name, obj);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void unbind(Name name) throws NamingException {
         getThreadContext().unbind(name);
     }
@@ -165,90 +164,91 @@ public class OpenEJBContext implements Context {
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Context createSubcontext(String name) throws NamingException {
         return getThreadContext().createSubcontext(name);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Object lookupLink(Name name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Object lookupLink(String name) throws NamingException {
         return getThreadContext().lookupLink(name);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public NameParser getNameParser(Name name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public NameParser getNameParser(String name) throws NamingException {
         return getThreadContext().getNameParser(name);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Name composeName(Name name, Name prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public String composeName(String name, String prefix) throws NamingException {
         return getThreadContext().composeName(name, prefix);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
         return getThreadContext().addToEnvironment(propName, propVal);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Object removeFromEnvironment(String propName) throws NamingException {
         return getThreadContext().removeFromEnvironment(propName);
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public Hashtable<?, ?> getEnvironment() throws NamingException {
         return getThreadContext().getEnvironment();
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public void close() throws NamingException {
         getThreadContext().close();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getNameInNamespace() throws NamingException {
         return "";
     }
-    
+
     /**
      * Gets current context deployment context.
+     *
      * @return context of deployment
      * @throws NamingException for exception
      */

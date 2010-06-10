@@ -29,7 +29,6 @@ import org.apache.naming.ContextAccessController;
 import org.apache.naming.factory.Constants;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
@@ -46,6 +45,9 @@ import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.tomcat.common.EjbFactory;
+import org.apache.openejb.tomcat.common.NamingUtil;
 import static org.apache.openejb.tomcat.common.NamingUtil.DEPLOYMENT_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTENDED;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTERNAL;
@@ -61,19 +63,17 @@ import static org.apache.openejb.tomcat.common.NamingUtil.WS_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_PORT_QNAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.setStaticValue;
-import org.apache.openejb.tomcat.common.EjbFactory;
-import org.apache.openejb.tomcat.common.WsFactory;
-import org.apache.openejb.tomcat.common.ResourceFactory;
-import org.apache.openejb.tomcat.common.PersistenceUnitFactory;
 import org.apache.openejb.tomcat.common.PersistenceContextFactory;
+import org.apache.openejb.tomcat.common.PersistenceUnitFactory;
+import org.apache.openejb.tomcat.common.ResourceFactory;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
-import org.apache.openejb.tomcat.common.NamingUtil;
+import org.apache.openejb.tomcat.common.WsFactory;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
-import javax.naming.Context;
-import javax.naming.NamingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -536,7 +536,7 @@ public class TomcatJndiBuilder {
             }
         }
 
-        if (wsdlUrl == null ) {
+        if (wsdlUrl == null) {
             throw new IllegalArgumentException("WSDL file " + ref.wsdlFile + " for web service-ref " + ref.referenceName + " not found");
         }
 

@@ -20,27 +20,34 @@ package org.apache.openejb.tomcat.catalina;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
 import java.lang.reflect.Method;
 
 /**
  * Tomcat thread context listener.
+ *
  * @version $Rev$ $Date$
  */
 public class TomcatThreadContextListener implements ThreadContextListener {
-    
-    /**Logger instance for tomcat*/
+
+    /**
+     * Logger instance for tomcat
+     */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
-    
-    /**OpenEJB context name*/
+
+    /**
+     * OpenEJB context name
+     */
     private static final String OPENEJB_CONTEXT = "OpenEJBContext";
-    
-    /**getThreadName method in class ContextBindings*/
+
+    /**
+     * getThreadName method in class ContextBindings
+     */
     protected Method method;
-    
+
     /**
      * Creates a new instance.
      */
@@ -50,17 +57,17 @@ public class TomcatThreadContextListener implements ThreadContextListener {
         try {
             // someone decided to make the getThreadName package protected so we have to use reflection
             method = ContextBindings.class.getDeclaredMethod("getThreadName");
-            accessible = method.isAccessible();            
+            accessible = method.isAccessible();
             method.setAccessible(true);
         } catch (NoSuchMethodException e) {
             logger.error("Expected ContextBinding to have the method getThreadName()");
-        }finally{
-            if(!accessible){
-                method.setAccessible(accessible);   
+        } finally {
+            if (!accessible) {
+                method.setAccessible(accessible);
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -94,13 +101,14 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             try {
                 ContextBindings.bindThread(data.oldContextName);
             } catch (NamingException e) {
-                logger.error("Exception in method contextExited",e);
+                logger.error("Exception in method contextExited", e);
             }
         }
     }
-    
+
     /**
      * Gets thread name.
+     *
      * @return thread name
      * @throws NamingException for exception
      */
@@ -109,7 +117,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             Object threadName = method.invoke(null);
             return threadName;
         } catch (Exception e) {
-            logger.error("Exception in method getThreadName",e);
+            logger.error("Exception in method getThreadName", e);
             return null;
         }
     }

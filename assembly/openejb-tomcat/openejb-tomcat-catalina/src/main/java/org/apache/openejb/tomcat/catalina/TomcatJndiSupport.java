@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.RpcContainerWrapper;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.RpcContainerWrapper;
 
 import javax.naming.Context;
 import java.lang.reflect.InvocationTargetException;
@@ -63,7 +63,7 @@ public class TomcatJndiSupport extends RpcContainerWrapper {
         setupDeployment((org.apache.openejb.core.CoreDeploymentInfo) info);
     }
 
-    public static Map<Object,Context> contexts = new HashMap<Object,Context>();
+    public static Map<Object, Context> contexts = new HashMap<Object, Context>();
 
     private void setupDeployment(org.apache.openejb.core.CoreDeploymentInfo deployment) {
 

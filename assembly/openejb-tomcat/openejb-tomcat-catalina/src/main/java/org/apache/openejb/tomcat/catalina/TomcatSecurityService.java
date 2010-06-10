@@ -17,13 +17,13 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
-import org.apache.catalina.Realm;
-import org.apache.catalina.Service;
 import org.apache.catalina.Engine;
-import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
-import org.apache.openejb.core.security.AbstractSecurityService;
+import org.apache.catalina.ServerFactory;
+import org.apache.catalina.Service;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
 
 import javax.security.auth.Subject;
@@ -31,11 +31,11 @@ import javax.security.auth.login.LoginException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.UUID;
 
-public class TomcatSecurityService  extends AbstractSecurityService {
+public class TomcatSecurityService extends AbstractSecurityService {
     static protected final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
         protected LinkedList<Subject> initialValue() {
             return new LinkedList<Subject>();
