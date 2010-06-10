@@ -395,15 +395,16 @@ public class StatelessInstanceManager {
     public void deploy(CoreDeploymentInfo deploymentInfo) {
         Options options = new Options(deploymentInfo.getProperties());
 
-        final Pool.Builder builder = new Pool.Builder(poolBuilder);
-
         Duration accessTimeout = getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS);
         accessTimeout = getDuration(options, "AccessTimeout", accessTimeout, TimeUnit.MILLISECONDS);
-
         Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
 
-        final ObjectRecipe recipe = PassthroughFactory.recipe(builder);
+        final ObjectRecipe recipe = PassthroughFactory.recipe(new Pool.Builder(poolBuilder));
+        recipe.allow(Option.CASE_INSENSITIVE_FACTORY);
+        recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+        recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
         recipe.setAllProperties(deploymentInfo.getProperties());
+        final Pool.Builder builder = (Pool.Builder) recipe.create();
 
         setDefault(builder.getMaxAge(), TimeUnit.HOURS);
         setDefault(builder.getIdleTimeout(), TimeUnit.MINUTES);
