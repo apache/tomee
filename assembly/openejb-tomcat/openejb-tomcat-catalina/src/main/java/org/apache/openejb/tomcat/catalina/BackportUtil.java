@@ -17,11 +17,11 @@
 package org.apache.openejb.tomcat.catalina;
 
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.ContextService;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 
 import javax.servlet.Servlet;
@@ -37,7 +37,7 @@ public class BackportUtil {
     private static API api;
 
     static {
-        if (TomcatVersion.v6.isTheVersion()){
+        if (TomcatVersion.v6.isTheVersion()) {
             api = new Tomcat6();
         } else {
             api = new Tomcat55();
@@ -66,8 +66,11 @@ public class BackportUtil {
 
     public static interface API {
         Servlet getServlet(Wrapper wrapper);
+
         String findServiceName(NamingResources naming, String refName);
+
         NamingContextListener getNamingContextListener(StandardContext standardContext);
+
         void removeService(NamingContextListener namingContextListener, String serviceName);
     }
 
@@ -83,7 +86,7 @@ public class BackportUtil {
 
         public String findServiceName(NamingResources naming, String referenceName) {
             ContextService service = naming.findService(referenceName);
-            return (service != null)?service.getName():null;
+            return (service != null) ? service.getName() : null;
         }
 
         public void removeService(NamingContextListener namingContextListener, String serviceName) {
@@ -132,14 +135,13 @@ public class BackportUtil {
                         field.setAccessible(true);
                         return field;
                     } catch (Exception e2) {
-                        throw (IllegalStateException) new IllegalStateException("Unable to find or access the '"+name+"' field in "+clazz.getName()).initCause(e2);
+                        throw (IllegalStateException) new IllegalStateException("Unable to find or access the '" + name + "' field in " + clazz.getName()).initCause(e2);
                     }
                 }
             });
         }
 
     }
-
 
 
 }

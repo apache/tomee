@@ -51,7 +51,7 @@ public class OpenEJBValve extends ValveBase {
     }
 
     private TomcatSecurityService getSecurityService() {
-        SecurityService securityService =  SystemInstance.get().getComponent(SecurityService.class);
+        SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService) {
             return (TomcatSecurityService) securityService;
         }

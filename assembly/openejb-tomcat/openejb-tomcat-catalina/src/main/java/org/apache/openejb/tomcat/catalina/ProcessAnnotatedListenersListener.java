@@ -16,23 +16,23 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
-import org.apache.catalina.ContainerListener;
 import org.apache.catalina.ContainerEvent;
+import org.apache.catalina.ContainerListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The StandardContext only calls these events for the listeners in the
  * getApplicationLifecycleListeners() list and not for any listeners in the
  * getApplicationEventListeners() list.  This is a big pain as we need to
  * do annotation processing for both.  The code gets a bit tricky as a result.
- *
+ * <p/>
  * Note this class only pertains to Tomcat 5.5.x and before, not 6.0.x and after.
  *
  * @version $Rev$ $Date$
@@ -56,6 +56,7 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
 
     /**
      * We must process all the listeners on the very first "beforeContextInitialized" event of this Container
+     *
      * @param event
      */
     private void listenerStart(ContainerEvent event) {
@@ -80,10 +81,11 @@ public class ProcessAnnotatedListenersListener extends LegacyAnnotationProcessor
 
     /**
      * We must process all the listeners on the very last "afterContextDestroyed" event of this Container
-     *
+     * <p/>
      * Looking at the code it's possible that if a ContainerListener threw an exception in the
      * afterContextDestroyed event that the afterContextDestroyed will get fired again in the catch block,
      * so we need to watch for that.  We use a set to ensure we can track uniqe events.
+     *
      * @param event
      */
     private void listenerStop(ContainerEvent event) {
