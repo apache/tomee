@@ -18,6 +18,9 @@ package org.apache.openejb.util;
 
 import java.beans.PropertyEditorManager;
 import java.util.concurrent.TimeUnit;
+import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Duration {
 
@@ -81,48 +84,8 @@ public class Duration {
 
             part.time = Integer.parseInt(t.toString());
 
-            Unit unit1 = parseUnit(u.toString());
+            part.unit = parseUnit(u.toString());
 
-            if (unit1 != null) switch (unit1) {
-                case days: {
-                    part.time *= 60 * 60 * 24;
-                    part.unit = TimeUnit.SECONDS;
-                }
-                ;
-                break;
-                case hours: {
-                    part.time *= 60 * 60;
-                    part.unit = TimeUnit.SECONDS;
-                }
-                ;
-                break;
-                case minutes: {
-                    part.time *= 60;
-                    part.unit = TimeUnit.SECONDS;
-                }
-                ;
-                break;
-                case seconds: {
-                    part.unit = TimeUnit.SECONDS;
-                }
-                ;
-                break;
-                case milliseconds: {
-                    part.unit = TimeUnit.MILLISECONDS;
-                }
-                ;
-                break;
-                case microseconds: {
-                    part.unit = TimeUnit.MICROSECONDS;
-                }
-                ;
-                break;
-                case nanoseconds: {
-                    part.unit = TimeUnit.NANOSECONDS;
-                }
-                ;
-                break;
-            }
             total = total.add(part);
         }
 
@@ -222,56 +185,59 @@ public class Duration {
         return sb.toString();
     }
 
-    private static Unit parseUnit(String u) {
+    private static TimeUnit parseUnit(String u) {
         if (u.length() == 0) return null;
 
-        if (u.equalsIgnoreCase("NANOSECONDS")) return Unit.nanoseconds;
-        if (u.equalsIgnoreCase("NANOSECOND")) return Unit.nanoseconds;
-        if (u.equalsIgnoreCase("NANOS")) return Unit.nanoseconds;
-        if (u.equalsIgnoreCase("NANO")) return Unit.nanoseconds;
-        if (u.equalsIgnoreCase("NS")) return Unit.nanoseconds;
+        if (u.equalsIgnoreCase("NANOSECONDS")) return TimeUnit.NANOSECONDS;
+        if (u.equalsIgnoreCase("NANOSECOND")) return TimeUnit.NANOSECONDS;
+        if (u.equalsIgnoreCase("NANOS")) return TimeUnit.NANOSECONDS;
+        if (u.equalsIgnoreCase("NANO")) return TimeUnit.NANOSECONDS;
+        if (u.equalsIgnoreCase("NS")) return TimeUnit.NANOSECONDS;
 
-        if (u.equalsIgnoreCase("MICROSECONDS")) return Unit.microseconds;
-        if (u.equalsIgnoreCase("MICROSECOND")) return Unit.microseconds;
-        if (u.equalsIgnoreCase("MICROS")) return Unit.microseconds;
-        if (u.equalsIgnoreCase("MICRO")) return Unit.microseconds;
+        if (u.equalsIgnoreCase("MICROSECONDS")) return TimeUnit.MICROSECONDS;
+        if (u.equalsIgnoreCase("MICROSECOND")) return TimeUnit.MICROSECONDS;
+        if (u.equalsIgnoreCase("MICROS")) return TimeUnit.MICROSECONDS;
+        if (u.equalsIgnoreCase("MICRO")) return TimeUnit.MICROSECONDS;
 
-        if (u.equalsIgnoreCase("MILLISECONDS")) return Unit.milliseconds;
-        if (u.equalsIgnoreCase("MILLISECOND")) return Unit.milliseconds;
-        if (u.equalsIgnoreCase("MILLIS")) return Unit.milliseconds;
-        if (u.equalsIgnoreCase("MILLI")) return Unit.milliseconds;
-        if (u.equalsIgnoreCase("MS")) return Unit.milliseconds;
+        if (u.equalsIgnoreCase("MILLISECONDS")) return TimeUnit.MILLISECONDS;
+        if (u.equalsIgnoreCase("MILLISECOND")) return TimeUnit.MILLISECONDS;
+        if (u.equalsIgnoreCase("MILLIS")) return TimeUnit.MILLISECONDS;
+        if (u.equalsIgnoreCase("MILLI")) return TimeUnit.MILLISECONDS;
+        if (u.equalsIgnoreCase("MS")) return TimeUnit.MILLISECONDS;
 
-        if (u.equalsIgnoreCase("SECONDS")) return Unit.seconds;
-        if (u.equalsIgnoreCase("SECOND")) return Unit.seconds;
-        if (u.equalsIgnoreCase("SEC")) return Unit.seconds;
-        if (u.equalsIgnoreCase("S")) return Unit.seconds;
+        if (u.equalsIgnoreCase("SECONDS")) return TimeUnit.SECONDS;
+        if (u.equalsIgnoreCase("SECOND")) return TimeUnit.SECONDS;
+        if (u.equalsIgnoreCase("SEC")) return TimeUnit.SECONDS;
+        if (u.equalsIgnoreCase("S")) return TimeUnit.SECONDS;
 
-        if (u.equalsIgnoreCase("MINUTES")) return Unit.minutes;
-        if (u.equalsIgnoreCase("MINUTE")) return Unit.minutes;
-        if (u.equalsIgnoreCase("MIN")) return Unit.minutes;
-        if (u.equalsIgnoreCase("M")) return Unit.minutes;
+        if (u.equalsIgnoreCase("MINUTES")) return TimeUnit.MINUTES;
+        if (u.equalsIgnoreCase("MINUTE")) return TimeUnit.MINUTES;
+        if (u.equalsIgnoreCase("MIN")) return TimeUnit.MINUTES;
+        if (u.equalsIgnoreCase("M")) return TimeUnit.MINUTES;
 
-        if (u.equalsIgnoreCase("HOURS")) return Unit.hours;
-        if (u.equalsIgnoreCase("HOUR")) return Unit.hours;
-        if (u.equalsIgnoreCase("HRS")) return Unit.hours;
-        if (u.equalsIgnoreCase("HR")) return Unit.hours;
-        if (u.equalsIgnoreCase("H")) return Unit.hours;
+        if (u.equalsIgnoreCase("HOURS")) return TimeUnit.HOURS;
+        if (u.equalsIgnoreCase("HOUR")) return TimeUnit.HOURS;
+        if (u.equalsIgnoreCase("HRS")) return TimeUnit.HOURS;
+        if (u.equalsIgnoreCase("HR")) return TimeUnit.HOURS;
+        if (u.equalsIgnoreCase("H")) return TimeUnit.HOURS;
 
-        if (u.equalsIgnoreCase("DAYS")) return Unit.days;
-        if (u.equalsIgnoreCase("DAY")) return Unit.days;
-        if (u.equalsIgnoreCase("D")) return Unit.days;
+        if (u.equalsIgnoreCase("DAYS")) return TimeUnit.DAYS;
+        if (u.equalsIgnoreCase("DAY")) return TimeUnit.DAYS;
+        if (u.equalsIgnoreCase("D")) return TimeUnit.DAYS;
 
-        throw new IllegalArgumentException("Unknown time unit '" + u + "'.  Supported units " + Join.join(", ", Unit.values()));
+        throw new IllegalArgumentException("Unknown time unit '" + u + "'.  Supported units " + Join.join(", ", lowercase(TimeUnit.values())));
     }
 
+    private static List<String> lowercase(Enum... units) {
+        List<String> list = new ArrayList<String>();
+        for (Enum unit : units) {
+            list.add(unit.name().toLowerCase());
+        }
+        return list;
+    }
 
     static {
         PropertyEditorManager.registerEditor(Duration.class, DurationEditor.class);
     }
 
-    public static enum Unit {
-        // All lowercase so they look good displayed in help
-        nanoseconds, microseconds, milliseconds, seconds, minutes, hours, days;
-    }
 }
