@@ -50,7 +50,6 @@ public class StatefulConcurrencyTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
-        statefulContainerInfo.properties.setProperty("PoolSize", "0");
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         assembler.createContainer(statefulContainerInfo);
 
