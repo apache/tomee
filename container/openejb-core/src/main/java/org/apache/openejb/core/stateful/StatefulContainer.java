@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
@@ -93,6 +94,7 @@ public class StatefulContainer implements RpcContainer {
 
     private final Object containerID;
     private final SecurityService securityService;
+    private final Duration accessTimeout;
 
     // todo this should be part of the constructor
     protected final JtaEntityManagerRegistry entityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
@@ -106,10 +108,15 @@ public class StatefulContainer implements RpcContainer {
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
 
     public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache) {
+        this(id, securityService, cache, new Duration(0, TimeUnit.MILLISECONDS));
+    }
+
+    public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache, Duration accessTimeout) {
         this.containerID = id;
         this.securityService = securityService;
         this.cache = cache;
         cache.setListener(new StatefulCacheListener());
+        this.accessTimeout = accessTimeout;
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
@@ -690,8 +697,10 @@ public class StatefulContainer implements RpcContainer {
         }
 
 
-        final Duration accessTimeout = instance.deploymentInfo.getAccessTimeout();
-    	final Lock currLock = instance.getLock();
+        Duration accessTimeout = instance.deploymentInfo.getAccessTimeout();
+        if (accessTimeout == null) accessTimeout = this.accessTimeout;
+
+        final Lock currLock = instance.getLock();
     	final boolean lockAcquired;
     	if(accessTimeout == null) {
     		// returns immediately true if the lock is available 
