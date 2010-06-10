@@ -23,12 +23,14 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.OpenEJBException;
 
 import javax.annotation.PostConstruct;
@@ -65,14 +67,18 @@ public class DependsOnTest extends TestCase {
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
+        StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
+        statelessContainer.properties.setProperty("PoolMin", "1");
+        assembler.createContainer(statelessContainer);
+        
         actual.clear();
 
         EjbJar ejbJar = new EjbJar();
 
-        ejbJar.addEnterpriseBean(new SingletonBean(Two.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(Two.class));
         ejbJar.addEnterpriseBean(new SingletonBean(One.class));
         ejbJar.addEnterpriseBean(new SingletonBean(Four.class));
-        ejbJar.addEnterpriseBean(new SingletonBean(Three.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(Three.class));
 
         // startup and trigger @PostConstruct
         assembler.createApplication(config.configureApplication(ejbJar));

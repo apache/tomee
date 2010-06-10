@@ -224,9 +224,13 @@ class EnterpriseBeanBuilder {
             deployment.setBeanManagedTransaction("Bean".equalsIgnoreCase(bean.transactionType));
         }
 
+        if (ejbType.isSession()) {
+            // Allow dependsOn to work for all session beans
+            deployment.getDependsOn().addAll(bean.dependsOn);
+        }
+
         if (ejbType == BeanType.SINGLETON) {
             deployment.setBeanManagedConcurrency("Bean".equalsIgnoreCase(bean.concurrencyType));
-            deployment.getDependsOn().addAll(bean.dependsOn);
             deployment.setLoadOnStartup(bean.loadOnStartup);
             deployment.setLocalbean(((SingletonBeanInfo) bean).localbean);
         }
