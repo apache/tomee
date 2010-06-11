@@ -414,7 +414,7 @@ public class MultipointServer {
 
                             case HEARTBEAT: { // read
 
-                                String message = session.read();
+                                String message = null;
                                 while ((message = session.read()) != null) {
                                     tracker.processData(message);
                                 }
