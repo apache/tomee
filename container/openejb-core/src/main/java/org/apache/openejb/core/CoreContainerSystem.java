@@ -54,21 +54,15 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         }
         jndiContext = jndiFactory.createRootContext();
         try {
-            if (SystemInstance.get().hasProperty("openejb.geronimo")) {
-                Context openejb = jndiContext.createSubcontext("openejb");
-                openejb.createSubcontext("local");
-                openejb.createSubcontext("remote");
-                openejb.createSubcontext("client");
-                openejb.createSubcontext("Deployment");
-            } else {
-                jndiContext.bind("openejb/local/.", "");
-                jndiContext.bind("openejb/remote/.", "");
-                jndiContext.bind("openejb/client/.", "");
-                jndiContext.bind("openejb/Deployment/.", "");
+            if (!(jndiContext.lookup("openejb/local") instanceof Context)
+            || !(jndiContext.lookup("openejb/remote") instanceof Context)
+            || !(jndiContext.lookup("openejb/client") instanceof Context)
+            || !(jndiContext.lookup("openejb/Deployment") instanceof Context)) {
+                throw new RuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present");
             }
         }
         catch (javax.naming.NamingException exception) {
-            throw new RuntimeException("Could not initialize openejb core naming context", exception);
+            throw new RuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present", exception);
         }
         SystemInstance.get().setComponent(JndiFactory.class, jndiFactory);
     }

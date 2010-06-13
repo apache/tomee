@@ -23,7 +23,7 @@ package org.apache.openejb.core.ivm.naming;
 import java.util.Map;
 
 
-import javax.naming.Context;
+import javax.naming.*;
 
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.SystemException;
@@ -36,6 +36,14 @@ public class IvmJndiFactory implements JndiFactory {
 
     public IvmJndiFactory() {
         jndiRootContext = IvmContext.createRootContext();
+        try {
+            jndiRootContext.bind("openejb/local/.", "");
+            jndiRootContext.bind("openejb/remote/.", "");
+            jndiRootContext.bind("openejb/client/.", "");
+            jndiRootContext.bind("openejb/Deployment/.", "");
+        } catch (javax.naming.NamingException e) {
+            throw new RuntimeException("this should not happen", e);
+        }
     }
 
     public Context createComponentContext(Map<String, Object> bindings) throws SystemException {
