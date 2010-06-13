@@ -100,7 +100,7 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
             // All lists and collections *must* specify the generic type
             // No vague lists that are typeless
-            // Garantees that the data type in the list is one of the allowed types
+            // Guarantees that the data type in the list is one of the allowed types
             if (List.class.isAssignableFrom(type)) {
                 type = getGenericType(field);
                 assertNotNull("Lists must have a generic type: " + simpleName + "." + field.getName(), type);
