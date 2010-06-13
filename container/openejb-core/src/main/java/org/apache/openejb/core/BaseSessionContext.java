@@ -19,7 +19,6 @@ package org.apache.openejb.core;
 import java.security.Principal;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
