@@ -50,7 +50,9 @@ import java.util.Map;
         "postConstruct",
         "preDestroy",
         "callbackHandler",
-        "messageDestination"
+        "messageDestination",
+        "dataSource"
+
 })
 public class ApplicationClient implements JndiConsumer {
 
@@ -87,7 +89,9 @@ public class ApplicationClient implements JndiConsumer {
     protected String callbackHandler;
     @XmlElement(name = "message-destination", required = true)
     protected KeyedCollection<String,MessageDestination> messageDestination;
-
+    @XmlElement(name = "data-source")
+    protected KeyedCollection<String,DataSource> dataSource;
+ 
 
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -281,6 +285,20 @@ public class ApplicationClient implements JndiConsumer {
             persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
+    }
+
+    public Collection<DataSource> getDataSource() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource;
+    }
+
+    public Map<String,DataSource> getDataSourceMap() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource.toMap();
     }
 
     public List<LifecycleCallback> getPostConstruct() {

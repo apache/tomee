@@ -26,17 +26,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
-/**
- * The exception-mapping element defines the mapping between the
- * service specific exception types and wsdl faults and
- * SOAP headerfaults.
- * <p/>
- * This element should be interpreted with respect to the
- * mapping between a method and an operation which provides the
- * mapping context.
- * <p/>
- * Used in: service-endpoint-method-mapping
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "exception-mappingType", propOrder = {
     "exceptionType",

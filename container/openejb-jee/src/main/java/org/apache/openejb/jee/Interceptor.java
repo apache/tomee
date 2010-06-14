@@ -52,6 +52,7 @@ import java.util.Map;
         "description",
         "interceptorClass",
         "aroundInvoke",
+        "aroundTimeout",
         "envEntry",
         "ejbRef",
         "ejbLocalRef",
@@ -63,6 +64,7 @@ import java.util.Map;
         "persistenceUnitRef",
         "postConstruct",
         "preDestroy",
+        "dataSource",
         "postActivate",
         "prePassivate",
         "afterBegin",
@@ -77,6 +79,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected String interceptorClass;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
+    @XmlElement(name = "around-timeout")
+    protected List<AroundTimeout> aroundTimeout;
     @XmlElement(name = "env-entry", required = true)
     protected KeyedCollection<String,EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
@@ -95,6 +99,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
     protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    @XmlElement(name = "data-source", required = true)
+    protected KeyedCollection<String,DataSource> dataSource;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -157,6 +163,13 @@ public class Interceptor implements JndiConsumer, Session {
     public void addAroundInvoke(String method){
         assert interceptorClass != null: "Set the interceptorClass before calling this method";
         getAroundInvoke().add(new AroundInvoke(interceptorClass, method));
+    }
+
+    public List<AroundTimeout> getAroundTimeout() {
+        if (aroundTimeout == null) {
+            aroundTimeout = new ArrayList<AroundTimeout>();
+        }
+        return this.aroundTimeout;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
@@ -283,6 +296,22 @@ public class Interceptor implements JndiConsumer, Session {
             persistenceUnitRef = new KeyedCollection<String,PersistenceUnitRef>();
         }
         return this.persistenceUnitRef.toMap();
+    }
+
+    @Override
+    public Collection<DataSource> getDataSource() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource;
+    }
+
+    @Override
+    public Map<String,DataSource> getDataSourceMap() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource.toMap();
     }
 
     public List<LifecycleCallback> getPostConstruct() {

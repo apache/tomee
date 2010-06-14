@@ -27,15 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The constructor-parameter-order element defines the order
- * that complexType element values are applied to a Java
- * exception constructor. Element names are specified for each
- * parameter of the constructor, including element names of
- * inherited types if necessary.
- * <p/>
- * Used in: exception-mapping
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "constructor-parameter-orderType", propOrder = {"elementName"})
 public class ConstructorParameterOrder {

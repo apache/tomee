@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -28,19 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * The activation-configType defines information about the
- * expected configuration properties of the message-driven bean
- * in its operational environment. This may include information
- * about message acknowledgement, message selector, expected
- * destination type, etc.
- * <p/>
- * The configuration information is expressed in terms of
- * name/value configuration properties.
- * <p/>
- * The properties that are recognized for a particular
- * message-driven bean are determined by the messaging type.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-configType", propOrder = {
         "description",
@@ -55,6 +43,7 @@ public class ActivationConfig {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
+    @XmlSchemaType(name = "ID")
     protected String id;
 
     public List<Text> getDescription() {

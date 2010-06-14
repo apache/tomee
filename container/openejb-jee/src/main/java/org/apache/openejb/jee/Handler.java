@@ -37,7 +37,8 @@ import java.util.Map;
  * Used in: port-component
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "port-component_handlerType", propOrder = {
+//@XmlType(name = "port-component_handlerType", propOrder = {
+@XmlType(name = "handlerType", propOrder = {
     "description",
     "displayName",
     "icon",

@@ -27,19 +27,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import java.util.List;
 import java.util.ArrayList;
-
+//TODO not part of schema?  replaced by concurrent-method?
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "container-concurrencyType", propOrder = {
         "descriptions",
+        //replaced by a NamedMethod which doesn't need the ejb-name because it's attached to an ejb already.
         "method",
-        "concurrencyAttribute"
+        "lock"
         })
-public class ContainerConcurrency implements AttributeBinding<ConcurrencyAttribute>{
+public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType>{
 
     @XmlElement(required = true)
     protected List<Method> method;
     @XmlElement(name = "concurrency-attribute", required = true)
-    protected ConcurrencyAttribute concurrencyAttribute;
+    protected ConcurrentLockType lock;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -56,16 +57,16 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrencyAttribu
     public ContainerConcurrency() {
     }
 
-    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, String className, String ejbName, String methodName) {
-        this(concurrencyAttribute, new Method(ejbName, className, methodName));
+    public ContainerConcurrency(ConcurrentLockType lock, String className, String ejbName, String methodName) {
+        this(lock, new Method(ejbName, className, methodName));
     }
 
-    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, String ejbName, java.lang.reflect.Method method) {
-        this(concurrencyAttribute, new Method(ejbName, method));
+    public ContainerConcurrency(ConcurrentLockType lock, String ejbName, java.lang.reflect.Method method) {
+        this(lock, new Method(ejbName, method));
     }
 
-    public ContainerConcurrency(ConcurrencyAttribute concurrencyAttribute, Method method) {
-        this.concurrencyAttribute = concurrencyAttribute;
+    public ContainerConcurrency(ConcurrentLockType lock, Method method) {
+        this.lock = lock;
         getMethod().add(method);
     }
 
@@ -84,16 +85,16 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrencyAttribu
         return this.method;
     }
 
-    public ConcurrencyAttribute getAttribute() {
-        return concurrencyAttribute;
+    public ConcurrentLockType getAttribute() {
+        return lock;
     }
 
-    public ConcurrencyAttribute getConcurrencyAttribute() {
-        return concurrencyAttribute;
+    public ConcurrentLockType getLock() {
+        return lock;
     }
 
-    public void setConcurrencyAttribute(ConcurrencyAttribute value) {
-        this.concurrencyAttribute = value;
+    public void setLock(ConcurrentLockType value) {
+        this.lock = value;
     }
 
     public String getId() {

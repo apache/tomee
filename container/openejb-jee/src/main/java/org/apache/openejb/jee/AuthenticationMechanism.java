@@ -27,20 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The authentication-mechanismType specifies an authentication
- * mechanism supported by the resource adapter. Note that this
- * support is for the resource adapter and not for the
- * underlying EIS instance. The optional description specifies
- * any resource adapter specific requirement for the support of
- * security contract and authentication mechanism.
- * <p/>
- * Note that BasicPassword mechanism type should support the
- * javax.resource.spi.security.PasswordCredential interface.
- * The Kerbv5 mechanism type should support the
- * org.ietf.jgss.GSSCredential interface or the deprecated
- * javax.resource.spi.security.GenericCredential interface.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "authentication-mechanismType", propOrder = {
     "description",
@@ -49,6 +35,7 @@ import java.util.List;
 })
 public class AuthenticationMechanism {
 
+    //TODO use TextMap for description
     protected List<Text> description;
     @XmlElement(name = "authentication-mechanism-type", required = true)
     protected String authenticationMechanismType;

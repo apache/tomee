@@ -60,7 +60,11 @@ import java.util.Map;
         "includePrelude",
         "includeCoda", 
         "deferredSyntaxAllowedAsLiteral",
-        "trimDirectiveWhitespaces"
+        "trimDirectiveWhitespaces",
+    "defaultContentType",
+    "buffer",
+    "errorOnUndeclaredNamespace"
+
 })
 public class JspPropertyGroup {
 
@@ -89,6 +93,11 @@ public class JspPropertyGroup {
     protected Boolean deferredSyntaxAllowedAsLiteral;
     @XmlElement(name = "trim-directive-whitespaces")
     protected Boolean trimDirectiveWhitespaces;
+    @XmlElement(name = "default-content-type")
+    protected String defaultContentType;
+    protected String buffer;
+    @XmlElement(name = "error-on-undeclared-namespace")
+    protected Boolean errorOnUndeclaredNamespace;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -205,6 +214,30 @@ public class JspPropertyGroup {
 
     public void setTrimDirectiveWhitespaces(Boolean value) {
         this.trimDirectiveWhitespaces = value;
+    }
+
+    public String getDefaultContentType() {
+        return defaultContentType;
+    }
+
+    public void setDefaultContentType(String value) {
+        this.defaultContentType = value;
+    }
+
+    public String getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(String value) {
+        this.buffer = value;
+    }
+
+    public Boolean getErrorOnUndeclaredNamespace() {
+        return errorOnUndeclaredNamespace;
+    }
+
+    public void setErrorOnUndeclaredNamespace(Boolean value) {
+        this.errorOnUndeclaredNamespace = value;
     }
 
     public String getId() {

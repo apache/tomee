@@ -27,14 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The adminobjectType specifies information about an
- * administered object.  Administered objects are specific to a
- * messaging style or message provider.  This contains
- * information on the Java type of the interface implemented by
- * an administered object, its Java class name and its
- * configuration properties.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "adminobjectType", propOrder = {
         "adminObjectInterface",

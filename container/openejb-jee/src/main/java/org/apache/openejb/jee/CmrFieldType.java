@@ -21,12 +21,6 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 
-/**
- * The cmr-field-type element specifies the class of a
- * collection-valued logical relationship field in the entity
- * bean class. The value of an element using cmr-field-typeType
- * must be either: java.util.Collection or java.util.Set.
- */
 public enum CmrFieldType {
     @XmlEnumValue("java.util.Collection") COLLECTION("java.util.Collection"),
     @XmlEnumValue("java.util.Set") SET("java.util.Set");

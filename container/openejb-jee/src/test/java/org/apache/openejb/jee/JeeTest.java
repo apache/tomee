@@ -289,6 +289,7 @@ public class JeeTest extends TestCase {
     private static class TestValidationEventHandler implements ValidationEventHandler {
         public boolean handleEvent(ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
+            System.out.println(validationEvent.getLocator());
             return false; // if an error occurs we must be aware of
         }
     }

@@ -43,7 +43,7 @@ public class FilterMapping {
     protected List<String> urlPattern;
     @XmlElement(name = "servlet-name")
     protected List<String> servletName;
-    protected List<String> dispatcher;
+    protected List<Dispatcher> dispatcher;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -71,9 +71,9 @@ public class FilterMapping {
         return this.servletName;
     }
 
-    public List<String> getDispatcher() {
+    public List<Dispatcher> getDispatcher() {
         if (dispatcher == null) {
-            dispatcher = new ArrayList<String>();
+            dispatcher = new ArrayList<Dispatcher>();
         }
         return this.dispatcher;
     }

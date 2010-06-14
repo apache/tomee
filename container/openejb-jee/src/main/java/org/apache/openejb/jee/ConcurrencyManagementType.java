@@ -16,18 +16,26 @@
  */
 package org.apache.openejb.jee;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 
-/**
- * The concurrency-typeType specifies an enterprise bean's
- * concurrency management type.
- * <p/>
- * The concurrency-type must be one of the two following:
- * <p/>
- * Bean
- * Container
- */
-public enum ConcurrencyType {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "concurrency-management-typeType")
+@XmlEnum
+public enum ConcurrencyManagementType {
+
     @XmlEnumValue("Bean") BEAN,
     @XmlEnumValue("Container") CONTAINER;
+
+    public java.lang.String value() {
+        return name();
+    }
+
+    public static ConcurrencyManagementType fromValue(java.lang.String v) {
+        return valueOf(v);
+    }
+
 }

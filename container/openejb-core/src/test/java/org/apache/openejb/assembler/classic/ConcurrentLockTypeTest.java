@@ -19,7 +19,7 @@ package org.apache.openejb.assembler.classic;
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.jee.ConcurrencyAttribute;
+import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
@@ -28,17 +28,18 @@ import org.apache.openejb.spi.ContainerSystem;
 
 import javax.ejb.Local;
 import javax.ejb.Lock;
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
 import javax.ejb.Remote;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
+
 /**
  * @version $Rev$ $Date$
  */
-public class ConcurrencyAttributesTest extends TestCase {
+public class ConcurrentLockTypeTest extends TestCase {
     private Map<Method, MethodAttributeInfo> attributes;
 
     public void test() throws Exception {
@@ -56,11 +57,11 @@ public class ConcurrencyAttributesTest extends TestCase {
         ejbJar.addEnterpriseBean(new SingletonBean(Scarlet.class));
         List<ContainerConcurrency> declared = ejbJar.getAssemblyDescriptor().getContainerConcurrency();
 
-        declared.add(new ContainerConcurrency(ConcurrencyAttribute.WRITE, "*", "*", "*"));
-        declared.add(new ContainerConcurrency(ConcurrencyAttribute.READ, "*", "Crimson", "*"));
-        declared.add(new ContainerConcurrency(ConcurrencyAttribute.READ, Color.class.getName(), "Scarlet", "*"));
-        declared.add(new ContainerConcurrency(ConcurrencyAttribute.READ, Red.class.getName(), "Scarlet", "red"));
-        declared.add(new ContainerConcurrency(ConcurrencyAttribute.WRITE, "Scarlet", Scarlet.class.getMethod("scarlet")));
+        declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "*", "*", "*"));
+        declared.add(new ContainerConcurrency(ConcurrentLockType.READ, "*", "Crimson", "*"));
+        declared.add(new ContainerConcurrency(ConcurrentLockType.READ, Color.class.getName(), "Scarlet", "*"));
+        declared.add(new ContainerConcurrency(ConcurrentLockType.READ, Red.class.getName(), "Scarlet", "red"));
+        declared.add(new ContainerConcurrency(ConcurrentLockType.WRITE, "Scarlet", Scarlet.class.getMethod("scarlet")));
 
         EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);

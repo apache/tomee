@@ -22,23 +22,33 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "session-configType", propOrder = {
-        "sessionTimeout"
+    "sessionTimeout",
+    "cookieConfig",
+    "trackingMode"
 })
 public class SessionConfig {
 
     @XmlElement(name = "session-timeout")
     protected BigInteger sessionTimeout;
+    @XmlElement(name = "cookie-config")
+    protected CookieConfig cookieConfig;
+    @XmlElement(name = "tracking-mode")
+    protected List<TrackingMode> trackingMode;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected String id;
+    @XmlSchemaType(name = "ID")
+    protected java.lang.String id;
 
     public BigInteger getSessionTimeout() {
         return sessionTimeout;
@@ -48,12 +58,28 @@ public class SessionConfig {
         this.sessionTimeout = value;
     }
 
-    public String getId() {
+    public CookieConfig getCookieConfig() {
+        return cookieConfig;
+    }
+
+    public void setCookieConfig(CookieConfig value) {
+        this.cookieConfig = value;
+    }
+
+    public List<TrackingMode> getTrackingMode() {
+        if (trackingMode == null) {
+            trackingMode = new ArrayList<TrackingMode>();
+        }
+        return this.trackingMode;
+    }
+
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(java.lang.String value) {
         this.id = value;
     }
 
 }
+

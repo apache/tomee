@@ -28,30 +28,18 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * The application-exceptionType declares an application
- * exception. The declaration consists of:
- * <p/>
- * - the exception class. When the container receives
- * an exception of this type, it is required to
- * forward this exception as an applcation exception
- * to the client regardless of whether it is a checked
- * or unchecked exception.
- * - an optional rollback element. If this element is
- * set to true, the container must rollback the current
- * transaction before forwarding the exception to the
- * client.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "application-exceptionType", propOrder = {
         "exceptionClass",
-        "rollback"
+        "rollback",
+        "inherited"
         })
 public class ApplicationException implements Keyable<String> {
 
     @XmlElement(name = "exception-class", required = true)
     protected String exceptionClass;
     protected boolean rollback;
+    protected boolean inherited;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -83,6 +71,14 @@ public class ApplicationException implements Keyable<String> {
 
     public void setRollback(boolean value) {
         this.rollback = value;
+    }
+
+    public boolean isInherited() {
+        return inherited;
+    }
+
+    public void setInherited(boolean inherited) {
+        this.inherited = inherited;
     }
 
     public String getId() {

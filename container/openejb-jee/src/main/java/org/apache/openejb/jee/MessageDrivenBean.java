@@ -90,6 +90,7 @@ import java.util.Map;
         "ejbClass",
         "messagingType",
         "timeoutMethod",
+        "timer",
         "transactionType",
         "messageSelector",
         "acknowledgeMode",
@@ -98,6 +99,7 @@ import java.util.Map;
         "messageDestinationLink",
         "activationConfig",
         "aroundInvoke",
+        "aroundTimeout",
         "envEntry",
         "ejbRef",
         "ejbLocalRef",
@@ -109,6 +111,7 @@ import java.util.Map;
         "persistenceUnitRef",
         "postConstruct",
         "preDestroy",
+        "dataSource",
         "securityRoleRef",
         "securityIdentity"
         })
@@ -131,6 +134,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected String messagingType;
     @XmlElement(name = "timeout-method")
     protected NamedMethod timeoutMethod;
+    protected List<Timer> timer;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
     @XmlElement(name = "message-destination-type")
@@ -141,6 +145,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected ActivationConfig activationConfig;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
+    @XmlElement(name = "around-timeout")
+    protected List<AroundTimeout> aroundTimeout;
     @XmlElement(name = "env-entry", required = true)
     protected KeyedCollection<String,EnvEntry> envEntry;
     @XmlElement(name = "ejb-ref", required = true)
@@ -159,6 +165,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     protected KeyedCollection<String,PersistenceContextRef> persistenceContextRef;
     @XmlElement(name = "persistence-unit-ref", required = true)
     protected KeyedCollection<String,PersistenceUnitRef> persistenceUnitRef;
+    @XmlElement(name = "data-source", required = true)
+    protected KeyedCollection<String,DataSource> dataSource;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -303,6 +311,12 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.timeoutMethod = value;
     }
 
+    public List<Timer> getTimer() {
+        if (timer == null) {
+            timer = new ArrayList<Timer>();
+        }
+        return this.timer;
+    }
 
     public MessageDrivenDestination getMessageDrivenDestination() {
         return null;
@@ -404,6 +418,13 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
     public void addAroundInvoke(String method){
         assert ejbClass != null: "Set the ejbClass before calling this method";
         getAroundInvoke().add(new AroundInvoke(ejbClass, method));
+    }
+
+    public List<AroundTimeout> getAroundTimeout() {
+        if (aroundTimeout == null) {
+            aroundTimeout = new ArrayList<AroundTimeout>();
+        }
+        return this.aroundTimeout;
     }
 
     public Collection<EnvEntry> getEnvEntry() {
@@ -531,6 +552,22 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         }
         return this.persistenceUnitRef.toMap();
     }
+
+
+    public Collection<DataSource> getDataSource() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource;
+    }
+
+    public Map<String,DataSource> getDataSourceMap() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource.toMap();
+    }
+
 
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {

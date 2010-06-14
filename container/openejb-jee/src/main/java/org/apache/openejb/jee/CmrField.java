@@ -30,16 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The cmr-fieldType describes the bean provider's view of
- * a relationship. It consists of an optional description, and
- * the name and the class type of a field in the source of a
- * role of a relationship. The cmr-field-name element
- * corresponds to the name used for the get and set accessor
- * methods for the relationship. The cmr-field-type element is
- * used only for collection-valued cmr-fields. It specifies the
- * type of the collection that is used.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmr-fieldType", propOrder = {
         "description",

@@ -38,6 +38,7 @@ import java.util.Map;
         "icon",
         "filterName",
         "filterClass",
+        "asyncSupported",
         "initParam"
 })
 public class Filter {
@@ -53,6 +54,8 @@ public class Filter {
     protected String filterName;
     @XmlElement(name = "filter-class", required = true)
     protected String filterClass;
+    @XmlElement(name = "async-supported")
+    protected boolean asyncSupported;
     @XmlElement(name = "init-param")
     protected List<ParamValue> initParam;
     @XmlAttribute
@@ -118,6 +121,14 @@ public class Filter {
 
     public void setFilterClass(String value) {
         this.filterClass = value;
+    }
+
+    public boolean isAsyncSupported() {
+        return asyncSupported;
+    }
+
+    public void setAsyncSupported(boolean asyncSupported) {
+        this.asyncSupported = asyncSupported;
     }
 
     public List<ParamValue> getInitParam() {

@@ -30,16 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The ejb-relationType describes a relationship between two
- * entity beans with container-managed persistence.  It is used
- * by ejb-relation elements. It contains a description; an
- * optional ejb-relation-name element; and exactly two
- * relationship role declarations, defined by the
- * ejb-relationship-role elements. The name of the
- * relationship, if specified, is unique within the ejb-jar
- * file.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationType", propOrder = {
         "description",

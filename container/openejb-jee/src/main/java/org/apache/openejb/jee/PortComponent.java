@@ -47,6 +47,9 @@ import java.util.List;
     "wsdlService",
     "wsdlPort",
     "enableMtom",
+        "mtomThreshold",
+        "addressing",
+        "respectBinding",
     "protocolBinding",
     "serviceEndpointInterface",
     "serviceImplBean",
@@ -66,6 +69,11 @@ public class PortComponent implements Keyable<String> {
     protected QName wsdlPort;
     @XmlElement(name = "enable-mtom")
     protected boolean enableMtom;
+    @XmlElement(name = "mtom-threshold")
+    protected Integer mtomThreshold;
+    protected Addressing addressing;
+    @XmlElement(name = "respect-binding")
+    protected Boolean respectBinding;
     @XmlElement(name = "protocol-binding")
     protected String protocolBinding;
     @XmlElement(name = "service-endpoint-interface")
@@ -140,6 +148,30 @@ public class PortComponent implements Keyable<String> {
 
     public void setEnableMtom(boolean value) {
         this.enableMtom = value;
+    }
+
+    public Integer getMtomThreshold() {
+        return mtomThreshold;
+    }
+
+    public void setMtomThreshold(Integer value) {
+        this.mtomThreshold = value;
+    }
+
+    public Addressing getAddressing() {
+        return addressing;
+    }
+
+    public void setAddressing(Addressing value) {
+        this.addressing = value;
+    }
+
+    public Boolean getRespectBinding() {
+        return respectBinding;
+    }
+
+    public void setRespectBinding(Boolean value) {
+        this.respectBinding = value;
     }
 
     public String getProtocolBinding() {

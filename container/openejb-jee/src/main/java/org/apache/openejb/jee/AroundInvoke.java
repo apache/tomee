@@ -24,19 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
-/**
- * The around-invoke type specifies a method on a
- * class to be called during the around invoke portion of an
- * ejb invocation.  Note that each class may have only one
- * around invoke method and that the method may not be
- * overloaded.
- * <p/>
- * If the around-invoke element is missing then
- * the class defining the callback is assumed to be the
- * interceptor class or component class in scope at the
- * location in the descriptor in which the around invoke
- * definition appears.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "around-invokeType", propOrder = {
         "clazz",

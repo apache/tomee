@@ -41,8 +41,11 @@ import java.util.Map;
         "jspFile",
         "initParam",
         "loadOnStartup",
+        "enabled",
+        "asyncSupported",
         "runAs",
-        "securityRoleRef"
+        "securityRoleRef",
+        "multipartConfig"
 })
 public class Servlet {
 
@@ -62,11 +65,16 @@ public class Servlet {
     @XmlElement(name = "init-param")
     protected List<ParamValue> initParam;
     @XmlElement(name = "load-on-startup")
-    protected Boolean loadOnStartup;
+    protected java.lang.String loadOnStartup;
+    protected Boolean enabled;
+    @XmlElement(name = "async-supported")
+    protected Boolean asyncSupported;
     @XmlElement(name = "run-as")
     protected RunAs runAs;
     @XmlElement(name = "security-role-ref")
     protected List<SecurityRoleRef> securityRoleRef;
+    @XmlElement(name = "multipart-config")
+    protected MultipartConfig multipartConfig;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -147,12 +155,28 @@ public class Servlet {
         return this.initParam;
     }
 
-    public Boolean getLoadOnStartup() {
+    public String getLoadOnStartup() {
         return loadOnStartup;
     }
 
-    public void setLoadOnStartup(Boolean value) {
+    public void setLoadOnStartup(String value) {
         this.loadOnStartup = value;
+    }
+
+    public Boolean getAsyncSupported() {
+        return asyncSupported;
+    }
+
+    public void setAsyncSupported(Boolean asyncSupported) {
+        this.asyncSupported = asyncSupported;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public RunAs getRunAs() {
@@ -168,6 +192,14 @@ public class Servlet {
             securityRoleRef = new ArrayList<SecurityRoleRef>();
         }
         return this.securityRoleRef;
+    }
+
+    public MultipartConfig getMultipartConfig() {
+        return multipartConfig;
+    }
+
+    public void setMultipartConfig(MultipartConfig multipartConfig) {
+        this.multipartConfig = multipartConfig;
     }
 
     public String getId() {

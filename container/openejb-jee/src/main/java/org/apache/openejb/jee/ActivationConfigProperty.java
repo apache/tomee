@@ -23,18 +23,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * The activation-config-propertyType contains a name/value
- * configuration property pair for a message-driven bean.
- * <p/>
- * The properties that are recognized for a particular
- * message-driven bean are determined by the messaging type.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-config-propertyType", propOrder = {
         "activationConfigPropertyName",
@@ -49,6 +43,7 @@ public class ActivationConfigProperty {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
+    @XmlSchemaType(name = "ID")
     protected String id;
 
     public ActivationConfigProperty() {
