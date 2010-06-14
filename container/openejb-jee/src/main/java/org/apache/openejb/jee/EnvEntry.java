@@ -31,27 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The env-entryType is used to declare an application's
- * environment entry. The declaration consists of an optional
- * description, the name of the environment entry, a type
- * (optional if the value is injected, otherwise required), and
- * an optional value.
- * <p/>
- * It also includes optional elements to define injection of
- * the named resource into fields or JavaBeans properties.
- * <p/>
- * If a value is not specified and injection is requested,
- * no injection will occur and no entry of the specified name
- * will be created.  This allows an initial value to be
- * specified in the source code without being incorrectly
- * changed when no override has been specified.
- * <p/>
- * If a value is not specified and no injection is requested,
- * a value must be supplied during deployment.
- * <p/>
- * This type is used by env-entry elements.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entryType", propOrder = {
         "description",

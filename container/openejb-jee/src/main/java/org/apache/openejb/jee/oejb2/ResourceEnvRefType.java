@@ -56,7 +56,12 @@ import javax.xml.bind.annotation.XmlType;
     "pattern",
     "messageDestinationLink",
     "adminObjectModule",
-    "adminObjectLink"
+    "adminObjectLink",
+    "referenceClass",
+    "stringAddrType",
+    "stringAddr",
+    "objectFactory",
+    "objectFactoryLocation"
 })
 public class ResourceEnvRefType {
 
@@ -70,6 +75,16 @@ public class ResourceEnvRefType {
     protected String adminObjectModule;
     @XmlElement(name = "admin-object-link", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
     protected String adminObjectLink;
+    @XmlElement(name = "reference-class", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected String referenceClass;
+    @XmlElement(name = "string-addr-type", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected String stringAddrType;
+    @XmlElement(name = "string-addr", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected String stringAddr;
+    @XmlElement(name = "object-factory", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected String objectFactory;
+    @XmlElement(name = "object-factory-location", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2")
+    protected String objectFactoryLocation;
 
     /**
      * Gets the value of the refName property.
@@ -191,4 +206,43 @@ public class ResourceEnvRefType {
         this.adminObjectLink = value;
     }
 
+    public String getObjectFactory() {
+        return objectFactory;
+    }
+
+    public void setObjectFactory(String objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
+    public String getObjectFactoryLocation() {
+        return objectFactoryLocation;
+    }
+
+    public void setObjectFactoryLocation(String objectFactoryLocation) {
+        this.objectFactoryLocation = objectFactoryLocation;
+    }
+
+    public String getReferenceClass() {
+        return referenceClass;
+    }
+
+    public void setReferenceClass(String referenceClass) {
+        this.referenceClass = referenceClass;
+    }
+
+    public String getStringAddr() {
+        return stringAddr;
+    }
+
+    public void setStringAddr(String stringAddr) {
+        this.stringAddr = stringAddr;
+    }
+
+    public String getStringAddrType() {
+        return stringAddrType;
+    }
+
+    public void setStringAddrType(String stringAddrType) {
+        this.stringAddrType = stringAddrType;
+    }
 }

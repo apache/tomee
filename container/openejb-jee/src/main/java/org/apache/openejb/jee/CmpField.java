@@ -30,11 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The cmp-fieldType describes a container-managed field. The
- * cmp-fieldType contains an optional description of the field,
- * and the name of the field.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmp-fieldType", propOrder = {
         "description",

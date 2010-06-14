@@ -30,14 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The exclude-listType specifies one or more methods which
- * the Assembler marks to be uncallable.
- * <p/>
- * If the method permission relation contains methods that are
- * in the exclude list, the Deployer should consider those
- * methods to be uncallable.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "exclude-listType", propOrder = {
         "description",

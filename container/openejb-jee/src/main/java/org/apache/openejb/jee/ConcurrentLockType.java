@@ -16,19 +16,36 @@
  */
 package org.apache.openejb.jee;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 
-public enum ConcurrencyAttribute {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "concurrent-lock-typeType")
+@XmlEnum
+public enum ConcurrentLockType {
+
     @XmlEnumValue("Read") READ("Read"),
     @XmlEnumValue("Write") WRITE("Write");
 
     private final String name;
 
-    ConcurrencyAttribute(String name) {
+    ConcurrentLockType(String name) {
        this.name = name;
    }
 
     public String toString() {
         return name;
     }
+
+    public java.lang.String value() {
+        return name();
+    }
+
+    public static ConcurrentLockType fromValue(java.lang.String v) {
+        return valueOf(v);
+    }
+
 }

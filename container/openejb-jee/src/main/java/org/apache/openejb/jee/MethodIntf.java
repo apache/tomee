@@ -46,7 +46,9 @@ public enum MethodIntf {
     @XmlEnumValue("Remote") REMOTE("Remote"),
     @XmlEnumValue("LocalHome") LOCALHOME("LocalHome"),
     @XmlEnumValue("Local") LOCAL("Local"),
-    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT("ServiceEndpoint");
+    @XmlEnumValue("ServiceEndpoint") SERVICEENDPOINT("ServiceEndpoint"),
+    @XmlEnumValue("Timer") TIMER("Timer"),
+    @XmlEnumValue("MessageEndpoint") MESSAGEENDPOINT("MessageEndpoint");
 
     private final String name;
 

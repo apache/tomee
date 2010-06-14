@@ -30,27 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The ejb-local-refType is used by ejb-local-ref elements for
- * the declaration of a reference to an enterprise bean's local
- * home or to the local business interface of a 3.0 bean.
- * The declaration consists of:
- * <p/>
- * - an optional description
- * - the EJB reference name used in the code of the Deployment
- * Component that's referencing the enterprise bean.
- * - the optional expected type of the referenced enterprise bean
- * - the optional expected local interface of the referenced
- * enterprise bean or the local business interface of the
- * referenced enterprise bean.
- * - the optional expected local home interface of the referenced
- * enterprise bean. Not applicable if this ejb-local-ref refers
- * to the local business interface of a 3.0 bean.
- * - optional ejb-link information, used to specify the
- * referenced enterprise bean
- * - optional elements to define injection of the named enterprise
- * bean into a component field or property.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-local-refType", propOrder = {
         "description",

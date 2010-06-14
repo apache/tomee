@@ -63,6 +63,7 @@ import java.util.List;
         "persistenceUnitName",
         "mappedName",
         "injectionTarget",
+        //TODO lookupName not in schema ??
         "lookupName"
         })
 public class PersistenceUnitRef implements JndiReference, PersistenceRef {
@@ -75,6 +76,7 @@ public class PersistenceUnitRef implements JndiReference, PersistenceRef {
     protected String persistenceUnitName;
     @XmlElement(name = "mapped-name")
     protected String mappedName;
+    //TODO lookupName not in schema ??
     @XmlElement(name = "lookup-name")
     protected String lookupName;
     @XmlElement(name = "injection-target", required = true)

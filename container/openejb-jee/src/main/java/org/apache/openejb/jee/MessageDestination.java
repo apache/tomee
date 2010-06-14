@@ -58,7 +58,8 @@ import java.util.List;
         "displayName",
         "icon",
         "messageDestinationName",
-        "mappedName"
+        "mappedName",
+        "lookupName"
         })
 public class MessageDestination implements Keyable<String> {
 
@@ -72,6 +73,8 @@ public class MessageDestination implements Keyable<String> {
     protected String messageDestinationName;
     @XmlElement(name = "mapped-name")
     protected String mappedName;
+    @XmlElement(name = "lookup-name")
+    protected String lookupName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -116,6 +119,14 @@ public class MessageDestination implements Keyable<String> {
 
     public void setMappedName(String value) {
         this.mappedName = value;
+    }
+
+    public String getLookupName() {
+        return lookupName;
+    }
+
+    public void setLookupName(String lookupName) {
+        this.lookupName = lookupName;
     }
 
     public String getId() {

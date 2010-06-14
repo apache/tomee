@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import java.util.List;
 import java.util.ArrayList;
+//TODO does not appear in newly generated classes
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-scheduleType", propOrder = {
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 public class MethodSchedule {
 
     @XmlElement(name = "schedule", required = true)
-    protected List<Schedule> schedule;
+    protected List<TimerSchedule> schedule;
 
     @XmlElement(required = true)
     protected NamedMethod method;
@@ -57,18 +58,18 @@ public class MethodSchedule {
     public MethodSchedule() {
     }
 
-    public MethodSchedule(String className, String ejbName, String methodName, Schedule... schedules) {
+    public MethodSchedule(String className, String ejbName, String methodName, TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(className, methodName), schedules);
     }
 
-    public MethodSchedule(String ejbName, java.lang.reflect.Method method, Schedule... schedules) {
+    public MethodSchedule(String ejbName, java.lang.reflect.Method method, TimerSchedule... schedules) {
         this(ejbName, new NamedMethod(method), schedules);
     }
 
-    public MethodSchedule(String ejbName, NamedMethod method, Schedule... schedules) {
+    public MethodSchedule(String ejbName, NamedMethod method, TimerSchedule... schedules) {
         this.method = method;
         this.ejbName = ejbName;
-        for (Schedule schedule : schedules) {
+        for (TimerSchedule schedule : schedules) {
             getSchedule().add(schedule);
         }
     }
@@ -86,9 +87,9 @@ public class MethodSchedule {
         return description.get();
     }
 
-    public List<Schedule> getSchedule() {
+    public List<TimerSchedule> getSchedule() {
         if (schedule == null) {
-            schedule = new ArrayList<Schedule>();
+            schedule = new ArrayList<TimerSchedule>();
         }
         return this.schedule;
     }
@@ -117,7 +118,7 @@ public class MethodSchedule {
         this.id = value;
     }
 
-    public List<Schedule> getAttribute() {
+    public List<TimerSchedule> getAttribute() {
         return getSchedule();
     }
 

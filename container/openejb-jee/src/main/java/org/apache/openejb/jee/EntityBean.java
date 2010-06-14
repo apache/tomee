@@ -35,97 +35,6 @@ import java.util.Collection;
 import java.util.Map;
 
 
-/**
- * The entity-beanType declares an entity bean. The declaration
- * consists of:
- * <p/>
- * - an optional description
- * - an optional display name
- * - an optional icon element that contains a small and a large
- * icon file name
- * - a unique name assigned to the enterprise bean
- * in the deployment descriptor
- * - an optional mapped-name element that can be used to provide
- * vendor-specific deployment information such as the physical
- * jndi-name of the entity bean's remote home interface. This
- * element is not required to be supported by all implementations.
- * Any use of this element is non-portable.
- * - the names of the entity bean's remote home
- * and remote interfaces, if any
- * - the names of the entity bean's local home and local
- * interfaces, if any
- * - the entity bean's implementation class
- * - the optional entity bean's persistence management type. If
- * this element is not specified it is defaulted to Container.
- * - the entity bean's primary key class name
- * - an indication of the entity bean's reentrancy
- * - an optional specification of the
- * entity bean's cmp-version
- * - an optional specification of the entity bean's
- * abstract schema name
- * - an optional list of container-managed fields
- * - an optional specification of the primary key
- * field
- * - an optional declaration of the bean's environment
- * entries
- * - an optional declaration of the bean's EJB
- * references
- * - an optional declaration of the bean's local
- * EJB references
- * - an optional declaration of the bean's web
- * service references
- * - an optional declaration of the security role
- * references
- * - an optional declaration of the security identity
- * to be used for the execution of the bean's methods
- * - an optional declaration of the bean's
- * resource manager connection factory references
- * - an optional declaration of the bean's
- * resource environment references
- * - an optional declaration of the bean's message
- * destination references
- * - an optional set of query declarations
- * for finder and select methods for an entity
- * bean with cmp-version 2.x.
- * <p/>
- * The optional abstract-schema-name element must be specified
- * for an entity bean with container-managed persistence and
- * cmp-version 2.x.
- * <p/>
- * The optional primkey-field may be present in the descriptor
- * if the entity's persistence-type is Container.
- * <p/>
- * The optional cmp-version element may be present in the
- * descriptor if the entity's persistence-type is Container. If
- * the persistence-type is Container and the cmp-version
- * element is not specified, its value defaults to 2.x.
- * <p/>
- * The optional home and remote elements must be specified if
- * the entity bean cmp-version is 1.x.
- * <p/>
- * The optional home and remote elements must be specified if
- * the entity bean has a remote home and remote interface.
- * <p/>
- * The optional local-home and local elements must be specified
- * if the entity bean has a local home and local interface.
- * <p/>
- * Either both the local-home and the local elements or both
- * the home and the remote elements must be specified.
- * <p/>
- * The optional query elements must be present if the
- * persistence-type is Container and the cmp-version is 2.x and
- * query methods other than findByPrimaryKey have been defined
- * for the entity bean.
- * <p/>
- * The other elements that are optional are "optional" in the
- * sense that they are omitted if the lists represented by them
- * are empty.
- * <p/>
- * At least one cmp-field element must be present in the
- * descriptor if the entity's persistence-type is Container and
- * the cmp-version is 1.x, and none must not be present if the
- * entity's persistence-type is Bean.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-beanType", propOrder = {
         "descriptions",
@@ -156,6 +65,7 @@ import java.util.Map;
         "persistenceUnitRef",
         "postConstruct",
         "preDestroy",
+        "dataSource",
         "securityRoleRef",
         "securityIdentity",
         "query"
@@ -217,6 +127,8 @@ public class EntityBean implements RemoteBean {
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
     protected List<LifecycleCallback> preDestroy;
+    @XmlElement(name = "data-source")
+    protected KeyedCollection<String,DataSource> dataSource;
     @XmlElement(name = "security-role-ref", required = true)
     protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
@@ -577,6 +489,20 @@ public class EntityBean implements RemoteBean {
     public void addPreDestroy(String method){
         assert ejbClass != null: "Set the ejbClass before calling this method";
         getPreDestroy().add(new LifecycleCallback(ejbClass, method));
+    }
+
+    public Collection<DataSource> getDataSource() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource;
+    }
+
+    public Map<String,DataSource> getDataSourceMap() {
+        if (dataSource == null) {
+            dataSource = new KeyedCollection<String,DataSource>();
+        }
+        return this.dataSource.toMap();
     }
 
     public List<SecurityRoleRef> getSecurityRoleRef() {

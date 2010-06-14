@@ -42,6 +42,9 @@ import java.util.Properties;
 @XmlType(name = "port-component-refType", propOrder = {
         "serviceEndpointInterface",
         "enableMtom",
+        "mtomThreshold",
+        "addressing",
+        "respectBinding",
         "portComponentLink"
         })
 public class PortComponentRef {
@@ -50,6 +53,11 @@ public class PortComponentRef {
     protected String serviceEndpointInterface;
     @XmlElement(name = "enable-mtom")
     protected Boolean enableMtom;
+    @XmlElement(name = "mtom-threshold")
+    protected Integer mtomThreshold;
+    protected Addressing addressing;
+    @XmlElement(name = "respect-binding")
+    protected Boolean respectBinding;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
     @XmlTransient
@@ -75,6 +83,30 @@ public class PortComponentRef {
 
     public void setEnableMtom(boolean value) {
         this.enableMtom = value;
+    }
+
+    public Integer getMtomThreshold() {
+        return mtomThreshold;
+    }
+
+    public void setMtomThreshold(Integer value) {
+        this.mtomThreshold = value;
+    }
+
+    public Addressing getAddressing() {
+        return addressing;
+    }
+
+    public void setAddressing(Addressing value) {
+        this.addressing = value;
+    }
+
+    public Boolean getRespectBinding() {
+        return respectBinding;
+    }
+
+    public void setRespectBinding(Boolean value) {
+        this.respectBinding = value;
     }
 
     public String getPortComponentLink() {

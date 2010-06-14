@@ -56,6 +56,7 @@ import java.util.Collection;
 @XmlRootElement(name = "ejb-jar")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-jarType", propOrder = {
+        "moduleName",
         "descriptions",
         "displayNames",
         "icon",
@@ -67,6 +68,8 @@ import java.util.Collection;
         })
 public class EjbJar {
 
+    @XmlElement(name = "module-name")
+    protected String moduleName;
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
@@ -97,6 +100,14 @@ public class EjbJar {
 
     public EjbJar(String id) {
         this.id = id;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     @XmlElement(name = "description", required = true)

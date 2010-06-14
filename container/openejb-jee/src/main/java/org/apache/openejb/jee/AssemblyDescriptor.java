@@ -33,31 +33,14 @@ import java.util.LinkedHashMap;
 import java.util.Collection;
 
 
-/**
- * The assembly-descriptorType defines
- * application-assembly information.
- * <p/>
- * The application-assembly information consists of the
- * following parts: the definition of security roles, the
- * definition of method permissions, the definition of
- * transaction attributes for enterprise beans with
- * container-managed transaction demarcation, the definition
- * of interceptor bindings, a list of
- * methods to be excluded from being invoked, and a list of
- * exception types that should be treated as application exceptions.
- * <p/>
- * All the parts are optional in the sense that they are
- * omitted if the lists represented by them are empty.
- * <p/>
- * Providing an assembly-descriptor in the deployment
- * descriptor is optional for the ejb-jar file producer.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "assembly-descriptorType", propOrder = {
         "securityRole",
         "methodPermission",
         "containerTransaction",
+        //TODO moved out of assembly descriptor in schema
         "containerConcurrency",
+        //TODO moved out of assembly descriptor in schema
         "methodSchedule",
         "interceptorBinding",
         "messageDestination",
@@ -72,8 +55,10 @@ public class AssemblyDescriptor {
     protected List<MethodPermission> methodPermission;
     @XmlElement(name = "container-transaction", required = true)
     protected List<ContainerTransaction> containerTransaction;
+    //TODO moved out of assembly descriptor in schema
     @XmlElement(name = "container-concurrency", required = true)
     protected List<ContainerConcurrency> containerConcurrency;
+    //TODO moved out of assembly descriptor in schema
     @XmlElement(name = "method-schedule", required = true)
     protected List<MethodSchedule> methodSchedule;
     @XmlElement(name = "interceptor-binding", required = true)
@@ -110,6 +95,11 @@ public class AssemblyDescriptor {
         return this.containerTransaction;
     }
 
+    public Map<String,List<MethodAttribute>> getMethodTransactionMap(String ejbName) {
+        return getMethodAttributes(ejbName, getContainerTransaction());
+    }
+
+    //TODO moved out of assembly descriptor in schema
     public List<ContainerConcurrency> getContainerConcurrency() {
         if (containerConcurrency == null) {
             containerConcurrency = new ArrayList<ContainerConcurrency>();
@@ -117,6 +107,7 @@ public class AssemblyDescriptor {
         return this.containerConcurrency;
     }
 
+    //TODO moved out of assembly descriptor in schema
     public List<MethodSchedule> getMethodSchedule() {
         if (methodSchedule == null) {
             methodSchedule = new ArrayList<MethodSchedule>();
@@ -124,14 +115,12 @@ public class AssemblyDescriptor {
         return this.methodSchedule;
     }
 
-    public Map<String,List<MethodAttribute>> getMethodTransactionMap(String ejbName) {
-        return getMethodAttributes(ejbName, getContainerTransaction());
-    }
-
+    //TODO moved out of assembly descriptor in schema
     public Map<String,List<MethodAttribute>> getMethodConcurrencyMap(String ejbName) {
         return getMethodAttributes(ejbName, getContainerConcurrency());
     }
 
+    //TODO moved out of assembly descriptor in schema
     public Map<String,List<MethodAttribute>> getMethodScheduleMap(String ejbName) {
         Map<String,List<MethodAttribute>> methods = new LinkedHashMap<String,List<MethodAttribute>>();
 

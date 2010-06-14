@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -33,7 +34,8 @@ import java.util.List;
         "webResourceName",
         "description",
         "urlPattern",
-        "httpMethod"
+        "httpMethod",
+        "httpMethodOmission"
 })
 public class WebResourceCollection {
 
@@ -43,11 +45,16 @@ public class WebResourceCollection {
     @XmlElement(name = "url-pattern", required = true)
     protected List<String> urlPattern;
     @XmlElement(name = "http-method")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected List<String> httpMethod;
+    @XmlElement(name = "http-method-omission")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    protected List<String> httpMethodOmission;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
-    protected String id;
+    @XmlSchemaType(name = "ID")
+    protected java.lang.String id;
 
     public String getWebResourceName() {
         return webResourceName;
@@ -78,12 +85,20 @@ public class WebResourceCollection {
         return this.httpMethod;
     }
 
-    public String getId() {
+    public List<String> getHttpMethodOmission() {
+        if (httpMethodOmission == null) {
+            httpMethodOmission = new ArrayList<String>();
+        }
+        return this.httpMethodOmission;
+    }
+
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String value) {
+    public void setId(java.lang.String value) {
         this.id = value;
     }
 
 }
+

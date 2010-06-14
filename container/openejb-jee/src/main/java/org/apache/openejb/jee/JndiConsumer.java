@@ -53,4 +53,6 @@ public interface JndiConsumer {
     Collection<PersistenceUnitRef> getPersistenceUnitRef();
     Map<String,PersistenceUnitRef> getPersistenceUnitRefMap();
 
+    Collection<DataSource> getDataSource();
+    Map<String,DataSource> getDataSourceMap();
 }

@@ -27,13 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The connection-definitionType defines a set of connection
- * interfaces and classes pertaining to a particular connection
- * type. This also includes configurable properties for
- * ManagedConnectionFactory instances that may be produced out
- * of this set.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "connection-definitionType", propOrder = {
         "managedConnectionFactoryClass",

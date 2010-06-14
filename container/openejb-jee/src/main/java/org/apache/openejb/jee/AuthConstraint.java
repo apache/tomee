@@ -34,7 +34,7 @@ import java.util.List;
         "roleName"
 })
 public class AuthConstraint {
-
+    //TODO use TextMap for description
     protected List<String> description;
     @XmlElement(name = "role-name")
     protected List<String> roleName;

@@ -1,0 +1,17 @@
+http://java.sun.com/xml/ns/javaee/application_6.xsd
+http://java.sun.com/xml/ns/javaee/application-client_6.xsd
+http://java.sun.com/xml/ns/javaee/beans_1_0.xsd
+http://java.sun.com/xml/ns/javaee/connector_1_6.xsd
+http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd
+http://java.sun.com/xml/ns/javaee/javaee_6.xsd
+http://java.sun.com/xml/ns/javaee/javaee_web_services_1_3.xsd
+http://java.sun.com/xml/ns/javaee/javaee_web_services_client_1_3.xsd
+http://java.sun.com/xml/ns/javaee/jsp_2_2.xsd
+http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd
+http://java.sun.com/xml/ns/javaee/web-common_3_0.xsd
+http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd
+http://java.sun.com/xml/ns/javaee/web-facelettaglibrary_2_0.xsd
+http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd
+http://java.sun.com/xml/ns/javaee/web-partialresponse_2_0.xsd
+http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd
+http://java.sun.com/xml/ns/javaee/javaee_web_services_metadata_handler_2_0.xsd

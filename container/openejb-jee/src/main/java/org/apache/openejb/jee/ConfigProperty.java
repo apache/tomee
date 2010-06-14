@@ -27,20 +27,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The config-propertyType contains a declaration of a single
- * configuration property that may be used for providing
- * configuration information.
- * <p/>
- * The declaration consists of an optional description, name,
- * type and an optional value of the configuration property. If
- * the resource adapter provider does not specify a value than
- * the deployer is responsible for providing a valid value for
- * a configuration property.
- * <p/>
- * Any bounds or well-defined values of properties should be
- * described in the description element.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "config-propertyType", propOrder = {
         "description",
@@ -53,10 +39,12 @@ import java.util.List;
 })
 public class ConfigProperty {
 
+    //TODO use TextMap for description
     protected List<Text> description;
     @XmlElement(name = "config-property-name", required = true)
     protected String configPropertyName;
     @XmlElement(name = "config-property-type", required = true)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String configPropertyType;
     @XmlElement(name = "config-property-value")
     protected String configPropertyValue;

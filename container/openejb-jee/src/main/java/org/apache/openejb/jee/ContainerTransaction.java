@@ -31,14 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * The container-transactionType specifies how the container
- * must manage transaction scopes for the enterprise bean's
- * method invocations. It defines an optional description, a
- * list of method elements, and a transaction attribute. The
- * transaction attribute is to be applied to all the specified
- * methods.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "container-transactionType", propOrder = {
         "descriptions",
