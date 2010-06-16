@@ -110,7 +110,7 @@ public class WebFragment implements WebCommon {
     @XmlElement(name = "security-constraint")
     protected List<SecurityConstraint> securityConstraint;
     @XmlElement(name = "login-config")
-    protected List<LoginConfigType> loginConfig;
+    protected List<LoginConfig> loginConfig;
     @XmlElement(name = "security-role")
     protected List<SecurityRole> securityRole;
     @XmlElement(name = "locale-encoding-mapping-list")
@@ -336,9 +336,9 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public List<LoginConfigType> getLoginConfig() {
+    public List<LoginConfig> getLoginConfig() {
         if (loginConfig == null) {
-            loginConfig = new ArrayList<LoginConfigType>();
+            loginConfig = new ArrayList<LoginConfig>();
         }
         return this.loginConfig;
     }

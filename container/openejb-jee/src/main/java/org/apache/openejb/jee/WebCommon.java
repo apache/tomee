@@ -81,7 +81,7 @@ public interface WebCommon extends JndiConsumer {
 
     List<SecurityConstraint> getSecurityConstraint();
 
-    List<LoginConfigType> getLoginConfig();
+    List<LoginConfig> getLoginConfig();
 
     List<SecurityRole> getSecurityRole();
 
