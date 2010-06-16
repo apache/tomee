@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "formLoginConfig"
 })
 public class LoginConfigType {
+    //TODO use LoginConfig instead
 
     @XmlElement(name = "auth-method")
     protected String authMethod;
