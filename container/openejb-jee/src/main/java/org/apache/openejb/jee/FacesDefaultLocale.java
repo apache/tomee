@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 public class FacesDefaultLocale {
-
+    //TODO this seems wrong, this class should extend FacesLocale??
     @XmlValue
     protected FacesLocale value;
     @XmlAttribute

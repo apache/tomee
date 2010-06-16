@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 public class FacesFromAction {
-
+    //TODO this should be a String? or the class extend FacesELExpression
     @XmlValue
     protected FacesELExpression value;
     @XmlAttribute

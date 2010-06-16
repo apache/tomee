@@ -68,7 +68,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 public class FacesSupportedLocale {
-
+   //TODO should be String, and class extend FacesLocale??
     @XmlValue
     protected FacesLocale value;
     @XmlAttribute
