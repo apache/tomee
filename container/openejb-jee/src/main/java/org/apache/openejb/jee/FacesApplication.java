@@ -56,26 +56,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * &lt;complexType name="faces-config-applicationType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="action-listener" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="default-render-kit-id" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="message-bundle" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="navigation-handler" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="view-handler" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="state-manager" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="el-resolver" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="property-resolver" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="variable-resolver" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="locale-config" type="{http://java.sun.com/xml/ns/javaee}faces-config-locale-configType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0">
+ *         &lt;element name="action-listener" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="default-render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="message-bundle" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="navigation-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="view-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="state-manager" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="el-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="property-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="variable-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="resource-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="system-event-listener" type="{http://java.sun.com/xml/ns/javaee}faces-config-system-event-listenerType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="locale-config" type="{http://java.sun.com/xml/ns/javaee}faces-config-locale-configType"/>
  *         &lt;element name="resource-bundle" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-resource-bundleType"/>
  *         &lt;element name="application-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
+ *         &lt;element name="default-validators" type="{http://java.sun.com/xml/ns/javaee}faces-config-default-validatorsType"/>
+ *       &lt;/choice>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,9 +92,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "elResolver",
     "propertyResolver",
     "variableResolver",
+        "resourceHandler",
+        "systemEventListener",
     "localeConfig",
     "resourceBundle",
-    "applicationExtension"
+    "applicationExtension",
+        "defaultValidators"
 })
 public class FacesApplication {
 
@@ -113,12 +119,18 @@ public class FacesApplication {
     protected List<java.lang.String> propertyResolver;
     @XmlElement(name = "variable-resolver")
     protected List<java.lang.String> variableResolver;
+    @XmlElement(name = "resource-handler")
+    protected List<java.lang.String> resourceHandler;
+    @XmlElement(name = "system-event-listener")
+    protected List<FacesSystemEventListener> systemEventListener;
     @XmlElement(name = "locale-config")
     protected List<FacesLocaleConfig> localeConfig;
     @XmlElement(name = "resource-bundle", required = true)
     protected FacesApplicationResourceBundle resourceBundle;
     @XmlElement(name = "application-extension")
     protected List<FacesApplicationExtension> applicationExtension;
+    @XmlElement(name = "default-validators")
+    protected List<FacesValidator> defaultValidators;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -386,6 +398,21 @@ public class FacesApplication {
         return this.variableResolver;
     }
 
+
+    public List<String> getResourceHandler() {
+        if (resourceHandler == null) {
+            resourceHandler = new ArrayList<String>();
+        }
+        return resourceHandler;
+    }
+
+    public List<FacesSystemEventListener> getSystemEventListener() {
+        if (systemEventListener == null) {
+            systemEventListener = new ArrayList<FacesSystemEventListener>();
+        }
+        return systemEventListener;
+    }
+
     /**
      * Gets the value of the localeConfig property.
      * 
@@ -466,6 +493,13 @@ public class FacesApplication {
             applicationExtension = new ArrayList<FacesApplicationExtension>();
         }
         return this.applicationExtension;
+    }
+
+    public List<FacesValidator> getDefaultValidators() {
+        if (defaultValidators == null) {
+            defaultValidators = new ArrayList<FacesValidator>();
+        }
+        return defaultValidators;
     }
 
     /**

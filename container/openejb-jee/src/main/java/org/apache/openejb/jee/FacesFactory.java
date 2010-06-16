@@ -56,39 +56,60 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * &lt;complexType name="faces-config-factoryType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="application-factory" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="faces-context-factory" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="lifecycle-factory" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="render-kit-factory" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0">
+ *         &lt;element name="application-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="exception-handler-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="external-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="faces-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="partial-view-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="lifecycle-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="view-declaration-language-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="tag-handler-delegate-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="render-kit-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="visit-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
  *         &lt;element name="factory-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-factory-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
+ *       &lt;/choice>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ 5 *
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-factoryType", propOrder = {
     "applicationFactory",
+        "exceptionHandlerFactory",
+        "externalContextFactory",
     "facesContextFactory",
     "lifecycleFactory",
+        "viewDeclarationLanguageFactory",
+        "tagHandlerDelegateFactory",
     "renderKitFactory",
+        "visitContextFactory",
     "factoryExtension"
 })
 public class FacesFactory {
 
     @XmlElement(name = "application-factory")
     protected List<java.lang.String> applicationFactory;
+    @XmlElement(name = "exception-handler-factory")
+    protected List<java.lang.String> exceptionHandlerFactory;
+    @XmlElement(name = "external-context-factory")
+    protected List<java.lang.String> externalContextFactory;
     @XmlElement(name = "faces-context-factory")
     protected List<java.lang.String> facesContextFactory;
     @XmlElement(name = "lifecycle-factory")
     protected List<java.lang.String> lifecycleFactory;
+    @XmlElement(name = "view-declaration-language-factory")
+    protected List<java.lang.String> viewDeclarationLanguageFactory;
+    @XmlElement(name = "tag-handler-delegate-factory")
+    protected List<java.lang.String> tagHandlerDelegateFactory;
     @XmlElement(name = "render-kit-factory")
     protected List<java.lang.String> renderKitFactory;
+    @XmlElement(name = "visit-context-factory")
+    protected List<java.lang.String> visitContextFactory;
     @XmlElement(name = "factory-extension")
     protected List<FacesFactoryExtension> factoryExtension;
     @XmlAttribute
@@ -124,6 +145,20 @@ public class FacesFactory {
             applicationFactory = new ArrayList<java.lang.String>();
         }
         return this.applicationFactory;
+    }
+
+    public List<String> getExceptionHandlerFactory() {
+        if (exceptionHandlerFactory == null) {
+            exceptionHandlerFactory = new ArrayList<String>();
+        }
+        return exceptionHandlerFactory;
+    }
+
+    public List<String> getExternalContextFactory() {
+        if (externalContextFactory == null) {
+            externalContextFactory = new ArrayList<String>();
+        }
+        return externalContextFactory;
     }
 
     /**
@@ -184,6 +219,20 @@ public class FacesFactory {
         return this.lifecycleFactory;
     }
 
+    public List<String> getViewDeclarationLanguageFactory() {
+        if (viewDeclarationLanguageFactory == null) {
+            viewDeclarationLanguageFactory = new ArrayList<String>();
+        }
+        return viewDeclarationLanguageFactory;
+    }
+
+    public List<String> getTagHandlerDelegateFactory() {
+        if (tagHandlerDelegateFactory == null) {
+            tagHandlerDelegateFactory = new ArrayList<String>();
+        }
+        return tagHandlerDelegateFactory;
+    }
+
     /**
      * Gets the value of the renderKitFactory property.
      * 
@@ -211,6 +260,13 @@ public class FacesFactory {
             renderKitFactory = new ArrayList<java.lang.String>();
         }
         return this.renderKitFactory;
+    }
+
+    public List<String> getVisitContextFactory() {
+        if (visitContextFactory == null) {
+            visitContextFactory = new ArrayList<String>();
+        }
+        return visitContextFactory;
     }
 
     /**

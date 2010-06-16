@@ -54,50 +54,63 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * &lt;complexType name="faces-configType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="application" type="{http://java.sun.com/xml/ns/javaee}faces-config-applicationType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="factory" type="{http://java.sun.com/xml/ns/javaee}faces-config-factoryType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="component" type="{http://java.sun.com/xml/ns/javaee}faces-config-componentType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="converter" type="{http://java.sun.com/xml/ns/javaee}faces-config-converterType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="managed-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-managed-beanType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="navigation-rule" type="{http://java.sun.com/xml/ns/javaee}faces-config-navigation-ruleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="referenced-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-referenced-beanType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="render-kit" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kitType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="lifecycle" type="{http://java.sun.com/xml/ns/javaee}faces-config-lifecycleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}faces-config-validatorType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0">
+ *         &lt;element name="application" type="{http://java.sun.com/xml/ns/javaee}faces-config-applicationType"/>
+ *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-orderingType"/>
+ *         &lt;element name="absolute-ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-absoluteOrderingType" minOccurs="0"/>
+ *         &lt;element name="factory" type="{http://java.sun.com/xml/ns/javaee}faces-config-factoryType"/>
+ *         &lt;element name="component" type="{http://java.sun.com/xml/ns/javaee}faces-config-componentType"/>
+ *         &lt;element name="converter" type="{http://java.sun.com/xml/ns/javaee}faces-config-converterType"/>
+ *         &lt;element name="managed-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-managed-beanType"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType" minOccurs="0"/>
+ *         &lt;element name="navigation-rule" type="{http://java.sun.com/xml/ns/javaee}faces-config-navigation-ruleType"/>
+ *         &lt;element name="referenced-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-referenced-beanType"/>
+ *         &lt;element name="render-kit" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kitType"/>
+ *         &lt;element name="lifecycle" type="{http://java.sun.com/xml/ns/javaee}faces-config-lifecycleType"/>
+ *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}faces-config-validatorType"/>
+ *         &lt;element name="behavior" type="{http://java.sun.com/xml/ns/javaee}faces-config-behaviorType"/>
  *         &lt;element name="faces-config-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
+ *       &lt;/choice>
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}faces-config-versionType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ 59 *
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-configType", propOrder = {
     "application",
+        "ordering",
+        "absoluteOrdering",
     "factory",
     "component",
     "converter",
     "managedBean",
+        "name",
     "navigationRule",
     "referencedBean",
     "renderKit",
     "lifecycle",
     "validator",
+        "behavior",
     "facesConfigExtension"
 })
 public class FacesConfig {
 
     protected List<FacesApplication> application;
+    protected List<FacesOrdering> ordering;
+    @XmlElement(name = "absolute-ordering")
+    protected List<FacesAbsoluteOrdering> absoluteOrdering;
     protected List<FacesFactory> factory;
     protected List<FacesComponent> component;
     protected List<FacesConverter> converter;
     @XmlElement(name = "managed-bean")
     protected List<FacesManagedBean> managedBean;
+    protected List<String> name;
     @XmlElement(name = "navigation-rule")
     protected List<FacesNavigationRule> navigationRule;
     @XmlElement(name = "referenced-bean")
@@ -106,6 +119,7 @@ public class FacesConfig {
     protected List<FacesRenderKit> renderKit;
     protected List<FacesLifecycle> lifecycle;
     protected List<FacesValidator> validator;
+    protected List<FacesBehavior> behavior;
     @XmlElement(name = "faces-config-extension")
     protected List<FacesExtension> facesConfigExtension;
     @XmlAttribute
@@ -143,6 +157,20 @@ public class FacesConfig {
             application = new ArrayList<FacesApplication>();
         }
         return this.application;
+    }
+
+    public List<FacesOrdering> getOrdering() {
+        if (ordering == null) {
+            ordering = new ArrayList<FacesOrdering>();
+        }
+        return ordering;
+    }
+
+    public List<FacesAbsoluteOrdering> getAbsoluteOrdering() {
+        if (absoluteOrdering == null) {
+            absoluteOrdering = new ArrayList<FacesAbsoluteOrdering>();
+        }
+        return absoluteOrdering;
     }
 
     /**
@@ -261,6 +289,13 @@ public class FacesConfig {
         return this.managedBean;
     }
 
+    public List<String> getName() {
+        if (name == null) {
+            name = new ArrayList<String>();
+        }
+        return name;
+    }
+
     /**
      * Gets the value of the navigationRule property.
      * 
@@ -269,7 +304,7 @@ public class FacesConfig {
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the navigationRule property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
@@ -404,6 +439,13 @@ public class FacesConfig {
             validator = new ArrayList<FacesValidator>();
         }
         return this.validator;
+    }
+
+    public List<FacesBehavior> getBehavior() {
+        if (behavior == null) {
+            behavior = new ArrayList<FacesBehavior>();
+        }
+        return behavior;
     }
 
     /**

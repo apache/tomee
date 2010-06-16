@@ -38,29 +38,28 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "render-kit" element represents a concrete RenderKit 
- *                 implementation that should be registered under the specified 
- *                 render-kit-id.  If no render-kit-id is specified, the 
- *                 identifier of the default RenderKit 
- *                 (RenderKitFactory.DEFAULT_RENDER_KIT) is assumed.
- *                 
- *             
- * 
+ * The "render-kit" element represents a concrete RenderKit
+ * implementation that should be registered under the specified
+ * render-kit-id.  If no render-kit-id is specified, the
+ * identifier of the default RenderKit
+ * (RenderKitFactory.DEFAULT_RENDER_KIT) is assumed.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for faces-config-render-kitType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="faces-config-render-kitType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="render-kit-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="render-kit-class" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="render-kit-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
  *         &lt;element name="renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-rendererType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="client-behavior-renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-client-behavior-rendererType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="render-kit-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kit-extensionType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -68,18 +67,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-render-kitType", propOrder = {
-    "description",
-    "displayName",
-    "icon",
-    "renderKitId",
-    "renderKitClass",
-    "renderer",
-    "renderKitExtension"
+        "description",
+        "displayName",
+        "icon",
+        "renderKitId",
+        "renderKitClass",
+        "renderer",
+        "clientBehaviorRenderer",
+        "renderKitExtension"
 })
 public class FacesRenderKit {
 
@@ -92,6 +90,8 @@ public class FacesRenderKit {
     @XmlElement(name = "render-kit-class")
     protected java.lang.String renderKitClass;
     protected List<FacesRenderer> renderer;
+    @XmlElement(name = "client-behavior-renderer")
+    protected List<FacesClientBehaviorRenderer> clientBehaviorRenderer;
     @XmlElement(name = "render-kit-extension")
     protected List<FacesRenderKitExtension> renderKitExtension;
     @XmlAttribute
@@ -102,25 +102,23 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link DescriptionType }
-     * 
-     * 
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -131,25 +129,23 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link java.lang.String }
-     * 
-     * 
      */
     public List<java.lang.String> getDisplayName() {
         if (displayName == null) {
@@ -160,25 +156,23 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Icon }
-     * 
-     * 
      */
     public List<Icon> getIcon() {
         if (icon == null) {
@@ -189,11 +183,9 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the renderKitId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     *         {@link java.lang.String }
      */
     public java.lang.String getRenderKitId() {
         return renderKitId;
@@ -201,11 +193,9 @@ public class FacesRenderKit {
 
     /**
      * Sets the value of the renderKitId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
     public void setRenderKitId(java.lang.String value) {
         this.renderKitId = value;
@@ -213,11 +203,9 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the renderKitClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     *         {@link java.lang.String }
      */
     public java.lang.String getRenderKitClass() {
         return renderKitClass;
@@ -225,11 +213,9 @@ public class FacesRenderKit {
 
     /**
      * Sets the value of the renderKitClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
     public void setRenderKitClass(java.lang.String value) {
         this.renderKitClass = value;
@@ -237,25 +223,23 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the renderer property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the renderer property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRenderer().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesRenderer }
-     * 
-     * 
      */
     public List<FacesRenderer> getRenderer() {
         if (renderer == null) {
@@ -264,27 +248,32 @@ public class FacesRenderKit {
         return this.renderer;
     }
 
+    public List<FacesClientBehaviorRenderer> getClientBehaviorRenderer() {
+        if (clientBehaviorRenderer == null) {
+            clientBehaviorRenderer = new ArrayList<FacesClientBehaviorRenderer>();
+        }
+        return this.clientBehaviorRenderer;
+    }
+
     /**
      * Gets the value of the renderKitExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the renderKitExtension property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRenderKitExtension().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FacesRenderKitExtension }
-     * 
-     * 
      */
     public List<FacesRenderKitExtension> getRenderKitExtension() {
         if (renderKitExtension == null) {
@@ -295,11 +284,9 @@ public class FacesRenderKit {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     *         {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -307,11 +294,9 @@ public class FacesRenderKit {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

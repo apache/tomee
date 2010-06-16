@@ -58,8 +58,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *       &lt;sequence>
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
  *         &lt;element name="from-action" type="{http://java.sun.com/xml/ns/javaee}faces-config-from-actionType" minOccurs="0"/>
- *         &lt;element name="from-outcome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="to-view-id" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="from-outcome" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="if" type="{http://java.sun.com/xml/ns/javaee}faces-config-ifType" minOccurs="0"/>
+ *         &lt;element name="to-view-id" type="{http://java.sun.com/xml/ns/javaee}faces-config-valueType"/>
  *         &lt;element name="redirect" type="{http://java.sun.com/xml/ns/javaee}faces-config-redirectType" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -67,7 +68,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ 48 *
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,6 +78,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "icon",
     "fromAction",
     "fromOutcome",
+        "_if",
     "toViewId",
     "redirect"
 })
@@ -90,6 +92,9 @@ public class FacesNavigationCase {
     protected FacesFromAction fromAction;
     @XmlElement(name = "from-outcome")
     protected java.lang.String fromOutcome;
+    //this is a faces EL expression
+    @XmlElement(name = "if")
+    protected String _if;
     @XmlElement(name = "to-view-id", required = true)
     protected java.lang.String toViewId;
     protected FacesRedirect redirect;
@@ -232,6 +237,30 @@ public class FacesNavigationCase {
      */
     public void setFromOutcome(java.lang.String value) {
         this.fromOutcome = value;
+    }
+
+    /**
+     * Gets the value of the if property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getIf() {
+        return _if;
+    }
+
+    /**
+     * Sets the value of the if property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setIf(String value) {
+        this._if = value;
     }
 
     /**
