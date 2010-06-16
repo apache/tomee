@@ -33,7 +33,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entryType", propOrder = {
-        "description",
+        "descriptions",
         "envEntryName",
         "envEntryType",
         "envEntryValue",
@@ -43,8 +43,8 @@ import java.util.List;
         })
 public class EnvEntry implements JndiReference {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "env-entry-name", required = true)
     protected String envEntryName;
     @XmlElement(name = "env-entry-type")
@@ -100,11 +100,17 @@ public class EnvEntry implements JndiReference {
         setEnvEntryType(type);
     }
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getEnvEntryName() {

@@ -35,7 +35,7 @@ public interface EjbReference extends JndiReference {
 
     String getEjbLink();
 
-    List<Text> getDescription();
+    Text[] getDescriptions();
 
     static enum Type {
         UNKNOWN, LOCAL, REMOTE;

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -39,8 +40,8 @@ import java.util.Map;
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "port-component_handlerType", propOrder = {
 @XmlType(name = "handlerType", propOrder = {
-    "description",
-    "displayName",
+    "descriptions",
+    "displayNames",
     "icon",
     "handlerName",
     "handlerClass",
@@ -50,9 +51,10 @@ import java.util.Map;
     "portName"
 })
 public class Handler {
-    protected List<String> description;
-    @XmlElement(name = "display-name")
-    protected List<String> displayName;
+    @XmlTransient
+    protected TextMap description = new TextMap();
+    @XmlTransient
+    protected TextMap displayName = new TextMap();
     @XmlElement(name = "icon")
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
     @XmlElement(name = "handler-name", required = true)
@@ -73,18 +75,30 @@ public class Handler {
     @XmlID
     protected String id;
 
-    public List<String> getDescription() {
-        if (description == null) {
-            description = new ArrayList<String>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
-    public List<String> getDisplayName() {
-        if (displayName == null) {
-            displayName = new ArrayList<String>();
-        }
-        return this.displayName;
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    @XmlElement(name = "display-name", required = true)
+    public Text[] getDisplayNames() {
+        return displayName.toArray();
+    }
+
+    public void setDisplayNames(Text[] text) {
+        displayName.set(text);
+    }
+
+    public String getDisplayName() {
+        return displayName.get();
     }
 
     public Collection<Icon> getIcons() {

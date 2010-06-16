@@ -37,13 +37,13 @@ import java.util.LinkedHashMap;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interceptorsType", propOrder = {
-        "description",
+        "descriptions",
         "interceptor"
         })
 public class Interceptors {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
 
     @XmlTransient
     protected Map<String,Interceptor> interceptors = new LinkedHashMap<String,Interceptor>();
@@ -53,11 +53,17 @@ public class Interceptors {
     @XmlID
     protected String id;
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getId() {

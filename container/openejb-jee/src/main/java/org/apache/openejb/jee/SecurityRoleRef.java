@@ -47,6 +47,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class SecurityRoleRef {
 
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
     @XmlElement(name = "role-name", required = true)
     protected String roleName;
     @XmlElement(name = "role-link")
@@ -55,10 +58,6 @@ public class SecurityRoleRef {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    @XmlTransient
-    protected TextMap description = new TextMap();
-
 
     public SecurityRoleRef() {
     }

@@ -37,6 +37,8 @@ import java.util.ArrayList;
         })
 public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType>{
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(required = true)
     protected List<Method> method;
     @XmlElement(name = "concurrency-attribute", required = true)
@@ -46,8 +48,6 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
     @XmlID
     protected String id;
 
-    @XmlTransient
-    protected TextMap description = new TextMap();
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

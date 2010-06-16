@@ -51,15 +51,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         })
 public class SecurityRole {
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
     @XmlElement(name = "role-name", required = true)
     protected String roleName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    @XmlTransient
-    protected TextMap description = new TextMap();
 
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {

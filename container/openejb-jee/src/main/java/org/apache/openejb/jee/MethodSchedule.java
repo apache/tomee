@@ -38,6 +38,9 @@ import java.util.ArrayList;
         })
 public class MethodSchedule {
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
     @XmlElement(name = "schedule", required = true)
     protected List<TimerSchedule> schedule;
 
@@ -51,9 +54,6 @@ public class MethodSchedule {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    @XmlTransient
-    protected TextMap description = new TextMap();
 
     public MethodSchedule() {
     }

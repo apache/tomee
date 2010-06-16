@@ -17,10 +17,13 @@
 package org.apache.openejb.jee;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -69,8 +72,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-config-behaviorType", propOrder = {
-    "description",
-    "displayName",
+    "descriptions",
+    "displayNames",
     "icon",
     "behaviorId",
     "behaviorClass",
@@ -80,10 +83,12 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class FacesBehavior {
 
-    protected List<String> description;
-    @XmlElement(name = "display-name")
-    protected List<String> displayName;
-    protected List<Icon> icon;
+    @XmlTransient
+    protected TextMap description = new TextMap();
+    @XmlTransient
+    protected TextMap displayName = new TextMap();
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
     @XmlElement(name = "behavior-id", required = true)
     protected String behaviorId;
     @XmlElement(name = "behavior-class", required = true)
@@ -93,91 +98,48 @@ public class FacesBehavior {
     @XmlElement(name = "behavior-extension")
     protected List<FacesBehaviorExtension> behaviorExtension;
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDescription().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getDescription() {
-        if (description == null) {
-            description = new ArrayList<String>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
-    /**
-     * Gets the value of the displayName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDisplayName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getDisplayName() {
-        if (displayName == null) {
-            displayName = new ArrayList<String>();
-        }
-        return this.displayName;
+    public void setDescriptions(Text[] text) {
+        description.set(text);
     }
 
-    /**
-     * Gets the value of the icon property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIcon().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Icon }
-     * 
-     * 
-     */
-    public List<Icon> getIcon() {
+    public String getDescription() {
+        return description.get();
+    }
+
+    @XmlElement(name = "display-name", required = true)
+    public Text[] getDisplayNames() {
+        return displayName.toArray();
+    }
+
+    public void setDisplayNames(Text[] text) {
+        displayName.set(text);
+    }
+
+    public String getDisplayName() {
+        return displayName.get();
+    }
+
+    public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new ArrayList<Icon>();
+            icon = new LocalCollection<Icon>();
         }
-        return this.icon;
+        return icon;
+    }
+
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
+    }
+
+    public Icon getIcon() {
+        return icon.getLocal();
     }
 
     /**
