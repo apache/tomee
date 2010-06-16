@@ -24,12 +24,24 @@ import org.apache.openejb.InjectionProcessor;
 */
 public class PassthroughFactory {
 
-    public static Object create(Object instance) {
-        return instance;
+    /**
+     * xbean-reflect seems to sometimes get confused.
+     * Despite explicitly setting the 'static Object create(Object)'
+     * method as the factory method, sometimes xbean instead would
+     * invoke the 'static ObjectRecipe recipe(Object)' method.
+     *
+     * Splitting the two methods into different classes seems to
+     * eliminate the chances that xbean-reflect will pick the wrong
+     * static method.
+     */
+    public static class Create {
+        public static Object create(Object instance) {
+            return instance;
+        }
     }
 
     public static ObjectRecipe recipe(Object instance) {
-        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.class);
+        ObjectRecipe recipe = new ObjectRecipe(PassthroughFactory.Create.class);
         recipe.setFactoryMethod("create");
 
         String param = "instance"+recipe.hashCode();
