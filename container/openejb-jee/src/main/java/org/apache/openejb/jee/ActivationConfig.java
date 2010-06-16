@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -31,13 +32,13 @@ import java.util.Properties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-configType", propOrder = {
-        "description",
+        "descriptions",
         "activationConfigProperty"
         })
 public class ActivationConfig {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "activation-config-property", required = true)
     protected List<ActivationConfigProperty> activationConfigProperty;
     @XmlAttribute
@@ -46,11 +47,17 @@ public class ActivationConfig {
     @XmlSchemaType(name = "ID")
     protected String id;
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public void addProperty(String name, String value) {

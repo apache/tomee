@@ -33,7 +33,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-refType", propOrder = {
-        "description",
+        "descriptions",
         "ejbRefName",
         "ejbRefType",
         "home",
@@ -45,8 +45,8 @@ import java.util.List;
         })
 public class EjbRef implements EjbReference {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "ejb-ref-name", required = true)
     protected String ejbRefName;
     @XmlElement(name = "ejb-ref-type")
@@ -77,11 +77,17 @@ public class EjbRef implements EjbReference {
         this.refType = refType;
     }
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getEjbRefName() {

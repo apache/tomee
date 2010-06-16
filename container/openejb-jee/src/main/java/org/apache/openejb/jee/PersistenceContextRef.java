@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -63,7 +64,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-refType", propOrder = {
-        "description",
+        "descriptions",
         "persistenceContextRefName",
         "persistenceUnitName",
         "persistenceContextType",
@@ -75,8 +76,8 @@ import java.util.List;
         })
 public class PersistenceContextRef implements JndiReference, PersistenceRef {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "persistence-context-ref-name", required = true)
     protected String persistenceContextRefName;
     @XmlElement(name = "persistence-unit-name")
@@ -131,11 +132,17 @@ public class PersistenceContextRef implements JndiReference, PersistenceRef {
     public void setType(String type) {
     }
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getPersistenceContextRefName() {

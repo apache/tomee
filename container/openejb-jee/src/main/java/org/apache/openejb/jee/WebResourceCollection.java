@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -32,7 +33,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-resource-collectionType", propOrder = {
         "webResourceName",
-        "description",
+        "descriptions",
         "urlPattern",
         "httpMethod",
         "httpMethodOmission"
@@ -41,7 +42,8 @@ public class WebResourceCollection {
 
     @XmlElement(name = "web-resource-name", required = true)
     protected String webResourceName;
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "url-pattern", required = true)
     protected List<String> urlPattern;
     @XmlElement(name = "http-method")
@@ -64,11 +66,17 @@ public class WebResourceCollection {
         this.webResourceName = value;
     }
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public List<String> getUrlPattern() {

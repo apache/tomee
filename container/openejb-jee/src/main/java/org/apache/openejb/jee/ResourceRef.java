@@ -62,7 +62,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-refType", propOrder = {
-        "description",
+        "descriptions",
         "resRefName",
         "resType",
         "resAuth",
@@ -73,8 +73,8 @@ import java.util.List;
         })
 public class ResourceRef implements JndiReference {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "res-ref-name", required = true)
     protected String resRefName;
     @XmlElement(name = "res-type")
@@ -132,11 +132,17 @@ public class ResourceRef implements JndiReference {
     }
 
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getResRefName() {

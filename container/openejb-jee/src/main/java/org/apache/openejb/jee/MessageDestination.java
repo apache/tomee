@@ -23,11 +23,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -54,8 +57,8 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destinationType", propOrder = {
-        "description",
-        "displayName",
+        "descriptions",
+        "displayNames",
         "icon",
         "messageDestinationName",
         "mappedName",
@@ -63,12 +66,12 @@ import java.util.List;
         })
 public class MessageDestination implements Keyable<String> {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
-    @XmlElement(name = "display-name", required = true)
-    protected List<Text> displayName;
-    @XmlElement(required = true)
-    protected List<Icon> icon;
+    @XmlTransient
+    protected TextMap description = new TextMap();
+    @XmlTransient
+    protected TextMap displayName = new TextMap();
+    @XmlElement(name = "icon", required = true)
+    protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
     @XmlElement(name = "message-destination-name", required = true)
     protected String messageDestinationName;
     @XmlElement(name = "mapped-name")
@@ -80,25 +83,48 @@ public class MessageDestination implements Keyable<String> {
     @XmlID
     protected String id;
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
-    public List<Text> getDisplayName() {
-        if (displayName == null) {
-            displayName = new ArrayList<Text>();
-        }
-        return this.displayName;
+    public void setDescriptions(Text[] text) {
+        description.set(text);
     }
 
-    public List<Icon> getIcon() {
+    public String getDescription() {
+        return description.get();
+    }
+
+    @XmlElement(name = "display-name", required = true)
+    public Text[] getDisplayNames() {
+        return displayName.toArray();
+    }
+
+    public void setDisplayNames(Text[] text) {
+        displayName.set(text);
+    }
+
+    public String getDisplayName() {
+        return displayName.get();
+    }
+
+    public Collection<Icon> getIcons() {
         if (icon == null) {
-            icon = new ArrayList<Icon>();
+            icon = new LocalCollection<Icon>();
         }
-        return this.icon;
+        return icon;
+    }
+
+    public Map<String,Icon> getIconMap() {
+        if (icon == null) {
+            icon = new LocalCollection<Icon>();
+        }
+        return icon.toMap();
+    }
+
+    public Icon getIcon() {
+        return icon.getLocal();
     }
 
     public String getMessageDestinationName() {

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -30,12 +31,12 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "auth-constraintType", propOrder = {
-        "description",
+        "descriptions",
         "roleName"
 })
 public class AuthConstraint {
-    //TODO use TextMap for description
-    protected List<String> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "role-name")
     protected List<String> roleName;
     @XmlAttribute
@@ -43,11 +44,17 @@ public class AuthConstraint {
     @XmlID
     protected String id;
 
-    public List<String> getDescription() {
-        if (description == null) {
-            description = new ArrayList<String>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public List<String> getRoleName() {

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -33,16 +34,17 @@ import java.util.Map;
 @XmlRootElement(name = "webservices")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webservicesType", propOrder = {
-    "description",
-    "displayName",
+    "descriptions",
+    "displayNames",
     "icon",
     "webserviceDescription"
 })
 public class Webservices {
-    protected List<String> description;
-    @XmlElement(name = "display-name")
-    protected List<String> displayName;
-    @XmlElement(name = "icon")
+    @XmlTransient
+    protected TextMap description = new TextMap();
+    @XmlTransient
+    protected TextMap displayName = new TextMap();
+    @XmlElement(name = "icon", required = true)
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
     @XmlElement(name = "webservice-description", required = true)
     protected KeyedCollection<String, WebserviceDescription> webserviceDescription;
@@ -53,18 +55,30 @@ public class Webservices {
     @XmlAttribute(required = true)
     protected String version;
 
-    public List<String> getDescription() {
-        if (description == null) {
-            description = new ArrayList<String>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
     }
 
-    public List<String> getDisplayName() {
-        if (displayName == null) {
-            displayName = new ArrayList<String>();
-        }
-        return this.displayName;
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
+    }
+
+    @XmlElement(name = "display-name", required = true)
+    public Text[] getDisplayNames() {
+        return displayName.toArray();
+    }
+
+    public void setDisplayNames(Text[] text) {
+        displayName.set(text);
+    }
+
+    public String getDisplayName() {
+        return displayName.get();
     }
 
     public Collection<Icon> getIcons() {
@@ -74,7 +88,7 @@ public class Webservices {
         return icon;
     }
 
-    public Map<String, Icon> getIconMap() {
+    public Map<String,Icon> getIconMap() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();
         }

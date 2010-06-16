@@ -215,6 +215,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         })
 public class Method {
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
     @XmlElement(name = "ejb-name", required = true)
     protected String ejbName;
 
@@ -232,8 +235,6 @@ public class Method {
     @XmlID
     protected String id;
 
-    @XmlTransient
-    protected TextMap description = new TextMap();
 
     public Method(String ejbName, java.lang.reflect.Method method) {
         this.ejbName = ejbName;

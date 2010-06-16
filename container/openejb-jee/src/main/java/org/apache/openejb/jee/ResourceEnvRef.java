@@ -61,7 +61,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-env-refType", propOrder = {
-        "description",
+        "descriptions",
         "resourceEnvRefName",
         "resourceEnvRefType",
         "mappedName",
@@ -70,8 +70,8 @@ import java.util.List;
         })
 public class ResourceEnvRef implements JndiReference {
 
-    @XmlElement(required = true)
-    protected List<Text> description;
+    @XmlTransient
+    protected TextMap description = new TextMap();
     @XmlElement(name = "resource-env-ref-name", required = true)
     protected String resourceEnvRefName;
     @XmlElement(name = "resource-env-ref-type")
@@ -117,11 +117,17 @@ public class ResourceEnvRef implements JndiReference {
         setResourceEnvRefType(type);
     }
 
-    public List<Text> getDescription() {
-        if (description == null) {
-            description = new ArrayList<Text>();
-        }
-        return this.description;
+    @XmlElement(name = "description", required = true)
+    public Text[] getDescriptions() {
+        return description.toArray();
+    }
+
+    public void setDescriptions(Text[] text) {
+        description.set(text);
+    }
+
+    public String getDescription() {
+        return description.get();
     }
 
     public String getResourceEnvRefName() {

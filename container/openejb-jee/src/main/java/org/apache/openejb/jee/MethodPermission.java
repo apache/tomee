@@ -54,6 +54,9 @@ import java.util.List;
         })
 public class MethodPermission {
 
+    @XmlTransient
+    protected TextMap description = new TextMap();
+
     @XmlElement(name = "role-name", required = true)
     protected List<String> roleName;
     protected EmptyType unchecked;
@@ -63,9 +66,6 @@ public class MethodPermission {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    @XmlTransient
-    protected TextMap description = new TextMap();
 
     public MethodPermission() {
     }
