@@ -31,7 +31,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceadapterX;
 import org.apache.openejb.jee.MessageAdapter;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.util.Join;
@@ -81,7 +81,7 @@ public class CustomMdbContainerTest extends TestCase {
         AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
 
         Connector connector = new Connector("email-ra");
-        ResourceAdapter adapter = connector.setResourceAdapter(new ResourceAdapter(EmailResourceAdapter.class));
+        ResourceadapterX adapter = connector.setResourceAdapter(new ResourceadapterX(EmailResourceAdapter.class));
         InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(EmailConsumer.class, EmailAccountInfo.class));

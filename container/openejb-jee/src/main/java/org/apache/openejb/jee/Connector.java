@@ -82,16 +82,16 @@ public class Connector extends ConnectorBase {
     }
 
     @XmlElement(name = "resourceadapter", required = true)
-    public ResourceAdapter getResourceAdapter() {
+    public ResourceadapterX getResourceAdapter() {
         if (resourceAdapter == null) {
-            resourceAdapter = new ResourceAdapter();
+            resourceAdapter = new ResourceadapterX();
         }
-        return (ResourceAdapter) resourceAdapter;
+        return (ResourceadapterX) resourceAdapter;
     }
 
-    public ResourceAdapter setResourceAdapter(ResourceAdapter resourceAdapter16) {
+    public ResourceadapterX setResourceAdapter(ResourceadapterX resourceAdapter16) {
         this.resourceAdapter = resourceAdapter16;
-        return (ResourceAdapter) this.resourceAdapter;
+        return (ResourceadapterX) this.resourceAdapter;
     }
 
     @XmlAttribute(required = true)

@@ -52,7 +52,7 @@ public class ConnectorBase {
     protected String resourceAdapterVersion = "";
     protected License license;
     @XmlTransient
-    protected ResourceAdapterBase resourceAdapter;
+    protected ResourceadapterBaseX resourceAdapter;
     @XmlElement(name = "required-work-context")
     protected List<String> requiredWorkContext;
     @XmlAttribute
@@ -155,11 +155,11 @@ public class ConnectorBase {
         this.license = value;
     }
 
-    public ResourceAdapterBase getResourceAdapter() {
+    public ResourceadapterBaseX getResourceAdapter() {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapterBase resourceAdapter) {
+    public void setResourceAdapter(ResourceadapterBaseX resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
