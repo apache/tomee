@@ -772,19 +772,17 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     public List<AroundTimeout> getAroundTimeout() {
-        return aroundTimeout;
-    }
-
-    public void setAroundTimeout(List<AroundTimeout> aroundTimeout) {
-        this.aroundTimeout = aroundTimeout;
+        if (aroundTimeout == null) {
+            aroundTimeout = new ArrayList<AroundTimeout>();
+        }
+        return this.aroundTimeout;
     }
 
     public List<AsyncMethod> getAsyncMethod() {
-        return asyncMethod;
-    }
-
-    public void setAsyncMethod(List<AsyncMethod> asyncMethod) {
-        this.asyncMethod = asyncMethod;
+        if (asyncMethod == null) {
+            asyncMethod = new ArrayList<AsyncMethod>();
+        }
+        return this.asyncMethod;
     }
 
     public ConcurrencyManagementType getConcurrencyManagementType() {
@@ -796,11 +794,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     public List<ConcurrentMethod> getConcurrentMethod() {
-        return concurrentMethod;
-    }
-
-    public void setConcurrentMethod(List<ConcurrentMethod> concurrentMethod) {
-        this.concurrentMethod = concurrentMethod;
+        if (concurrentMethod == null) {
+            concurrentMethod = new ArrayList<ConcurrentMethod>();
+        }
+        return this.concurrentMethod;
     }
 
     public void addAfterBegin(String method) {
@@ -855,11 +852,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
 
     public List<Timer> getTimer() {
-        return timer;
-    }
-
-    public void setTimer(List<Timer> timer) {
-        this.timer = timer;
+        if (timer == null) {
+            timer = new ArrayList<Timer>();
+        }
+        return this.timer;
     }
 
     public Timeout getAccessTimeout() {

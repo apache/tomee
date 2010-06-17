@@ -55,16 +55,16 @@ import java.util.List;
 //    "adminObject",
 //    "securityPermission"
 //})
-public class ResourceadapterX extends ResourceadapterBaseX {
+public class Resourceadapter extends ResourceadapterBase {
 
-    public ResourceadapterX() {
+    public Resourceadapter() {
     }
 
-    public ResourceadapterX(Class resourceAdapterClass) {
+    public Resourceadapter(Class resourceAdapterClass) {
         super(resourceAdapterClass);
     }
 
-    public ResourceadapterX(String resourceAdapterClass) {
+    public Resourceadapter(String resourceAdapterClass) {
         super(resourceAdapterClass);
     }
 

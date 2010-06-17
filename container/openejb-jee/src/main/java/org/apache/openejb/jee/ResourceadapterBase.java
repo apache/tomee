@@ -27,7 +27,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso(ResourceAdapter.class)
-public class ResourceadapterBaseX {
+public class ResourceadapterBase {
 
     @XmlElement(name = "resourceadapter-class")
     protected String resourceAdapterClass;
@@ -46,14 +46,14 @@ public class ResourceadapterBaseX {
     @XmlID
     protected String id;
 
-    public ResourceadapterBaseX() {
+    public ResourceadapterBase() {
     }
 
-    public ResourceadapterBaseX(String resourceAdapterClass) {
+    public ResourceadapterBase(String resourceAdapterClass) {
         this.resourceAdapterClass = resourceAdapterClass;
     }
 
-    public ResourceadapterBaseX(Class resourceAdapterClass) {
+    public ResourceadapterBase(Class resourceAdapterClass) {
         this(resourceAdapterClass.getName());
     }
 

@@ -34,7 +34,7 @@ import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.OutboundResourceadapter;
-import org.apache.openejb.jee.ResourceadapterX;
+import org.apache.openejb.jee.Resourceadapter;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
@@ -315,7 +315,7 @@ class AppInfoBuilder {
                 }
             }
 
-            ResourceadapterX resourceAdapter = connector.getResourceAdapter();
+            Resourceadapter resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
                 String id = getId(connectorModule);
                 String className = resourceAdapter.getResourceAdapterClass();
@@ -424,7 +424,7 @@ class AppInfoBuilder {
         }
     }
 
-    private String getId(AdminObject adminObject, ResourceadapterX resourceAdapter, ConnectorModule connectorModule) {
+    private String getId(AdminObject adminObject, Resourceadapter resourceAdapter, ConnectorModule connectorModule) {
         String id;
         if (adminObject.getId() != null) {
             id = adminObject.getId();
