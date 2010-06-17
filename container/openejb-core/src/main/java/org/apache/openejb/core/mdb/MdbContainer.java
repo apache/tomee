@@ -29,6 +29,7 @@ import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
@@ -131,6 +132,8 @@ public class MdbContainer implements RpcContainer {
         // create the activation spec
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
+        Options options = new Options(deploymentInfo.getProperties());
+        int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
         MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, securityService, instanceLimit);
         EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, xaResourceWrapper);
