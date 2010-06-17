@@ -44,7 +44,7 @@ import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ResourceadapterX;
+import org.apache.openejb.jee.Resourceadapter;
 import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
@@ -1594,7 +1594,7 @@ public class AutoConfig implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 Connector connector = connectorModule.getConnector();
 
-                ResourceadapterX resourceAdapter = connector.getResourceAdapter();
+                Resourceadapter resourceAdapter = connector.getResourceAdapter();
                 if (resourceAdapter.getResourceAdapterClass() != null) {
                     String resourceAdapterId;
                     if (resourceAdapter.getId() != null) {
