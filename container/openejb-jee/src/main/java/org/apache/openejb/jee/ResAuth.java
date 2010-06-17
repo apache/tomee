@@ -22,17 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The res-authType specifies whether the Deployment Component
- * code signs on programmatically to the resource manager, or
- * whether the Container will sign on to the resource manager
- * on behalf of the Deployment Component. In the latter case,
- * the Container uses information that is supplied by the
- * Deployer.
- * <p/>
- * The value must be one of the two following:
- * <p/>
- * Application
- * Container
+ * connector_1_6.xsd
+ * 
+ * <p>Java class for res-authType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="res-authType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum ResAuth {
     @XmlEnumValue("Application") APPLICATION,

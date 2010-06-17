@@ -34,6 +34,46 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for entity-beanType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="entity-beanType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/>
+ *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="home" type="{http://java.sun.com/xml/ns/javaee}homeType" minOccurs="0"/>
+ *         &lt;element name="remote" type="{http://java.sun.com/xml/ns/javaee}remoteType" minOccurs="0"/>
+ *         &lt;element name="local-home" type="{http://java.sun.com/xml/ns/javaee}local-homeType" minOccurs="0"/>
+ *         &lt;element name="local" type="{http://java.sun.com/xml/ns/javaee}localType" minOccurs="0"/>
+ *         &lt;element name="ejb-class" type="{http://java.sun.com/xml/ns/javaee}ejb-classType"/>
+ *         &lt;element name="persistence-type" type="{http://java.sun.com/xml/ns/javaee}persistence-typeType"/>
+ *         &lt;element name="prim-key-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="reentrant" type="{http://java.sun.com/xml/ns/javaee}true-falseType"/>
+ *         &lt;element name="cmp-version" type="{http://java.sun.com/xml/ns/javaee}cmp-versionType" minOccurs="0"/>
+ *         &lt;element name="abstract-schema-name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType" minOccurs="0"/>
+ *         &lt;element name="cmp-field" type="{http://java.sun.com/xml/ns/javaee}cmp-fieldType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="primkey-field" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/>
+ *         &lt;element name="security-role-ref" type="{http://java.sun.com/xml/ns/javaee}security-role-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="security-identity" type="{http://java.sun.com/xml/ns/javaee}security-identityType" minOccurs="0"/>
+ *         &lt;element name="query" type="{http://java.sun.com/xml/ns/javaee}queryType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-beanType", propOrder = {

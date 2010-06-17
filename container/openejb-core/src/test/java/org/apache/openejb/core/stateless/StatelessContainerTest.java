@@ -23,7 +23,7 @@ import org.apache.openejb.assembler.classic.cmd.Info2Properties;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EmptyType;
+import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
 
 import javax.ejb.SessionContext;
@@ -127,7 +127,7 @@ public class StatelessContainerTest extends TestCase {
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
-        bean.setLocalBean(new EmptyType());
+        bean.setLocalBean(new Empty());
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(bean);

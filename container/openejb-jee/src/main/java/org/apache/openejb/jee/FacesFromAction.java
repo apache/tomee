@@ -36,17 +36,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "from-action" element contains an action reference 
- *                 expression that must have been executed (by the default 
- *                 ActionListener for handling application level events) 
- *                 in order to select the navigation rule.  If not specified, 
- *                 this rule will be relevant no matter which action reference 
- *                 was executed (or if no action reference was executed).
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-from-actionType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

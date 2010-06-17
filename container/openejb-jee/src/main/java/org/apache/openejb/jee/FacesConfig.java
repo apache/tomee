@@ -38,14 +38,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "faces-config" element is the root of the configuration
- *                 information hierarchy, and contains nested elements for all
- *                 of the other configuration settings.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-configType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

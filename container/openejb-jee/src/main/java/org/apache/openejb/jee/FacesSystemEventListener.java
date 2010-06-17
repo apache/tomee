@@ -28,18 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         The presence of this element within the "application" element in
- *         an application configuration resource file indicates the
- *         developer wants to add an SystemEventListener to this
- *         application instance.  Elements nested within this element allow
- *         selecting the kinds of events that will be delivered to the
- *         listener instance, and allow selecting the kinds of classes that
- *         can be the source of events that are delivered to the listener
- *         instance.
- *         
- *       
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-system-event-listenerType complex type.
  * 

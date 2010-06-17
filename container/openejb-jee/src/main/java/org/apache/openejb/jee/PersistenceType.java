@@ -22,13 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The persistence-typeType specifies an entity bean's persistence
- * management type.
- * <p/>
- * The persistence-type element must be one of the two following:
- * <p/>
- * Bean
- * Container
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for persistence-typeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="persistence-typeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum PersistenceType {
     @XmlEnumValue("Bean") BEAN,

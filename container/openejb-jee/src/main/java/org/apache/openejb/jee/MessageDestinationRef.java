@@ -32,39 +32,31 @@ import java.util.List;
 
 
 /**
- * The message-destination-ref element contains a declaration
- * of Deployment Component's reference to a message destination
- * associated with a resource in Deployment Component's
- * environment. It consists of:
- * <p/>
- * - an optional description
- * - the message destination reference name
- * - an optional message destination type
- * - an optional specification as to whether
- * the destination is used for
- * consuming or producing messages, or both.
- * if not specified, "both" is assumed.
- * - an optional link to the message destination
- * - optional injection targets
- * <p/>
- * The message destination type must be supplied unless an
- * injection target is specified, in which case the type
- * of the target is used.  If both are specified, the type
- * must be assignment compatible with the type of the injection
- * target.
- * <p/>
- * Examples:
- * <p/>
- * <message-destination-ref>
- * <message-destination-ref-name>jms/StockQueue
- * </message-destination-ref-name>
- * <message-destination-type>javax.jms.Queue
- * </message-destination-type>
- * <message-destination-usage>Consumes
- * </message-destination-usage>
- * <message-destination-link>CorporateStocks
- * </message-destination-link>
- * </message-destination-ref>
+ * javaee6.xsd
+ * 
+ * <p>Java class for message-destination-refType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="message-destination-refType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="message-destination-ref-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
+ *         &lt;element name="message-destination-type" type="{http://java.sun.com/xml/ns/javaee}message-destination-typeType" minOccurs="0"/>
+ *         &lt;element name="message-destination-usage" type="{http://java.sun.com/xml/ns/javaee}message-destination-usageType" minOccurs="0"/>
+ *         &lt;element name="message-destination-link" type="{http://java.sun.com/xml/ns/javaee}message-destination-linkType" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-refType", propOrder = {

@@ -29,30 +29,27 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * The query-method specifies the method for a finder or select
- * query.
- * <p/>
- * The method-name element specifies the name of a finder or select
- * method in the entity bean's implementation class.
- * <p/>
- * Each method-param must be defined for a query-method using the
- * method-params element.
- * <p/>
- * It is used by the query-method element.
- * <p/>
- * Example:
- * <p/>
- * <query>
- * <description>Method finds large orders</description>
- * <query-method>
- * <method-name>findLargeOrders</method-name>
- * <method-params></method-params>
- * </query-method>
- * <ejb-ql>
- * SELECT OBJECT(o) FROM Order o
- * WHERE o.amount &gt; 1000
- * </ejb-ql>
- * </query>
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for query-methodType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="query-methodType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="method-name" type="{http://java.sun.com/xml/ns/javaee}method-nameType"/>
+ *         &lt;element name="method-params" type="{http://java.sun.com/xml/ns/javaee}method-paramsType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "query-methodType", propOrder = {

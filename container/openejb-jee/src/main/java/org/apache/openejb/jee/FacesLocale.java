@@ -31,13 +31,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
- * 
- *                 The localeType defines valid locale defined by ISO-639-1
- *                 and ISO-3166.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-localeType simple type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

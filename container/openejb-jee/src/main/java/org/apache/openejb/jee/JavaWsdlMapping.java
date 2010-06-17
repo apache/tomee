@@ -31,13 +31,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The element describes the Java mapping to a known WSDL document.
- * <p/>
- * It contains the mapping between package names and XML namespaces,
- * WSDL root types and Java artifacts, and the set of mappings for
- * services.
- */
 @XmlRootElement(name = "java-wsdl-mapping")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "java-wsdl-mappingType", propOrder = {

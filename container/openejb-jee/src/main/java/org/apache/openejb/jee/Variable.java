@@ -27,33 +27,33 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * The variableType provides information on the scripting
- * variables defined by using this tag.  It is a (translation
- * time) error for a tag that has one or more variable
- * subelements to have a TagExtraInfo class that returns a
- * non-null value from a call to getVariableInfo().
- * <p/>
- * The subelements of variableType are of the form:
- * <p/>
- * description              Optional description of this
- * variable
- * <p/>
- * name-given               The variable name as a constant
- * <p/>
- * name-from-attribute      The name of an attribute whose
- * (translation time) value will
- * give the name of the
- * variable.  One of name-given or
- * name-from-attribute is required.
- * <p/>
- * variable-class           Name of the class of the variable.
- * java.lang.String is default.
- * <p/>
- * declare                  Whether the variable is declared
- * or not.  True is the default.
- * <p/>
- * scope                    The scope of the scripting varaible
- * defined.  NESTED is default.
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for variableType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="variableType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;element name="name-given" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *           &lt;element name="name-from-attribute" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *         &lt;/choice>
+ *         &lt;element name="variable-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="declare" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType" minOccurs="0"/>
+ *         &lt;element name="scope" type="{http://java.sun.com/xml/ns/javaee}variable-scopeType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "variableType", propOrder = {

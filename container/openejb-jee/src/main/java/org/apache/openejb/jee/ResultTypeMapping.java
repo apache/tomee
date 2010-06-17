@@ -22,15 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The result-type-mappingType is used in the query element to
- * specify whether an abstract schema type returned by a query
- * for a select method is to be mapped to an EJBLocalObject or
- * EJBObject type.
- * <p/>
- * The value must be one of the following:
- * <p/>
- * Local
- * Remote
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for result-type-mappingType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="result-type-mappingType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum ResultTypeMapping {
     @XmlEnumValue("Local") LOCAL,

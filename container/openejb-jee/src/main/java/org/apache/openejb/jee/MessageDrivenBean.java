@@ -34,51 +34,41 @@ import java.util.Map;
 
 
 /**
- * The message-driven element declares a message-driven
- * bean. The declaration consists of:
- * <p/>
- * - an optional description
- * - an optional display name
- * - an optional icon element that contains a small and a large
- * icon file name.
- * - a name assigned to the enterprise bean in
- * the deployment descriptor
- * - an optional mapped-name element that can be used to provide
- * vendor-specific deployment information such as the physical
- * jndi-name of destination from which this message-driven bean
- * should consume.  This element is not required to be supported
- * by all implementations.  Any use of this element is non-portable.
- * - the message-driven bean's implementation class
- * - an optional declaration of the bean's messaging
- * type
- * - an optional declaration of the bean's timeout method.
- * - the optional message-driven bean's transaction management
- * type. If it is not defined, it is defaulted to Container.
- * - an optional declaration of the bean's
- * message-destination-type
- * - an optional declaration of the bean's
- * message-destination-link
- * - an optional declaration of the message-driven bean's
- * activation configuration properties
- * - an optional list of the message-driven bean class and/or
- * superclass around-invoke methods.
- * - an optional declaration of the bean's environment
- * entries
- * - an optional declaration of the bean's EJB references
- * - an optional declaration of the bean's local EJB
- * references
- * - an optional declaration of the bean's web service
- * references
- * - an optional declaration of the security
- * identity to be used for the execution of the bean's
- * methods
- * - an optional declaration of the bean's
- * resource manager connection factory
- * references
- * - an optional declaration of the bean's resource
- * environment references.
- * - an optional declaration of the bean's message
- * destination references
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for message-driven-beanType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="message-driven-beanType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/>
+ *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="ejb-class" type="{http://java.sun.com/xml/ns/javaee}ejb-classType" minOccurs="0"/>
+ *         &lt;element name="messaging-type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="timeout-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/>
+ *         &lt;element name="timer" type="{http://java.sun.com/xml/ns/javaee}timerType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="transaction-type" type="{http://java.sun.com/xml/ns/javaee}transaction-typeType" minOccurs="0"/>
+ *         &lt;element name="message-destination-type" type="{http://java.sun.com/xml/ns/javaee}message-destination-typeType" minOccurs="0"/>
+ *         &lt;element name="message-destination-link" type="{http://java.sun.com/xml/ns/javaee}message-destination-linkType" minOccurs="0"/>
+ *         &lt;element name="activation-config" type="{http://java.sun.com/xml/ns/javaee}activation-configType" minOccurs="0"/>
+ *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/>
+ *         &lt;element name="security-role-ref" type="{http://java.sun.com/xml/ns/javaee}security-role-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="security-identity" type="{http://java.sun.com/xml/ns/javaee}security-identityType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-driven-beanType", propOrder = {

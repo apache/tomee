@@ -32,6 +32,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * web-common_3_0.xsd
+ * 
+ * <p>Java class for web-fragmentType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="web-fragmentType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0">
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}web-commonType"/>
+ *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}orderingType"/>
+ *       &lt;/choice>
+ *       &lt;attGroup ref="{http://java.sun.com/xml/ns/javaee}web-common-attributes"/>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlRootElement(name = "web-app")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "web-appType", propOrder = {
@@ -84,7 +109,7 @@ public class WebFragment implements WebCommon {
     @XmlElement(name = "icon", required = true)
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
-    protected List<EmptyType> distributable;
+    protected List<Empty> distributable;
     @XmlElement(name = "context-param")
     protected List<ParamValue> contextParam;
     protected List<Filter> filter;
@@ -232,9 +257,9 @@ public class WebFragment implements WebCommon {
     }
 
     @Override
-    public List<EmptyType> getDistributable() {
+    public List<Empty> getDistributable() {
         if (distributable == null) {
-            distributable = new ArrayList<EmptyType>();
+            distributable = new ArrayList<Empty>();
         }
         return this.distributable;
     }

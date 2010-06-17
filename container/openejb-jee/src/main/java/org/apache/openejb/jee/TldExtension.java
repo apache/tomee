@@ -27,20 +27,28 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * The tld-extensionType is used to indicate
- * extensions to a specific TLD element.
- * <p/>
- * It is used by elements to designate an extension block
- * that is targeted to a specific extension designated by
- * a set of extension elements that are declared by a
- * namespace. The namespace identifies the extension to
- * the tool that processes the extension.
- * <p/>
- * The type of the extension-element is abstract. Therefore,
- * a concrete type must be specified by the TLD using
- * xsi:type attribute for each extension-element.
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tld-extensionType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tld-extensionType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="extension-element" type="{http://java.sun.com/xml/ns/javaee}extensibleType" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="namespace" use="required" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-extensionType", propOrder = {"extensionElement"})

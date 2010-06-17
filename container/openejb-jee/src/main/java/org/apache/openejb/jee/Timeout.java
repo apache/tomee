@@ -27,7 +27,47 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
+ * ejb-jar_3_1.xsd
+ *
  * class that combines the access-timeoutType and session-timeoutType xml types which have the same structure.
+ *
+ * <p>Java class for access-timeoutType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="access-timeoutType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/>
+ *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ * <p>Java class for stateful-timeoutType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="stateful-timeoutType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/>
+ *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)

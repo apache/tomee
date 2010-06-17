@@ -38,16 +38,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "application" element provides a mechanism to define the
- *                 various per-application-singleton implementation artifacts for
- *                 a particular web application that is utilizing 
- *                 JavaServer Faces.  For nested elements that are not specified, 
- *                 the JSF implementation must provide a suitable default.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-applicationType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -30,19 +30,27 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * The security-roleType contains the definition of a security
- * role. The definition consists of an optional description of
- * the security role, and the security role name.
- * <p/>
- * Example:
- * <p/>
- * <security-role>
- * <description>
- * This role includes all employees who are authorized
- * to access the employee service application.
- * </description>
- * <role-name>employee</role-name>
- * </security-role>
+ * javaee6.xsd
+ *
+ * <p>Java class for security-roleType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="security-roleType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="role-name" type="{http://java.sun.com/xml/ns/javaee}role-nameType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "security-roleType", propOrder = {

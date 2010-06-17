@@ -22,15 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The res-sharing-scope type specifies whether connections
- * obtained through the given resource manager connection
- * factory reference can be shared. The value, if specified,
- * must be one of the two following:
- * <p/>
- * Shareable
- * Unshareable
- * <p/>
- * The default value is Shareable.
+ * javaee6.xsd
+ * 
+ * <p>Java class for res-sharing-scopeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="res-sharing-scopeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum ResSharingScope {
     @XmlEnumValue("Shareable") SHAREABLE,

@@ -39,16 +39,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "list-entries" element represents a set of initialization
- *                 elements for a managed property that is a java.util.List or an
- *                 array.  In the former case, the "value-class" element can 
- *                 optionally be used to declare the Java type to which each 
- *                 value should be converted before adding it to the Collection.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-list-entriesType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

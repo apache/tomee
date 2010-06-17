@@ -22,13 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The transaction-typeType specifies an enterprise bean's
- * transaction management type.
- * <p/>
- * The transaction-type must be one of the two following:
- * <p/>
- * Bean
- * Container
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for transaction-typeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="transaction-typeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum TransactionType {
     @XmlEnumValue("Bean") BEAN,

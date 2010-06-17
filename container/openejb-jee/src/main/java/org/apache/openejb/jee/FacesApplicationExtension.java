@@ -39,13 +39,8 @@ import org.w3c.dom.Element;
 
 
 /**
- * 
- * 
- *                 Extension element for application.  It may contain
- *                 implementation specific content.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-application-extensionType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

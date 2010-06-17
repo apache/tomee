@@ -23,25 +23,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * An injection target specifies a class and a name within
- * that class into which a resource should be injected.
- * <p/>
- * The injection target class specifies the fully qualified
- * class name that is the target of the injection.  The
- * Java EE specifications describe which classes can be an
- * injection target.
- * <p/>
- * The injection target name specifies the target within
- * the specified class.  The target is first looked for as a
- * JavaBeans property name.  If not found, the target is
- * looked for as a field name.
- * <p/>
- * The specified resource will be injected into the target
- * during initialization of the class by either calling the
- * set method for the target property or by setting a value
- * into the named field.
+ * javaee6.xsd
+ *
+ * <p>Java class for injection-targetType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="injection-targetType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="injection-target-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="injection-target-name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "injection-targetType", propOrder = {

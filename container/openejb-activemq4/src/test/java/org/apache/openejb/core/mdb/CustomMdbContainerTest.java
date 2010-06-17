@@ -28,16 +28,15 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.ResourceAdapter;
-import org.apache.openejb.jee.InboundResource;
 import org.apache.openejb.jee.MessageAdapter;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.util.Join;
 
 import javax.naming.InitialContext;
-import javax.jms.ConnectionFactory;
 import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
 import javax.ejb.MessageDrivenContext;
@@ -83,7 +82,7 @@ public class CustomMdbContainerTest extends TestCase {
 
         Connector connector = new Connector("email-ra");
         ResourceAdapter adapter = connector.setResourceAdapter(new ResourceAdapter(EmailResourceAdapter.class));
-        InboundResource inbound = adapter.setInboundResourceAdapter(new InboundResource());
+        InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(EmailConsumer.class, EmailAccountInfo.class));
         listener.getActivationSpec().addRequiredConfigProperty("address");

@@ -39,12 +39,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * 
- * 
- *                 Extension element for renderer.  It may contain implementation
- *                 specific content.
- * 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-renderer-extensionType complex type.
  * 

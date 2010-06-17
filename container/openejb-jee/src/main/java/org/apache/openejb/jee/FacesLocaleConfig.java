@@ -38,13 +38,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "locale-config" element allows the app developer to 
- *                 declare the supported locales for this application.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-locale-configType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

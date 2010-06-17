@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The connectorType defines a resource adapter.
+ * Base class for Connector (1.6) and Connector10 (1.0) jaxb clases
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConnectorBase {

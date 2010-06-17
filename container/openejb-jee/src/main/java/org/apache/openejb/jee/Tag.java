@@ -31,46 +31,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The tag defines a unique tag in this tag library.  It has one
- * attribute, id.
- * <p/>
- * The tag element may have several subelements defining:
- * <p/>
- * description       Optional tag-specific information
- * <p/>
- * display-name      A short name that is intended to be
- * displayed by tools
- * <p/>
- * icon              Optional icon element that can be used
- * by tools
- * <p/>
- * name              The unique action name
- * <p/>
- * tag-class         The tag handler class implementing
- * javax.servlet.jsp.tagext.JspTag
- * <p/>
- * tei-class         An optional subclass of
- * javax.servlet.jsp.tagext.TagExtraInfo
- * <p/>
- * body-content      The body content type
- * <p/>
- * variable          Optional scripting variable information
- * <p/>
- * attribute         All attributes of this action that are
- * evaluated prior to invocation.
- * <p/>
- * dynamic-attributes Whether this tag supports additional
- * attributes with dynamic names.  If
- * true, the tag-class must implement the
- * javax.servlet.jsp.tagext.DynamicAttributes
- * interface.  Defaults to false.
- * <p/>
- * example           Optional informal description of an
- * example of a use of this tag
- * <p/>
- * tag-extension     Zero or more extensions that provide extra
- * information about this tag, for tool
- * consumption
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tagType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tagType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
+ *         &lt;element name="tag-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="tei-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="body-content" type="{http://java.sun.com/xml/ns/javaee}body-contentType"/>
+ *         &lt;element name="variable" type="{http://java.sun.com/xml/ns/javaee}variableType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attribute" type="{http://java.sun.com/xml/ns/javaee}tld-attributeType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="dynamic-attributes" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType" minOccurs="0"/>
+ *         &lt;element name="example" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="tag-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tagType", propOrder = {

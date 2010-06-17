@@ -28,19 +28,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The outbound-resourceadapterType specifies information about
- * an outbound resource adapter. The information includes fully
- * qualified names of classes/interfaces required as part of
- * the connector architecture specified contracts for
- * connection management, level of transaction support
- * provided, one or more authentication mechanisms supported
- * and additional required security permissions.
- * <p/>
- * If there is no authentication-mechanism specified as part of
- * resource adapter element then the resource adapter does not
- * support any standard security authentication mechanisms as
- * part of security contract. The application server ignores
- * the security part of the system contracts in this case.
+ * connector_1_6.xsd 
+ *
+ * <p>Java class for outbound-resourceadapterType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="outbound-resourceadapterType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="connection-definition" type="{http://java.sun.com/xml/ns/javaee}connection-definitionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="transaction-support" type="{http://java.sun.com/xml/ns/javaee}transaction-supportType" minOccurs="0"/>
+ *         &lt;element name="authentication-mechanism" type="{http://java.sun.com/xml/ns/javaee}authentication-mechanismType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="reauthentication-support" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "outbound-resourceadapterType", propOrder = {
@@ -49,7 +59,7 @@ import java.util.List;
         "authenticationMechanism",
         "reauthenticationSupport"
 })
-public class OutboundResourceAdapter {
+public class OutboundResourceadapterX {
 
     @XmlElement(name = "connection-definition")
     protected List<ConnectionDefinition> connectionDefinition;

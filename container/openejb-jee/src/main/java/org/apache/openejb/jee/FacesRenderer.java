@@ -41,20 +41,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "renderer" element represents a concrete Renderer 
- *                 implementation class that should be registered under the 
- *                 specified component family and renderer type identifiers, 
- *                 in the RenderKit associated with the parent "render-kit" 
- *                 element.  Combinations of component family and 
- *                 renderer type must be unique within the RenderKit 
- *                 associated with the parent "render-kit" element.
- * 
- *                 Nested "attribute" elements identify generic component 
- *                 attributes that are recognized by this renderer.
- *                 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-rendererType complex type.
  * 

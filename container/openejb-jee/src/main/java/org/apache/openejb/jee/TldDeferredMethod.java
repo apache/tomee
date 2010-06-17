@@ -26,15 +26,26 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * Defines information about how to provide the value for a
- * tag handler attribute that accepts a javax.el.MethodExpression.
- * <p/>
- * The deferred-method element has one optional subelement:
- * <p/>
- * method-signature  Provides the signature, as in the Java
- * Language Specifies, that is expected for
- * the method being identified by the
- * expression.
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tld-deferred-methodType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tld-deferred-methodType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="method-signature" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-deferred-methodType", propOrder = {"methodSignature"})

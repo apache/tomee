@@ -25,6 +25,35 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * application_6.xsd
+ * 
+ * <p>Java class for moduleType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="moduleType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;choice>
+ *           &lt;element name="connector" type="{http://java.sun.com/xml/ns/javaee}pathType"/>
+ *           &lt;element name="ejb" type="{http://java.sun.com/xml/ns/javaee}pathType"/>
+ *           &lt;element name="java" type="{http://java.sun.com/xml/ns/javaee}pathType"/>
+ *           &lt;element name="web" type="{http://java.sun.com/xml/ns/javaee}webType"/>
+ *         &lt;/choice>
+ *         &lt;element name="alt-dd" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "moduleType", propOrder = {
         "connector",
@@ -38,7 +67,7 @@ public class Module {
     protected String connector;
     protected String ejb;
     protected String java;
-    protected WebModule web;
+    protected Web web;
     @XmlElement(name = "alt-dd")
     protected String altDd;
     @XmlAttribute
@@ -86,11 +115,11 @@ public class Module {
         this.java = java;
     }
 
-    public WebModule getWeb() {
+    public Web getWeb() {
         return web;
     }
 
-    public void setWeb(WebModule web) {
+    public void setWeb(Web web) {
         this.web = web;
     }
 

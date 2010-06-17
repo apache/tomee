@@ -32,21 +32,33 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Map;
 
-
 /**
- * The interceptorType element declares information about a single
- * interceptor class.  It consists of :
- * <p/>
- * - An optional description.
- * - The fully-qualified name of the interceptor class.
- * - An optional list of around invoke methods declared on the
- * interceptor class and/or its super-classes.
- * - An optional list environment dependencies for the interceptor
- * class and/or its super-classes.
- * - An optional list of post-activate methods declared on the
- * interceptor class and/or its super-classes.
- * - An optional list of pre-passivate methods declared on the
- * interceptor class and/or its super-classes.
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for interceptorType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="interceptorType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="interceptor-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/>
+ *         &lt;element name="post-activate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="pre-passivate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "interceptorType", propOrder = {

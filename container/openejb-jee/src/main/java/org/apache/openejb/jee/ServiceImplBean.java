@@ -26,12 +26,27 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * The service-impl-bean element defines the web service implementation.
- * A service implementation can be an EJB bean class or JAX-RPC web
- * component.  Existing EJB implementations are exposed as a web service
- * using an ejb-link.
- * <p/>
- * Used in: port-component
+ * javaee_web_services_1_3.xsd
+ * 
+ * <p>Java class for service-impl-beanType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="service-impl-beanType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;choice>
+ *         &lt;element name="ejb-link" type="{http://java.sun.com/xml/ns/javaee}ejb-linkType"/>
+ *         &lt;element name="servlet-link" type="{http://java.sun.com/xml/ns/javaee}servlet-linkType"/>
+ *       &lt;/choice>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-impl-beanType", propOrder = {"ejbLink", "servletLink"})

@@ -28,15 +28,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         The "view-param" element, only valid within
- *         a "redirect" element, contains child "name"
- *         and "value" elements that must be included in the
- *         redirect url when the redirect is performed.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-redirect-viewParamType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

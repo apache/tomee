@@ -41,17 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "attribute" element represents a named, typed, value
- *                 associated with the parent UIComponent via the generic
- *                 attributes mechanism.
- * 
- *                 Attribute names must be unique within the scope of the parent
- *                 (or related) component.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-attributeType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -41,21 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "managed-bean" element represents a JavaBean, of a 
- *                 particular class, that will be dynamically instantiated 
- *                 at runtime (by the default VariableResolver implementation) 
- *                 if it is referenced as the first element of a value binding 
- *                 expression, and no corresponding bean can be identified in 
- *                 any scope.  In addition to the creation of the managed bean, 
- *                 and the optional storing of it into the specified scope, 
- *                 the nested managed-property elements can be used to 
- *                 initialize the contents of settable JavaBeans properties of 
- *                 the created instance.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-managed-beanType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

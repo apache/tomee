@@ -31,8 +31,26 @@ import java.util.List;
 
 
 /**
- * The method-paramsType defines a list of the
- * fully-qualified Java type names of the method parameters.
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for method-paramsType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="method-paramsType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="method-param" type="{http://java.sun.com/xml/ns/javaee}java-typeType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-paramsType", propOrder = {

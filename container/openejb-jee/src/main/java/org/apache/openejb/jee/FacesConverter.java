@@ -41,25 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "converter" element represents a concrete Converter
- *                 implementation class that should be registered under the
- *                 specified converter identifier.  Converter identifiers must 
- *                 be unique within the entire web application.
- * 
- *                 Nested "attribute" elements identify generic attributes that
- *                 may be configured on the corresponding UIComponent in order 
- *                 to affect the operation of the Converter.  Nested "property"
- *                 elements identify JavaBeans properties of the Converter
- *                 implementation class that may be configured to affect the
- *                 operation of the Converter.  "attribute" and "property" 
- *                 elements are intended to allow component developers to 
- *                 more completely describe their components to tools and users.
- *                 These elements have no required runtime semantics.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-converterType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -24,16 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         This element contains a sequence of "id" elements, each of which
- *         refers to an application configuration resource by the "id"
- *         declared on its faces-config element.  This element can also contain
- *         a single "others" element which specifies that this document comes
- *         before or after other documents within the application.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-ordering-orderingType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -34,25 +34,37 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.Collection;
 
-
 /**
- * The ejb-jarType defines the root element of the EJB
- * deployment descriptor. It contains
- * <p/>
- * - an optional description of the ejb-jar file
- * - an optional display name
- * - an optional icon that contains a small and a large
- * icon file name
- * - structural information about all included
- * enterprise beans that is not specified through
- * annotations
- * - structural information about interceptor classes
- * - a descriptor for container managed relationships,
- * if any.
- * - an optional application-assembly descriptor
- * - an optional name of an ejb-client-jar file for the
- * ejb-jar.
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for ejb-jarType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="ejb-jarType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="enterprise-beans" type="{http://java.sun.com/xml/ns/javaee}enterprise-beansType" minOccurs="0"/>
+ *         &lt;element name="interceptors" type="{http://java.sun.com/xml/ns/javaee}interceptorsType" minOccurs="0"/>
+ *         &lt;element name="relationships" type="{http://java.sun.com/xml/ns/javaee}relationshipsType" minOccurs="0"/>
+ *         &lt;element name="assembly-descriptor" type="{http://java.sun.com/xml/ns/javaee}assembly-descriptorType" minOccurs="0"/>
+ *         &lt;element name="ejb-client-jar" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="3.1" />
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
+
 @XmlRootElement(name = "ejb-jar")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-jarType", propOrder = {

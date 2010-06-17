@@ -32,11 +32,27 @@ import java.util.List;
 
 
 /**
- * The relationship-role-sourceType designates the source of a
- * role that participates in a relationship. A
- * relationship-role-sourceType is used by
- * relationship-role-source elements to uniquely identify an
- * entity bean.
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for relationship-role-sourceType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="relationship-role-sourceType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "relationship-role-sourceType", propOrder = {

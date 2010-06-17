@@ -21,8 +21,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for persistence-unit-transaction-type.
+ * persistence_2_0.xsd
  * 
+ * <p>Java class for persistence-unit-transaction-type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -33,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "persistence-unit-transaction-type", namespace = "http://java.sun.com/xml/ns/persistence")
 @XmlEnum

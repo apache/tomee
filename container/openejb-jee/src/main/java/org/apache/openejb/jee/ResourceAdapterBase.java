@@ -23,13 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The resourceadapterType specifies information about the
- * resource adapter. The information includes fully qualified
- * resource adapter Java class name, configuration properties,
- * information specific to the implementation of the resource
- * adapter library as specified through the
- * outbound-resourceadapter and inbound-resourceadapter
- * elements, and an optional set of administered objects.
+ * connector_1_6.xsd
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso(ResourceAdapter.class)
@@ -40,9 +34,9 @@ public class ResourceAdapterBase {
     @XmlTransient
     protected List<ConfigProperty> configProperty;
     @XmlElement(name = "outbound-resourceadapter")
-    protected OutboundResourceAdapter outboundResourceAdapter;
+    protected OutboundResourceadapterX outboundResourceAdapter;
     @XmlElement(name = "inbound-resourceadapter")
-    protected InboundResource inboundResourceAdapter;
+    protected InboundResourceadapter inboundResourceAdapter;
     @XmlElement(name = "adminobject")
     protected List<AdminObject> adminObject;
     @XmlElement(name = "security-permission")
@@ -78,20 +72,20 @@ public class ResourceAdapterBase {
         return this.configProperty;
     }
 
-    public OutboundResourceAdapter getOutboundResourceAdapter() {
+    public OutboundResourceadapterX getOutboundResourceAdapter() {
         return outboundResourceAdapter;
     }
 
-    public OutboundResourceAdapter setOutboundResourceAdapter(OutboundResourceAdapter value) {
+    public OutboundResourceadapterX setOutboundResourceAdapter(OutboundResourceadapterX value) {
         this.outboundResourceAdapter = value;
         return outboundResourceAdapter;
     }
 
-    public InboundResource getInboundResourceAdapter() {
+    public InboundResourceadapter getInboundResourceAdapter() {
         return inboundResourceAdapter;
     }
 
-    public InboundResource setInboundResourceAdapter(InboundResource value) {
+    public InboundResourceadapter setInboundResourceAdapter(InboundResourceadapter value) {
         this.inboundResourceAdapter = value;
         return inboundResourceAdapter;
     }

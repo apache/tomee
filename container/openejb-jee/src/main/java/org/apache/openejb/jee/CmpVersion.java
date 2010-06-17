@@ -20,6 +20,25 @@ package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for cmp-versionType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="cmp-versionType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 public enum CmpVersion {
     @XmlEnumValue("1.x") CMP1,
     @XmlEnumValue("2.x") CMP2

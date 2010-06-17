@@ -28,6 +28,33 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * web-common_3_0.xsd
+ *
+ * <p>Java class for filter-mappingType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="filter-mappingType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="filter-name" type="{http://java.sun.com/xml/ns/javaee}filter-nameType"/>
+ *         &lt;choice maxOccurs="unbounded">
+ *           &lt;element name="url-pattern" type="{http://java.sun.com/xml/ns/javaee}url-patternType"/>
+ *           &lt;element name="servlet-name" type="{http://java.sun.com/xml/ns/javaee}servlet-nameType"/>
+ *         &lt;/choice>
+ *         &lt;element name="dispatcher" type="{http://java.sun.com/xml/ns/javaee}dispatcherType" maxOccurs="5" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "filter-mappingType", propOrder = {
         "filterName",
