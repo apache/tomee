@@ -27,13 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         This type is used to designate an empty
- *         element when used. 
- *         
- *       
- * 
+ * javaee6.xsd
+ *
  * <p>Java class for emptyType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

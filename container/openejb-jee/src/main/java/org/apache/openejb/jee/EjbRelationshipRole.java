@@ -30,6 +30,33 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for ejb-relationship-roleType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="ejb-relationship-roleType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ejb-relationship-role-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="multiplicity" type="{http://java.sun.com/xml/ns/javaee}multiplicityType"/>
+ *         &lt;element name="cascade-delete" type="{http://java.sun.com/xml/ns/javaee}emptyType" minOccurs="0"/>
+ *         &lt;element name="relationship-role-source" type="{http://java.sun.com/xml/ns/javaee}relationship-role-sourceType"/>
+ *         &lt;element name="cmr-field" type="{http://java.sun.com/xml/ns/javaee}cmr-fieldType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-relationship-roleType", propOrder = {
@@ -49,7 +76,7 @@ public class EjbRelationshipRole {
     @XmlElement(required = true)
     protected Multiplicity multiplicity;
     @XmlElement(name = "cascade-delete")
-    protected EmptyType cascadeDelete;
+    protected Empty cascadeDelete;
     @XmlElement(name = "relationship-role-source", required = true)
     protected RelationshipRoleSource relationshipRoleSource;
     @XmlElement(name = "cmr-field")
@@ -93,7 +120,7 @@ public class EjbRelationshipRole {
     }
 
     public void setCascadeDelete(boolean value) {
-        this.cascadeDelete = value ? new EmptyType() : null;
+        this.cascadeDelete = value ? new Empty() : null;
     }
 
     public RelationshipRoleSource getRelationshipRoleSource() {

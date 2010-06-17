@@ -20,13 +20,8 @@ import javax.xml.bind.annotation.*;
 import java.util.List;
 
 /**
- * The resourceadapterType specifies information about the
- * resource adapter. The information includes fully qualified
- * resource adapter Java class name, configuration properties,
- * information specific to the implementation of the resource
- * adapter library as specified through the
- * outbound-resourceadapter and inbound-resourceadapter
- * elements, and an optional set of administered objects.
+ * connector_1_6.xsd
+ * Well, actually connttor 1.0 dtd
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "resourceadapterType", propOrder = {
@@ -46,7 +41,7 @@ public class ResourceAdapter10 extends ResourceAdapterBase {
     private ConnectionDefinition connectionDefinition = new ConnectionDefinition();
 
     public ResourceAdapter10() {
-        setOutboundResourceAdapter(new OutboundResourceAdapter());
+        setOutboundResourceAdapter(new OutboundResourceadapterX());
         getOutboundResourceAdapter().getConnectionDefinition().add(connectionDefinition);
     }
 

@@ -20,6 +20,25 @@ package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+/**
+ * javaee6.xsd
+ *
+ * <p>Java class for ejb-ref-typeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="ejb-ref-typeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 public enum EjbRefType {
     @XmlEnumValue("Entity") ENTITY,
     @XmlEnumValue("Session") SESSION

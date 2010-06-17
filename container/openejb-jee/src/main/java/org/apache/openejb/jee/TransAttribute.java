@@ -22,18 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The trans-attributeType specifies how the container must
- * manage the transaction boundaries when delegating a method
- * invocation to an enterprise bean's business method.
- * <p/>
- * The value must be one of the following:
- * <p/>
- * NotSupported
- * Supports
- * Required
- * RequiresNew
- * Mandatory
- * Never
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for trans-attributeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="trans-attributeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum TransAttribute {
     @XmlEnumValue("NotSupported") NOT_SUPPORTED("NotSupported"),

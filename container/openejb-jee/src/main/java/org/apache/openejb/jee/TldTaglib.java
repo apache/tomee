@@ -32,41 +32,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The taglib tag is the document root, it defines:
- * <p/>
- * description     a simple string describing the "use" of this
- * taglib, should be user discernable
- * <p/>
- * display-name    the display-name element contains a
- * short name that is intended to be displayed
- * by tools
- * <p/>
- * icon            optional icon that can be used by tools
- * <p/>
- * tlib-version    the version of the tag library implementation
- * <p/>
- * short-name      a simple default short name that could be
- * used by a JSP authoring tool to create
- * names with a mnemonic value; for example,
- * the it may be used as the prefered prefix
- * value in taglib directives
- * <p/>
- * uri             a uri uniquely identifying this taglib
- * <p/>
- * validator       optional TagLibraryValidator information
- * <p/>
- * listener        optional event listener specification
- * <p/>
- * tag             tags in this tag library
- * <p/>
- * tag-file        tag files in this tag library
- * <p/>
- * function        zero or more EL functions defined in this
- * tag library
- * <p/>
- * taglib-extension zero or more extensions that provide extra
- * information about this taglib, for tool
- * consumption
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tldTaglibType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tldTaglibType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="tlib-version" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType"/>
+ *         &lt;element name="short-name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
+ *         &lt;element name="uri" type="{http://java.sun.com/xml/ns/javaee}xsdAnyURIType" minOccurs="0"/>
+ *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}validatorType" minOccurs="0"/>
+ *         &lt;element name="listener" type="{http://java.sun.com/xml/ns/javaee}listenerType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="tag" type="{http://java.sun.com/xml/ns/javaee}tagType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="tag-file" type="{http://java.sun.com/xml/ns/javaee}tagFileType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="function" type="{http://java.sun.com/xml/ns/javaee}functionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="taglib-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="2.1" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlRootElement(name = "taglib")
 @XmlAccessorType(XmlAccessType.FIELD)

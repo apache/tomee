@@ -18,6 +18,25 @@ package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlEnum;
 
+/**
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for variable-scopeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="variable-scopeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlEnum
 public enum VariableScope {
     NESTED,

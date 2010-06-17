@@ -19,6 +19,25 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
+/**
+ * connector_1_6.xsd
+ *
+ * <p>Java class for transaction-supportType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="transaction-supportType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlEnum
 public enum TransactionSupportType {
 

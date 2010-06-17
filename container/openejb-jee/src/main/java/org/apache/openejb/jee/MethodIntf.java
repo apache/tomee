@@ -22,24 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The method-intf element allows a method element to
- * differentiate between the methods with the same name and
- * signature that are multiply defined across the home and
- * component interfaces (e.g, in both an enterprise bean's
- * remote and local interfaces or in both an enterprise bean's
- * home and remote interfaces, etc.); the component and web
- * service endpoint interfaces, and so on. The Local applies to
- * both local component interface and local business interface.
- * Similarly, Remote applies to both remote component interface
- * and the remote business interface.
- * <p/>
- * The method-intf element must be one of the following:
- * <p/>
- * Home
- * Remote
- * LocalHome
- * Local
- * ServiceEndpoint
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for method-intfType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="method-intfType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum MethodIntf {
     @XmlEnumValue("Home") HOME("Home"),

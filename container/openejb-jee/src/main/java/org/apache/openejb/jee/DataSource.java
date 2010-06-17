@@ -30,6 +30,46 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
+/**
+ * javaee6.xsd
+ *
+ * <p>Java class for data-sourceType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="data-sourceType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" minOccurs="0"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
+ *         &lt;element name="class-name" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="server-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="port-number" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="database-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="url" type="{http://java.sun.com/xml/ns/javaee}jdbc-urlType" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="password" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="property" type="{http://java.sun.com/xml/ns/javaee}propertyType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="login-timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="transactional" type="{http://java.sun.com/xml/ns/javaee}xsdBooleanType" minOccurs="0"/>
+ *         &lt;element name="isolation-level" type="{http://java.sun.com/xml/ns/javaee}isolation-levelType" minOccurs="0"/>
+ *         &lt;element name="initial-pool-size" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="max-pool-size" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="min-pool-size" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="max-idle-time" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="max-statements" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "data-sourceType", propOrder = {
     "descriptions",

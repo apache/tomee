@@ -49,7 +49,7 @@ public class SecurityIdentity {
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlElement(name = "use-caller-identity")
-    protected EmptyType useCallerIdentity;
+    protected Empty useCallerIdentity;
     @XmlElement(name = "run-as")
     protected RunAs runAs;
     @XmlAttribute
@@ -70,11 +70,11 @@ public class SecurityIdentity {
         return description.get();
     }
 
-    public EmptyType getUseCallerIdentity() {
+    public Empty getUseCallerIdentity() {
         return useCallerIdentity;
     }
 
-    public void setUseCallerIdentity(EmptyType value) {
+    public void setUseCallerIdentity(Empty value) {
         this.useCallerIdentity = value;
     }
 

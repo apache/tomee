@@ -41,15 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "managed-property" element represents an individual 
- *                 property of a managed bean that will be configured to the 
- *                 specified value (or value set) if the corresponding 
- *                 managed bean is automatically created.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-managed-propertyType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

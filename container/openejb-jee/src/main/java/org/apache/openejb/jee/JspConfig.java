@@ -28,6 +28,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * jsp_2_2.xsd
+ *
+ * <p>Java class for jsp-configType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="jsp-configType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="taglib" type="{http://java.sun.com/xml/ns/javaee}taglibType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="jsp-property-group" type="{http://java.sun.com/xml/ns/javaee}jsp-property-groupType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jsp-configType", propOrder = {

@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
@@ -54,9 +55,8 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.OutboundResourceadapterX;
 import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.InboundResource;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.WebApp;
@@ -337,7 +337,7 @@ class AppInfoBuilder {
                 connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
             }
 
-            OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
+            OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
                 switch (outbound.getTransactionSupport()) {
@@ -379,7 +379,7 @@ class AppInfoBuilder {
                 }
             }
 
-            InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
+            InboundResourceadapter inbound = resourceAdapter.getInboundResourceAdapter();
             if (inbound != null) {
                 for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
                     String id = getId(messageListener, inbound, connectorModule);
@@ -436,7 +436,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(MessageListener messageListener, InboundResource inbound, ConnectorModule connectorModule) {
+    private String getId(MessageListener messageListener, InboundResourceadapter inbound, ConnectorModule connectorModule) {
         String id;
         if (messageListener.getId() != null) {
             id = messageListener.getId();
@@ -448,7 +448,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectionDefinition connection, OutboundResourceAdapter outbound, ConnectorModule connectorModule) {
+    private String getId(ConnectionDefinition connection, OutboundResourceadapterX outbound, ConnectorModule connectorModule) {
         String id;
         if (connection.getId() != null) {
             id = connection.getId();
@@ -630,7 +630,7 @@ class AppInfoBuilder {
     }
 
     void configureWebserviceSecurity(WebAppInfo info, WebModule module) {
-        // no security to configure for WebModule 
+        // no security to configure for WebModule
         // --> this method should be removed
     }
     

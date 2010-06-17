@@ -33,7 +33,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EjbReference;
-import org.apache.openejb.jee.EmptyType;
+import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.FacesConfig;
@@ -67,6 +67,7 @@ import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResSharingScope;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.SecurityIdentity;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.ServiceRef;
@@ -80,7 +81,6 @@ import org.apache.openejb.jee.Tag;
 import org.apache.openejb.jee.TimeUnitType;
 import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.TransAttribute;
 import org.apache.openejb.jee.TransactionType;
@@ -1856,7 +1856,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class interfce : all.unspecified) sessionBean.addBusinessLocal(interfce);
 
             if (beanClass.getAnnotation(LocalBean.class) != null || beanClass.getInterfaces().length == 0) {
-                sessionBean.setLocalBean(new EmptyType());
+                sessionBean.setLocalBean(new Empty());
             }
 
         }

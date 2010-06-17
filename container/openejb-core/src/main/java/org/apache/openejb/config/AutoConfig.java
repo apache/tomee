@@ -24,6 +24,8 @@ import static java.util.Arrays.asList;
 
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.OutboundResourceadapterX;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -43,9 +45,7 @@ import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.ResourceAdapter;
-import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.InboundResource;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.PersistenceContextRef;
@@ -1605,7 +1605,7 @@ public class AutoConfig implements DynamicDeployer {
                     resourceAdapterIds.add(resourceAdapterId);
                 }
 
-                OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
+                OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
                 if (outbound != null) {
                     for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
                         String type = connection.getConnectionFactoryInterface();
@@ -1628,7 +1628,7 @@ public class AutoConfig implements DynamicDeployer {
                     }
                 }
 
-                InboundResource inbound = resourceAdapter.getInboundResourceAdapter();
+                InboundResourceadapter inbound = resourceAdapter.getInboundResourceAdapter();
                 if (inbound != null) {
                     for (MessageListener messageListener : inbound.getMessageAdapter().getMessageListener()) {
                         String type = messageListener.getMessageListenerType();

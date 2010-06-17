@@ -36,16 +36,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "supported-locale" element allows authors to declare
- *                 which locales are supported in this application instance.
- * 
- *                 It must be specified as :language:[_:country:[_:variant:]]
- *                 without the colons, for example "ja_JP_SJIS".  The
- *                 separators between the segments may be '-' or '_'.
- * 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-supported-localeType complex type.
  * 

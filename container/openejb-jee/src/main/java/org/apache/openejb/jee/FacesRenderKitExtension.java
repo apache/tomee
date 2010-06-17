@@ -39,12 +39,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * 
- * 
- *                 Extension element for render-kit.  It may contain
- *                 implementation specific content.
- * 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-render-kit-extensionType complex type.
  * 

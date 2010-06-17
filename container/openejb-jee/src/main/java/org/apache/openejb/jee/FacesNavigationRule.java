@@ -41,16 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "navigation-rule" element represents an individual 
- *                 decision rule that will be utilized by the default 
- *                 NavigationHandler implementation to make decisions on 
- *                 what view should be displayed next, based on the 
- *                 view id being processed.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-navigation-ruleType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

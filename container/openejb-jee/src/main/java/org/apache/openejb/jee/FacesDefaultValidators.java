@@ -30,15 +30,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         The "default-validators" element allows the app developer to 
- *         register a set of validators, referenced by identifier, that
- *         are automatically assigned to any EditableValueHolder component
- *         in the application, unless overridden or disabled locally.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-default-validatorsType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

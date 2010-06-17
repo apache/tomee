@@ -55,7 +55,7 @@ public interface WebCommon extends JndiConsumer {
 
     Icon getIcon();
 
-    List<EmptyType> getDistributable();
+    List<Empty> getDistributable();
 
     List<ParamValue> getContextParam();
 

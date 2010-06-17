@@ -28,6 +28,29 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for activation-config-propertyType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="activation-config-propertyType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="activation-config-property-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
+ *         &lt;element name="activation-config-property-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "activation-config-propertyType", propOrder = {

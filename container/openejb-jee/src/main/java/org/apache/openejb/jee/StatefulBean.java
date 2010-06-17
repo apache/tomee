@@ -18,6 +18,7 @@
 package org.apache.openejb.jee;
 
 /**
+ * Not in schema
  * @version $Revision$ $Date$
  */
 public class StatefulBean extends SessionBean {

@@ -18,6 +18,7 @@
 package org.apache.openejb.jee;
 
 /**
+ * TODO where is this from?
  * @version $Revision$ $Date$
  */
 public class ManagedBean extends SessionBean {

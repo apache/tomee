@@ -26,13 +26,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         Only relevant if this is placed within the /WEB-INF/faces-config.xml.
- *         Please see section JSF.11.4.6 for the specification for details.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-absoluteOrderingType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

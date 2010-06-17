@@ -33,35 +33,30 @@ import java.util.Map;
 
 
 /**
- * Defines an action in this tag library that is implemented
- * as a .tag file.
- * <p/>
- * The tag-file element has two required subelements:
- * <p/>
- * description       Optional tag-specific information
- * <p/>
- * display-name      A short name that is intended to be
- * displayed by tools
- * <p/>
- * icon              Optional icon element that can be used
- * by tools
- * <p/>
- * name              The unique action name
- * <p/>
- * path              Where to find the .tag file implementing this
- * action, relative to the root of the web
- * application or the root of the JAR file for a
- * tag library packaged in a JAR.  This must
- * begin with /WEB-INF/tags if the .tag file
- * resides in the WAR, or /META-INF/tags if the
- * .tag file resides in a JAR.
- * <p/>
- * example           Optional informal description of an
- * example of a use of this tag
- * <p/>
- * tag-extension     Zero or more extensions that provide extra
- * information about this tag, for tool
- * consumption
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tagFileType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tagFileType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
+ *         &lt;element name="path" type="{http://java.sun.com/xml/ns/javaee}pathType"/>
+ *         &lt;element name="example" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="tag-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tagFileType", propOrder = {

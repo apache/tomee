@@ -41,18 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *               The resource-bundle element inside the application element
- *               references a java.util.ResourceBundle instance by name
- *               using the var element.  ResourceBundles referenced in this
- *               manner may be returned by a call to
- *               Application.getResourceBundle() passing the current
- *               FacesContext for this request and the value of the var
- *               element below.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-application-resource-bundleType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

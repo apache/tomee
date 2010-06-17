@@ -38,15 +38,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "map-entries' element represents a set of key-entry pairs 
- *                 that will be added to the computed value of a managed property 
- *                 of type java.util.Map.  In addition, the Java class types 
- *                 of the key and entry values may be optionally declared.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-map-entriesType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

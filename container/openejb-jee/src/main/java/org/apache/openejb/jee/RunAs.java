@@ -32,9 +32,27 @@ import java.util.List;
 
 
 /**
- * The run-asType specifies the run-as identity to be
- * used for the execution of a component. It contains an
- * optional description, and the name of a security role.
+ * javaee6.xsd
+ *
+ * <p>Java class for run-asType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="run-asType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="role-name" type="{http://java.sun.com/xml/ns/javaee}role-nameType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "run-asType", propOrder = {

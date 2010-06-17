@@ -34,26 +34,29 @@ import java.util.Map;
 
 
 /**
- * The message-destinationType specifies a message
- * destination. The logical destination described by this
- * element is mapped to a physical destination by the Deployer.
- * <p/>
- * The message destination element contains:
- * <p/>
- * - an optional description
- * - an optional display-name
- * - an optional icon
- * - a message destination name which must be unique
- * among message destination names within the same
- * Deployment File.
- * - an optional mapped name
- * <p/>
- * Example:
- * <p/>
- * <message-destination>
- * <message-destination-name>CorporateStocks
- * </message-destination-name>
- * </message-destination>
+ * javaee6.xsd
+ * 
+ * <p>Java class for message-destinationType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="message-destinationType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="message-destination-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="lookup-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destinationType", propOrder = {

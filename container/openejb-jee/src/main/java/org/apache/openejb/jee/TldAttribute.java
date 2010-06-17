@@ -27,28 +27,41 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * The attribute element defines an attribute for the nesting
- * tag.  The attribute element may have several subelements
- * defining:
- * <p/>
- * description     a description of the attribute
- * <p/>
- * name            the name of the attribute
- * <p/>
- * required        whether the attribute is required or
- * optional
- * <p/>
- * rtexprvalue     whether the attribute is a runtime attribute
- * <p/>
- * type            the type of the attributes
- * <p/>
- * fragment        whether this attribute is a fragment
- * <p/>
- * deferred-value  present if this attribute is to be parsed as a
- * javax.el.ValueExpression
- * <p/>
- * deferred-method present if this attribute is to be parsed as a
- * javax.el.MethodExpression
+ * web-jsptaglibrary_2_1.xsd
+ *
+ * <p>Java class for tld-attributeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="tld-attributeType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *         &lt;element name="required" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;sequence>
+ *             &lt;sequence minOccurs="0">
+ *               &lt;element name="rtexprvalue" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType"/>
+ *               &lt;element name="type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *             &lt;/sequence>
+ *             &lt;choice>
+ *               &lt;element name="deferred-value" type="{http://java.sun.com/xml/ns/javaee}tld-deferred-valueType" minOccurs="0"/>
+ *               &lt;element name="deferred-method" type="{http://java.sun.com/xml/ns/javaee}tld-deferred-methodType" minOccurs="0"/>
+ *             &lt;/choice>
+ *           &lt;/sequence>
+ *           &lt;element name="fragment" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType" minOccurs="0"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tld-attributeType", propOrder = {

@@ -41,19 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "property" element represents a JavaBean property of the 
- *                 Java class represented by our parent element.
- * 
- *                 Property names must be unique within the scope of the Java 
- *                 class that is represented by the parent element, and must 
- *                 correspond to property names that will be recognized when 
- *                 performing introspection against that class via 
- *                 java.beans.Introspector.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-propertyType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

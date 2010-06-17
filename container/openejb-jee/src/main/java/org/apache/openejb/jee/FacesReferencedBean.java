@@ -41,17 +41,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "referenced-bean" element represents at design time the 
- *                 promise that a Java object of the specified type will exist at 
- *                 runtime in some scope, under the specified key.  This can be 
- *                 used by design time tools to construct user interface dialogs 
- *                 based on the properties of the specified class.  The presence 
- *                 or absence of a referenced bean element has no impact on the 
- *                 JavaServer Faces runtime environment inside a web application.
- *                 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-referenced-beanType complex type.
  * 

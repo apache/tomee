@@ -32,30 +32,29 @@ import java.util.List;
 
 
 /**
- * The persistence-unit-ref element contains a declaration
- * of Deployment Component's reference to a persistence unit
- * associated within a Deployment Component's
- * environment. It consists of:
- * <p/>
- * - an optional description
- * - the persistence unit reference name
- * - an optional persistence unit name.  If not specified,
- * the default persistence unit is assumed.
- * - optional injection targets
- * <p/>
- * Examples:
- * <p/>
- * <persistence-unit-ref>
- * <persistence-unit-ref-name>myPersistenceUnit
- * </persistence-unit-ref-name>
- * </persistence-unit-ref>
- * <p/>
- * <persistence-unit-ref>
- * <persistence-unit-ref-name>myPersistenceUnit
- * </persistence-unit-ref-name>
- * <persistence-unit-name>PersistenceUnit1
- * </persistence-unit-name>
- * </persistence-unit-ref>
+ * javaee6.xsd
+ *
+ * <p>Java class for persistence-unit-refType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="persistence-unit-refType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="persistence-unit-ref-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
+ *         &lt;element name="persistence-unit-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceBaseGroup"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-refType", propOrder = {

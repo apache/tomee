@@ -32,8 +32,26 @@ import java.util.List;
 
 
 /**
- * This type is a general type that can be used to declare
- * parameter/value lists.
+ * javaee6.xsd
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="param-valueType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="param-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="param-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "param-valueType", propOrder = {

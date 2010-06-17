@@ -23,20 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The "client-behavior-renderer" element represents a concrete 
- *         ClientBehaviorRenderer implementation class that should be 
- *         registered under the specified behavior renderer type identifier,
- *         in the RenderKit associated with the parent "render-kit"
- *         element.  Client Behavior renderer type must be unique within the RenderKit
- *         associated with the parent "render-kit" element.
- *         
- *         Nested "attribute" elements identify generic component
- *         attributes that are recognized by this renderer.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-client-behavior-rendererType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

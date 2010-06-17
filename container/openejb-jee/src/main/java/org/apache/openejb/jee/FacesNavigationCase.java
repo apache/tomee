@@ -41,15 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- *                 
- *                 The "navigation-case" element describes a particular 
- *                 combination of conditions that must match for this case to 
- *                 be executed, and the view id of the component tree that 
- *                 should be selected next.
- *                 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-navigation-caseType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

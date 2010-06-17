@@ -41,14 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * The "render-kit" element represents a concrete RenderKit
- * implementation that should be registered under the specified
- * render-kit-id.  If no render-kit-id is specified, the
- * identifier of the default RenderKit
- * (RenderKitFactory.DEFAULT_RENDER_KIT) is assumed.
- * <p/>
- * <p/>
- * <p/>
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-render-kitType complex type.
  * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.

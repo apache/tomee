@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 
 /**
+ * TODO what schema?
  * The wsdl-return-value-mapping  element defines the mapping for the
  * method's return value. It defines the mapping to a specific message
  * and its part.  Together they define uniquely the mapping for a

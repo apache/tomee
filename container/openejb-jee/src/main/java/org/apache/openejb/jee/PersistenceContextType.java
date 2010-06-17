@@ -22,13 +22,22 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 /**
- * The persistence-context-typeType specifies the transactional
- * nature of a persistence context reference.
- * <p/>
- * The value of the persistence-context-type element must be
- * one of the following:
- * Transaction
- * Extended
+ * javaee6.xsd
+ *
+ * <p>Java class for persistence-context-typeType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="persistence-context-typeType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 public enum PersistenceContextType {
     @XmlEnumValue("Transaction") TRANSACTION,

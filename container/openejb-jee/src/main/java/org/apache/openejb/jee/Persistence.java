@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * persistence_2_0.xsd
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 

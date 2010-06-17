@@ -23,19 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The tracking modes for sessions created by this web
- *         application
- *         
- *         Used in: session-config
- *         
- *       
- * 
+ * web-common_3_0.xsd
+ *
  * <p>Java class for tracking-modeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="tracking-modeType">
  *   &lt;simpleContent>
@@ -44,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tracking-modeType")

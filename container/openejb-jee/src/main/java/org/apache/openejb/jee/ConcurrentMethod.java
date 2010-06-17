@@ -27,6 +27,31 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for concurrent-methodType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="concurrent-methodType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="method" type="{http://java.sun.com/xml/ns/javaee}named-methodType"/>
+ *         &lt;element name="lock" type="{http://java.sun.com/xml/ns/javaee}concurrent-lock-typeType" minOccurs="0"/>
+ *         &lt;element name="access-timeout" type="{http://java.sun.com/xml/ns/javaee}access-timeoutType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "concurrent-methodType", propOrder = {
     "method",

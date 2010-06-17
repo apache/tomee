@@ -31,34 +31,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The function element is used to provide information on each
- * function in the tag library that is to be exposed to the EL.
- * <p/>
- * The function element may have several subelements defining:
- * <p/>
- * description         Optional tag-specific information
- * <p/>
- * display-name        A short name that is intended to be displayed
- * by tools
- * <p/>
- * icon                Optional icon element that can be used by tools
- * <p/>
- * name                A unique name for this function
- * <p/>
- * function-class      Provides the name of the Java class that
- * implements the function
- * <p/>
- * function-signature  Provides the signature, as in the Java Language
- * Specification, of the Java method that is to be
- * used to implement the function.
- * <p/>
- * example             Optional informal description of an
- * example of a use of this function
- * <p/>
- * function-extension  Zero or more extensions that provide extra
- * information about this function, for tool
- * consumption
+ * web-facelettaglibary_2_0.xsd
+ *
+ * <p>Java class for functionType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="functionType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
+ *         &lt;element name="function-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;element name="function-signature" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="example" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="function-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "functionType", propOrder = {
     "descriptions",

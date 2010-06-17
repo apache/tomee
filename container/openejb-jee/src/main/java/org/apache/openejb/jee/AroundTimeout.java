@@ -22,6 +22,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for around-timeoutType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="around-timeoutType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="method-name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "around-timeoutType", propOrder = {
     "clazz",

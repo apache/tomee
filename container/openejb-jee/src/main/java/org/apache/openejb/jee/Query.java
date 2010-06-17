@@ -29,26 +29,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * The queryType defines a finder or select
- * query. It contains
- * - an optional description of the query
- * - the specification of the finder or select
- * method it is used by
- * - an optional specification of the result type
- * mapping, if the query is for a select method
- * and entity objects are returned.
- * - the EJB QL query string that defines the query.
- * <p/>
- * Queries that are expressible in EJB QL must use the ejb-ql
- * element to specify the query. If a query is not expressible
- * in EJB QL, the description element should be used to
- * describe the semantics of the query and the ejb-ql element
- * should be empty.
- * <p/>
- * The result-type-mapping is an optional element. It can only
- * be present if the query-method specifies a select method
- * that returns entity objects.  The default value for the
- * result-type-mapping element is "Local".
+ * ejb-jar_3_1.xsd
+ * 
+ * <p>Java class for queryType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="queryType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" minOccurs="0"/>
+ *         &lt;element name="query-method" type="{http://java.sun.com/xml/ns/javaee}query-methodType"/>
+ *         &lt;element name="result-type-mapping" type="{http://java.sun.com/xml/ns/javaee}result-type-mappingType" minOccurs="0"/>
+ *         &lt;element name="ejb-ql" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "queryType", propOrder = {

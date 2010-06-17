@@ -26,6 +26,30 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * jsp_2_2.xsd
+ *
+ * <p>Java class for taglibType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="taglibType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="taglib-uri" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="taglib-location" type="{http://java.sun.com/xml/ns/javaee}pathType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "taglibType", propOrder = {
         "taglibUri",

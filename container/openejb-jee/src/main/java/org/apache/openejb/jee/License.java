@@ -29,12 +29,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The licenseType specifies licensing requirements for the
- * resource adapter module. This type specifies whether a
- * license is required to deploy and use this resource adapter,
- * and an optional description of the licensing terms
- * (examples: duration of license, number of connection
- * restrictions). It is used by the license element.
+ * connector_1_6.xsd
+ * 
+ * <p>Java class for licenseType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="licenseType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="license-required" type="{http://java.sun.com/xml/ns/javaee}true-falseType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "licenseType", propOrder = {

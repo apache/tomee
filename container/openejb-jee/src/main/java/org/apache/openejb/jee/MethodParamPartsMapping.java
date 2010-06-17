@@ -26,12 +26,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
 
-/**
- * The method-param-parts-mapping element defines the mapping between a
- * Java method parameters and a wsdl-message.
- * <p/>
- * Used in: service-endpoint-method-mapping
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-param-parts-mappingType", propOrder = {
     "paramPosition",

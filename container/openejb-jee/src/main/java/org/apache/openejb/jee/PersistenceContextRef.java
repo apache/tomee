@@ -32,35 +32,31 @@ import java.util.List;
 
 
 /**
- * The persistence-context-ref element contains a declaration
- * of Deployment Component's reference to a persistence context
- * associated within a Deployment Component's
- * environment. It consists of:
- * <p/>
- * - an optional description
- * - the persistence context reference name
- * - an optional persistence unit name.  If not specified,
- * the default persistence unit is assumed.
- * - an optional specification as to whether
- * the persistence context type is Transaction or
- * Extended.  If not specified, Transaction is assumed.
- * - an optional list of persistence properties
- * - optional injection targets
- * <p/>
- * Examples:
- * <p/>
- * <persistence-context-ref>
- * <persistence-context-ref-name>myPersistenceContext
- * </persistence-context-ref-name>
- * </persistence-context-ref>
- * <p/>
- * <persistence-context-ref>
- * <persistence-context-ref-name>myPersistenceContext
- * </persistence-context-ref-name>
- * <persistence-unit-name>PersistenceUnit1
- * </persistence-unit-name>
- * <persistence-context-type>Extended</persistence-context-type>
- * </persistence-context-ref>
+ * javaee6.xsd
+ * 
+ * <p>Java class for persistence-context-refType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="persistence-context-refType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="persistence-context-ref-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
+ *         &lt;element name="persistence-unit-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;element name="persistence-context-type" type="{http://java.sun.com/xml/ns/javaee}persistence-context-typeType" minOccurs="0"/>
+ *         &lt;element name="persistence-property" type="{http://java.sun.com/xml/ns/javaee}propertyType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceBaseGroup"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-refType", propOrder = {

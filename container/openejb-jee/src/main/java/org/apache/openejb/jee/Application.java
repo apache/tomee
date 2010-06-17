@@ -32,6 +32,46 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * application_6.xsd
+ *
+ * <p>Java class for applicationType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="applicationType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="application-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="initialize-in-order" type="{http://java.sun.com/xml/ns/javaee}generic-booleanType" minOccurs="0"/>
+ *         &lt;element name="module" type="{http://java.sun.com/xml/ns/javaee}moduleType" maxOccurs="unbounded"/>
+ *         &lt;element name="security-role" type="{http://java.sun.com/xml/ns/javaee}security-roleType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="library-directory" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
+ *         &lt;element name="env-entry" type="{http://java.sun.com/xml/ns/javaee}env-entryType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ejb-ref" type="{http://java.sun.com/xml/ns/javaee}ejb-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ejb-local-ref" type="{http://java.sun.com/xml/ns/javaee}ejb-local-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}service-refGroup"/>
+ *         &lt;element name="resource-ref" type="{http://java.sun.com/xml/ns/javaee}resource-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="resource-env-ref" type="{http://java.sun.com/xml/ns/javaee}resource-env-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="message-destination-ref" type="{http://java.sun.com/xml/ns/javaee}message-destination-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="persistence-context-ref" type="{http://java.sun.com/xml/ns/javaee}persistence-context-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="persistence-unit-ref" type="{http://java.sun.com/xml/ns/javaee}persistence-unit-refType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="message-destination" type="{http://java.sun.com/xml/ns/javaee}message-destinationType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="data-source" type="{http://java.sun.com/xml/ns/javaee}data-sourceType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="6" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlRootElement(name = "application")
 
 @XmlAccessorType(XmlAccessType.FIELD)

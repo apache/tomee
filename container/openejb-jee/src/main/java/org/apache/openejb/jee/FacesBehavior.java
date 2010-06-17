@@ -28,25 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The "behavior" element represents a concrete Behavior 
- *         implementation class that should be registered under the
- *         specified behavior identifier.  Behavior identifiers must
- *         be unique within the entire web application.
- *         
- *         Nested "attribute" elements identify generic attributes that
- *         may be configured on the corresponding UIComponent in order
- *         to affect the operation of the Behavior.  Nested "property"
- *         elements identify JavaBeans properties of the Behavior 
- *         implementation class that may be configured to affect the
- *         operation of the Behavior.  "attribute" and "property"
- *         elements are intended to allow component developers to
- *         more completely describe their components to tools and users.
- *         These elements have no required runtime semantics.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-behaviorType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

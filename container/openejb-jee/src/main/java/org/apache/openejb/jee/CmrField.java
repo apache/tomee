@@ -30,6 +30,30 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for cmr-fieldType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="cmr-fieldType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="cmr-field-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
+ *         &lt;element name="cmr-field-type" type="{http://java.sun.com/xml/ns/javaee}cmr-field-typeType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cmr-fieldType", propOrder = {

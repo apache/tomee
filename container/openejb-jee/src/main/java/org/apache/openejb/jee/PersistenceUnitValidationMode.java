@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
+ * persistence_2_0.xsd
+ * 
  * <p>Java class for persistence-unit-validation-mode-type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

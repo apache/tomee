@@ -41,22 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "component" element represents a concrete UIComponent
- *                 implementation class that should be registered under the
- *                 specified type identifier, along with its associated 
- *                 properties and attributes.  Component types must be unique 
- *                 within the entire web application.
- * 
- *                 Nested "attribute" elements identify generic attributes that 
- *                 are recognized by the implementation logic of this component.
- *                 Nested "property" elements identify JavaBeans properties of 
- *                 the component class that may be exposed for manipulation 
- *                 via tools.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-componentType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

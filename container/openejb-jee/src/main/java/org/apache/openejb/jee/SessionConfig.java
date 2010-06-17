@@ -30,6 +30,31 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * web-common_3_0.xsd
+ *
+ * <p>Java class for session-configType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="session-configType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="session-timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType" minOccurs="0"/>
+ *         &lt;element name="cookie-config" type="{http://java.sun.com/xml/ns/javaee}cookie-configType" minOccurs="0"/>
+ *         &lt;element name="tracking-mode" type="{http://java.sun.com/xml/ns/javaee}tracking-modeType" maxOccurs="3" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "session-configType", propOrder = {
     "sessionTimeout",

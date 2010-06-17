@@ -28,15 +28,6 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The java-xml-type-mapping element contains a java-type that is the
- * fully qualified name of the Java class, primitive type, or array
- * type, QName of the XML root type or anonymous type, the WSDL type
- * scope the QName applies to and the set of variable mappings for
- * each public variable within the Java class.
- * <p/>
- * Used in: java-wsdl-mapping
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "java-xml-type-mappingType", propOrder = {
     "javaType",

@@ -19,7 +19,7 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.*;
 
 /**
- * The connectorType defines a resource adapter.
+ * class for adapting connector 1.0 ra.xml to our jaxb class tree
  */
 @XmlRootElement(name = "connector")
 @XmlAccessorType(XmlAccessType.PROPERTY)

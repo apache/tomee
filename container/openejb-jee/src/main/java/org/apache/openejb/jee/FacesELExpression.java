@@ -31,14 +31,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * 
- * 
- *                 EL expressions present within a faces config file
- *                 must start with the character sequence of '#{' and
- *                 end with '}'.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-el-expressionType simple type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

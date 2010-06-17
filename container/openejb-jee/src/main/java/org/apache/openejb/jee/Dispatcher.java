@@ -23,6 +23,24 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
 
+/**
+ * web-common_3_0.xsd
+ *
+ * <p>Java class for dispatcherType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="dispatcherType">
+ *   &lt;simpleContent>
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
+ *     &lt;/restriction>
+ *   &lt;/simpleContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dispatcherType")
 @XmlEnum

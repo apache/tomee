@@ -28,13 +28,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         The webType defines the web-uri and context-root of
- *         a web application module.
- *         
- *       
- * 
+ * application_6.xsd
+ *
  * <p>Java class for webType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

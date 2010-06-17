@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.Collections;
-
 /**
+ * Not in schema
  * @version $Revision: 605052 $ $Date: 2007-12-17 16:24:24 -0800 (Mon, 17 Dec 2007) $
  */
 public class SingletonBean extends SessionBean {

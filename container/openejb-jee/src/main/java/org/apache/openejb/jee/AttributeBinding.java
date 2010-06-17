@@ -19,6 +19,8 @@ package org.apache.openejb.jee;
 import java.util.List;
 
 /**
+ * TODO this interface may not make sense any more because one of the two classes implementing it is not ins the schema any more
+ * and its replacement, ConcurrentMethod, uses a single  NamedMethod rather than a list of Method.
  * @version $Rev$ $Date$
  */
 public interface AttributeBinding<A> {

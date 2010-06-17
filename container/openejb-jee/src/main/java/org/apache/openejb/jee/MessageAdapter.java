@@ -28,12 +28,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The messageadapterType specifies information about the
- * messaging capabilities of the resource adapter. This
- * contains information specific to the implementation of the
- * resource adapter library as specified through the
- * messagelistener element.
+ * connector_1_6.xsd
+ * 
+ * <p>Java class for messageadapterType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="messageadapterType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="messagelistener" type="{http://java.sun.com/xml/ns/javaee}messagelistenerType" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "messageadapterType", propOrder = {
         "messageListener"

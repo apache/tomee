@@ -31,6 +31,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * javaee_web_services_1_3.xsd
+ * 
+ * <p>Java class for webservicesType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="webservicesType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="webservice-description" type="{http://java.sun.com/xml/ns/javaee}webservice-descriptionType" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="1.3" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+
 @XmlRootElement(name = "webservices")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webservicesType", propOrder = {

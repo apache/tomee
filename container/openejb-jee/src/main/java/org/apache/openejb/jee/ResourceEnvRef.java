@@ -32,32 +32,29 @@ import java.util.List;
 
 
 /**
- * The resource-env-refType is used to define
- * resource-env-type elements.  It contains a declaration of a
- * Deployment Component's reference to an administered object
- * associated with a resource in the Deployment Component's
- * environment.  It consists of an optional description, the
- * resource environment reference name, and an optional
- * indication of the resource environment reference type
- * expected by the Deployment Component code.
- * <p/>
- * It also includes optional elements to define injection of
- * the named resource into fields or JavaBeans properties.
- * <p/>
- * The resource environment type must be supplied unless an
- * injection target is specified, in which case the type
- * of the target is used.  If both are specified, the type
- * must be assignment compatible with the type of the injection
- * target.
- * <p/>
- * Example:
- * <p/>
- * <resource-env-ref>
- * <resource-env-ref-name>jms/StockQueue
- * </resource-env-ref-name>
- * <resource-env-ref-type>javax.jms.Queue
- * </resource-env-ref-type>
- * </resource-env-ref>
+ * javaee6.xsd
+ *
+ * <p>Java class for resource-env-refType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="resource-env-refType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="resource-env-ref-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
+ *         &lt;element name="resource-env-ref-type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "resource-env-refType", propOrder = {

@@ -19,6 +19,25 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * javaee6.xsd
+ *
+ * <p>Java class for isolation-levelType.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * <pre>
+ * &lt;simpleType name="isolation-levelType">
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="TRANSACTION_READ_UNCOMMITTED"/>
+ *     &lt;enumeration value="TRANSACTION_READ_COMMITTED"/>
+ *     &lt;enumeration value="TRANSACTION_REPEATABLE_READ"/>
+ *     &lt;enumeration value="TRANSACTION_SERIALIZABLE"/>
+ *   &lt;/restriction>
+ * &lt;/simpleType>
+ * </pre>
+ *
+ */
 
 @XmlType(name = "isolation-levelType")
 @XmlEnum

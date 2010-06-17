@@ -41,24 +41,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "validator" element represents a concrete Validator
- *                 implementation class that should be registered under the
- *                 specified validator identifier.  Validator identifiers must 
- *                 be unique within the entire web application.
- * 
- *                 Nested "attribute" elements identify generic attributes that 
- *                 may be configured on the corresponding UIComponent in order 
- *                 to affect the operation of the Validator.  Nested "property"
- *                 elements identify JavaBeans properties of the Validator
- *                 implementation class that may be configured to affect the
- *                 operation of the Validator.  "attribute" and "property" 
- *                 elements are intended to allow component developers to 
- *                 more completely describe their components to tools and users.
- *                 These elements have no required runtime semantics.
- * 
- *             
+ * web-facesconfig_2_0.xsd
  * 
  * <p>Java class for faces-config-validatorType complex type.
  * 

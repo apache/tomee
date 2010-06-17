@@ -41,13 +41,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 Define the name and other design-time information for a facet
- *                 that is associated with a renderer or a component.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-facetType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

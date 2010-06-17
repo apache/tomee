@@ -23,25 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         The transport-guaranteeType specifies that the communication
- *         between client and server should be NONE, INTEGRAL, or
- *         CONFIDENTIAL. NONE means that the application does not
- *         require any transport guarantees. A value of INTEGRAL means
- *         that the application requires that the data sent between the
- *         client and server be sent in such a way that it can't be
- *         changed in transit. CONFIDENTIAL means that the application
- *         requires that the data be transmitted in a fashion that
- *         prevents other entities from observing the contents of the
- *         transmission. In most cases, the presence of the INTEGRAL or
- *         CONFIDENTIAL flag will indicate that the use of SSL is
- *         required.
- *         
- *         Used in: user-data-constraint
- *         
- *       
- * 
+ * web-common_3_0.xsd
+ *
  * <p>Java class for transport-guaranteeType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

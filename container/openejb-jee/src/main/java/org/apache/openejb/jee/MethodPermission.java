@@ -32,18 +32,31 @@ import java.util.List;
 
 
 /**
- * The method-permissionType specifies that one or more
- * security roles are allowed to invoke one or more enterprise
- * bean methods. The method-permissionType consists of an
- * optional description, a list of security role names or an
- * indicator to state that the method is unchecked for
- * authorization, and a list of method elements.
- * <p/>
- * The security roles used in the method-permissionType
- * must be defined in the security-role elements of the
- * deployment descriptor, and the methods must be methods
- * defined in the enterprise bean's business, home, component
- * and/or web service endpoint interfaces.
+ * ejb-jar_3_1.xsd
+ *
+ * <p>Java class for method-permissionType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="method-permissionType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;element name="role-name" type="{http://java.sun.com/xml/ns/javaee}role-nameType" maxOccurs="unbounded"/>
+ *           &lt;element name="unchecked" type="{http://java.sun.com/xml/ns/javaee}emptyType"/>
+ *         &lt;/choice>
+ *         &lt;element name="method" type="{http://java.sun.com/xml/ns/javaee}methodType" maxOccurs="unbounded"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "method-permissionType", propOrder = {
@@ -59,7 +72,7 @@ public class MethodPermission {
 
     @XmlElement(name = "role-name", required = true)
     protected List<String> roleName;
-    protected EmptyType unchecked;
+    protected Empty unchecked;
     @XmlElement(required = true)
     protected List<Method> method;
     @XmlAttribute
@@ -86,7 +99,7 @@ public class MethodPermission {
     }
 
     public MethodPermission setUnchecked() {
-        this.unchecked = new EmptyType();
+        this.unchecked = new Empty();
         return this;
     }
 
@@ -116,7 +129,7 @@ public class MethodPermission {
     }
 
     public void setUnchecked(boolean b) {
-        this.unchecked = (b) ? new EmptyType() : null;
+        this.unchecked = (b) ? new Empty() : null;
     }
 
     public List<Method> getMethod() {

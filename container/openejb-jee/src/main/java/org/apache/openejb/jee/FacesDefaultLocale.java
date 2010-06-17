@@ -36,17 +36,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "default-locale" element declares the default locale 
- *                 for this application instance.
- * 
- *                 It must be specified as :language:[_:country:[_:variant:]]
- *                 without the colons, for example "ja_JP_SJIS".  The
- *                 separators between the segments may be '-' or '_'.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-default-localeType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

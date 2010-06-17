@@ -24,23 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * 
- * 
- *         The time-unit-typeType represents a time duration at a given
- *         unit of granularity.  
- *         
- *         The time unit type must be one of the following :
- *         
- *         Days
- *         Hours
- *         Minutes
- *         Seconds
- *         Milliseconds
- *         Microseconds
- *         Nanoseconds
- *         
- *       
- * 
+ * ejb-jar_3_1.xsd
+ *
  * <p>Java class for time-unit-typeType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -35,21 +35,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *                 The "null-value" element indicates that the managed
- *                 property in which we are nested will be explicitly
- *                 set to null if our managed bean is automatically
- *                 created.  This is different from omitting the managed
- *                 property element entirely, which will cause no
- *                 property setter to be called for this property.
- * 
- *                 The "null-value" element can only be used when the
- *                 associated "property-class" identifies a Java class,
- *                 not a Java primitive.
- * 
- *             
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-null-valueType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.

@@ -28,16 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         The login-configType is used to configure the authentication
- *         method that should be used, the realm name that should be
- *         used for this application, and the attributes that are
- *         needed by the form login mechanism.
- *         
- *         Used in: web-app
- *         
- *       
+ * web-common_3_0.xsd
  * 
  * <p>Java class for login-configType complex type.
  * 

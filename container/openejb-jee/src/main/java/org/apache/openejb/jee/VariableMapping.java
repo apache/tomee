@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
+ * TODO what schema?
  * The variable-mapping element defines the correlation between a
  * Java class data member or JavaBeans property to an XML element
  * or attribute name of an XML root type. If the data-member

@@ -27,6 +27,32 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigInteger;
 
+/**
+ * web-common_3_0.xsd
+ *
+ * <p>Java class for error-pageType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="error-pageType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;choice minOccurs="0">
+ *           &lt;element name="error-code" type="{http://java.sun.com/xml/ns/javaee}error-codeType"/>
+ *           &lt;element name="exception-type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
+ *         &lt;/choice>
+ *         &lt;element name="location" type="{http://java.sun.com/xml/ns/javaee}war-pathType"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "error-pageType", propOrder = {
         "errorCode",

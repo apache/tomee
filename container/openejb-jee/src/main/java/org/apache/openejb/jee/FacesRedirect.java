@@ -39,14 +39,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- *
- *
- *         The "redirect" element indicates that navigation to the
- *         specified "to-view-id" should be accomplished by
- *         performing an HTTP redirect rather than the usual
- *         ViewHandler mechanisms.
- *
- *
+ * web-facesconfig_2_0.xsd
  *
  * <p>Java class for faces-config-redirectType complex type.
  *

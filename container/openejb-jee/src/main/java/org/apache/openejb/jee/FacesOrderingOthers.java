@@ -27,16 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- *         This element indicates that the ordering sub-element in which
- *         it was placed should take special action regarding the ordering
- *         of this application resource relative to other
- *         application configuration resources.  See section JSF.11.4.6
- *         for the complete specification.
- *         
- *       
- * 
+ * web-facesconfig_2_0.xsd
+ *
  * <p>Java class for faces-config-ordering-othersType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
