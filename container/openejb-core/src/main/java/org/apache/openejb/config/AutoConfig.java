@@ -25,7 +25,7 @@ import static java.util.Arrays.asList;
 import static org.apache.openejb.config.ServiceUtils.hasServiceProvider;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.InboundResourceadapter;
-import org.apache.openejb.jee.OutboundResourceadapterX;
+import org.apache.openejb.jee.OutboundResourceadapter;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -44,7 +44,7 @@ import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceadapterX;
 import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
@@ -1594,7 +1594,7 @@ public class AutoConfig implements DynamicDeployer {
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
                 Connector connector = connectorModule.getConnector();
 
-                ResourceAdapter resourceAdapter = connector.getResourceAdapter();
+                ResourceadapterX resourceAdapter = connector.getResourceAdapter();
                 if (resourceAdapter.getResourceAdapterClass() != null) {
                     String resourceAdapterId;
                     if (resourceAdapter.getId() != null) {
@@ -1605,7 +1605,7 @@ public class AutoConfig implements DynamicDeployer {
                     resourceAdapterIds.add(resourceAdapterId);
                 }
 
-                OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
+                OutboundResourceadapter outbound = resourceAdapter.getOutboundResourceAdapter();
                 if (outbound != null) {
                     for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
                         String type = connection.getConnectionFactoryInterface();

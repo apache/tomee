@@ -201,8 +201,6 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected NamedMethod beforeCompletionMethod;
     @XmlElement(name = "after-completion-method")
     protected NamedMethod afterCompletionMethod;
-//    @XmlElement(name = "concurrency-type")
-//    protected ConcurrencyType concurrencyType;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "around-timeout")

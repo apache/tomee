@@ -30,7 +30,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceadapterX;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.MessageAdapter;
 import org.apache.openejb.jee.MessageListener;
@@ -72,7 +72,7 @@ public class QuartzMdbContainerTest extends TestCase {
         AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
 
         Connector connector = new Connector("quartz");
-        ResourceAdapter adapter = connector.setResourceAdapter(new ResourceAdapter(QuartzResourceAdapter.class));
+        ResourceadapterX adapter = connector.setResourceAdapter(new ResourceadapterX(QuartzResourceAdapter.class));
         InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(Job.class, JobSpec.class));

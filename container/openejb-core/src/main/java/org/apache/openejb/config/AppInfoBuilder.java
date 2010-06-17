@@ -33,6 +33,8 @@ import org.apache.openejb.assembler.classic.HandlerChainInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.OutboundResourceadapter;
+import org.apache.openejb.jee.ResourceadapterX;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
@@ -53,9 +55,7 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.OutboundResourceadapterX;
 import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.AdminObject;
@@ -315,7 +315,7 @@ class AppInfoBuilder {
                 }
             }
 
-            ResourceAdapter resourceAdapter = connector.getResourceAdapter();
+            ResourceadapterX resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
                 String id = getId(connectorModule);
                 String className = resourceAdapter.getResourceAdapterClass();
@@ -337,7 +337,7 @@ class AppInfoBuilder {
                 connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
             }
 
-            OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
+            OutboundResourceadapter outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
                 switch (outbound.getTransactionSupport()) {
@@ -424,7 +424,7 @@ class AppInfoBuilder {
         }
     }
 
-    private String getId(AdminObject adminObject, ResourceAdapter resourceAdapter, ConnectorModule connectorModule) {
+    private String getId(AdminObject adminObject, ResourceadapterX resourceAdapter, ConnectorModule connectorModule) {
         String id;
         if (adminObject.getId() != null) {
             id = adminObject.getId();
@@ -448,7 +448,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectionDefinition connection, OutboundResourceadapterX outbound, ConnectorModule connectorModule) {
+    private String getId(ConnectionDefinition connection, OutboundResourceadapter outbound, ConnectorModule connectorModule) {
         String id;
         if (connection.getId() != null) {
             id = connection.getId();
