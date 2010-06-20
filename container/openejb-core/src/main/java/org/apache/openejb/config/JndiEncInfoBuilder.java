@@ -454,22 +454,7 @@ public class JndiEncInfoBuilder {
     }
 
     private boolean isLocalBean(EnterpriseBeanInfo beanInfo) {
-        if (beanInfo == null) return false;
-
-        if (beanInfo instanceof StatelessBeanInfo) {
-            StatelessBeanInfo statelessBeanInfo = (StatelessBeanInfo) beanInfo;
-            return statelessBeanInfo.localbean;
-        }
-        if (beanInfo instanceof StatefulBeanInfo) {
-            StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) beanInfo;
-            return statefulBeanInfo.localbean;
-        }
-        if (beanInfo instanceof SingletonBeanInfo) {
-            SingletonBeanInfo singletonBeanInfo = (SingletonBeanInfo) beanInfo;
-            return singletonBeanInfo.localbean;
-        }
-
-        return false;
+        return beanInfo != null && beanInfo.localbean;
     }
 
     private EnterpriseBeanInfo getBeanInfo(String moduleId, String deploymentId) {

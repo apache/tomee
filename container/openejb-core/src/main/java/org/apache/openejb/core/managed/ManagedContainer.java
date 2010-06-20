@@ -33,7 +33,6 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.SessionSynchronization;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -156,6 +155,17 @@ public class ManagedContainer implements RpcContainer {
         Class businessLocalHomeInterface = deploymentInfo.getBusinessLocalInterface();
         if (businessLocalHomeInterface != null) {
             for (Method method : DeploymentInfo.BusinessLocalHome.class.getMethods()) {
+                if (method.getName().startsWith("create")) {
+                    methods.put(method, MethodType.CREATE);
+                } else if (method.getName().equals("remove")) {
+                    methods.put(method, MethodType.REMOVE);
+                }
+            }
+        }
+
+        Class businessLocalBeanHomeInterface = deploymentInfo.getBusinessLocalBeanInterface();
+        if (businessLocalBeanHomeInterface != null) {
+            for (Method method : DeploymentInfo.BusinessLocalBeanHome.class.getMethods()) {
                 if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
                 } else if (method.getName().equals("remove")) {
@@ -352,10 +362,11 @@ public class ManagedContainer implements RpcContainer {
 
                 // Register for synchronization callbacks
                 registerSessionSynchronization(instance, createContext);
-              
+
                 // Invoke create for legacy beans
                 if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) &&
-                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class)){
+                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class) &&
+                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalBeanHome.class)) {
 
                     // Setup for business invocation
                     Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
@@ -923,10 +934,8 @@ public class ManagedContainer implements RpcContainer {
             ThreadContext oldCallContext = ThreadContext.enter(callContext);
             try {
 
-                Method afterBegin = SessionSynchronization.class.getMethod("afterBegin");
-
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(afterBegin);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterBegin, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
+                List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
                 interceptorStack.invoke();
 
             } catch (Exception e) {
@@ -962,10 +971,9 @@ public class ManagedContainer implements RpcContainer {
                 try {
                     instance.setInUse(true);
 
-                    Method beforeCompletion = SessionSynchronization.class.getMethod("beforeCompletion");
-
-                    List<InterceptorData> interceptors = instance.deploymentInfo.getMethodInterceptors(beforeCompletion);
-                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, beforeCompletion, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
+                    CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+                    List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
                     interceptorStack.invoke();
 
                     instance.setInUse(false);
@@ -1003,10 +1011,10 @@ public class ManagedContainer implements RpcContainer {
                 try {
                     instance.setInUse(true);
                     if (synchronization.isCallSessionSynchronization()) {
-                        Method afterCompletion = SessionSynchronization.class.getMethod("afterCompletion", boolean.class);
 
-                        List<InterceptorData> interceptors = instance.deploymentInfo.getMethodInterceptors(afterCompletion);
-                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, afterCompletion, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
+                        CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+                        List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                        InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
                         interceptorStack.invoke(status == Status.COMMITTED);
                     }
                     instance.setTransaction(null);
