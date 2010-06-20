@@ -17,8 +17,6 @@
 package org.apache.openejb.assembler.classic;
 
 public class SingletonBeanInfo extends EnterpriseBeanInfo {
-    public boolean localbean; 
-
     public SingletonBeanInfo() {
         type = SINGLETON;
     }

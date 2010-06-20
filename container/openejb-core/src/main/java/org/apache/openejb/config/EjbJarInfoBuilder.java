@@ -489,7 +489,6 @@ public class EjbJarInfoBuilder {
         if (s.getSessionType() == SessionType.STATEFUL) {
             bean = new StatefulBeanInfo();
             StatefulBeanInfo stateful = ((StatefulBeanInfo) bean);
-            stateful.localbean = s.getLocalBean() != null;
 
             copyCallbacks(s.getPostActivate(), stateful.postActivate);
             copyCallbacks(s.getPrePassivate(), stateful.prePassivate);
@@ -533,11 +532,12 @@ public class EjbJarInfoBuilder {
             bean.loadOnStartup = s.getInitOnStartup();
             // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
-            ((SingletonBeanInfo)bean).localbean = s.getLocalBean() != null;
         } else {
             bean = new StatelessBeanInfo();
-            ((StatelessBeanInfo)bean).localbean = s.getLocalBean() != null;
         }
+
+        bean.localbean = s.getLocalBean() != null;
+
 
         bean.timeoutMethod = toInfo(s.getTimeoutMethod());
 

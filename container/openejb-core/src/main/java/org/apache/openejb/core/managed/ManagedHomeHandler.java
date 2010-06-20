@@ -17,6 +17,7 @@
 package org.apache.openejb.core.managed;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import javax.ejb.RemoveException;
@@ -35,12 +36,22 @@ public class ManagedHomeHandler extends EjbHomeProxyHandler {
 
     public Object createProxy(Object primaryKey) {
         Object proxy = super.createProxy(primaryKey);
-        EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        EjbObjectProxyHandler handler = null;
+
+        try {
+            handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
+        } catch (Exception e) {
+            // try getting the invocation handler from the localbean
+            try {
+                Field field = proxy.getClass().getDeclaredField("invocationHandler");
+                field.setAccessible(true);
+                handler = (EjbObjectProxyHandler) field.get(proxy);
+            } catch (Exception e1) {
+            }
+        }
 
         registerHandler(handler.getRegistryId(), handler);
-
         return proxy;
-
     }
 
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {

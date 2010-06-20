@@ -50,6 +50,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String local;
     public final List<String> businessLocal = new ArrayList<String>();
     public final List<String> businessRemote = new ArrayList<String>();
+    public boolean localbean;
+    
     public String ejbClass;
     public String ejbName;
 
