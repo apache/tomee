@@ -25,8 +25,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
+import javax.ejb.AfterCompletion;
+import javax.ejb.BeforeCompletion;
+import javax.ejb.AfterBegin;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.interceptor.AroundTimeout;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
@@ -82,35 +86,89 @@ public class StatsInterceptor {
         return map.values();
     }
 
-    @PostConstruct
-    public void constructed(InvocationContext invocationContext) throws Exception {
-        record(invocationContext);
-    }
-
-    @PreDestroy
-    public void destroy(InvocationContext invocationContext) throws Exception {
-        record(invocationContext);
-    }
+//    private Method $n() throws NoSuchMethodException { return this.getClass().getMethod(\"$n\"); } @$n public void $n(InvocationContext invocationContext) throws Exception { record(invocationContext, $n()); }
 
     @AroundInvoke
     public Object invoke(InvocationContext invocationContext) throws Exception {
-        return record(invocationContext);
+        return record(invocationContext, null);
+    }
+
+    public Method PostConstruct() throws NoSuchMethodException {
+        return this.getClass().getMethod("PostConstruct");
+    }
+
+    @PostConstruct
+    public void PostConstruct(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, PostConstruct());
+    }
+
+    public Method PreDestroy() throws NoSuchMethodException {
+        return this.getClass().getMethod("PreDestroy");
+    }
+
+    @PreDestroy
+    public void PreDestroy(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, PreDestroy());
+    }
+
+    public Method PostActivate() throws NoSuchMethodException {
+        return this.getClass().getMethod("PostActivate");
     }
 
     @PostActivate
-    public void activated(InvocationContext invocationContext) throws Exception {
-        record(invocationContext);
+    public void PostActivate(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, PostActivate());
+    }
+
+    public Method PrePassivate() throws NoSuchMethodException {
+        return this.getClass().getMethod("PrePassivate");
     }
 
     @PrePassivate
-    public void passivate(InvocationContext invocationContext) throws Exception {
-        record(invocationContext);
+    public void PrePassivate(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, PrePassivate());
     }
 
-    private Object record(InvocationContext invocationContext) throws Exception {
+    public Method AroundTimeout() throws NoSuchMethodException {
+        return this.getClass().getMethod("AroundTimeout");
+    }
+
+    @AroundTimeout
+    public void AroundTimeout(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, AroundTimeout());
+    }
+
+    public Method AfterBegin() throws NoSuchMethodException {
+        return this.getClass().getMethod("AfterBegin");
+    }
+
+    @AfterBegin
+    public void AfterBegin(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, AfterBegin());
+    }
+
+    public Method BeforeCompletion() throws NoSuchMethodException {
+        return this.getClass().getMethod("BeforeCompletion");
+    }
+
+    @BeforeCompletion
+    public void BeforeCompletion(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, BeforeCompletion());
+    }
+
+    public Method AfterCompletion() throws NoSuchMethodException {
+        return this.getClass().getMethod("AfterCompletion");
+    }
+
+    @AfterCompletion
+    public void AfterCompletion(InvocationContext invocationContext) throws Exception {
+        record(invocationContext, AfterCompletion());
+    }
+
+    private Object record(InvocationContext invocationContext, Method callback) throws Exception {
         invocations.incrementAndGet();
 
-        Stats stats = enabled ? stats(invocationContext): null;
+        Stats stats = enabled ? stats(invocationContext, callback): null;
         long start = System.nanoTime();
         try{
             return invocationContext.proceed();
@@ -125,8 +183,9 @@ public class StatsInterceptor {
         return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
     }
 
-    private Stats stats(InvocationContext invocationContext) {
-        Method method = invocationContext.getMethod();
+    private Stats stats(InvocationContext invocationContext, Method callback) {
+        Method method = callback == null? invocationContext.getMethod(): callback;
+
         Stats stats = map.get(method);
         if (stats == null) {
             stats = new Stats(method, monitor);
