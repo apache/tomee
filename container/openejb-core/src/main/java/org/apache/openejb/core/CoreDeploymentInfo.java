@@ -767,7 +767,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public List<InterceptorData> getCallbackInterceptors() {
-        return callbackInterceptors;
+        return addSystemInterceptorDatas(callbackInterceptors);
     }
 
     public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
@@ -780,6 +780,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
         List<InterceptorData> interceptors = methodInterceptors.get(method);
 
+        return addSystemInterceptorDatas(interceptors);
+    }
+
+    private List<InterceptorData> addSystemInterceptorDatas(List<InterceptorData> interceptors) {
         if (interceptors == null) interceptors = Collections.EMPTY_LIST;
 
         if (systemInterceptors.size() <= 0) return interceptors;
