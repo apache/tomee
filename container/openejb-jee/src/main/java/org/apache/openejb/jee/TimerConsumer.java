@@ -20,6 +20,7 @@ package org.apache.openejb.jee;
  * @version $Rev$ $Date$
  */
 public interface TimerConsumer {
+
     NamedMethod getTimeoutMethod();
 
     void setTimeoutMethod(NamedMethod value);

@@ -16,82 +16,28 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.api.RemoteClient;
-import org.apache.openejb.core.webservices.JaxWsUtils;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.ConcurrencyManagementType;
-import org.apache.openejb.jee.ConcurrentLockType;
-import org.apache.openejb.jee.ContainerConcurrency;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EjbReference;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
-import org.apache.openejb.jee.Filter;
-import org.apache.openejb.jee.Handler;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.InitMethod;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.Lifecycle;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.Listener;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.MethodAttribute;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.MethodSchedule;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.Property;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.RemoveMethod;
-import org.apache.openejb.jee.ResAuth;
-import org.apache.openejb.jee.ResSharingScope;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.TimerSchedule;
-import org.apache.openejb.jee.SecurityIdentity;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Tag;
-import org.apache.openejb.jee.TimeUnitType;
-import org.apache.openejb.jee.Timeout;
-import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.AbstractFinder;
-import org.apache.xbean.finder.ClassFinder;
+
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.util.Arrays.asList;
+import static org.apache.openejb.util.Join.join;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -150,27 +96,84 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.util.Arrays.asList;
-import static org.apache.openejb.util.Join.join;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.LocalClient;
+import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AroundTimeout;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ConcurrencyManagementType;
+import org.apache.openejb.jee.ConcurrentLockType;
+import org.apache.openejb.jee.ContainerConcurrency;
+import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EjbReference;
+import org.apache.openejb.jee.Empty;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.FacesManagedBean;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.Lifecycle;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MethodAttribute;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.MethodSchedule;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SecurityIdentity;
+import org.apache.openejb.jee.SecurityRoleRef;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.Tag;
+import org.apache.openejb.jee.TimeUnitType;
+import org.apache.openejb.jee.Timeout;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.TimerSchedule;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -999,7 +1002,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (logger.isDebugEnabled()) for (Class clazz : list) {
                         logger.debug("Found " + clazz.getName());
                     }
-                    
+
                     classes.addAll(list);
                 }
             }
@@ -2064,6 +2067,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (aroundInvoke == null) {
                 for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
                     bean.getAroundInvoke().add(new AroundInvoke(method));
+                }
+            }
+
+            /*
+             *  @AroundTimeout
+             */
+            AroundTimeout aroundTimeout = getFirst(bean.getAroundTimeout());
+            if (aroundTimeout == null) {
+                for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundTimeout.class)) {
+                    bean.getAroundTimeout().add(new AroundTimeout(method));
                 }
             }
 

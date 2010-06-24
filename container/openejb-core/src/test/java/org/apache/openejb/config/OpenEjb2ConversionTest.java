@@ -40,7 +40,7 @@ public class OpenEjb2ConversionTest extends TestCase {
 
     public void testSimple() throws Exception {
         String prefix = "convert/oej2/simple/";
-        
+
         AppModule appModule = deploy(prefix);
 
         // compare the results to the expected results

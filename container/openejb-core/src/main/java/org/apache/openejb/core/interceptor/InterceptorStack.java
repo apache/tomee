@@ -17,19 +17,19 @@
  */
 package org.apache.openejb.core.interceptor;
 
-import org.apache.openejb.core.Operation;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.Classes;
 import static org.apache.openejb.util.Join.join;
 
-import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.Stack;
+
+import javax.interceptor.InvocationContext;
+
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.Classes;
 
 /**
  * @version $Rev$ $Date$
@@ -52,7 +52,7 @@ public class InterceptorStack {
 //            interceptors.add(new Interceptor(new Debug(), Debug.class.getMethod("invoke", InvocationContext.class)));
 //        } catch (Throwable e) {
 //        }
-        
+
         for (InterceptorData interceptorData : interceptorDatas) {
             Class interceptorClass = interceptorData.getInterceptorClass();
             Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());

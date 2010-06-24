@@ -264,7 +264,7 @@ public class EjbJarInfoBuilder {
             cmrFieldInfo.fieldName = relatedEntity.abstractSchemaName + "_" + relatedRole.getCmrField().getCmrFieldName();
             if (relatedRole.getMultiplicity() == Multiplicity.MANY) {
                 cmrFieldInfo.fieldType = Collection.class.getName();
-            }            
+            }
         }
 
         // CascadeDelete
@@ -299,6 +299,8 @@ public class EjbJarInfoBuilder {
             copyCallbacks(s.getAfterBegin(), info.afterBegin);
             copyCallbacks(s.getBeforeCompletion(), info.beforeCompletion);
             copyCallbacks(s.getAfterCompletion(), info.afterCompletion);
+
+            copyCallbacks(s.getAroundTimeout(), info.aroundTimeout);
 
             ejbJar.interceptors.add(info);
         }
@@ -536,6 +538,10 @@ public class EjbJarInfoBuilder {
             bean = new StatelessBeanInfo();
         }
 
+        if (s.getSessionType() != SessionType.STATEFUL) {
+            copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
+        }
+        
         bean.localbean = s.getLocalBean() != null;
 
 

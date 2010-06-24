@@ -161,7 +161,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         // Use the backup way to determine call type if null was supplied.
         if (type == null) type = deployInfo.getInterfaceType(callInterface);
-        
+
         Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
         if(runMethod.getAnnotation(Asynchronous.class) != null){
         	// Need to invoke this bean asynchronously
@@ -174,7 +174,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         Object bean = null;
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
+            boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -190,7 +190,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
             bean = instanceManager.getInstance(callContext);
 
-            callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
             callContext.setCurrentAllowedStates(StatelessContext.getStates());
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
@@ -240,7 +240,8 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 returnValue = invokeWebService(args, deploymentInfo, runMethod, instance, returnValue);
             } else {
                 List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS, interceptors,
+                        instance.interceptors);
                 returnValue = interceptorStack.invoke(args);
             }
         } catch (Throwable re) {// handle reflection exception
@@ -326,9 +327,9 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         }
         return returnValue;
     }
-    
+
     public class StatelessMethodRunnable extends AsynchMethodRunnable{
-    	
+
     	public StatelessMethodRunnable(
 				Method callMethod,
 				Method runMethod, Object[] args, InterfaceType type,
@@ -353,7 +354,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                 instanceManager.poolInstance(callContext, bean);
             }
 		}
-    	
+
     }
 
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {

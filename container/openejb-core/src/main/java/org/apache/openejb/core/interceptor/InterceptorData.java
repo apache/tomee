@@ -21,6 +21,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.interceptor.AroundInvoke;
+import javax.interceptor.AroundTimeout;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.PostActivate;
@@ -51,6 +52,8 @@ public class InterceptorData {
     private final List<Method> afterBegin = new ArrayList<Method>();
     private final List<Method> beforeCompletion = new ArrayList<Method>();
     private final List<Method> afterCompletion = new ArrayList<Method>();
+
+    private final List<Method> aroundTimeout = new ArrayList<Method>();
 
     public InterceptorData(Class clazz) {
         this.clazz = clazz;
@@ -92,6 +95,10 @@ public class InterceptorData {
         return afterCompletion;
     }
 
+    public List<Method> getAroundTimeout(){
+        return aroundTimeout;
+    }
+
     public List<Method> getMethods(Operation operation) {
         switch(operation) {
             case BUSINESS: return getAroundInvoke();
@@ -104,6 +111,7 @@ public class InterceptorData {
             case AFTER_BEGIN: return getAfterBegin();
             case AFTER_COMPLETION: return getAfterCompletion();
             case BEFORE_COMPLETION: return getBeforeCompletion();
+            case TIMEOUT: return getAroundTimeout();
         }
         return Collections.EMPTY_LIST;
     }
@@ -136,6 +144,7 @@ public class InterceptorData {
         data.afterBegin.addAll(finder.findAnnotatedMethods(AfterBegin.class));
         data.beforeCompletion.addAll(finder.findAnnotatedMethods(BeforeCompletion.class));
         data.afterCompletion.addAll(finder.findAnnotatedMethods(AfterCompletion.class));
+        data.aroundTimeout.addAll(finder.findAnnotatedMethods(AroundTimeout.class));
 
         return data;
     }

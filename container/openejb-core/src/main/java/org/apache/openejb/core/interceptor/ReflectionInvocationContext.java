@@ -59,7 +59,10 @@ public class ReflectionInvocationContext implements InvocationContext {
     }
 
     public Object getTimer() {
-        throw new UnsupportedOperationException("not yet implemented");
+        if (operation.equals(Operation.TIMEOUT)) {
+            return parameters[0];
+        }
+        return null;
     }
 
     public Object getTarget() {
@@ -72,7 +75,7 @@ public class ReflectionInvocationContext implements InvocationContext {
 
     public Object[] getParameters() {
         //TODO Need to figure out what is going on with afterCompletion call back here ?
-        if (operation.isCallback()) {
+        if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
         return parameters.clone();

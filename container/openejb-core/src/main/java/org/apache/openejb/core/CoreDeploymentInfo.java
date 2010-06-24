@@ -149,6 +149,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
             case EJB_LOCAL: return getLocalInterface();
             case BUSINESS_LOCAL: return getBusinessLocalInterface();
             case BUSINESS_REMOTE: return getBusinessRemoteInterface();
+            case TIMEOUT : return DeploymentInfo.Timeout.class;
             case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
             case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
             case SERVICE_ENDPOINT: return getServiceEndpointInterface();
@@ -1157,7 +1158,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         if (this.isLocalbean()) {
             return this.beanClass;
         }
-
         return null;
     }
 

@@ -156,7 +156,7 @@ public class EntityContainer implements RpcContainer {
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
+            boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -185,7 +185,7 @@ public class EntityContainer implements RpcContainer {
                 return null;
             }
 
-            callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
             callContext.setCurrentAllowedStates(EntityContext.getStates());
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 

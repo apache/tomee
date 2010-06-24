@@ -177,6 +177,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected Timeout statefulTimeout;
     @XmlElement(name = "timeout-method")
     protected NamedMethod timeoutMethod;
+    @XmlElement(name = "timer")
     protected List<Timer> timer;
     @XmlElement(name = "init-on-startup")
     protected Boolean initOnStartup;
@@ -801,17 +802,17 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     }
 
     public void addAfterBegin(String method) {
-        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getAfterBegin().add(new LifecycleCallback(ejbClass, method));
     }
 
     public void addAfterCompletion(String method) {
-        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getAfterCompletion().add(new LifecycleCallback(ejbClass, method));
     }
 
     public void addBeforeCompletion(String method) {
-        assert ejbClass != null : "Set the interceptorClass before calling this method";
+        assert ejbClass != null : "Set the ejbClass before calling this method";
         getBeforeCompletion().add(new LifecycleCallback(ejbClass, method));
     }
 
@@ -864,5 +865,10 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public void setAccessTimeout(Timeout accessTimeout) {
         this.accessTimeout = accessTimeout;
+    }
+
+    public void addAroundTimeout(String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
+        getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }
 }

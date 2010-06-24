@@ -19,6 +19,7 @@ package org.apache.openejb.core.timer;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
@@ -38,7 +39,6 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.lang.reflect.Method;
 
 public class EjbTimerServiceImpl implements EjbTimerService {
@@ -81,7 +81,6 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
-
     }
 
     public void start() throws TimerStoreException {
@@ -282,7 +281,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
                     Method ejbTimeout = deployment.getEjbTimeout();
-                    container.invoke(deployment.getDeploymentID(), ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] {timer}, timerData.getPrimaryKey());
+                    container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] { timer }, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     // exception from a timer does not necessairly mean failure
                     log.warning("RuntimeException from ejbTimeout on " + deployment.getDeploymentID(), e);
