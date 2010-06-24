@@ -132,7 +132,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         // TODO: This should not be necessary, but having an empty <attributes/> tag
         // causes some of the unit tests to fail.  Not sure why.  Should be fixed.
         for (Entity entity : appModule.getCmpMappings().getEntity()) {
-            if (entity.getAttributes().isEmpty()){
+            if (entity.getAttributes() != null && entity.getAttributes().isEmpty()){
                 entity.setAttributes(null);
             }
         }
