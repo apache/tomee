@@ -106,7 +106,7 @@ public class OpenEjb2ConversionTest extends TestCase {
 //        System.out.println("expected = " + expected);
 //        System.out.println("actual = " + actual);
         
-        Diff myDiff = new Diff(expected, actual);
+        Diff myDiff = new Diff(expected.trim(), actual.trim());
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 

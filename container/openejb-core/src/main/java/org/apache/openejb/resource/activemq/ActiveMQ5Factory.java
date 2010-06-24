@@ -31,17 +31,22 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.openejb.util.LogCategory;
 
 public class ActiveMQ5Factory implements BrokerFactoryHandler {
+
     private static final ThreadLocal<Properties> threadProperties = new ThreadLocal<Properties>();
+    private static BrokerService broker = null;
+    private static Throwable throwable = null;
 
     public static void setThreadProperties(Properties value) {
         threadProperties.set(value);
     }
 
-    public BrokerService createBroker(URI brokerURI) throws Exception {
-        URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
-        BrokerService broker = BrokerFactory.createBroker(uri);
+    public BrokerService createBroker(final URI brokerURI) throws Exception {
+
+        final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
+        broker = BrokerFactory.createBroker(uri);
 
         Properties properties = getLowerCaseProperties();
 
@@ -62,8 +67,8 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     Context context = containerSystem.getJNDIContext();
                     Object obj = context.lookup("openejb/Resource/" + resouceId);
                     if (!(obj instanceof DataSource)) {
-                        throw new IllegalArgumentException("Resource with id " + resouceId +
-                            " is not a DataSource, but is " + obj.getClass().getName());
+                        throw new IllegalArgumentException("Resource with id " + resouceId
+                                + " is not a DataSource, but is " + obj.getClass().getName());
                     }
                     dataSource = (DataSource) obj;
                 } catch (NamingException e) {
@@ -72,11 +77,54 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
 
             JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
+
+            if (properties.containsKey("usedatabaselock")) {
+                //This must be false for hsqldb
+                persistenceAdapter.setUseDatabaseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
+            }
+
             persistenceAdapter.setDataSource(dataSource);
             broker.setPersistenceAdapter(persistenceAdapter);
         } else {
             MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
             broker.setPersistenceAdapter(persistenceAdapter);
+        }
+
+        //We must close the broker
+        broker.setUseShutdownHook(false);
+        broker.setSystemExitOnShutdown(false);
+
+        //Notify when an error occurs on shutdown.
+        broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").isErrorEnabled());
+
+        final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
+
+            @Override
+            public void run() {
+                try {
+                    //Start before returning - this is known to be safe.
+                    broker.start();
+                    broker.waitUntilStarted();
+
+                    //Force a checkpoint to initialize pools
+                    broker.getPersistenceAdapter().checkpoint(true);
+                } catch (Throwable t) {
+                    throwable = t;
+                }
+            }
+        };
+
+        start.setDaemon(true);
+        start.start();
+
+        try {
+            start.join(5000);
+        } catch (InterruptedException e) {
+            //Ignore
+        }
+
+        if (null != throwable) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ failed to start within 5 seconds - It may not be usable", throwable);
         }
 
         return broker;
@@ -97,6 +145,4 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         }
         return newProperties;
     }
-
-
 }

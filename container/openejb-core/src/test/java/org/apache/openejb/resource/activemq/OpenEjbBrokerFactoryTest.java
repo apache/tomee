@@ -27,7 +27,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
-import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 import org.apache.activemq.broker.BrokerFactory;
@@ -46,6 +45,7 @@ import org.apache.xbean.naming.context.ImmutableContext;
 import org.hsqldb.jdbc.jdbcDataSource;
 
 public class OpenEjbBrokerFactoryTest extends TestCase {
+
     public void testBrokerUri() throws Exception {
         final String prefix = ActiveMQFactory.getBrokerMetaFile();
         assertEquals(prefix + "broker:(tcp://localhost:61616)?persistent=false",
@@ -59,13 +59,13 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     private String getBrokerUri(String brokerUri) throws URISyntaxException {
-        URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerUri));
+        final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerUri));
         compositeData.getParameters().put("persistent", "false");
         return ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI();
     }
 
     public void testBrokerDoubleCreate() throws Exception {
-        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri( "broker:(tcp://localhost:61616)?useJmx=false")));
+        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri("broker:(tcp://localhost:61616)?useJmx=false")));
         stopBroker(broker);
 
         broker = BrokerFactory.createBroker(new URI(getBrokerUri("broker:(tcp://localhost:61616)?useJmx=false")));
@@ -74,7 +74,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     public void testNoDataSource() throws Exception {
-        BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri(
+        final BrokerService broker = BrokerFactory.createBroker(new URI(getBrokerUri(
                 "broker:(tcp://localhost:61616)?useJmx=false")));
         assertNotNull("broker is null", broker);
 
@@ -88,10 +88,17 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     public void testDirectDataSource() throws Exception {
-        Properties properties = new Properties();
 
-        DataSource dataSource = new jdbcDataSource();
+        final Properties properties = new Properties();
+
+        final jdbcDataSource dataSource = new jdbcDataSource();
+        dataSource.setDatabase("jdbc:hsqldb:mem:testdb" + System.currentTimeMillis());
+        dataSource.setUser("sa");
+        dataSource.setPassword("");
+        dataSource.getConnection().close();
+
         properties.put("DataSource", dataSource);
+        properties.put("UseDatabaseLock", "false");
 
         ActiveMQFactory.setThreadProperties(properties);
         BrokerService broker = null;
@@ -105,7 +112,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
             assertTrue("persistenceAdapter should be an instance of JDBCPersistenceAdapter",
                     persistenceAdapter instanceof JDBCPersistenceAdapter);
-            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter)persistenceAdapter;
+            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter) persistenceAdapter;
 
             assertSame(dataSource, jdbcPersistenceAdapter.getDataSource());
         } finally {
@@ -115,17 +122,24 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     public void testLookupDataSource() throws Exception {
-        Properties properties = new Properties();
 
-        DataSource dataSource = new jdbcDataSource();
+        final Properties properties = new Properties();
+
+        final jdbcDataSource dataSource = new jdbcDataSource();
+        dataSource.setDatabase("jdbc:hsqldb:mem:testdb" + System.currentTimeMillis());
+        dataSource.setUser("sa");
+        dataSource.setPassword("");
+        dataSource.getConnection().close();
+
         MockInitialContextFactory.install(Collections.singletonMap("openejb/Resource/TestDs", dataSource));
         assertSame(dataSource, new InitialContext().lookup("openejb/Resource/TestDs"));
 
-        CoreContainerSystem containerSystem = new CoreContainerSystem(new IvmJndiFactory());
+        final CoreContainerSystem containerSystem = new CoreContainerSystem(new IvmJndiFactory());
         containerSystem.getJNDIContext().bind("openejb/Resource/TestDs", dataSource);
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
 
         properties.put("DataSource", "TestDs");
+        properties.put("UseDatabaseLock", "false");
 
         ActiveMQFactory.setThreadProperties(properties);
         BrokerService broker = null;
@@ -139,7 +153,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
 
             assertTrue("persistenceAdapter should be an instance of JDBCPersistenceAdapter",
                     persistenceAdapter instanceof JDBCPersistenceAdapter);
-            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter)persistenceAdapter;
+            JDBCPersistenceAdapter jdbcPersistenceAdapter = (JDBCPersistenceAdapter) persistenceAdapter;
 
             assertSame(dataSource, jdbcPersistenceAdapter.getDataSource());
         } finally {
@@ -149,6 +163,7 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
     }
 
     public static class MockInitialContextFactory implements InitialContextFactory {
+
         private static ImmutableContext immutableContext;
 
         public static void install(Map bindings) throws NamingException {
@@ -157,14 +172,15 @@ public class OpenEjbBrokerFactoryTest extends TestCase {
             new InitialContext();
         }
 
-        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        public Context getInitialContext(final Hashtable<?, ?> environment) throws NamingException {
             return immutableContext;
         }
     }
 
-
-    private void stopBroker(BrokerService broker) throws Exception {
-        if (broker == null) return;
+    private void stopBroker(final BrokerService broker) throws Exception {
+        if (broker == null) {
+            return;
+        }
 
         if (broker.getJmsBridgeConnectors() != null) {
             for (JmsConnector connector : broker.getJmsBridgeConnectors()) {
