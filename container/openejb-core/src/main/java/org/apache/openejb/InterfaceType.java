@@ -31,6 +31,7 @@ public enum InterfaceType {
     BUSINESS_REMOTE_HOME("Home"),
     SERVICE_ENDPOINT("ServiceEndpoint"),
     BUSINESS_LOCALBEAN_HOME("LocalBeanHome"),
+    TIMEOUT("Timeout"),
     UNKNOWN("Unknown");
 
     private final String specName;

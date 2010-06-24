@@ -16,35 +16,37 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.CallbackMethod;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.Session;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.RemoveMethod;
-import org.apache.openejb.jee.InitMethod;
-import org.apache.openejb.OpenEJBException;
-import org.apache.xbean.finder.ClassFinder;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.interceptor.InvocationContext;
 import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
 import javax.ejb.BeforeCompletion;
-import javax.ejb.PrePassivate;
-import javax.ejb.PostActivate;
-import javax.ejb.Remove;
 import javax.ejb.Init;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.ejb.Remove;
 import javax.ejb.SessionSynchronization;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.ArrayList;
+import javax.interceptor.InvocationContext;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AroundTimeout;
+import org.apache.openejb.jee.CallbackMethod;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.Session;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -99,71 +101,79 @@ public class CheckCallbacks extends ValidationBase {
                         checkCallback(ejbClass, "AfterCompletion", callback, bean, boolean.class);
                     }
 
+                    for (AroundTimeout aroundTimeout : session.getAroundTimeout()) {
+                        ignoredAnnotation("aroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
+                    }
+
                 } else {
 
                     for (LifecycleCallback callback : session.getAfterBegin()) {
-                        ignoredStatefulAnnotation("afterBegin", bean, callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("afterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getBeforeCompletion()) {
-                        ignoredStatefulAnnotation("beforeCompletion", bean, callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("beforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getAfterCompletion()) {
-                        ignoredStatefulAnnotation("afterCompletion", bean, callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("afterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getPrePassivate()) {
-                        ignoredStatefulAnnotation("PrePassivate", bean, callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("PrePassivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getPostActivate()) {
-                        ignoredStatefulAnnotation("PostActivate", bean, callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("PostActivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (RemoveMethod method : session.getRemoveMethod()) {
-                        ignoredStatefulAnnotation("Remove", bean, method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("Remove", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
 
                     for (InitMethod method : session.getInitMethod()) {
-                        ignoredStatefulAnnotation("Init", bean, method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("Init", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
                 }
             } else {
                 ClassFinder finder = new ClassFinder(ejbClass);
 
                 for (Method method : finder.findAnnotatedMethods(PrePassivate.class)) {
-                    ignoredStatefulAnnotation("PrePassivate", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("PrePassivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(PostActivate.class)) {
-                    ignoredStatefulAnnotation("PostActivate", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("PostActivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(Remove.class)) {
-                    ignoredStatefulAnnotation("Remove", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("Remove", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(Init.class)) {
-                    ignoredStatefulAnnotation("Init", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("Init", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
-                    ignoredStatefulAnnotation("afterBegin", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("afterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
-                    ignoredStatefulAnnotation("beforeCompletion", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("beforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
-                    ignoredStatefulAnnotation("afterCompletion", bean, method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("afterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
             }
 
             if (bean instanceof TimerConsumer) {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 checkTimeOut(ejbClass, timerConsumer.getTimeoutMethod(), bean);
+
+                for (AroundTimeout aroundTimeout : bean.getAroundTimeout()) {
+                    checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
+                }
             }
         }
 
@@ -177,6 +187,10 @@ public class CheckCallbacks extends ValidationBase {
 
             for (AroundInvoke aroundInvoke : interceptor.getAroundInvoke()) {
                 checkAroundInvoke(interceptorClass, aroundInvoke, "Interceptor");
+            }
+
+            for (AroundTimeout aroundTimeout : interceptor.getAroundTimeout()) {
+                checkAroundTimeout(interceptorClass, aroundTimeout, "Interceptor");
             }
 
             for (LifecycleCallback callback : interceptor.getPostConstruct()) {
@@ -209,14 +223,14 @@ public class CheckCallbacks extends ValidationBase {
         }
     }
 
-    private void checkAroundInvoke(Class ejbClass, AroundInvoke aroundInvoke, String componentName) {
+    private void checkAroundTypeInvoke(String aroundType, Class ejbClass, String declaringClassName, String declaringMethodName, String componentName) {
         try {
-            Method method = getMethod(ejbClass, aroundInvoke.getMethodName(), InvocationContext.class);
+            Method method = getMethod(ejbClass, declaringMethodName, InvocationContext.class);
 
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Object.class)) {
-                fail(componentName, "aroundInvoke.badReturnType", aroundInvoke.getMethodName(), returnType.getName(),aroundInvoke.getClassName());
+                fail(componentName, "aroundInvoke.badReturnType", aroundType, declaringMethodName, returnType.getName(), declaringClassName);
             }
 
             boolean throwsException = false;
@@ -227,27 +241,35 @@ public class CheckCallbacks extends ValidationBase {
             }
 
             if (!throwsException) {
-                fail(componentName, "aroundInvoke.mustThrowException", aroundInvoke.getMethodName(), aroundInvoke.getClassName());
+                fail(componentName, "aroundInvoke.mustThrowException", aroundType, declaringMethodName, declaringClassName);
             }
 
         } catch (NoSuchMethodException e) {
-            List<Method> possibleMethods = getMethods(ejbClass, aroundInvoke.getMethodName());
+            List<Method> possibleMethods = getMethods(ejbClass, declaringMethodName);
 
             if (possibleMethods.size() == 0) {
-                fail(componentName, "aroundInvoke.missing", aroundInvoke.getMethodName(), aroundInvoke.getClassName());
+                fail(componentName, "aroundInvoke.missing", aroundType, declaringMethodName, declaringClassName);
             } else if (possibleMethods.size() == 1) {
-                fail(componentName, "aroundInvoke.invalidArguments", aroundInvoke.getMethodName(), getParameters(possibleMethods.get(0)), aroundInvoke.getClassName());
+                fail(componentName, "aroundInvoke.invalidArguments", aroundType, declaringMethodName, getParameters(possibleMethods.get(0)), declaringClassName);
             } else {
-                fail(componentName, "aroundInvoke.missing.possibleTypo", aroundInvoke.getMethodName(), possibleMethods.size(), aroundInvoke.getClassName());
+                fail(componentName, "aroundInvoke.missing.possibleTypo", aroundType, declaringMethodName, possibleMethods.size(), declaringClassName);
             }
         }
     }
 
-    private void ignoredStatefulAnnotation(String annotationType, EnterpriseBean bean, String methodName, String beanType) {
-        warn(bean, "ignoredStatefulAnnotation", annotationType, beanType, methodName);
+    private void checkAroundInvoke(Class<?> ejbClass, AroundInvoke aroundInvoke, String componentName) {
+        checkAroundTypeInvoke("AroundInvoke", ejbClass, aroundInvoke.getClassName(), aroundInvoke.getMethodName(), componentName);
     }
 
-    private void checkCallback(Class ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
+    private void checkAroundTimeout(Class<?> ejbClass, AroundTimeout aroundTimeout, String componentName) {
+        checkAroundTypeInvoke("AroundTimeout", ejbClass, aroundTimeout.getClassName(), aroundTimeout.getMethodName(), componentName);
+    }
+
+    private void ignoredAnnotation(String annotationType, EnterpriseBean bean, String className, String methodName, String beanType) {
+        warn(bean, "ignoredAnnotation", annotationType, beanType, className, methodName);
+    }
+
+    private void checkCallback(Class<?> ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
         try {
             Method method = getMethod(ejbClass, callback.getMethodName(), parameterTypes);
 

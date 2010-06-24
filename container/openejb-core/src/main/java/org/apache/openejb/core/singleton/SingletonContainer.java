@@ -191,7 +191,7 @@ public class SingletonContainer implements RpcContainer {
 
         // Use the backup way to determine call type if null was supplied.
         if (type == null) type = deployInfo.getInterfaceType(callInterface);
-        
+
         Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
         if(runMethod.getAnnotation(Asynchronous.class) != null){
         	// Need to invoke this bean asynchronously
@@ -199,11 +199,11 @@ public class SingletonContainer implements RpcContainer {
         	Future<Object> future = this.asynchService.submit(asynch);
         	return future;
         }
-        
+
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
-            boolean authorized = getSecurityService().isCallerAuthorized(callMethod, type);
+            boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
             if (!authorized)
                 throw new org.apache.openejb.ApplicationException(new EJBAccessException("Unauthorized Access by Principal Denied"));
 
@@ -219,7 +219,7 @@ public class SingletonContainer implements RpcContainer {
 
             Instance instance = instanceManager.getInstance(callContext);
 
-            callContext.setCurrentOperation(Operation.BUSINESS);
+            callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
             callContext.setCurrentAllowedStates(SingletonContext.getStates());
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
@@ -245,7 +245,7 @@ public class SingletonContainer implements RpcContainer {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == DeploymentInfo.READ_LOCK;
-        
+
         final Lock lock = aquireLock(read, instance);
 
         Object returnValue;
@@ -259,7 +259,8 @@ public class SingletonContainer implements RpcContainer {
                     returnValue = invokeWebService(args, deploymentInfo, runMethod, instance);
                 } else {
                     List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
-                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, callType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS, interceptors,
+                            instance.interceptors);
                     returnValue = interceptorStack.invoke(args);
                 }
             } catch (Throwable e) {// handle reflection exception
@@ -361,9 +362,9 @@ public class SingletonContainer implements RpcContainer {
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         return new ProxyInfo(deploymentInfo, null);
     }
-    
+
     public class SingletonMethodRunnable extends AsynchMethodRunnable{
-    	
+
     	public SingletonMethodRunnable(
 				Method callMethod,
 				Method runMethod, Object[] args, InterfaceType type,
@@ -384,6 +385,6 @@ public class SingletonContainer implements RpcContainer {
 		protected void releaseBean(Object bean, ThreadContext callContext) throws OpenEJBException{
 			// Singleton doesn't have to do anything here
 		}
-    	
+
     }
 }

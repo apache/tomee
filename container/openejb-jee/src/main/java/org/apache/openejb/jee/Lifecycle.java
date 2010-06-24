@@ -33,4 +33,8 @@ public interface Lifecycle {
     void addPostConstruct(String method);
 
     void addPreDestroy(String method);
+
+    List<AroundTimeout> getAroundTimeout();
+
+    void addAroundTimeout(String method);
 }

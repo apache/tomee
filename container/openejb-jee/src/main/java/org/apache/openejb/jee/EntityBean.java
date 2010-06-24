@@ -369,7 +369,7 @@ public class EntityBean implements RemoteBean {
         for (CmpField field : cmpField) {
             if (fieldName.equals(field.getFieldName())) return;
         }
-        
+
         cmpField.add(new CmpField(fieldName));
     }
 
@@ -598,4 +598,10 @@ public class EntityBean implements RemoteBean {
     public void setTransactionType(TransactionType type){
     }
 
+    public void addAroundTimeout(String method) {
+    }
+
+    public List<AroundTimeout> getAroundTimeout() {
+        return Collections.emptyList();
+    }
 }

@@ -87,6 +87,7 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, info.afterBegin, interceptor.getAfterBegin());
             toMethods(clazz, info.beforeCompletion, interceptor.getBeforeCompletion());
             toMethods(clazz, info.afterCompletion, interceptor.getAfterCompletion());
+            toMethods(clazz, info.aroundTimeout, interceptor.getAroundTimeout());
             interceptors.put(info.clazz, interceptor);
         }
     }
@@ -108,6 +109,8 @@ public class InterceptorBindingBuilder {
             toCallback(clazz, stateful.afterBegin, beanAsInterceptor.getAfterBegin());
             toCallback(clazz, stateful.beforeCompletion, beanAsInterceptor.getBeforeCompletion());
             toCallback(clazz, stateful.afterCompletion, beanAsInterceptor.getAfterCompletion(), boolean.class);
+        } else {
+            toMethods(clazz, beanInfo.aroundTimeout, beanAsInterceptor.getAroundTimeout());
         }
 
         for (Method method : deploymentInfo.getBeanClass().getMethods()) {
@@ -254,6 +257,7 @@ public class InterceptorBindingBuilder {
      *  - @PrePassivate <any-scope> void <method-name>(InvocationContext)
      *  - @PostActivate <any-scope> void <method-name>(InvocationContext)
      *  - @AroundInvoke <any-scope> Object <method-name>(InvocationContext) throws Exception
+     *  - @AroundTimeout <any-scope> Object <method-name>(InvocationContext) throws Exception
      *
      * @param clazz
      * @param callbackInfos the raw CallbackInfo objects

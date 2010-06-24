@@ -170,6 +170,9 @@ public interface DeploymentInfo {
     public interface ServiceEndpoint {
     }
 
+    public interface Timeout {
+    }
+
     public <T> T get(Class<T> type);
 
     public <T> T set(Class<T> type, T value);

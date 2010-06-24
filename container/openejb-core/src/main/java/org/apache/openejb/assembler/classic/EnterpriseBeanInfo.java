@@ -37,7 +37,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public int type;
 
     public final Properties properties = new Properties();
-    
+
     public String codebase;
     public String description;
     public String displayName;
@@ -69,6 +69,8 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
     public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
 
+    public final List<CallbackInfo> aroundTimeout = new ArrayList<CallbackInfo>();
+
     public String containerId;
     public String serviceEndpoint;
 
@@ -77,7 +79,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public List<String> jndiNames = new ArrayList<String>();
     public boolean loadOnStartup;
     public final List<String> dependsOn = new ArrayList<String>() ;
-    
+
     public TimeoutInfo statefulTimeout;
     public TimeoutInfo accessTimeout;
 }

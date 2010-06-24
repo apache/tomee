@@ -45,7 +45,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         BEFORE_CALLED,
 
         /**
-         * The message delivery method has been called successfully, and the next method called must be 
+         * The message delivery method has been called successfully, and the next method called must be
          * another message delivery method, afterDelivery, or release.
          */
         METHOD_CALLED,
@@ -198,9 +198,9 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     public Object deliverMessage(Method method, Object[] args) throws Throwable {
-        
+
         boolean callBeforeAfter = false;
-        
+
         // verify current state
         switch (state) {
             case NONE:
@@ -226,7 +226,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         Object value = null;
         try {
             // deliver the message
-            value = container.invoke(instance, method, args);
+            value = container.invoke(instance, method, null, args);
         } catch (SystemException se) {
             throwable = (se.getRootCause() != null) ? se.getRootCause() : se;
             state = State.SYSTEM_EXCEPTION;

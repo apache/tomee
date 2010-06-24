@@ -87,7 +87,7 @@ public class JeeTest extends TestCase {
 
         System.out.println("time: " + (System.currentTimeMillis() - start));
     }
-    
+
     public void testEjbTimeout() throws Exception {
         String fileName = "ejb-jar-timeout.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
@@ -123,6 +123,25 @@ public class JeeTest extends TestCase {
         assertNotNull("Unable to get the afterBegin value", sbean.getAfterBegin());
         assertNotNull("Unable to get the beforeCompletion value", sbean.getBeforeCompletion());
         assertNotNull("Unable to get the afterCompletion value", sbean.getAfterCompletion());
+    }
+
+    public void testAroundTimeout() throws Exception {
+        String fileName = "ejb-jar-aroundtimeout.xml";
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
+        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+
+        EjbJar ejbJar = (EjbJar) o;
+        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+
+        assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
+        SessionBean sbean = (SessionBean) bean;
+
+        AroundTimeout beanAroundTimeout = sbean.getAroundTimeout().get(0);
+        assertEquals("aroundTimeout", beanAroundTimeout.getMethodName());
+
+        AroundTimeout interceptorAroundTimeout =ejbJar.getInterceptors()[0].getAroundTimeout().get(0);
+        assertEquals("aroundTimeout", interceptorAroundTimeout.getMethodName());
     }
 
     public void testEjbJarMdb20() throws Exception {

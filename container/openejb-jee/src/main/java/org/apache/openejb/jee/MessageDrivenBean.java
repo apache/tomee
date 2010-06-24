@@ -606,4 +606,8 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
         this.id = value;
     }
 
+    public void addAroundTimeout(String method) {
+        assert ejbClass != null : "Set the ejbClass before calling this method";
+        getAroundTimeout().add(new AroundTimeout(ejbClass, method));
+    }
 }

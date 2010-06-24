@@ -433,4 +433,8 @@ public class Interceptor implements JndiConsumer, Session {
         this.id = value;
     }
 
+    public void addAroundTimeout(String method) {
+        assert interceptorClass != null : "Set the interceptorClass before calling this method";
+        getAroundTimeout().add(new AroundTimeout(interceptorClass, method));
+    }
 }
