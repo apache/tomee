@@ -91,6 +91,10 @@ public class Listener {
         return description.get();
     }
 
+    public void addDescription(Text text) {
+        description.add(text);
+    }
+
     @XmlElement(name = "display-name", required = true)
     public Text[] getDisplayNames() {
         return displayName.toArray();
@@ -104,6 +108,10 @@ public class Listener {
         return displayName.get();
     }
 
+    public void addDisplayName(Text text) {
+        displayName.add(text);
+    }
+    
     public Collection<Icon> getIcons() {
         if (icon == null) {
             icon = new LocalCollection<Icon>();

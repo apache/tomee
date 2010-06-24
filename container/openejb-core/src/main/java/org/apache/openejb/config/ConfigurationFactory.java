@@ -218,8 +218,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         for (HandlerChain handlerChain : chains.getHandlerChain()) {
             HandlerChainInfo handlerChainInfo = new HandlerChainInfo();
-            handlerChainInfo.serviceNamePattern = handlerChain.getServiceNamePattern();
-            handlerChainInfo.portNamePattern = handlerChain.getPortNamePattern();
+            handlerChainInfo.serviceNamePattern = handlerChain.getServiceNamePattern().toString();
+            handlerChainInfo.portNamePattern = handlerChain.getPortNamePattern().toString();
             handlerChainInfo.protocolBindings.addAll(handlerChain.getProtocolBindings());
             for (Handler handler : handlerChain.getHandler()) {
                 HandlerInfo handlerInfo = new HandlerInfo();

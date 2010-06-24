@@ -107,6 +107,37 @@ public class JaxbJavaee {
         }
     }
 
+    public static <T>Object unmarshalTaglib(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        InputSource inputSource = new InputSource(in);
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        SAXParser parser = factory.newSAXParser();
+
+        JAXBContext ctx = JaxbJavaee.getContext(type);
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        unmarshaller.setEventHandler(new ValidationEventHandler(){
+            public boolean handleEvent(ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
+        });
+
+
+        JaxbJavaee.TaglibNamespaceFilter xmlFilter = new JaxbJavaee.TaglibNamespaceFilter(parser.getXMLReader());
+        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+
+        SAXSource source = new SAXSource(xmlFilter, inputSource);
+
+        currentPublicId.set(new TreeSet<String>());
+        try {
+            return unmarshaller.unmarshal(source);
+        } finally {
+            currentPublicId.set(null);
+        }
+    }
+
     public static class NamespaceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
@@ -124,6 +155,52 @@ public class JaxbJavaee {
 
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
             super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
+        }
+    }
+
+    public static class TaglibNamespaceFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+
+        public TaglibNamespaceFilter(XMLReader xmlReader) {
+            super(xmlReader);
+        }
+
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            Set<String> publicIds = currentPublicId.get();
+            if (publicIds != null) {
+                publicIds.add(publicId);
+            }
+            return EMPTY_INPUT_SOURCE;
+        }
+
+        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+            localName = fixLocalName(localName);
+            super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
+        }
+
+        private String fixLocalName(String localName) {
+            if (localName.equals("tlibversion")) {
+                localName = "tlib-version";
+            } else if (localName.equals("jspversion")) {
+                localName = "jsp-version";
+            } else if (localName.equals("shortname")) {
+                localName = "short-name";
+            } else if (localName.equals("tagclass")) {
+                localName = "tag-class";
+            } else if (localName.equals("teiclass")) {
+                localName = "tei-class";
+            } else if (localName.equals("bodycontent")) {
+                localName = "body-content";
+            } else if (localName.equals("jspversion")) {
+                localName = "jsp-version";
+            }
+            return localName;
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            localName = fixLocalName(localName);
+            super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
         }
     }
 }

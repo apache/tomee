@@ -72,10 +72,10 @@ public class CookieConfig {
     protected String path;
     protected String comment;
     @XmlElement(name = "http-only")
-    protected boolean httpOnly;
-    protected boolean secure;
+    protected Boolean httpOnly;
+    protected Boolean secure;
     @XmlElement(name = "max-age")
-    protected int maxAge;
+    protected Integer maxAge;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -114,27 +114,27 @@ public class CookieConfig {
         this.comment = value;
     }
 
-    public boolean getHttpOnly() {
+    public Boolean getHttpOnly() {
         return httpOnly;
     }
 
-    public void setHttpOnly(boolean value) {
+    public void setHttpOnly(Boolean value) {
         this.httpOnly = value;
     }
 
-    public boolean getSecure() {
+    public Boolean getSecure() {
         return secure;
     }
 
-    public void setSecure(boolean value) {
+    public void setSecure(Boolean value) {
         this.secure = value;
     }
 
-    public int getMaxAge() {
+    public Integer getMaxAge() {
         return maxAge;
     }
 
-    public void setMaxAge(int value) {
+    public void setMaxAge(Integer value) {
         this.maxAge = value;
     }
 

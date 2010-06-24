@@ -103,6 +103,10 @@ public class Filter {
         return description.get();
     }
 
+    public void addDescription(Text text) {
+        description.add(text);
+    }
+
     @XmlElement(name = "display-name", required = true)
     public Text[] getDisplayNames() {
         return displayName.toArray();
@@ -114,6 +118,10 @@ public class Filter {
 
     public String getDisplayName() {
         return displayName.get();
+    }
+
+    public void addDisplayName(Text text) {
+        displayName.add(text);
     }
 
     public Collection<Icon> getIcons() {

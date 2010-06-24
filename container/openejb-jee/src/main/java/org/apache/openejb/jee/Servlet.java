@@ -99,8 +99,9 @@ public class Servlet {
     protected String jspFile;
     @XmlElement(name = "init-param")
     protected List<ParamValue> initParam;
+    @XmlJavaTypeAdapter(type = Integer.class, value = LoadOnStartupAdapter.class)
     @XmlElement(name = "load-on-startup")
-    protected java.lang.String loadOnStartup;
+    protected Integer loadOnStartup;
     protected Boolean enabled;
     @XmlElement(name = "async-supported")
     protected Boolean asyncSupported;
@@ -128,6 +129,10 @@ public class Servlet {
         return description.get();
     }
 
+    public void addDescription(Text text) {
+        description.add(text);
+    }
+
     @XmlElement(name = "display-name", required = true)
     public Text[] getDisplayNames() {
         return displayName.toArray();
@@ -139,6 +144,10 @@ public class Servlet {
 
     public String getDisplayName() {
         return displayName.get();
+    }
+
+    public void addDisplayName(Text text) {
+        displayName.add(text);
     }
 
     public Collection<Icon> getIcons() {
@@ -190,11 +199,11 @@ public class Servlet {
         return this.initParam;
     }
 
-    public String getLoadOnStartup() {
+    public Integer getLoadOnStartup() {
         return loadOnStartup;
     }
 
-    public void setLoadOnStartup(String value) {
+    public void setLoadOnStartup(Integer value) {
         this.loadOnStartup = value;
     }
 

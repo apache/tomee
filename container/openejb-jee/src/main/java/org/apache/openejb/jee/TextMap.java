@@ -45,6 +45,12 @@ public class TextMap {
         }
     }
 
+    public void add(Text text) {
+        if (!string.containsKey(text.getLang())) {
+            string.put(text.getLang(), text.getValue());
+        }
+    }
+
     public String get() {
         return getLocal(string);
     }

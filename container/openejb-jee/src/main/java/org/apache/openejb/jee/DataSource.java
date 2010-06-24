@@ -113,7 +113,7 @@ public class DataSource {
     protected Integer loginTimeout;
     protected Boolean transactional;
     @XmlElement(name = "isolation-level")
-    protected TransportGuarantee isolationLevel;
+    protected IsolationLevel isolationLevel;
     @XmlElement(name = "initial-pool-size")
     protected Integer initialPoolSize;
     @XmlElement(name = "max-pool-size")
@@ -231,11 +231,11 @@ public class DataSource {
         this.transactional = value;
     }
 
-    public TransportGuarantee getIsolationLevel() {
+    public IsolationLevel getIsolationLevel() {
         return isolationLevel;
     }
 
-    public void setIsolationLevel(TransportGuarantee value) {
+    public void setIsolationLevel(IsolationLevel value) {
         this.isolationLevel = value;
     }
 
