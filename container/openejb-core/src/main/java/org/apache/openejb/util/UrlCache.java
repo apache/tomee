@@ -40,9 +40,11 @@ import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.SystemInstance;
 
 public class UrlCache {
+
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, UrlCache.class);
     public static final boolean antiJarLocking;
     public static final File cacheDir;
+
     static {
         String value = null;
         for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -75,9 +77,7 @@ public class UrlCache {
             cacheDir = null;
         }
     }
-
-
-    private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL,File>>();
+    private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL, File>>();
 
     public synchronized URL[] cacheUrls(String appId, URL[] urls) {
         if (!antiJarLocking) {
@@ -288,32 +288,46 @@ public class UrlCache {
         try {
             FileUtils openejbBase = SystemInstance.get().getBase();
 
-            File cacheDir = null;
+            File dir = null;
             // if we are not embedded, cache (temp) dir is under base dir
             if (openejbBase.getDirectory("conf").exists()) {
                 try {
-                    cacheDir = openejbBase.getDirectory("temp");
+                    dir = openejbBase.getDirectory("temp");
                 } catch (IOException e) {
+                    //Ignore
                 }
             }
 
             // if we are embedded, tmp dir is in the system tmp dir
-            if (cacheDir == null) {
-                cacheDir = File.createTempFile("OpenEJB-temp-", "");
+            if (dir == null) {
+                dir = File.createTempFile("OpenEJB-temp-", "");
             }
 
-            // if the cache dir already exists, clear it out
-            if (cacheDir.exists()) {
-                deleteDir(cacheDir);
+            // If the cache dir already exists then empty its contents
+            if (dir.exists()) {
+                final File[] files = dir.listFiles();
+                if (null != files) {
+                    for (final File f : files) {
+                        deleteDir(f);
+                    }
+                }
+            } else {
+                dir = createCacheDir(new File(dir.getAbsolutePath()));
             }
 
-            // create the cache dir if it no longer exists
-            cacheDir.mkdirs();
+            return dir;
 
-            return cacheDir;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static File createCacheDir(File dir) throws IOException {
+        if (!dir.mkdirs() && !dir.isDirectory()) {
+            throw new IOException("Unable to create cache temp directory: " + dir);
+        }
+
+        return dir;
     }
 
     /**
@@ -323,7 +337,9 @@ public class UrlCache {
      * @param dir File object representing the directory to be deleted
      */
     public static void deleteDir(File dir) {
-        if (dir == null) return;
+        if (dir == null) {
+            return;
+        }
 
         File[] fileNames = dir.listFiles();
         if (fileNames != null) {
