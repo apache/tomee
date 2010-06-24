@@ -127,11 +127,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         Chain chain = new Chain();
 
-        chain.add(new AppModulePreProcessor());
-
         chain.add(new GeneratedClientModules.Add());
 
         chain.add(new ReadDescriptors());
+
+        chain.add(new AppModulePreProcessor());
 
         chain.add(new AnnotationDeployer());
 
