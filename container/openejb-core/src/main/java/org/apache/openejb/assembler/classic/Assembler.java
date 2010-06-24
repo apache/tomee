@@ -75,6 +75,7 @@ import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
+import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
@@ -480,6 +481,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
+            AppContext appContext = new AppContext(appInfo.jarPath, SystemInstance.get(), classLoader);
+            
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
@@ -520,7 +523,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             List<DeploymentInfo> allDeployments = new ArrayList<DeploymentInfo>();
 
             // EJB
-            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, classLoader);
+            EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar);
 

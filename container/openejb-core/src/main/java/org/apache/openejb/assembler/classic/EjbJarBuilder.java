@@ -21,6 +21,8 @@ import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.core.AppContext;
 import org.apache.openejb.util.Messages;
 
 import java.util.ArrayList;
@@ -33,22 +35,22 @@ import java.util.Properties;
 public class EjbJarBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
 
-    private final ClassLoader classLoader;
     private final Properties props;
+    private AppContext context;
 
-    public EjbJarBuilder(Properties props, ClassLoader classLoader) {
+    public EjbJarBuilder(Properties props, AppContext context) {
         this.props = props;
-        this.classLoader = classLoader;
+        this.context = context;
     }
 
     public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
 
-        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(classLoader, ejbJar);
+        InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
 
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(classLoader, ejbInfo, ejbJar.moduleId, new ArrayList<String>());
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), new ModuleContext(ejbJar.moduleId, context));
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);
@@ -56,7 +58,9 @@ public class EjbJarBuilder {
                 deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 
+                // TODO: replace with get() on application context or parent
                 Container container = (Container) props.get(ejbInfo.containerId);
+                
                 if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + deployment.getDeploymentID());
                 // Don't deploy to the container, yet. That will be done by deploy() once Assembler as finished configuring the DeploymentInfo
                 deployment.setContainer(container);
