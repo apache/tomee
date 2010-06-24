@@ -24,10 +24,12 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
-
+import org.apache.openejb.util.LogCategory;
 
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
+
     private String dataSource;
+    private String useDatabaseLock;
 
     public String getDataSource() {
         return dataSource;
@@ -36,6 +38,11 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
     }
+
+    public void setUseDatabaseLock(String useDatabaseLock) {
+        this.useDatabaseLock = useDatabaseLock;
+    }
+
 //   DMB:  Work in progress.  These all should go into the service-jar.xml
 //   Sources of info:
 //         - http://activemq.apache.org/resource-adapter-properties.html
@@ -104,20 +111,25 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 //    public void setTopicPrefetch(Integer integer) {
 //        super.setTopicPrefetch(integer);
 //    }
+    
+    @Override
+    public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
+        final Properties properties = new Properties();
 
-    public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
-        Properties properties = new Properties();
+        //Add data source property
+        if (null != this.dataSource) {
+            properties.put("DataSource", this.dataSource);
+        }
 
-        // add data source property
-        if (dataSource != null) {
-            properties.put("DataSource", dataSource);
+        if (null != this.useDatabaseLock) {
+            properties.put("UseDatabaseLock", this.useDatabaseLock);
         }
 
         // prefix server uri with openejb: so our broker factory is used
-        String brokerXmlConfig = getBrokerXmlConfig();
+        final String brokerXmlConfig = getBrokerXmlConfig();
         if (brokerXmlConfig != null && brokerXmlConfig.startsWith("broker:")) {
             try {
-                URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
+                final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
                 compositeData.getParameters().put("persistent", "false");
                 setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
             } catch (URISyntaxException e) {
@@ -137,5 +149,35 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                 setBrokerXmlConfig(brokerXmlConfig);
             }
         }
+    }
+
+    @Override
+    public void stop() {
+
+        final ActiveMQResourceAdapter ra = this;
+
+        final Thread stopThread = new Thread("ActiveMQResourceAdapter stop") {
+
+            @Override
+            public void run() {
+                ra.stopImpl();
+            }
+        };
+
+        stopThread.setDaemon(true);
+        stopThread.start();
+
+        try {
+            //Block for a maximum of 5 seconds waiting for this thread to die.
+            stopThread.join(5000);
+        } catch (InterruptedException ex) {
+            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Gave up on ActiveMQ shutdown", ex);
+            return;
+        }
+    }
+
+    private void stopImpl() {
+        super.stop();
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped ActiveMQ");
     }
 }
