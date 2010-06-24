@@ -16,45 +16,27 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
-
-import java.util.Properties;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * @version $Rev$ $Date$
- */
-public class DeploymentContext {
-    private final String id;
-    private final Map<Class, Object> data = new HashMap<Class, Object>();
-    private final Properties properties = new Properties();
-    private Options options;
+*/
+public class AppContext extends DeploymentContext {
+    private final SystemInstance systemInstance;
+    private final ClassLoader classLoader;
 
-    public DeploymentContext(String id, Options parent) {
-        this.id = id;
-        this.options = new Options(properties, parent);
+    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader) {
+        super(id, systemInstance.getOptions());
+        this.classLoader = classLoader;
+        this.systemInstance = systemInstance;
     }
 
-    public Properties getProperties() {
-        return properties;
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
-    @SuppressWarnings({"unchecked"})
-        public <T> T get(Class<T> type) {
-        return (T)data.get(type);
-    }
-
-    @SuppressWarnings({"unchecked"})
-        public <T> T set(Class<T> type, T value) {
-        return (T) data.put(type, value);
-    }
-
-    public Options getOptions() {
-        return options;
-    }
-
-    public String getId() {
-        return id;
+    public SystemInstance getSystemInstance() {
+        return systemInstance;
     }
 }

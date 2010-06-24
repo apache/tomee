@@ -20,9 +20,12 @@ package org.apache.openejb.core.cmp.jpa;
 import org.apache.openejb.core.cmp.cmp2.SetValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.DeploymentContext;
+import org.apache.openejb.core.BeanContext;
+import org.apache.openejb.core.AppContext;
+import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
@@ -33,7 +36,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new CoreDeploymentInfo(new DeploymentContext("book", Book.class.getClassLoader(), null),
+            deploymentInfo = new CoreDeploymentInfo(new BeanContext("book", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Book.class.getClassLoader()))),
                     BookBean.class,
                     null,
                     null,

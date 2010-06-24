@@ -23,7 +23,8 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.DeploymentContext;
+import org.apache.openejb.core.BeanContext;
+import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
@@ -47,15 +48,14 @@ import java.util.concurrent.TimeUnit;
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
     private final EnterpriseBeanInfo bean;
-    private final String moduleId;
     private final List<String> defaultInterceptors;
     private final BeanType ejbType;
-    private final ClassLoader cl;
     private List<Exception> warnings = new ArrayList<Exception>();
+    private ModuleContext moduleContext;
 
-    public EnterpriseBeanBuilder(ClassLoader cl, EnterpriseBeanInfo bean, String moduleId, List<String> defaultInterceptors) {
+    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext) {
+        this.moduleContext = moduleContext;
         this.bean = bean;
-        this.moduleId = moduleId;
         this.defaultInterceptors = defaultInterceptors;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
@@ -74,7 +74,6 @@ class EnterpriseBeanBuilder {
         } else {
             throw new UnsupportedOperationException("No building support for bean type: " + bean);
         }
-        this.cl = cl;
     }
 
     public Object build() throws OpenEJBException {
@@ -120,27 +119,27 @@ class EnterpriseBeanBuilder {
         final String transactionType = bean.transactionType;
 
         // determind the injections
-        InjectionBuilder injectionBuilder = new InjectionBuilder(cl);
+        InjectionBuilder injectionBuilder = new InjectionBuilder(moduleContext.getClassLoader());
         List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
 
         // build the enc
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleId, cl);
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), moduleContext.getClassLoader());
         Context root = jndiEncBuilder.build();
 
-        DeploymentContext deploymentContext = new DeploymentContext(bean.ejbDeploymentId, cl, root);
+        BeanContext beanContext = new BeanContext(bean.ejbDeploymentId, root, moduleContext);
+        beanContext.getProperties().putAll(bean.properties);
+
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(beanContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
-            deployment = new CoreDeploymentInfo(deploymentContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+            deployment = new CoreDeploymentInfo(beanContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
 
         deployment.setEjbName(bean.ejbName);
-
-        deployment.setModuleId(moduleId);
 
         deployment.setRunAs(bean.runAs);
 
@@ -159,8 +158,6 @@ class EnterpriseBeanBuilder {
         }
 
         deployment.getInjections().addAll(injections);
-
-        deployment.getProperties().putAll(bean.properties);
 
         // ejbTimeout
         deployment.setEjbTimeout(getTimeout(ejbClass, bean.timeoutMethod));
@@ -389,8 +386,8 @@ class EnterpriseBeanBuilder {
 //            clazz.getInterfaces();
             return clazz;
         } catch (NoClassDefFoundError e) {
-            if (clazz.getClassLoader() != cl) {
-                String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), cl, e.getMessage());
+            if (clazz.getClassLoader() != moduleContext.getClassLoader()) {
+                String message = SafeToolkit.messages.format("cl0008", className, clazz.getClassLoader(), moduleContext.getClassLoader(), e.getMessage());
                 throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message), e);
             } else {
                 String message = SafeToolkit.messages.format("cl0009", className, clazz.getClassLoader(), e.getMessage());
@@ -401,7 +398,7 @@ class EnterpriseBeanBuilder {
 
     private Class load(String className, String messageCode) throws OpenEJBException {
         try {
-            return Class.forName(className, true, cl);
+            return Class.forName(className, true, moduleContext.getClassLoader());
         } catch (ClassNotFoundException e) {
             String message = SafeToolkit.messages.format("cl0007", className, bean.codebase);
             throw new OpenEJBException(AssemblerTool.messages.format(messageCode, className, bean.ejbDeploymentId, message));

@@ -99,17 +99,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBHome ejbHomeRef;
     private EJBLocalHome ejbLocalHomeRef;
     private String destinationId;
-    private final Map<Class, Object> data = new HashMap<Class, Object>();
-
-    private final Properties properties = new Properties();
 
     private String ejbName;
     private String moduleId;
     private String runAs;
 
-    private Object containerData;
-
-    private final DeploymentContext context;
+    private final BeanContext context;
 
     private Method createMethod = null;
 
@@ -182,7 +177,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return null;
     }
 
-    public CoreDeploymentInfo(DeploymentContext context,
+    public CoreDeploymentInfo(BeanContext context,
                               Class beanClass, Class homeInterface,
                               Class remoteInterface,
                               Class localHomeInterface,
@@ -300,7 +295,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public CoreDeploymentInfo(DeploymentContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
+    public CoreDeploymentInfo(BeanContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
         this.context = context;
         this.beanClass = beanClass;
         this.mdbInterface = mdbInterface;
@@ -325,18 +320,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.destroyed = destroyed;
     }
 
-    @SuppressWarnings({"unchecked"})
-    public <T> T get(Class<T> type) {
-        return (T)data.get(type);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public <T> T set(Class<T> type, T value) {
-        return (T) data.put(type, value);
-    }
-
     public Properties getProperties() {
-        return properties;
+        return context.getProperties();
     }
 
     public List<Injection> getInjections() {
@@ -351,12 +336,22 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
+    @SuppressWarnings({"unchecked"})
+    public <T> T get(Class<T> type) {
+        return context.get(type);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T set(Class<T> type, T value) {
+        return context.set(type, value);
+    }
+
     public Object getContainerData() {
-        return containerData;
+        return context.getContainerData();
     }
 
     public void setContainerData(Object containerData) {
-        this.containerData = containerData;
+        context.setContainerData(containerData);
     }
 
     public void setContainer(Container container) {
@@ -1102,7 +1097,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public String getModuleID() {
-        return moduleId;
+        return context.getModuleContext().getId();
     }
 
     public String getRunAs() {
