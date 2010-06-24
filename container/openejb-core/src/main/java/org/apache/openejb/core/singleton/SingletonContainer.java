@@ -42,6 +42,7 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.LockType;
 import javax.interceptor.AroundInvoke;
 
 import org.apache.openejb.ContainerType;
@@ -244,7 +245,7 @@ public class SingletonContainer implements RpcContainer {
     protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType callType) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
-        boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == DeploymentInfo.READ_LOCK;
+        boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == javax.ejb.LockType.READ;
 
         final Lock lock = aquireLock(read, instance);
 
