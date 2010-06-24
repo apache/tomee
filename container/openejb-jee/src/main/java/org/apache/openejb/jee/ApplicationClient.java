@@ -73,6 +73,7 @@ import java.util.Map;
 @XmlRootElement(name = "application-client")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "application-clientType", propOrder = {
+        "moduleName",
         "descriptions",
         "displayNames",
         "icon",
@@ -94,6 +95,8 @@ import java.util.Map;
 })
 public class ApplicationClient implements JndiConsumer {
 
+    @XmlElement(name = "module-name", required = true)
+    protected String moduleName;
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlTransient
@@ -153,6 +156,14 @@ public class ApplicationClient implements JndiConsumer {
             return null;
         }
         return mainClass.replaceAll(".*\\.","");
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     @XmlElement(name = "description", required = true)

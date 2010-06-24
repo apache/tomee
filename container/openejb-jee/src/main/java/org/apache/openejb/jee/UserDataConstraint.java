@@ -63,7 +63,7 @@ public class UserDataConstraint {
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlElement(name = "transport-guarantee", required = true)
-    protected String transportGuarantee;
+    protected TransportGuarantee transportGuarantee;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -82,11 +82,11 @@ public class UserDataConstraint {
         return description.get();
     }
 
-    public String getTransportGuarantee() {
+    public TransportGuarantee getTransportGuarantee() {
         return transportGuarantee;
     }
 
-    public void setTransportGuarantee(String value) {
+    public void setTransportGuarantee(TransportGuarantee value) {
         this.transportGuarantee = value;
     }
 

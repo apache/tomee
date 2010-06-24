@@ -86,6 +86,10 @@ public class ParamValue {
         return description.get();
     }
 
+    public void addDescription(Text text) {
+        description.add(text);
+    }
+
     public String getParamName() {
         return paramName;
     }

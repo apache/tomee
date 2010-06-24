@@ -142,19 +142,6 @@ public class EjbRef implements EjbReference {
     public void setType(String type) {
     }
 
-    /**
-     * The ejb-ref-name element contains the name of an EJB
-     * reference. The EJB reference is an entry in the
-     * Deployment Component's environment and is relative to the
-     * java:comp/env context.  The name must be unique within the
-     * Deployment Component.
-     * <p/>
-     * It is recommended that name is prefixed with "ejb/".
-     * <p/>
-     * Example:
-     * <p/>
-     * <ejb-ref-name>ejb/Payroll</ejb-ref-name>
-     */
     public void setEjbRefName(String value) {
         this.ejbRefName = value;
     }
@@ -187,26 +174,6 @@ public class EjbRef implements EjbReference {
         this.remote = value;
     }
 
-    /**
-     * The value of the ejb-link element must be the ejb-name of an
-     * enterprise bean in the same ejb-jar file or in another ejb-jar
-     * file in the same Java EE application unit.
-     * <p/>
-     * Alternatively, the name in the ejb-link element may be
-     * composed of a path name specifying the ejb-jar containing the
-     * referenced enterprise bean with the ejb-name of the target
-     * bean appended and separated from the path name by "#".  The
-     * path name is relative to the Deployment File containing
-     * Deployment Component that is referencing the enterprise
-     * bean.  This allows multiple enterprise beans with the same
-     * ejb-name to be uniquely identified.
-     * <p/>
-     * Examples:
-     * <p/>
-     * <ejb-link>EmployeeRecord</ejb-link>
-     * <p/>
-     * <ejb-link>../products/product.jar#ProductEJB</ejb-link>
-     */
     public String getEjbLink() {
         return ejbLink;
     }

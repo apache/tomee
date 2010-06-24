@@ -57,9 +57,9 @@ import java.util.Map;
  *
  */
 
-@XmlRootElement(name = "web-app")
+@XmlRootElement(name = "web-fragment")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "web-appType", propOrder = {
+@XmlType(name = "web-fragmentType", propOrder = {
         "descriptions",
         "displayNames",
         "icon",
@@ -169,7 +169,7 @@ public class WebFragment implements WebCommon {
     @XmlElement(name = "message-destination", required = true)
     protected List<MessageDestination> messageDestination;
 
-    @XmlElement(name = "module-name")
+    @XmlElement(name = "name")
     protected String name;
     @XmlElement(name = "ordering")
     protected Ordering ordering;

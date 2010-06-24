@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,9 +65,9 @@ import java.util.List;
 })
 public class HandlerChain {
     @XmlElement(name = "service-name-pattern")
-    protected String serviceNamePattern;
+    protected QName serviceNamePattern;
     @XmlElement(name = "port-name-pattern")
-    protected String portNamePattern;
+    protected QName portNamePattern;
     @XmlList
     @XmlElement(name = "protocol-bindings")
     protected List<String> protocolBindings;
@@ -77,19 +78,19 @@ public class HandlerChain {
     @XmlID
     protected String id;
 
-    public String getServiceNamePattern() {
+    public QName getServiceNamePattern() {
         return serviceNamePattern;
     }
 
-    public void setServiceNamePattern(String value) {
+    public void setServiceNamePattern(QName value) {
         this.serviceNamePattern = value;
     }
 
-    public String getPortNamePattern() {
+    public QName getPortNamePattern() {
         return portNamePattern;
     }
 
-    public void setPortNamePattern(String value) {
+    public void setPortNamePattern(QName value) {
         this.portNamePattern = value;
     }
 
