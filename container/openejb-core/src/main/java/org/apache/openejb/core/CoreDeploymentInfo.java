@@ -36,6 +36,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.ejb.LockType;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -100,37 +101,37 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private String destinationId;
 
+    private String jarPath;
+    
     private String ejbName;
-    private String moduleId;
     private String runAs;
 
     private final BeanContext context;
 
     private Method createMethod = null;
 
-    private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     private final BeanType componentType;
 
+    private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
     private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
-    private final Map<Method, Byte> methodConcurrencyAttributes = new HashMap<Method, Byte>();
-
     private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
+    private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
+    private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
+
+    private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
+
     private TransactionPolicyFactory transactionPolicyFactory;
 
     private final List<MethodSchedule> methodSchedules = new ArrayList<MethodSchedule>();
-    private final Map<Method, List<InterceptorData>> methodInterceptors = new HashMap<Method, List<InterceptorData>>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
-
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
-    private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
-    private String jarPath;
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
-    private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
+
     private boolean loadOnStartup;
     private boolean localbean;
     private Duration accessTimeout;
@@ -358,23 +359,16 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.container = container;
     }
 
+    /**
+     * TODO: Move to BeanContext
+     */
     public BeanType getComponentType() {
         return componentType;
     }
 
-    public byte getConcurrencyAttribute(Method method) {
-        Byte byteWrapper = methodConcurrencyAttributes.get(method);
-
-        if (byteWrapper == null){
-            Method beanMethod = getMatchingBeanMethod(method);
-            byteWrapper = methodConcurrencyAttributes.get(beanMethod);
-        }
-
-        if (byteWrapper == null) {
-            return WRITE_LOCK;
-        } else {
-            return byteWrapper;
-        }
+    public LockType getConcurrencyAttribute(Method beanMethod) {
+        LockType attribute = getMethodContext(beanMethod).getMethodConcurrencyAttribute();
+        return (attribute == null)?LockType.WRITE: attribute;
     }
 
     public TransactionType getTransactionType(Method method) {
@@ -418,6 +412,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.transactionPolicyFactory = transactionPolicyFactory;
     }
 
+    /**
+     * TODO: Remove unused
+     */
     public Collection<String> getAuthorizedRoles(Method method) {
         Collection<String> roleSet = methodPermissions.get(method);
         if (roleSet == null) {
@@ -426,6 +423,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return roleSet;
     }
 
+    /**
+     * TODO: Remove unused
+     */
     public String [] getAuthorizedRoles(String action) {
         return null;
     }
@@ -607,6 +607,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return (method == null) ? interfaceMethod : method;
     }
 
+    /**
+     * TODO: Remove unused
+     */
     public void appendMethodPermissions(Method m, List<String> roleNames) {
         Collection<String> hs = methodPermissions.get(m);
         if (hs == null) {
@@ -618,6 +621,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
+    /**
+     * TODO: Remove unused
+     */
     public String getSecurityRole(String securityRoleReference) {
         return securityRoleReferenceMap.get(securityRoleReference);
     }
@@ -626,17 +632,23 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         securityRoleReferenceMap.put(securityRoleReference, linkedRoleName);
     }
 
-    public void setMethodConcurrencyAttribute(Method method, String concurrencyAttribute) {
-        if ("Read".equals(concurrencyAttribute)){
-            this.methodConcurrencyAttributes.put(method, READ_LOCK);
-        } else if ("Write".equals(concurrencyAttribute)){
-            this.methodConcurrencyAttributes.put(method, WRITE_LOCK);
-        } else {
-            throw new IllegalArgumentException("Unsupported MethodConcurrencyAttribute '"+concurrencyAttribute+"'");
+    public MethodContext getMethodContext(Method method) {
+        MethodContext methodContext = methodContextMap.get(method);
+        if (methodContext == null) {
+            methodContext = new MethodContext(context, method);
+            methodContextMap.put(method, methodContext);
         }
+        return methodContext;
+    }
+    
+    public void setMethodConcurrencyAttribute(Method method, LockType concurrencyAttribute) {
+        getMethodContext(method).setMethodConcurrencyAttribute(concurrencyAttribute);
     }
 
 
+    /**
+     * TODO: Move to MethodContext
+     */
     public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {
         TransactionType transactionType;
         if (transAttribute.equalsIgnoreCase("Supports")) {
@@ -680,22 +692,37 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         methodTransactionType.put(method, transactionType);
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getAroundInvoke() {
         return aroundInvoke;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getPostConstruct() {
         return postConstruct;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getPreDestroy() {
         return preDestroy;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getPostActivate() {
         return postActivate;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getPrePassivate() {
         return prePassivate;
     }
@@ -704,35 +731,59 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return removeMethods;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getAfterBegin() {
         return afterBegin;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getBeforeCompletion() {
         return beforeCompletion;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public List<Method> getAfterCompletion() {
         return afterCompletion;
     }
 
+    /**
+     * TODO: Move to MethodContext
+     */
     private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method,Boolean>();
 
+    /**
+     * TODO: Move to MethodContext
+     */
     public void setRetainIfExeption(Method removeMethod, boolean retain){
         if (getRemoveMethods().contains(removeMethod)){
             removeExceptionPolicy.put(removeMethod, retain);
         }
     }
 
+    /**
+     * TODO: Move to MethodContext
+     */
     public boolean retainIfExeption(Method removeMethod){
         Boolean retain = removeExceptionPolicy.get(removeMethod);
         return retain != null && retain;
     }
 
+    /**
+     * TODO: Move to MethodContext
+     */
     public List<MethodSchedule> getMethodSchedules() {
         return methodSchedules;
     }
 
+    /**
+     * TODO: Move to MethodContext
+     */
     public void setMethodSchedules(List<MethodSchedule> schedules) {
         methodSchedules.addAll(schedules);
     }
@@ -773,13 +824,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public List<InterceptorData> getMethodInterceptors(Method method) {
-
-        List<InterceptorData> interceptors = methodInterceptors.get(method);
-
-        return addSystemInterceptorDatas(interceptors);
+        return addSystemInterceptorDatas(getMethodContext(method).getInterceptors());
     }
 
-    private List<InterceptorData> addSystemInterceptorDatas(List<InterceptorData> interceptors) {
+    public List<InterceptorData> addSystemInterceptorDatas(List<InterceptorData> interceptors) {
         if (interceptors == null) interceptors = Collections.EMPTY_LIST;
 
         if (systemInterceptors.size() <= 0) return interceptors;
@@ -798,7 +846,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
-        methodInterceptors.put(method, interceptors);
+        getMethodContext(method).getInterceptors().addAll(interceptors);
         this.instanceScopedInterceptors.addAll(interceptors);
     }
 
@@ -1020,6 +1068,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.primaryKeyField = primaryKeyField;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public String [] getCmrFields() {
         return cmrFields;
     }
@@ -1040,6 +1091,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         queryMethodMap.put(queryMethod, queryString);
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public String getQuery(Method queryMethod) {
         return queryMethodMap.get(queryMethod);
     }
@@ -1072,6 +1126,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.jarPath = jarPath;
     }
 
+    /**
+     * TODO: Remove, not used
+     */
     public String getJarPath() {
         return jarPath;
     }
@@ -1106,10 +1163,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setEjbName(String ejbName) {
         this.ejbName = ejbName;
-    }
-
-    public void setModuleId(String moduleId) {
-        this.moduleId = moduleId;
     }
 
     public void setRunAs(String runAs) {

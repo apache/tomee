@@ -22,6 +22,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 
+import javax.ejb.LockType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,8 @@ public class MethodConcurrencyBuilder {
             MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
 
 //            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
-            deploymentInfo.setMethodConcurrencyAttribute(entry.getKey(), value.concurrencyAttribute);
+            String s = value.concurrencyAttribute.toUpperCase();
+            deploymentInfo.setMethodConcurrencyAttribute(entry.getKey(), LockType.valueOf(s));
         }
     }
 

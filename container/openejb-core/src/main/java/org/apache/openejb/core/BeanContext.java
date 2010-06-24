@@ -49,4 +49,5 @@ public class BeanContext extends DeploymentContext {
     public ModuleContext getModuleContext() {
         return moduleContext;
     }
+
 }
