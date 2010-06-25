@@ -21,14 +21,12 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.timer.ScheduleData;
 import org.apache.openejb.OpenEJBException;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
 import java.util.List;
-import java.util.ArrayList;
 import java.lang.reflect.Method;
 
 public class MethodScheduleBuilder {
@@ -37,7 +35,7 @@ public class MethodScheduleBuilder {
 
     private final List<MethodScheduleInfo> methodSchedules;
 
-    public MethodScheduleBuilder(ClassLoader cl, EjbJarInfo ejbJarInfo) throws OpenEJBException {
+    public MethodScheduleBuilder(EjbJarInfo ejbJarInfo) throws OpenEJBException {
         methodSchedules = ejbJarInfo.methodSchedules;
     }
 
@@ -45,7 +43,6 @@ public class MethodScheduleBuilder {
         Class clazz = deploymentInfo.getBeanClass();
         String ejbName = deploymentInfo.getEjbName();
 
-        List<MethodSchedule> schedules = new ArrayList<MethodSchedule>();
         for (MethodScheduleInfo info : methodSchedules) {
             if (!ejbName.equals(info.ejbName)) continue;
 
@@ -63,7 +60,6 @@ public class MethodScheduleBuilder {
 
             if (info.method.className == null || method.getDeclaringClass().getName().equals(info.method.className)){
 
-                ArrayList<ScheduleData> data = new ArrayList<ScheduleData>();
                 for (ScheduleInfo scheduleInfo : info.schedules) {
 
                     ScheduleExpression expr = new ScheduleExpression();
@@ -79,15 +75,10 @@ public class MethodScheduleBuilder {
                     config.setInfo(scheduleInfo.info);
                     config.setPersistent(scheduleInfo.persistent);
 
-                    data.add(new ScheduleData(config, expr));
+                    deploymentInfo.getMethodContext(method).getSchedules().add(new ScheduleData(config, expr));
                 }
-
-                schedules.add(new MethodSchedule(method, data));
             }
         }
-
-        deploymentInfo.setMethodSchedules(schedules);
-
     }
 
     private Class[] toClasses(List<String> params, ClassLoader classLoader) throws ClassNotFoundException {

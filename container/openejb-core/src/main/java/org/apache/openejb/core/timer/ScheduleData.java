@@ -30,19 +30,19 @@ import javax.ejb.TimerConfig;
  */
 public class ScheduleData {
 
-    private final ScheduleExpression exression;
+    private final ScheduleExpression expression;
     private final TimerConfig config;
 
-    public ScheduleData(TimerConfig config, ScheduleExpression exression) {
+    public ScheduleData(TimerConfig config, ScheduleExpression expression) {
         this.config = config;
-        this.exression = exression;
+        this.expression = expression;
     }
 
     public TimerConfig getConfig() {
         return config;
     }
 
-    public ScheduleExpression getExression() {
-        return exression;
+    public ScheduleExpression getExpression() {
+        return expression;
     }
 }

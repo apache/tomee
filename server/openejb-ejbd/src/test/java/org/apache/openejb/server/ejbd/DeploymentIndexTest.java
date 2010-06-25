@@ -26,7 +26,6 @@ import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.BeanContext;
 import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ModuleContext;
 import org.junit.Before;
@@ -35,15 +34,13 @@ import org.junit.Test;
 public class DeploymentIndexTest {
 
     private Method method;
-    private BeanContext dc;
     private DeploymentInfo deploymentInfo;
     private DeploymentIndex deploymentIndex;
 
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        dc = new BeanContext("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null)));
-        deploymentInfo = new CoreDeploymentInfo(dc, DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null);
+        deploymentInfo = new CoreDeploymentInfo("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null)), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null);
         deploymentIndex = new DeploymentIndex(new DeploymentInfo[] { deploymentInfo, deploymentInfo });
     }
 

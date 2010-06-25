@@ -31,7 +31,7 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class MethodContext {
-    private final BeanContext beanContext;
+    private final CoreDeploymentInfo beanContext;
     private final Method beanMethod;
     private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
     private final List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
@@ -46,20 +46,20 @@ public class MethodContext {
      */
     private MethodContext beanMethodContext;
 
-    public MethodContext(BeanContext beanContext, Method beanMethod) {
+    public MethodContext(CoreDeploymentInfo beanContext, Method beanMethod) {
         this.beanContext = beanContext;
         this.beanMethod = beanMethod;
-    }
-
-    public Duration getAccessTimeout() {
-        return accessTimeout;
     }
 
     public void setAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
-    public BeanContext getBeanContext() {
+    public Duration getAccessTimeout() {
+        return accessTimeout;
+    }
+
+    public CoreDeploymentInfo getBeanContext() {
         return beanContext;
     }
 
@@ -87,6 +87,9 @@ public class MethodContext {
         this.transactionType = transactionType;
     }
 
+    public List<ScheduleData> getSchedules() {
+        return schedules;
+    }
 
     public static class InterfaceMethodContext {
         private final MethodContext beanMethod;

@@ -23,7 +23,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.BeanContext;
 import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.util.Index;
@@ -126,18 +125,17 @@ class EnterpriseBeanBuilder {
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), moduleContext.getClassLoader());
         Context root = jndiEncBuilder.build();
 
-        BeanContext beanContext = new BeanContext(bean.ejbDeploymentId, root, moduleContext);
-        beanContext.getProperties().putAll(bean.properties);
-
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(beanContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, root, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
-            deployment = new CoreDeploymentInfo(beanContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, root, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
+
+        deployment.getProperties().putAll(bean.properties);
 
         deployment.setEjbName(bean.ejbName);
 

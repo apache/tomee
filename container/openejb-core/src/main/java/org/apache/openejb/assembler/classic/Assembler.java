@@ -531,7 +531,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
                 jaccPermissionsBuilder.install(policyContext);
 
-                MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder(classLoader, ejbJar);
+                MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder(ejbJar);
                 TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;

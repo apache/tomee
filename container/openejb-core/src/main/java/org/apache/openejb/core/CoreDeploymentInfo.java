@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -51,7 +50,6 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
@@ -59,7 +57,11 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
+public class CoreDeploymentInfo extends DeploymentContext implements org.apache.openejb.DeploymentInfo {
+
+    private final ModuleContext moduleContext;
+    private final Context jndiContext;
+    private Object containerData;
 
     private boolean destroyed;
     private Class homeInterface;
@@ -91,8 +93,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private String ejbName;
     private String runAs;
 
-    private final BeanContext context;
-
     private Method createMethod = null;
 
     private final BeanType componentType;
@@ -106,7 +106,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     private TransactionPolicyFactory transactionPolicyFactory;
 
-    private final List<MethodSchedule> methodSchedules = new ArrayList<MethodSchedule>();
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
@@ -161,7 +160,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return null;
     }
 
-    public CoreDeploymentInfo(BeanContext context,
+    public CoreDeploymentInfo(String id, Context jndiContext, ModuleContext moduleContext,
                               Class beanClass, Class homeInterface,
                               Class remoteInterface,
                               Class localHomeInterface,
@@ -169,10 +168,11 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
                               Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType
     ) throws SystemException {
-        if (context == null || beanClass == null) {
-            throw new NullPointerException("context or beanClass input parameter is null");
-        }
-        this.context = context;
+        super(id, moduleContext.getOptions());
+        this.moduleContext = moduleContext;
+        this.jndiContext = jndiContext;
+
+        if (beanClass == null) throw new NullPointerException("beanClass input parameter is null");
         this.pkClass = pkClass;
 
         this.homeInterface = homeInterface;
@@ -279,8 +279,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    public CoreDeploymentInfo(BeanContext context, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
-        this.context = context;
+    public CoreDeploymentInfo(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
+        super(id, moduleContext.getOptions());
+        this.jndiContext = jndiContext;
+        this.moduleContext = moduleContext;
         this.beanClass = beanClass;
         this.mdbInterface = mdbInterface;
         this.activationProperties.putAll(activationProperties);
@@ -296,16 +298,33 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         createMethodMap();
     }
 
+
+    public Object getContainerData() {
+        return containerData;
+    }
+
+    public void setContainerData(Object containerData) {
+        this.containerData = containerData;
+    }
+
+    public ClassLoader getClassLoader() {
+        return moduleContext.getClassLoader();
+    }
+
+    public Context getJndiContext() {
+        return jndiContext;
+    }
+
+    public ModuleContext getModuleContext() {
+        return moduleContext;
+    }
+
     public boolean isDestroyed() {
         return destroyed;
     }
 
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-    }
-
-    public Properties getProperties() {
-        return context.getProperties();
     }
 
     public List<Injection> getInjections() {
@@ -320,31 +339,10 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.extendedEntityManagerFactories = extendedEntityManagerFactories;
     }
 
-    @SuppressWarnings({"unchecked"})
-    public <T> T get(Class<T> type) {
-        return context.get(type);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public <T> T set(Class<T> type, T value) {
-        return context.set(type, value);
-    }
-
-    public Object getContainerData() {
-        return context.getContainerData();
-    }
-
-    public void setContainerData(Object containerData) {
-        context.setContainerData(containerData);
-    }
-
     public void setContainer(Container container) {
         this.container = container;
     }
 
-    /**
-     * TODO: Move to BeanContext
-     */
     public BeanType getComponentType() {
         return componentType;
     }
@@ -400,7 +398,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public Object getDeploymentID() {
-        return context.getId();
+        return getId();
     }
 
     public boolean isBeanManagedTransaction() {
@@ -547,11 +545,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public Context getJndiEnc() {
-        return context.getJndiContext();
-    }
-
-    public ClassLoader getClassLoader() {
-        return context.getClassLoader();
+        return jndiContext;
     }
 
     public boolean isReentrant() {
@@ -570,7 +564,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public MethodContext getMethodContext(Method method) {
         MethodContext methodContext = methodContextMap.get(method);
         if (methodContext == null) {
-            methodContext = new MethodContext(context, method);
+            methodContext = new MethodContext(this, method);
             methodContextMap.put(method, methodContext);
         }
         return methodContext;
@@ -651,20 +645,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     public boolean retainIfExeption(Method removeMethod){
         Boolean retain = removeExceptionPolicy.get(removeMethod);
         return retain != null && retain;
-    }
-
-    /**
-     * TODO: Move to MethodContext
-     */
-    public List<MethodSchedule> getMethodSchedules() {
-        return methodSchedules;
-    }
-
-    /**
-     * TODO: Move to MethodContext
-     */
-    public void setMethodSchedules(List<MethodSchedule> schedules) {
-        methodSchedules.addAll(schedules);
     }
 
     /**
@@ -988,7 +968,7 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     }
 
     public String getModuleID() {
-        return context.getModuleContext().getId();
+        return getModuleContext().getId();
     }
 
     public String getRunAs() {
