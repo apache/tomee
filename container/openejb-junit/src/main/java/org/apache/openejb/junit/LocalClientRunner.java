@@ -20,7 +20,6 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ModuleContext;
@@ -108,8 +107,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
     private CoreDeploymentInfo createDeployment(Class<?> testClass) {
         try {
-            BeanContext beanContext = new BeanContext(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader())));
-            return new CoreDeploymentInfo(beanContext, testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED);
+            return new CoreDeploymentInfo(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader())), testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED);
         } catch (SystemException e) {
             throw new IllegalStateException(e);
         }

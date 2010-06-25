@@ -23,7 +23,6 @@ import java.util.List;
  * Holds the basic binding information for a method and the ScheduleDatas associated with it.
  * ScheduleData is a simple object that wraps both javax.ejb.ScheduleExpression and javax.ejb.TimerConfig
  *
- * @see org.apache.openejb.DeploymentInfo#getMethodSchedules()  
  */
 public class MethodSchedule {
 

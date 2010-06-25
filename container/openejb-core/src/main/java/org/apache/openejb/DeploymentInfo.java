@@ -18,13 +18,11 @@ package org.apache.openejb;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.MethodSchedule;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Map;
 import java.util.List;
 import java.util.Set;
@@ -104,8 +102,6 @@ public interface DeploymentInfo {
     public List<Injection> getInjections();
 
     public List<InterceptorData> getMethodInterceptors(Method method);
-
-    public List<MethodSchedule> getMethodSchedules();
 
     public void setContainer(Container container);
 
