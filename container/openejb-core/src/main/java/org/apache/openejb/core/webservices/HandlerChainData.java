@@ -17,27 +17,28 @@
  */
 package org.apache.openejb.core.webservices;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerChainData {
-    private final String serviceNamePattern;
-    private final String portNamePattern;
+    private final QName serviceNamePattern;
+    private final QName portNamePattern;
     private final List<String> protocolBindings = new ArrayList<String>();
     private final List<HandlerData> handlers = new ArrayList<HandlerData>();
 
-    public HandlerChainData(String serviceNamePattern, String portNamePattern, List<String> protocolBindings, List<HandlerData> handlers) {
+    public HandlerChainData(QName serviceNamePattern, QName portNamePattern, List<String> protocolBindings, List<HandlerData> handlers) {
         this.serviceNamePattern = serviceNamePattern;
         this.portNamePattern = portNamePattern;
         this.protocolBindings.addAll(protocolBindings);
         this.handlers.addAll(handlers);
     }
 
-    public String getServiceNamePattern() {
+    public QName getServiceNamePattern() {
         return serviceNamePattern;
     }
 
-    public String getPortNamePattern() {
+    public QName getPortNamePattern() {
         return portNamePattern;
     }
 

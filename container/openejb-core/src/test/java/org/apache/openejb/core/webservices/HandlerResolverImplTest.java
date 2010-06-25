@@ -65,19 +65,19 @@ public class HandlerResolverImplTest extends TestCase {
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName serviceName1 = new QName("http://foo", "Bar");
+        QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName1));
         assertEquals(1, handlers.size());
 
-        QName serviceName2 = new QName("http://foo", "Foo");
+        QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName2));
         assertEquals(2, handlers.size());
 
-        QName serviceName3 = new QName("http://foo", "FooBar");
+        QName serviceName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName3));
         assertEquals(1, handlers.size());
 
-        QName serviceName4 = new QName("http://foo", "BarFoo");
+        QName serviceName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, serviceName4));
         assertEquals(0, handlers.size());
     }
@@ -118,19 +118,19 @@ public class HandlerResolverImplTest extends TestCase {
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName portName1 = new QName("http://foo", "Bar");
+        QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName1, null));
         assertEquals(1, handlers.size());
 
-        QName portName2 = new QName("http://foo", "Foo");
+        QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Foo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName2, null));
         assertEquals(2, handlers.size());
 
-        QName portName3 = new QName("http://foo", "FooBar");
+        QName portName3 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName3, null));
         assertEquals(1, handlers.size());
 
-        QName portName4 = new QName("http://foo", "BarFoo");
+        QName portName4 = new QName("http://java.sun.com/xml/ns/javaee", "BarFoo");
         handlers = resolver.getHandlerChain(new TestPortInfo(null, portName4, null));
         assertEquals(0, handlers.size());
     }
@@ -148,8 +148,8 @@ public class HandlerResolverImplTest extends TestCase {
         handlers = resolver.getHandlerChain(new TestPortInfo(null, null, null));
         assertEquals(0, handlers.size());
 
-        QName serviceName1 = new QName("http:/foo", "Bar");
-        QName portName1 = new QName("http://foo", "FooBar");
+        QName serviceName1 = new QName("http://java.sun.com/xml/ns/javaee", "Bar");
+        QName portName1 = new QName("http://java.sun.com/xml/ns/javaee", "FooBar");
         String binding1 = "##XML_HTTP";
         handlers = resolver.getHandlerChain(new TestPortInfo(binding1, portName1, serviceName1));
         assertEquals(3, handlers.size());
@@ -158,8 +158,8 @@ public class HandlerResolverImplTest extends TestCase {
         handlers = resolver.getHandlerChain(new TestPortInfo(binding2, portName1, serviceName1));
         assertEquals(2, handlers.size());
 
-        QName serviceName2 = new QName("http://foo", "Baaz");
-        QName portName2 = new QName("http://foo", "Baaz");
+        QName serviceName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
+        QName portName2 = new QName("http://java.sun.com/xml/ns/javaee", "Baaz");
         handlers = resolver.getHandlerChain(new TestPortInfo(binding1, portName2, serviceName2));
         assertEquals(1, handlers.size());
     }
