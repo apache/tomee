@@ -34,7 +34,7 @@ public class ResourceadapterBase {
     @XmlTransient
     protected List<ConfigProperty> configProperty;
     @XmlElement(name = "outbound-resourceadapter")
-    protected OutboundResourceadapter outboundResourceAdapter;
+    protected OutboundResourceadapterX outboundResourceAdapter;
     @XmlElement(name = "inbound-resourceadapter")
     protected InboundResourceadapter inboundResourceAdapter;
     @XmlElement(name = "adminobject")
@@ -72,11 +72,11 @@ public class ResourceadapterBase {
         return this.configProperty;
     }
 
-    public OutboundResourceadapter getOutboundResourceAdapter() {
+    public OutboundResourceadapterX getOutboundResourceAdapter() {
         return outboundResourceAdapter;
     }
 
-    public OutboundResourceadapter setOutboundResourceAdapter(OutboundResourceadapter value) {
+    public OutboundResourceadapterX setOutboundResourceAdapter(OutboundResourceadapterX value) {
         this.outboundResourceAdapter = value;
         return outboundResourceAdapter;
     }

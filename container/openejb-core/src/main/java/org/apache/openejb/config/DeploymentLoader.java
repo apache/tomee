@@ -46,10 +46,10 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.jee.ConnectorBase;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.JavaWsdlMapping;
@@ -919,7 +919,7 @@ public class DeploymentLoader {
 
         // read the ra.xml file
         Map<String, URL> descriptors = getDescriptors(baseUrl);
-        Connector connector = null;
+        ConnectorBase connector = null;
         URL rarXmlUrl = descriptors.get("ra.xml");
         if (rarXmlUrl != null){
             connector = ReadDescriptors.readConnector(rarXmlUrl);
