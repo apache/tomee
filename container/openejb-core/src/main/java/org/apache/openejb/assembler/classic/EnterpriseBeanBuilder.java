@@ -143,20 +143,6 @@ class EnterpriseBeanBuilder {
 
         deployment.setRunAs(bean.runAs);
 
-        for (SecurityRoleReferenceInfo roleReferenceInfo : bean.securityRoleReferences) {
-            String alias = roleReferenceInfo.roleName;
-            String actualName = roleReferenceInfo.roleLink;
-
-            // EJB 3.0 - 17.2.5.3
-            // In the absence of this linking step, any security role name as used in the code will be assumed to
-            // correspond to a security role of the same name.
-            if (actualName == null){
-                actualName = alias;
-            }
-
-            deployment.addSecurityRoleReference(alias, actualName);
-        }
-
         deployment.getInjections().addAll(injections);
 
         // ejbTimeout
@@ -247,18 +233,6 @@ class EnterpriseBeanBuilder {
                 deployment.setAbstractSchemaName(entity.abstractSchemaName);
 
                 for (QueryInfo query : entity.queries) {
-                    List<Method> finderMethods = new ArrayList<Method>();
-
-                    if (home != null) {
-                        finderMethods.addAll(matchingMethods(query.method, home));
-                    }
-                    if (localhome != null) {
-                        finderMethods.addAll(matchingMethods(query.method, localhome));
-                    }
-
-                    for (Method method : finderMethods) {
-                        deployment.addQuery(method, query.queryStatement);
-                    }
 
                     if (query.remoteResultType) {
                         StringBuilder methodSignature = new StringBuilder();
@@ -277,7 +251,6 @@ class EnterpriseBeanBuilder {
                     }
 
                 }
-                deployment.setCmrFields(entity.cmpFieldNames.toArray(new String[]{}));
 
                 if (entity.primKeyField != null) {
                     deployment.setPrimaryKeyField(entity.primKeyField);

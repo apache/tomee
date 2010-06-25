@@ -18,7 +18,6 @@ package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,18 +73,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private Class mdbInterface;
     private Class serviceEndpointInterface;
 
-    private final List<Method> aroundInvoke = new ArrayList<Method>();
-
-    private final List<Method> postConstruct = new ArrayList<Method>();
-    private final List<Method> preDestroy = new ArrayList<Method>();
-
-    private final List<Method> postActivate = new ArrayList<Method>();
-    private final List<Method> prePassivate = new ArrayList<Method>();
-
-    private final List<Method> afterBegin = new ArrayList<Method>();
-    private final List<Method> beforeCompletion= new ArrayList<Method>();
-    private final List<Method> afterCompletion = new ArrayList<Method>();
-
     private final List<Method> removeMethods = new ArrayList<Method>();
 
     private final Set<String> dependsOn = new LinkedHashSet<String>();
@@ -101,8 +88,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private EJBLocalHome ejbLocalHomeRef;
     private String destinationId;
 
-    private String jarPath;
-    
     private String ejbName;
     private String runAs;
 
@@ -113,7 +98,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final BeanType componentType;
 
     private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
-    private final Map<Method, Collection<String>> methodPermissions = new HashMap<Method, Collection<String>>();
     private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
@@ -126,7 +110,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
-    private final Map<String, String> securityRoleReferenceMap = new HashMap<String, String>();
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
@@ -412,24 +395,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.transactionPolicyFactory = transactionPolicyFactory;
     }
 
-    /**
-     * TODO: Remove unused
-     */
-    public Collection<String> getAuthorizedRoles(Method method) {
-        Collection<String> roleSet = methodPermissions.get(method);
-        if (roleSet == null) {
-            return Collections.emptySet();
-        }
-        return roleSet;
-    }
-
-    /**
-     * TODO: Remove unused
-     */
-    public String [] getAuthorizedRoles(String action) {
-        return null;
-    }
-
     public Container getContainer() {
         return container;
     }
@@ -492,11 +457,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public Map<String, String> getActivationProperties() {
         return activationProperties;
-    }
-
-    public void setActivationProperties(Map<String, String> activationProperties) {
-        this.activationProperties.clear();
-        this.activationProperties.putAll(activationProperties);
     }
 
     public Class getPrimaryKeyClass() {
@@ -607,31 +567,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         return (method == null) ? interfaceMethod : method;
     }
 
-    /**
-     * TODO: Remove unused
-     */
-    public void appendMethodPermissions(Method m, List<String> roleNames) {
-        Collection<String> hs = methodPermissions.get(m);
-        if (hs == null) {
-            hs = new HashSet<String>();// FIXME: Set appropriate load and intial capacity
-            methodPermissions.put(m, hs);
-        }
-        for (String roleName : roleNames) {
-            hs.add(roleName);
-        }
-    }
-
-    /**
-     * TODO: Remove unused
-     */
-    public String getSecurityRole(String securityRoleReference) {
-        return securityRoleReferenceMap.get(securityRoleReference);
-    }
-
-    public void addSecurityRoleReference(String securityRoleReference, String linkedRoleName) {
-        securityRoleReferenceMap.put(securityRoleReference, linkedRoleName);
-    }
-
     public MethodContext getMethodContext(Method method) {
         MethodContext methodContext = methodContextMap.get(method);
         if (methodContext == null) {
@@ -692,64 +627,8 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         methodTransactionType.put(method, transactionType);
     }
 
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getAroundInvoke() {
-        return aroundInvoke;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getPostConstruct() {
-        return postConstruct;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getPreDestroy() {
-        return preDestroy;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getPostActivate() {
-        return postActivate;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getPrePassivate() {
-        return prePassivate;
-    }
-
     public List<Method> getRemoveMethods() {
         return removeMethods;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getAfterBegin() {
-        return afterBegin;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getBeforeCompletion() {
-        return beforeCompletion;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public List<Method> getAfterCompletion() {
-        return afterCompletion;
     }
 
     /**
@@ -1020,16 +899,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         }
     }
 
-    protected String extractHomeBeanMethodName(String methodName) {
-        if (methodName.equals("create")) {
-            return "ejbCreate";
-        } else if (methodName.startsWith("find")) {
-            return "ejbF" + methodName.substring(1);
-        } else {
-            return "ejbH" + methodName.substring(1);
-        }
-    }
-
     public Method getCreateMethod() {
         return createMethod;
     }
@@ -1045,11 +914,9 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
     private boolean cmp2;
     private KeyGenerator keyGenerator;
     private String primaryKeyField;
-    private String[] cmrFields;
     private Class cmpImplClass;
     private String abstractSchemaName;
 
-    private Map<Method, String> queryMethodMap = new HashMap<Method, String>();
     private Set<String> remoteQueryResults = new TreeSet<String>();
 
     public boolean isCmp2() {
@@ -1068,34 +935,12 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
         this.primaryKeyField = primaryKeyField;
     }
 
-    /**
-     * TODO: Remove, not used
-     */
-    public String [] getCmrFields() {
-        return cmrFields;
-    }
-
-    public void setCmrFields(String [] cmrFields) {
-        this.cmrFields = cmrFields;
-    }
-
     public KeyGenerator getKeyGenerator() {
         return keyGenerator;
     }
 
     public void setKeyGenerator(KeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;
-    }
-
-    public void addQuery(Method queryMethod, String queryString) {
-        queryMethodMap.put(queryMethod, queryString);
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public String getQuery(Method queryMethod) {
-        return queryMethodMap.get(queryMethod);
     }
 
     public void setRemoteQueryResults(String methodSignature) {
@@ -1120,17 +965,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public void setAbstractSchemaName(String abstractSchemaName) {
         this.abstractSchemaName = abstractSchemaName;
-    }
-
-    public void setJarPath(String jarPath) {
-        this.jarPath = jarPath;
-    }
-
-    /**
-     * TODO: Remove, not used
-     */
-    public String getJarPath() {
-        return jarPath;
     }
 
     public Method getEjbTimeout() {
@@ -1171,11 +1005,6 @@ public class CoreDeploymentInfo implements org.apache.openejb.DeploymentInfo {
 
     public String toString() {
         return "DeploymentInfo(id="+getDeploymentID()+")";
-    }
-
-    public void setServiceEndpointInterface(Class serviceEndpointInterface) {
-        this.serviceEndpointInterface = serviceEndpointInterface;
-        mapObjectInterface(serviceEndpointInterface);
     }
 
     public boolean isLoadOnStartup() {

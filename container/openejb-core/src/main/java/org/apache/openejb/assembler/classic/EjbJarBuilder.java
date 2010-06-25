@@ -55,7 +55,6 @@ public class EjbJarBuilder {
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);
 
-                deployment.setJarPath(ejbJar.jarPath);
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 
                 // TODO: replace with get() on application context or parent

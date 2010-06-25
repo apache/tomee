@@ -47,10 +47,6 @@ public interface DeploymentInfo {
 
     public TransactionType getTransactionType(Method method);
 
-    public Collection<String> getAuthorizedRoles(Method method);
-
-    public String [] getAuthorizedRoles(String action);
-
     public Container getContainer();
 
     public Object getDeploymentID();
@@ -60,8 +56,6 @@ public interface DeploymentInfo {
     public String getModuleID();
 
     public String getRunAs();
-
-    public String getSecurityRole(String securityRoleReference);
 
     public boolean isBeanManagedTransaction();
 
@@ -104,16 +98,6 @@ public interface DeploymentInfo {
     public Map<String, String> getActivationProperties();
 
     public ClassLoader getClassLoader();
-
-    public List<Method> getAroundInvoke();
-
-    public List<Method> getPostConstruct();
-
-    public List<Method> getPreDestroy();
-
-    public List<Method> getPostActivate();
-
-    public List<Method> getPrePassivate();
 
     public List<Method> getRemoveMethods();
 
