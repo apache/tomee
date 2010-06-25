@@ -126,8 +126,8 @@ public class WebApp implements WebCommon {
     @XmlElement(name = "welcome-file-list")
     protected List<WelcomeFileList> welcomeFileList;
     //in web-app-2.3.dtd, not in any schema
-    @XmlElement(name = "taglib")
-    protected List<Taglib> taglib;
+//    @XmlElement(name = "taglib")
+//    protected List<Taglib> taglib;
     @XmlElement(name = "error-page")
     protected List<ErrorPage> errorPage;
     @XmlElement(name = "jsp-config")
@@ -595,11 +595,17 @@ public class WebApp implements WebCommon {
     }
 
     //compatibility with web-app-2.3.dtd
-    public List<Taglib> getTaglib() {
-        return taglib;
+    @XmlElement(name = "taglib")
+    public Taglib getTaglib() {
+        return null;
     }
 
-    public void setTaglib(List<Taglib> taglib) {
-        this.taglib = taglib;
+    public void setTaglib(Taglib taglib) {
+        List<JspConfig> jspConfigs = getJspConfig();
+        if (jspConfigs.isEmpty()) {
+            jspConfigs.add(new JspConfig());
+        }
+        jspConfigs.get(0).getTaglib().add(taglib);
     }
+
 }
