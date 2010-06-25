@@ -17,12 +17,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HandlerChainInfo extends InfoObject {
-    public String serviceNamePattern;
-    public String portNamePattern;
+    public QName serviceNamePattern;
+    public QName portNamePattern;
     public final List<String> protocolBindings = new ArrayList<String>();
     public final List<HandlerInfo> handlers = new ArrayList<HandlerInfo>();
 }
