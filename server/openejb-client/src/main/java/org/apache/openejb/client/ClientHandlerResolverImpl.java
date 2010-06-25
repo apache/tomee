@@ -85,11 +85,11 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
         return handlers;
     }
 
-    private boolean matchServiceName(PortInfo info, String namePattern) {
+    private boolean matchServiceName(PortInfo info, QName namePattern) {
         return match((info == null ? null : info.getServiceName()), namePattern);
     }
 
-    private boolean matchPortName(PortInfo info, String namePattern) {
+    private boolean matchPortName(PortInfo info, QName namePattern) {
         return match((info == null ? null : info.getPortName()), namePattern);
     }
 
@@ -119,23 +119,18 @@ public class ClientHandlerResolverImpl implements HandlerResolver {
     }
 
     /**
-     * Performs basic localName matching, namespaces are not checked!
+     * Performs basic localName matching
      */
-    private boolean match(QName name, String namePattern) {
+    private boolean match(QName name, QName namePattern) {
         if (name == null) {
-            return (namePattern == null || namePattern.equals("*"));
+            return (namePattern == null || namePattern.getLocalPart().equals("*"));
         } else {
             if (namePattern == null) {
                 return true;
+            } else if (namePattern.getNamespaceURI() != null && !name.getNamespaceURI().equals(namePattern.getNamespaceURI())) {
+                return false;
             } else {
-                String localNamePattern;
-
-                // get the local name from pattern
-                int pos = namePattern.indexOf(':');
-                localNamePattern = (pos == -1) ? namePattern : namePattern
-                        .substring(pos + 1);
-                localNamePattern = localNamePattern.trim();
-
+                String localNamePattern = namePattern.getLocalPart();
                 if (localNamePattern.equals("*")) {
                     // matches anything
                     return true;
