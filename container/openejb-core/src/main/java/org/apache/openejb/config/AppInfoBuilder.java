@@ -16,67 +16,68 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.URLs.toFile;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
-import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
-import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.assembler.classic.MdbContainerInfo;
-import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.assembler.classic.ServletInfo;
-import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.HandlerChainInfo;
+import org.apache.openejb.assembler.classic.JndiEncInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.jee.InboundResourceadapter;
-import org.apache.openejb.jee.OutboundResourceadapter;
-import org.apache.openejb.jee.Resourceadapter;
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.assembler.classic.ResourceInfo;
+import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.ServiceProvider;
-import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.MakeTxLookup;
-import org.apache.openejb.util.References;
-import org.apache.openejb.util.CircularReferencesException;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.ConfigProperty;
+import org.apache.openejb.jee.ConnectionDefinition;
+import org.apache.openejb.jee.ConnectorBase;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.OutboundResourceadapterX;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.ResourceadapterBase;
+import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.Property;
-import org.apache.openejb.jee.jpa.JpaJaxbUtil;
-import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Connector;
-import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.AdminObject;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.jee.WebserviceDescription;
-import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.ServiceImplBean;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.CircularReferencesException;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.MakeTxLookup;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.References;
 
 import javax.xml.bind.JAXBException;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.LinkedHashSet;
-import java.net.URL;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static org.apache.openejb.util.URLs.toFile;
 
 /**
  * @version $Rev$ $Date$
@@ -296,7 +297,7 @@ class AppInfoBuilder {
             // the id generation code in AutoConfig$AppResources
             //
 
-            Connector connector = connectorModule.getConnector();
+            ConnectorBase connector = connectorModule.getConnector();
 
             ConnectorInfo connectorInfo = new ConnectorInfo();
             connectorInfo.description = connector.getDescription();
@@ -315,7 +316,7 @@ class AppInfoBuilder {
                 }
             }
 
-            Resourceadapter resourceAdapter = connector.getResourceAdapter();
+            ResourceadapterBase resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
                 String id = getId(connectorModule);
                 String className = resourceAdapter.getResourceAdapterClass();
@@ -337,7 +338,7 @@ class AppInfoBuilder {
                 connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
             }
 
-            OutboundResourceadapter outbound = resourceAdapter.getOutboundResourceAdapter();
+            OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
                 switch (outbound.getTransactionSupport()) {
@@ -424,7 +425,7 @@ class AppInfoBuilder {
         }
     }
 
-    private String getId(AdminObject adminObject, Resourceadapter resourceAdapter, ConnectorModule connectorModule) {
+    private String getId(AdminObject adminObject, ResourceadapterBase resourceAdapter, ConnectorModule connectorModule) {
         String id;
         if (adminObject.getId() != null) {
             id = adminObject.getId();
@@ -448,7 +449,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectionDefinition connection, OutboundResourceadapter outbound, ConnectorModule connectorModule) {
+    private String getId(ConnectionDefinition connection, OutboundResourceadapterX outbound, ConnectorModule connectorModule) {
         String id;
         if (connection.getId() != null) {
             id = connection.getId();

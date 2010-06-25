@@ -196,11 +196,11 @@ public class JeeTest extends TestCase {
     }
 
     public void testRar15() throws Exception {
-        marshalAndUnmarshal(Connector.class, "connector-1.5-example.xml");
+        marshalAndUnmarshal(Connector16.class, "connector-1.5-example.xml");
     }
 
     public void testRar16() throws Exception {
-        marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml");
+        marshalAndUnmarshal(Connector16.class, "connector-1.6-example.xml");
     }
 
     /**

@@ -63,12 +63,12 @@ import javax.xml.bind.annotation.*;
 //        "resourceAdapter",
 //        "requiredWorkContext"
 //})
-public class Connector extends ConnectorBase {
+public class Connector16 extends ConnectorBase {
 
-    public Connector() {
+    public Connector16() {
     }
 
-    public Connector(String id) {
+    public Connector16(String id) {
         super(id);
     }
 
@@ -82,16 +82,16 @@ public class Connector extends ConnectorBase {
     }
 
     @XmlElement(name = "resourceadapter", required = true)
-    public Resourceadapter getResourceAdapter() {
+    public ResourceAdapter16 getResourceAdapter() {
         if (resourceAdapter == null) {
-            resourceAdapter = new Resourceadapter();
+            resourceAdapter = new ResourceAdapter16();
         }
-        return (Resourceadapter) resourceAdapter;
+        return (ResourceAdapter16) resourceAdapter;
     }
 
-    public Resourceadapter setResourceAdapter(Resourceadapter resourceAdapter16) {
+    public ResourceAdapter16 setResourceAdapter(ResourceAdapter16 resourceAdapter16) {
         this.resourceAdapter = resourceAdapter16;
-        return (Resourceadapter) this.resourceAdapter;
+        return (ResourceAdapter16) this.resourceAdapter;
     }
 
     @XmlAttribute(required = true)

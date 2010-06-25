@@ -59,7 +59,7 @@ import java.util.List;
         "authenticationMechanism",
         "reauthenticationSupport"
 })
-public class OutboundResourceadapter {
+public class OutboundResourceadapterX {
 
     @XmlElement(name = "connection-definition")
     protected List<ConnectionDefinition> connectionDefinition;

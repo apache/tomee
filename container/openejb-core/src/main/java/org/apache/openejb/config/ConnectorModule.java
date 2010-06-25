@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.ConnectorBase;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.net.URL;
 
 /**
  * @version $Rev$ $Date$
@@ -34,18 +34,18 @@ public class ConnectorModule implements DeploymentModule {
     private final ValidationContext validation;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
-    private Connector connector;
+    private ConnectorBase connector;
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
-    public ConnectorModule(Connector connector) {
+    public ConnectorModule(ConnectorBase connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
 
-    public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
+    public ConnectorModule(ConnectorBase connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
@@ -81,11 +81,11 @@ public class ConnectorModule implements DeploymentModule {
         return altDDs;
     }
 
-    public Connector getConnector() {
+    public ConnectorBase getConnector() {
         return connector;
     }
 
-    public void setConnector(Connector connector) {
+    public void setConnector(ConnectorBase connector) {
         this.connector = connector;
     }
 

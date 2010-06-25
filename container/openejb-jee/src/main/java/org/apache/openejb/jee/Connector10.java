@@ -49,16 +49,16 @@ public class Connector10 extends ConnectorBase {
     }
 
     @XmlElement(name = "resourceadapter", required = true)
-    public Resourceadapter10 getResourceAdapter() {
+    public Resourceadapter10X getResourceAdapter() {
         if (resourceAdapter == null){
-            resourceAdapter = new Resourceadapter10();
+            resourceAdapter = new Resourceadapter10X();
         }
-        return (Resourceadapter10) resourceAdapter;
+        return (Resourceadapter10X) resourceAdapter;
     }
 
-    public Resourceadapter10 setResourceAdapter(Resourceadapter10 value) {
+    public Resourceadapter10X setResourceAdapter(Resourceadapter10X value) {
         this.resourceAdapter = value;
-        return (Resourceadapter10) resourceAdapter;
+        return (Resourceadapter10X) resourceAdapter;
     }
 
     @XmlElement(name="spec-version")
