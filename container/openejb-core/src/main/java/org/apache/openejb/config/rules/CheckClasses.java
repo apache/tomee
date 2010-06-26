@@ -177,9 +177,12 @@ public class CheckClasses extends ValidationBase {
             for (Object item : clazz.getMethods()) { item.toString(); }
             for (Object item : clazz.getConstructors()) { item.toString(); }
             for (Object item : clazz.getAnnotations()) { item.toString(); }
-            for (Object item : clazz.getEnumConstants()) { item.toString(); }
-        } catch (NullPointerException e) {
-            // Don't know why I get these from clazz.getEnumConstants() 
+            // checking for any declared enum constants
+            for(Class klass: clazz.getClasses()){
+            	if(klass.isEnum()){
+            		klass.toString();
+            	}
+            }
         } catch (ClassNotFoundException e) {
             /*
             # 0 - Referring Class name
