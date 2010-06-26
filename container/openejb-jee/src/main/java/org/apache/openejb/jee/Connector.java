@@ -33,7 +33,7 @@ import java.util.Map;
  * Base class for Connector (1.6) and Connector10 (1.0) jaxb clases
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConnectorBase {
+public class Connector {
 
     @XmlElement(name = "module-name")
     protected String moduleName;
@@ -52,7 +52,7 @@ public class ConnectorBase {
     protected String resourceAdapterVersion = "";
     protected License license;
     @XmlTransient
-    protected ResourceadapterBase resourceAdapter;
+    protected ResourceAdapter resourceAdapter;
     @XmlElement(name = "required-work-context")
     protected List<String> requiredWorkContext;
     @XmlAttribute
@@ -64,10 +64,10 @@ public class ConnectorBase {
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;
 
-    public ConnectorBase() {
+    public Connector() {
     }
 
-    public ConnectorBase(String id) {
+    public Connector(String id) {
         this.id = id;
     }
 
@@ -155,11 +155,11 @@ public class ConnectorBase {
         this.license = value;
     }
 
-    public ResourceadapterBase getResourceAdapter() {
+    public ResourceAdapter getResourceAdapter() {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceadapterBase resourceAdapter) {
+    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 

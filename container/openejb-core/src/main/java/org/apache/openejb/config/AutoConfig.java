@@ -26,7 +26,7 @@ import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.ConnectorBase;
+import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.JndiConsumer;
@@ -35,12 +35,12 @@ import org.apache.openejb.jee.MessageDestination;
 import org.apache.openejb.jee.MessageDestinationRef;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.OutboundResourceadapterX;
+import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceRef;
 import org.apache.openejb.jee.PersistenceType;
+import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.ResourceadapterBase;
 import org.apache.openejb.jee.SessionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -1591,9 +1591,9 @@ public class AutoConfig implements DynamicDeployer {
             //
 
             for (ConnectorModule connectorModule : appModule.getResourceModules()) {
-                ConnectorBase connector = connectorModule.getConnector();
+                Connector connector = connectorModule.getConnector();
 
-                ResourceadapterBase resourceAdapter = connector.getResourceAdapter();
+                ResourceAdapter resourceAdapter = connector.getResourceAdapter();
                 if (resourceAdapter.getResourceAdapterClass() != null) {
                     String resourceAdapterId;
                     if (resourceAdapter.getId() != null) {
@@ -1604,7 +1604,7 @@ public class AutoConfig implements DynamicDeployer {
                     resourceAdapterIds.add(resourceAdapterId);
                 }
 
-                OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
+                OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
                 if (outbound != null) {
                     for (ConnectionDefinition connection : outbound.getConnectionDefinition()) {
                         String type = connection.getConnectionFactoryInterface();

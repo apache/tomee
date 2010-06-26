@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.*;
 //        "resourceAdapter",
 //        "requiredWorkContext"
 //})
-public class Connector16 extends ConnectorBase {
+public class Connector16 extends Connector {
 
     public Connector16() {
     }

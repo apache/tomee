@@ -27,14 +27,14 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso(ResourceAdapter.class)
-public class ResourceadapterBase {
+public class ResourceAdapter {
 
     @XmlElement(name = "resourceadapter-class")
     protected String resourceAdapterClass;
     @XmlTransient
     protected List<ConfigProperty> configProperty;
     @XmlElement(name = "outbound-resourceadapter")
-    protected OutboundResourceadapterX outboundResourceAdapter;
+    protected OutboundResourceAdapter outboundResourceAdapter;
     @XmlElement(name = "inbound-resourceadapter")
     protected InboundResourceadapter inboundResourceAdapter;
     @XmlElement(name = "adminobject")
@@ -46,14 +46,14 @@ public class ResourceadapterBase {
     @XmlID
     protected String id;
 
-    public ResourceadapterBase() {
+    public ResourceAdapter() {
     }
 
-    public ResourceadapterBase(String resourceAdapterClass) {
+    public ResourceAdapter(String resourceAdapterClass) {
         this.resourceAdapterClass = resourceAdapterClass;
     }
 
-    public ResourceadapterBase(Class resourceAdapterClass) {
+    public ResourceAdapter(Class resourceAdapterClass) {
         this(resourceAdapterClass.getName());
     }
 
@@ -72,11 +72,11 @@ public class ResourceadapterBase {
         return this.configProperty;
     }
 
-    public OutboundResourceadapterX getOutboundResourceAdapter() {
+    public OutboundResourceAdapter getOutboundResourceAdapter() {
         return outboundResourceAdapter;
     }
 
-    public OutboundResourceadapterX setOutboundResourceAdapter(OutboundResourceadapterX value) {
+    public OutboundResourceAdapter setOutboundResourceAdapter(OutboundResourceAdapter value) {
         this.outboundResourceAdapter = value;
         return outboundResourceAdapter;
     }

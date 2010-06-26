@@ -22,7 +22,7 @@ import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Connector16;
 import org.apache.openejb.jee.Connector10;
-import org.apache.openejb.jee.ConnectorBase;
+import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
@@ -285,7 +285,7 @@ public class ReadDescriptors implements DynamicDeployer {
             connectorModule.setConnector((Connector16) data);
         } else if (data instanceof URL) {
             URL url = (URL) data;
-            ConnectorBase connector = readConnector(url);
+            Connector connector = readConnector(url);
             connectorModule.setConnector(connector);
         } else {
             DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
@@ -429,13 +429,13 @@ public class ReadDescriptors implements DynamicDeployer {
         return definition;
     }
 
-    public static ConnectorBase readConnector(URL url) throws OpenEJBException {
-        ConnectorBase connector;
+    public static Connector readConnector(URL url) throws OpenEJBException {
+        Connector connector;
         try {
-            connector = (ConnectorBase) JaxbJavaee.unmarshal(Connector16.class, url.openStream());
+            connector = (Connector) JaxbJavaee.unmarshal(Connector16.class, url.openStream());
         } catch (JAXBException e) {
             try {
-                connector = (ConnectorBase) JaxbJavaee.unmarshal(Connector10.class, url.openStream());
+                connector = (Connector) JaxbJavaee.unmarshal(Connector10.class, url.openStream());
             } catch (ParserConfigurationException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
             } catch (SAXException e1) {
