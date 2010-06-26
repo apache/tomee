@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.*;
 //        "license",
 //        "resourceAdapter"
 //})
-public class Connector10 extends ConnectorBase {
+public class Connector10 extends Connector {
 
     public Connector10() {
     }
@@ -49,16 +49,16 @@ public class Connector10 extends ConnectorBase {
     }
 
     @XmlElement(name = "resourceadapter", required = true)
-    public Resourceadapter10X getResourceAdapter() {
+    public ResourceAdapter10 getResourceAdapter() {
         if (resourceAdapter == null){
-            resourceAdapter = new Resourceadapter10X();
+            resourceAdapter = new ResourceAdapter10();
         }
-        return (Resourceadapter10X) resourceAdapter;
+        return (ResourceAdapter10) resourceAdapter;
     }
 
-    public Resourceadapter10X setResourceAdapter(Resourceadapter10X value) {
+    public ResourceAdapter10 setResourceAdapter(ResourceAdapter10 value) {
         this.resourceAdapter = value;
-        return (Resourceadapter10X) resourceAdapter;
+        return (ResourceAdapter10) resourceAdapter;
     }
 
     @XmlElement(name="spec-version")

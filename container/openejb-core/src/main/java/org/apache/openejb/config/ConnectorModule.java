@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.jee.ConnectorBase;
+import org.apache.openejb.jee.Connector;
 
 import java.io.File;
 import java.net.URL;
@@ -34,18 +34,18 @@ public class ConnectorModule implements DeploymentModule {
     private final ValidationContext validation;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
-    private ConnectorBase connector;
+    private Connector connector;
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
-    public ConnectorModule(ConnectorBase connector) {
+    public ConnectorModule(Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
 
-    public ConnectorModule(ConnectorBase connector, ClassLoader classLoader, String jarLocation, String moduleId) {
+    public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
@@ -81,11 +81,11 @@ public class ConnectorModule implements DeploymentModule {
         return altDDs;
     }
 
-    public ConnectorBase getConnector() {
+    public Connector getConnector() {
         return connector;
     }
 
-    public void setConnector(ConnectorBase connector) {
+    public void setConnector(Connector connector) {
         this.connector = connector;
     }
 

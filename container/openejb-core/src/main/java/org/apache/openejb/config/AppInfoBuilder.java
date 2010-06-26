@@ -38,13 +38,13 @@ import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ConnectionDefinition;
-import org.apache.openejb.jee.ConnectorBase;
+import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.OutboundResourceadapterX;
+import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.ResourceadapterBase;
+import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ServiceImplBean;
 import org.apache.openejb.jee.Servlet;
 import org.apache.openejb.jee.WebApp;
@@ -297,7 +297,7 @@ class AppInfoBuilder {
             // the id generation code in AutoConfig$AppResources
             //
 
-            ConnectorBase connector = connectorModule.getConnector();
+            Connector connector = connectorModule.getConnector();
 
             ConnectorInfo connectorInfo = new ConnectorInfo();
             connectorInfo.description = connector.getDescription();
@@ -316,7 +316,7 @@ class AppInfoBuilder {
                 }
             }
 
-            ResourceadapterBase resourceAdapter = connector.getResourceAdapter();
+            ResourceAdapter resourceAdapter = connector.getResourceAdapter();
             if (resourceAdapter.getResourceAdapterClass() != null) {
                 String id = getId(connectorModule);
                 String className = resourceAdapter.getResourceAdapterClass();
@@ -338,7 +338,7 @@ class AppInfoBuilder {
                 connectorInfo.resourceAdapter = configFactory.configureService(resource, ResourceInfo.class);
             }
 
-            OutboundResourceadapterX outbound = resourceAdapter.getOutboundResourceAdapter();
+            OutboundResourceAdapter outbound = resourceAdapter.getOutboundResourceAdapter();
             if (outbound != null) {
                 String transactionSupport = "none";
                 switch (outbound.getTransactionSupport()) {
@@ -425,7 +425,7 @@ class AppInfoBuilder {
         }
     }
 
-    private String getId(AdminObject adminObject, ResourceadapterBase resourceAdapter, ConnectorModule connectorModule) {
+    private String getId(AdminObject adminObject, ResourceAdapter resourceAdapter, ConnectorModule connectorModule) {
         String id;
         if (adminObject.getId() != null) {
             id = adminObject.getId();
@@ -449,7 +449,7 @@ class AppInfoBuilder {
         return id;
     }
 
-    private String getId(ConnectionDefinition connection, OutboundResourceadapterX outbound, ConnectorModule connectorModule) {
+    private String getId(ConnectionDefinition connection, OutboundResourceAdapter outbound, ConnectorModule connectorModule) {
         String id;
         if (connection.getId() != null) {
             id = connection.getId();

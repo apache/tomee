@@ -139,12 +139,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ConnectorBase }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Connector }{@code >}}
      *
      */
     @XmlElementDecl(namespace = "http://java.sun.com/xml/ns/j2ee", name = "connector")
-    public JAXBElement<ConnectorBase> createConnector(ConnectorBase value) {
-        return new JAXBElement<ConnectorBase>(_Connector_QNAME, ConnectorBase.class, null, value);
+    public JAXBElement<Connector> createConnector(Connector value) {
+        return new JAXBElement<Connector>(_Connector_QNAME, Connector.class, null, value);
     }
 
     /**

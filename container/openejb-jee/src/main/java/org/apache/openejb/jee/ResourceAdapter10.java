@@ -36,12 +36,12 @@ import java.util.List;
 //        "reauthenticationSupport",
 //        "securityPermission"
 //})
-public class Resourceadapter10X extends ResourceadapterBase {
+public class ResourceAdapter10 extends ResourceAdapter {
 
     private ConnectionDefinition connectionDefinition = new ConnectionDefinition();
 
-    public Resourceadapter10X() {
-        setOutboundResourceAdapter(new OutboundResourceadapterX());
+    public ResourceAdapter10() {
+        setOutboundResourceAdapter(new OutboundResourceAdapter());
         getOutboundResourceAdapter().getConnectionDefinition().add(connectionDefinition);
     }
 
