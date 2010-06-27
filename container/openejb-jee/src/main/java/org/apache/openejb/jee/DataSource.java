@@ -91,7 +91,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "maxIdleTime",
     "maxStatements"
 })
-public class DataSource {
+public class DataSource implements Keyable<String> {
 
     @XmlTransient
     protected TextMap description = new TextMap();
@@ -287,4 +287,8 @@ public class DataSource {
         this.id = value;
     }
 
+    @Override
+    public String getKey() {
+        return name;
+    }
 }
