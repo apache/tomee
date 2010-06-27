@@ -76,7 +76,18 @@ public class JaxbJavaee {
         return jaxbContext;
     }
 
-    public static <T>Object unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    /**
+     * Convert the namespaceURI in the input to the javaee URI, do not validate the xml, and read in a T.
+     *
+     * @param type Class of object to be read in
+     * @param in input stream to read
+     * @param <T> class of object to be returned
+     * @return a T read from the input stream
+     * @throws ParserConfigurationException is the SAX parser can not be configured
+     * @throws SAXException if there is an xml problem
+     * @throws JAXBException if the xml cannot be marshalled into a T.
+     */
+    public static <T>Object unmarshalJavaee(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -94,7 +105,7 @@ public class JaxbJavaee {
         });
 
 
-        JaxbJavaee.NamespaceFilter xmlFilter = new JaxbJavaee.NamespaceFilter(parser.getXMLReader());
+        JavaeeNamespaceFilter xmlFilter = new JavaeeNamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
 
         SAXSource source = new SAXSource(xmlFilter, inputSource);
@@ -107,6 +118,55 @@ public class JaxbJavaee {
         }
     }
 
+    /**
+     * Read in a T from the input stream.
+     *
+     * @param type Class of object to be read in
+     * @param in input stream to read
+     * @param validate whether to validate the input.
+     * @param <T> class of object to be returned
+     * @return a T read from the input stream
+     * @throws ParserConfigurationException is the SAX parser can not be configured
+     * @throws SAXException if there is an xml problem
+     * @throws JAXBException if the xml cannot be marshalled into a T.
+     */
+    public static <T>Object unmarshal(Class<T> type, InputStream in, boolean validate) throws ParserConfigurationException, SAXException, JAXBException {
+        InputSource inputSource = new InputSource(in);
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(validate);
+
+        JAXBContext ctx = JaxbJavaee.getContext(type);
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        unmarshaller.setEventHandler(new ValidationEventHandler(){
+            public boolean handleEvent(ValidationEvent validationEvent) {
+                System.out.println(validationEvent);
+                return false;
+            }
+        });
+
+        SAXSource source = new SAXSource(inputSource);
+
+        currentPublicId.set(new TreeSet<String>());
+        try {
+            return unmarshaller.unmarshal(source);
+        } finally {
+            currentPublicId.set(null);
+        }
+    }
+
+    /**
+     * Convert the namespaceURI in the input to the taglib URI, do not validate the xml, and read in a T.
+     *
+     * @param type Class of object to be read in
+     * @param in input stream to read
+     * @param <T> class of object to be returned
+     * @return a T read from the input stream
+     * @throws ParserConfigurationException is the SAX parser can not be configured
+     * @throws SAXException if there is an xml problem
+     * @throws JAXBException if the xml cannot be marshalled into a T.
+     */
     public static <T>Object unmarshalTaglib(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
@@ -138,13 +198,14 @@ public class JaxbJavaee {
         }
     }
 
-    public static class NamespaceFilter extends XMLFilterImpl {
+    public static class JavaeeNamespaceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-        public NamespaceFilter(XMLReader xmlReader) {
+        public JavaeeNamespaceFilter(XMLReader xmlReader) {
             super(xmlReader);
         }
 
+        @Override
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
             Set<String> publicIds = currentPublicId.get();
             if (publicIds != null) {
@@ -153,8 +214,14 @@ public class JaxbJavaee {
             return EMPTY_INPUT_SOURCE;
         }
 
+        @Override
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
             super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
         }
     }
 
@@ -165,6 +232,7 @@ public class JaxbJavaee {
             super(xmlReader);
         }
 
+        @Override
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
             Set<String> publicIds = currentPublicId.get();
             if (publicIds != null) {
@@ -173,6 +241,7 @@ public class JaxbJavaee {
             return EMPTY_INPUT_SOURCE;
         }
 
+        @Override
         public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
             localName = fixLocalName(localName);
             super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
@@ -203,4 +272,5 @@ public class JaxbJavaee {
             super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
         }
     }
+
 }

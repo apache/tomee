@@ -92,7 +92,7 @@ public class JeeTest extends TestCase {
         String fileName = "ejb-jar-timeout.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
         EjbJar ejbJar = (EjbJar) o;
         EnterpriseBean bean = ejbJar.getEnterpriseBean("A");
@@ -108,7 +108,7 @@ public class JeeTest extends TestCase {
         String fileName = "ejb-session-synchronization.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
         EjbJar ejbJar = (EjbJar) o;
         EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
@@ -129,7 +129,7 @@ public class JeeTest extends TestCase {
         String fileName = "ejb-jar-aroundtimeout.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
         EjbJar ejbJar = (EjbJar) o;
         EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
@@ -148,7 +148,7 @@ public class JeeTest extends TestCase {
         String fileName = "ejb-jar-mdb-2.0.xml";
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 
-        Object o = JaxbJavaee.unmarshal(EjbJar.class, in);
+        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
 
         EjbJar ejbJar = (EjbJar) o;
 
@@ -215,7 +215,7 @@ public class JeeTest extends TestCase {
         managedBeanClasses.add("org.apache.openejb.faces.OneBean");
         managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("faces-config.xml");
-        JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee.unmarshal(FacesConfig.class, inputStream);
+        JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
         FacesConfig facesConfig = element.getValue();
         List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
 
