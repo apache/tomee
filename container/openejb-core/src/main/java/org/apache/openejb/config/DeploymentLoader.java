@@ -1118,7 +1118,7 @@ public class DeploymentLoader {
     @SuppressWarnings({"unchecked"})
     public static <T>T unmarshal(Class<T> type, String descriptor, URL url) throws OpenEJBException {
         try {
-            return (T) JaxbJavaee.unmarshal(type, url.openStream());
+            return (T) JaxbJavaee.unmarshalJavaee(type, url.openStream());
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the " + descriptor + " file: "+ url.toExternalForm(), e);
         } catch (JAXBException e) {

@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
@@ -89,7 +88,7 @@ public class SunCmpConversionTest extends TestCase {
 
     private EntityMappings convert(String ejbJarFileName, String sunEjbJarFileName, String sunCmpMappingsFileName, String expectedFileName) throws Exception {
         InputStream in = getClass().getClassLoader().getResourceAsStream(ejbJarFileName);
-        EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshal(EjbJar.class, new ByteArrayInputStream(readContent(in).getBytes()));
+        EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, new ByteArrayInputStream(readContent(in).getBytes()));
 
         // create and configure the module
         EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, ejbJar, new OpenejbJar());
