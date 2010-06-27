@@ -18,6 +18,7 @@ package org.apache.openejb.jee;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
+import java.sql.Connection;
 
 /**
  * javaee6.xsd
@@ -54,6 +55,26 @@ public enum IsolationLevel {
 
     public static IsolationLevel fromValue(java.lang.String v) {
         return valueOf(v);
+    }
+
+    public static IsolationLevel fromFlag(int flag) {
+        if (flag == Connection.TRANSACTION_READ_UNCOMMITTED) {
+            return TRANSACTION_READ_UNCOMMITTED;
+        }
+        if (flag == Connection.TRANSACTION_READ_COMMITTED) {
+            return TRANSACTION_READ_COMMITTED;
+        }
+        if (flag == Connection.TRANSACTION_REPEATABLE_READ) {
+            return TRANSACTION_REPEATABLE_READ;
+        }
+        if (flag == Connection.TRANSACTION_SERIALIZABLE) {
+            return TRANSACTION_SERIALIZABLE;
+        }
+        //-1 is the annotation default
+        if (flag == Connection.TRANSACTION_NONE || flag == -1) {
+            return null;
+        }
+        throw new IllegalArgumentException("Invalid isolation level flag: " + flag);
     }
 
 }
