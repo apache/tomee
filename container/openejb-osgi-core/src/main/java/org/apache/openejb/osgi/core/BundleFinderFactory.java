@@ -20,6 +20,8 @@ import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.BundleAnnotationFinder;
+import org.apache.xbean.osgi.bundle.util.DiscoveryRange;
+import org.apache.xbean.osgi.bundle.util.ResourceDiscoveryFilter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
@@ -41,7 +43,30 @@ public class BundleFinderFactory extends FinderFactory {
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
             PackageAdmin packageAdmin = (PackageAdmin) bundleContext.getService(sr);
 
-            return new BundleAnnotationFinder(packageAdmin, bundle);
+            final String location = module.getModuleId();
+            if (location != null && !location.isEmpty()) {
+                ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
+
+                    @Override
+                    public boolean rangeDiscoveryRequired(DiscoveryRange discoveryRange) {
+                        return discoveryRange == DiscoveryRange.BUNDLE_CLASSPATH || discoveryRange == DiscoveryRange.FRAGMENT_BUNDLES;
+                    }
+
+                    @Override
+                    public boolean zipFileDiscoveryRequired(String s) {
+                        return s.equals(location);
+                    }
+
+                    @Override
+                    public boolean directoryDiscoveryRequired(String s) {
+                        return s.equals(location);
+                    }
+                };
+
+                return new BundleAnnotationFinder(packageAdmin, bundle, filter);
+            } else {
+                return new BundleAnnotationFinder(packageAdmin, bundle);
+            }
         }
 
         throw new IllegalStateException("Module classloader is not a BundleReference. Only use BundleFactoryFinder in an pure osgi environment");
