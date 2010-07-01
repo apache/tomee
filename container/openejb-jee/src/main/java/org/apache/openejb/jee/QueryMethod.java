@@ -67,6 +67,14 @@ public class QueryMethod {
     @XmlID
     protected String id;
 
+    public QueryMethod() {
+    }
+
+    public QueryMethod(String methodName, String... params) {
+        this.methodName = methodName;
+        this.methodParams = new MethodParams(params);
+    }
+
     public String getMethodName() {
         return methodName;
     }

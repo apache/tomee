@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.util.Logger;
@@ -64,7 +65,7 @@ public class MethodTransactionBuilder {
             MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
 
 //            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
-            deploymentInfo.setMethodTransactionAttribute(entry.getKey(), value.transAttribute);
+            deploymentInfo.setMethodTransactionAttribute(entry.getKey(), TransactionType.get(value.transAttribute));
         }
     }
 

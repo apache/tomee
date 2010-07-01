@@ -33,12 +33,6 @@ import javax.ejb.EJBLocalHome;
 
 public interface DeploymentInfo {
 
-    final public static byte READ_LOCK = (byte) 6;
-
-    final public static byte WRITE_LOCK = (byte) 7;
-
-    final public static String AC_CREATE_EJBHOME = "create.ejbhome";
-
     public BeanType getComponentType();
 
     public InterfaceType getInterfaceType(Class clazz);

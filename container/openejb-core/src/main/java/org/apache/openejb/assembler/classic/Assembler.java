@@ -561,7 +561,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         if (ejbTimeout != null) {
                             // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
                             if (coreDeploymentInfo.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
-                                coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, "Required");
+                                coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
                             }
 
                             // Create the timer

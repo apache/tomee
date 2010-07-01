@@ -24,7 +24,6 @@ import org.apache.openejb.util.Duration;
 import javax.ejb.LockType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,17 +33,10 @@ public class MethodContext {
     private final CoreDeploymentInfo beanContext;
     private final Method beanMethod;
     private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
-    private final List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
-    private LockType methodConcurrencyAttribute;
+    private final List<InterceptorData> interceptors = new ArrayList<InterceptorData>();
+    private LockType lockType;
     private TransactionType transactionType;
     private Duration accessTimeout;
-
-    /**
-     * Only initialized if this method represents metadata
-     * associated with a specific interface view and not the
-     * bean method itself.
-     */
-    private MethodContext beanMethodContext;
 
     public MethodContext(CoreDeploymentInfo beanContext, Method beanMethod) {
         this.beanContext = beanContext;
@@ -56,7 +48,7 @@ public class MethodContext {
     }
 
     public Duration getAccessTimeout() {
-        return accessTimeout;
+        return accessTimeout != null? accessTimeout: beanContext.getAccessTimeout();
     }
 
     public CoreDeploymentInfo getBeanContext() {
@@ -67,20 +59,27 @@ public class MethodContext {
         return beanMethod;
     }
 
+    public void setInterceptors(List<InterceptorData> interceptors) {
+        this.interceptors.clear();
+        this.interceptors.addAll(interceptors);
+    }
+
     public List<InterceptorData> getInterceptors() {
-        return methodInterceptors;
+        List<InterceptorData> datas = beanContext.getInterceptorData();
+        datas.addAll(interceptors);
+        return datas;
     }
 
-    public LockType getMethodConcurrencyAttribute() {
-        return methodConcurrencyAttribute;
+    public LockType getLockType() {
+        return lockType != null? lockType: beanContext.getLockType();
     }
 
-    public void setMethodConcurrencyAttribute(LockType methodConcurrencyAttribute) {
-        this.methodConcurrencyAttribute = methodConcurrencyAttribute;
+    public void setLockType(LockType lockType) {
+        this.lockType = lockType;
     }
 
     public TransactionType getTransactionType() {
-        return transactionType;
+        return transactionType != null? transactionType: beanContext.getTransactionType();
     }
 
     public void setTransactionType(TransactionType transactionType) {
@@ -91,12 +90,23 @@ public class MethodContext {
         return schedules;
     }
 
+    /**
+     * Currently (and as a matter of legacy) only EJB 2.x style
+     * interfaces may have different transaction attributes for an
+     * individual interface method.
+     */
     public static class InterfaceMethodContext {
         private final MethodContext beanMethod;
+        private final Method method;
         private TransactionType transactionType;
 
-        public InterfaceMethodContext(MethodContext beanMethod) {
+        public InterfaceMethodContext(MethodContext beanMethod, Method method) {
             this.beanMethod = beanMethod;
+            this.method = method;
+        }
+
+        public Method getMethod() {
+            return method;
         }
 
         public void setTransactionType(TransactionType transactionType) {
@@ -105,6 +115,10 @@ public class MethodContext {
 
         public TransactionType getTransactionType() {
             return transactionType != null ? transactionType : beanMethod.getTransactionType();
+        }
+
+        public MethodContext getBeanMethod() {
+            return beanMethod;
         }
     }
 }
