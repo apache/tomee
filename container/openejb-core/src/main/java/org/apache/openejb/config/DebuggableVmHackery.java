@@ -65,6 +65,9 @@ class DebuggableVmHackery implements DynamicDeployer {
                 pruneRefs(bean, ejbDeployment);
 
 
+//                if (bean.getEjbName().equals("BasicSingletonBean")) {
+//                    continue;
+//                }
                 if (!(bean instanceof MessageDrivenBean) && !(bean instanceof EntityBean)) {
                     continue;
                 }

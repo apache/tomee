@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.util.Join;
 
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
 import static java.util.Arrays.asList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.lang.reflect.Method;
 
 /**
@@ -240,9 +244,7 @@ public class MethodInfoUtil {
                     }
 
                     for (Method method : methods) {
-                        if ((method.getDeclaringClass() == javax.ejb.EJBObject.class ||
-                                method.getDeclaringClass() == javax.ejb.EJBHome.class) &&
-                                !method.getName().equals("remove")) {
+                        if (containerMethod(method)) {
                             continue;
                         }
 
@@ -254,6 +256,14 @@ public class MethodInfoUtil {
         return attributes;
     }
 
+    private static boolean containerMethod(Method method) {
+        return (method.getDeclaringClass() == EJBObject.class ||
+                method.getDeclaringClass() == EJBHome.class ||
+                method.getDeclaringClass() == EJBLocalObject.class ||
+                method.getDeclaringClass() == EJBLocalHome.class) &&
+                !method.getName().equals("remove");
+    }
+
     private static List<Method> getWildCardView(DeploymentInfo info) {
         List<Method> methods = new ArrayList<Method>();
 
@@ -263,29 +273,41 @@ public class MethodInfoUtil {
         if (info.getRemoteInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getRemoteInterface().getMethods()));
         }
+
         if (info.getHomeInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getHomeInterface().getMethods()));
         }
+
         if (info.getLocalInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getLocalInterface().getMethods()));
         }
+
         if (info.getLocalHomeInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getLocalHomeInterface().getMethods()));
         }
         if(info.getMdbInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getMdbInterface().getMethods()));
         }
+
         if(info.getServiceEndpointInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getServiceEndpointInterface().getMethods()));
         }
+
         for (Class intf : info.getBusinessRemoteInterfaces()) {
             methods.addAll(exclude(beanMethods, intf.getMethods()));
         }
+
         for (Class intf : info.getBusinessLocalInterfaces()) {
             methods.addAll(exclude(beanMethods, intf.getMethods()));
         }
 
-
+        // Remove methods that cannot be controlled by the user
+        Iterator<Method> iterator = methods.iterator();
+        while (iterator.hasNext()) {
+            Method method = iterator.next();
+            if (containerMethod(method)) iterator.remove();
+        }
+        
         return methods;
     }
 

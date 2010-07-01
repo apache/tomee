@@ -36,7 +36,15 @@ public enum TransactionType {
             case NEVER: return Never;
             case NOT_SUPPORTED: return NotSupported;
             case SUPPORTS: return Supports;
-            default: throw new IllegalStateException("Uknown TransactionAttributeType"+ type);
+            default: throw new IllegalArgumentException("Uknown TransactionAttributeType."+ type);
         }
+    }
+
+    public static TransactionType get(String name) {
+        for (TransactionType type : values()) {
+            if (type.name().equalsIgnoreCase(name)) return type;
+        }
+
+        throw new IllegalArgumentException("Uknown TransactionType " + name);
     }
 }

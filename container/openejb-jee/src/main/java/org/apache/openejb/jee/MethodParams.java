@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 
 /**
@@ -64,6 +65,17 @@ public class MethodParams {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    public MethodParams() {
+    }
+
+    public MethodParams(List<String> methodParam) {
+        this.methodParam = methodParam;
+    }
+
+    public MethodParams(String... params) {
+        this(Arrays.asList(params));
+    }
 
     public List<String> getMethodParam() {
         if (methodParam == null) {

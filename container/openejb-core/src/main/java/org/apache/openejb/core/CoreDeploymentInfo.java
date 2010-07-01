@@ -348,8 +348,11 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
 
     public LockType getConcurrencyAttribute(Method beanMethod) {
-        LockType attribute = getMethodContext(beanMethod).getMethodConcurrencyAttribute();
-        return (attribute == null)?LockType.WRITE: attribute;
+        return getMethodContext(beanMethod).getLockType();
+    }
+
+    public LockType getLockType() {
+        return LockType.WRITE;
     }
 
     public TransactionType getTransactionType(Method method) {
@@ -378,11 +381,15 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         log.debug("The following method doesn't have a transaction policy assigned: " + method);
 
         // default transaction policy is required
-        type = TransactionType.Required;
+        type = getTransactionType();
 
         // cache this default to avoid extra log messages
         methodTransactionType.put(method, type);
         return type;
+    }
+
+    public TransactionType getTransactionType() {
+        return (isBeanManagedTransaction) ? TransactionType.BeanManaged : TransactionType.Required;
     }
 
     public TransactionPolicyFactory getTransactionPolicyFactory() {
@@ -571,36 +578,14 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
     
     public void setMethodConcurrencyAttribute(Method method, LockType concurrencyAttribute) {
-        getMethodContext(method).setMethodConcurrencyAttribute(concurrencyAttribute);
+        getMethodContext(method).setLockType(concurrencyAttribute);
     }
 
 
     /**
      * TODO: Move to MethodContext
      */
-    public void setMethodTransactionAttribute(Method method, String transAttribute) throws OpenEJBException {
-        TransactionType transactionType;
-        if (transAttribute.equalsIgnoreCase("Supports")) {
-            transactionType = TransactionType.Supports;
-
-        } else if (transAttribute.equalsIgnoreCase("RequiresNew")) {
-            transactionType = TransactionType.RequiresNew;
-
-        } else if (transAttribute.equalsIgnoreCase("Mandatory")) {
-            transactionType = TransactionType.Mandatory;
-
-        } else if (transAttribute.equalsIgnoreCase("NotSupported")) {
-            transactionType = TransactionType.NotSupported;
-
-        } else if (transAttribute.equalsIgnoreCase("Required")) {
-            transactionType = TransactionType.Required;
-
-        } else if (transAttribute.equalsIgnoreCase("Never")) {
-            transactionType = TransactionType.Never;
-
-        } else {
-            throw new IllegalArgumentException("Invalid transaction attribute \"" + transAttribute + "\" declared for method " + method.getName() + ". Please check your configuration.");
-        }
+    public void setMethodTransactionAttribute(Method method, TransactionType transactionType) throws OpenEJBException {
 
         // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
         // bean message listener methods. The use of the other transaction attributes is not meaningful
@@ -673,7 +658,9 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
 
     public List<InterceptorData> getCallbackInterceptors() {
-        return addSystemInterceptorDatas(callbackInterceptors);
+        List<InterceptorData> datas = getInterceptorData();
+        datas.addAll(callbackInterceptors);
+        return datas;
     }
 
     public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
@@ -683,29 +670,19 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
 
     public List<InterceptorData> getMethodInterceptors(Method method) {
-        return addSystemInterceptorDatas(getMethodContext(method).getInterceptors());
+        return getMethodContext(method).getInterceptors();
     }
 
-    public List<InterceptorData> addSystemInterceptorDatas(List<InterceptorData> interceptors) {
-        if (interceptors == null) interceptors = Collections.EMPTY_LIST;
-
-        if (systemInterceptors.size() <= 0) return interceptors;
-
-        // we have system interceptors to add to the beginning of the stack
-
-        List<InterceptorData> datas = new ArrayList<InterceptorData>(systemInterceptors.size() + interceptors.size());
-
+    public List<InterceptorData> getInterceptorData() {
+        List<InterceptorData> datas = new ArrayList<InterceptorData>();
         for (InterceptorInstance instance : systemInterceptors) {
             datas.add(instance.getData());
         }
-
-        datas.addAll(interceptors);
-
         return datas;
     }
 
     public void setMethodInterceptors(Method method, List<InterceptorData> interceptors) {
-        getMethodContext(method).getInterceptors().addAll(interceptors);
+        getMethodContext(method).setInterceptors(interceptors);
         this.instanceScopedInterceptors.addAll(interceptors);
     }
 
