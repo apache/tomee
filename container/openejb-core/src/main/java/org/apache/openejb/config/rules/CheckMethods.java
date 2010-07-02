@@ -110,9 +110,11 @@ public class CheckMethods extends ValidationBase {
 
                 if (differentArgs.size() > 0) {
                     fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentArgs.size());
-                } else if (differentCase.size() > 0){
+                } 
+                if (differentCase.size() > 0){
                     fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName(), differentCase.size());
-                } else {
+                } 
+                if(differentArgs.size() == 0 && differentCase.size() == 0){
                     fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "local", intrface.getName(), beanClass.getName());
                 }
             }
@@ -157,9 +159,11 @@ public class CheckMethods extends ValidationBase {
 
                 if (differentArgs.size() > 0) {
                     fail(b, "no.busines.method.args", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentArgs.size());
-                } else if (differentCase.size() > 0){
+                } 
+                if (differentCase.size() > 0){
                     fail(b, "no.busines.method.case", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName(), differentCase.size());
-                } else {
+                }
+                if (differentArgs.size() == 0 && differentCase.size() == 0){
                     fail(b, "no.busines.method", interfaceMethods[i].getName(), interfaceMethods[i].toString(), "remote", intrface.getName(), beanClass.getName());
                 }
             }
