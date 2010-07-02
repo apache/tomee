@@ -20,22 +20,22 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckNoBusinessMethodTest {
   @Keys({ "no.busines.method.case", "no.busines.method.case", "no.busines.method.case", "no.busines.method.case", "no.busines.method.args", "no.busines.method.args",
-      "no.busines.method.args", "no.busines.method.args", "no.busines.method", "no.busines.method", "no.busines.method", "no.busines.method", })
-  public EjbJar noBusinessMethodArgs() throws OpenEJBException {
+      "no.busines.method.args", "no.busines.method.args", "no.busines.method", "no.busines.method", "no.busines.method", "no.busines.method" })
+  public EjbJar noBusinessMethod() throws OpenEJBException {
     // System.setProperty("openejb.validation.output.level", "VERBOSE");
     EjbJar ejbJar = new EjbJar();
     StatelessBean stateLessLocal = new StatelessBean(FooStatelessSession.class);
-    stateLessLocal.setLocalHome("org.apache.openejb.config.rules.DummyTest$FooLocalHome");
-    stateLessLocal.setLocal("org.apache.openejb.config.rules.DummyTest$FooLocal");
+    stateLessLocal.setLocalHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocalHome");
+    stateLessLocal.setLocal("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocal");
     StatefulBean statefulLocal = new StatefulBean(FooStatefulSession.class);
-    statefulLocal.setLocalHome("org.apache.openejb.config.rules.DummyTest$FooLocalHome");
-    statefulLocal.setLocal("org.apache.openejb.config.rules.DummyTest$FooLocal");
+    statefulLocal.setLocalHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocalHome");
+    statefulLocal.setLocal("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooLocal");
     StatelessBean stateLessRemote = new StatelessBean(FooRemoteStatelessSession.class);
-    stateLessRemote.setHome("org.apache.openejb.config.rules.DummyTest$FooRemoteHome");
-    stateLessRemote.setRemote("org.apache.openejb.config.rules.DummyTest$FooRemote");
+    stateLessRemote.setHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemoteHome");
+    stateLessRemote.setRemote("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemote");
     StatefulBean statefulRemote = new StatefulBean(FooRemoteStatefulSession.class);
-    statefulRemote.setHome("org.apache.openejb.config.rules.DummyTest$FooRemoteHome");
-    statefulRemote.setRemote("org.apache.openejb.config.rules.DummyTest$FooRemote");
+    statefulRemote.setHome("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemoteHome");
+    statefulRemote.setRemote("org.apache.openejb.config.rules.CheckNoBusinessMethodTest$FooRemote");
     ejbJar.addEnterpriseBean(stateLessLocal);
     ejbJar.addEnterpriseBean(statefulLocal);
     ejbJar.addEnterpriseBean(stateLessRemote);
