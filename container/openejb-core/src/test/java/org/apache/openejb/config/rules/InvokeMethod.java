@@ -25,9 +25,9 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.util.Join;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
 /**
  * This Statement is the one which runs the test.
- *
  */
 public class InvokeMethod extends Statement {
   private ConfigurationFactory config;
@@ -72,8 +72,7 @@ public class InvokeMethod extends Statement {
     assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
   }
 
-  private void tearDown() {
-  }
+  private void tearDown() {}
 
   /**
    * Tests to see if the keys specified in the @Keys annotation are also available in the org.apache.openejb.config.rules.Messages.properties file. If there are any invalid keys,
@@ -86,17 +85,23 @@ public class InvokeMethod extends Statement {
    */
   private List<String> validateKeys() throws Exception {
     Keys annotation = testMethod.getAnnotation(Keys.class);
-    String[] keys = annotation.value();
+    Key[] keys = annotation.value();
     ArrayList<String> wrongKeys = new ArrayList<String>();
-    for (String key : keys) {
-      if (allKeys.contains("1." + key)) {
+    for (Key key : keys) {
+      if (allKeys.contains("1." + key.value())) {
         continue;
       } else {
-        wrongKeys.add(key);
+        wrongKeys.add(key.value());
       }
     }
     if (wrongKeys.isEmpty()) {
-      return Arrays.asList(keys);
+      ArrayList<String> validKeys = new ArrayList<String>();
+      for (Key key : keys) {
+        for (int i = 0; i < key.count(); i++) {
+          validKeys.add(key.value());
+        }
+      }
+      return validKeys;
     } else {
       String commaDelimitedKeys = Join.join(",", wrongKeys);
       throw new Exception("The following keys listed in the @Keys annotation on the method " + testMethod.getName() + "() of " + testMethod.getMethod().getDeclaringClass()
