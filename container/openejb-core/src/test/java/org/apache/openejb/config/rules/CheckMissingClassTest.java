@@ -16,11 +16,9 @@ import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
-
 @RunWith(ValidationRunner.class)
 public class CheckMissingClassTest {
-  @Keys({ "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class",
-      "missing.class", "missing.class", "missing.class", "missing.class", "missing.class", "missing.class" })
+  @Keys(@Key(value = "missing.class", count = 16))
   public EjbJar wrongClassType() throws OpenEJBException {
     System.setProperty("openejb.validation.output.level", "VERBOSE");
     EjbJar ejbJar = new EjbJar();

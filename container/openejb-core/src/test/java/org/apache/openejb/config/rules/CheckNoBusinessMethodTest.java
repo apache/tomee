@@ -19,8 +19,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckNoBusinessMethodTest {
-  @Keys({ "no.busines.method.case", "no.busines.method.case", "no.busines.method.case", "no.busines.method.case", "no.busines.method.args", "no.busines.method.args",
-      "no.busines.method.args", "no.busines.method.args", "no.busines.method", "no.busines.method", "no.busines.method", "no.busines.method" })
+  @Keys({ @Key(value = "no.busines.method.case", count = 4), @Key(value = "no.busines.method.args", count = 4), @Key(value = "no.busines.method", count = 4) })
   public EjbJar noBusinessMethod() throws OpenEJBException {
     // System.setProperty("openejb.validation.output.level", "VERBOSE");
     EjbJar ejbJar = new EjbJar();
