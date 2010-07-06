@@ -68,8 +68,8 @@ public class CallbackOverridesTest extends TestCase {
 
         ChildBean childBean = (ChildBean) context.lookup("ChildBeanLocalBean");
 
-        // TODO: Broken -- See OPENEJB-1299
-//        assertEquals(asList(ParentInterceptor.class, ChildInterceptor.class, ParentBean.class, ChildBean.class), callbacks);
+
+        assertEquals(asList(ParentInterceptor.class, ChildInterceptor.class, ParentBean.class, ChildBean.class), callbacks);
 
         callbacks.clear();
 
@@ -134,7 +134,7 @@ public class CallbackOverridesTest extends TestCase {
 
     @Stateful
     @Interceptors(ChildInterceptor.class)
-    public static class ChildBean {
+    public static class ChildBean extends ParentBean {
 
 
         @PostConstruct

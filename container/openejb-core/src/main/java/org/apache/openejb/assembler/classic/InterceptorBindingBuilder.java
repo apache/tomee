@@ -272,6 +272,25 @@ public class InterceptorBindingBuilder {
                 }
                 if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
                     methods.add(method);
+                }  else {
+                    // check for a private method on the declared class
+
+                    // find declared class
+                    Class c = clazz;
+                    while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
+
+                    // get callback method
+                    if (c != null) {
+                        try {
+                            method = getMethod(c, callbackInfo.method, InvocationContext.class);
+                            // make sure it is private
+                            if (Modifier.isPrivate(method.getModifiers())) {
+                                SetAccessible.on(method);
+                                methods.add(method);
+                            }
+                        } catch (NoSuchMethodException e) {
+                        }
+                    }
                 }
             } catch (NoSuchMethodException e) {
                 logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
