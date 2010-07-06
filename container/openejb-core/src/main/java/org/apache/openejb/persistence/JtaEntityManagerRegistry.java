@@ -18,6 +18,9 @@
 package org.apache.openejb.persistence;
 
 
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
+
 import java.util.Map;
 import java.util.HashMap;
 import javax.persistence.EntityManager;
@@ -35,6 +38,9 @@ import javax.transaction.TransactionSynchronizationRegistry;
  * incoherence.
  */
 public class JtaEntityManagerRegistry {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("persistence"), JtaEntityManager.class);
+    
     /**
      * Registry of transaction associated entity managers.
      */
@@ -67,11 +73,12 @@ public class JtaEntityManagerRegistry {
      * @param entityManagerFactory the entity manager factory from which an entity manager is required
      * @param properties the properties passed to the entity manager factory when an entity manager is created
      * @param extended is the entity manager an extended context
+     * @param unitName
      * @return the new entity manager
      * @throws IllegalStateException if the entity manger is extended and there is not an existing entity manager
      * instance already registered
      */
-    public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended) throws IllegalStateException {
+    public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended, String unitName) throws IllegalStateException {
         if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
         EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
         boolean transactionActive = isTransactionActive();
@@ -99,6 +106,7 @@ public class JtaEntityManagerRegistry {
 
             return entityManager;
         } else {
+
             // create a new entity manager
             EntityManager entityManager;
             if (properties != null) {
@@ -107,10 +115,12 @@ public class JtaEntityManagerRegistry {
                 entityManager = entityManagerFactory.createEntityManager();
             }
 
+            logger.debug("Created EntityManager(unit=" + unitName + ", hashCode=" + entityManager.hashCode() + ")");
+
             // if we are in a transaction associate the entity manager with the transaction; otherwise it is
             // expected the caller will close this entity manager after use
             if (transactionActive) {
-                transactionRegistry.registerInterposedSynchronization(new CloseEntityManager(entityManager));
+                transactionRegistry.registerInterposedSynchronization(new CloseEntityManager(entityManager, unitName));
                 transactionRegistry.putResource(txKey, entityManager);
             }
             return entityManager;
@@ -282,9 +292,11 @@ public class JtaEntityManagerRegistry {
 
     private static class CloseEntityManager implements Synchronization {
         private final EntityManager entityManager;
+        private String unitName;
 
-        public CloseEntityManager(EntityManager entityManager) {
+        public CloseEntityManager(EntityManager entityManager, String unitName) {
             this.entityManager = entityManager;
+            this.unitName = unitName;
         }
 
         public void beforeCompletion() {
@@ -292,6 +304,7 @@ public class JtaEntityManagerRegistry {
 
         public void afterCompletion(int i) {
             entityManager.close();
+            logger.debug("Closed EntityManager(unit=" + unitName + ", hashCode=" + entityManager.hashCode() + ")");
         }
     }
 }

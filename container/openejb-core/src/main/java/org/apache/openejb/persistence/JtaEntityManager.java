@@ -17,8 +17,10 @@
  */
 package org.apache.openejb.persistence;
 
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.LogCategory;
+
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
@@ -45,18 +47,23 @@ import javax.persistence.metamodel.Metamodel;
  * be thrown when entity manger is accessed.
  */
 public class JtaEntityManager implements EntityManager {
+
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("persistence"), JtaEntityManager.class);
+
     private final JtaEntityManagerRegistry registry;
     private final EntityManagerFactory entityManagerFactory;
     private final Map properties;
     private final boolean extended;
+    private final String unitName;
 
-    public JtaEntityManager(JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties) {
-        this(registry, entityManagerFactory, properties, false);
-
+    public JtaEntityManager(JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, String unitName) {
+        this(unitName, registry, entityManagerFactory, properties, false);
     }
-    public JtaEntityManager(JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, boolean extended) {
+    
+    public JtaEntityManager(String unitName, JtaEntityManagerRegistry registry, EntityManagerFactory entityManagerFactory, Map properties, boolean extended) {
         if (registry == null) throw new NullPointerException("registry is null");
         if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
+        this.unitName = unitName;
         this.registry = registry;
         this.entityManagerFactory = entityManagerFactory;
         this.properties = properties;
@@ -64,7 +71,7 @@ public class JtaEntityManager implements EntityManager {
     }
 
     private EntityManager getEntityManager() {
-        return registry.getEntityManager(entityManagerFactory, properties, extended);
+        return registry.getEntityManager(entityManagerFactory, properties, extended, unitName);
     }
 
     private boolean isTransactionActive() {
@@ -91,6 +98,7 @@ public class JtaEntityManager implements EntityManager {
     private void closeIfNoTx(EntityManager entityManager) {
         if (!extended && !isTransactionActive()) {
             entityManager.close();
+            logger.debug("Closed EntityManager(unit=" + unitName + ", hashCode=" + entityManager.hashCode() + ")");
         }
     }
 

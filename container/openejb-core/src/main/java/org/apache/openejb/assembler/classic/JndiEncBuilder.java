@@ -25,7 +25,6 @@ import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
-import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
@@ -42,7 +41,6 @@ import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
-import org.apache.xbean.naming.context.WritableContext;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.EJBContext;
@@ -62,11 +60,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.io.Serializable;
 
 /**
@@ -324,7 +320,7 @@ public class JndiEncBuilder {
                 throw new OpenEJBException("PersistenceUnit '" + contextInfo.unitId + "' not found for EXTENDED ref '" + contextInfo.referenceName + "'");
             }
 
-            JtaEntityManager jtaEntityManager = new JtaEntityManager(jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
+            JtaEntityManager jtaEntityManager = new JtaEntityManager(contextInfo.persistenceUnitName, jtaEntityManagerRegistry, factory, contextInfo.properties, contextInfo.extended);
             Reference reference = new PersistenceContextReference(jtaEntityManager);
             bindings.put(normalize(contextInfo.referenceName), reference);
         }
