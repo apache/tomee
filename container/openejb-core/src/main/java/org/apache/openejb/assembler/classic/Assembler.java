@@ -706,6 +706,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static List<DeploymentInfo> sort(List<DeploymentInfo> deployments) {
+        // Sort all the singletons to the back of the list.  We want to make sure
+        // all non-singletons are created first so that if a singleton refers to them
+        // they are available.
+        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
+            public int compare(DeploymentInfo a, DeploymentInfo b) {
+                int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
+                return aa - bb;
+            }
+        });
+
         // Sort all the beans with references to the back of the list.  Beans
         // without references to ther beans will be deployed first.
         deployments = References.sort(deployments, new References.Visitor<DeploymentInfo>(){
