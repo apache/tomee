@@ -305,7 +305,7 @@ public class SingletonInstanceManager {
         // Possible the instance was never created
         if (instanceFuture == null) return;
 
-        Instance instance = null;
+        Instance instance;
         try {
             instance = instanceFuture.get();
         } catch (InterruptedException e) {
@@ -314,8 +314,8 @@ public class SingletonInstanceManager {
             return;
         } catch (ExecutionException e) {
             // Instance was never initialized
+            return;
         }
-
 
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
