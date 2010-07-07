@@ -32,10 +32,15 @@ import javax.annotation.PreDestroy;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanParameterInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.InitialContext;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -173,7 +178,7 @@ public class StatelessStatisticsTest extends TestCase {
      *
      * @throws Exception
      */
-    public void test() throws Exception {
+    public void testBasic() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
@@ -192,7 +197,6 @@ public class StatelessStatisticsTest extends TestCase {
         assembler.createContainer(statelessContainerInfo);
 
         // Setup the descriptor information
-
         CounterBean.instances.set(0);
 
         EjbJar ejbJar = new EjbJar("StatsModule");
@@ -203,31 +207,378 @@ public class StatelessStatisticsTest extends TestCase {
         javax.naming.Context context = new InitialContext();
         CounterBean bean = (CounterBean) context.lookup("CounterBeanLocalBean");
 
-        // TODO: invoke each method a different number of times
+        // Invoke each method once
         bean.red();
         bean.green();
         bean.blue();
-
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
         ObjectName poolName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Pool,name=CounterBean");
 
-        // TODO grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters
+        // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters        
         MBeanInfo invocationsMBeanInfo = server.getMBeanInfo(invocationsName);
         MBeanInfo poolMBeanInfo = server.getMBeanInfo(poolName);
 
-        // TODO The hardest part, check the values of each
 
-        System.out.println("// Attributes:");
+        /*
+        * Pool MBeanInfo
+        *
+        */
+        List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
+        expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Aged", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Aged.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Available", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushed", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushed.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushes", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushes.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("GarbageCollected", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("GarbageCollected.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("IdleTimeout", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Instances", "int", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Interval", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("MaxAge", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("MaxAgeOffset", "double", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("MaxSize", "int", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("MinSize", "int", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("MinimumInstances", "int", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Overdrafts", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Overdrafts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("PoolVersion", "java.util.concurrent.atomic.AtomicInteger", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("ReplaceAged", "boolean", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Replaced", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Replaced.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Sweeps", "long", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Sweeps.Latest", "java.lang.String", "", true, false, false));
+
+
+        // The hardest part, check the values of each, PoolVersion is AtomicaInteger, *.Latest are time-sensitive, so not verified.
+        Map<String, Object> expectedAttributesValue = new HashMap<String, Object>();
+        expectedAttributesValue.put("Aged", (long) 0);
+        expectedAttributesValue.put("Available", (long) 15);
+        expectedAttributesValue.put("Flushed", (long) 0);
+        expectedAttributesValue.put("Flushes", (long) 0);
+        expectedAttributesValue.put("GarbageCollected", (long) 0);
+        expectedAttributesValue.put("IdleTimeout", (long) 0);
+        expectedAttributesValue.put("Instances", (int) 3);
+        expectedAttributesValue.put("Interval", (long) 300000);
+        expectedAttributesValue.put("MaxAge", (long) 0);
+        expectedAttributesValue.put("MaxAgeOffset", (double) (-1.0));
+        expectedAttributesValue.put("MaxSize", (int) 15);
+        expectedAttributesValue.put("MinSize", (int) 3);
+        expectedAttributesValue.put("MinimumInstances", (int) 3);
+        expectedAttributesValue.put("Overdrafts", (long) 0);
+        //expectedAttributesValue.put("PoolVersion", new AtomicInteger(0));
+        expectedAttributesValue.put("ReplaceAged", false);
+        expectedAttributesValue.put("Replaced", (long) 0);
+        expectedAttributesValue.put("Sweeps", (long) 1);
+
+        List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
+        Map<String, Object> actualAttributesValue = new HashMap<String, Object>();
         for (MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
-            System.out.println("// " + info);
+            actualAttributes.add(info);
+            if (info.getName().equals("Aged")
+                    || info.getName().equals("Available")
+                    || info.getName().equals("MinimumInstances")
+                    || info.getName().equals("MaxSize")
+                    || info.getName().equals("MinSize")
+                    || info.getName().equals("IdleTimeout")
+                    || info.getName().equals("Instances")
+                    || info.getName().equals("Interval")
+                    || info.getName().equals("Flushed")
+                    || info.getName().equals("Flushes")
+                    || info.getName().equals("GarbageCollected")
+                    || info.getName().equals("Overdrafts")
+                    || info.getName().equals("ReplaceAged")
+                    || info.getName().equals("Replaced")
+                    || info.getName().equals("Sweeps")
+                    || info.getName().equals("MaxAge")
+                    || info.getName().equals("MaxAgeOffset")) {
+                actualAttributesValue.put(info.getName(), server.getAttribute(
+                        poolName, info.getName()));
+            }
+            //System.out.println(info.getName() + " " + server.getAttribute(poolName, info.getName()));            
         }
 
-        System.out.println("// Operations:");
+        assertEquals(expectedAttributes, actualAttributes);
+        assertEquals(expectedAttributesValue, actualAttributesValue);
+
+        // Grab pool mbean operations
+        MBeanParameterInfo[] operations = {
+                new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
+                new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
+        List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
+        expectedOperations.add(new MBeanOperationInfo(
+                "FilterAttributes",
+                "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
+                operations, "void", MBeanOperationInfo.UNKNOWN));
+
+        List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
         for (MBeanOperationInfo info : poolMBeanInfo.getOperations()) {
-            System.out.println("// " + info);
+            //System.out.println("// " + info);
+            actualOperations.add(info);
         }
+        assertEquals(expectedOperations, actualOperations);
+
+
+        /*
+        * Invocation MBeanInfo
+        *
+        */
+        List<MBeanAttributeInfo> expectedInvocationAttributes = new ArrayList<MBeanAttributeInfo>();
+        expectedInvocationAttributes.add(new MBeanAttributeInfo("InvocationCount", "long", "", true, false, false));
+        expectedInvocationAttributes.add(new MBeanAttributeInfo("InvocationTime", "long", "", true, false, false));
+        expectedInvocationAttributes.add(new MBeanAttributeInfo("MonitoredMethods", "long", "", true, false, false));
+
+        Map<String, Object> expectedInvocationAttributesValue = new HashMap<String, Object>();
+        expectedInvocationAttributesValue.put("InvocationCount", (long) 6);
+        expectedInvocationAttributesValue.put("InvocationTime", (long) 0);
+        expectedInvocationAttributesValue.put("MonitoredMethods", (long) 4);
+
+
+        String[] methods = {"PostConstruct()", "blue()", "green()", "red()"};
+        for (String s : methods) {
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Count", "long", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".GeometricMean", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Kurtosis", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Max", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Mean", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Min", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile01", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile10", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile25", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile50", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile75", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile90", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Percentile99", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".SampleSize", "int", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Skewness", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".StandardDeviation", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Sum", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Sumsq", "double", "", true, false, false));
+            expectedInvocationAttributes.add(new MBeanAttributeInfo(s + ".Variance", "double", "", true, false, false));
+            if (s.equals("PostConstruct()")) {
+                expectedInvocationAttributesValue.put(s + ".Count", (long) 3);
+            } else {
+                expectedInvocationAttributesValue.put(s + ".Count", (long) 1);
+            }
+            expectedInvocationAttributesValue.put(s + ".GeometricMean", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Kurtosis", Double.NaN);
+            expectedInvocationAttributesValue.put(s + ".Max", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Mean", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Min", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile01", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile10", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile25", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile50", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile75", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile90", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Percentile99", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".SampleSize", (int) 2000);
+            expectedInvocationAttributesValue.put(s + ".Skewness", Double.NaN);
+            expectedInvocationAttributesValue.put(s + ".StandardDeviation", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Sum", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Sumsq", (double) 0.0);
+            expectedInvocationAttributesValue.put(s + ".Variance", (double) 0.0);
+        }
+
+        List<MBeanAttributeInfo> actualInvocationAttributes = new ArrayList<MBeanAttributeInfo>();
+        Map<String, Object> actualInvocationAttributesValue = new HashMap<String, Object>();
+        for (MBeanAttributeInfo info : invocationsMBeanInfo.getAttributes()) {
+            //System.out.println(info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
+            actualInvocationAttributes.add(info);
+            actualInvocationAttributesValue.put(info.getName(), server.getAttribute(invocationsName, info.getName()));
+        }
+        //Verify invocation attributes and values
+        assertEquals(expectedInvocationAttributes, actualInvocationAttributes);
+        assertEquals(expectedInvocationAttributesValue, actualInvocationAttributesValue);
+
+        // Grab invocation mbean operations
+        MBeanParameterInfo[] invocationParameters1 = {
+                new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
+                new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
+        MBeanParameterInfo[] invocationParameters2 = {
+                new MBeanParameterInfo("p1", "int", "")};
+
+        List<MBeanOperationInfo> expectedInvocationOperations = new ArrayList<MBeanOperationInfo>();
+        expectedInvocationOperations.add(new MBeanOperationInfo(
+                "FilterAttributes",
+                "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
+                invocationParameters1, "void", MBeanOperationInfo.UNKNOWN));
+
+        for (String s : methods) {
+            expectedInvocationOperations.add(new MBeanOperationInfo(s + ".setSampleSize", "", invocationParameters2, "void", MBeanOperationInfo.UNKNOWN));
+            expectedInvocationOperations.add(new MBeanOperationInfo(s + ".sortedValues", "", new MBeanParameterInfo[0], "[D", MBeanOperationInfo.UNKNOWN));
+            expectedInvocationOperations.add(new MBeanOperationInfo(s + ".values", "", new MBeanParameterInfo[0], "[D", MBeanOperationInfo.UNKNOWN));
+        }
+
+        List<MBeanOperationInfo> actualInvocationOperations = new ArrayList<MBeanOperationInfo>();
+        for (MBeanOperationInfo info : invocationsMBeanInfo.getOperations()) {
+            //System.out.println("// " + info);
+            actualInvocationOperations.add(info);
+        }
+
+        //Verify invocation operation information and remove bean.
+        assertEquals(expectedInvocationOperations, actualInvocationOperations);
+        ejbJar.removeEnterpriseBean("StatsModule");
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testAdvanced() throws Exception {
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        // containers
+        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        statelessContainerInfo.properties.setProperty("AccessTimeout", "0");
+        statelessContainerInfo.properties.setProperty("PoolSize", "2");
+        statelessContainerInfo.properties.setProperty("PoolMin", "0");
+        statelessContainerInfo.properties.setProperty("StrictPooling", "false");
+        statelessContainerInfo.properties.setProperty("PollInterval", "1");
+        statelessContainerInfo.properties.setProperty("IdleTimeout", "30000");
+        //statelessContainerInfo.properties.setProperty("PoolVersion", "1.0");
+
+        assembler.createContainer(statelessContainerInfo);
+
+        // Setup the descriptor information
+        CounterBean.instances.set(0);
+
+        EjbJar ejbJar = new EjbJar("StatsAdvancedModule");
+        ejbJar.addEnterpriseBean(new StatelessBean(CounterBean.class));
+
+
+        assembler.createApplication(config.configureApplication(ejbJar));
+
+        javax.naming.Context context = new InitialContext();
+        CounterBean bean = (CounterBean) context.lookup("CounterBeanLocalBean");
+
+        // Invoke each method a different number of times
+        for (int i = 0; i < 15; i++) {
+            bean.red();
+        }
+        for (int i = 0; i < 10; i++) {
+            bean.green();
+        }
+        for (int i = 0; i < 5; i++) {
+            bean.blue();
+        }
+
+        CountDownLatch startingPistol = checkout(bean, 7);
+        startingPistol.countDown();
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsAdvancedModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+        ObjectName poolName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsAdvancedModule,StatelessSessionBean=CounterBean,j2eeType=Pool,name=CounterBean");
+
+        // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters        
+        MBeanInfo invocationsMBeanInfo = server.getMBeanInfo(invocationsName);
+        MBeanInfo poolMBeanInfo = server.getMBeanInfo(poolName);
+        for (MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
+            //System.out.println("//" + info.getName() + " " + server.getAttribute(poolName, info.getName()) );
+            if (info.getName().equals("Available")) {
+                assertEquals((long) 2147483647, server.getAttribute(poolName, info.getName()));
+            }
+            if (info.getName().equals("IdleTimeout")) {
+                assertEquals((long) 30000 * 60 * 1000, server.getAttribute(poolName, info.getName()));
+            }
+        }
+
+        for (MBeanAttributeInfo info : invocationsMBeanInfo.getAttributes()) {
+            //System.out.println("//" + info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
+            if (info.getName().equals("MonitoredMethods")) {
+                assertEquals((long) 6, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("InvocationCount")) {
+                assertTrue((Long) (server.getAttribute(invocationsName, info.getName())) >= (7 * 2 + 30));
+            } else if (info.getName().equals("PostConstruct().Count")) {
+                assertEquals((long) 7, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("red().Count")) {
+                assertEquals((long) 15, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("green().Count")) {
+                assertEquals((long) 10, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("blue().Count")) {
+                assertEquals((long) 5, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("checkout(CountDownLatch,CountDownLatch).Count")) {
+                assertEquals((long) 7, server.getAttribute(invocationsName, info.getName()));
+            } else if (info.getName().equals("Overdrafts")) {
+                assertEquals((long) 5, server.getAttribute(invocationsName, info.getName()));
+            }
+        }
+        ejbJar.removeEnterpriseBean("StatsAdvancedModule");
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testInvocation() throws Exception {
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        ConfigurationFactory config = new ConfigurationFactory();
+        Assembler assembler = new Assembler();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        // containers
+        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
+        statelessContainerInfo.properties.setProperty("AccessTimeout", "0");
+        statelessContainerInfo.properties.setProperty("PoolSize", "2");
+        statelessContainerInfo.properties.setProperty("PoolMin", "0");
+        statelessContainerInfo.properties.setProperty("StrictPooling", "true");
+        statelessContainerInfo.properties.setProperty("PollInterval", "1");
+        statelessContainerInfo.properties.setProperty("IdleTimeout", "0");
+
+        assembler.createContainer(statelessContainerInfo);
+
+        // Setup the descriptor information
+        CounterBean.instances.set(0);
+
+        EjbJar ejbJar = new EjbJar("StatsInvocModule");
+        ejbJar.addEnterpriseBean(new StatelessBean(CounterBean.class));
+
+
+        assembler.createApplication(config.configureApplication(ejbJar));
+
+        javax.naming.Context context = new InitialContext();
+        CounterBean bean = (CounterBean) context.lookup("CounterBeanLocalBean");
+
+        //Invoke  
+        bean.waitSecs();
+
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsInvocModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+
+        // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters        
+        MBeanInfo invocationsMBeanInfo = server.getMBeanInfo(invocationsName);
+        for (MBeanAttributeInfo info : invocationsMBeanInfo.getAttributes()) {
+//            System.out.println("//" + info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
+            if (info.getName().equals("waitSecs().GeometricMean")
+                    || info.getName().equals("waitSecs().Max")
+                    || info.getName().equals("waitSecs().Mean")
+                    || info.getName().equals("waitSecs().Min")
+                    || info.getName().equals("waitSecs().Percentile01")
+                    || info.getName().equals("waitSecs().Percentile10")
+                    || info.getName().equals("waitSecs().Percentile25")
+                    || info.getName().equals("waitSecs().Percentile50")
+                    || info.getName().equals("waitSecs().Percentile75")
+                    || info.getName().equals("waitSecs().Percentile90")
+                    || info.getName().equals("waitSecs().Percentile99")
+                    || info.getName().equals("waitSecs().Sum")) {
+                assertTrue(((Double) (server.getAttribute(invocationsName, info.getName()))) >= 999);
+            }
+        }
+        ejbJar.removeEnterpriseBean("StatsInvocModule");
     }
 
     /**
@@ -239,7 +590,7 @@ public class StatelessStatisticsTest extends TestCase {
      * <p/>
      * // Look at pool stats
      * ...
-     * 
+     * <p/>
      * // Release them all back into the pool
      * startingPistol.countDown();
      *
@@ -295,6 +646,10 @@ public class StatelessStatisticsTest extends TestCase {
         }
 
         public void blue() {
+        }
+
+        public void waitSecs() throws InterruptedException {
+            Thread.sleep((long) (1000));
         }
 
         public void checkout(CountDownLatch startingLine, CountDownLatch startPistol) {
