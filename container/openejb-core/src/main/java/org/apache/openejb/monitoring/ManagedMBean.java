@@ -45,6 +45,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 /**
@@ -377,7 +381,7 @@ public class ManagedMBean implements DynamicMBean {
         }
 
         public Class getType() {
-            return field.getType();
+            return unwrap(field.getType());
         }
 
         public String toString() {
@@ -406,7 +410,35 @@ public class ManagedMBean implements DynamicMBean {
         }
 
         public Object get() throws IllegalAccessException {
-            return field.get(target);
+            return unwrap(field.get(target));
+        }
+
+        public Class<?> unwrap(Class<?> clazz) {
+            if (clazz == AtomicInteger.class) {
+                return int.class;
+            } else if (clazz == AtomicBoolean.class) {
+                return boolean.class;
+            } else if (clazz == AtomicLong.class) {
+                return long.class;
+            } else if (clazz == AtomicReference.class) {
+                return Object.class;
+            } else {
+                return clazz;
+            }
+        }
+
+        public Object unwrap(Object clazz) {
+            if (clazz instanceof AtomicInteger) {
+                return ((AtomicInteger) clazz).get();
+            } else if (clazz instanceof AtomicBoolean) {
+                return ((AtomicBoolean) clazz).get();
+            } else if (clazz instanceof AtomicLong) {
+                return ((AtomicLong) clazz).get();
+            } else if (clazz instanceof AtomicReference) {
+                return ((AtomicReference) clazz).get();
+            } else {
+                return clazz;
+            }
         }
     }
 
