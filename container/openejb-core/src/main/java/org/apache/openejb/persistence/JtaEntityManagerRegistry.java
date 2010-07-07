@@ -20,6 +20,7 @@ package org.apache.openejb.persistence;
 
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Geronimo;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -125,6 +126,11 @@ public class JtaEntityManagerRegistry {
             }
             return entityManager;
         }
+    }
+
+    @Geronimo
+    public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended) throws IllegalStateException {
+        return getEntityManager(entityManagerFactory, properties, extended, "<unknown>");
     }
 
     /**
