@@ -17,7 +17,6 @@
 package org.apache.openejb.monitoring;
 
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -31,7 +30,6 @@ import org.apache.openejb.util.Duration;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.interceptor.InvocationContext;
 
 /**
  * @version $Rev$ $Date$
@@ -47,9 +45,9 @@ public class ScratchPad {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
         Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(4);
+        builder.setMinSize(4);
         builder.setIdleTimeout(new Duration("30 seconds"));
-        builder.setPollInterval(new Duration("15 seconds"));
+        builder.setSweepInterval(new Duration("15 seconds"));
         builder.setMaxAge(new Duration("2 minutes"));
         builder.setSupplier(new Pool.Supplier(){
             public void discard(Object o, Pool.Event reason) {

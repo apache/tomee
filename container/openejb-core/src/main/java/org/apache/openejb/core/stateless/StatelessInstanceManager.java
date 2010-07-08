@@ -135,7 +135,7 @@ public class StatelessInstanceManager {
 
         Instance instance = null;
         try {
-            final Pool.Entry<Instance> entry = data.poolPop();
+            final Pool<Instance>.Entry entry = data.poolPop();
 
             if (entry != null){
                 instance = entry.get();
@@ -531,7 +531,7 @@ public class StatelessInstanceManager {
             return accessTimeout;
         }
 
-        public Pool.Entry<Instance> poolPop() throws InterruptedException, TimeoutException {
+        public Pool<Instance>.Entry poolPop() throws InterruptedException, TimeoutException {
             return pool.pop(accessTimeout.getTime(), accessTimeout.getUnit());
         }
 

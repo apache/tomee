@@ -236,7 +236,7 @@ public class FullPoolFailoverTest extends TestCase {
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("TimeOut", "100");
         statelessContainerInfo.properties.setProperty("PoolSize", "" + statelessPoolSize);
-        statelessContainerInfo.properties.setProperty("PoolMin", "2");
+        statelessContainerInfo.properties.setProperty("MinSize", "2");
         statelessContainerInfo.properties.setProperty("StrictPooling", "true");
         assembler.createContainer(statelessContainerInfo);
 
