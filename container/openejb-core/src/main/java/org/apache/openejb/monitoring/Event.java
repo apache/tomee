@@ -32,11 +32,9 @@ import java.text.DateFormat;
 public class Event {
     private final AtomicLong count = new AtomicLong();
     private final AtomicLong last = new AtomicLong();
-//    private final SynchronizedDescriptiveStatistics frequency = new SynchronizedDescriptiveStatistics(2000);
 
     public void record() {
-        long start = last.getAndSet(System.nanoTime());
-//        frequency.addValue(millis(start - last.get()));
+        last.getAndSet(System.currentTimeMillis());
         count.incrementAndGet();
     }
 
@@ -47,19 +45,11 @@ public class Event {
 
     @Managed
     public String getLatest() {
-        long last = millis(this.last.get());
+        long last = this.last.get();
 
         if (last <= 0) return "-";
         
         DateFormat format = SimpleDateFormat.getDateTimeInstance();
         return format.format(new Date(last));
-    }
-
-//    public DescriptiveStatistics getFrequency() {
-//        return frequency;
-//    }
-
-    private long millis(long nanos) {
-        return TimeUnit.MILLISECONDS.convert(nanos, TimeUnit.NANOSECONDS);
     }
 }

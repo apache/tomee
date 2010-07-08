@@ -65,12 +65,12 @@ public class StatelessContainerFactory {
         if (this.accessTimeout == null) setTimeOut(accessTimeout);
     }
 
-    public void setPoolMax(int max) {
+    public void setMaxSize(int max) {
         if (this.max == null) setPoolSize(max);
     }
 
     /**
-     * @deprecated use PoolMax
+     * @deprecated use MaxSize
      * @param max
      */
     public void setPoolSize(int max) {
@@ -78,8 +78,8 @@ public class StatelessContainerFactory {
         pool.setPoolSize(max);
     }
 
-    public void setPoolMin(int min) {
-        pool.setPoolMin(min);
+    public void setMinSize(int min) {
+        pool.setMinSize(min);
     }
 
     public void setStrictPooling(boolean strict) {
@@ -94,12 +94,20 @@ public class StatelessContainerFactory {
         pool.setIdleTimeout(idleTimeout);
     }
 
-    public void setPollInterval(Duration interval) {
-        pool.setPollInterval(interval);
+    public void setSweepInterval(Duration interval) {
+        pool.setSweepInterval(interval);
     }
 
     public void setReplaceAged(boolean replaceAged) {
         pool.setReplaceAged(replaceAged);
+    }
+
+    public void setReplaceFlushed(boolean replaceFlushed) {
+        pool.setReplaceFlushed(replaceFlushed);
+    }
+
+    public void setGarbageCollection(boolean garbageCollection) {
+        pool.setGarbageCollection(garbageCollection);
     }
 
     public void setMaxAgeOffset(double maxAgeOffset) {

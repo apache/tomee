@@ -59,13 +59,13 @@ public class PoolTest extends TestCase {
         final int min = 2;
         final Pool<Bean> pool = new Pool<Bean>(max, min, true);
 
-        final List<Pool.Entry<Bean>> entries = drain(pool);
+        final List<Pool<Bean>.Entry> entries = drain(pool);
 
         // Should have received "max" number of nulls
         checkMax(max, entries);
 
         // All entries should be null
-        for (Pool.Entry<Bean> entry : entries) {
+        for (Pool<Bean>.Entry entry : entries) {
             assertNull(entry);
         }
 
@@ -90,7 +90,7 @@ public class PoolTest extends TestCase {
         for (int i = 1; i <= max; i++) {
             assertTrue("i=" + i + ", max=" + max, pool.add(new Bean()));
 
-            List<Pool.Entry<Bean>> list = drain(pool);
+            List<Pool<Bean>.Entry> list = drain(pool);
             checkMax(max, list);
             checkMin(Math.min(i, min), list);
             checkEntries(i, list);
@@ -103,8 +103,8 @@ public class PoolTest extends TestCase {
         System.out.println("PoolTest.testNonStrictDiscard");
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(0);
-        builder.setPoolMax(0);
+        builder.setMinSize(0);
+        builder.setMaxSize(1);
         builder.setStrictPooling(false);
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
@@ -121,29 +121,38 @@ public class PoolTest extends TestCase {
         final Pool pool = builder.build().start();
 
         assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
+        assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
+        assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
 
         final Bean bean = new Bean();
 
+        assertTrue(pool.push(bean));
+        assertFalse(pool.push(bean));
         assertFalse(pool.push(bean));
 
         assertTrue(bean.discarded > 0);
+        
+        assertNotNull(pool.pop(0, TimeUnit.MILLISECONDS));
+        assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
+        assertNull(pool.pop(0, TimeUnit.MILLISECONDS));
+
     }
 
     private <T> void drainCheckPush(int max, int min, Pool<T> pool) throws InterruptedException {
-        final List<Pool.Entry<T>> list = drain(pool);
+        final List<Pool<T>.Entry> list = drain(pool);
         checkMax(max, list);
         checkMin(min, list);
         push(pool, list);
     }
 
-    private <T> void discard(Pool<T> pool, List<Pool.Entry<T>> list) {
-        for (Pool.Entry<T> entry : list) {
+    private <T> void discard(Pool<T> pool, List<Pool<T>.Entry> list) {
+        for (Pool<T>.Entry entry : list) {
             pool.discard(entry);
         }
     }
 
-    private <T> void push(Pool<T> pool, List<Pool.Entry<T>> list) {
-        for (Pool.Entry<T> entry : list) {
+    private <T> void push(Pool<T> pool, List<Pool<T>.Entry> list) {
+        for (Pool<T>.Entry entry : list) {
             if (entry != null && entry.get() instanceof Bean) {
                 Bean bean = (Bean) entry.get();
                 bean.push();
@@ -166,21 +175,21 @@ public class PoolTest extends TestCase {
         assertFalse(pool.add("extra"));
 
         // Check the contents of the pool
-        final List<Pool.Entry<String>> entries = drain(pool);
+        final List<Pool<String>.Entry> entries = drain(pool);
 
         checkMax(max, entries);
         checkMin(min, entries);
 
         // Push one back and check pool
         pool.push(entries.remove(0));
-        final List<Pool.Entry<String>> entries2 = drain(pool);
+        final List<Pool<String>.Entry> entries2 = drain(pool);
         assertEquals(max, entries2.size() + entries.size());
 
 
         // discard all instances and add new ones
         entries.addAll(entries2);
         entries2.clear();
-        final Iterator<Pool.Entry<String>> iterator = entries.iterator();
+        final Iterator<Pool<String>.Entry> iterator = entries.iterator();
         while (iterator.hasNext()) {
 
             // Attempt two discards, followed by two adds
@@ -194,7 +203,7 @@ public class PoolTest extends TestCase {
         }
 
         // Once again check min and max
-        final List<Pool.Entry<String>> list = drain(pool);
+        final List<Pool<String>.Entry> list = drain(pool);
         checkMax(max, list);
         checkMin(min, list);
     }
@@ -270,9 +279,9 @@ public class PoolTest extends TestCase {
         final List<Bean> discarded = new CopyOnWriteArrayList<Bean>();
         final CountDownLatch discard = new CountDownLatch(max);
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
-        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
+        builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 try {
@@ -338,10 +347,10 @@ public class PoolTest extends TestCase {
         final CountDownLatch hold = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
         builder.setIdleTimeout(new Duration(idleTimeout, TimeUnit.MILLISECONDS));
-        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
@@ -425,9 +434,9 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
-        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
+        builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
@@ -560,10 +569,10 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
-        builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
+        builder.setSweepInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
@@ -713,9 +722,9 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
-        builder.setPollInterval(new Duration(poll, TimeUnit.MILLISECONDS));
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
+        builder.setSweepInterval(new Duration(poll, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier() {
             public void discard(Object o, Pool.Event reason) {
                 discarded.countDown();
@@ -869,10 +878,10 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
-        builder.setPollInterval(new Duration(poll, MILLISECONDS));
+        builder.setSweepInterval(new Duration(poll, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean o, Pool.Event reason) {
                 countDown(discarded, o, "discarded");
@@ -1030,9 +1039,9 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
-        builder.setPollInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
+        builder.setSweepInterval(new Duration(sweepInterval, TimeUnit.MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
@@ -1071,13 +1080,13 @@ public class PoolTest extends TestCase {
 
         {
             // Drain pool again, flush, then try and return them
-            final List<Pool.Entry<Bean>> entries = drain(pool, 100);
+            final List<Pool<Bean>.Entry> entries = drain(pool, 100);
             checkEntries(max, entries);
 
             // Now call flush
             pool.flush();
 
-            for (Pool.Entry<Bean> entry : entries) {
+            for (Pool<Bean>.Entry entry : entries) {
                 assertFalse("entry should not be accepted", pool.push(entry));
             }
         }
@@ -1168,10 +1177,10 @@ public class PoolTest extends TestCase {
         final CountDownLatch createInstances = new CountDownLatch(1);
 
         final Pool.Builder builder = new Pool.Builder();
-        builder.setPoolMin(min);
-        builder.setPoolMax(max);
+        builder.setMinSize(min);
+        builder.setMaxSize(max);
         builder.setMaxAge(new Duration(maxAge, MILLISECONDS));
-        builder.setPollInterval(new Duration(sweepInterval, MILLISECONDS));
+        builder.setSweepInterval(new Duration(sweepInterval, MILLISECONDS));
         builder.setSupplier(new Pool.Supplier<Bean>() {
             public void discard(Bean bean, Pool.Event reason) {
                 bean.discard();
@@ -1210,13 +1219,13 @@ public class PoolTest extends TestCase {
 
         {
             // Drain pool again, flush, then try and return them
-            final List<Pool.Entry<Bean>> entries = drain(pool, 100);
+            final List<Pool<Bean>.Entry> entries = drain(pool, 100);
             checkEntries(max, entries);
 
             // Now wait for max age
             Thread.sleep(maxAge);
 
-            for (Pool.Entry<Bean> entry : entries) {
+            for (Pool<Bean>.Entry entry : entries) {
                 assertFalse("entry should not be accepted", pool.push(entry));
             }
         }
@@ -1302,32 +1311,32 @@ public class PoolTest extends TestCase {
         }
     }
 
-    private <T> void checkMax(int max, List<Pool.Entry<T>> entries) {
+    private <T> void checkMax(int max, List<Pool<T>.Entry> entries) {
         assertEquals(max, entries.size());
     }
 
-    private <T> void checkMin(int min, List<Pool.Entry<T>> entries) {
+    private <T> void checkMin(int min, List<Pool<T>.Entry> entries) {
         assertEquals(min, getMin(entries).size());
     }
 
-    private <T> void checkNull(List<Pool.Entry<T>> entries) {
-        for (Pool.Entry<T> entry : entries) {
+    private <T> void checkNull(List<Pool<T>.Entry> entries) {
+        for (Pool<T>.Entry entry : entries) {
             assertNull(entry);
         }
     }
 
-    private <T> List<Pool.Entry<T>> getMin(List<Pool.Entry<T>> entries) {
-        List<Pool.Entry<T>> list = new ArrayList<Pool.Entry<T>>();
+    private <T> List<Pool<T>.Entry> getMin(List<Pool<T>.Entry> entries) {
+        List<Pool<T>.Entry> list = new ArrayList<Pool<T>.Entry>();
 
-        for (Pool.Entry<T> entry : entries) {
+        for (Pool<T>.Entry entry : entries) {
             if (entry != null && entry.hasHardReference()) list.add(entry);
         }
         return list;
     }
 
-    private <T> void checkEntries(int expected, List<Pool.Entry<T>> entries) {
+    private <T> void checkEntries(int expected, List<Pool<T>.Entry> entries) {
         int found = 0;
-        for (Pool.Entry<T> entry : entries) {
+        for (Pool<T>.Entry entry : entries) {
             if (entry == null) continue;
             found++;
             assertNotNull(entry.get());
@@ -1336,12 +1345,12 @@ public class PoolTest extends TestCase {
         assertEquals(expected, found);
     }
 
-    private <T> List<Pool.Entry<T>> drain(Pool<T> pool) throws InterruptedException {
+    private <T> List<Pool<T>.Entry> drain(Pool<T> pool) throws InterruptedException {
         return drain(pool, 0);
     }
 
-    private <T> List<Pool.Entry<T>> drain(Pool<T> pool, int timeout) throws InterruptedException {
-        List<Pool.Entry<T>> entries = new ArrayList<Pool.Entry<T>>();
+    private <T> List<Pool<T>.Entry> drain(Pool<T> pool, int timeout) throws InterruptedException {
+        List<Pool<T>.Entry> entries = new ArrayList<Pool<T>.Entry>();
         try {
             while (true) {
                 entries.add(pool.pop(timeout, MILLISECONDS));

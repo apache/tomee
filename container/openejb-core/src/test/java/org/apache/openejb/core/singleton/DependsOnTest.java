@@ -68,7 +68,7 @@ public class DependsOnTest extends TestCase {
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
 
         StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
-        statelessContainer.properties.setProperty("PoolMin", "1");
+        statelessContainer.properties.setProperty("MinSize", "1");
         assembler.createContainer(statelessContainer);
         
         actual.clear();

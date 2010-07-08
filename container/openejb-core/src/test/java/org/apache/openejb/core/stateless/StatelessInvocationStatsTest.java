@@ -119,8 +119,8 @@ public class StatelessInvocationStatsTest extends TestCase {
         // containers
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("AccessTimeout", "100");
-        statelessContainerInfo.properties.setProperty("PoolSize", "15");
-        statelessContainerInfo.properties.setProperty("PoolMin", "3");
+        statelessContainerInfo.properties.setProperty("MaxSize", "15");
+        statelessContainerInfo.properties.setProperty("MinSize", "3");
         statelessContainerInfo.properties.setProperty("StrictPooling", "true");
         assembler.createContainer(statelessContainerInfo);
 
@@ -259,8 +259,8 @@ public class StatelessInvocationStatsTest extends TestCase {
         // containers
         StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainerInfo.properties.setProperty("AccessTimeout", "0");
-        statelessContainerInfo.properties.setProperty("PoolSize", "2");
-        statelessContainerInfo.properties.setProperty("PoolMin", "0");
+        statelessContainerInfo.properties.setProperty("MaxSize", "2");
+        statelessContainerInfo.properties.setProperty("MinSize", "0");
         statelessContainerInfo.properties.setProperty("StrictPooling", "true");
         statelessContainerInfo.properties.setProperty("PollInterval", "1");
         statelessContainerInfo.properties.setProperty("IdleTimeout", "0");

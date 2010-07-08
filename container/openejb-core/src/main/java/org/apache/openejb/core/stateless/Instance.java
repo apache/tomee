@@ -18,8 +18,6 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.util.Pool;
 
-import java.util.List;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -27,20 +25,20 @@ import java.util.Map;
  */
 public class Instance {
     public final Object bean;
-    public final Map<String,Object> interceptors;
+    public final Map<String, Object> interceptors;
 
-    private Pool.Entry<Instance> poolEntry;
+    private Pool<Instance>.Entry poolEntry;
 
     public Instance(Object bean, Map<String, Object> interceptors) {
         this.bean = bean;
         this.interceptors = interceptors;
     }
 
-    public Pool.Entry<Instance> getPoolEntry() {
+    public Pool<Instance>.Entry getPoolEntry() {
         return poolEntry;
     }
 
-    public void setPoolEntry(Pool.Entry<Instance> poolEntry) {
+    public void setPoolEntry(Pool<Instance>.Entry poolEntry) {
         this.poolEntry = poolEntry;
     }
 }

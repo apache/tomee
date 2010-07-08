@@ -103,24 +103,27 @@
     # they will not be returned to the pool and instead will be
     # immediately destroyed.
 
-    PoolSize 10
+    MaxSize = 10
 
-    # Specifies the minimum number of bean instances that should be
-    # in the pool for each bean.  Pools are prefilled to the minimum
-    # on startup.  Pool "shrinking" is achived through SoftReferences
-    # and natural vm garbage collection. All but the minimum are allowed
-    # to be garbage collected by the VM when memory is needed.
+    # Specifies the minimum number of bean instances that should be in
+    # the pool for each bean.  Pools are prefilled to the minimum on
+    # startup.  Note this will create start order dependencies between
+    # other beans that also eagerly start, such as other @Stateless
+    # beans with a minimum or @Singleton beans using @Startup.  The
+    # @DependsOn annotation can be used to appropriately influence
+    # start order.
     #
-    # The minimum pool size is rigidly maintained.  The minimum side
-    # of the pool is not eligible for IdleTimeout, but is subject to
-    # MaxAge and flushing.  When the pool is flushed, the pool is
-    # immediately refilled to the minimum size with MaxAgeOffset
-    # applied.  When an instance from the minimum side of the pool
-    # reaches it's MaxAge, it is also immediately replaced.
-    # Replacement is done in a background queue using the number of
-    # threads specified by CallbackThreads.
+    # The minimum pool size is rigidly maintained.  Instances in the
+    # minimum side of the pool are not eligible for IdleTimeout or
+    # GarbageCollection, but are subject to MaxAge and flushing.
+    #
+    # If the pool is flushed it is immediately refilled to the minimum
+    # size with MaxAgeOffset applied.  If an instance from the minimum
+    # side of the pool reaches its MaxAge, it is also immediately
+    # replaced.  Replacement is done in a background queue using the
+    # number of threads specified by CallbackThreads.
     
-    PoolMin 0
+    MinSize = 0
 
     # StrictPooling tells the container what to do when the pool
     # reaches it's maximum size and there are incoming requests that
@@ -128,18 +131,18 @@
     #
     # With strict pooling, requests will have to wait for instances to
     # become available. The pool size will never grow beyond the the
-    # set PoolSize value.  The maximum amount of time a request should
+    # set MaxSize value.  The maximum amount of time a request should
     # wait is specified via the AccessTimeout setting.
     #
     # Without strict pooling, the container will create temporary
     # instances to meet demand. The instances will last for just one
     # method invocation and then are removed.
     #
-    # Setting StrictPooling to false and PoolSize to 0 will result in
+    # Setting StrictPooling to false and MaxSize to 0 will result in
     # no pooling. Instead instances will be created on demand and live
     # for exactly one method call before being removed.
 
-    StrictPooling true
+    StrictPooling = true
 
     # Specifies the maximum time that an instance should live before
     # it should be retired and removed from use.  This will happen
@@ -153,17 +156,59 @@
 
     MaxAge = 0 hours
 
+    # When ReplaceAged is enabled, any instances in the pool that
+    # expire due to reaching their MaxAge will be replaced immediately
+    # so that the pool will remain at its current size.  Replacement
+    # is done in a background queue so that incoming threads will not
+    # have to wait for instance creation.
+    #
+    # The aim of his option is to prevent user requests from paying
+    # the instance creation cost as MaxAge is enforced, potentially
+    # while under heavy load at peak hours.
+    #
     # Instances from the minimum side of the pool are always replaced
-    # when they reach their MaxAge.  When this option is enabled, any
-    # instances in the pool that expire due to reaching their MaxAge
-    # will be replaced immediately so that the pool will remain at
-    # it's current size.  Replacement is done in a background queue so
-    # that incoming threads will not have to wait for instance
-    # creation.  The aim of his option is to prevent user requests
-    # from paying the instance creation cost as MaxAge is enforced,
-    # potentially while under heavy load.
+    # when they reach their MaxAge, this setting dictates the
+    # treatment of non-minimum instances.
 
     ReplaceAged = true
+
+    # When ReplaceFlushed is enabled, any instances in the pool that
+    # are flushed will be replaced immediately so that the pool will
+    # remain at its current size.  Replacement is done in a background
+    # queue so that incoming threads will not have to wait for
+    # instance creation.
+    #
+    # The aim of his option is to prevent user requests from paying
+    # the instance creation cost if a flush performed while under
+    # heavy load at peak hours.
+    #
+    # Instances from the minimum side of the pool are always replaced
+    # when they are flushed, this setting dictates the treatment of
+    # non-minimum instances.
+    #
+    # A bean may flush its pool by casting the SessionContext to
+    # Flushable and calling flush().  See SweepInterval for details on
+    # how flush is performed.
+    #
+    #   import javax.annotation.Resource;
+    #   import javax.ejb.SessionContext;
+    #   import javax.ejb.Stateless;
+    #   import java.io.Flushable;
+    #   import java.io.IOException;
+    #
+    #   @Stateless
+    #   public class MyBean {
+    #
+    #       @Resource
+    #       private SessionContext sessionContext;
+    #
+    #       public void flush() throws IOException {
+    #
+    #           ((Flushable) sessionContext).flush();
+    #       }
+    #   }
+
+    ReplaceFlushed = false
 
     # Applies to MaxAge usage and would rarely be changed, but is a
     # nice feature to understand.
@@ -188,7 +233,7 @@
     #
     # The default MaxAgeOffset is -1 which causes the initial
     # instances in the pool to live a bit longer before expiring.  As
-    # a concrete example, let's say the PoolMin is 4 and the MaxAge is
+    # a concrete example, let's say the MinSize is 4 and the MaxAge is
     # 100 years.  The generated offsets for the four instances created
     # at startup would be 0, -25, -50, -75.  So the first instance
     # would be "born" at age 0, die at 100, living 100 years.  The
@@ -197,7 +242,7 @@
     # years.
     #
     # A MaxAgeOffset of 1 would cause instances to be "born" older
-    # and therefore die sooner.  Using the same example PoolMin of 4
+    # and therefore die sooner.  Using the same example MinSize of 4
     # and MaxAge of 100 years, the life spans of these initial four
     # instances would be 100, 75, 50, and 25 years respectively.
     #
@@ -213,29 +258,38 @@
     # sit idly in the pool without use before it should be retired and
     # removed.
     #
-    # Note that all instances in the pool, excluding the minimum, are
-    # eligible for garbage collection by the virtual machine as per
-    # the rules of java.lang.ref.SoftReference, so the use of an
-    # IdleTimeout is not required to conserve JVM-managed memory or
-    # shrink the pool.
-    #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
     IdleTimeout = 0 minutes
 
+    # Allows Garbage Collection to be used as a mechanism for shrinking
+    # the pool.  When set to true all instances in the pool, excluding
+    # the minimum, are eligible for garbage collection by the virtual
+    # machine as per the rules of java.lang.ref.SoftReference and can be
+    # claimed by the JVM to free memory.  Instances garbage collected
+    # will have their @PreDestroy methods called during finalization.
+    
+    GarbageCollection = true
+
     # The frequency in which the container will sweep the pool and
     # evict expired instances.  Eviction is how the IdleTimeout,
     # MaxAge, and pool "flush" functionality is enforced.  Higher
-    # intervals are better.  Expired instances in use while the pool
-    # is swept will still be evicted upon return to the pool.
+    # intervals are better.
+    #
+    # Instances in use are excluded from sweeping.  Should an instance
+    # expire while in use it will be evicted immediately upon return
+    # to the pool.  Effectively MaxAge and flushes will be enforced as
+    # a part of normal activity or sweeping, while IdleTimeout is only
+    # enforcable via sweeping.  This makes aggressive sweeping less
+    # important for a pool under moderate load.
     #
     # Usable time units: nanoseconds, microsecons, milliseconds,
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
-    PollInterval = 5 minutes
+    SweepInterval = 5 minutes
 
     # When sweeping the pool for expired instances a thread pool is
     # used to process calling @PreDestroy on expired instances as well

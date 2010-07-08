@@ -73,7 +73,7 @@ public class StatelessContainer extends AbstractContainerProvider {
             properties.put("TimeOut", timeOut);
         }
         if (poolSize != null) {
-            properties.put("PoolSize", poolSize);
+            properties.put("MaxSize", poolSize);
         }
         if (strictPooling != null) {
             properties.put("StrictPooling", strictPooling);
