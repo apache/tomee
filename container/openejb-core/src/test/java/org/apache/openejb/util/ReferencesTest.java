@@ -182,6 +182,41 @@ public class ReferencesTest extends TestCase {
         }
     }
 
+    // proof that this sort is not a stable sort -- i.e. disrupts order unnecessarily
+    // this test needs to pass
+    public void _testNoReferences() {
+
+        beans = new ArrayList<Bean>();
+
+        Bean b = bean("b");
+        Bean a = bean("a");
+        Bean d = bean("d");
+        Bean c = bean("c");
+        Bean f = bean("f");
+        Bean e = bean("e");
+
+        List<Bean> actual = sort(beans, visitor);
+
+        assertEquals(expected(b, a, d, c, f, e), actual);
+    }
+
+    // items are already in the right order
+    // this should pass but doesn't
+    public void _testOrderedReferences() {
+
+        beans = new ArrayList<Bean>();
+
+        Bean b = bean("b");
+        Bean a = bean("a");
+        Bean d = bean("d","a", "b");
+        Bean c = bean("c");
+        Bean f = bean("f");
+        Bean e = bean("e", "f");
+
+        List<Bean> actual = sort(beans, visitor);
+
+        assertEquals(expected(b, a, d, c, f, e), actual);
+    }
 
     private List<Bean> expected(Bean... beans){
         return Arrays.asList(beans);
