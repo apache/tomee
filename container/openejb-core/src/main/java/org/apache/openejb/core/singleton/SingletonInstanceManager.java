@@ -45,6 +45,8 @@ import javax.management.ObjectName;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.InjectionProcessor;
+import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -126,11 +128,6 @@ public class SingletonInstanceManager {
 
     private Instance createInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws org.apache.openejb.ApplicationException {
         Class beanClass = deploymentInfo.getBeanClass();
-        ObjectRecipe objectRecipe = new ObjectRecipe(beanClass);
-        objectRecipe.allow(Option.FIELD_INJECTION);
-        objectRecipe.allow(Option.PRIVATE_PROPERTIES);
-        objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-        objectRecipe.allow(Option.NAMED_PARAMETERS);
 
         Operation originalOperation = callContext.getCurrentOperation();
         BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
@@ -151,12 +148,6 @@ public class SingletonInstanceManager {
                 }
             }
 
-            if (SessionBean.class.isAssignableFrom(beanClass) || hasSetSessionContext(beanClass)) {
-                callContext.setCurrentOperation(Operation.INJECTION);
-                callContext.setCurrentAllowedStates(SingletonContext.getStates());
-                objectRecipe.setProperty("sessionContext", sessionContext);
-            }
-
             // This is a fix for GERONIMO-3444
             synchronized(this){
                 try {
@@ -168,15 +159,18 @@ public class SingletonInstanceManager {
                 }
             }
 
-            fillInjectionProperties(objectRecipe, beanClass, deploymentInfo, ctx);
-
-            Object bean = objectRecipe.create(beanClass.getClassLoader());
-            Map unsetProperties = objectRecipe.getUnsetProperties();
-            if (unsetProperties.size() > 0) {
-                for (Object property : unsetProperties.keySet()) {
-                    logger.warning("Injection: No such property '" + property + "' in class " + beanClass.getName());
+            // Create bean instance
+            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
+            try {
+                if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
+                    callContext.setCurrentOperation(Operation.INJECTION);
+                    injectionProcessor.setProperty("sessionContext", sessionContext);
                 }
+            } catch (NoSuchMethodException ignored) {
+                // bean doesn't have a setSessionContext method, so we don't need to inject one
             }
+
+            Object bean = injectionProcessor.createInstance();
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
 
@@ -187,19 +181,14 @@ public class SingletonInstanceManager {
             }
 
             for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
-                if (interceptorData.getInterceptorClass().equals(beanClass)) continue;
+                if (interceptorData.getInterceptorClass().equals(beanClass)) {
+                    continue;
+                }
 
                 Class clazz = interceptorData.getInterceptorClass();
-                ObjectRecipe interceptorRecipe = new ObjectRecipe(clazz);
-                interceptorRecipe.allow(Option.FIELD_INJECTION);
-                interceptorRecipe.allow(Option.PRIVATE_PROPERTIES);
-                interceptorRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-                interceptorRecipe.allow(Option.NAMED_PARAMETERS);
-
-                fillInjectionProperties(interceptorRecipe, clazz, deploymentInfo, ctx);
-
+                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), unwrap(ctx));
                 try {
-                    Object interceptorInstance = interceptorRecipe.create(clazz.getClassLoader());
+                    Object interceptorInstance = interceptorInjector.createInstance();
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
                 } catch (ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
@@ -244,52 +233,6 @@ public class SingletonInstanceManager {
         } finally {
             callContext.setCurrentOperation(originalOperation);
             callContext.setCurrentAllowedStates(originalAllowedStates);
-        }
-    }
-
-    private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
-        boolean usePrefix = true;
-
-        try {
-            clazz.getConstructor();
-        } catch (NoSuchMethodException e) {
-            // Using constructor injection
-            // xbean can't handle the prefix yet
-            usePrefix = false;
-        }
-
-        for (Injection injection : deploymentInfo.getInjections()) {
-            if (!injection.getTarget().isAssignableFrom(clazz)) continue;
-            try {
-                String jndiName = injection.getJndiName();
-                Object object = context.lookup("comp/env/" + jndiName);
-                String prefix;
-                if (usePrefix) {
-                    prefix = injection.getTarget().getName() + "/";
-                } else {
-                    prefix = "";
-                }
-
-                if (object instanceof String) {
-                    String string = (String) object;
-                    // Pass it in raw so it could be potentially converted to
-                    // another data type by an xbean-reflect property editor
-                    objectRecipe.setProperty(prefix + injection.getName(), string);
-                } else {
-                    objectRecipe.setProperty(prefix + injection.getName(), object);
-                }
-            } catch (NamingException e) {
-                logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
-            }
-        }
-    }
-
-    private boolean hasSetSessionContext(Class beanClass) {
-        try {
-            beanClass.getMethod("setSessionContext", SessionContext.class);
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
         }
     }
 
