@@ -22,6 +22,7 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 import javax.ejb.SessionContext;
 import javax.ejb.EJBException;
+import javax.annotation.Resource;
 import java.util.Properties;
 import java.rmi.RemoteException;
 
@@ -101,6 +102,7 @@ public class BasicStatelessPojoBean implements BasicStatelessBusinessLocal, Basi
         return null;
     }
 
+    @Resource
     public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
     }
 

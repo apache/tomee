@@ -25,6 +25,7 @@ import javax.ejb.Remove;
 import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
+import javax.annotation.Resource;
 
 /**
  * @version $Rev$ $Date$
@@ -37,6 +38,7 @@ public class PersistenceContextStatefulBean {
     private static EntityManager inheritedDelegate;
     private SessionContext ejbContext;
 
+    @Resource
     public void setSessionContext(SessionContext ctx) {
         ejbContext = ctx;
     }

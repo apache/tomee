@@ -596,14 +596,6 @@ public class ManagedContainer implements RpcContainer {
 
             // Create bean instance
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
-            try {
-                if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
-                    callContext.setCurrentOperation(Operation.INJECTION);
-                    injectionProcessor.setProperty("sessionContext", sessionContext);
-                }
-            } catch (NoSuchMethodException ignored) {
-                // bean doesn't have a setSessionContext method, so we don't need to inject one
-            }
             Object bean = injectionProcessor.createInstance();
 
             // Create interceptors

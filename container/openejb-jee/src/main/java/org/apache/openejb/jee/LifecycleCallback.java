@@ -71,6 +71,11 @@ public class LifecycleCallback implements CallbackMethod {
         this.lifecycleCallbackMethod = lifecycleCallbackMethod;
     }
 
+    public LifecycleCallback(NamedMethod method) {
+        this.lifecycleCallbackClass = method.getClassName();
+        this.lifecycleCallbackMethod = method.getMethodName();
+    }
+
     public String getLifecycleCallbackClass() {
         return lifecycleCallbackClass;
     }

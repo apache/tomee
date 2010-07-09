@@ -235,8 +235,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
 
-        private final AppModulePreProcessor.SessionSynchronizationProcessor sessionSynchronizationProcessor = new AppModulePreProcessor.SessionSynchronizationProcessor();
-
         public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
                 "javax.ejb.SessionContext",
                 "javax.ejb.EntityContext",
@@ -433,9 +431,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new SingletonBean(ejbName, beanClass.getName());
                     ejbJar.addEnterpriseBean(enterpriseBean);
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -457,9 +457,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new StatelessBean(ejbName, beanClass.getName());
                     ejbJar.addEnterpriseBean(enterpriseBean);
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -481,10 +483,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new StatefulBean(ejbName, beanClass.getName());
                     ejbJar.addEnterpriseBean(enterpriseBean);
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.getName());
-                    sessionSynchronizationProcessor.process(beanClass, enterpriseBean);
+                    LegacyProcessor.process(beanClass, enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -530,9 +533,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (messageBean == null) {
                     messageBean = new MessageDrivenBean(ejbName);
                     ejbJar.addEnterpriseBean(messageBean);
+                    LegacyProcessor.process(beanClass, messageBean);
                 }
                 if (messageBean.getEjbClass() == null) {
                     messageBean.setEjbClass(beanClass.getName());
+                    LegacyProcessor.process(beanClass, messageBean);
                 }
             }
 

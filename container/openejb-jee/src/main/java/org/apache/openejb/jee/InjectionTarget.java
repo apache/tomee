@@ -73,6 +73,10 @@ public class InjectionTarget {
         this.injectionTargetClass = value;
     }
 
+    public void setInjectionTargetClass(Class clazz) {
+        setInjectionTargetClass(clazz.getName());
+    }
+
     public String getInjectionTargetName() {
         return injectionTargetName;
     }

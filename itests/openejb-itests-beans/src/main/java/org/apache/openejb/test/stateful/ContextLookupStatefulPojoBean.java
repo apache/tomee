@@ -40,6 +40,7 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.JMSException;
 import javax.naming.InitialContext;
+import javax.annotation.Resource;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -59,6 +60,7 @@ public class ContextLookupStatefulPojoBean {
     public void remove(){
     }
     
+    @Resource
     public void setSessionContext(SessionContext ejbContext) {
         this.ejbContext = ejbContext;
     }

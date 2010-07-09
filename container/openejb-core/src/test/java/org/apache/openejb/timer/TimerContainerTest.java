@@ -100,6 +100,7 @@ public class TimerContainerTest extends TestCase {
         public WidgetBean() {           
         }
 
+        @Resource
         public void setSessionContext(SessionContext sessionContext) {
         }
 

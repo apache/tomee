@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import javax.naming.InitialContext;
 import javax.ejb.SessionContext;
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Stack;
@@ -157,6 +158,7 @@ public class SingletonContainerTest extends TestCase {
             WidgetBean.lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
 
+        @Resource
         public void setSessionContext(SessionContext sessionContext) {
             WidgetBean.lifecycle.push(Lifecycle.INJECTION);
         }

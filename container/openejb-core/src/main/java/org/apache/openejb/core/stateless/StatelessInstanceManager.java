@@ -165,21 +165,14 @@ public class StatelessInstanceManager {
         Operation originalOperation = callContext.getCurrentOperation();
         BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
-        final Data data = (Data) deploymentInfo.getContainerData();
         try {
+            callContext.setCurrentOperation(Operation.INJECTION);
+
             Context ctx = deploymentInfo.getJndiEnc();
 
             // Create bean instance
-            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
-            try {
-                if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
-                    callContext.setCurrentOperation(Operation.INJECTION);
-                    injectionProcessor.setProperty("sessionContext", data.sessionContext);
-                }
-            } catch (NoSuchMethodException ignored) {
-                // bean doesn't have a setSessionContext method, so we don't need to inject one
-            }
 
+            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
             Object bean = injectionProcessor.createInstance();
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
