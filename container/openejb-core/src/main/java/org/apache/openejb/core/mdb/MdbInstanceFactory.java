@@ -28,6 +28,7 @@ import javax.resource.spi.UnavailableException;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.OpenEJBException;
 import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
@@ -60,6 +61,7 @@ public class MdbInstanceFactory {
     private final SecurityService securityService;
     private final int instanceLimit;
     private int instanceCount;
+    private final MdbContext mdbContext;
 
     /**
      * Creates a MdbInstanceFactory for a single specific deployment.
@@ -67,10 +69,19 @@ public class MdbInstanceFactory {
      * @param securityService the transaction manager for this container system
      * @param instanceLimit the maximal number of instances or <= 0 if unlimited
      */
-    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, SecurityService securityService, int instanceLimit) {
+    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, SecurityService securityService, int instanceLimit) throws OpenEJBException {
         this.deploymentInfo = deploymentInfo;
         this.securityService = securityService;
         this.instanceLimit = instanceLimit;
+        mdbContext = new MdbContext(securityService);
+
+        try {
+            final Context context = deploymentInfo.getJndiEnc();
+            context.bind("comp/EJBContext", mdbContext);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext", e);
+        }
+
     }
 
     /**
@@ -178,16 +189,6 @@ public class MdbInstanceFactory {
         ThreadContext oldContext = ThreadContext.enter(callContext);
         try {
             Context ctx = deploymentInfo.getJndiEnc();
-            // construct the bean instance
-            MdbContext mdbContext;
-            synchronized(this) {
-                try {
-                    mdbContext = (MdbContext) ctx.lookup("comp/EJBContext");
-                } catch (NamingException e) {
-                    mdbContext = new MdbContext(securityService);
-                    ctx.bind("comp/EJBContext",mdbContext);
-                }
-            }
 
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
 
@@ -249,26 +250,6 @@ public class MdbInstanceFactory {
             throw new UnavailableException(message, e);
         } finally {
             ThreadContext.exit(oldContext);
-        }
-    }
-
-    private static void fillInjectionProperties(ObjectRecipe objectRecipe, Class clazz, CoreDeploymentInfo deploymentInfo, Context context) {
-        for (Injection injection : deploymentInfo.getInjections()) {
-            if (!injection.getTarget().isAssignableFrom(clazz)) continue;
-            try {
-                String jndiName = injection.getJndiName();
-                Object object = context.lookup("comp/env/" + jndiName);
-                if (object instanceof String) {
-                    String string = (String) object;
-                    // Pass it in raw so it could be potentially converted to
-                    // another data type by an xbean-reflect property editor
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), string);
-                } else {
-                    objectRecipe.setProperty(injection.getTarget().getName() + "/" + injection.getName(), object);
-                }
-            } catch (NamingException e) {
-                logger.warning("Injection data not found in enc: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget() + "/" + injection.getName());
-            }
         }
     }
 

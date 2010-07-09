@@ -23,7 +23,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,11 +36,9 @@ import javax.ejb.SessionContext;
 import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.xml.ws.WebServiceContext;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 
-import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
@@ -168,38 +165,16 @@ public class StatelessInstanceManager {
         Operation originalOperation = callContext.getCurrentOperation();
         BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
+        final Data data = (Data) deploymentInfo.getContainerData();
         try {
             Context ctx = deploymentInfo.getJndiEnc();
-            SessionContext sessionContext;
-            // This needs to be synchronized as this code is multi-threaded.
-            // In between the lookup and the bind a bind may take place in another Thread.
-            // This is a fix for GERONIMO-3444
-            synchronized(this){
-                try {
-                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
-                } catch (NamingException e1) {
-                    sessionContext = createSessionContext(deploymentInfo);
-                    // TODO: This should work
-                    ctx.bind("comp/EJBContext", sessionContext);
-                }
-            }
-
-            // This is a fix for GERONIMO-3444
-            synchronized(this){
-                try {
-                    ctx.lookup("comp/WebServiceContext");
-                } catch (NamingException e) {
-                    WebServiceContext wsContext = new EjbWsContext(sessionContext);
-                    ctx.bind("comp/WebServiceContext", wsContext);
-                }
-            }
 
             // Create bean instance
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
             try {
                 if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
                     callContext.setCurrentOperation(Operation.INJECTION);
-                    injectionProcessor.setProperty("sessionContext", sessionContext);
+                    injectionProcessor.setProperty("sessionContext", data.sessionContext);
                 }
             } catch (NoSuchMethodException ignored) {
                 // bean doesn't have a setSessionContext method, so we don't need to inject one
@@ -258,16 +233,6 @@ public class StatelessInstanceManager {
             callContext.setCurrentOperation(originalOperation);
             callContext.setCurrentAllowedStates(originalAllowedStates);
         }
-    }
-
-    private SessionContext createSessionContext(CoreDeploymentInfo deploymentInfo) {
-        final Data data = (Data) deploymentInfo.getContainerData();
-        
-        return new StatelessContext(securityService, new Flushable(){
-            public void flush() throws IOException {
-                data.getPool().flush();
-            }
-        });
     }
 
     /**
@@ -337,7 +302,7 @@ public class StatelessInstanceManager {
 
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) {
+    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Options options = new Options(deploymentInfo.getProperties());
 
         Duration accessTimeout = getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS);
@@ -357,9 +322,18 @@ public class StatelessInstanceManager {
 
         builder.setSupplier(new StatelessSupplier(deploymentInfo));
         builder.setExecutor(executor);
-        
+
+
         Data data = new Data(builder.build(), accessTimeout, closeTimeout);
         deploymentInfo.setContainerData(data);
+
+        try {
+            final Context context = deploymentInfo.getJndiEnc();
+            context.bind("comp/EJBContext", data.sessionContext);
+            context.bind("comp/WebServiceContext", new EjbWsContext(data.sessionContext));
+        } catch (NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext", e);
+        }
 
         final int min = builder.getMin();
         long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
@@ -460,16 +434,22 @@ public class StatelessInstanceManager {
         deploymentInfo.setContainerData(null);
     }
 
-    private static final class Data {
+    private final class Data {
         private final Pool<Instance> pool;
         private final Duration accessTimeout;
         private final Duration closeTimeout;
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final SessionContext sessionContext;
 
         private Data(Pool<Instance> pool, Duration accessTimeout, Duration closeTimeout) {
             this.pool = pool;
             this.accessTimeout = accessTimeout;
             this.closeTimeout = closeTimeout;
+            this.sessionContext = new StatelessContext(securityService, new Flushable() {
+                public void flush() throws IOException {
+                    getPool().flush();
+                }
+            });
         }
 
         public Duration getAccessTimeout() {
