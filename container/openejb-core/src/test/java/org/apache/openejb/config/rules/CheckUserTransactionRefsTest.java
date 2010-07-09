@@ -16,48 +16,29 @@
  */
 package org.apache.openejb.config.rules;
 
-import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ValidationFailedException;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.junit.Test;
+import java.util.concurrent.Callable;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.transaction.UserTransaction;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
+
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
-public class CheckUserTransactionRefsTest extends TestCase {
+@RunWith(ValidationRunner.class)
+public class CheckUserTransactionRefsTest  {
 
-    @Test
-    public void testSLSBwithUserTransaction() throws Exception {
-
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
-
+    @Keys(@Key("userTransactionRef.forbiddenForCmtdBeans"))
+    public EjbJar testSLSBwithUserTransaction() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("userTransactionRef.forbiddenForCmtdBeans");
-
-        // "@Resource UserTransaction tx" declaration
-        try {
-            config.configureApplication(ejbJar);
-            fail("A ValidationFailedException should have been thrown");
-        } catch (ValidationFailedException e) {
-            assertFailures(expectedKeys, e);
-        }
+        return ejbJar;
     }
 
     @Stateless
