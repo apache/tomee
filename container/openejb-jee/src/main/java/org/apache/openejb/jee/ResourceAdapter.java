@@ -24,14 +24,45 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
+ *
+ * <p>Java class for resourceadapterType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="resourceadapterType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="resourceadapter-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
+ *         &lt;element name="config-property" type="{http://java.sun.com/xml/ns/javaee}config-propertyType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="outbound-resourceadapter" type="{http://java.sun.com/xml/ns/javaee}outbound-resourceadapterType" minOccurs="0"/>
+ *         &lt;element name="inbound-resourceadapter" type="{http://java.sun.com/xml/ns/javaee}inbound-resourceadapterType" minOccurs="0"/>
+ *         &lt;element name="adminobject" type="{http://java.sun.com/xml/ns/javaee}adminobjectType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="security-permission" type="{http://java.sun.com/xml/ns/javaee}security-permissionType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-//@XmlSeeAlso(ResourceAdapter.class)
+@XmlType(name = "resourceadapterType", propOrder = {
+    "resourceAdapterClass",
+    "configProperty",
+    "outboundResourceAdapter",
+    "inboundResourceAdapter",
+    "adminObject",
+    "securityPermission"
+})
 public class ResourceAdapter {
 
     @XmlElement(name = "resourceadapter-class")
     protected String resourceAdapterClass;
-    @XmlTransient
+    @XmlElement(name = "config-property")
     protected List<ConfigProperty> configProperty;
     @XmlElement(name = "outbound-resourceadapter")
     protected OutboundResourceAdapter outboundResourceAdapter;
@@ -55,6 +86,19 @@ public class ResourceAdapter {
 
     public ResourceAdapter(Class resourceAdapterClass) {
         this(resourceAdapterClass.getName());
+    }
+
+    public static ResourceAdapter newResourceAdapter(ResourceAdapter10 source) {
+        ResourceAdapter resourceAdapter = new ResourceAdapter();
+        resourceAdapter.getSecurityPermission().addAll(source.getSecurityPermission());
+        resourceAdapter.setId(source.getId());
+        OutboundResourceAdapter outboundResourceAdapter = new OutboundResourceAdapter();
+        outboundResourceAdapter.getAuthenticationMechanism().addAll(source.getAuthenticationMechanism());
+        outboundResourceAdapter.setTransactionSupport(source.getTransactionSupport());
+        outboundResourceAdapter.setReauthenticationSupport(source.isReauthenticationSupport());
+        outboundResourceAdapter.getConnectionDefinition().add(source.getConnectionDefinition());
+        resourceAdapter.setOutboundResourceAdapter(outboundResourceAdapter);
+        return resourceAdapter;
     }
 
     public String getResourceAdapterClass() {

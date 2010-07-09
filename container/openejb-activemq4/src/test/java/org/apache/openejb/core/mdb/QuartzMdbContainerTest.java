@@ -16,38 +16,38 @@
  */
 package org.apache.openejb.core.mdb;
 
-import junit.framework.TestCase;
 import junit.framework.Assert;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.ConnectorModule;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.jee.Connector16;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.ConnectorModule;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.ResourceAdapter16;
 import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.MessageAdapter;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
+import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.resource.quartz.JobSpec;
+import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
-import javax.ejb.MessageDrivenContext;
-import javax.ejb.MessageDriven;
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
-import java.util.Stack;
-import java.util.List;
+import javax.ejb.MessageDriven;
+import javax.ejb.MessageDrivenContext;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -71,8 +71,9 @@ public class QuartzMdbContainerTest extends TestCase {
 
         AppModule app = new AppModule(this.getClass().getClassLoader(), "testapp");
 
-        Connector16 connector = new Connector16("quartz");
-        ResourceAdapter16 adapter = connector.setResourceAdapter(new ResourceAdapter16(QuartzResourceAdapter.class));
+        Connector connector = new Connector("quartz");
+        ResourceAdapter adapter = new ResourceAdapter(QuartzResourceAdapter.class);
+        connector.setResourceAdapter(adapter);
         InboundResourceadapter inbound = adapter.setInboundResourceAdapter(new InboundResourceadapter());
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(Job.class, JobSpec.class));

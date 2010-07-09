@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
@@ -30,9 +32,50 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base class for Connector (1.6) and Connector10 (1.0) jaxb clases
+ * connector_1_6.xsd
+ *
+ * <p>Java class for connectorType complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="connectorType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
+ *         &lt;element name="vendor-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="eis-type" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="resourceadapter-version" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="license" type="{http://java.sun.com/xml/ns/javaee}licenseType" minOccurs="0"/>
+ *         &lt;element name="resourceadapter" type="{http://java.sun.com/xml/ns/javaee}resourceadapterType"/>
+ *         &lt;element name="required-work-context" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="1.6" />
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
  */
+@XmlRootElement(name = "connector")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "connectorType", propOrder = {
+        "moduleName",
+        "descriptions",
+        "displayNames",
+        "icon",
+        "vendorName",
+        "eisType",
+        "resourceAdapterVersion",
+        "license",
+        "resourceAdapter",
+        "requiredWorkContext"
+})
 public class Connector {
 
     @XmlElement(name = "module-name")
@@ -48,10 +91,10 @@ public class Connector {
     protected String vendorName = "";
     @XmlElement(name = "eis-type")
     protected String eisType = "";
-    @XmlTransient
+    @XmlElement(name = "resourceadapter-version")
     protected String resourceAdapterVersion = "";
     protected License license;
-    @XmlTransient
+    @XmlElement(name = "resourceadapter", required = true)
     protected ResourceAdapter resourceAdapter;
     @XmlElement(name = "required-work-context")
     protected List<String> requiredWorkContext;
@@ -59,7 +102,7 @@ public class Connector {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-    @XmlTransient
+    @XmlAttribute(required = true)
     protected String version;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;
@@ -70,6 +113,22 @@ public class Connector {
     public Connector(String id) {
         this.id = id;
     }
+
+    public static Connector newConnector(Connector10 source) {
+        Connector connector = new Connector();
+        connector.setDescriptions(source.getDescriptions());
+        connector.setDisplayNames(source.getDisplayNames());
+        connector.getIcons().addAll(source.getIcons());
+        connector.setVendorName(source.getVendorName());
+        connector.setEisType(source.getEisType());
+        connector.setResourceAdapterVersion(source.getVersion());
+        connector.setLicense(source.getLicense());
+        connector.setId(source.getId());
+        connector.setVersion(source.getSpecVersion());
+        connector.setResourceAdapter(ResourceAdapter.newResourceAdapter(source.getResourceAdapter()));
+        return connector;
+    }
+
 
     public String getModuleName() {
         return moduleName;

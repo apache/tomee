@@ -16,13 +16,11 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.URLs.toFilePath;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.Connector16;
-import org.apache.openejb.jee.Connector10;
 import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.Connector10;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.HandlerChains;
@@ -31,9 +29,9 @@ import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
@@ -49,9 +47,9 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,6 +57,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+
+import static org.apache.openejb.util.URLs.toFilePath;
 
 public class ReadDescriptors implements DynamicDeployer {
     @SuppressWarnings({"unchecked"})
@@ -281,15 +281,15 @@ public class ReadDescriptors implements DynamicDeployer {
         if (connectorModule.getConnector() != null) return;
 
         Object data = connectorModule.getAltDDs().get("ra.xml");
-        if (data instanceof Connector16) {
-            connectorModule.setConnector((Connector16) data);
+        if (data instanceof Connector) {
+            connectorModule.setConnector((Connector) data);
         } else if (data instanceof URL) {
             URL url = (URL) data;
             Connector connector = readConnector(url);
             connectorModule.setConnector(connector);
         } else {
             DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
-            connectorModule.setConnector(new Connector16());
+            connectorModule.setConnector(new Connector());
         }
     }
 
@@ -432,10 +432,11 @@ public class ReadDescriptors implements DynamicDeployer {
     public static Connector readConnector(URL url) throws OpenEJBException {
         Connector connector;
         try {
-            connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector16.class, url.openStream());
+            connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector.class, url.openStream());
         } catch (JAXBException e) {
             try {
-                connector = (Connector) JaxbJavaee.unmarshalJavaee(Connector10.class, url.openStream());
+                Connector10 connector10 = (Connector10) JaxbJavaee.unmarshalJavaee(Connector10.class, url.openStream());
+                connector = Connector.newConnector(connector10);
             } catch (ParserConfigurationException e1) {
                 throw new OpenEJBException("Cannot parse the ra.xml file: " + url.toExternalForm(), e);
             } catch (SAXException e1) {
