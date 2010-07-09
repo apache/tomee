@@ -79,6 +79,7 @@ public class JtaEntityManagerRegistry {
      * @throws IllegalStateException if the entity manger is extended and there is not an existing entity manager
      * instance already registered
      */
+    @Geronimo
     public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended, String unitName) throws IllegalStateException {
         if (entityManagerFactory == null) throw new NullPointerException("entityManagerFactory is null");
         EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
@@ -126,11 +127,6 @@ public class JtaEntityManagerRegistry {
             }
             return entityManager;
         }
-    }
-
-    @Geronimo
-    public EntityManager getEntityManager(EntityManagerFactory entityManagerFactory, Map properties, boolean extended) throws IllegalStateException {
-        return getEntityManager(entityManagerFactory, properties, extended, "<unknown>");
     }
 
     /**
