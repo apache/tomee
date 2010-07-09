@@ -131,7 +131,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         chain.add(new ReadDescriptors());
 
-        chain.add(new AppModulePreProcessor());
+        chain.add(new LegacyProcessor());
 
         chain.add(new AnnotationDeployer());
 

@@ -196,11 +196,11 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected List<AsyncMethod> asyncMethod;
     @XmlElement(name = "transaction-type")
     protected TransactionType transactionType;
-    @XmlElement(name = "after-begin-method")
+    @XmlTransient
     protected NamedMethod afterBeginMethod;
-    @XmlElement(name = "before-completion-method")
+    @XmlTransient
     protected NamedMethod beforeCompletionMethod;
-    @XmlElement(name = "after-completion-method")
+    @XmlTransient
     protected NamedMethod afterCompletionMethod;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
@@ -510,24 +510,33 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         return afterBeginMethod;
     }
 
+    @XmlElement(name = "after-begin-method")
     public void setAfterBeginMethod(NamedMethod afterBeginMethod) {
         this.afterBeginMethod = afterBeginMethod;
+        getAfterBegin().clear();
+        getAfterBegin().add(new LifecycleCallback(afterBeginMethod));
     }
 
     public NamedMethod getBeforeCompletionMethod() {
         return beforeCompletionMethod;
     }
 
+    @XmlElement(name = "before-completion-method")
     public void setBeforeCompletionMethod(NamedMethod beforeCompletionMethod) {
         this.beforeCompletionMethod = beforeCompletionMethod;
+        getBeforeCompletion().clear();
+        getBeforeCompletion().add(new LifecycleCallback(beforeCompletionMethod));
     }
 
     public NamedMethod getAfterCompletionMethod() {
         return afterCompletionMethod;
     }
 
+    @XmlElement(name = "after-completion-method")
     public void setAfterCompletionMethod(NamedMethod afterCompletionMethod) {
         this.afterCompletionMethod = afterCompletionMethod;
+        getAfterCompletion().clear();
+        getAfterCompletion().add(new LifecycleCallback(afterCompletionMethod));
     }
 
     public List<AroundInvoke> getAroundInvoke() {

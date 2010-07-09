@@ -28,6 +28,7 @@ import org.apache.openejb.jee.StatelessBean;
 
 import javax.ejb.SessionContext;
 import javax.naming.InitialContext;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -164,6 +165,7 @@ public class StatelessContainerTest extends TestCase {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
         }
 
+        @Resource
         public void setSessionContext(SessionContext sessionContext) {
             lifecycle.push(Lifecycle.INJECTION);
         }

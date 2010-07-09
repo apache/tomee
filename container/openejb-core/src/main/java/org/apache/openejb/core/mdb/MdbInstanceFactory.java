@@ -183,21 +183,12 @@ public class MdbInstanceFactory {
     }
 
     private Object constructBean() throws UnavailableException {
-        Class beanClass = deploymentInfo.getBeanClass();
-
         ThreadContext callContext = new ThreadContext(deploymentInfo, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
         try {
             Context ctx = deploymentInfo.getJndiEnc();
-
+            Class beanClass = deploymentInfo.getBeanClass();
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
-
-            // only in this case should the callback be used
-            callContext.setCurrentOperation(Operation.INJECTION);
-            callContext.setCurrentAllowedStates(MdbContext.getStates());
-            if(MessageDrivenBean.class.isAssignableFrom(beanClass)) {
-                injectionProcessor.setProperty("messageDrivenContext", mdbContext);
-            }
             Object bean = injectionProcessor.createInstance();
 
             HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
