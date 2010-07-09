@@ -106,6 +106,7 @@ public class StatefulContainer implements RpcContainer {
 
     protected final Cache<Object, Instance> cache;
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
+    private final SessionContext sessionContext;
 
     public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache) {
         this(id, securityService, cache, new Duration(0, TimeUnit.MILLISECONDS));
@@ -117,6 +118,7 @@ public class StatefulContainer implements RpcContainer {
         this.cache = cache;
         cache.setListener(new StatefulCacheListener());
         this.accessTimeout = accessTimeout;
+        sessionContext = new StatefulContext(this.securityService, new StatefulUserTransaction(new EjbUserTransaction(), entityManagerRegistry));
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
@@ -300,6 +302,12 @@ public class StatefulContainer implements RpcContainer {
             logger.error("Unable to register MBean ", e);
         }
 
+        try {
+            final Context context = deploymentInfo.getJndiEnc();
+            context.bind("comp/EJBContext", sessionContext);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext", e);
+        }
     }
 
     /**
@@ -595,24 +603,12 @@ public class StatefulContainer implements RpcContainer {
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Context ctx = deploymentInfo.getJndiEnc();
 
-            // Get or create the session context
-            SessionContext sessionContext;
-            synchronized (this) {
-                try {
-                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
-                } catch (NamingException e1) {
-                    StatefulUserTransaction userTransaction = new StatefulUserTransaction(new EjbUserTransaction(), entityManagerRegistry);
-                    sessionContext = new StatefulContext(securityService, userTransaction);
-                    ctx.bind("comp/EJBContext", sessionContext);
-                }
-            }
-
             // Create bean instance
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
             try {
                 if (SessionBean.class.isAssignableFrom(beanClass) || beanClass.getMethod("setSessionContext", SessionContext.class) != null) {
                     callContext.setCurrentOperation(Operation.INJECTION);
-                    injectionProcessor.setProperty("sessionContext", sessionContext);
+                    injectionProcessor.setProperty("sessionContext", this.sessionContext);
                 }
             } catch (NoSuchMethodException ignored) {
                 // bean doesn't have a setSessionContext method, so we don't need to inject one

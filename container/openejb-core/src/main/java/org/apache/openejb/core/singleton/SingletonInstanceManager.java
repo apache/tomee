@@ -21,7 +21,6 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.Lock;
@@ -42,7 +41,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.InjectionProcessor;
@@ -62,17 +60,19 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ConstructionException;
-import org.apache.xbean.recipe.ObjectRecipe;
-import org.apache.xbean.recipe.Option;
 
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     protected final SafeToolkit toolkit = SafeToolkit.getToolkit("SingletonInstanceManager");
     private SecurityService securityService;
+    private final SingletonContext sessionContext;
+    private final WebServiceContext webServiceContext;
 
     public SingletonInstanceManager(SecurityService securityService) {
         this.securityService = securityService;
+        sessionContext = new SingletonContext(this.securityService);
+        webServiceContext = (WebServiceContext) new EjbWsContext(sessionContext);
     }
 
     public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
@@ -134,30 +134,6 @@ public class SingletonInstanceManager {
 
         try {
             Context ctx = deploymentInfo.getJndiEnc();
-            SessionContext sessionContext;
-            // This needs to be synchronized as this code is multi-threaded.
-            // In between the lookup and the bind a bind may take place in another Thread.
-            // This is a fix for GERONIMO-3444
-            synchronized(this){
-                try {
-                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
-                } catch (NamingException e1) {
-                    sessionContext = createSessionContext();
-                    // TODO: This should work
-                    ctx.bind("comp/EJBContext", sessionContext);
-                }
-            }
-
-            // This is a fix for GERONIMO-3444
-            synchronized(this){
-                try {
-                    ctx.lookup("comp/WebServiceContext");
-                } catch (NamingException e) {
-                    WebServiceContext wsContext;
-                    wsContext = new EjbWsContext(sessionContext);
-                    ctx.bind("comp/WebServiceContext", wsContext);
-                }
-            }
 
             // Create bean instance
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
@@ -236,10 +212,6 @@ public class SingletonInstanceManager {
         }
     }
 
-    private SessionContext createSessionContext() {
-        return new SingletonContext(securityService);
-    }
-
     public void freeInstance(ThreadContext callContext) {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         Data data = (Data) deploymentInfo.getContainerData();
@@ -288,7 +260,7 @@ public class SingletonInstanceManager {
 
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) {
+    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Data data = new Data();
         deploymentInfo.setContainerData(data);
 
@@ -315,6 +287,13 @@ public class SingletonInstanceManager {
             logger.error("Unable to register MBean ", e);
         }
 
+        try {
+            final Context context = deploymentInfo.getJndiEnc();
+            context.bind("comp/EJBContext", sessionContext);
+            context.bind("comp/WebServiceContext", webServiceContext);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext", e);
+        }
     }
 
     public void undeploy(CoreDeploymentInfo deploymentInfo) {

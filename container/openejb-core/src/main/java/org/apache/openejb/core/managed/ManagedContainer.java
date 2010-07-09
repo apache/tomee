@@ -102,12 +102,14 @@ public class ManagedContainer implements RpcContainer {
 
     protected final Cache<Object, Instance> cache;
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
+    private final SessionContext sessionContext;
 
     public ManagedContainer(Object id, SecurityService securityService) throws SystemException {
         this.cache = new SimpleCache<Object, Instance>(null, new SimplePassivater(), 1000, 50, new Duration("1 hour"));
         this.containerID = id;
         this.securityService = securityService;
         cache.setListener(new StatefulCacheListener());
+        sessionContext = new ManagedContext(securityService, new ManagedUserTransaction(new EjbUserTransaction(), entityManagerRegistry));
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
@@ -291,6 +293,12 @@ public class ManagedContainer implements RpcContainer {
             logger.error("Unable to register MBean ", e);
         }
 
+        try {
+            final Context context = deploymentInfo.getJndiEnc();
+            context.bind("comp/EJBContext", sessionContext);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext", e);
+        }
     }
 
     /**
@@ -585,18 +593,6 @@ public class ManagedContainer implements RpcContainer {
             ThreadContext callContext = ThreadContext.getThreadContext();
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
             Context ctx = deploymentInfo.getJndiEnc();
-
-            // Get or create the session context
-            SessionContext sessionContext;
-            synchronized (this) {
-                try {
-                    sessionContext = (SessionContext) ctx.lookup("comp/EJBContext");
-                } catch (NamingException e1) {
-                    ManagedUserTransaction userTransaction = new ManagedUserTransaction(new EjbUserTransaction(), entityManagerRegistry);
-                    sessionContext = new ManagedContext(securityService, userTransaction);
-                    ctx.bind("comp/EJBContext", sessionContext);
-                }
-            }
 
             // Create bean instance
             InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
