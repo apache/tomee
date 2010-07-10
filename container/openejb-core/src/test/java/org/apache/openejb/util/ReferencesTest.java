@@ -17,15 +17,14 @@
 package org.apache.openejb.util;
 
 import static org.apache.openejb.util.References.sort;
-import junit.framework.TestCase;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
-import java.util.ListIterator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import junit.framework.TestCase;
 
 /**
  * @version $Rev$ $Date$
@@ -75,7 +74,8 @@ public class ReferencesTest extends TestCase {
 
         List<Bean> actual = sort(beans, visitor);
 
-        assertEquals(expected(d, a, e, b, f, c), actual);
+        //assertEquals(expected(d, a, e, b, f, c), actual);
+        assertEquals(expected(a, b, c, d, e, f), actual);
     }
 
     public void testOrder2() {
@@ -103,7 +103,6 @@ public class ReferencesTest extends TestCase {
         Bean a = bean("a", "c");
         Bean b = bean("b", "a");
         Bean c = bean("c", "b");
-
         try {
             sort(beans, visitor);
             fail("Ciruit should have been detected");
@@ -184,7 +183,7 @@ public class ReferencesTest extends TestCase {
 
     // proof that this sort is not a stable sort -- i.e. disrupts order unnecessarily
     // this test needs to pass
-    public void _testNoReferences() {
+    public void testNoReferences() {
 
         beans = new ArrayList<Bean>();
 
@@ -202,7 +201,7 @@ public class ReferencesTest extends TestCase {
 
     // items are already in the right order
     // this should pass but doesn't
-    public void _testOrderedReferences() {
+    public void testOrderedReferences() {
 
         beans = new ArrayList<Bean>();
 
@@ -210,8 +209,8 @@ public class ReferencesTest extends TestCase {
         Bean a = bean("a");
         Bean d = bean("d","a", "b");
         Bean c = bean("c");
-        Bean f = bean("f");
         Bean e = bean("e", "f");
+        Bean f = bean("f");
 
         List<Bean> actual = sort(beans, visitor);
 
