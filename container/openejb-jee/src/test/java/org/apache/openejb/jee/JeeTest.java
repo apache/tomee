@@ -225,31 +225,7 @@ public class JeeTest extends TestCase {
         marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml", null);
     }
 
-    /**
-     * This test requires that there are three managed beans in faces-config.xml. It will ask JaxbJavaee to load faces-config.xml
-     * and then assert if it found the three managed beans and checks if the class names are correct
-     *
-     * @throws Exception
-     */
-    public void testFacesConfig() throws Exception {
-        List<String> managedBeanClasses = new ArrayList<String>();
-        managedBeanClasses.add("org.apache.openejb.faces.EmployeeBean");
-        managedBeanClasses.add("org.apache.openejb.faces.OneBean");
-        managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("faces-config.xml");
-        JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
-        FacesConfig facesConfig = element.getValue();
-        List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
-
-        for (FacesManagedBean bean : managedBean) {
-            assertTrue(managedBeanClasses.contains(bean.getManagedBeanClass().trim()));
-        }
-        assertEquals(3, managedBean.size());
-
-        marshalAndUnmarshal(FacesConfig.class, "faces-config.xml", null);
-    }
-
-    private <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {
+    public static <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
@@ -262,7 +238,7 @@ public class JeeTest extends TestCase {
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
         unmarshaller.setEventHandler(new TestValidationEventHandler());
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(sourceXmlFile);
+        InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
         String sourceXml = readContent(in);
 
         SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(sourceXml.getBytes())));
@@ -282,7 +258,7 @@ public class JeeTest extends TestCase {
         if (expectedXmlFile == null) {
             expected = sourceXml;
         } else {
-            InputStream in2 = this.getClass().getClassLoader().getResourceAsStream(expectedXmlFile);
+            InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(expectedXmlFile);
             expected = readContent(in2);
         }
 
@@ -312,7 +288,7 @@ public class JeeTest extends TestCase {
         }
     }
 
-    private void writeToTmpFile(byte[] bytes, String xmlFileName) {
+    private static void writeToTmpFile(byte[] bytes, String xmlFileName) {
         try {
             File tempFile = File.createTempFile("jaxb-output", "xml");
             FileOutputStream out = new FileOutputStream(tempFile);
@@ -324,13 +300,17 @@ public class JeeTest extends TestCase {
         }
     }
 
-    private String readContent(InputStream in) throws IOException {
+    private static String readContent(InputStream in) throws IOException {
         StringBuffer sb = new StringBuffer();
         in = new BufferedInputStream(in);
-        int i = in.read();
-        while (i != -1) {
-            sb.append((char) i);
-            i = in.read();
+        try {
+            int i = in.read();
+            while (i != -1) {
+                sb.append((char) i);
+                i = in.read();
+            }
+        } finally {
+            in.close();
         }
         String content = sb.toString();
         return content;

@@ -1,0 +1,884 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<!-- simple web app -->
+
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+  version="2.0">
+
+    <application>
+        <variable-resolver>org.apache.myfaces.examples.accessedbeans.AccessTrackingVariableResolver</variable-resolver>
+    </application>
+
+    <!-- Accessed beans on the last request -->
+    <managed-bean>
+        <managed-bean-name>accessedBeans</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.accessedbeans.AccessedBeans</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for sample1.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>calcForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.example1.CalcForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>validateForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.validate.ValidateForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>ucaseForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.example1.UCaseForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>validationController</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.example1.ValidationController</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+
+    <!-- Managed Beans for sample2.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>q_form</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.example2.QuotationForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for aliasBean.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>aliasTest1</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.AliasHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>aliasTest2</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.AliasHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>aliasTest3</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.AliasHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>aliasTest4</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.AliasHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>firstComponentBindingHolder</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.FirstComponentBindingHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>secondComponentBindingHolder</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.aliasexample.SecondComponentBindingHolder</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for collapsiblePanel.jsp -->
+    <managed-bean>
+        <managed-bean-name>firstCollapsiblePanelBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.collapsiblepanel.CollapsiblePanelBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>secondCollapsiblePanelBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.collapsiblepanel.CollapsiblePanelBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>thirdCollapsiblePanelBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.collapsiblepanel.CollapsiblePanelBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <!-- Managed Beans for selectbox.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>carconf</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.common.CarConfigurator</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for selectOneLanguage.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>language</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.Language</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for simpleList.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>countryList</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.SimpleCountryList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for simpleGroupBy.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>simpleGroupBy</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.SimpleGroupByList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- JsListener on the last request -->
+    <managed-bean>
+        <managed-bean-name>jsListenerModel</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.jslistener.JsListenerModel</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <!-- Managed Beans for tree.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>treeTable</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.TreeTable</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for tree2.jsp -->
+    <managed-bean>
+        <managed-bean-name>treeBacker</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.tree.TreeBacker</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for forceId.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>forceIdBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.forceid.ForceIdBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+
+    <!-- Managed Beans for simpleSortList.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>list</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.SimpleSortableCarList</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for simpleAutoSortList.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>autosortlist</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.SimpleAutoSortableCarList</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for calendar.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>calendarBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.calendarexample.CalendarBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for countryForm.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>countryForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.SimpleCountryForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>crossDataTable</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.crosstable.DataBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for date.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>date1</managed-bean-name>
+        <managed-bean-class>java.util.Date</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>date2</managed-bean-name>
+        <managed-bean-class>java.util.Date</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>date3</managed-bean-name>
+        <managed-bean-class>java.util.Date</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for date.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>dvoFace</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.displayValueOnly.DVOFace</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for inputHtml.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>editor</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.inputhtmlexample.EditorFace</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>editor1</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.inputhtmlexample.EditorFace</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>editor2</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.inputhtmlexample.EditorFace</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for fileupload.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>fileUploadForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.FileUploadForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <!-- Managed Beans for options.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>globalOptions</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.GlobalOptions</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>pageLayout</property-name>
+            <value>classic</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>optionsForm</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.OptionsForm</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>optionsCtrl</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.OptionsController</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for dataScroller.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>scrollerList</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.DataScrollerList</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for NavigationMenu -->
+
+    <managed-bean>
+        <managed-bean-name>navigationMenu</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.NavigationMenu</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for TabbedPane example -->
+
+    <managed-bean>
+        <managed-bean-name>tabbedPaneBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.TabbedPaneBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>testCheckBox</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.TestCheckBox</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>testCheckList</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.TestCheckBoxList</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>testRadioButton</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.TestRadioButton</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for panelstack example -->
+
+    <managed-bean>
+        <managed-bean-name>stackState</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for pagedSortTable.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>pagedSort</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.PagedSortableCarList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for openDataTable.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>openDataList</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.listexample.OpenDataList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- test custom error page -->
+    <managed-bean>
+        <managed-bean-name>testException</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.testexception.TestException</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <!--  managed beans for schedule examples -->
+    <managed-bean>
+        <managed-bean-name>today</managed-bean-name>
+        <managed-bean-class>java.util.Date</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <!--  Managed bean for the selectItems component -->
+    <managed-bean>
+        <managed-bean-name>selectItemsBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.selectitems.SelectItemsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>scheduleModel1</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.custom.schedule.model.SimpleScheduleModel
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>mode</property-name>
+            <value>1</value>
+        </managed-property>
+        <managed-property>
+            <property-name>selectedDate</property-name>
+            <value>#{today}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>scheduleHandler1</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.examples.schedule.ScheduleExampleHandler
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>model</property-name>
+            <value>#{scheduleModel1}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>addEntryHandler</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.examples.schedule.AddEntryHandler
+        </managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>model</property-name>
+            <value>#{scheduleModel1}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>scheduleModel2</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.custom.schedule.model.SimpleScheduleModel
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>mode</property-name>
+            <value>3</value>
+        </managed-property>
+        <managed-property>
+            <property-name>selectedDate</property-name>
+            <value>#{today}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>scheduleHandler2</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.examples.schedule.ScheduleExampleHandler
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>model</property-name>
+            <value>#{scheduleModel2}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>bindingScheduleHandler</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.examples.schedule.BindingScheduleExampleHandler
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>model</property-name>
+            <value>#{scheduleModel2}</value>
+        </managed-property>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>scheduleSettings2</managed-bean-name>
+        <managed-bean-class>
+            org.apache.myfaces.examples.schedule.ScheduleSettings
+        </managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>model</property-name>
+            <value>#{scheduleModel2}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>visibleStartHour</property-name>
+            <value>8</value>
+        </managed-property>
+        <managed-property>
+            <property-name>visibleEndHour</property-name>
+            <value>18</value>
+        </managed-property>
+        <managed-property>
+            <property-name>workingStartHour</property-name>
+            <value>9</value>
+        </managed-property>
+        <managed-property>
+            <property-name>workingEndHour</property-name>
+            <value>17</value>
+        </managed-property>
+        <managed-property>
+            <property-name>tooltip</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>readonly</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>theme</property-name>
+            <value>default</value>
+        </managed-property>
+        <managed-property>
+            <property-name>headerDateFormat</property-name>
+            <value>yyyy-MM-dd</value>
+        </managed-property>
+        <managed-property>
+            <property-name>compactWeekRowHeight</property-name>
+            <value>200</value>
+        </managed-property>
+        <managed-property>
+            <property-name>compactMonthRowHeight</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>detailedRowHeight</property-name>
+            <value>22</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>scheduleThemeChoices</managed-bean-name>
+        <managed-bean-class>java.util.TreeMap</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+        <map-entries>
+            <map-entry>
+                <key>default</key>
+                <value>default</value>
+            </map-entry>
+            <map-entry>
+                <key>evolution</key>
+                <value>evolution</value>
+            </map-entry>
+            <map-entry>
+                <key>outlookxp</key>
+                <value>outlookxp</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+
+
+    <managed-bean>
+        <managed-bean-name>randomColorEntryRenderer</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.schedule.RandomColorScheduleEntryRenderer</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for calendar.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>autoScrollBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.misc.AutoScrollBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <!-- Managed Beans for colspan.jsp -->
+
+    <managed-bean>
+        <managed-bean-name>testColspanBean</managed-bean-name>
+        <managed-bean-class>org.apache.myfaces.examples.colspanexample.TestColspanBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- NAVIGATION RULES -->
+
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>go_home</from-outcome>
+            <to-view-id>/home.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+
+    <navigation-rule>
+        <description>
+            Navigation rules for navigation component.
+        </description>
+        <from-view-id>*</from-view-id>
+
+        <navigation-case>
+            <from-outcome>go_sample1</from-outcome>
+            <to-view-id>/sample1.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_sample2</from-outcome>
+            <to-view-id>/sample2.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_aliasBean</from-outcome>
+            <to-view-id>/aliasBean.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_buffer</from-outcome>
+            <to-view-id>/buffer.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_dataTable</from-outcome>
+            <to-view-id>/dataTable.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_sortTable</from-outcome>
+            <to-view-id>/sortTable.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_selectbox</from-outcome>
+            <to-view-id>/selectbox.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_fileupload</from-outcome>
+            <to-view-id>/fileupload.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_tabbedPane</from-outcome>
+            <to-view-id>/tabbedPane.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_calendar</from-outcome>
+            <to-view-id>/calendar.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_popup</from-outcome>
+            <to-view-id>/popup.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_jslistener</from-outcome>
+            <to-view-id>/jslistener.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_date</from-outcome>
+            <to-view-id>/date.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_dataList</from-outcome>
+            <to-view-id>/dataList.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_tree</from-outcome>
+            <to-view-id>/tree.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_tree2</from-outcome>
+            <to-view-id>/tree2.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_treeTable</from-outcome>
+            <to-view-id>/treeTable.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_features</from-outcome>
+            <to-view-id>/features.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_options</from-outcome>
+            <to-view-id>/options.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_contact</from-outcome>
+            <to-view-id>/contact.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_copyright</from-outcome>
+            <to-view-id>/copyright.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_validate</from-outcome>
+            <to-view-id>/validate.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_datascroller</from-outcome>
+            <to-view-id>/dataScroller.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_panelstack</from-outcome>
+            <to-view-id>/panelstack.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_css</from-outcome>
+            <to-view-id>/css.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_newspaperTable</from-outcome>
+            <to-view-id>/newspaperTable.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_forceId</from-outcome>
+            <to-view-id>/forceId.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_swapimage</from-outcome>
+            <to-view-id>/swapimage.jsp</to-view-id>
+        </navigation-case>
+
+
+        <navigation-case>
+            <from-outcome>go_selectOneCountry</from-outcome>
+            <to-view-id>/selectOneCountry.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_panelnavigation_1</from-outcome>
+            <to-view-id>/panelnavigation_1.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_panelnavigation_2</from-outcome>
+            <to-view-id>/panelnavigation_2.jsp</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>go_panelnavigation_3</from-outcome>
+            <to-view-id>/panelnavigation_3.jsp</to-view-id>
+        </navigation-case>
+
+
+
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/sample1.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>jump_home</from-outcome>
+            <to-view-id>/home.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/validate.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>valid</from-outcome>
+            <to-view-id>/home.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>go_country</from-outcome>
+            <to-view-id>/countryForm.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <!-- from-view-id>/dataTable.jsp</from-view-id -->
+        <navigation-case>
+            <from-outcome>go_edit_table</from-outcome>
+            <to-view-id>/countryTableForm.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/countryTableForm.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>go_back</from-outcome>
+            <to-view-id>/masterDetail.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/countryForm.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>cancel</from-outcome>
+            <to-view-id>/masterDetail.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>ok_next</from-outcome>
+            <to-view-id>/masterDetail.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <!-- navigational rules for the schedule examples -->
+    <navigation-rule>
+        <from-view-id>/schedule2.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>add_entry</from-outcome>
+            <to-view-id>/schedule_addentry.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule>
+
+
+    <navigation-rule>
+        <from-view-id>/schedule_addentry.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+            <to-view-id>/schedule2.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>cancel</from-outcome>
+            <to-view-id>/schedule2.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>failure</from-outcome>
+            <to-view-id>/schedule_addentry.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule>
+
+
+    <navigation-rule>
+        <from-view-id>/schedule3.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>edit_settings</from-outcome>
+            <to-view-id>/schedule_editsettings.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/schedule_editsettings.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+            <to-view-id>/schedule3.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>cancel</from-outcome>
+            <to-view-id>/schedule3.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>failure</from-outcome>
+            <to-view-id>/schedule_editsettings.jsp</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule>
+
+</faces-config>

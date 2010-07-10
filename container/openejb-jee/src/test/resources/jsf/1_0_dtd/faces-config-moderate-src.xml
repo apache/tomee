@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_0.dtd">
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config>
+    <navigation-rule>
+        <from-view-id>/testSuite/*</from-view-id>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/testSuite/home.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hCommandButton</from-outcome>
+            <to-view-id>/testSuite/hCommandButton.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hForm</from-outcome>
+            <to-view-id>/testSuite/hForm.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hFormWithInputs</from-outcome>
+            <to-view-id>/testSuite/hFormWithInputs.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hFormWithSelects</from-outcome>
+            <to-view-id>/testSuite/hFormWithSelects.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hGraphicImage</from-outcome>
+            <to-view-id>/testSuite/hGraphicImage.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hOutputLabel</from-outcome>
+            <to-view-id>/testSuite/hOutputLabel.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hOutputLink</from-outcome>
+            <to-view-id>/testSuite/hOutputLink.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hOutputText</from-outcome>
+            <to-view-id>/testSuite/hOutputText.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>hPanelGrid</from-outcome>
+            <to-view-id>/testSuite/hPanelGrid.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>page_1</from-outcome>
+            <to-view-id>/testSuite/page_1.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>page_2</from-outcome>
+            <to-view-id>/testSuite/page_2.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>page_3</from-outcome>
+            <to-view-id>/testSuite/page_3.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>page_4</from-outcome>
+            <to-view-id>/testSuite/page_4.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>tOutputText</from-outcome>
+            <to-view-id>/testSuite/tOutputText.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>tPanelNavigation</from-outcome>
+            <to-view-id>/tPanelNavigation.jsp</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>tPanelNavigation2</from-outcome>
+            <to-view-id>/testSuite/tPanelNavigation2.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>
