@@ -49,8 +49,7 @@ public class JsfTest  extends TestCase {
         managedBeanClasses.add("org.apache.openejb.faces.OneBean");
         managedBeanClasses.add("org.apache.openejb.faces.TwoBean");
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("jsf/faces-config.xml");
-        JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
-        FacesConfig facesConfig = element.getValue();
+        FacesConfig facesConfig = (FacesConfig) JaxbJavaee.unmarshalJavaee(FacesConfig.class, inputStream);
         List<FacesManagedBean> managedBean = facesConfig.getManagedBean();
 
         for (FacesManagedBean bean : managedBean) {
@@ -73,6 +72,7 @@ public class JsfTest  extends TestCase {
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-moderate-src.xml", "jsf/1_0_dtd/faces-config-moderate-expected.xml");
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-complex-src.xml", "jsf/1_0_dtd/faces-config-complex-expected.xml");
         marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config-empty-src.xml", "jsf/1_0_dtd/faces-config-empty-expected.xml");
+        FacesConfig f = marshalAndUnmarshal(FacesConfig.class, "jsf/1_1_dtd/faces-config.xml", null);
     }
 
     public void test12() throws Exception {
