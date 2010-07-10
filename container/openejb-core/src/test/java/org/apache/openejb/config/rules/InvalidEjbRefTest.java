@@ -16,15 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ValidationFailedException;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -32,17 +23,21 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import java.util.ArrayList;
-import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
+@RunWith(ValidationRunner.class)
 public class InvalidEjbRefTest extends TestCase {
-
-    private ConfigurationFactory config;
-
-    public void test() throws Exception {
+    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
+    public EjbJar test() throws Exception {
 
         EjbJar ejbJar = new EjbJar();
 
@@ -60,26 +55,8 @@ public class InvalidEjbRefTest extends TestCase {
         fooImpl.addBusinessLocal(FooLocal.class.getName());
         fooImpl.addBusinessRemote(FooRemote.class.getName());
 
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("ann.ejb.ejbObject");
-        expectedKeys.add("ann.ejb.ejbLocalObject");
-        expectedKeys.add("ann.ejb.beanClass");
-        expectedKeys.add("ann.ejb.notInterface");
-
-        try {
-            config.configureApplication(ejbJar);
-            fail("A ValidationFailedException should have been thrown");
-        } catch (ValidationFailedException e) {
-            assertFailures(expectedKeys, e);
-        }
+        return ejbJar;
     }
-
-    public void setUp() throws Exception {
-        config = new ConfigurationFactory(true);
-        ContainerSystemInfo containerSystem = config.getOpenEjbConfiguration().containerSystem;
-        containerSystem.containers.add(config.configureService(StatelessSessionContainerInfo.class));
-    }
-
 
     public static class EjbRefBean implements EjbRefBeanLocal {
         // valid because fooBean will be a LocalBean (because it has no interfaces)
