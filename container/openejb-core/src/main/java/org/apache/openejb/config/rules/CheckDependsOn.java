@@ -90,7 +90,7 @@ public class CheckDependsOn extends ValidationBase {
             }
         }
 
-        if (missingBeans) return;
+       // if (missingBeans) return;
 
         try {
             References.sort(new ArrayList<Bean>(app.values()), new References.Visitor<Bean>() {
