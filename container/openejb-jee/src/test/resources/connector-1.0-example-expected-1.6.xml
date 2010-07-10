@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<connector xmlns="http://java.sun.com/xml/ns/javaee" version="1.0" id="ID001">
+    <description xml:lang="">description0</description>
+    <display-name xml:lang="en-US">display-name0</display-name>
+    <icon xml:lang="" id="ID007">
+        <small-icon>small-icon0</small-icon>
+        <large-icon>large-icon0</large-icon>
+    </icon>
+    <vendor-name>vendor-name0</vendor-name>
+    <eis-type>eis-type0</eis-type>
+    <resourceadapter-version>version0</resourceadapter-version>
+    <license id="ID019">
+        <description xml:lang="">description1</description>
+        <license-required>true</license-required>
+    </license>
+    <resourceadapter id="ID025">
+        <outbound-resourceadapter>
+            <connection-definition>
+                <managedconnectionfactory-class>managedconnectionfactory-class0</managedconnectionfactory-class>
+                <config-property id="ID045">
+                    <description xml:lang="en-US">description3</description>
+                    <config-property-name>config-property-name1</config-property-name>
+                    <config-property-type>java.lang.Boolean</config-property-type>
+                    <config-property-value>config-property-value1</config-property-value>
+                </config-property>
+                <connectionfactory-interface>connectionfactory-interface0</connectionfactory-interface>
+                <connectionfactory-impl-class>connectionfactory-impl-class0</connectionfactory-impl-class>
+                <connection-interface>connection-interface0</connection-interface>
+                <connection-impl-class>connection-impl-class0</connection-impl-class>
+            </connection-definition>
+            <transaction-support>NoTransaction</transaction-support>
+            <authentication-mechanism id="ID109">
+                <description xml:lang="en-US">description6</description>
+                <authentication-mechanism-type>authentication-mechanism-type0</authentication-mechanism-type>
+                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+            </authentication-mechanism>
+            <reauthentication-support>true</reauthentication-support>
+        </outbound-resourceadapter>
+        <security-permission id="ID181">
+            <description xml:lang="">description11</description>
+            <security-permission-spec>security-permission-spec0</security-permission-spec>
+        </security-permission>
+    </resourceadapter>
+</connector>

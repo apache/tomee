@@ -35,22 +35,6 @@
         </resource-bundle>
     </application>
 
-<!-- validators -->
-    <validator>
-        <description>
-			Some description about validators
-        </description>
-        <validator-id>CreditCardValidator</validator-id>
-        <validator-class>org.apache.openejb.faces.CreditCardValidator</validator-class>
-        <attribute>
-            <description>
- 				The separator between numbers
-            </description>
-            <attribute-name>separator</attribute-name>
-            <attribute-class>java.lang.String</attribute-class>
-        </attribute>
-    </validator>
-
 <!-- converters -->
     <converter>
         <description>
@@ -100,4 +84,21 @@
         </managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+
+    <!-- validators -->
+    <validator>
+        <description>
+            Some description about validators
+        </description>
+        <validator-id>CreditCardValidator</validator-id>
+        <validator-class>org.apache.openejb.faces.CreditCardValidator</validator-class>
+        <attribute>
+            <description>
+                The separator between numbers
+            </description>
+            <attribute-name>separator</attribute-name>
+            <attribute-class>java.lang.String</attribute-class>
+        </attribute>
+    </validator>
+
 </faces-config>

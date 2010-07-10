@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE connector PUBLIC
-	"-//Sun Microsystems, Inc.//DTD Connector 1.0//EN"
-	"http://java.sun.com/dtd/connector_1_0.dtd">
+        "-//Sun Microsystems, Inc.//DTD Connector 1.0//EN"
+        "http://java.sun.com/dtd/connector_1_0.dtd">
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,35 +38,24 @@
         <license-required>true</license-required>
     </license>
     <resourceadapter id="ID025">
-        <!--<resourceadapter-class>resourceadapter-class0</resourceadapter-class>-->
-        <!--<config-property id="ID029">-->
-            <!--<description xml:lang="" id="ID031">description2</description>-->
-            <!--<config-property-name>config-property-name0</config-property-name>-->
-            <!--<config-property-type>java.lang.Boolean</config-property-type>-->
-            <!--<config-property-value>config-property-value0</config-property-value>-->
-        <!--</config-property>-->
-        <!--<outbound-resourceadapter id="ID039">-->
-            <!--<connection-definition id="ID041">-->
-                <managedconnectionfactory-class>managedconnectionfactory-class0</managedconnectionfactory-class>
+        <managedconnectionfactory-class>managedconnectionfactory-class0</managedconnectionfactory-class>
         <connectionfactory-interface>connectionfactory-interface0</connectionfactory-interface>
         <connectionfactory-impl-class>connectionfactory-impl-class0</connectionfactory-impl-class>
         <connection-interface>connection-interface0</connection-interface>
         <connection-impl-class>connection-impl-class0</connection-impl-class>
         <transaction-support>NoTransaction</transaction-support>
-                <config-property id="ID045">
-                    <description xml:lang="en-US" id="ID047">description3</description>
-                    <config-property-name>config-property-name1</config-property-name>
-                    <config-property-type>java.lang.Boolean</config-property-type>
-                    <config-property-value>config-property-value1</config-property-value>
-                </config-property>
-            <!--</connection-definition>-->
-            <authentication-mechanism id="ID109">
-                <description xml:lang="en-US" id="ID111">description6</description>
-                <authentication-mechanism-type>authentication-mechanism-type0</authentication-mechanism-type>
-                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
-            </authentication-mechanism>
-            <reauthentication-support>true</reauthentication-support>
-        <!--</outbound-resourceadapter>-->
+        <config-property id="ID045">
+            <description xml:lang="en-US" id="ID047">description3</description>
+            <config-property-name>config-property-name1</config-property-name>
+            <config-property-type>java.lang.Boolean</config-property-type>
+            <config-property-value>config-property-value1</config-property-value>
+        </config-property>
+        <authentication-mechanism id="ID109">
+            <description xml:lang="en-US" id="ID111">description6</description>
+            <authentication-mechanism-type>authentication-mechanism-type0</authentication-mechanism-type>
+            <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+        </authentication-mechanism>
+        <reauthentication-support>true</reauthentication-support>
         <security-permission id="ID181">
             <description xml:lang="" id="ID183">description11</description>
             <security-permission-spec>security-permission-spec0</security-permission-spec>
