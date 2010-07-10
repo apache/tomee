@@ -76,7 +76,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  59 *
  * 
  */
-@XmlRootElement(namespace = "http://java.sun.com/xml/ns/javaee")
+@XmlRootElement(name = "faces-config")
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "faces-configType", propOrder = {
     "application",

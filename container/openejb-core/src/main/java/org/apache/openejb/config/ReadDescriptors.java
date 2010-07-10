@@ -491,9 +491,8 @@ public class ReadDescriptors implements DynamicDeployer {
     public static FacesConfig readFacesConfig(URL url) throws OpenEJBException {
         FacesConfig facesConfig;
         try {
-     		JAXBElement<FacesConfig> element = (JAXBElement<FacesConfig>) JaxbJavaee
+     		facesConfig = (FacesConfig) JaxbJavaee
     		.unmarshalJavaee(FacesConfig.class, url.openStream());
-     		facesConfig = element.getValue();
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the faces configuration file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {

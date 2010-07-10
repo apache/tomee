@@ -226,25 +226,12 @@ public class JeeTest extends TestCase {
     }
 
     public static <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
+        InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
+        T object = (T)JaxbJavaee.unmarshalJavaee(type, in);
+        in.close();
+        assertTrue(object.getClass().isAssignableFrom(type));
 
         JAXBContext ctx = JAXBContextFactory.newInstance(type);
-        Unmarshaller unmarshaller = ctx.createUnmarshaller();
-
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
-        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
-        unmarshaller.setEventHandler(new TestValidationEventHandler());
-
-        InputStream in = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
-        String sourceXml = readContent(in);
-
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(sourceXml.getBytes())));
-
-        T object = (T) unmarshaller.unmarshal(source);
-
         Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
@@ -256,7 +243,8 @@ public class JeeTest extends TestCase {
 
         String expected;
         if (expectedXmlFile == null) {
-            expected = sourceXml;
+            InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(sourceXmlFile);
+            expected = readContent(in2);
         } else {
             InputStream in2 = JeeTest.class.getClassLoader().getResourceAsStream(expectedXmlFile);
             expected = readContent(in2);

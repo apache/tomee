@@ -23,6 +23,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -112,7 +113,8 @@ public class JaxbJavaee {
 
         currentPublicId.set(new TreeSet<String>());
         try {
-            return unmarshaller.unmarshal(source);
+            JAXBElement<T> element = unmarshaller.unmarshal(source, type);
+            return element.getValue();
         } finally {
             currentPublicId.set(null);
         }
