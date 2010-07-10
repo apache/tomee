@@ -16,35 +16,25 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.util.Join.join;
-import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.ContainerSystemInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ValidationFailedException;
-import org.apache.openejb.config.ValidationFailure;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.OpenEJBException;
-
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
-public class InvalidInterfacesTest extends TestCase {
-    private ConfigurationFactory config;
-
-    public void testCorrectInterfaces() throws Exception {
+@RunWith(ValidationRunner.class)
+public class InvalidInterfacesTest  {
+    @Keys
+    public EjbJar testCorrectInterfaces() throws Exception {
 
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
@@ -52,126 +42,46 @@ public class InvalidInterfacesTest extends TestCase {
         bean.setHomeAndLocal(FooEJBLocalHome.class, FooEJBLocalObject.class);
         bean.addBusinessLocal(FooLocal.class.getName());
         bean.addBusinessRemote(FooRemote.class.getName());
-
-        try {
-            config.configureApplication(ejbJar);
-        } catch (ValidationFailedException e) {
-            for (ValidationFailure failure : e.getFailures()) {
-                System.out.println("failure = " + failure.getMessageKey());
-            }
-            fail("There should be no validation failures");
-        }
-
+        return ejbJar;
+    }
+    @Keys( { @Key("xml.remote.businessLocal"), @Key("xml.home.businessLocal"),@Key("xml.local.businessLocal"), @Key("xml.localHome.businessLocal") })
+    public EjbJar testBusinessLocal() throws Exception {
+        return validate(FooLocal.class);
+    }
+    @Keys( { @Key("xml.remote.businessRemote"), @Key("xml.home.businessRemote"),@Key("xml.local.businessRemote"), @Key("xml.localHome.businessRemote") })
+    public EjbJar testBusinessRemote() throws Exception {
+        return validate(FooRemote.class);
+    }
+    @Keys( { @Key("xml.home.ejbObject"), @Key("xml.local.ejbObject"),@Key("xml.localHome.ejbObject"), @Key("xml.businessLocal.ejbObject"), @Key("xml.businessRemote.ejbObject") })
+    public EjbJar testEJBObject() throws Exception {
+        return validate(FooEJBObject.class);
+    }
+    @Keys( { @Key("xml.remote.ejbHome"), @Key("xml.local.ejbHome"),@Key("xml.localHome.ejbHome"), @Key("xml.businessLocal.ejbHome"), @Key("xml.businessRemote.ejbHome") })
+    public EjbJar testEJBHome() throws Exception {
+        return validate(FooEJBHome.class);
+    }
+    @Keys( { @Key("xml.remote.ejbLocalHome"), @Key("xml.home.ejbLocalHome"),@Key("xml.local.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessRemote.ejbLocalHome") })
+    public EjbJar testEJBLocalHome() throws Exception {
+        return validate(FooEJBLocalHome.class);
+    }
+    @Keys( { @Key("xml.remote.ejbLocalObject"), @Key("xml.home.ejbLocalObject"),@Key("xml.localHome.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalObject"), @Key("xml.businessRemote.ejbLocalObject") })
+    public EjbJar testEJBLocalObject() throws Exception {
+        return validate(FooEJBLocalObject.class);
+    }
+    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"),@Key("xml.localHome.unknown"), @Key("xml.local.unknown")})
+    public EjbJar testUnkown() throws Exception {
+        return validate(FooUnknown.class);
+    }
+    @Keys( { @Key("xml.remote.beanClass"), @Key("xml.home.beanClass"),@Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"), @Key("xml.businessLocal.beanClass") })
+    public EjbJar testBeanClass() throws Exception {
+        return validate(FooBean.class);
+    }
+    @Keys( { @Key("xml.remote.notInterface"), @Key("xml.home.notInterface"),@Key("xml.localHome.notInterface"), @Key("xml.local.notInterface"), @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface") })
+    public EjbJar testNotInterface() throws Exception {
+        return validate(FooClass.class);
     }
 
-    public void testBusinessLocal() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.businessLocal");
-        expectedKeys.add("xml.home.businessLocal");
-        expectedKeys.add("xml.local.businessLocal");
-        expectedKeys.add("xml.localHome.businessLocal");
-
-        validate(FooLocal.class, expectedKeys);
-    }
-
-    public void testBusinessRemote() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.businessRemote");
-        expectedKeys.add("xml.home.businessRemote");
-        expectedKeys.add("xml.local.businessRemote");
-        expectedKeys.add("xml.localHome.businessRemote");
-
-        validate(FooRemote.class, expectedKeys);
-    }
-
-    public void testEJBObject() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.home.ejbObject");
-        expectedKeys.add("xml.local.ejbObject");
-        expectedKeys.add("xml.localHome.ejbObject");
-        expectedKeys.add("xml.businessLocal.ejbObject");
-        expectedKeys.add("xml.businessRemote.ejbObject");
-
-        validate(FooEJBObject.class, expectedKeys);
-    }
-
-    public void testEJBHome() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.ejbHome");
-        expectedKeys.add("xml.local.ejbHome");
-        expectedKeys.add("xml.localHome.ejbHome");
-        expectedKeys.add("xml.businessLocal.ejbHome");
-        expectedKeys.add("xml.businessRemote.ejbHome");
-
-        validate(FooEJBHome.class, expectedKeys);
-    }
-
-    public void testEJBLocalHome() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.ejbLocalHome");
-        expectedKeys.add("xml.home.ejbLocalHome");
-        expectedKeys.add("xml.local.ejbLocalHome");
-        expectedKeys.add("xml.businessLocal.ejbLocalHome");
-        expectedKeys.add("xml.businessRemote.ejbLocalHome");
-
-        validate(FooEJBLocalHome.class, expectedKeys);
-    }
-
-    public void testEJBLocalObject() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.ejbLocalObject");
-        expectedKeys.add("xml.home.ejbLocalObject");
-        expectedKeys.add("xml.localHome.ejbLocalObject");
-        expectedKeys.add("xml.businessLocal.ejbLocalObject");
-        expectedKeys.add("xml.businessRemote.ejbLocalObject");
-
-        validate(FooEJBLocalObject.class, expectedKeys);
-    }
-
-    public void testUnkown() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.unknown");
-        expectedKeys.add("xml.home.unknown");
-        expectedKeys.add("xml.localHome.unknown");
-        expectedKeys.add("xml.local.unknown");
-
-        validate(FooUnknown.class, expectedKeys);
-    }
-
-    public void testBeanClass() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.beanClass");
-        expectedKeys.add("xml.home.beanClass");
-        expectedKeys.add("xml.localHome.beanClass");
-        expectedKeys.add("xml.local.beanClass");
-        expectedKeys.add("xml.businessRemote.beanClass");
-        expectedKeys.add("xml.businessLocal.beanClass");
-
-        validate(FooBean.class, expectedKeys);
-    }
-
-    public void testNotInterface() throws Exception {
-
-        List<String> expectedKeys = new ArrayList<String>();
-        expectedKeys.add("xml.remote.notInterface");
-        expectedKeys.add("xml.home.notInterface");
-        expectedKeys.add("xml.localHome.notInterface");
-        expectedKeys.add("xml.local.notInterface");
-        expectedKeys.add("xml.businessRemote.notInterface");
-        expectedKeys.add("xml.businessLocal.notInterface");
-
-        validate(FooClass.class, expectedKeys);
-    }
-
-    private void validate(Class interfaceClass, List<String> expectedKeys) throws OpenEJBException {
+    private EjbJar validate(Class interfaceClass) throws OpenEJBException {
 
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
@@ -179,19 +89,7 @@ public class InvalidInterfacesTest extends TestCase {
         bean.setHomeAndRemote(interfaceClass, interfaceClass);
         bean.addBusinessLocal(interfaceClass);
         bean.addBusinessRemote(interfaceClass);
-
-        try {
-            config.configureApplication(ejbJar);
-            fail("A ValidationFailedException should have been thrown");
-        } catch (ValidationFailedException e) {
-            ValidationAssertions.assertFailures(expectedKeys, e);
-        }
-    }
-
-    public void setUp() throws Exception {
-        config = new ConfigurationFactory(true);
-        ContainerSystemInfo containerSystem = config.getOpenEjbConfiguration().containerSystem;
-        containerSystem.containers.add(config.configureService(StatelessSessionContainerInfo.class));
+        return ejbJar;
     }
 
     public static class FooBean {
