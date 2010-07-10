@@ -136,6 +136,7 @@ public class JaxbJavaee {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(validate);
+        SAXParser parser = factory.newSAXParser();
 
         JAXBContext ctx = JaxbJavaee.getContext(type);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
@@ -146,7 +147,10 @@ public class JaxbJavaee {
             }
         });
 
-        SAXSource source = new SAXSource(inputSource);
+        JaxbJavaee.NoSourceFilter xmlFilter = new JaxbJavaee.NoSourceFilter(parser.getXMLReader());
+        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+
+        SAXSource source = new SAXSource(xmlFilter, inputSource);
 
         currentPublicId.set(new TreeSet<String>());
         try {
@@ -222,6 +226,22 @@ public class JaxbJavaee {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
+        }
+    }
+    public static class NoSourceFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+
+        public NoSourceFilter(XMLReader xmlReader) {
+            super(xmlReader);
+        }
+
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            Set<String> publicIds = currentPublicId.get();
+            if (publicIds != null) {
+                publicIds.add(publicId);
+            }
+            return EMPTY_INPUT_SOURCE;
         }
     }
 

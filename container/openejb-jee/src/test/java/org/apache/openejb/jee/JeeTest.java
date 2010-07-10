@@ -172,35 +172,57 @@ public class JeeTest extends TestCase {
     }
 
     public void testApplication() throws Exception {
-        marshalAndUnmarshal(Application.class, "application-example.xml");
+        marshalAndUnmarshal(Application.class, "application-example.xml", null);
     }
 
     public void testApplicationClient() throws Exception {
-        marshalAndUnmarshal(ApplicationClient.class, "application-client-example.xml");
+        marshalAndUnmarshal(ApplicationClient.class, "application-client-example.xml", null);
     }
 
     public void testWar() throws Exception {
-        marshalAndUnmarshal(WebApp.class, "web-example.xml");
+        marshalAndUnmarshal(WebApp.class, "web-example.xml", "web-example-expected.xml");
     }
 
     public void testWar2_3() throws Exception {
-        marshalAndUnmarshal(WebApp.class, "web_2.3-example.xml");
+        marshalAndUnmarshal(WebApp.class, "web_2.3-example.xml", "web_2.3-example-expected.xml");
     }
 
     public void testTld() throws Exception {
-        marshalAndUnmarshal(TldTaglib.class, "tld-example.xml");
+        marshalAndUnmarshal(TldTaglib.class, "tld-example.xml", null);
     }
 
     public void testRar10() throws Exception {
-        marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml");
+        Connector10 c10 = marshalAndUnmarshal(Connector10.class, "connector-1.0-example.xml", null);
+        Connector c = Connector.newConnector(c10);
+        JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
+        Marshaller marshaller = ctx.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(c, baos);
+
+        byte[] bytes = baos.toByteArray();
+        String actual = new String(bytes);
+
+        String expected;
+            InputStream in2 = this.getClass().getClassLoader().getResourceAsStream("connector-1.0-example-expected-1.6.xml");
+            expected = readContent(in2);
+
+        try {
+            StaxCompare.compare(expected, actual);
+        } catch (Exception e) {
+//            System.out.append(actual);
+            writeToTmpFile(bytes, "connector-1.0-example.xml");
+            throw e;
+        }
     }
 
     public void testRar15() throws Exception {
-        marshalAndUnmarshal(Connector.class, "connector-1.5-example.xml");
+        marshalAndUnmarshal(Connector.class, "connector-1.5-example.xml", null);
     }
 
     public void testRar16() throws Exception {
-        marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml");
+        marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml", null);
     }
 
     /**
@@ -224,10 +246,10 @@ public class JeeTest extends TestCase {
         }
         assertEquals(3, managedBean.size());
 
-        marshalAndUnmarshal(FacesConfig.class, "faces-config.xml");
+        marshalAndUnmarshal(FacesConfig.class, "faces-config.xml", null);
     }
 
-    private <T> void marshalAndUnmarshal(Class<T> type, String xmlFileName) throws Exception {
+    private <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
@@ -240,12 +262,12 @@ public class JeeTest extends TestCase {
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
         unmarshaller.setEventHandler(new TestValidationEventHandler());
 
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(xmlFileName);
-        String expected = readContent(in);
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(sourceXmlFile);
+        String sourceXml = readContent(in);
 
-        SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(expected.getBytes())));
+        SAXSource source = new SAXSource(xmlFilter, new InputSource(new ByteArrayInputStream(sourceXml.getBytes())));
 
-        Object object = unmarshaller.unmarshal(source);
+        T object = (T) unmarshaller.unmarshal(source);
 
         Marshaller marshaller = ctx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -253,16 +275,25 @@ public class JeeTest extends TestCase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         marshaller.marshal(object, baos);
 
-//        byte[] bytes = baos.toByteArray();
-//        String actual = new String(bytes);
-//
-//        try {
-//            Diff myDiff = new Diff(expected, actual);
-//            assertTrue("Files are similar " + myDiff, myDiff.similar());
-//        } catch (AssertionFailedError e) {
-//            writeToTmpFile(bytes, xmlFileName);
-//            throw e;
-//        }
+        byte[] bytes = baos.toByteArray();
+        String actual = new String(bytes);
+
+        String expected;
+        if (expectedXmlFile == null) {
+            expected = sourceXml;
+        } else {
+            InputStream in2 = this.getClass().getClassLoader().getResourceAsStream(expectedXmlFile);
+            expected = readContent(in2);
+        }
+
+        try {
+            StaxCompare.compare(expected, actual);
+        } catch (Exception e) {
+//            System.out.append(actual);
+            writeToTmpFile(bytes, sourceXmlFile);
+            throw e;
+        }
+        return object;
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {

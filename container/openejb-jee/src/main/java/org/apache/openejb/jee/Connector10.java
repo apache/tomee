@@ -32,9 +32,9 @@ import java.util.Map;
         "descriptions",
         "icon",
         "vendorName",
-        "version",
-        "eisType",
         "specVersion",
+        "eisType",
+        "version",
         "license",
         "resourceAdapter"
 })
