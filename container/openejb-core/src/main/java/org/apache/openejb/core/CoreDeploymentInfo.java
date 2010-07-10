@@ -45,9 +45,11 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
+import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
@@ -56,6 +58,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.recipe.ConstructionException;
 
 public class CoreDeploymentInfo extends DeploymentContext implements org.apache.openejb.DeploymentInfo {
 
@@ -1010,4 +1013,55 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
 	public void setStatefulTimeout(Duration statefulTimeout) {
 		this.statefulTimeout = statefulTimeout;
 	}
+
+    public InstanceContext newInstance() throws Exception {
+        ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
+        ThreadContext oldContext = ThreadContext.enter(callContext);
+
+        try {
+            final Context ctx = this.getJndiEnc();
+            final Class beanClass = this.getBeanClass();
+
+            // Create bean instance
+
+            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, this.getInjections(), null, null, org.apache.openejb.InjectionProcessor.unwrap(ctx));
+            final Object bean = injectionProcessor.createInstance();
+
+            // Create interceptors
+            final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
+
+            // Add the stats interceptor instance and other already created interceptor instances
+            for (InterceptorInstance interceptorInstance : this.getSystemInterceptors()) {
+                final Class clazz = interceptorInstance.getData().getInterceptorClass();
+                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
+            }
+
+            for (InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
+                if (interceptorData.getInterceptorClass().equals(beanClass)) {
+                    continue;
+                }
+
+                final Class clazz = interceptorData.getInterceptorClass();
+                final InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
+                try {
+                    final Object interceptorInstance = interceptorInjector.createInstance();
+                    interceptorInstances.put(clazz.getName(), interceptorInstance);
+                } catch (ConstructionException e) {
+                    throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
+                }
+            }
+
+            interceptorInstances.put(beanClass.getName(), bean);
+
+            // Invoke post construct method
+            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
+            final List<InterceptorData> callbackInterceptors = this.getCallbackInterceptors();
+            final InterceptorStack postConstruct = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+            postConstruct.invoke();
+
+            return new InstanceContext(this, bean, interceptorInstances);
+        } finally {
+            ThreadContext.exit(oldContext);
+        }
+    }
 }

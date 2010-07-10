@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
 import javax.ejb.NoSuchEJBException;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -43,23 +42,19 @@ import javax.management.ObjectName;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.InjectionProcessor;
-import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SafeToolkit;
-import org.apache.xbean.recipe.ConstructionException;
 
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -127,59 +122,21 @@ public class SingletonInstanceManager {
     }
 
     private Instance createInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws org.apache.openejb.ApplicationException {
-        Class beanClass = deploymentInfo.getBeanClass();
-
-        Operation originalOperation = callContext.getCurrentOperation();
-        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
 
         try {
-            callContext.setCurrentOperation(Operation.INJECTION);
+            final InstanceContext context = deploymentInfo.newInstance();
 
-            Context ctx = deploymentInfo.getJndiEnc();
+            if (context.getBean() instanceof SessionBean){
 
-            // Create bean instance
-            InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, deploymentInfo.getInjections(), null, null, unwrap(ctx));
-            Object bean = injectionProcessor.createInstance();
-
-            HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
-
-            // Add the stats interceptor instance and other already created interceptor instances
-            for (InterceptorInstance interceptorInstance : deploymentInfo.getSystemInterceptors()) {
-                Class clazz = interceptorInstance.getData().getInterceptorClass();
-                interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
-            }
-
-            for (InterceptorData interceptorData : deploymentInfo.getInstanceScopedInterceptors()) {
-                if (interceptorData.getInterceptorClass().equals(beanClass)) {
-                    continue;
-                }
-
-                Class clazz = interceptorData.getInterceptorClass();
-                InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, deploymentInfo.getInjections(), unwrap(ctx));
+                final Operation originalOperation = callContext.getCurrentOperation();
                 try {
-                    Object interceptorInstance = interceptorInjector.createInstance();
-                    interceptorInstances.put(clazz.getName(), interceptorInstance);
-                } catch (ConstructionException e) {
-                    throw new Exception("Failed to create interceptor: " + clazz.getName(), e);
+                    callContext.setCurrentOperation(Operation.CREATE);
+                    final Method create = deploymentInfo.getCreateMethod();
+                    final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
+                    ejbCreate.invoke();
+                } finally {
+                    callContext.setCurrentOperation(originalOperation);
                 }
-            }
-
-            interceptorInstances.put(beanClass.getName(), bean);
-
-
-            callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
-            callContext.setCurrentAllowedStates(SingletonContext.getStates());
-
-            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
-            InterceptorStack interceptorStack = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
-            interceptorStack.invoke();
-
-            if (bean instanceof SessionBean){
-                callContext.setCurrentOperation(Operation.CREATE);
-                callContext.setCurrentAllowedStates(SingletonContext.getStates());
-                Method create = deploymentInfo.getCreateMethod();
-                interceptorStack = new InterceptorStack(bean, create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
-                interceptorStack.invoke();
             }
 
             ReadWriteLock lock;
@@ -191,17 +148,14 @@ public class SingletonInstanceManager {
                 lock = new ReentrantReadWriteLock();
             }
 
-            return new Instance(bean, interceptorInstances, lock);
+            return new Instance(context.getBean(), context.getInterceptors(), lock);
         } catch (Throwable e) {
             if (e instanceof java.lang.reflect.InvocationTargetException) {
                 e = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
             }
-            String t = "The bean instance threw a system exception:" + e;
+            String t = "The bean instance " + deploymentInfo.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
             throw new ApplicationException(new NoSuchEJBException("Singleton failed to initialize").initCause(e));
-        } finally {
-            callContext.setCurrentOperation(originalOperation);
-            callContext.setCurrentAllowedStates(originalAllowedStates);
         }
     }
 
