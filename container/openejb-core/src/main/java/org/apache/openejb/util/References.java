@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.util;
 
-import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
 
 /**
  * @version $Rev$ $Date$
@@ -38,18 +38,8 @@ public class References {
         Set<String> getReferences(T t);
     }
 
-    /**
-     * Items will be sorted from least amount of references to most amount of references.
-     * Original order will be maintained only within those bounds.
-     *
-     * If one or more circular references are detected a CircularReferenceException will
-     * be thrown containing lists of all circuits sorted from lowest to highest.
-     *
-     * @param objects
-     * @param visitor
-     * @return
-     */
     public static <T> List<T> sort(List<T> objects, Visitor<T> visitor) {
+
         final Map<String, Node> nodes = new LinkedHashMap<String, Node>();
 
         // Create nodes
@@ -65,42 +55,23 @@ public class References {
                 Node ref = nodes.get(name);
                 if (ref == null) throw new IllegalArgumentException("No such object in list: "+name);
                 node.references.add(ref);
-                ref.refernceCount++;
+                node.initialReferences.add(ref);
             }
 
         }
 
-        // find all initial leaf nodes (and islands)
-        List<Node> sortedNodes = new ArrayList<Node>(nodes.size());
-        LinkedList<Node> leafNodes = new LinkedList<Node>();
-        for (Node n : nodes.values()) {
-            if (n.refernceCount == 0) {
-                // if the node is totally isolated (no in or out refs),
-                // move it directly to the finished list, so they are first
-                if (n.references.size() == 0) {
-                    sortedNodes.add(n);
-                } else {
-                    leafNodes.add(n);
-                }
+        boolean circuitFounded = false;
+        for (Node node : nodes.values()) {
+            Set<Node> visitedNodes = new HashSet<Node>();
+            if (!normalizeNodeReferences(node, node, visitedNodes)) {
+                circuitFounded = true;
+                break;
             }
+            node.references.addAll(visitedNodes);
         }
 
-        // pluck the leaves until there are no leaves remaining
-        while (!leafNodes.isEmpty()) {
-            Node node = leafNodes.removeFirst();
-            sortedNodes.add(node);
-            for (Node ref : node.references) {
-                ref.refernceCount--;
-                if (ref.refernceCount == 0) {
-                    leafNodes.add(ref);
-                }
-            }
-        }
-
-        // There are no more leaves so if there are there still
-        // unprocessed nodes in the graph, we have one or more curcuits
-        if (sortedNodes.size() != nodes.size()) {
-
+        //detect circus
+        if (circuitFounded) {
             Set<Circuit> circuits = new LinkedHashSet<Circuit>();
 
             for (Node node : nodes.values()) {
@@ -112,15 +83,61 @@ public class References {
 
             List<List> all = new ArrayList<List>();
             for (Circuit circuit : list) {
-                all.add((List) unwrap(circuit.nodes));
+                all.add(unwrap(circuit.nodes));
             }
 
             throw new CircularReferencesException(all);
         }
 
-        List<T> sortedObjects = unwrap(sortedNodes);
-        Collections.reverse(sortedObjects);
-        return sortedObjects;
+        LinkedList<Node> sortedNodes = new LinkedList<Node>();
+        sortedNodes.addAll(nodes.values());
+
+        for (Node node : nodes.values()) {
+            for (Node reference : node.references) {
+                final int i = sortedNodes.indexOf(node);
+                swap(node.name, reference.name, sortedNodes);
+            }
+        }
+        return unwrap(sortedNodes);
+    }
+
+    private static boolean normalizeNodeReferences(Node rootNode, Node node, Set<Node> referenceNodes) {
+        if (node.references.contains(rootNode)) {
+            return false;
+        }
+        for (Node reference : node.references) {
+            if (!referenceNodes.add(reference)) {
+                //this reference node has been visited in the past
+                continue;
+            }
+            if (!normalizeNodeReferences(rootNode, reference, referenceNodes)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void swap(String shouldAfterNodeName, String shouldBeforeNodeName, LinkedList<Node> nodes) {
+        int shouldAfterIndex = -1;
+        int shouldBeforeIndex = -1;
+        int index = 0;
+        for (Node node : nodes) {
+            if (shouldAfterIndex == -1 || shouldBeforeIndex == -1) {
+                if (shouldAfterNodeName.equals(node.name)) {
+                    shouldAfterIndex = index;
+                } else if (shouldBeforeNodeName.equals(node.name)) {
+                    shouldBeforeIndex = index;
+                }
+                index++;
+            } else {
+                break;
+            }
+        }
+        System.out.println(shouldAfterNodeName + "=" + shouldAfterIndex + "\t" + shouldBeforeNodeName + "=" + shouldBeforeIndex);
+        if (shouldAfterIndex < shouldBeforeIndex) {
+            Node node = nodes.remove(shouldAfterIndex);
+            nodes.add(shouldBeforeIndex, node);
+        }
     }
 
     private static <T> List<T> unwrap(List<Node> nodes) {
@@ -149,7 +166,7 @@ public class References {
 
         stack.push(node);
 
-        for (Node reference : node.references) {
+        for (Node reference : node.initialReferences) {
             findCircuits(circuits, reference, stack);
         }
 
@@ -159,8 +176,9 @@ public class References {
     private static class Node implements Comparable<Node> {
         private final String name;
         private Object object;
-        private final List<Node> references = new ArrayList<Node>();
-        private int refernceCount;
+        private final List<Node> initialReferences = new ArrayList<Node>();
+        private final Set<Node> references = new HashSet<Node>();
+        //private int refernceCount;
 
         public Node(String name, Object object) {
             this.name = name;
@@ -185,7 +203,8 @@ public class References {
         }
 
         public String toString() {
-            return "Node("+ name +" : "+ Join.join(",", unwrap(references))+")";
+            return name;
+            //return "Node("+ name +" : "+ Join.join(",", unwrap(initialReferences))+")";
         }
     }
 
