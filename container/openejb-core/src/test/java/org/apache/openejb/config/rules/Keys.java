@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Keys {
-    Key[] value();
+    Key[] value() default {};
 }
