@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
+import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.util.Join;
 import org.junit.runners.model.FrameworkMethod;
@@ -65,9 +66,18 @@ public class InvokeMethod extends Statement {
             EjbJar ejbJar = (EjbJar) obj;
             try {
                 assembler.createApplication(config.configureApplication(ejbJar));
-                fail("A ValidationFailedException should have been thrown");
+                if (!expectedKeys.isEmpty()) {
+                    fail("A ValidationFailedException should have been thrown");
+                }
             } catch (ValidationFailedException vfe) {
-                assertFailures(expectedKeys, vfe);
+                if (!expectedKeys.isEmpty()) {
+                    assertFailures(expectedKeys, vfe);
+                } else {
+                    for (ValidationFailure failure : vfe.getFailures()) {
+                        System.out.println("failure = " + failure.getMessageKey());
+                    }
+                    fail("There should be no validation failures");
+                }
             }
         }
         tearDown();

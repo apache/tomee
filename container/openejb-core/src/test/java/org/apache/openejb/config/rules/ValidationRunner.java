@@ -35,7 +35,8 @@ import org.junit.runners.model.Statement;
  * the application 6. This will kick off validation and this Runner will catch ValidationFailureException and make sure that all the keys specified in the @Keys annotation show up
  * in the ValidationFailureException 7. If the keys listed in the @Keys annotation match the keys found in the ValidationFailureException, the test passes, else the test fails. 8.
  * This Runner also validates that the keys specified in the @Keys annotation are also available in the org.apache.openejb.config.rules.Messages.properties file. If the key is not
- * found, then the Runner throws and exception resulting in your test case not being allowed to run.
+ * found, then the Runner throws and exception resulting in your test case not being allowed to run. Sometimes you want to write a test where you do not want any
+ * ValidationFailureException to be thrown, in those scenarios, simply annotate your test with @Keys and do not specify any @Key in it
  */
 public class ValidationRunner extends BlockJUnit4ClassRunner {
     public ValidationRunner(Class<?> klass) throws InitializationError {
