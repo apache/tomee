@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.ejb.EJBAccessException;
+import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -296,6 +297,8 @@ public class ManagedContainer implements RpcContainer {
         } catch (NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
+
+        deploymentInfo.set(EJBContext.class, this.sessionContext);
     }
 
     /**
@@ -355,7 +358,7 @@ public class ManagedContainer implements RpcContainer {
             }
 
             createContext.setCurrentOperation(Operation.CREATE);
-            createContext.setCurrentAllowedStates(ManagedContext.getStates());
+            createContext.setCurrentAllowedStates(null);
 
             // Start transaction
             TransactionPolicy txPolicy = createTransactionPolicy(createContext.getDeploymentInfo().getTransactionType(callMethod), createContext);
@@ -477,7 +480,7 @@ public class ManagedContainer implements RpcContainer {
 
                 // Setup for remove invocation
                 callContext.setCurrentOperation(Operation.REMOVE);
-                callContext.setCurrentAllowedStates(ManagedContext.getStates());
+                callContext.setCurrentAllowedStates(null);
                 callContext.setInvokedInterface(callInterface);
                 runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
@@ -575,7 +578,7 @@ public class ManagedContainer implements RpcContainer {
 
                 // Setup for business invocation
                 callContext.setCurrentOperation(Operation.BUSINESS);
-                callContext.setCurrentAllowedStates(ManagedContext.getStates());
+                callContext.setCurrentAllowedStates(null);
                 callContext.setInvokedInterface(callInterface);
                 Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
@@ -868,7 +871,7 @@ public class ManagedContainer implements RpcContainer {
 
             // Invoke afterBegin
             ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_BEGIN);
-            callContext.setCurrentAllowedStates(ManagedContext.getStates());
+            callContext.setCurrentAllowedStates(null);
             ThreadContext oldCallContext = ThreadContext.enter(callContext);
             try {
 
@@ -904,7 +907,7 @@ public class ManagedContainer implements RpcContainer {
 
                 // Invoke beforeCompletion
                 ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.BEFORE_COMPLETION);
-                callContext.setCurrentAllowedStates(ManagedContext.getStates());
+                callContext.setCurrentAllowedStates(null);
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
                 try {
                     instance.setInUse(true);
@@ -944,7 +947,7 @@ public class ManagedContainer implements RpcContainer {
                 Instance instance = synchronization.instance;
 
                 ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_COMPLETION);
-                callContext.setCurrentAllowedStates(ManagedContext.getStates());
+                callContext.setCurrentAllowedStates(null);
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
                 try {
                     instance.setInUse(true);
@@ -1028,7 +1031,7 @@ public class ManagedContainer implements RpcContainer {
             CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
 
             ThreadContext threadContext = new ThreadContext(deploymentInfo, instance.primaryKey, Operation.PRE_DESTROY);
-            threadContext.setCurrentAllowedStates(ManagedContext.getStates());
+            threadContext.setCurrentAllowedStates(null);
             ThreadContext oldContext = ThreadContext.enter(threadContext);
             try {
                 Method remove = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbRemove") : null;

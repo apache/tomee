@@ -279,7 +279,6 @@ public class CmpContainer implements RpcContainer {
 
             // business method
             callContext.setCurrentOperation(Operation.BUSINESS);
-            callContext.setCurrentAllowedStates(EntityContext.getStates());
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -321,7 +320,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = new ThreadContext(deployInfo, null);
         callContext.setCurrentOperation(Operation.SET_CONTEXT);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -338,7 +336,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.UNSET_CONTEXT);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -355,7 +352,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.LOAD);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -398,7 +394,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.STORE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -416,7 +411,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.REMOVE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -450,7 +444,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.ACTIVATE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -467,7 +460,6 @@ public class CmpContainer implements RpcContainer {
 
         ThreadContext callContext = createThreadContext(entityBean);
         callContext.setCurrentOperation(Operation.PASSIVATE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
@@ -539,7 +531,6 @@ public class CmpContainer implements RpcContainer {
 
             try {
                 callContext.setCurrentOperation(Operation.HOME);
-                callContext.setCurrentAllowedStates(EntityContext.getStates());
 
                 Method runMethod = ((CoreDeploymentInfo)deploymentInfo).getMatchingBeanMethod(callMethod);
 
@@ -597,7 +588,6 @@ public class CmpContainer implements RpcContainer {
 
             // Set current operation for allowed operations
             callContext.setCurrentOperation(Operation.CREATE);
-            callContext.setCurrentAllowedStates(EntityContext.getStates());
 
             // Invoke the proper ejbCreate() method on the instance
             ejbCreateMethod.invoke(bean, args);
@@ -611,7 +601,6 @@ public class CmpContainer implements RpcContainer {
             // create a new context containing the pk for the post create call
             ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey);
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
-            postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 
             ThreadContext oldContext = ThreadContext.enter(postCreateContext);
             try {

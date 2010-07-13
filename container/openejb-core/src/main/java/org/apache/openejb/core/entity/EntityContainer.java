@@ -186,7 +186,6 @@ public class EntityContainer implements RpcContainer {
             }
 
             callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
-            callContext.setCurrentAllowedStates(EntityContext.getStates());
             Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
 
             callContext.set(Method.class, runMethod);
@@ -235,7 +234,6 @@ public class EntityContainer implements RpcContainer {
 
     public void ejbLoad_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
         Operation orginalOperation = callContext.getCurrentOperation();
-        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
         if (orginalOperation == Operation.BUSINESS || orginalOperation == Operation.REMOVE) {
 
             TransactionPolicy callerTxPolicy = callContext.getTransactionPolicy();
@@ -249,7 +247,6 @@ public class EntityContainer implements RpcContainer {
                 // double check we don't have an active transaction
                 if (!txPolicy.isTransactionActive()) {
                     callContext.setCurrentOperation(Operation.LOAD);
-                    callContext.setCurrentAllowedStates(EntityContext.getStates());
                     bean.ejbLoad();
                 }
             } catch (NoSuchEntityException e) {
@@ -260,7 +257,6 @@ public class EntityContainer implements RpcContainer {
                 throw e;
             } finally {
                 callContext.setCurrentOperation(orginalOperation);
-                callContext.setCurrentAllowedStates(originalAllowedStates);
                 txPolicy.commit();
             }
 
@@ -269,7 +265,6 @@ public class EntityContainer implements RpcContainer {
 
     public void ejbStore_If_No_Transaction(ThreadContext callContext, EntityBean bean) throws Exception {
         Operation currentOp = callContext.getCurrentOperation();
-        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
         if (currentOp == Operation.BUSINESS) {
 
             TransactionPolicy callerTxPolicy = callContext.getTransactionPolicy();
@@ -283,7 +278,6 @@ public class EntityContainer implements RpcContainer {
                 // double check we don't have an active transaction
                 if (!txPolicy.isTransactionActive()) {
                     callContext.setCurrentOperation(Operation.STORE);
-                    callContext.setCurrentAllowedStates(EntityContext.getStates());
                     bean.ejbStore();
                 }
             } catch (Exception e) {
@@ -291,7 +285,6 @@ public class EntityContainer implements RpcContainer {
                 throw e;
             } finally {
                 callContext.setCurrentOperation(currentOp);
-                callContext.setCurrentAllowedStates(originalAllowedStates);
                 txPolicy.commit();
             }
         }
@@ -304,7 +297,6 @@ public class EntityContainer implements RpcContainer {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
         callContext.setCurrentOperation(Operation.CREATE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         /*
         * According to section 9.1.5.1 of the EJB 1.1 specification, the "ejbPostCreate(...)
@@ -342,7 +334,6 @@ public class EntityContainer implements RpcContainer {
             // create a new context containing the pk for the post create call
             ThreadContext postCreateContext = new ThreadContext(deploymentInfo, primaryKey);
             postCreateContext.setCurrentOperation(Operation.POST_CREATE);
-            postCreateContext.setCurrentAllowedStates(EntityContext.getStates());
 
             ThreadContext oldContext = ThreadContext.enter(postCreateContext);
             try {
@@ -374,7 +365,6 @@ public class EntityContainer implements RpcContainer {
     protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.FIND);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         Object returnValue = invoke(callMethod, runMethod, args, callContext);
 
@@ -407,7 +397,6 @@ public class EntityContainer implements RpcContainer {
     protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
         org.apache.openejb.core.CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         callContext.setCurrentOperation(Operation.HOME);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
         Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
         return invoke(callMethod, runMethod, args, callContext);
     }
@@ -433,7 +422,6 @@ public class EntityContainer implements RpcContainer {
 
     protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
         callContext.setCurrentOperation(Operation.REMOVE);
-        callContext.setCurrentAllowedStates(EntityContext.getStates());
 
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
         TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);

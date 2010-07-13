@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.core.managed;
 
-import javax.transaction.UserTransaction;
-import javax.xml.rpc.handler.MessageContext;
-
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
+
+import javax.transaction.UserTransaction;
+import javax.xml.rpc.handler.MessageContext;
 
 
 /**
@@ -30,138 +30,71 @@ import org.apache.openejb.spi.SecurityService;
  */
 public class ManagedContext extends BaseSessionContext {
 
-    protected final static State[] states = new State[Operation.values().length];
-
-    public static State[] getStates() {
-        return states;
-    }
-
     public ManagedContext(SecurityService securityService, UserTransaction userTransaction) {
         super(securityService, userTransaction);
     }
 
-    protected State getState() {
-        Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
-        State state = states[operation.ordinal()];
+    @Override
+    public void check(Call call) {
+        final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
+        switch (call) {
+            case getCallerPrincipal:
+            case isCallerInRole:
+            case getUserTransaction:
+            case getTimerService:
+            case getEJBLocalObject:
+            case getEJBObject:
+            case getBusinessObject:
+                switch (operation) {
+                    case INJECTION:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
+            case setRollbackOnly:
+            case getRollbackOnly:
+            case timerMethod:
+                switch (operation) {
+                    case INJECTION:
+                    case CREATE:
+                    case AFTER_COMPLETION:
+                    case PRE_DESTROY:
+                    case REMOVE:
+                    case POST_CONSTRUCT:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
+            case getInvokedBusinessInterface:
+                switch (operation) {
+                    case INJECTION:
+                    case CREATE:
+                    case AFTER_BEGIN:
+                    case BEFORE_COMPLETION:
+                    case AFTER_COMPLETION:
+                    case TIMEOUT:
+                    case PRE_DESTROY:
+                    case REMOVE:
+                    case POST_CONSTRUCT:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
 
-        if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");
+            case UserTransactionMethod:
+                switch (operation) {
+                    case INJECTION:
+                    case AFTER_COMPLETION:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
 
-        return state;
-    }
-
-    /**
-     * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
-     */
-    public static class LifecycleManagedBeanState extends SessionState {
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerMethodAllowed() {
-            return false;
-        }
-    }
-
-    /**
-     * afterBegin
-     * beforeCompletion
-     */
-    public static class BeforeCompletion extends SessionState {
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
         }
     }
 
-    /**
-     * afterCompletion
-     */
-    public static class AfterCompletion extends SessionState {
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        public boolean isJNDIAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerFactoryAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerMethodAllowed() {
-            return false;
-        }
+    @Override
+    public MessageContext getMessageContext() throws IllegalStateException {
+        throw new IllegalStateException("@ManagedBeans do not support Web Service interfaces");
     }
-
-    static {
-        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
-        states[Operation.CREATE.ordinal()] = new LifecycleManagedBeanState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
-        states[Operation.AFTER_BEGIN.ordinal()] = new BeforeCompletion();
-        states[Operation.BEFORE_COMPLETION.ordinal()] = new BeforeCompletion();
-        states[Operation.AFTER_COMPLETION.ordinal()] = new AfterCompletion();
-        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleManagedBeanState();
-        states[Operation.REMOVE.ordinal()] = new LifecycleManagedBeanState();
-        states[Operation.POST_CONSTRUCT.ordinal()] = new LifecycleManagedBeanState();
-    }
-
 }

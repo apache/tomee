@@ -96,7 +96,6 @@ public class ThreadContext {
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
     private Operation currentOperation;
-    private BaseContext.State[] currentAllowedStates;
     private Class invokedInterface;
     private TransactionPolicy transactionPolicy;
 
@@ -159,13 +158,11 @@ public class ThreadContext {
     }
 
     public BaseContext.State[] getCurrentAllowedStates() {
-        return currentAllowedStates;
+        return null;
     }
 
     public BaseContext.State[] setCurrentAllowedStates(BaseContext.State[] newAllowedStates) {
-        BaseContext.State[] oldAllowedStates = currentAllowedStates; 
-        currentAllowedStates = newAllowedStates;
-        return oldAllowedStates;
+        return null;
     }
     
     @SuppressWarnings({"unchecked"})

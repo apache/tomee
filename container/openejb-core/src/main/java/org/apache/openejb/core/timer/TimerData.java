@@ -30,7 +30,7 @@ import java.util.TimerTask;
 public class TimerData {
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
     private final long id;
-    private final EjbTimerServiceImpl timerService;
+    final EjbTimerServiceImpl timerService;
     private final String deploymentId;
     private final Object primaryKey;
     private final Object info;

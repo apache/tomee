@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.ejb.EJBContext;
 import javax.ejb.SessionBean;
 import javax.ejb.NoSuchEJBException;
 import javax.naming.Context;
@@ -181,7 +182,7 @@ public class SingletonInstanceManager {
 
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
-            callContext.setCurrentAllowedStates(SingletonContext.getStates());
+            callContext.setCurrentAllowedStates(null);
 
             Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
 
@@ -210,6 +211,8 @@ public class SingletonInstanceManager {
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
         Data data = new Data();
         deploymentInfo.setContainerData(data);
+
+        deploymentInfo.set(EJBContext.class, this.sessionContext);
 
         // Create stats interceptor
         StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());

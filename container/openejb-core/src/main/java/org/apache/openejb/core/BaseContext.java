@@ -16,32 +16,32 @@
  */
 package org.apache.openejb.core;
 
-import java.io.Serializable;
-import java.io.ObjectStreamException;
-import java.security.Identity;
-import java.security.Principal;
-import java.util.Properties;
-import java.util.Map;
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.core.ivm.IntraVmArtifact;
+import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.timer.TimerServiceImpl;
+import org.apache.openejb.core.transaction.EjbUserTransaction;
+import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.spi.SecurityService;
+
 import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.TimerService;
-import javax.naming.NamingException;
 import javax.naming.Context;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-import javax.transaction.NotSupportedException;
+import javax.naming.NamingException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
-
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.timer.EjbTimerService;
-import org.apache.openejb.core.timer.TimerServiceImpl;
-import org.apache.openejb.core.ivm.IntraVmArtifact;
-import org.apache.openejb.core.transaction.EjbUserTransaction;
-import org.apache.openejb.core.transaction.TransactionPolicy;
-import org.apache.openejb.spi.SecurityService;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+import java.security.Identity;
+import java.security.Principal;
+import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -49,8 +49,13 @@ import org.apache.openejb.spi.SecurityService;
  */
 public abstract class BaseContext implements EJBContext, Serializable {
 
-    private final SecurityService securityService;
-    private final UserTransaction userTransaction;
+    public static enum Call {
+        getEJBObject, getEJBLocalObject, isCallerInRole, setRollbackOnly, getCallerPrincipal, getRollbackOnly, getTimerService, getUserTransaction, getBusinessObject, timerMethod, getInvokedBusinessInterface, UserTransactionMethod, getMessageContext, getPrimaryKey
+
+    }
+
+    protected final SecurityService securityService;
+    protected final UserTransaction userTransaction;
 
     protected BaseContext(SecurityService securityService) {
         this(securityService, new EjbUserTransaction());
@@ -61,25 +66,133 @@ public abstract class BaseContext implements EJBContext, Serializable {
         this.userTransaction = new UserTransactionWrapper(userTransaction);
     }
 
-    protected static State[] states;
-    
-    public static State[] getStates() {
-        return states;
+    public abstract void check(Call call);
+
+    protected IllegalStateException illegal(Call call, Operation operation) {
+        return new IllegalStateException(call + " cannot be called in " + operation);
     }
-    
-    protected abstract State getState();
 
     public Map<String, Object> getContextData() {
         throw new UnsupportedOperationException("not yet implemented");
     }
-    
     public EJBHome getEJBHome() {
-        return getState().getEJBHome();
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        return di.getEJBHome();
     }
 
     public EJBLocalHome getEJBLocalHome() {
-        return getState().getEJBLocalHome();
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        return di.getEJBLocalHome();
     }
+
+    public Principal getCallerPrincipal() {
+        check(Call.getCallerPrincipal);
+        Principal callerPrincipal = getCallerPrincipal(securityService);
+        if (callerPrincipal == null) callerPrincipal = UnauthenticatedPrincipal.INSTANCE;
+        return callerPrincipal;
+    }
+
+    protected Principal getCallerPrincipal(SecurityService securityService) {
+        return securityService.getCallerPrincipal();
+    }
+
+    @Override
+    public boolean isCallerInRole(String s) {
+        check(Call.isCallerInRole);
+        return isCallerInRole(securityService, s);
+    }
+
+    protected boolean isCallerInRole(SecurityService securityService, String roleName) {
+        check(Call.isCallerInRole);
+        return securityService.isCallerInRole(roleName);
+    }
+
+    @Override
+    public UserTransaction getUserTransaction() throws IllegalStateException {
+        check(Call.getUserTransaction);
+        return getUserTransaction(userTransaction);
+    }
+
+    public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
+
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        if (di.isBeanManagedTransaction()) {
+            return userTransaction;
+        } else {
+            throw new IllegalStateException("container-managed transaction beans can not access the UserTransaction");
+        }
+    }
+
+    public void setRollbackOnly() throws IllegalStateException {
+        check(Call.setRollbackOnly);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        if (di.isBeanManagedTransaction()) {
+            throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly() method");
+        }
+
+        TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
+        if (txPolicy == null) {
+            throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
+        }
+        if (!txPolicy.isTransactionActive()) {
+            // this would be true for Supports tx attribute where no tx was propagated
+            throw new IllegalStateException("No current transaction");
+        }
+        txPolicy.setRollbackOnly();
+    }
+
+    public boolean getRollbackOnly() throws IllegalStateException {
+        check(Call.getRollbackOnly);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        if (di.isBeanManagedTransaction()) {
+            throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
+        }
+
+        TransactionPolicy transactionPolicy = threadContext.getTransactionPolicy();
+        if (transactionPolicy == null) {
+            throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
+        }
+        if (!transactionPolicy.isTransactionActive()) {
+            // this would be true for Supports tx attribute where no tx was propagated
+            throw new IllegalStateException("No current transaction");
+        }
+        return transactionPolicy.isRollbackOnly();
+    }
+
+    public TimerService getTimerService() throws IllegalStateException {
+        check(Call.getTimerService);
+
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        if (timerService == null) {
+            throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
+        }
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
+    }
+
+    public boolean isTimerMethodAllowed() {
+        return true;
+    }
+
+    public boolean isUserTransactionAccessAllowed() {
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        check(Call.UserTransactionMethod);
+        return di.isBeanManagedTransaction();
+    }
+
 
     public final Properties getEnvironment() {
         throw new UnsupportedOperationException();
@@ -89,34 +202,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
         throw new UnsupportedOperationException();
     }
 
-    public Principal getCallerPrincipal() {
-        Principal callerPrincipal = getState().getCallerPrincipal(securityService);
-        if (callerPrincipal == null) callerPrincipal = UnauthenticatedPrincipal.INSTANCE;
-        return callerPrincipal;
-    }
-
     public final boolean isCallerInRole(Identity identity) {
         throw new UnsupportedOperationException();
-    }
-
-    public boolean isCallerInRole(String roleName) {
-        return getState().isCallerInRole(securityService, roleName);
-    }
-
-    public UserTransaction getUserTransaction() throws IllegalStateException {
-        return getState().getUserTransaction(userTransaction);
-    }
-
-    public void setRollbackOnly() throws IllegalStateException {
-        getState().setRollbackOnly();
-    }
-
-    public boolean getRollbackOnly() throws IllegalStateException {
-        return getState().getRollbackOnly();
-    }
-
-    public TimerService getTimerService() throws IllegalStateException {
-        return getState().getTimerService();
     }
 
     public Object lookup(String name) {
@@ -131,47 +218,6 @@ public abstract class BaseContext implements EJBContext, Serializable {
         } catch (RuntimeException e) {
             throw new IllegalArgumentException(e);
         }
-
-//        try {
-//            InitialContext initialContext = new InitialContext();
-//            Context ctx = (Context) initialContext.lookup("java:comp/env");
-//            return ctx.lookup(name);
-//        } catch (NamingException e) {
-//            throw new IllegalArgumentException(e);
-//        } catch (RuntimeException e) {
-//            throw new IllegalArgumentException(e);
-//        }
-    }
-
-    public boolean isUserTransactionAccessAllowed() {
-        return getState().isUserTransactionAccessAllowed();
-    }
-
-    public boolean isMessageContextAccessAllowed() {
-        return getState().isMessageContextAccessAllowed();
-    }
-
-    public boolean isJNDIAccessAllowed() {
-        return getState().isJNDIAccessAllowed();
-    }
-
-    public boolean isEntityManagerFactoryAccessAllowed() {
-        return getState().isEntityManagerFactoryAccessAllowed();
-    }
-
-    public boolean isEntityManagerAccessAllowed() {
-        return getState().isEntityManagerAccessAllowed();
-    }
-
-    public boolean isTimerAccessAllowed() {
-        return getState().isTimerAccessAllowed();
-    }
-
-    public static boolean isTimerMethodAllowed() {
-        State[] currentStates = ThreadContext.getThreadContext().getCurrentAllowedStates();
-        State currentState = currentStates[ThreadContext.getThreadContext().getCurrentOperation().ordinal()];
-        
-        return currentState.isTimerMethodAllowed();
     }
 
     public class UserTransactionWrapper implements UserTransaction {
@@ -223,121 +269,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
             userTransaction.setTransactionTimeout(i);
         }
     }
-    
+
     public static class State {
-
-        public EJBHome getEJBHome() {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            return di.getEJBHome();
-        }
-
-        public EJBLocalHome getEJBLocalHome() {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            return di.getEJBLocalHome();
-        }
-
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            return securityService.getCallerPrincipal();
-        }
-
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            return securityService.isCallerInRole(roleName);
-        }
-
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            if (di.isBeanManagedTransaction()) {
-                return userTransaction;
-            } else {
-                throw new IllegalStateException("container-managed transaction beans can not access the UserTransaction");
-            }
-        }
-
-        public void setRollbackOnly() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            if (di.isBeanManagedTransaction()) {
-                throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly() method");
-            }
-
-            TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
-            if (txPolicy == null) {
-                throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
-            }
-            if (!txPolicy.isTransactionActive()) {
-                // this would be true for Supports tx attribute where no tx was propagated
-                throw new IllegalStateException("No current transaction");
-            }
-            txPolicy.setRollbackOnly();
-        }
-
-        public boolean getRollbackOnly() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            if (di.isBeanManagedTransaction()) {
-                throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
-            }
-
-            TransactionPolicy transactionPolicy = threadContext.getTransactionPolicy();
-            if (transactionPolicy == null) {
-                throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
-            }
-            if (!transactionPolicy.isTransactionActive()) {
-                // this would be true for Supports tx attribute where no tx was propagated
-                throw new IllegalStateException("No current transaction");
-            }
-            return transactionPolicy.isRollbackOnly();
-        }
-
-        public TimerService getTimerService() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-            EjbTimerService timerService = deploymentInfo.getEjbTimerService();
-            if (timerService == null) {
-                throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
-            }
-            return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
-        }
-
-        public boolean isTimerAccessAllowed() {
-            return true;
-        }
-
-        public boolean isTimerMethodAllowed() {
-            return true;
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            return di.isBeanManagedTransaction();
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return true;
-        }
-
-        public boolean isJNDIAccessAllowed() {
-            return true;
-        }
-
-        public boolean isEntityManagerFactoryAccessAllowed() {
-            return true;
-        }
-
-        public boolean isEntityManagerAccessAllowed() {
-            return true;
-        }
-
     }
 
     protected Object writeReplace() throws ObjectStreamException {

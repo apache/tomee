@@ -16,197 +16,61 @@
  */
 package org.apache.openejb.core.mdb;
 
-import java.security.Principal;
-import java.util.Map;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.MessageDrivenContext;
-import javax.ejb.TimerService;
-import javax.transaction.UserTransaction;
-
 import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
+
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.MessageDrivenContext;
 
 /**
  * @version $Rev$ $Date$
  */
 public class MdbContext extends BaseContext implements MessageDrivenContext {
 
-    protected final static State[] states = new State[Operation.values().length];
-
-    public static State[] getStates() {
-        return states;
-    }
-
     public MdbContext(SecurityService securityService) {
         super(securityService);
     }
 
-    protected State getState() {
-        Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
-        State state = states[operation.ordinal()];
-
-        if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");
-
-        return state;
+    @Override
+    public EJBHome getEJBHome() {
+        throw new IllegalStateException();
     }
 
-    /**
-     * Dependency injection methods (e.g., setMessageDrivenContext)
-     */
-    protected static class InjectionMdbState extends State {
-        @Override
-        public EJBHome getEJBHome() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public EJBLocalHome getEJBLocalHome() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public TimerService getTimerService() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isEntityManagerFactoryAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isEntityManagerAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isTimerAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isTimerMethodAllowed() {
-            return false;
-        }
+    @Override
+    public EJBLocalHome getEJBLocalHome() {
+        throw new IllegalStateException();
     }
 
-    /**
-     * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
-     */
-    protected static class LifecycleMdbState extends State {
-        @Override
-        public EJBHome getEJBHome() {
-            throw new IllegalStateException();
-        }
+    @Override
+    public void check(Call call) {
+        final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
 
-        @Override
-        public EJBLocalHome getEJBLocalHome() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isEntityManagerAccessAllowed() {
-            return false;
-        }
-
-        @Override
-        public boolean isTimerAccessAllowed() {
-            return super.isTimerAccessAllowed();    //todo: consider this autogenerated code
-        }
-
-        @Override
-        public boolean isTimerMethodAllowed() {
-            return false;
+        switch (call) {
+            case getUserTransaction:
+            case getTimerService:
+                switch (operation) {
+                    case INJECTION:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
+            case getCallerPrincipal:
+            case isCallerInRole:
+            case timerMethod:
+            case setRollbackOnly:
+            case getRollbackOnly:
+                switch (operation) {
+                    case INJECTION:
+                    case CREATE:
+                    case POST_CONSTRUCT:
+                    case PRE_DESTROY:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
         }
     }
-
-    /**
-     * Message listener method, business method interceptor method
-     * and timeout callback method
-     */
-    protected static class BusinessTimeoutMdbState extends State {
-        @Override
-        public EJBHome getEJBHome() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public EJBLocalHome getEJBLocalHome() {
-            throw new IllegalStateException();
-        }
-
-    }
-
-    static {
-        states[Operation.INJECTION.ordinal()] = new InjectionMdbState();
-        states[Operation.CREATE.ordinal()] = new LifecycleMdbState();
-        states[Operation.POST_CONSTRUCT.ordinal()] = new LifecycleMdbState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleMdbState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessTimeoutMdbState();
-        states[Operation.TIMEOUT.ordinal()] = new BusinessTimeoutMdbState();
-    }
-
 }

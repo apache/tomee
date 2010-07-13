@@ -29,44 +29,59 @@ import java.io.IOException;
  */
 public class StatelessContext extends BaseSessionContext implements Flushable {
 
-    protected final static State[] states = new State[Operation.values().length];
     private final Flushable flushable;
-
-    public static State[] getStates() {
-        return states;
-    }
 
     public StatelessContext(SecurityService securityService, Flushable flushable) {
         super(securityService);
         this.flushable = flushable;
     }
 
-    protected State getState() {
-        Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
-        State state = states[operation.ordinal()];
+    @Override
+    public void check(Call call) {
+        final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
 
-        if (state == null) throw new IllegalArgumentException("Invalid operation " + operation + " for this context");
-
-        return state;
-    }
-
-    /**
-     * Business method from web service endpoint
-     */
-    private static class BusinessWsStatelessState extends SessionState {
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
+        switch (call) {
+            case getEJBLocalObject:
+            case getEJBObject:
+            case getBusinessObject:
+            case getUserTransaction:
+            case getTimerService:
+                switch (operation) {
+                    case INJECTION:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
+            case getCallerPrincipal:
+            case isCallerInRole:
+            case timerMethod:
+            case setRollbackOnly:
+            case getRollbackOnly:
+            case UserTransactionMethod:
+                switch (operation) {
+                    case INJECTION:
+                    case CREATE:
+                    case POST_CONSTRUCT:
+                    case PRE_DESTROY:
+                        throw illegal(call, operation);
+                    default:
+                        return;
+                }
+            case getInvokedBusinessInterface:
+                switch (operation) {
+                    case BUSINESS:
+                        return;
+                    default:
+                        throw illegal(call, operation);
+                }
+            case getMessageContext:
+                switch (operation) {
+                    case BUSINESS_WS:
+                        return;
+                    default:
+                        throw illegal(call, operation);
+                }
         }
-    }
-
-    static {
-        states[Operation.INJECTION.ordinal()] = new InjectionSessionState();
-        states[Operation.CREATE.ordinal()] = new LifecycleSessionState();
-        states[Operation.BUSINESS.ordinal()] = new BusinessSessionState();
-        states[Operation.BUSINESS_WS.ordinal()] = new BusinessWsStatelessState();
-        states[Operation.TIMEOUT.ordinal()] = new TimeoutSessionState();
-        states[Operation.POST_CONSTRUCT.ordinal()] = new PostConstructSessionState();
-        states[Operation.PRE_DESTROY.ordinal()] = new LifecycleSessionState();
     }
 
     public void flush() throws IOException {
