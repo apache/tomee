@@ -37,7 +37,7 @@ public class StaxCompare {
 
     public static void compare(String a, String b) throws Exception {
         StringBuilder message = new StringBuilder();
-        XMLInputFactory factory = XMLInputFactory.newFactory();
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLEventReader rA = factory.createXMLEventReader(new StringReader(a));
         XMLEventReader rB = factory.createXMLEventReader(new StringReader(b));
         if (!compare(rA, rB, message)) {
