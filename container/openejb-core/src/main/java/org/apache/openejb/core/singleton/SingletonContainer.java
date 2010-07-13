@@ -42,7 +42,6 @@ import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
-import javax.ejb.LockType;
 import javax.interceptor.AroundInvoke;
 
 import org.apache.openejb.ContainerType;
@@ -221,7 +220,7 @@ public class SingletonContainer implements RpcContainer {
             Instance instance = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
-            callContext.setCurrentAllowedStates(SingletonContext.getStates());
+            callContext.setCurrentAllowedStates(null);
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
 

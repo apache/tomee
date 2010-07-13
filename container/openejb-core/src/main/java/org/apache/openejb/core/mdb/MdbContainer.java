@@ -343,7 +343,6 @@ public class MdbContainer implements RpcContainer {
         OpenEJBException openEjbException = null;
         Operation oldOperation = callContext.getCurrentOperation();
         callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
-        BaseContext.State[] originalStates = callContext.setCurrentAllowedStates(MdbContext.getStates());
         try {
             if (logger.isInfoEnabled()) {
                 logger.info("invoking method " + method.getName() + " on " + deployInfo.getDeploymentID());
@@ -366,7 +365,6 @@ public class MdbContainer implements RpcContainer {
             throw e;
         } finally {
             callContext.setCurrentOperation(oldOperation);
-            callContext.setCurrentAllowedStates(originalStates);
             // Log the invocation results
             if (logger.isDebugEnabled()) {
                 if (openEjbException == null) {

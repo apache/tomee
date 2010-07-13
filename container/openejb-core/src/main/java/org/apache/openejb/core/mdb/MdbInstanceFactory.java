@@ -29,6 +29,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.ejb.EJBContext;
 import javax.ejb.MessageDrivenBean;
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -78,6 +79,7 @@ public class MdbInstanceFactory {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
 
+        deploymentInfo.set(EJBContext.class, this.mdbContext);
     }
 
     /**
@@ -157,7 +159,6 @@ public class MdbInstanceFactory {
         try {
             // call post destroy method
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
-            callContext.setCurrentAllowedStates(MdbContext.getStates());
             Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove") : null;
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);

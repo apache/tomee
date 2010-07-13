@@ -191,7 +191,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
             bean = instanceManager.getInstance(callContext);
 
             callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
-            callContext.setCurrentAllowedStates(StatelessContext.getStates());
             callContext.set(Method.class, runMethod);
             callContext.setInvokedInterface(callInterface);
             Object retValue = _invoke(callMethod, runMethod, args, (Instance) bean, callContext, type);

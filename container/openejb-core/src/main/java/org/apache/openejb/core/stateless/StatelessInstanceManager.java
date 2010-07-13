@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
 import java.io.Flushable;
 import java.io.IOException;
 
+import javax.ejb.EJBContext;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.ConcurrentAccessTimeoutException;
@@ -242,7 +243,6 @@ public class StatelessInstanceManager {
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
-            callContext.setCurrentAllowedStates(StatelessContext.getStates());
             CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
 
             Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
@@ -282,6 +282,8 @@ public class StatelessInstanceManager {
 
         Data data = new Data(builder.build(), accessTimeout, closeTimeout);
         deploymentInfo.setContainerData(data);
+
+        deploymentInfo.set(EJBContext.class, data.sessionContext);
 
         try {
             final Context context = deploymentInfo.getJndiEnc();

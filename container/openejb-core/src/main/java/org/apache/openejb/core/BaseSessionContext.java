@@ -19,6 +19,8 @@ package org.apache.openejb.core;
 import java.security.Principal;
 import java.util.List;
 import java.util.ArrayList;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
@@ -55,281 +57,90 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        return ((SessionState) getState()).getEJBLocalObject();
+        check(Call.getEJBLocalObject);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
+
+        return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL);
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
-        return ((SessionState) getState()).getEJBObject();
+        check(Call.getEJBObject);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+        if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
+
+        return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT);
     }
 
     public MessageContext getMessageContext() throws IllegalStateException {
-        return ((SessionState) getState()).getMessageContext();
+        check(Call.getMessageContext);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        MessageContext messageContext = threadContext.get(MessageContext.class);
+        if (messageContext == null) throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
+        return messageContext;
     }
 
-    public Object getBusinessObject(Class aClass) {
-        return ((SessionState) getState()).getBusinessObject(aClass);
+    public Object getBusinessObject(Class interfce) {
+        check(Call.getBusinessObject);
+        if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
+
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        DeploymentInfo di = threadContext.getDeploymentInfo();
+
+        InterfaceType interfaceType = di.getInterfaceType(interfce);
+
+        if (interfaceType == null){
+            throw new IllegalStateException("Component has no such interface: " + interfce.getName());
+        }
+
+        if (!interfaceType.isBusiness()) {
+            throw new IllegalStateException("Interface is not a business interface for this bean: " + interfce.getName());
+        }
+
+        try {
+            EjbObjectProxyHandler handler;
+            switch(di.getComponentType()){
+                case STATEFUL: {
+                    handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    break;
+                }
+                case STATELESS: {
+                    handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    break;
+                }
+                case SINGLETON: {
+                    handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    break;
+                }
+                case MANAGED: {
+                    handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    break;
+                }
+                default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
+            }
+
+            List<Class> interfaces = new ArrayList<Class>();
+            interfaces.addAll(di.getInterfaces(interfaceType));
+            interfaces.add(IntraVmProxy.class);
+            return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
+        } catch (IllegalAccessException iae) {
+            throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
+        }
     }
 
     public Class getInvokedBusinessInterface() {
-        return ((SessionState) getState()).getInvokedBusinessInterface();
+        check(Call.getInvokedBusinessInterface);
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        Class invokedInterface = threadContext.getInvokedInterface();
+        InterfaceType type = threadContext.getDeploymentInfo().getInterfaceType(invokedInterface);
+        if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
+
+        if (invokedInterface == null){
+            throw new IllegalStateException("Business interface not set into ThreadContext.");
+        }
+        return invokedInterface;
     }
-
-    protected static class SessionState extends State {
-
-        public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
-
-            return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL);
-        }
-
-        public EJBObject getEJBObject() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-            if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
-
-            return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT);
-        }
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            MessageContext messageContext = threadContext.get(MessageContext.class);
-            if (messageContext == null) throw new IllegalStateException("Only calls on the service-endpoint have a MessageContext.");
-            return messageContext;
-        }
-
-        public Object getBusinessObject(Class interfce) {
-            if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
-
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            DeploymentInfo di = threadContext.getDeploymentInfo();
-
-            InterfaceType interfaceType = di.getInterfaceType(interfce);
-
-            if (interfaceType == null){
-                throw new IllegalStateException("Component has no such interface: " + interfce.getName());
-            }
-
-            if (!interfaceType.isBusiness()) {
-                throw new IllegalStateException("Interface is not a business interface for this bean: " + interfce.getName());
-            }
-
-            try {
-                EjbObjectProxyHandler handler;
-                switch(di.getComponentType()){
-                    case STATEFUL: {
-                        handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
-                        break;
-                    }
-                    case STATELESS: {
-                        handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
-                        break;
-                    }
-                    case SINGLETON: {
-                        handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
-                        break;
-                    }
-                    case MANAGED: {
-                        handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
-                        break;
-                    }
-                    default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
-                }
-
-                List<Class> interfaces = new ArrayList<Class>();
-                interfaces.addAll(di.getInterfaces(interfaceType));
-                interfaces.add(IntraVmProxy.class);
-                return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
-            } catch (IllegalAccessException iae) {
-                throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
-            }
-        }
-
-        public Class getInvokedBusinessInterface() {
-            ThreadContext threadContext = ThreadContext.getThreadContext();
-            Class invokedInterface = threadContext.getInvokedInterface();
-            InterfaceType type = threadContext.getDeploymentInfo().getInterfaceType(invokedInterface);
-            if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
-
-            if (invokedInterface == null){
-                throw new IllegalStateException("Business interface not set into ThreadContext.");
-            }
-            return invokedInterface;
-        }
-    }
-
-    /**
-     * Dependency injection methods (e.g., setSessionContext)
-     */
-    public static class InjectionSessionState extends SessionState {
-
-        public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public EJBObject getEJBObject() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public Object getBusinessObject(Class interfce) {
-            throw new IllegalStateException();
-        }
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            throw new IllegalStateException();
-        }
-
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            throw new IllegalStateException();
-        }
-
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public TimerService getTimerService() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerFactoryAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerMethodAllowed() {
-            return false;
-        }
-    }
-
-    /**
-     * PostConstruct, Pre-Destroy lifecycle callback interceptor methods
-     */
-    public static class LifecycleSessionState extends SessionState {
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public Principal getCallerPrincipal(SecurityService securityService) {
-            throw new IllegalStateException();
-        }
-
-        public boolean isCallerInRole(SecurityService securityService, String roleName) {
-            throw new IllegalStateException();
-        }
-
-        public void setRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean getRollbackOnly() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isUserTransactionAccessAllowed() {
-            return false;
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-
-        public boolean isJNDIAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerFactoryAccessAllowed() {
-            return false;
-        }
-
-        public boolean isEntityManagerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerAccessAllowed() {
-            return false;
-        }
-
-        public boolean isTimerMethodAllowed() {
-            return false;
-        }
-    }
-
-    public static class PostConstructSessionState extends LifecycleSessionState {
-
-        public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
-            return new RestrictedUserTransaction(super.getUserTransaction(userTransaction));
-        }
-    }
-
-    /**
-     * Business method from business interface or component interface; business
-     * method interceptor method
-     */
-    public static class BusinessSessionState extends SessionState {
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-    }
-
-    /**
-     * Timeout callback method
-     */
-    public static class TimeoutSessionState extends SessionState {
-
-        public Class getInvokedBusinessInterface() {
-            throw new IllegalStateException();
-        }
-
-        public MessageContext getMessageContext() throws IllegalStateException {
-            throw new IllegalStateException();
-        }
-
-        public boolean isMessageContextAccessAllowed() {
-            return false;
-        }
-    }
-
 }
