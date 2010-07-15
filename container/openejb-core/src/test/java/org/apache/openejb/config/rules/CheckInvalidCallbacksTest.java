@@ -16,11 +16,6 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.annotation.PostConstruct;
@@ -34,54 +29,23 @@ import javax.interceptor.AroundInvoke;
 
 import junit.framework.TestCase;
 
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
+@RunWith(ValidationRunner.class)
 public class CheckInvalidCallbacksTest extends TestCase {
 
-    @Test
-    public void test() throws Exception {
-        Assembler assemler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
-
+    @Keys({@Key(value="ignoredAnnotation",count=10,type=KeyType.WARNING),@Key(value="aroundInvoke.invalidArguments",count=2,type=KeyType.FAILURE)})
+    public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
         ejbJar.addEnterpriseBean(new SingletonBean("TestSingleton", TestBean.class));
-
-        List<String> expectedWarningKeys = new ArrayList<String>();
-        //For StatelessBean
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        //For SingletionBean
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-        expectedWarningKeys.add("ignoredAnnotation");
-
-        List<String> expectedFailureKeys = new ArrayList<String>();
-        //For StatelessBean
-        expectedFailureKeys.add("aroundInvoke.invalidArguments");
-        //For SingletionBean
-        expectedFailureKeys.add("aroundInvoke.invalidArguments");
-
-        try {
-            config.configureApplication(ejbJar);
-        } catch (ValidationFailedException e) {
-            assertWarnings(expectedWarningKeys, e);
-            assertFailures(expectedFailureKeys,e);
-        }
+        return ejbJar;
     }
 
     public static class TestBean implements Callable {

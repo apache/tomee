@@ -17,91 +17,44 @@
 
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
-import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.InvocationContext;
 
 import junit.framework.TestCase;
 
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
+@RunWith(ValidationRunner.class)
 public class CheckInvalidAroundTimeoutTest extends TestCase {
 
-    @Test
-    public void testInvalidAroundTimeoutParameter() throws Exception {
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+    @Keys(@Key(value="aroundInvoke.invalidArguments",count=2))
+    public EjbJar testInvalidAroundTimeoutParameter() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutParameterBean", TestInvalidAroundTimeoutParameterBean.class));
         ejbJar.addInterceptor(new Interceptor(TestInvalidAroundTimeoutParameterInterceptor.class));
-
-        List<String> expectedFailureKeys = new ArrayList<String>();
-        expectedFailureKeys.add("aroundInvoke.invalidArguments");
-        expectedFailureKeys.add("aroundInvoke.invalidArguments");
-        try {
-            config.configureApplication(ejbJar);
-        } catch (ValidationFailedException e) {
-            assertFailures(expectedFailureKeys, e);
-        }
+        return ejbJar;
     }
 
-    @Test
-    public void testInvalidAroundTimeoutReturnValue() throws Exception {
-        Assembler assembler = new Assembler();
-        ConfigurationFactory config = new ConfigurationFactory();
+    @Keys({@Key(value="aroundInvoke.badReturnType",count=2),@Key(value="aroundInvoke.mustThrowException",count=2)})
+    public EjbJar testInvalidAroundTimeoutReturnValue() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutReturnValueBean", TestInvalidAroundTimeoutReturnValueBean.class));
         ejbJar.addInterceptor(new Interceptor(TestInvalidAroundTimeoutReturnValueInterceptor.class));
-
-        List<String> expectedFailureKeys = new ArrayList<String>();
-        //For Bean Class
-        expectedFailureKeys.add("aroundInvoke.badReturnType");
-        expectedFailureKeys.add("aroundInvoke.mustThrowException");
-        //For Interceptor
-        expectedFailureKeys.add("aroundInvoke.badReturnType");
-        expectedFailureKeys.add("aroundInvoke.mustThrowException");
-        try {
-            config.configureApplication(ejbJar);
-        } catch (ValidationFailedException e) {
-            assertFailures(expectedFailureKeys, e);
-        }
+        return ejbJar;
     }
 
-    @Test
-    public void testIgnoredAroundTimeout() throws Exception {
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
-        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
-        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+    @Keys(@Key(value="ignoredAnnotation",type=KeyType.WARNING))
+    public EjbJar testIgnoredAroundTimeout() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean("TestAroundTimeout", TestAroundTimeout.class));
-        List<String> expectedWarningKeys = new ArrayList<String>();
-        expectedWarningKeys.add("ignoredAnnotation");
-        try {
-            config.configureApplication(ejbJar);
-        } catch (ValidationFailedException e) {
-            assertWarnings(expectedWarningKeys, e);
-
-        }
+        return ejbJar;
     }
 
     public static class TestInvalidAroundTimeoutParameterBean {
