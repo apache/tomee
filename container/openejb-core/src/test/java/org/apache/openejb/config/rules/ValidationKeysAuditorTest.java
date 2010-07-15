@@ -70,9 +70,11 @@ public class ValidationKeysAuditorTest {
             e.printStackTrace();
         }
     }
+
     /**
-     * This method will write to confluence only if you supply the system properties confluenceUsername and confluencePassword
-     * example usage  mvn test -Dtest=ValidationKeysAuditorTest -DconfluenceUsername=<<your username>> -DconfluencePassword=<<your password>>
+     * This method will write to confluence only if you supply the system properties confluenceUsername and confluencePassword example usage mvn test
+     * -Dtest=ValidationKeysAuditorTest -DconfluenceUsername=<<your username>> -DconfluencePassword=<<your password>>
+     * 
      * @param confluenceOutput
      */
     private void writeToConfluence(String confluenceOutput) {
@@ -88,7 +90,7 @@ public class ValidationKeysAuditorTest {
                 confluence.storePage(page);
                 confluence.logout();
             } catch (Exception e) {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -164,10 +166,21 @@ public class ValidationKeysAuditorTest {
     }
 
     private void prepareConfluenceUntestedKeyList(Set<String> untestedKeys, StringBuilder output, String newLine) {
-        output.append("|| List of untested keys \\\\ ||").append(newLine);
+        output.append("|| h2.List of untested keys \\\\ ||").append(newLine);
+        int count = 0;
         for (String key : untestedKeys) {
-            output.append("| ").append(key).append(" |").append(newLine);
+            if (count == 0) {
+                output.append("| ");
+            }
+            if (count >= 0 && count < 4) {
+                output.append(key).append(" | ");
+                ++count;
+                continue;
+            }
+            output.append(newLine);
+            count = 0;
         }
+        output.append(newLine);
     }
 
     private void prepareConfluenceSummary(Set<String> untestedKeys, StringBuilder output, String newLine) {
@@ -175,7 +188,10 @@ public class ValidationKeysAuditorTest {
         int untested = untestedKeys.size();
         int tested = total - untested;
         double coverage = (((tested + 0.0) / (total + 0.0)) * 100);
-        output.append("h2.Out of a total of " + total + " keys, " + tested + " have been tested. Test coverage for keys is " + coverage + " %.").append(newLine);
+        output.append("{warning:title=Warning}This page is auto-generated. Any manual changes would be over-written the next time this page is regenerated{warning}").append(
+                newLine);
+        output.append("{info:title=Audit Result}h2.Out of a total of " + total + " keys, " + tested + " have been tested. Test coverage for keys is " + coverage + " %.{info}")
+                .append(newLine);
     }
 
     private void generateReport(File file, KeysAnnotationVisitor visitor) throws IOException {
