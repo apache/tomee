@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -35,6 +36,8 @@ import org.apache.openejb.config.rules.KeysAnnotationVisitor.ClassInfo;
 import org.apache.openejb.config.rules.KeysAnnotationVisitor.MethodInfo;
 import org.apache.xbean.asm.ClassReader;
 import org.apache.xbean.asm.ClassWriter;
+import org.codehaus.swizzle.confluence.Confluence;
+import org.codehaus.swizzle.confluence.Page;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -60,14 +63,49 @@ public class ValidationKeysAuditorTest {
         dir(file.getParentFile(), visitor);
         try {
             generateReport(file, visitor);
-            generateConfluenceReport(file, visitor);
+            String confluenceOutput = generateConfluenceReport(file, visitor);
+            writeToConfluence(confluenceOutput);
         } catch (IOException e) {
             // ignore it
             e.printStackTrace();
         }
     }
+    /**
+     * This method will write to confluence only if you supply the system properties confluenceUsername and confluencePassword
+     * example usage  mvn test -Dtest=ValidationKeysAuditorTest -DconfluenceUsername=<<your username>> -DconfluencePassword=<<your password>>
+     * @param confluenceOutput
+     */
+    private void writeToConfluence(String confluenceOutput) {
+        String username = System.getProperty("confluenceUsername");
+        String password = System.getProperty("confluencePassword");
+        if (validate(username) && validate(password)) {
+            try {
+                String endpoint = "https://cwiki.apache.org/confluence/rpc/xmlrpc";
+                Confluence confluence = new Confluence(endpoint);
+                confluence.login(username, password);
+                Page page = confluence.getPage("OPENEJB", "Validation Keys Audit Report");
+                page.setContent(confluenceOutput);
+                confluence.storePage(page);
+                confluence.logout();
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+        }
+    }
 
-    private void generateConfluenceReport(File file, KeysAnnotationVisitor visitor) throws IOException {
+    private boolean validate(String str) {
+        if (str == null)
+            return false;
+        if ("true".equalsIgnoreCase(str))
+            return false;
+        if ("false".equalsIgnoreCase(str))
+            return false;
+        if (str.trim().length() == 0)
+            return false;
+        return true;
+    }
+
+    private String generateConfluenceReport(File file, KeysAnnotationVisitor visitor) throws IOException {
         StringBuilder output = new StringBuilder();
         String newLine = System.getProperty("line.separator");
         Set<String> testedKeys = getTestedKeys(visitor.classInfos);
@@ -77,6 +115,7 @@ public class ValidationKeysAuditorTest {
         prepareConfluenceUntestedKeyList(untestedKeys, output, newLine);
         prepareConfluenceTestedKeysDetailedReport(visitor.classInfos, output, newLine);
         writeToFile(file, output, "ValidationKeyAuditReportConfluence.txt");
+        return output.toString();
     }
 
     private void prepareConfluenceTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) {
@@ -150,7 +189,8 @@ public class ValidationKeysAuditorTest {
         prepareTestedKeysDetailedReport(visitor.classInfos, output, newLine);
         writeToFile(file, output, "ValidationKeyAuditReport.txt");
     }
-//TODO this method does not list all the methods where this key is tested. Needs update
+
+    // TODO this method does not list all the methods where this key is tested. Needs update
     private void prepareTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) throws IOException {
         output.append("================================================================================================").append(newLine);
         output.append("List of all keys tested. Next to each is the the test method which tests the key").append(newLine);
