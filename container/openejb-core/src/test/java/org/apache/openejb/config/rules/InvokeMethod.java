@@ -16,13 +16,18 @@
  */
 package org.apache.openejb.config.rules;
 
+import static org.apache.openejb.config.rules.ValidationAssertions.assertErrors;
 import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
+import static org.apache.openejb.config.rules.ValidationAssertions.assertWarnings;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -59,19 +64,27 @@ public class InvokeMethod extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        List<String> expectedKeys = validateKeys();
+        Map<KeyType, List<String>> expectedKeys = validateKeys();
         setUp();
         Object obj = testMethod.invokeExplosively(target);
         if (obj instanceof EjbJar) {
             EjbJar ejbJar = (EjbJar) obj;
             try {
                 assembler.createApplication(config.configureApplication(ejbJar));
-                if (!expectedKeys.isEmpty()) {
+                if (!isEmpty(expectedKeys)) {
                     fail("A ValidationFailedException should have been thrown");
                 }
             } catch (ValidationFailedException vfe) {
-                if (!expectedKeys.isEmpty()) {
-                    assertFailures(expectedKeys, vfe);
+                if (!isEmpty(expectedKeys)) {
+                    if (!expectedKeys.get(KeyType.FAILURE).isEmpty()) {
+                        assertFailures(expectedKeys.get(KeyType.FAILURE), vfe);
+                    }
+                    if (!expectedKeys.get(KeyType.WARNING).isEmpty()) {
+                        assertWarnings(expectedKeys.get(KeyType.WARNING), vfe);
+                    }
+                    if (!expectedKeys.get(KeyType.ERROR).isEmpty()) {
+                        assertErrors(expectedKeys.get(KeyType.ERROR), vfe);
+                    }
                 } else {
                     for (ValidationFailure failure : vfe.getFailures()) {
                         System.out.println("failure = " + failure.getMessageKey());
@@ -101,7 +114,7 @@ public class InvokeMethod extends Statement {
      * @return
      * @throws Exception
      */
-    private List<String> validateKeys() throws Exception {
+    private Map<KeyType, List<String>> validateKeys() throws Exception {
         Keys annotation = testMethod.getAnnotation(Keys.class);
         Key[] keys = annotation.value();
         ArrayList<String> wrongKeys = new ArrayList<String>();
@@ -113,12 +126,28 @@ public class InvokeMethod extends Statement {
             }
         }
         if (wrongKeys.isEmpty()) {
-            ArrayList<String> validKeys = new ArrayList<String>();
+            Map<KeyType, List<String>> validKeys = new HashMap<KeyType, List<String>>();
+            ArrayList<String> failureKeys = new ArrayList<String>();
+            ArrayList<String> warningKeys = new ArrayList<String>();
+            ArrayList<String> errorKeys = new ArrayList<String>();
             for (Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
-                    validKeys.add(key.value());
+                    switch (key.type()) {
+                    case FAILURE:
+                        failureKeys.add(key.value());
+                        break;
+                    case WARNING:
+                        warningKeys.add(key.value());
+                        break;
+                    case ERROR:
+                        errorKeys.add(key.value());
+                        break;
+                    }
                 }
             }
+            validKeys.put(KeyType.FAILURE, failureKeys);
+            validKeys.put(KeyType.WARNING, warningKeys);
+            validKeys.put(KeyType.ERROR, errorKeys);
             return validKeys;
         } else {
             String commaDelimitedKeys = Join.join(",", wrongKeys);
@@ -126,5 +155,14 @@ public class InvokeMethod extends Statement {
                     + " are invalid : " + commaDelimitedKeys
                     + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
         }
+    }
+    private boolean isEmpty(Map<KeyType, List<String>> expectedKeys) {
+        boolean empty = true;
+        Set<Entry<KeyType, List<String>>> entrySet = expectedKeys.entrySet();
+        for (Entry<KeyType, List<String>> entry : entrySet) {
+            empty = entry.getValue().size() == 0;
+            if(!empty) return empty;
+        }
+        return empty;
     }
 }
