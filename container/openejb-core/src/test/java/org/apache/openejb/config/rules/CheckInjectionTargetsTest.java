@@ -16,60 +16,42 @@
  */
 package org.apache.openejb.config.rules;
 
-import junit.framework.TestCase;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.ValidationError;
-import org.apache.openejb.config.ValidationWarning;
+import javax.interceptor.AroundInvoke;
+
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.StatelessBean;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
+import org.junit.runner.RunWith;
 
 /**
  * @version $Rev$ $Date$
  */
+@RunWith(ValidationRunner.class)
 public class CheckInjectionTargetsTest {
-
-    private EjbModule module;
-    private StatelessBean bean;
-    
-    private CheckInjectionTargets rule;
-    
-    @Before
-    public void initialize() {
-        module = new EjbModule(new EjbJar());
-        bean = module.getEjbJar().addEnterpriseBean(new StatelessBean("CheeseEjb", "org.acme.CheeseEjb"));        
-
-        rule = new CheckInjectionTargets();
-        rule.module = module;
-    }
-
-    @Test
-    public void test() {
-        
+    @Keys(@Key(value="injectionTarget.nameContainsSet",count=2,type=KeyType.WARNING))
+    public EjbJar test() {
+        EjbJar ejbJar = new EjbJar();
+        StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(CheeseEjb.class));  
         // Valid
         EnvEntry envEntry = new EnvEntry("count", Integer.class.getName(), "10");
-        envEntry.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "org.acme.CheeseEjb/count"));
+        envEntry.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(),CheeseEjb.class.getName()+"/count"));
         bean.getEnvEntry().add(envEntry);
 
         // Invalid - can't specify setColor, just color as a target and its setter will be calculated
         EnvEntry envEntry2 = new EnvEntry("color", String.class.getName(), "yellow");
-        envEntry2.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "org.acme.CheeseEjb/setColor"));
+        envEntry2.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(),CheeseEjb.class.getName()+"/setColor"));
         bean.getEnvEntry().add(envEntry2);
 
         // Invalid - see the comment above
         EnvEntry envEntry3 = new EnvEntry("age", Integer.class.getName(), "5");
-        envEntry3.getInjectionTarget().add(new InjectionTarget("org.acme.CheeseEjb", "setAge"));
+        envEntry3.getInjectionTarget().add(new InjectionTarget(CheeseEjb.class.getName(), "setAge"));
         bean.getEnvEntry().add(envEntry3);
 
-        rule.validate(module);
-
-        ValidationWarning[] warnings = module.getValidation().getWarnings();
-        Assert.assertEquals(warnings.length, 2);
-
+        return ejbJar;
+    }
+    private static class CheeseEjb{
+        @AroundInvoke // need to add this to cause validation to fail. Validation does not fail on warnings, which causes this framework to not work properly
+        public void sayCheese(){}
     }
 }
