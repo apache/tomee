@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -206,24 +205,45 @@ public class ValidationKeysAuditorTest {
         writeToFile(file, output, "ValidationKeyAuditReport.txt");
     }
 
-    // TODO this method does not list all the methods where this key is tested. Needs update
     private void prepareTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) throws IOException {
         output.append("================================================================================================").append(newLine);
         output.append("List of all keys tested. Next to each is the the test method which tests the key").append(newLine);
         output.append("================================================================================================").append(newLine);
-        TreeMap<String, String> info = new TreeMap<String, String>(); // will be used to print keys in sorted fashion
+        TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
         for (ClassInfo classInfo : classInfos) {
             HashSet<MethodInfo> methuds = classInfo.methuds;
             for (MethodInfo methodInfo : methuds) {
                 HashSet<String> keys = methodInfo.keys;
                 for (String key : keys) {
-                    info.put(key, " --> " + classInfo.clazz + "." + methodInfo.methud + "()" + newLine);
+                    if (!info.containsKey(key)) {
+                        TreeSet<String> set = new TreeSet<String>();
+                        set.add(classInfo.clazz + "." + methodInfo.methud + "()");
+                        info.put(key, set);
+                    } else {
+                        TreeSet<String> set = info.get(key);
+                        set.add(classInfo.clazz + "." + methodInfo.methud + "()");
+                    }
                 }
             }
         }
-        Set<Entry<String, String>> entrySet = info.entrySet();
-        for (Entry<String, String> entry : entrySet) {
-            output.append(entry.getKey()).append(entry.getValue());
+        Set<Entry<String, TreeSet<String>>> entrySet = info.entrySet();
+        for (Entry<String, TreeSet<String>> entry : entrySet) {
+            String key = entry.getKey();
+            output.append(key).append(" --> ");
+            int count = 0;
+            TreeSet<String> values = entry.getValue();
+            for (String value : values) {
+                if (count > 0) {
+                    // put as many spaces as there are characters in the key to indent and align multiple values for the same key
+                    StringBuilder spaces = new StringBuilder();
+                    for(int i=0;i<key.length();i++){
+                        spaces.append(" ");
+                    }
+                    output.append(spaces).append(" --> ");
+                }
+                output.append(value).append(newLine);
+                ++count;
+            }
         }
     }
 
