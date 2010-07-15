@@ -51,7 +51,7 @@ public class LocalInitialContext extends ContextWrapper {
     private Properties properties;
     private Object clientIdentity;
 
-    private static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
+    public static final String ON_CLOSE = "openejb.embedded.initialcontext.close";
     private Close onClose;
     private Options options;
     private ServiceManagerProxy serviceManager;
