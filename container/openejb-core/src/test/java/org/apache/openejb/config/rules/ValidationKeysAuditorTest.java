@@ -122,7 +122,7 @@ public class ValidationKeysAuditorTest {
     private void prepareConfluenceTestedKeysDetailedReport(HashSet<ClassInfo> classInfos, StringBuilder output, String newLine) {
         TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
         output.append("h2.List of keys which have been tested.").append(newLine);
-        // output.append("{csv}").append(newLine);
+        output.append("{table-plus:autoNumber=true}").append(newLine);
         output.append("|| Key | Method which tests the key ||").append(newLine);
         for (ClassInfo classInfo : classInfos) {
             HashSet<MethodInfo> methuds = classInfo.methuds;
@@ -148,12 +148,14 @@ public class ValidationKeysAuditorTest {
             TreeSet<String> values = entry.getValue();
             for (String value : values) {
                 if (count > 0) {
-                    output.append(" | | ");
+                    output.append(" \\\\ ");
                 }
-                output.append(value).append(" | ").append(newLine);
+                output.append(value);
                 ++count;
             }
+            output.append(newLine);
         }
+        output.append("{table-plus}").append(newLine);
     }
 
     private String createConfluenceLink(String string) {
@@ -165,21 +167,12 @@ public class ValidationKeysAuditorTest {
     }
 
     private void prepareConfluenceUntestedKeyList(Set<String> untestedKeys, StringBuilder output, String newLine) {
+        output.append("{table-plus:autoNumber=true}").append(newLine);
         output.append("|| h2.List of untested keys \\\\ ||").append(newLine);
-        int count = 0;
         for (String key : untestedKeys) {
-            if (count == 0) {
-                output.append("| ");
-            }
-            if (count >= 0 && count < 4) {
-                output.append(key).append(" | ");
-                ++count;
-                continue;
-            }
-            output.append(newLine);
-            count = 0;
+            output.append(" | ").append(key).append(" | ").append(newLine);
         }
-        output.append(newLine);
+        output.append("{table-plus}").append(newLine);
     }
 
     private void prepareConfluenceSummary(Set<String> untestedKeys, StringBuilder output, String newLine) {
