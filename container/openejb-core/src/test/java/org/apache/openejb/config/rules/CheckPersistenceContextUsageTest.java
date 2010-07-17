@@ -41,7 +41,7 @@ public class CheckPersistenceContextUsageTest {
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "persistenceContextRef.noUnitName") })
+    @Keys( { @Key(value = "persistenceContextRef.noUnitName"),@Key(value = "persistenceContextRef.noMatches") })
     public AppModule noUnitName() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessOne.class));
@@ -88,6 +88,8 @@ public class CheckPersistenceContextUsageTest {
     private static class FooStatelessOne {
         @PersistenceContext
         EntityManager em;
+        @PersistenceContext(unitName="wrongName")
+        EntityManager em1;
     }
 
     private static class FooStatelessTwo {
