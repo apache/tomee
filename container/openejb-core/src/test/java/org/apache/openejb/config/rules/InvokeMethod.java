@@ -32,7 +32,9 @@ import java.util.Map.Entry;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
 import org.apache.openejb.jee.EjbJar;
@@ -67,30 +69,36 @@ public class InvokeMethod extends Statement {
         Map<KeyType, List<String>> expectedKeys = validateKeys();
         setUp();
         Object obj = testMethod.invokeExplosively(target);
-        if (obj instanceof EjbJar) {
-            EjbJar ejbJar = (EjbJar) obj;
-            try {
+        try {
+            if (obj instanceof EjbJar) {
+                EjbJar ejbJar = (EjbJar) obj;
                 assembler.createApplication(config.configureApplication(ejbJar));
-                if (!isEmpty(expectedKeys)) {
-                    fail("A ValidationFailedException should have been thrown");
+            } else if (obj instanceof EjbModule) {
+                EjbModule ejbModule = (EjbModule) obj;
+                assembler.createApplication(config.configureApplication(ejbModule));
+            } else if (obj instanceof AppModule) {
+                AppModule appModule = (AppModule) obj;
+                assembler.createApplication(config.configureApplication(appModule));
+            }
+            if (!isEmpty(expectedKeys)) {
+                fail("A ValidationFailedException should have been thrown");
+            }
+        } catch (ValidationFailedException vfe) {
+            if (!isEmpty(expectedKeys)) {
+                if (!expectedKeys.get(KeyType.FAILURE).isEmpty()) {
+                    assertFailures(expectedKeys.get(KeyType.FAILURE), vfe);
                 }
-            } catch (ValidationFailedException vfe) {
-                if (!isEmpty(expectedKeys)) {
-                    if (!expectedKeys.get(KeyType.FAILURE).isEmpty()) {
-                        assertFailures(expectedKeys.get(KeyType.FAILURE), vfe);
-                    }
-                    if (!expectedKeys.get(KeyType.WARNING).isEmpty()) {
-                        assertWarnings(expectedKeys.get(KeyType.WARNING), vfe);
-                    }
-                    if (!expectedKeys.get(KeyType.ERROR).isEmpty()) {
-                        assertErrors(expectedKeys.get(KeyType.ERROR), vfe);
-                    }
-                } else {
-                    for (ValidationFailure failure : vfe.getFailures()) {
-                        System.out.println("failure = " + failure.getMessageKey());
-                    }
-                    fail("There should be no validation failures");
+                if (!expectedKeys.get(KeyType.WARNING).isEmpty()) {
+                    assertWarnings(expectedKeys.get(KeyType.WARNING), vfe);
                 }
+                if (!expectedKeys.get(KeyType.ERROR).isEmpty()) {
+                    assertErrors(expectedKeys.get(KeyType.ERROR), vfe);
+                }
+            } else {
+                for (ValidationFailure failure : vfe.getFailures()) {
+                    System.out.println("failure = " + failure.getMessageKey());
+                }
+                fail("There should be no validation failures");
             }
         }
         tearDown();
@@ -156,12 +164,14 @@ public class InvokeMethod extends Statement {
                     + " . Only keys listed in org.apache.openejb.config.rules.Messages.properties are allowed to be used in this annotation. ");
         }
     }
+
     private boolean isEmpty(Map<KeyType, List<String>> expectedKeys) {
         boolean empty = true;
         Set<Entry<KeyType, List<String>>> entrySet = expectedKeys.entrySet();
         for (Entry<KeyType, List<String>> entry : entrySet) {
             empty = entry.getValue().size() == 0;
-            if(!empty) return empty;
+            if (!empty)
+                return empty;
         }
         return empty;
     }
