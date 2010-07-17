@@ -266,7 +266,7 @@ public class AutoConfig implements DynamicDeployer {
                     unitName = refShortName;
                 }
                 validation.fail(componentName, refType + ".noPersistenceUnits", refShortName, unitName);
-            } else if (ref.getPersistenceUnitName() == null && availableUnits.size() > 1) {
+            } else if ((ref.getPersistenceUnitName() == null || ref.getPersistenceUnitName().length()==0) && availableUnits.size() > 1) {
                 // Print a correct example of unitName in a ref
                 // DMB: Idea, the ability to set a default unit-name in openejb-jar.xml via a property
                 String sampleUnitName = availableUnits.get(0);
