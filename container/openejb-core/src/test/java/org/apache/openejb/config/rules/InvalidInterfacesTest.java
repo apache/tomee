@@ -26,6 +26,8 @@ import javax.ejb.Remote;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.loader.SystemInstance;
+import org.junit.After;
 import org.junit.runner.RunWith;
 
 /**
@@ -68,8 +70,9 @@ public class InvalidInterfacesTest  {
     public EjbJar testEJBLocalObject() throws Exception {
         return validate(FooEJBLocalObject.class);
     }
-    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"),@Key("xml.localHome.unknown"), @Key("xml.local.unknown")})
+    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"),@Key("xml.localHome.unknown"), @Key("xml.local.unknown"), @Key("xml.localRemote.conflict")})
     public EjbJar testUnkown() throws Exception {
+        SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         return validate(FooUnknown.class);
     }
     @Keys( { @Key("xml.remote.beanClass"), @Key("xml.home.beanClass"),@Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"), @Key("xml.businessLocal.beanClass") })
@@ -80,7 +83,11 @@ public class InvalidInterfacesTest  {
     public EjbJar testNotInterface() throws Exception {
         return validate(FooClass.class);
     }
-
+ 
+    @After
+    public void after(){
+        SystemInstance.get().setProperty("openejb.strict.interface.declaration", "false");
+    }
     private EjbJar validate(Class interfaceClass) throws OpenEJBException {
 
         EjbJar ejbJar = new EjbJar();
