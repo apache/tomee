@@ -1754,8 +1754,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         /**
                          * Cannot imply either @Local or @Remote and list multiple interfaces
                          */
-                        if (impliedLocal) validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaces));
-                        if (impliedRemote) validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaces));
+                        // Need to extract the class names and append .class to them to show proper validation level 3 message
+                        List<String> interfaceNames = new ArrayList<String>();
+                        for (Class<?> intrfce : interfaces) {
+                            interfaceNames.add(intrfce.getName()+".class");
+                        }
+                        if (impliedLocal) validation.fail(ejbName, "ann.local.noAttributes", join(", ", interfaceNames));
+                        if (impliedRemote) validation.fail(ejbName, "ann.remote.noAttributes", join(", ", interfaceNames));
 
                         /**
                          * This bean is invalid, so do not bother looking at the other interfaces or the superclass
