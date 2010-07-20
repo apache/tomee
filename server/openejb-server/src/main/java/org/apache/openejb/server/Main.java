@@ -64,8 +64,8 @@ public class Main {
             Map<String, Properties> serviceEntries = finder.mapAvailableProperties(ServerService.class.getName());
             services = serviceEntries.keySet();
             for (String service : services) {
-                options.addOption(option(null, service+"-port", "int", "cmd.start.opt.port", service));
-                options.addOption(option(null, service+"-bind", "host", "cmd.start.opt.bind", service));
+                options.addOption(option(null, service + "-port", "int", "cmd.start.opt.port", service));
+                options.addOption(option(null, service + "-bind", "host", "cmd.start.opt.bind", service));
             }
         } catch (IOException e) {
             services = Collections.EMPTY_SET;
@@ -115,17 +115,17 @@ public class Main {
             String[] opts = {"port", "bind"};
             for (String opt : opts) {
                 String option = service + "-" + opt;
-                if (line.hasOption(option)){
-                    props.setProperty(service+"."+opt, line.getOptionValue(option));
+                if (line.hasOption(option)) {
+                    props.setProperty(service + "." + opt, line.getOptionValue(option));
                 }
             }
         }
 
         try {
-            SystemInstance system = SystemInstance.get();
+            final SystemInstance system = SystemInstance.get();
             File libs = system.getHome().getDirectory("lib");
             system.getClassPath().addJarsToPath(libs);
-            initServer();
+            initServer(system);
         } catch (DontStartServerException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +134,7 @@ public class Main {
 
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("start [options]", "\n"+i18n("cmd.start.description"), options, "\n");
+        formatter.printHelp("start [options]", "\n" + i18n("cmd.start.description"), options, "\n");
     }
 
     private static Option option(String shortOpt, String longOpt, String description) {
@@ -142,21 +142,23 @@ public class Main {
     }
 
     private static Option option(String shortOpt, String longOpt, String argName, String description, Object... details) {
-        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description,details)).create(shortOpt);
+        return OptionBuilder.withLongOpt(longOpt).withArgName(argName).hasArg().withDescription(i18n(description, details)).create(shortOpt);
     }
 
     private static String i18n(String key, Object... details) {
         return messages.format(key, details);
     }
 
+    private static void initServer(final SystemInstance system) throws Exception {
+        Server server = Server.getInstance();
+        server.init(system.getProperties());
 
-    private static void initServer() throws Exception {
-        Server server = new Server();
-        server.init(SystemInstance.get().getProperties());
+        system.setComponent(Server.class, server);
         server.start();
     }
 }
 
 class DontStartServerException extends Exception {
+
     private static final long serialVersionUID = 1L;
 }

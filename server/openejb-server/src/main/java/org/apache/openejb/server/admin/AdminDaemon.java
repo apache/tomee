@@ -25,12 +25,16 @@ import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.Server;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 public class AdminDaemon implements ServerService {
 
+    @Override
     public void init(Properties props) throws Exception {
     }
 
+    @Override
     public void service(Socket socket) throws ServiceException, IOException {
         InputStream in = null;
 
@@ -39,54 +43,68 @@ public class AdminDaemon implements ServerService {
 
             byte requestType = (byte) in.read();
 
-            if (requestType == -1) {
-                return;
-            }
-
             switch (requestType) {
+                case -1:
+                    return;
                 case RequestMethodConstants.STOP_REQUEST_Quit:
                 case RequestMethodConstants.STOP_REQUEST_quit:
                 case RequestMethodConstants.STOP_REQUEST_Stop:
                 case RequestMethodConstants.STOP_REQUEST_stop:
                     Server server = SystemInstance.get().getComponent(Server.class);
                     server.stop();
-
+                    break;
+                default:
+                    //If this turns up in the logs then it is time to take action
+                    Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Invalid Server Socket request: " + requestType);
+                    break;
             }
 
-        } catch (SecurityException e) {
-
         } catch (Throwable e) {
-
+            Logger.getInstance(LogCategory.OPENEJB_SERVER, AdminDaemon.class).warning("Server Socket request failed", e);
         } finally {
-            try {
-                if (in != null) in.close();
-                if (socket != null) socket.close();
-            } catch (Throwable t) {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (Throwable t) {
+                    //Ignore
+                }
+            }
 
+            if (null != socket) {
+                try {
+                    socket.close();
+                } catch (Throwable t) {
+                    //Ignore
+                }
             }
         }
     }
 
+    @Override
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
         throw new UnsupportedOperationException("Method not implemented: service(InputStream in, OutputStream out)");
     }
-    
+
+    @Override
     public void start() throws ServiceException {
     }
 
+    @Override
     public void stop() throws ServiceException {
     }
 
+    @Override
     public int getPort() {
         return 0;
     }
 
+    @Override
     public String getIP() {
         return "";
     }
 
+    @Override
     public String getName() {
         return "admin thread";
     }
-
 }

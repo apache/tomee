@@ -23,13 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.naming.Binding;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.resource.spi.ResourceAdapter;
 
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.finder.ResourceFinder;
 
 /**
@@ -39,7 +34,6 @@ import org.apache.xbean.finder.ResourceFinder;
 public class SimpleServiceManager extends ServiceManager {
 
     private ServerService[] daemons;
-
     private boolean stop = false;
 
     public SimpleServiceManager() {
@@ -61,9 +55,9 @@ public class SimpleServiceManager extends ServiceManager {
     // Each contains the class name of the daemon implamentation
     // The port to use
     // whether it's turned on
-
     // May be reusable elsewhere, move if another use occurs
     public static class ServiceFinder {
+
         private final ResourceFinder resourceFinder;
         private ClassLoader classLoader;
 
@@ -141,7 +135,7 @@ public class SimpleServiceManager extends ServiceManager {
                     printRow(d.getName(), d.getIP(), d.getPort() + "");
                 }
             } catch (Exception e) {
-                logger.fatal("Service Start Failed: "+d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + e.getMessage());
+                logger.fatal("Service Start Failed: " + d.getName() + " " + d.getIP() + " " + d.getPort() + ": " + e.getMessage());
                 if (display) {
                     printRow(d.getName(), "----", "FAILED");
                 }
@@ -151,17 +145,19 @@ public class SimpleServiceManager extends ServiceManager {
             System.out.println("-------");
             System.out.println("Ready!");
         }
-        if (!block) return;
+        if (!block) {
+            return;
+        }
 
         /*
-        * This will cause the user thread (the thread that keeps the
-        *  vm alive) to go into a state of constant waiting.
-        *  Each time the thread is woken up, it checks to see if
-        *  it should continue waiting.
-        *
-        *  To stop the thread (and the VM), just call the stop method
-        *  which will set 'stop' to true and notify the user thread.
-        */
+         * This will cause the user thread (the thread that keeps the
+         *  vm alive) to go into a state of constant waiting.
+         *  Each time the thread is woken up, it checks to see if
+         *  it should continue waiting.
+         *
+         *  To stop the thread (and the VM), just call the stop method
+         *  which will set 'stop' to true and notify the user thread.
+         */
         try {
             while (!stop) {
 
@@ -175,36 +171,14 @@ public class SimpleServiceManager extends ServiceManager {
 
     @Override
     public synchronized void stop() throws ServiceException {
-        logger.info("Received stop signal");
+        logger.info("Stopping server services");
         stop = true;
-
-        try {
-            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            NamingEnumeration<Binding> namingEnumeration = null;
-            try {
-                namingEnumeration = containerSystem.getJNDIContext().listBindings("openejb/resourceAdapter");
-            } catch (NamingException ignored) {
-                // no resource adapters were created
-            }
-            while (namingEnumeration != null && namingEnumeration.hasMoreElements()) {
-                Binding binding = namingEnumeration.nextElement();
-                Object object = binding.getObject();
-                ResourceAdapter resourceAdapter = (ResourceAdapter) object;
-                try {
-                    resourceAdapter.stop();
-                } catch (Exception e) {
-                    logger.fatal("ResourceAdapter Shutdown Failed: "+binding.getName(), e);
-                }
-            }
-        } catch (Throwable e) {
-            logger.fatal("Unable to get ResourceAdapters from JNDI.  Stop must be called on them for proper vm shutdown.", e);
-        }
 
         for (int i = 0; i < daemons.length; i++) {
             try {
                 daemons[i].stop();
             } catch (ServiceException e) {
-                logger.fatal("Service Shutdown Failed: "+daemons[i].getName()+".  Exception: "+e.getMessage(), e);
+                logger.fatal("Service Shutdown Failed: " + daemons[i].getName() + ".  Exception: " + e.getMessage(), e);
             }
         }
         notifyAll();

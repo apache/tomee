@@ -35,14 +35,14 @@ import org.apache.openejb.util.PropertiesService;
  */
 public class Server implements Service {
     // FIXME: Remove it completely once we ensure PropertiesService (below) works well
+
     Properties props;
-    
     private PropertiesService propertiesService;
+    private static Server server;
+    private static ServiceManager manager;
 
-    static Server server;
-    private ServiceManager manager;
+    public static Server getInstance() {
 
-    public static Server getServer() {
         if (server == null) {
             server = new Server();
         }
@@ -51,12 +51,13 @@ public class Server implements Service {
     }
 
     // TODO: Remove it once init() suits our (initialisation) needs 
+    @Override
     public void init(Properties props) throws Exception {
         this.props = props;
 
         SystemInstance system = SystemInstance.get();
         File home = system.getHome().getDirectory();
-        system.setProperty("openejb.deployments.classpath.include", ".*/"+home.getName()+"/lib/.*");
+        system.setProperty("openejb.deployments.classpath.include", ".*/" + home.getName() + "/lib/.*");
         system.setProperty("openejb.deployments.classpath.require.descriptor", "true");
         system.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
 
@@ -66,9 +67,10 @@ public class Server implements Service {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        if (manager == null){
+        if (manager == null) {
             manager = ServiceManager.getManager();
         }
+
         manager.init();
     }
 
@@ -85,7 +87,7 @@ public class Server implements Service {
             System.out.println("[init] OpenEJB Remote Server");
         }
 
-        manager.init();
+        manager.init();        
     }
 
     public void start() throws Exception {
@@ -93,26 +95,25 @@ public class Server implements Service {
     }
 
     public void stop() throws Exception {
-        manager.stop();
         OpenEJB.destroy();
+        manager.stop();
     }
 
     public void addService(URI uri) {
-
     }
 
     public static class ServerServiceFactory {
+
         public ServerService createService(URI location) throws IOException {
             return null;
         }
     }
 
     public void setServiceManager(ServiceManager serviceManager) {
-        this.manager = serviceManager;
+        manager = serviceManager;
     }
-    
+
     public void setPropertiesService(PropertiesService propertiesService) {
         this.propertiesService = propertiesService;
     }
 }
-
