@@ -349,6 +349,11 @@ public class CheckCallbacks extends ValidationBase {
                 fail(bean, "timeout.missing", timeout.getMethodName());
             } else if (possibleMethods.size() == 1) {
                 fail(bean, "timeout.invalidArguments", timeout.getMethodName(), getParameters(possibleMethods.get(0)));
+                Class<?> returnType = possibleMethods.get(0).getReturnType();
+
+                if (!returnType.equals(Void.TYPE)) {
+                    fail(bean, "timeout.badReturnType", timeout.getMethodName(), returnType.getName());
+                }
             } else {
                 fail(bean, "timeout.missing.possibleTypo", timeout.getMethodName(), possibleMethods.size());
             }
