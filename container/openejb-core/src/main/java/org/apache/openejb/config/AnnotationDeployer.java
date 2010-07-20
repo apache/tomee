@@ -170,6 +170,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.AbstractFinder;
@@ -2097,9 +2098,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
                     List<Method> timeoutMethods = classFinder.findAnnotatedMethods(javax.ejb.Timeout.class);
-                    for (Method method : timeoutMethods) {
-                        timerConsumer.setTimeoutMethod(new NamedMethod(method));
+                   String componentName = null;
+                    if(timeoutMethods.size() >1){
+                        componentName = timerConsumer.getTimerConsumerName();
+                        fail(componentName,"timeout.tooManyMethods",timeoutMethods.size(),Join.join(",", timeoutMethods));
+                    }else if(timeoutMethods.size() == 1){
+                        timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0)));
                     }
+                    
                 }
             }
 

@@ -880,4 +880,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }
+
+    @Override
+    public String getTimerConsumerName() {
+        return ejbName;
+    }
 }
