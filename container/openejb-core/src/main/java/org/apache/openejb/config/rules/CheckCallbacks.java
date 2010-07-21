@@ -341,7 +341,7 @@ public class CheckCallbacks extends ValidationBase {
             Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
             boolean isAnnotated = false;
             for (Annotation annotation : declaredAnnotations) {
-                if(annotation.equals(Timeout.class)){
+                if(annotation instanceof Timeout){
                     isAnnotated = true;
                     break;
                 }
