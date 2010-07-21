@@ -26,26 +26,40 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidTimeoutTest extends TestCase {
-    @Keys( { @Key(value = "timeout.badReturnType"), @Key("timeout.invalidArguments"), @Key("timeout.tooManyMethods") })
+    @Keys( { @Key(value = "timeout.badReturnType"), @Key("timeout.invalidArguments"), @Key("timeout.tooManyMethods") , @Key("timeout.missing.possibleTypo")})
     public EjbJar test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));
         return ejbJar;
     }
-
+// A case where the class has the method with wrong signature annotated with @Timeout
+    // timeout.badReturnType
+    // timeout.invalidArguments
     public static class TestBean {
         @Timeout
         public Object bar() {
             return null;
         }
     }
-
+// A case where the class has more than one method annotated with @Timeout
+    // timeout.tooManyMethods
     public static class FooBean {
         @Timeout
         public void foo(javax.ejb.Timer timer) {}
         @Timeout
         public void bar(javax.ejb.Timer timer) {}
     }
+//  A case where the class has overloaded methods, but the method with the wrong signature has been annotated with @Timeout
+    // timeout.missing.possibleTypo
+    public static class BarBean {
+       
+        public void foo(javax.ejb.Timer timer) {}
+        
+        @Timeout
+        public void foo() {}
+    }
+
 }
