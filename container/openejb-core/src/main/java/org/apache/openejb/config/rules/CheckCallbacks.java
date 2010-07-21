@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config.rules;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Remove;
 import javax.ejb.SessionSynchronization;
+import javax.ejb.Timeout;
 import javax.interceptor.InvocationContext;
 
 import org.apache.openejb.OpenEJBException;
@@ -336,12 +338,24 @@ public class CheckCallbacks extends ValidationBase {
         if (timeout == null) return;
         try {
             Method method = getMethod(ejbClass, timeout.getMethodName(), javax.ejb.Timer.class);
-
-            Class<?> returnType = method.getReturnType();
-
-            if (!returnType.equals(Void.TYPE)) {
-                fail(bean, "timeout.badReturnType", timeout.getMethodName(), returnType.getName());
+            Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
+            boolean isAnnotated = false;
+            for (Annotation annotation : declaredAnnotations) {
+                if(annotation.equals(Timeout.class)){
+                    isAnnotated = true;
+                    break;
+                }
             }
+            
+            if (isAnnotated) {
+                Class<?> returnType = method.getReturnType();
+                if (!returnType.equals(Void.TYPE)) {
+                    fail(bean, "timeout.badReturnType", timeout.getMethodName(), returnType.getName());
+                }
+            }else{
+                fail(bean, "timeout.missing.possibleTypo", timeout.getMethodName(), getMethods(ejbClass, timeout.getMethodName()).size());
+            }
+           
         } catch (NoSuchMethodException e) {
             List<Method> possibleMethods = getMethods(ejbClass, timeout.getMethodName());
 
