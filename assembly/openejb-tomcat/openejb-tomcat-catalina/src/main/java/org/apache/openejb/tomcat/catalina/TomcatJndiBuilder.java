@@ -148,11 +148,11 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, EnvEntryInfo ref) {
-        ContextEnvironment environment = naming.findEnvironment(ref.name);
+        ContextEnvironment environment = naming.findEnvironment(ref.referenceName);
         boolean addEntry = false;
         if (environment == null) {
             environment = new ContextEnvironment();
-            environment.setName(ref.name);
+            environment.setName(ref.referenceName);
             addEntry = true;
         }
 
@@ -387,11 +387,11 @@ public class TomcatJndiBuilder {
     }
 
     public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
-        ContextResourceEnvRef resourceEnv = naming.findResourceEnvRef(ref.resourceEnvRefName);
+        ContextResourceEnvRef resourceEnv = naming.findResourceEnvRef(ref.referenceName);
         boolean addEntry = false;
         if (resourceEnv == null) {
             resourceEnv = new ContextResourceEnvRef();
-            resourceEnv.setName(ref.resourceEnvRefName);
+            resourceEnv.setName(ref.referenceName);
             addEntry = true;
         }
 
@@ -400,7 +400,7 @@ public class TomcatJndiBuilder {
             resourceEnv.setType(ref.resourceEnvRefType);
         } else {
             resourceEnv.setProperty(Constants.FACTORY, ResourceFactory.class.getName());
-            resourceEnv.setProperty(NAME, ref.resourceEnvRefName);
+            resourceEnv.setProperty(NAME, ref.referenceName);
             resourceEnv.setType(ref.resourceEnvRefType);
 
             if (ref.resourceID != null) {
