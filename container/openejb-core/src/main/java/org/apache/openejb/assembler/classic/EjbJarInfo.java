@@ -40,4 +40,5 @@ public class EjbJarInfo extends InfoObject {
     public final List<ApplicationExceptionInfo> applicationException = new ArrayList<ApplicationExceptionInfo>();
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public final Set<String> watchedResources = new TreeSet<String>();
+    public final JndiEncInfo moduleJndiEnc = new JndiEncInfo();
 }

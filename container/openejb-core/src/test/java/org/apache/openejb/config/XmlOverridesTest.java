@@ -22,13 +22,13 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EnvEntryInfo;
+import org.apache.openejb.assembler.classic.InjectableInfo;
 import org.apache.openejb.assembler.classic.JndiEncInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
 import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
 import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
-import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EnvEntry;
@@ -51,7 +51,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import javax.sql.DataSource;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,7 +107,7 @@ public class XmlOverridesTest extends TestCase {
         assertEquals("Enc.ejbReferences.size()", 0, enc.ejbReferences.size());
 
         assertEquals("Enc.envEntries.size()", 9, enc.envEntries.size());
-        Map<String, EnvEntryInfo> entries = map(enc.envEntries, "name");
+        Map<String, EnvEntryInfo> entries = map(enc.envEntries);
 
         assertEnvEntry(entries, name("striing"), "java.lang.Integer", "2");
         assertEnvEntry(entries, name("doouble"), "java.lang.String", "two");
@@ -144,12 +143,11 @@ public class XmlOverridesTest extends TestCase {
         assertEquals(name + ".value", value, entryInfo.value);
     }
 
-    private <T> Map<String, T> map(List<T> list, String key) {
+    private <T extends InjectableInfo> Map<String, T> map(List<T> list) {
         try {
             Map<String, T> entries = new HashMap<String, T>();
             for (T envEntry : list) {
-                Field field = envEntry.getClass().getField(key);
-                entries.put((String) field.get(envEntry), envEntry);
+                entries.put("java:" + envEntry.referenceName, envEntry);
             }
             return entries;
         } catch (Exception e) {
@@ -158,7 +156,8 @@ public class XmlOverridesTest extends TestCase {
     }
 
     private String name(String name) {
-        return AnnotatedBean.class.getName() + "/" + name;
+//        return AnnotatedBean.class.getName() + "/" + name;
+        return "java:comp/env/" + AnnotatedBean.class.getName() + "/" + name;
     }
 
     @Local

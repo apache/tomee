@@ -315,7 +315,7 @@ public class InheritenceTest extends TestCase {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
-        if (a.name != null ? !a.name.equals(b.name) : b.name != null) return false;
+        if (a.referenceName != null ? !a.referenceName.equals(b.referenceName) : b.referenceName != null) return false;
         if (a.type != null ? !a.type.equals(b.type) : b.type != null) return false;
         if (a.value != null ? !a.value.equals(b.value) : b.value != null) return false;
         if (!equals(a.location, b.location)) return false;
@@ -536,7 +536,7 @@ public class InheritenceTest extends TestCase {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;
 
-        if (a.resourceEnvRefName != null ? !a.resourceEnvRefName.equals(b.resourceEnvRefName) : b.resourceEnvRefName != null)
+        if (a.referenceName != null ? !a.referenceName.equals(b.referenceName) : b.referenceName != null)
             return false;
         if (a.resourceEnvRefType != null ? !a.resourceEnvRefType.equals(b.resourceEnvRefType) : b.resourceEnvRefType != null)
             return false;

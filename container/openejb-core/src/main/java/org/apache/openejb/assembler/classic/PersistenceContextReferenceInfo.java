@@ -23,7 +23,6 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class PersistenceContextReferenceInfo extends InjectableInfo {
-    public String referenceName;
     public String persistenceUnitName;
     public String unitId;
     public boolean extended;

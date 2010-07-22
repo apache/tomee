@@ -77,7 +77,7 @@ public class ConfigurationPrinter {
                     for (ListIterator<EnvEntryInfo> iterator = jndiEnc.envEntries.listIterator(); iterator.hasNext();) {
                         EnvEntryInfo envEntry = iterator.next();
                         out(3, "--[" + iterator.previousIndex() + "]----------------------");
-                        out(3, "name  ", envEntry.name);
+                        out(3, "name  ", envEntry.referenceName);
                         out(3, "type  ", envEntry.type);
                         out(3, "value ", envEntry.value);
                     }

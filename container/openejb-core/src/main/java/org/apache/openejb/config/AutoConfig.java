@@ -1463,18 +1463,18 @@ public class AutoConfig implements DynamicDeployer {
         if (resourceId == null) return null;
 
         // strip off "java:comp/env"
-        if (resourceId.startsWith("java:comp/env")) {
-            resourceId = resourceId.substring("java:comp/env".length());
+        if (resourceId.startsWith("java:comp/env/")) {
+            resourceId = resourceId.substring("java:comp/env/".length());
         }
 
         // strip off "java:openejb/Resource"
-        if (resourceId.startsWith("java:openejb/Resource")) {
-            resourceId = resourceId.substring("java:openejb/Resource".length());
+        if (resourceId.startsWith("java:openejb/Resource/")) {
+            resourceId = resourceId.substring("java:openejb/Resource/".length());
         }
 
         // strip off "java:openejb/Connector"
-        if (resourceId.startsWith("java:openejb/Connector")) {
-            resourceId = resourceId.substring("java:openejb/Connector".length());
+        if (resourceId.startsWith("java:openejb/Connector/")) {
+            resourceId = resourceId.substring("java:openejb/Connector/".length());
         }
 
         return resourceId;

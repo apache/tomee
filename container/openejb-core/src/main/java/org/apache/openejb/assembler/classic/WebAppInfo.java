@@ -33,6 +33,6 @@ public class WebAppInfo extends InfoObject {
     public String contextRoot;
     public final Set<String> watchedResources = new TreeSet<String>();
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
-    public JndiEncInfo jndiEnc;
+    public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
 }

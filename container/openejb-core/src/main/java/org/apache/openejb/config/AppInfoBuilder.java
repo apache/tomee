@@ -97,6 +97,7 @@ class AppInfoBuilder {
 
     public AppInfo build(AppModule appModule) throws OpenEJBException {
         AppInfo appInfo = new AppInfo();
+        appInfo.appId = appModule.getModuleId();
 
         //
         //  J2EE Connectors
@@ -152,9 +153,13 @@ class AppInfoBuilder {
                 throw e;
             }
         }
-
         // Create the JNDI info builder
         JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo);
+        if (appModule.getApplication() != null) {
+            //TODO figure out how to prevent adding stuff to the module and comp contexts from the application
+            //or maybe validate the xml so this won't happen.
+            jndiEncInfoBuilder.build(appModule.getApplication(), appInfo.appId, null, new JndiEncInfo(), new JndiEncInfo());
+        }
 
         List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
         // Build the JNDI tree for each ejb
@@ -171,9 +176,7 @@ class AppInfoBuilder {
                 EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
 
                 // Build the JNDI info tree for the EJB
-                JndiEncInfo jndi = jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleId);
-
-                beanInfo.jndiEnc = jndi;
+                jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleId, ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
 
 
                 jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleId);
@@ -254,7 +257,7 @@ class AppInfoBuilder {
             clientInfo.moduleId = getClientModuleId(clientModule);
             clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
 
-            clientInfo.jndiEnc = jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId);
+            jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId, clientInfo.jndiEnc, clientInfo.jndiEnc);
             appInfo.clients.add(clientInfo);
         }
     }
@@ -272,7 +275,7 @@ class AppInfoBuilder {
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
 
-            webAppInfo.jndiEnc = jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId);
+            jndiEncInfoBuilder.build(webApp, webModule.getJarLocation(), webAppInfo.moduleId, webAppInfo.jndiEnc, webAppInfo.jndiEnc);
 
             webAppInfo.portInfos.addAll(configureWebservices(webModule.getWebservices()));
             configureWebserviceSecurity(webAppInfo, webModule);

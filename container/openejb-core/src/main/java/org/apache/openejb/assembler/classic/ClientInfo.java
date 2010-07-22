@@ -36,7 +36,7 @@ public class ClientInfo extends InfoObject {
     public String callbackHandler;
     public final Set<String> watchedResources = new TreeSet<String>();
 
-    public JndiEncInfo jndiEnc;
+    public final JndiEncInfo jndiEnc = new JndiEncInfo();
 
     public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
     public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();

@@ -128,7 +128,9 @@ public class EjbRef implements EjbReference {
     }
 
     public String getKey() {
-        return getName();
+        String name = getName();
+        if (name == null || name.startsWith("java:")) return name;
+        return "java:comp/env/" + name;
     }
 
     public String getType() {
