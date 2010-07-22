@@ -25,7 +25,6 @@ import java.util.ArrayList;
  */
 public class ServiceReferenceInfo extends InjectableInfo {
 
-    public String referenceName;
 
     public String id;
     public QName serviceQName;

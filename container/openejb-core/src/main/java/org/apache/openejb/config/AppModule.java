@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import java.util.TreeSet;
  */
 public class AppModule implements DeploymentModule {
 
+    private final Application application;
     private final ValidationContext validation;
     private final List<URL> additionalLibraries = new ArrayList<URL>();
     private final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
@@ -48,10 +50,18 @@ public class AppModule implements DeploymentModule {
     private final Set<String> watchedResources = new TreeSet<String>();
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
+        this(classLoader, jarLocation, null);
+    }
+    public AppModule(ClassLoader classLoader, String jarLocation, Application application) {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
-        File file = new File(jarLocation);
-        this.moduleId = file.getName();
+        this.application = application;
+        if (application == null || application.getApplicationName() == null) {
+            File file = new File(jarLocation);
+            this.moduleId = file.getName();
+        } else {
+            this.moduleId = application.getApplicationName();
+        }
         this.validation = new ValidationContext(AppModule.class, jarLocation);
     }
 
@@ -140,6 +150,10 @@ public class AppModule implements DeploymentModule {
 
     public ClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    public Application getApplication() {
+        return application;
     }
 
     public List<ClientModule> getClientModules() {

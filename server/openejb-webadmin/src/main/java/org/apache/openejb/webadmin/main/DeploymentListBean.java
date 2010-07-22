@@ -188,7 +188,7 @@ public class DeploymentListBean extends WebAdminBean {
         body.println("</tr>");
 
         for (EnvEntryInfo info : enc.envEntries) {
-            printRow(info.name, info.value, info.type, body);
+            printRow(info.referenceName, info.value, info.type, body);
         }
 
         for (EjbLocalReferenceInfo info : enc.ejbLocalReferences) {
@@ -204,7 +204,7 @@ public class DeploymentListBean extends WebAdminBean {
         }
 
         for (ResourceEnvReferenceInfo info : enc.resourceEnvRefs) {
-            printRow(info.resourceEnvRefName, info.resourceID, info.resourceEnvRefType, body);
+            printRow(info.referenceName, info.resourceID, info.resourceEnvRefType, body);
         }
 
         for (PersistenceUnitReferenceInfo info : enc.persistenceUnitRefs) {

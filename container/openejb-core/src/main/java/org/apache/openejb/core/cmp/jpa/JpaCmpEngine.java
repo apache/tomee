@@ -55,7 +55,7 @@ import org.apache.openjpa.persistence.OpenJPAEntityManagerSPI;
 
 public class JpaCmpEngine implements CmpEngine {
     private static final Object[] NO_ARGS = new Object[0];
-    public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "openejb/cmp";
+    public static final String CMP_PERSISTENCE_CONTEXT_REF_NAME = "comp/env/openejb/cmp";
 
     /**
      * Used to notify call CMP callback methods.
@@ -91,11 +91,11 @@ public class JpaCmpEngine implements CmpEngine {
     private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
         EntityManager entityManager = null;
         try {
-            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup("comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
+            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup(CMP_PERSISTENCE_CONTEXT_REF_NAME);
         } catch (NamingException ignored) {
             //TODO see OPENEJB-1259 temporary hack until geronimo jndi integration works better
             try {
-                entityManager = (EntityManager) new InitialContext().lookup("java:comp/env/" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
+                entityManager = (EntityManager) new InitialContext().lookup("java:" + CMP_PERSISTENCE_CONTEXT_REF_NAME);
             } catch (NamingException ignored2) {
                 //ignore
             }

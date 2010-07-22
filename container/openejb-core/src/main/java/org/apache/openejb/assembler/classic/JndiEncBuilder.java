@@ -132,13 +132,13 @@ public class JndiEncBuilder {
 
         // bind TransactionManager
         TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-        bindings.put("java:comp/TransactionManager", transactionManager);
+        bindings.put("comp/TransactionManager", transactionManager);
 
         // bind TransactionSynchronizationRegistry
-        bindings.put("java:comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
+        bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
 
-        bindings.put("java:comp/ORB", new SystemComponentReference(ORB.class));
-        bindings.put("java:comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+        bindings.put("comp/ORB", new SystemComponentReference(ORB.class));
+        bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
@@ -147,11 +147,11 @@ public class JndiEncBuilder {
         UserTransaction userTransaction = null;
         if (beanManagedTransactions) {
             userTransaction = new CoreUserTransaction(transactionManager);
-            bindings.put("java:comp/UserTransaction", userTransaction);
+            bindings.put("comp/UserTransaction", userTransaction);
         }
 
         // bind TimerService
-        bindings.put("java:comp/TimerService", new TimerServiceWrapper());
+        bindings.put("comp/TimerService", new TimerServiceWrapper());
 
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
@@ -190,7 +190,7 @@ public class JndiEncBuilder {
 
             if (entry.location != null) {
                 Reference reference = buildReferenceLocation(entry.location);
-                bindings.put(normalize(entry.name), reference);
+                bindings.put(normalize(entry.referenceName), reference);
                 continue;
             }
 
@@ -222,13 +222,13 @@ public class JndiEncBuilder {
                     throw new IllegalArgumentException("Invalid env-ref-type " + type);
                 }
 
-                bindings.put(normalize(entry.name), obj);
+                bindings.put(normalize(entry.referenceName), obj);
             } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.name, e);
+                throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.referenceName, e);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The env-entry-value for entry " + entry.name + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage(), e);
+                throw new IllegalArgumentException("The env-entry-value for entry " + entry.referenceName + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage(), e);
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("URL for reference " + entry.name + " was not a valid URL: " + entry.value, e);
+                throw new IllegalArgumentException("URL for reference " + entry.referenceName + " was not a valid URL: " + entry.value, e);
             }
         }
 
@@ -258,19 +258,19 @@ public class JndiEncBuilder {
             try {
                 Class<?> type = Class.forName(referenceInfo.resourceEnvRefType, true, EJBContext.class.getClassLoader());
                 if (EJBContext.class.isAssignableFrom(type)) {
-                    String jndiName = "java:comp/EJBContext";
+                    String jndiName = "comp/EJBContext";
                     linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
                     continue;
                 } else if (WebServiceContext.class.equals(type)) {
-                    String jndiName = "java:comp/WebServiceContext";
+                    String jndiName = "comp/WebServiceContext";
                     linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
                     continue;
                 } else if (TimerService.class.equals(type)) {
-                    String jndiName = "java:comp/TimerService";
+                    String jndiName = "comp/TimerService";
                     linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.resourceEnvRefName), linkRef);
+                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
                     continue;
                 }
             } catch (ClassNotFoundException e) {
@@ -285,11 +285,11 @@ public class JndiEncBuilder {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
             } else {
-                String jndiName = "openejb/Resource/" + referenceInfo.resourceEnvRefName;
+                String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
             if (reference != null) {
-                bindings.put(normalize(referenceInfo.resourceEnvRefName), reference);
+                bindings.put(normalize(referenceInfo.referenceName), reference);
             }
         }
 
@@ -430,14 +430,7 @@ public class JndiEncBuilder {
     }
 
     private String normalize(String name) {
-        if (name.charAt(0) == '/')
-            name = name.substring(1);
-        if (!(name.startsWith("java:comp/env") || name.startsWith("comp/env"))) {
-            if (name.startsWith("env/"))
-                name = "java:comp/" + name;
-            else
-                name = "java:comp/env/" + name;
-        }
+        //currently all names seem to be normalized properly
         return name;
     }
 

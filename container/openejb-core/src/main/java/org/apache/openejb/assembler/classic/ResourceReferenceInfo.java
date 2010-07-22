@@ -18,7 +18,6 @@ package org.apache.openejb.assembler.classic;
 
 public class ResourceReferenceInfo extends InjectableInfo {
 
-    public String referenceName;
     public String referenceType;
     public String referenceAuth;
     public String resourceID;

@@ -25,6 +25,7 @@ import java.util.TreeSet;
  * @version $Rev$ $Date$
  */
 public class AppInfo extends InfoObject {
+    public String appId;
     public String jarPath;
     public final List<ClientInfo> clients = new ArrayList<ClientInfo>();
     public final List<EjbJarInfo> ejbJars = new ArrayList<EjbJarInfo>();
@@ -33,5 +34,7 @@ public class AppInfo extends InfoObject {
     public final List<PersistenceUnitInfo> persistenceUnits = new ArrayList<PersistenceUnitInfo>();
     public final List<String> libs = new ArrayList<String>();
     public final Set<String> watchedResources = new TreeSet<String>();
+    public final JndiEncInfo globalJndiEnc = new JndiEncInfo();
+    public final JndiEncInfo appJndiEnc = new JndiEncInfo();
     public String cmpMappingsXml;
 }

@@ -33,8 +33,8 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceContextUsageTest {
     @Keys( { @Key(value = "persistenceContextExtented.nonStateful"), @Key(value = "persistenceContextRef.noPersistenceUnits", count = 3),
-            @Key(value = "presistenceContextAnnotation.onClassWithNoName"), @Key(value = "presistenceContextAnnotation.onEntityManagerFactory"),
-            @Key(value = "presistenceContextAnnotation.onNonEntityManager") })
+            @Key(value = "persistenceContextAnnotation.onClassWithNoName"), @Key(value = "persistenceContextAnnotation.onEntityManagerFactory"),
+            @Key(value = "persistenceContextAnnotation.onNonEntityManager") })
     public EjbJar wrongUsage() throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));

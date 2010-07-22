@@ -23,7 +23,9 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -619,9 +621,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                Context context = (Context) jndiEncBuilder.build().lookup("comp/env");
+                Context context = (Context) jndiEncBuilder.build();
 
-                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/env", context);
+                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
                 if (clientInfo.codebase != null) {
                     containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
                 }

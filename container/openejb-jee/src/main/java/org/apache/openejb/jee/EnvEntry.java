@@ -119,7 +119,9 @@ public class EnvEntry implements JndiReference {
     }
 
     public String getKey() {
-        return getName();
+        String name = getName();
+        if (name == null || name.startsWith("java:")) return name;
+        return "java:comp/env/" + name;
     }
 
     public void setType(String type) {

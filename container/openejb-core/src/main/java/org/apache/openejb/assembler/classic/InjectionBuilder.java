@@ -35,7 +35,7 @@ public class InjectionBuilder {
         for (EnvEntryInfo info : jndiEnc.envEntries) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className);
-                Injection injection = new Injection(info.name, target.propertyName, targetClass);
+                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
                 injections.add(injection);
             }
         }
@@ -83,7 +83,7 @@ public class InjectionBuilder {
         for (ResourceEnvReferenceInfo info : jndiEnc.resourceEnvRefs) {
             for (InjectionInfo target : info.targets) {
                 Class targetClass = loadClass(target.className);
-                Injection injection = new Injection(info.resourceEnvRefName, target.propertyName, targetClass);
+                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
                 injections.add(injection);
             }
         }

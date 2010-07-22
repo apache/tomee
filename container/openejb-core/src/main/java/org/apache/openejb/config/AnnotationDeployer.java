@@ -2404,10 +2404,12 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Get the ejb-ref-name
             String refName = ejb.name();
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            if (refName.length() == 0) {
+                refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
-            ejbRef.setEjbRefName(refName);
+
+            //TODO can refName actually be null?
+            ejbRef.setEjbRefName(normalize(refName));
 
             if (member != null) {
                 // Set the member name where this will be injected
@@ -2510,6 +2512,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
+        private String normalize(String refName) {
+            if (refName.startsWith("java:")) {
+                return refName;
+            }
+            return "java:comp/env/" + refName;
+        }
+
         private boolean isLocalBean(Class clazz) {
             DeploymentModule module = getModule();
             if (module instanceof EjbModule) {
@@ -2581,18 +2590,13 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @param member
          */
         private void buildResource(JndiConsumer consumer, Resource resource, Member member) {
-            // Get the ref-name
-            String refName = resource.name();
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
-            }
 
             /**
-             * Was @Resource used at a class level witout specifying the 'name' or 'beanInterface' attributes?
+             * Was @Resource used at a class level without specifying the 'name' or 'beanInterface' attributes?
              */
             if (member == null) {
                 boolean shouldReturn = false;
-                if (resource.name().equals("")) {
+                if (resource.name().length() == 0) {
                     fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
@@ -2602,6 +2606,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 if (shouldReturn) return;
             }
+
+            // Get the ref-name
+            String refName = resource.name();
+            if (refName.equals("")) {
+                refName = member.getDeclaringClass().getName() + "/" + member.getName();
+            }
+
+            refName = normalize(refName);
 
             JndiReference reference = consumer.getEnvEntryMap().get(refName);
             if (reference == null) {
@@ -2701,8 +2713,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return;
             }
 
-//            reference.setName(refName);
-
             /*
              * Fill in the injection information <injection-target>
              */
@@ -2730,20 +2740,20 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @throws OpenEJBException
          */
         private void buildPersistenceUnit(JndiConsumer consumer, PersistenceUnit persistenceUnit, Member member) throws OpenEJBException {
-            // Get the ref-name
             String refName = persistenceUnit.name();
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            // Get the ref-name
+            if (refName.length() == 0) {
+                /**
+                 * Was @PersistenceUnit used at a class level without specifying the 'name' attribute?
+                 */
+                if (member == null) {
+                    fail(consumer.getJndiConsumerName(), "persistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
+                    return;
+                }
+                refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
-            /**
-             * Was @PersistenceUnit used at a class level without specifying the 'name' attribute?
-             */
-            if (refName == null && member == null) {
-                fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onClassWithNoName", persistenceUnit.unitName());
-                return;
-            }
-
+            refName = normalize(refName);
             PersistenceUnitRef persistenceUnitRef = consumer.getPersistenceUnitRefMap().get(refName);
             if (persistenceUnitRef == null) {
                 persistenceUnitRef = new PersistenceUnitRef();
@@ -2762,12 +2772,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     ValidationContext validationContext = getValidationContext();
                     String jndiConsumerName = consumer.getJndiConsumerName();
                     String name = persistenceUnitRef.getName();
-                    validationContext.fail(jndiConsumerName, "presistenceUnitAnnotation.onEntityManager", name);
+                    validationContext.fail(jndiConsumerName, "persistenceUnitAnnotation.onEntityManager", name);
                 } else if (!EntityManagerFactory.class.isAssignableFrom(type)) {
                     /**
                      * Was @PersistenceUnit mistakenly used for something that isn't an EntityManagerFactory?
                      */
-                    fail(consumer.getJndiConsumerName(), "presistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
+                    fail(consumer.getJndiConsumerName(), "persistenceUnitAnnotation.onNonEntityManagerFactory", persistenceUnitRef.getName());
                 } else {
                     // Set the member name where this will be injected
                     InjectionTarget target = new InjectionTarget();
@@ -2795,17 +2805,18 @@ public class AnnotationDeployer implements DynamicDeployer {
         private void buildPersistenceContext(JndiConsumer consumer, PersistenceContextAnn persistenceContext, Member member) throws OpenEJBException {
             String refName = persistenceContext.name();
 
-            if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+            if (refName.length() ==0) {
+                /**
+                 * Was @PersistenceContext used at a class level without specifying the 'name' attribute?
+                 */
+                if (member == null) {
+                    fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
+                    return;
+                }
+                refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
-            /**
-             * Was @PersistenceContext used at a class level without specifying the 'name' attribute?
-             */
-            if (refName == null && member == null) {
-                fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onClassWithNoName", persistenceContext.unitName());
-                return;
-            }
+            refName = normalize(refName);
 
             PersistenceContextRef persistenceContextRef = consumer.getPersistenceContextRefMap().get(refName);
             if (persistenceContextRef == null) {
@@ -2859,12 +2870,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                     /**
                      * Was @PersistenceContext mistakenly used when @PersistenceUnit should have been used?
                      */
-                    fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
+                    fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onEntityManagerFactory", persistenceContextRef.getName());
                 } else if (!EntityManager.class.isAssignableFrom(type)) {
                     /**
                      * Was @PersistenceContext mistakenly used for something that isn't an EntityManager?
                      */
-                    fail(consumer.getJndiConsumerName(), "presistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
+                    fail(consumer.getJndiConsumerName(), "persistenceContextAnnotation.onNonEntityManager", persistenceContextRef.getName());
                 } else {
                     // Set the member name where this will be injected
                     InjectionTarget target = new InjectionTarget();
@@ -2892,8 +2903,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             String refName = webService.name();
             if (refName.equals("")) {
-                refName = (member == null) ? null : member.getDeclaringClass().getName() + "/" + member.getName();
+                if (member == null) {
+                    //TODO fail
+                    return;
+                }
+                refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
+
+            refName = normalize(refName);
 
             serviceRef = consumer.getServiceRefMap().get(refName);
 

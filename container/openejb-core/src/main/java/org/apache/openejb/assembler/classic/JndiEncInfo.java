@@ -19,6 +19,11 @@ package org.apache.openejb.assembler.classic;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JndiEncInfo holds a context-worth of jndi information.  The info objects are normalized so their names include the comp,
+ * module, app, or global part of the jndi path but not the java: namespace.
+ * Each instance shoulc contain only info objects for one of the subcontexts.
+ */
 
 public class JndiEncInfo extends InfoObject {
     public final List<EnvEntryInfo> envEntries = new ArrayList<EnvEntryInfo>();

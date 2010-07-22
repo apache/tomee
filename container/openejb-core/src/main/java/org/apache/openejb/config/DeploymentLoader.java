@@ -346,7 +346,7 @@ public class DeploymentLoader {
             // Create the AppModule and all nested module objects
             //
 
-            AppModule appModule = new AppModule(appClassLoader, appId);
+            AppModule appModule = new AppModule(appClassLoader, appId, application);
             appModule.getAdditionalLibraries().addAll(extraLibs);
             appModule.getAltDDs().putAll(appDescriptors);
             appModule.getWatchedResources().add(appId);

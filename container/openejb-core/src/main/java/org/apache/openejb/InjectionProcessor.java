@@ -196,17 +196,17 @@ public class InjectionProcessor<T> {
     }
 
     public static Context unwrap(Context context) {
-        if (context == null) return null;
-        try {
-            context = (Context) context.lookup("comp/env/");
-        } catch (NamingException notAnIssue) {
-            //TODO figure out which clause should work and remove the other one.
-            try {
-                context = (Context) context.lookup("java:comp/env/");
-            } catch (NamingException notAnIssue2) {
-            }
-        }
-        
+//        if (context == null) return null;
+//        try {
+//            context = (Context) context.lookup("comp/env/");
+//        } catch (NamingException notAnIssue) {
+//            //TODO figure out which clause should work and remove the other one.
+//            try {
+//                context = (Context) context.lookup("java:comp/env/");
+//            } catch (NamingException notAnIssue2) {
+//            }
+//        }
+//
         return context;
     }
 
