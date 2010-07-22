@@ -66,6 +66,16 @@ public class ParsedName implements java.io.Serializable {
         hashcode = components[0].hashCode();
     }
 
+    public int getPos() {
+        return pos;
+    }
+
+    public void reset(int pos) {
+        if (pos < 0 || pos >= components.length) throw new IllegalArgumentException("pos out of range 0 to " + components.length);
+        this.pos = pos;
+        hashcode = components[pos].hashCode();
+    }
+
     public int compareTo(int otherHash) {
         if (hashcode == otherHash)
             return 0;

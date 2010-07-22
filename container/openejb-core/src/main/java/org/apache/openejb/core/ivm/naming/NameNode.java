@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import javax.naming.*;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 public class NameNode implements java.io.Serializable {
     private final String atomicName;
@@ -36,8 +38,12 @@ public class NameNode implements java.io.Serializable {
         this.parentTree = parentTree;
         if (name.next())
             subTree = new NameNode(this, name, obj, this);
-        else
+        else if (obj instanceof Context) {
+            myObject = new Federation();
+            ((Federation)myObject).add((Context) obj);
+        } else {
             myObject = obj;
+        }
     }
 
     void setMyContext(IvmContext myContext) {
@@ -45,7 +51,7 @@ public class NameNode implements java.io.Serializable {
     }
 
     public Object getBinding() {
-        if (myObject != null)
+        if (myObject != null && !(myObject instanceof Federation))
             return myObject;// if NameNode has an object it must be a binding
         else {
             if (myContext == null)
@@ -56,32 +62,66 @@ public class NameNode implements java.io.Serializable {
 
     public Object resolve(ParsedName name) throws javax.naming.NameNotFoundException {
         int compareResult = name.compareTo(atomicHash);
-
-        if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {// hashcodes and String valuse are equal
+        javax.naming.NameNotFoundException n = null;
+        int pos = name.getPos();
+        if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
+            // hashcodes and String valuse are equal
             if (name.next()) {
-                if (subTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
-                return subTree.resolve(name);
-            } else if (unbound){
-                throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
-            } else {
+                if (subTree != null) {
+                    try {
+                        return subTree.resolve(name);
+                    } catch (NameNotFoundException e) {
+                        n = e;
+                    }
+                }
+            } else if (!unbound){
                 return getBinding();
             }
-        } else if (compareResult == ParsedName.IS_LESS) {// parsed hash is less than
-            if (lessTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
-            return lessTree.resolve(name);
+        } else if (compareResult == ParsedName.IS_LESS) {
+            // parsed hash is less than
+            if (lessTree != null) {
+                return lessTree.resolve(name);
+            }
 
-        } else {//ParsedName.IS_GREATER
-
-            if (grtrTree == null) throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
-            return grtrTree.resolve(name);
+        } else {
+            //ParsedName.IS_GREATER
+            if (grtrTree != null) {
+                return grtrTree.resolve(name);
+            }
         }
+        if (myObject instanceof Federation) {
+            name.reset(pos);
+            String nameInContext = name.remaining().path();
+            Federation f = null;
+            for (Context c: (Federation)myObject) {
+                try {
+                    Object o = c.lookup(nameInContext);
+                    if (o instanceof Context) {
+                        if (f == null) {
+                            f = new Federation();
+                        }
+                        f.add((Context) o);
+                    } else {
+                        return o;
+                    }
+                } catch (javax.naming.NamingException e) {
+                    //ignore
+                }
+            }
+            if (f != null) {
+                NameNode node = new NameNode(null, new ParsedName(""), f, null);
+                return new IvmContext(node);
+            }
+        }
+        if (n != null) throw n;
+        throw new javax.naming.NameNotFoundException("Cannot resolve " + name);
     }
 
     public void bind(ParsedName name, Object obj) throws javax.naming.NameAlreadyBoundException {
         int compareResult = name.compareTo(atomicHash);
         if (compareResult == ParsedName.IS_EQUAL && name.getComponent().equals(atomicName)) {
             if (name.next()) {
-                if (myObject != null) {
+                if (myObject != null && !(myObject instanceof Federation)) {
                     throw new javax.naming.NameAlreadyBoundException();
                 }
                 if (subTree == null)
@@ -89,22 +129,33 @@ public class NameNode implements java.io.Serializable {
                 else
                     subTree.bind(name, obj);
             } else {
-                if (subTree != null) {
-                    throw new javax.naming.NameAlreadyBoundException(name.toString());
+                if (obj instanceof Context) {
+                    if (myObject != null) {
+                        if (!(myObject instanceof Federation)) {
+                            throw new javax.naming.NameAlreadyBoundException(name.toString());
+                        }
+                    } else {
+                        myObject = new Federation();
+                    }
+                    ((Federation)myObject).add((Context) obj);
+                } else {
+                    if (subTree != null) {
+                        throw new javax.naming.NameAlreadyBoundException(name.toString());
+                    }
+                    if (myObject != null) {
+                        throw new javax.naming.NameAlreadyBoundException(name.toString());
+                    }
+                    unbound = false;
+                    myObject = obj;// bind the object to this node
                 }
-                if (myObject != null){
-                    throw new javax.naming.NameAlreadyBoundException(name.toString());
-                }
-                unbound = false;
-                myObject = obj;// bind the object to this node
             }
         } else if (compareResult == ParsedName.IS_LESS) {
             if (lessTree == null)
                 lessTree = new NameNode(this.parent, name, obj, this);
             else
                 lessTree.bind(name, obj);
-        } else {//ParsedName.IS_GREATER ...
-
+        } else {
+            //ParsedName.IS_GREATER ...
             if (grtrTree == null)
                 grtrTree = new NameNode(this.parent, name, obj, this);
             else
@@ -322,4 +373,6 @@ public class NameNode implements java.io.Serializable {
                 ", unbound=" + unbound +
                 '}';
     }
+
+    private static class Federation extends ArrayList<Context> {};
 }
