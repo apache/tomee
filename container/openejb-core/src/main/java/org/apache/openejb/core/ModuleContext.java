@@ -16,15 +16,19 @@
  */
 package org.apache.openejb.core;
 
+import javax.naming.Context;
+
 /**
  * @version $Rev$ $Date$
 */
 public class ModuleContext extends DeploymentContext {
     private final AppContext appContext;
+    private final Context moduleJndiContext;
 
-    public ModuleContext(String id, AppContext appContext) {
+    public ModuleContext(String id, AppContext appContext, Context moduleJndiContext) {
         super(id, appContext.getOptions());
         this.appContext = appContext;
+        this.moduleJndiContext = moduleJndiContext;
     }
 
     public AppContext getAppContext() {
@@ -33,5 +37,9 @@ public class ModuleContext extends DeploymentContext {
 
     public ClassLoader getClassLoader() {
         return appContext.getClassLoader();
+    }
+
+    public Context getModuleJndiContext() {
+        return moduleJndiContext;
     }
 }

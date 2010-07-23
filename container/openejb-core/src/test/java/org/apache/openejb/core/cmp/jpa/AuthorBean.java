@@ -24,6 +24,7 @@ import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.EntityBean;
@@ -35,7 +36,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new CoreDeploymentInfo("author", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Author.class.getClassLoader())),
+            deploymentInfo = new CoreDeploymentInfo("author", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Author.class.getClassLoader(), new IvmContext(), new IvmContext()), new IvmContext()),
                     AuthorBean.class,
                     null,
                     null,

@@ -23,9 +23,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -475,6 +473,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             throw new DuplicateDeploymentIdException(message);
         }
 
+        //Construct the global and app jndi contexts for this app
+        InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
+        List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
+        appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
+        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, classLoader).build(false);
+        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, null, classLoader).build(false);
+
         try {
             // Generate the cmp2/cmp1 concrete subclasses
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
@@ -483,7 +488,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.jarPath, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
-            AppContext appContext = new AppContext(appInfo.jarPath, SystemInstance.get(), classLoader);
+            AppContext appContext = new AppContext(appInfo.jarPath, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext);
             
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
@@ -527,7 +532,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar);
+                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, appInjections);
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
@@ -553,6 +558,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     containerSystem.addDeployment(deploymentInfo);
                 }
 
+                //bind ejbs into global jndi
                 jndiBuilder.build(ejbJar, deployments);
 
                 // setup timers - must be after transaction attibutes are set
@@ -608,7 +614,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // App Client
             for (ClientInfo clientInfo : appInfo.clients) {
                 // determine the injections
-                InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
@@ -621,7 +626,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                Context context = (Context) jndiEncBuilder.build();
+                Context context = (Context) jndiEncBuilder.build(true);
 
                 containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
                 if (clientInfo.codebase != null) {
