@@ -56,13 +56,13 @@ public class JndiBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
-    private final Context context;
+    private final Context openejbContext;
     private static final String JNDINAME_STRATEGY_CLASS = "openejb.jndiname.strategy.class";
     private static final String JNDINAME_FAILONCOLLISION = "openejb.jndiname.failoncollision";
     private final boolean failOnCollision;
 
-    public JndiBuilder(Context context) {
-        this.context = context;
+    public JndiBuilder(Context openejbContext) {
+        this.openejbContext = openejbContext;
         failOnCollision = SystemInstance.get().getOptions().get(JNDINAME_FAILONCOLLISION, true);
     }
 
@@ -98,11 +98,11 @@ public class JndiBuilder {
             Constructor constructor = strategyClass.getConstructor();
             return (JndiNameStrategy) constructor.newInstance();
         } catch (InstantiationException e) {
-            throw new IllegalStateException("Could not instantiate JndiNameStrategy: "+strategyClassName, e);
+            throw new IllegalStateException("Could not instantiate JndiNameStrategy: " + strategyClassName, e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Could not access JndiNameStrategy: "+strategyClassName, e);
-        } catch (Throwable t){
-            throw new IllegalStateException("Could not create JndiNameStrategy: "+strategyClassName, t);
+            throw new IllegalStateException("Could not access JndiNameStrategy: " + strategyClassName, e);
+        } catch (Throwable t) {
+            throw new IllegalStateException("Could not create JndiNameStrategy: " + strategyClassName, t);
         }
     }
 
@@ -155,11 +155,14 @@ public class JndiBuilder {
         }
 
         public void begin(DeploymentInfo deploymentInfo);
+
         public String getName(Class interfce, Interface type);
+
         public void end();
     }
 
     // TODO: put these into the classpath and get them with xbean-finder
+
     public static class TemplatedStrategy implements JndiNameStrategy {
         private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
         private org.apache.openejb.util.StringTemplate template;
@@ -169,10 +172,10 @@ public class JndiBuilder {
         private DeploymentInfo deploymentInfo;
         // Set in begin()
         private Map<String, StringTemplate> templates;
-        
+
         private String format;
         private Map<String, String> appContext;
-        private HashMap<String,String> beanContext;
+        private HashMap<String, String> beanContext;
 
         public TemplatedStrategy(EjbJarInfo ejbJarInfo, Map<String, DeploymentInfo> deployments) {
             Options options = new Options(ejbJarInfo.properties, SystemInstance.get().getOptions());
@@ -242,10 +245,10 @@ public class JndiBuilder {
             if (template == null) template = templates.get(type.getAnnotationName());
             if (template == null) template = templates.get("");
 
-            Map<String,String> contextData = new HashMap<String,String>(beanContext);
+            Map<String, String> contextData = new HashMap<String, String>(beanContext);
             contextData.put("interfaceType", type.getAnnotationName());
             contextData.put("interfaceType.annotationName", type.getAnnotationName());
-            contextData.put("interfaceType.annotationNameLC",type.getAnnotationName().toLowerCase());
+            contextData.put("interfaceType.annotationNameLC", type.getAnnotationName().toLowerCase());
             contextData.put("interfaceType.xmlName", type.getXmlName());
             contextData.put("interfaceType.xmlNameCc", type.getXmlNameCc());
             contextData.put("interfaceType.openejbLegacyName", type.getOpenejbLegacy());
@@ -310,6 +313,7 @@ public class JndiBuilder {
 
                 name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getRemoteInterface().getName(), InterfaceType.EJB_OBJECT);
                 bind(name, ref, bindings, beanInfo, homeInterface);
+                bindJava(cdi, homeInterface.getName(), ref);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind remote home interface for deployment " + id, e);
@@ -329,6 +333,7 @@ public class JndiBuilder {
 
                 name = "openejb/Deployment/" + format(deployment.getDeploymentID(), deployment.getLocalInterface().getName(), InterfaceType.EJB_LOCAL);
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
+                bindJava(cdi, localHomeInterface.getName(), ref);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind local home interface for deployment " + id, e);
@@ -351,6 +356,7 @@ public class JndiBuilder {
 
                 String externalName = "openejb/local/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 bind(externalName, ref, bindings, beanInfo, interfce);
+                bindJava(cdi, interfce.getName(), ref);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind business local interface for deployment " + id, e);
@@ -375,6 +381,7 @@ public class JndiBuilder {
                 String name = strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
+                bindJava(cdi, interfce.getName(), ref);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
@@ -394,6 +401,7 @@ public class JndiBuilder {
 
                 String name = strategy.getName(beanClass, JndiNameStrategy.Interface.LOCALBEAN);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
+                bindJava(cdi, beanClass.getName(), ref);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind business remote deployment in jndi.", e);
@@ -417,7 +425,7 @@ public class JndiBuilder {
 
     private void optionalBind(Bindings bindings, Reference ref, String name) throws NamingException {
         try {
-            context.bind(name, ref);
+            openejbContext.bind(name, ref);
             bindings.add(name);
         } catch (NamingException okIfBindFails) {
         }
@@ -441,16 +449,16 @@ public class JndiBuilder {
 
             String externalName = name.replaceFirst("openejb/[^/]+/", "");
 
-            if (bindings.contains(name)){
+            if (bindings.contains(name)) {
                 // We bind under two sections of jndi, only warn once.. the user doesn't need to be bothered with that detail
                 if (name.startsWith("openejb/local/")) {
-                    logger.debug("Duplicate: Jndi(name=" + externalName +")");
+                    logger.debug("Duplicate: Jndi(name=" + externalName + ")");
                 }
                 return;
             }
 
             try {
-                context.bind(name, ref);
+                openejbContext.bind(name, ref);
                 bindings.add(name);
 
                 if (!beanInfo.jndiNames.contains(externalName)) {
@@ -461,14 +469,14 @@ public class JndiBuilder {
                     nameInfo.name = externalName;
                     beanInfo.jndiNamess.add(nameInfo);
 
-                    logger.info("Jndi(name=" + externalName +") --> Ejb(deployment-id="+beanInfo.ejbDeploymentId+")");
+                    logger.info("Jndi(name=" + externalName + ") --> Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ")");
                 }
             } catch (NameAlreadyBoundException e) {
                 DeploymentInfo deployment = findNameOwner(name);
-                if (deployment != null){
-                    logger.error("Jndi(name=" + externalName +") cannot be bound to Ejb(deployment-id="+beanInfo.ejbDeploymentId+").  Name already taken by Ejb(deployment-id="+deployment.getDeploymentID()+")");
+                if (deployment != null) {
+                    logger.error("Jndi(name=" + externalName + ") cannot be bound to Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ").  Name already taken by Ejb(deployment-id=" + deployment.getDeploymentID() + ")");
                 } else {
-                    logger.error("Jndi(name=" + externalName +") cannot be bound to Ejb(deployment-id="+beanInfo.ejbDeploymentId+").  Name already taken by another object in the system.");
+                    logger.error("Jndi(name=" + externalName + ") cannot be bound to Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ").  Name already taken by another object in the system.");
                 }
                 // Construct a new exception as the IvmContext doesn't include
                 // the name in the exception that it throws
@@ -476,10 +484,10 @@ public class JndiBuilder {
             }
         } else {
             try {
-                context.bind(name, ref);
+                openejbContext.bind(name, ref);
                 bindings.add(name);
             } catch (NameAlreadyBoundException e) {
-                logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name +")");
+                logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name + ")");
                 // Construct a new exception as the IvmContext doesn't include
                 // the name in the exception that it throws
                 throw new NameAlreadyBoundException(name);
@@ -488,9 +496,33 @@ public class JndiBuilder {
 
     }
 
+    //ee6 specified ejb bindings in module, app, and global contexts
+
+    private void bindJava(CoreDeploymentInfo cdi, String interfaceName, Reference ref) throws NamingException {
+        Context moduleContext = cdi.getModuleContext().getModuleJndiContext();
+        Context appContext = cdi.getModuleContext().getAppContext().getAppJndiContext();
+        Context globalContext = cdi.getModuleContext().getAppContext().getGlobalJndiContext();
+
+        String appName = cdi.getModuleContext().getAppContext().getId() + "/";
+        String moduleName = cdi.getModuleID() + "/";
+        String beanName = cdi.getEjbName();
+        if (interfaceName != null) {
+            beanName = beanName + "!" + interfaceName;
+        }
+        try {
+            globalContext.bind("global/" + appName + moduleName + beanName, ref);
+        } catch (NameAlreadyBoundException e) {
+            //one interface in more than one role (e.g. both Local and Remote
+            return;
+        }
+        appContext.bind("app/" + moduleName + beanName, ref);
+        moduleContext.bind("module/" + beanName, ref);
+    }
+
     /**
      * This may not be that performant, but it's certain to be faster than the
      * user having to track down which deployment is using a particular jndi name
+     *
      * @param name
      * @return .
      */
@@ -526,7 +558,7 @@ public class JndiBuilder {
             boolean bIsRmote = java.rmi.Remote.class.isAssignableFrom(b);
 
             if (aIsRmote == bIsRmote) return 0;
-            return (aIsRmote)? 1: -1;
+            return (aIsRmote) ? 1 : -1;
         }
     }
 }
