@@ -107,7 +107,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
     private CoreDeploymentInfo createDeployment(Class<?> testClass) {
         try {
-            return new CoreDeploymentInfo(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader())), testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED);
+            return new CoreDeploymentInfo(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader(), new IvmContext(), new IvmContext()), new IvmContext()), testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED);
         } catch (SystemException e) {
             throw new IllegalStateException(e);
         }

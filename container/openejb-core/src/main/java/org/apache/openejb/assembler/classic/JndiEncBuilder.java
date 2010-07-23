@@ -94,7 +94,7 @@ public class JndiEncBuilder {
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
         try {
-            moduleUri = new URI(moduleId);
+            moduleUri = moduleId == null? null: new URI(moduleId);
         } catch (URISyntaxException e) {
             throw new OpenEJBException(e);
         }
@@ -117,41 +117,26 @@ public class JndiEncBuilder {
         this.client = client;
     }
 
-    public Context build() throws OpenEJBException {
+    public Context build(boolean isComp) throws OpenEJBException {
         JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
 
         if (SystemInstance.get().hasProperty("openejb.geronimo")){
             return jndiFactory.createComponentContext(new HashMap());
         }
 
-        return jndiFactory.createComponentContext(buildMap());
+        Map<String, Object> bindings = buildMap();
+        if (isComp) {
+            addSpecialCompBindings(bindings);
+        }
+
+        return jndiFactory.createComponentContext(bindings);
     }
 
     public Map<String, Object> buildMap() throws OpenEJBException {
         Map<String, Object> bindings = new HashMap<String, Object>();
 
-        // bind TransactionManager
-        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
-        bindings.put("comp/TransactionManager", transactionManager);
-
-        // bind TransactionSynchronizationRegistry
-        bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
-
-        bindings.put("comp/ORB", new SystemComponentReference(ORB.class));
-        bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
-
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
-
-        // bind UserTransaction if bean managed transactions
-        UserTransaction userTransaction = null;
-        if (beanManagedTransactions) {
-            userTransaction = new CoreUserTransaction(transactionManager);
-            bindings.put("comp/UserTransaction", userTransaction);
-        }
-
-        // bind TimerService
-        bindings.put("comp/TimerService", new TimerServiceWrapper());
 
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
@@ -278,7 +263,7 @@ public class JndiEncBuilder {
 
             Object reference = null;
             if (UserTransaction.class.getName().equals(referenceInfo.resourceEnvRefType)) {
-                reference = userTransaction;
+                reference = new IntraVmJndiReference("comp/UserTransaction");
             } else if (referenceInfo.location != null){
                 reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
@@ -410,6 +395,30 @@ public class JndiEncBuilder {
             }
         }
         return bindings;
+    }
+
+    private void addSpecialCompBindings(Map<String, Object> bindings) {
+        // bind TransactionManager
+        TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
+        bindings.put("comp/TransactionManager", transactionManager);
+
+        // bind TransactionSynchronizationRegistry
+        bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
+
+        bindings.put("comp/ORB", new SystemComponentReference(ORB.class));
+        bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
+
+        // bind UserTransaction if bean managed transactions
+        UserTransaction userTransaction = null;
+        if (beanManagedTransactions) {
+            userTransaction = new CoreUserTransaction(transactionManager);
+            bindings.put("comp/UserTransaction", userTransaction);
+        }
+
+        // bind TimerService
+        if (!isClient()) {
+            bindings.put("comp/TimerService", new TimerServiceWrapper());
+        }
     }
 
     public static boolean bindingExists(Context context, Name contextName) {

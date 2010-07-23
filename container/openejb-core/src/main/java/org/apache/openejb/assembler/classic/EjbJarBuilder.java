@@ -19,14 +19,17 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.core.AppContext;
 import org.apache.openejb.util.Messages;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -43,14 +46,20 @@ public class EjbJarBuilder {
         this.context = context;
     }
 
-    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar) throws OpenEJBException {
+    public HashMap<String, DeploymentInfo> build(EjbJarInfo ejbJar, List<Injection> appInjections) throws OpenEJBException {
+        InjectionBuilder injectionBuilder = new InjectionBuilder(context.getClassLoader());
+        List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
+        moduleInjections.addAll(appInjections);
+        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, ejbJar.moduleId, context.getClassLoader()).build(false);
+
         HashMap<String, DeploymentInfo> deployments = new HashMap<String, DeploymentInfo>();
 
+        ModuleContext moduleContext = new ModuleContext(ejbJar.moduleId, context, moduleJndiContext);
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
 
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), new ModuleContext(ejbJar.moduleId, context));
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections);
                 CoreDeploymentInfo deployment = (CoreDeploymentInfo) deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);

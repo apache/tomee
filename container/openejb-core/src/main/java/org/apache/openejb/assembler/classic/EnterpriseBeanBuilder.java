@@ -39,9 +39,11 @@ import javax.ejb.Timer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 class EnterpriseBeanBuilder {
@@ -49,13 +51,15 @@ class EnterpriseBeanBuilder {
     private final EnterpriseBeanInfo bean;
     private final List<String> defaultInterceptors;
     private final BeanType ejbType;
-    private List<Exception> warnings = new ArrayList<Exception>();
-    private ModuleContext moduleContext;
+    private final List<Exception> warnings = new ArrayList<Exception>();
+    private final ModuleContext moduleContext;
+    private final List<Injection> moduleInjections;
 
-    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext) {
+    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections) {
         this.moduleContext = moduleContext;
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
+        this.moduleInjections = moduleInjections;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
             ejbType = BeanType.STATEFUL;
@@ -117,21 +121,36 @@ class EnterpriseBeanBuilder {
 
         final String transactionType = bean.transactionType;
 
-        // determind the injections
+        // determine the injections
         InjectionBuilder injectionBuilder = new InjectionBuilder(moduleContext.getClassLoader());
         List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
+        Set<Class<?>> relevantClasses = new HashSet<Class<?>>();
+        Class c = ejbClass;
+        do {
+            relevantClasses.add(c);
+            c = c.getSuperclass();
+        } while (c != null && c != Object.class);
+
+        for (Injection injection: moduleInjections) {
+            if (relevantClasses.contains(injection.getTarget())) {
+                injections.add(injection);
+            }
+        }
 
         // build the enc
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), moduleContext.getClassLoader());
-        Context root = jndiEncBuilder.build();
+        Context compJndiContext = jndiEncBuilder.build(true);
+        bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
+        bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
+        bind(compJndiContext, "global", moduleContext.getAppContext().getGlobalJndiContext());
 
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, root, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
-            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, root, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
 
@@ -259,6 +278,21 @@ class EnterpriseBeanBuilder {
         deployment.createMethodMap();
 
         return deployment;
+    }
+
+    private void bind(Context compJndiContext, String s, Context moduleJndiContext) throws OpenEJBException {
+        Context c;
+        try {
+            c = (Context) moduleJndiContext.lookup(s);
+        } catch (NamingException e) {
+            //ok, nothing there....
+            return;
+        }
+        try {
+            compJndiContext.bind(s, c);
+        } catch (NamingException e) {
+            throw new OpenEJBException("Could not bind context at " + s, e);
+        }
     }
 
     public static boolean paramsMatch(Method methodA, Method methodB) {

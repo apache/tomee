@@ -19,17 +19,23 @@ package org.apache.openejb.core;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 
+import javax.naming.Context;
+
 /**
  * @version $Rev$ $Date$
 */
 public class AppContext extends DeploymentContext {
     private final SystemInstance systemInstance;
     private final ClassLoader classLoader;
+    private final Context globalJndiContext;
+    private final Context appJndiContext;
 
-    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader) {
+    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext) {
         super(id, systemInstance.getOptions());
         this.classLoader = classLoader;
         this.systemInstance = systemInstance;
+        this.globalJndiContext = globalJndiContext;
+        this.appJndiContext = appJndiContext;
     }
 
     public ClassLoader getClassLoader() {
@@ -38,5 +44,13 @@ public class AppContext extends DeploymentContext {
 
     public SystemInstance getSystemInstance() {
         return systemInstance;
+    }
+
+    public Context getAppJndiContext() {
+        return appJndiContext;
+    }
+
+    public Context getGlobalJndiContext() {
+        return globalJndiContext;
     }
 }
