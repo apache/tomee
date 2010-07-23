@@ -533,7 +533,7 @@ public class JndiEncInfoBuilder {
         } else if (name.startsWith("java:global/")) {
             t.referenceName = name.substring(5);
             global.add(t);
-        } else if (name.startsWith("java:application/")) {
+        } else if (name.startsWith("java:app/")) {
             t.referenceName = name.substring(5);
             app.add(t);
         } else if (name.startsWith("java:module/")) {
