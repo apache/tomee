@@ -475,7 +475,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static TldTaglib readTldTaglib(URL url) throws OpenEJBException {
         TldTaglib tldTaglib;
         try {
-            tldTaglib = (TldTaglib) JaxbJavaee.unmarshalJavaee(TldTaglib.class, url.openStream());
+            tldTaglib = (TldTaglib) JaxbJavaee.unmarshalTaglib(TldTaglib.class, url.openStream());
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the JSP tag library definition file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
