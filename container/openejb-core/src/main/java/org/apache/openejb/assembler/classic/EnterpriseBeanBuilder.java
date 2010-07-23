@@ -141,7 +141,7 @@ class EnterpriseBeanBuilder {
         JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), moduleContext.getClassLoader());
         Context compJndiContext = jndiEncBuilder.build(true);
         bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
-        bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
+        bind(compJndiContext, "application", moduleContext.getAppContext().getAppJndiContext());
         bind(compJndiContext, "global", moduleContext.getAppContext().getGlobalJndiContext());
 
         CoreDeploymentInfo deployment;
