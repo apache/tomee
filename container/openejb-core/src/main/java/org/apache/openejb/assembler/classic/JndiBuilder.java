@@ -515,7 +515,7 @@ public class JndiBuilder {
             //one interface in more than one role (e.g. both Local and Remote
             return;
         }
-        appContext.bind("app/" + moduleName + beanName, ref);
+        appContext.bind("application/" + moduleName + beanName, ref);
         moduleContext.bind("module/" + beanName, ref);
     }
 
