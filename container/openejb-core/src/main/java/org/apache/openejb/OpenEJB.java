@@ -40,6 +40,9 @@ public final class OpenEJB {
 
     private static Instance instance;
 
+    private OpenEJB() {
+    }
+
     public static ApplicationServer getApplicationServer() {
         return SystemInstance.get().getComponent(ApplicationServer.class);
     }
