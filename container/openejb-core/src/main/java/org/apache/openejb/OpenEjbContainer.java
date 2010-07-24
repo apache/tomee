@@ -16,15 +16,30 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.client.LocalInitialContext;
 import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.core.AppContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.core.ivm.naming.ContextWrapper;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
 import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
@@ -33,7 +48,7 @@ public class OpenEjbContainer extends EJBContainer {
 
     private final Context context;
 
-    public OpenEjbContainer(Context context) {
+    private OpenEjbContainer(Context context) {
         this.context = context;
     }
 
@@ -44,6 +59,7 @@ public class OpenEjbContainer extends EJBContainer {
         } catch (NamingException e) {
             throw new IllegalStateException(e);
         }
+        OpenEJB.destroy();
     }
 
     @Override
@@ -57,11 +73,50 @@ public class OpenEjbContainer extends EJBContainer {
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> properties) {
             try {
-                final Hashtable hashtable = new Hashtable(properties);
-                hashtable.put(LocalInitialContext.ON_CLOSE, LocalInitialContext.Close.DESTROY.name());
-                final Context context = new LocalInitialContextFactory().getInitialContext(hashtable);
-                return new OpenEjbContainer(context);
-            } catch (NamingException e) {
+                Properties props = new Properties();
+                props.putAll(properties);
+                OpenEJB.init(props);
+                Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                Collection<AppInfo> apps = assembler.getDeployedApplications();
+                if (apps.size() != 1) {
+                    throw new IllegalStateException("not exactly one app deployed in embedded: " + apps.size());
+                }
+                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                AppContext appContext = null;
+                DeploymentInfo[] infos = containerSystem.deployments();
+                for (DeploymentInfo info: infos) {
+                    if (info instanceof CoreDeploymentInfo) {
+                        appContext = ((CoreDeploymentInfo)info).getModuleContext().getAppContext();
+                        break;
+                    }
+                }
+                if (appContext == null) {
+                    throw new IllegalStateException("Could not locate app context");
+                }
+                final Context globalJndiContext = appContext.getGlobalJndiContext();
+                return new OpenEjbContainer(new ContextFlyweight() {
+
+                    @Override
+                    protected Context getContext() throws NamingException {
+                        return globalJndiContext;
+                    }
+
+                    @Override
+                    protected Name getName(Name name) throws NamingException {
+                        String first = name.get(0);
+                        if (!first.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+                        first = first.substring("java:".length());
+                        name = name.getSuffix(1);
+                        return name.add(0, first);
+                    }
+
+                    @Override
+                    protected String getName(String name) throws NamingException {
+                        if (!name.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+                        return name.substring("java:".length());
+                    }
+                });
+            } catch (OpenEJBException e) {
                 throw new IllegalStateException(e);
             }
         }
