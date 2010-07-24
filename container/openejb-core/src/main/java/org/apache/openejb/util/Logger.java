@@ -58,7 +58,12 @@ public class Logger {
         }
 
         if (factory == null) {
-            factory = new Log4jLogStreamFactory();
+            try {
+                factory = new Log4jLogStreamFactory();
+            } catch (NoClassDefFoundError e) {
+                //log4j not in classpath
+                factory = new JuliLogStreamFactory();
+            }
         }
 
         logStreamFactory = factory;
