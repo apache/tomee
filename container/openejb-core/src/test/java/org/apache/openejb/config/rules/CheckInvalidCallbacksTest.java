@@ -25,12 +25,12 @@ import javax.ejb.AfterCompletion;
 import javax.ejb.BeforeCompletion;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
-import javax.interceptor.AroundInvoke;
 
 import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
@@ -39,51 +39,69 @@ import org.junit.runner.RunWith;
  */
 @RunWith(ValidationRunner.class)
 public class CheckInvalidCallbacksTest extends TestCase {
-
-    @Keys({@Key(value="ignoredAnnotation",count=10,type=KeyType.WARNING),@Key(value="aroundInvoke.invalidArguments",count=2,type=KeyType.FAILURE)})
+    @Keys( { @Key(value = "ignoredAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.missing.possibleTypo"), @Key("callback.badReturnType"),
+            @Key("callback.badModifier"), @Key("callback.invalidArguments"), @Key("aroundInvoke.missing") })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
+        StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
+        testBean.addAroundInvoke("wrongMethod");
         ejbJar.addEnterpriseBean(new SingletonBean("TestSingleton", TestBean.class));
+        ejbJar.addEnterpriseBean(new StatefulBean("FooStateful", FooBean.class));
         return ejbJar;
     }
 
     public static class TestBean implements Callable {
-
         public Object call() throws Exception {
             return null;
         }
 
-        @AroundInvoke
-        public Object invoke(){return null;}
-
         @PostConstruct
-        public void myConstruct() {
+        public void myConstruct() {}
+
+        @PreDestroy
+        public void myDestroy() {}
+
+        @PostActivate
+        public void myActivate() {}
+
+        @PrePassivate
+        public void myPassivate() {}
+
+        @AfterBegin
+        public void myAfterBegin() {}
+
+        @BeforeCompletion
+        public void beforeCompletion() {}
+
+        @AfterCompletion
+        public void afterCompletion(boolean committed) {}
+    }
+
+    public static class FooBean {
+        @PostConstruct
+        public Object myConstruct() {
+            return null;
         }
 
         @PreDestroy
-        public void myDestroy() {
-        }
+        public static final void myDestroy() {}
 
         @PostActivate
-        public void myActivate() {
-        }
+        public void myActivate(Object anInvalidArgument) {}
 
         @PrePassivate
-        public void myPassivate() {
-        }
+        public void myPassivate() {}
 
         @AfterBegin
-        public void myAfterBegin() {
-        }
+        public void myAfterBegin() {}
 
         @BeforeCompletion
-        public void beforeCompletion() {
-        }
+        public void beforeCompletion() {}
 
         @AfterCompletion
-        public void afterCompletion() {
-        }
-    }
+        public void afterCompletion(boolean committed) {}
 
+        @AfterCompletion
+        public void afterCompletionTypo() {}
+    }
 }
