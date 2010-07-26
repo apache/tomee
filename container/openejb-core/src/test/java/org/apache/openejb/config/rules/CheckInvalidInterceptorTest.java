@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config.rules;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.interceptor.AroundInvoke;
@@ -26,6 +28,8 @@ import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
@@ -33,7 +37,7 @@ import org.junit.runner.RunWith;
 public class CheckInvalidInterceptorTest extends TestCase {
     @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
             @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2), @Key("interceptor.callback.missing"),
-            @Key("aroundInvoke.missing") })
+            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod") })
     public EjbJar test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
@@ -41,6 +45,13 @@ public class CheckInvalidInterceptorTest extends TestCase {
         Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
         interceptor.addAroundInvoke("wrongMethod");
         interceptor.addPostConstruct("wrongMethod");
+        List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
+        InterceptorBinding binding = new InterceptorBinding("wrongEjbName");
+        // binding.setMethod(new NamedMethod("wrongMethod"));
+        interceptorBindings.add(binding);
+        InterceptorBinding binding1 = new InterceptorBinding();
+        binding1.setMethod(new NamedMethod("aMethod"));
+        interceptorBindings.add(binding1);
         return ejbJar;
     }
 
