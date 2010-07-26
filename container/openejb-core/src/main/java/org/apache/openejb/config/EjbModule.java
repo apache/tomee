@@ -86,6 +86,8 @@ public class EjbModule implements WsModule {
                 moduleId = file.getName();
                 if (moduleId == null){
                     moduleId = jarURI;
+                } else if (moduleId.endsWith(".jar")) {
+                    moduleId = moduleId.substring(0, moduleId.length() - ".jar".length() );
                 }
             }
         }

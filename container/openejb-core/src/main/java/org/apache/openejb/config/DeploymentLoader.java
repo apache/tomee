@@ -143,7 +143,7 @@ public class DeploymentLoader {
                 EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
 
                 // wrap the EJB Module with an Application Module
-                AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+                AppModule appModule = new AppModule(ejbModule.getClassLoader(), null);
                 appModule.getEjbModules().add(ejbModule);
 
                 // Persistence Units
@@ -155,7 +155,7 @@ public class DeploymentLoader {
                 ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
-                AppModule appModule = new AppModule(clientModule.getClassLoader(), jarLocation);
+                AppModule appModule = new AppModule(clientModule.getClassLoader(), null);
                 appModule.getClientModules().add(clientModule);
 
                 return appModule;
@@ -164,7 +164,7 @@ public class DeploymentLoader {
                 ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
-                AppModule appModule = new AppModule(connectorModule.getClassLoader(), jarLocation);
+                AppModule appModule = new AppModule(connectorModule.getClassLoader(), null);
                 appModule.getResourceModules().add(connectorModule);
 
                 return appModule;
@@ -172,14 +172,14 @@ public class DeploymentLoader {
                 String moduleId = toFile(baseUrl).getName();
                 String warPath = URLs.toFilePath(baseUrl);
 
-                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), warPath);
+                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), null);
                 addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
                 return appModule;
             } else if (PersistenceModule.class.equals(moduleClass)) {
                 ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
 
                 // wrap the EJB Module with an Application Module
-                AppModule appModule = new AppModule(classLoader, jarPath);
+                AppModule appModule = new AppModule(classLoader, null);
 
                 // Persistence Units
                 addPersistenceUnits(appModule, baseUrl);
