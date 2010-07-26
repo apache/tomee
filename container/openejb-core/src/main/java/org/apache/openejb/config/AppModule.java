@@ -57,8 +57,15 @@ public class AppModule implements DeploymentModule {
         this.jarLocation = jarLocation;
         this.application = application;
         if (application == null || application.getApplicationName() == null) {
-            File file = new File(jarLocation);
-            this.moduleId = file.getName();
+            String appId = null;
+            if (jarLocation != null) {
+                File file = new File(jarLocation);
+                appId = file.getName();
+                if (file.isFile() && appId.endsWith(".ear")) {
+                    appId = appId.substring(0, appId.length() - 4);
+                }
+            }
+            this.moduleId = appId;
         } else {
             this.moduleId = application.getApplicationName();
         }

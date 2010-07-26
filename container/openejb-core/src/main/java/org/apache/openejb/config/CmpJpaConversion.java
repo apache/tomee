@@ -171,10 +171,18 @@ public class CmpJpaConversion implements DynamicDeployer {
             persistence.setVersion("1.0");
             persistence.getPersistenceUnit().add(persistenceUnit);
 
-            PersistenceModule persistenceModule = new PersistenceModule(appModule.getModuleId(), persistence);
+            PersistenceModule persistenceModule = new PersistenceModule(getPersistenceModuleId(appModule), persistence);
             appModule.getPersistenceModules().add(persistenceModule);
         }
         return persistenceUnit;
+    }
+
+    private String getPersistenceModuleId(AppModule appModule) {
+        if (appModule.getModuleId() != null) return appModule.getModuleId();
+        for (EjbModule ejbModule: appModule.getEjbModules()) {
+            return ejbModule.getModuleId();
+        }
+        throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }
 
     /**

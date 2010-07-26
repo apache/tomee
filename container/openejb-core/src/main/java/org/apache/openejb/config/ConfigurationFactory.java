@@ -76,6 +76,7 @@ import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.SecurityService;
 import org.apache.openejb.config.sys.ServiceProvider;
 import org.apache.openejb.config.sys.TransactionManager;
+import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChain;
@@ -206,8 +207,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public ConfigurationFactory(boolean offline,
-        DynamicDeployer preAutoConfigDeployer,
-        OpenEjbConfiguration configuration) {
+                                DynamicDeployer preAutoConfigDeployer,
+                                OpenEjbConfiguration configuration) {
         this(offline, preAutoConfigDeployer);
         sys = configuration;
     }
@@ -345,21 +346,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        List<Deployments> deployments = openejb.getDeployments();
-        // make a copy of the list because we update it
-        deployments = new ArrayList<Deployments>(deployments);
-
-        // resolve jar locations //////////////////////////////////////  BEGIN  ///////
-
-        FileUtils base = SystemInstance.get().getBase();
-
-        List<String> declaredApps = new ArrayList<String>(deployments.size());
-        try {
-            for (Deployments deployment : deployments) {
-                DeploymentsResolver.loadFrom(deployment, base, declaredApps);
-            }
-        } catch (SecurityException ignored) {
-        }
+        List<String> declaredApps = getDeclaredApps();
 
         for (String pathname : declaredApps) {
             try {
@@ -373,23 +360,16 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
         if (SystemInstance.get().getOptions().get(DEPLOYMENTS_CLASSPATH_PROPERTY, true)) {
-            List<String> classpathApps = new ArrayList<String>();
-
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-            DeploymentsResolver.loadFromClasspath(base, classpathApps, classLoader);
+            ArrayList<File> jarFiles = getModulesFromClassPath(declaredApps, classLoader);
+            String appId = "classpath.ear";
 
-            ArrayList<File> jarFiles = new ArrayList<File>();
-            for (String path : classpathApps) {
-                if (declaredApps.contains(path)) continue;
-
-                jarFiles.add(new File(path));
-            }
-
+            boolean classpathAsEar = SystemInstance.get().getOptions().get(CLASSPATH_AS_EAR, true);
             try {
-                if (SystemInstance.get().getOptions().get(CLASSPATH_AS_EAR, true)) {
+                if (classpathAsEar && !jarFiles.isEmpty()) {
 
-                    AppInfo appInfo = configureApplication(classLoader, "classpath.ear", jarFiles);
+                    AppInfo appInfo = configureApplication(classLoader, appId, jarFiles);
 
                     sys.containerSystem.applications.add(appInfo);
 
@@ -408,6 +388,45 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
 
         return sys;
+    }
+
+    private List<String> getDeclaredApps() {
+        // make a copy of the list because we update it
+        List<Deployments> deployments = new ArrayList<Deployments>();
+        if (openejb != null) {
+            deployments.addAll(openejb.getDeployments());
+        }
+
+        // resolve jar locations //////////////////////////////////////  BEGIN  ///////
+
+        FileUtils base = SystemInstance.get().getBase();
+
+        List<String> declaredApps = new ArrayList<String>(deployments.size());
+        try {
+            for (Deployments deployment : deployments) {
+                DeploymentsResolver.loadFrom(deployment, base, declaredApps);
+            }
+        } catch (SecurityException ignored) {
+        }
+        return declaredApps;
+    }
+
+    public ArrayList<File> getModulesFromClassPath(List<String> declaredApps, ClassLoader classLoader) {
+        FileUtils base = SystemInstance.get().getBase();
+        if (declaredApps == null) {
+            declaredApps = getDeclaredApps();
+        }
+        List<String> classpathApps = new ArrayList<String>();
+
+        DeploymentsResolver.loadFromClasspath(base, classpathApps, classLoader);
+
+        ArrayList<File> jarFiles = new ArrayList<File>();
+        for (String path : classpathApps) {
+            if (declaredApps.contains(path)) continue;
+
+            jarFiles.add(new File(path));
+        }
+        return jarFiles;
     }
 
     public ContainerInfo createContainerInfo(Container container) throws OpenEJBException {
@@ -510,8 +529,18 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return appInfo;
     }
 
+    /**
+     * embedded usage
+     * @param classLoader classloader
+     * @param id id supplied from embedded properties or null
+     * @param jarFiles list of ejb modules
+     * @return configured AppInfo
+     * @throws OpenEJBException on error
+     */
     public AppInfo configureApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
-        AppModule collection = new AppModule(classLoader, id);
+        Application application = new Application();
+        application.setApplicationName(id);
+        AppModule collection = new AppModule(classLoader, null, application);
         Map<String, Object> altDDs = collection.getAltDDs();
 
         for (File jarFile : jarFiles) {
@@ -580,28 +609,28 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public EjbJarInfo configureApplication(EjbModule ejbModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        AppModule appModule = new AppModule(ejbModule.getClassLoader(), null);
         appModule.getEjbModules().add(ejbModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.ejbJars.get(0);
     }
 
     public ClientInfo configureApplication(ClientModule clientModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(clientModule.getClassLoader(), clientModule.getJarLocation());
+        AppModule appModule = new AppModule(clientModule.getClassLoader(), null);
         appModule.getClientModules().add(clientModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.clients.get(0);
     }
 
     public ConnectorInfo configureApplication(ConnectorModule connectorModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(connectorModule.getClassLoader(), connectorModule.getJarLocation());
+        AppModule appModule = new AppModule(connectorModule.getClassLoader(), null);
         appModule.getResourceModules().add(connectorModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.connectors.get(0);
     }
 
     public WebAppInfo configureApplication(WebModule webModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(webModule.getClassLoader(), webModule.getJarLocation());
+        AppModule appModule = new AppModule(webModule.getClassLoader(), null);
         appModule.getWebModules().add(webModule);
         AppInfo appInfo = configureApplication(appModule);
         return appInfo.webApps.get(0);

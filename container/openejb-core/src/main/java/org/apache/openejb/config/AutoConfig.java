@@ -434,7 +434,7 @@ public class AutoConfig implements DynamicDeployer {
                 continue;
             }
 
-            URI moduleUri = URI.create(appModule.getModuleId());
+            URI moduleUri = URI.create(ejbModule.getModuleId());
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -491,7 +491,7 @@ public class AutoConfig implements DynamicDeployer {
                 continue;
             }
 
-            URI moduleUri = URI.create(appModule.getModuleId());
+            URI moduleUri = URI.create(ejbModule.getModuleId());
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -518,7 +518,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
-            URI moduleUri = URI.create(appModule.getModuleId());
+            URI moduleUri = URI.create(clientModule.getModuleId());
             for (MessageDestinationRef ref : clientModule.getApplicationClient().getMessageDestinationRef()) {
                 String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {
@@ -529,7 +529,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         for (WebModule webModule : appModule.getWebModules()) {
-            URI moduleUri = URI.create(appModule.getModuleId());
+            URI moduleUri = URI.create(webModule.getModuleId());
             for (MessageDestinationRef ref : webModule.getWebApp().getMessageDestinationRef()) {
                 String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {
@@ -548,7 +548,7 @@ public class AutoConfig implements DynamicDeployer {
                 continue;
             }
 
-            URI moduleUri = URI.create(appModule.getModuleId());
+            URI moduleUri = URI.create(ejbModule.getModuleId());
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {

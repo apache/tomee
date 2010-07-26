@@ -16,17 +16,11 @@
  */
 package org.apache.openejb;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.client.LocalInitialContext;
-import org.apache.openejb.client.LocalInitialContextFactory;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ModuleContext;
-import org.apache.openejb.core.ivm.naming.ContextWrapper;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.xbean.naming.context.ContextFlyweight;
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
@@ -34,12 +28,16 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.AppContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.xbean.naming.context.ContextFlyweight;
 
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
 
 /**
  * @version $Rev$ $Date$
@@ -72,11 +70,40 @@ public class OpenEjbContainer extends EJBContainer {
 
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> properties) {
+            Object provider = properties.get(EJBContainer.PROVIDER);
+            if (provider != null && !provider.equals(Provider.class) && !provider.equals(Provider.class.getName())) {
+                return null;
+            }
+            String appId = (String) properties.get(EJBContainer.APP_NAME);
+            Object modules = properties.get(EJBContainer.MODULES);
+            if (modules instanceof String) {
+
+            } else if (modules instanceof String[]) {
+
+            } else if (modules instanceof File) {
+
+            } else if (modules instanceof File[]) {
+
+            }
             try {
                 Properties props = new Properties();
+                props.put(DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 props.putAll(properties);
                 OpenEJB.init(props);
+                ConfigurationFactory configurationFactory = new ConfigurationFactory();
+                ClassLoader classLoader = getClass().getClassLoader();
+                List<File> moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+                if (moduleLocations.isEmpty()) {
+                    throw new IllegalStateException("No modules to deploy found");
+                }
+                AppInfo appInfo = configurationFactory.configureApplication(classLoader, appId, moduleLocations);
+
                 Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                try {
+                    assembler.createApplication(appInfo, classLoader);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Could not deploy embedded app", e);
+                }
                 Collection<AppInfo> apps = assembler.getDeployedApplications();
                 if (apps.size() != 1) {
                     throw new IllegalStateException("not exactly one app deployed in embedded: " + apps.size());
