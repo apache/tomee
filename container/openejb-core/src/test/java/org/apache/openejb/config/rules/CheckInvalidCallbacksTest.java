@@ -55,7 +55,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
         }
 
         @AroundInvoke
-        public void invoke(){}
+        public Object invoke(){return null;}
 
         @PostConstruct
         public void myConstruct() {

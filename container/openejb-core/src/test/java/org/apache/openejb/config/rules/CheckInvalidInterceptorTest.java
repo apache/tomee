@@ -16,31 +16,47 @@
  */
 package org.apache.openejb.config.rules;
 
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.Lock;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.interceptor.AroundInvoke;
+import javax.interceptor.AroundTimeout;
+import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
 
 import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
-public class CheckInvalidConcurrencyAttributeTest extends TestCase {
-    @Keys( { @Key(value = "ann.invalidConcurrencyAttribute", type = KeyType.WARNING), @Key(value = "aroundInvoke.invalidArguments") })
+public class CheckInvalidInterceptorTest extends TestCase {
+    @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
+            @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2) })
     public EjbJar test() throws Exception {
-        System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new SingletonBean(TestBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         return ejbJar;
     }
 
-    @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-    @Lock
-    public static class TestBean {
+    @Interceptors(Interceptor.class)
+    public static class FooBean {}
+
+    public static class Interceptor {
+        @PostConstruct
+        public Object interceptPostConstruct() {
+            return null;
+        }
+
+        @PreDestroy
+        public Object interceptPreDestroy() {
+            return null;
+        }
+
         @AroundInvoke
-        public Object foo() {return null;}
+        public void interceptAroundInvoke() {}
+
+        @AroundTimeout
+        public void interceptAroundTimeout() {}
     }
 }
