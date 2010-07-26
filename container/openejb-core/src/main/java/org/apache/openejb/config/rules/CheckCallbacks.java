@@ -253,6 +253,10 @@ public class CheckCallbacks extends ValidationBase {
                 fail(componentName, "aroundInvoke.missing", aroundType, declaringMethodName, declaringClassName);
             } else if (possibleMethods.size() == 1) {
                 fail(componentName, "aroundInvoke.invalidArguments", aroundType, declaringMethodName, getParameters(possibleMethods.get(0)), declaringClassName);
+                Class<?> returnType = possibleMethods.get(0).getReturnType();
+                if (!returnType.equals(Object.class)) {
+                    fail(componentName, "aroundInvoke.badReturnType", aroundType, declaringMethodName, returnType.getName(), declaringClassName);
+                }
             } else {
                 fail(componentName, "aroundInvoke.missing.possibleTypo", aroundType, declaringMethodName, possibleMethods.size(), declaringClassName);
             }
@@ -314,6 +318,11 @@ public class CheckCallbacks extends ValidationBase {
                 fail("Interceptor", "interceptor.callback.missing", type, callback.getMethodName(), interceptorClass.getName());
             } else if (possibleMethods.size() == 1) {
                 fail("Interceptor", "interceptor.callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), interceptorClass.getName());
+                Class<?> returnType = possibleMethods.get(0).getReturnType();
+
+                if (!returnType.equals(Void.TYPE)) {
+                    fail("Interceptor", "interceptor.callback.badReturnType", interceptorClass, type, callback.getMethodName(), returnType.getName());
+                }
             } else {
                 fail("Interceptor", "interceptor.callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), interceptorClass.getName());
             }
