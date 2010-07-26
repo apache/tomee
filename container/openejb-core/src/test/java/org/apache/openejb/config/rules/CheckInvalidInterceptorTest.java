@@ -21,28 +21,33 @@ import javax.annotation.PreDestroy;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
 
 import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidInterceptorTest extends TestCase {
     @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
-            @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2) })
+            @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2), @Key("interceptor.callback.missing"),
+            @Key("aroundInvoke.missing") })
     public EjbJar test() throws Exception {
+        System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
+        Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
+        interceptor.addAroundInvoke("wrongMethod");
+        interceptor.addPostConstruct("wrongMethod");
         return ejbJar;
     }
 
-    @Interceptors(Interceptor.class)
+    @Interceptors(Interzeptor.class)
     public static class FooBean {}
 
-    public static class Interceptor {
+    public static class Interzeptor {
         @PostConstruct
         public Object interceptPostConstruct() {
             return null;
@@ -58,5 +63,9 @@ public class CheckInvalidInterceptorTest extends TestCase {
 
         @AroundTimeout
         public void interceptAroundTimeout() {}
+    }
+
+    public static class CallbackMissingInterceptor {
+        public void interceptSomething() {}
     }
 }
