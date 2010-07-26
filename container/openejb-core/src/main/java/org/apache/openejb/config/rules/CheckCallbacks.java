@@ -332,11 +332,11 @@ public class CheckCallbacks extends ValidationBase {
     private void checkSessionSynchronization(Class ejbClass, SessionBean bean) {
         if (SessionSynchronization.class.isAssignableFrom(ejbClass)) {
             if (bean.getAfterBeginMethod() != null || bean.getBeforeCompletionMethod() != null || bean.getAfterCompletionMethod() != null) {
-                fail(bean, "calllback.invalidSessionSynchronizationUse", ejbClass.getName());
+                fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
             } else {
                 ClassFinder classFinder = new ClassFinder(ejbClass);
-                if (classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0 || classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0
-                        || classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0) {
+                if (classFinder.findAnnotatedMethods(AfterBegin.class).size() > 0 || classFinder.findAnnotatedMethods(BeforeCompletion.class).size() > 0
+                        || classFinder.findAnnotatedMethods(AfterCompletion.class).size() > 0) {
                     fail(bean, "callback.sessionSynchronization.invalidUse", ejbClass.getName());
                 }
             }
