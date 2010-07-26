@@ -17,7 +17,13 @@
 package org.apache.openejb;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -75,24 +81,61 @@ public class OpenEjbContainer extends EJBContainer {
                 return null;
             }
             String appId = (String) properties.get(EJBContainer.APP_NAME);
-            Object modules = properties.get(EJBContainer.MODULES);
-            if (modules instanceof String) {
-
-            } else if (modules instanceof String[]) {
-
-            } else if (modules instanceof File) {
-
-            } else if (modules instanceof File[]) {
-
-            }
             try {
                 Properties props = new Properties();
                 props.put(DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 props.putAll(properties);
                 OpenEJB.init(props);
                 ConfigurationFactory configurationFactory = new ConfigurationFactory();
+                List<File> moduleLocations;
                 ClassLoader classLoader = getClass().getClassLoader();
-                List<File> moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+                Object modules = properties.get(EJBContainer.MODULES);
+                if (modules instanceof String) {
+                    moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+                    for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
+                        File file = i.next();
+                        if (!match((String)modules, file)) {
+                            i.remove();
+                        }
+                    }
+                } else if (modules instanceof String[]) {
+                    moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+                    int matched = 0;
+                    for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
+                        File file = i.next();
+                        boolean remove = true;
+                        for (String s: (String[])modules) {
+                            if (match(s, file)) {
+                                remove = false;
+                                matched++;
+                                break;
+                            }
+                        }
+                        if (remove) {
+                            i.remove();
+                        }
+                    }
+                    if (matched != ((String[])modules).length) {
+                        throw new IllegalStateException("some modules not matched on classpath");
+                    }
+
+                } else if (modules instanceof File) {
+                    URL url = ((File) modules).toURI().toURL();
+                    classLoader = new URLClassLoader(new URL[] {url}, classLoader);
+                    moduleLocations = Collections.singletonList((File)modules);
+                } else if (modules instanceof File[]) {
+                    File[] files = (File[]) modules;
+                    URL[] urls = new URL[files.length];
+                    for (int i = 0; i< urls.length; i++) {
+                        urls[i] = files[i].toURI().toURL();
+                    }
+                    classLoader = new URLClassLoader(urls, classLoader);
+                    moduleLocations = Arrays.asList((File[])modules);
+                } else if (modules == null) {
+                    moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+                } else {
+                    throw new IllegalStateException("Unrecognized modules property");
+                }
                 if (moduleLocations.isEmpty()) {
                     throw new IllegalStateException("No modules to deploy found");
                 }
@@ -145,7 +188,23 @@ public class OpenEjbContainer extends EJBContainer {
                 });
             } catch (OpenEJBException e) {
                 throw new IllegalStateException(e);
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
             }
+        }
+
+        private boolean match(String s, File file) {
+            String s2 = file.getName();
+            boolean matches;
+            if (file.isDirectory()) {
+                matches = s2.equals(s) || s2.equals(s + ".jar");
+            } else {
+                matches = s2.equals(s + ".jar");
+            }
+            if (!matches) {
+                //TODO look for ejb-jar.xml with matching module name
+            }
+            return matches;
         }
     }
 }
