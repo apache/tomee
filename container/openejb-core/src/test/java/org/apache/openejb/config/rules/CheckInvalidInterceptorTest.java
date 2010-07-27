@@ -37,13 +37,14 @@ import org.junit.runner.RunWith;
 public class CheckInvalidInterceptorTest extends TestCase {
     @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
             @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2), @Key("interceptor.callback.missing"),
-            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod") })
+            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod"),@Key("interceptor.callback.missing.possibleTypo") })
     public EjbJar test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
         interceptor.addAroundInvoke("wrongMethod");
+        interceptor.addPostConstruct("foo");
         interceptor.addPostConstruct("wrongMethod");
         List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
         InterceptorBinding binding = new InterceptorBinding("wrongEjbName");
@@ -78,5 +79,7 @@ public class CheckInvalidInterceptorTest extends TestCase {
 
     public static class CallbackMissingInterceptor {
         public void interceptSomething() {}
+        public void foo(String str){}
+        public void foo(int x){}
     }
 }
