@@ -1795,9 +1795,27 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (strict && isLocal && isRemote) {
                         validation.fail(ejbName, "ann.localRemote.conflict", interfce.getName());
                     } else {
-                        if (isLocal) implemented.local.add(interfce);
-                        if (isRemote) implemented.remote.add(interfce);
+                        Class[] superInterface = interfce.getInterfaces();
+                        if (isLocal) {
+                          for (Class si : superInterface) {
+                            boolean present = si.isAnnotationPresent(Remote.class);
+                            if(present){
+                              validation.fail(ejbName, "ann.remoteOrLocal.converse.parent", interfce.getName(),"Local",si.getName(),"Remote");
+                            }
+                          }
+                          implemented.local.add(interfce);
+                        }
+                        if (isRemote) {
+                          for (Class si : superInterface) {
+                            boolean present = si.isAnnotationPresent(Local.class);
+                            if(present){
+                              validation.fail(ejbName, "ann.remoteOrLocal.converse.parent", interfce.getName(),"Remote",si.getName(),"Local");
+                            }
+                          }
+                          implemented.remote.add(interfce);
+                        }
                     }
+                      
                 }
 
                 interfaces.removeAll(implemented.local);
