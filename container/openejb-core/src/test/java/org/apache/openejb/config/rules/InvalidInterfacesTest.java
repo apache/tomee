@@ -16,12 +16,15 @@
  */
 package org.apache.openejb.config.rules;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import javax.interceptor.AroundInvoke;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.jee.EjbJar;
@@ -107,7 +110,14 @@ public class InvalidInterfacesTest {
         StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
         return ejbJar;
     }
-
+    @Keys({@Key(value="interface.beanOnlyAnnotation",type=KeyType.WARNING),@Key(value="interfaceMethod.beanOnlyAnnotation",type=KeyType.WARNING),@Key("aroundInvoke.invalidArguments")})
+    public EjbJar test1(){
+        SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(DBean.class));
+        return ejbJar;
+    
+    }
     @After
     public void after() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "false");
@@ -165,4 +175,14 @@ public class InvalidInterfacesTest {
     @Local(C.class)
     @Remote(C.class)
     public static class CBean {}
+    @EJB
+    public static interface D{
+        @PostConstruct
+        public void foo();
+    }
+    @Local(D.class)
+    public static class DBean{
+        public void foo(){}
+        @AroundInvoke public Object bar(){return null;}
+    }
 }
