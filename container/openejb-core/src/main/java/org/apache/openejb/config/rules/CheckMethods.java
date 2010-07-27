@@ -230,7 +230,7 @@ public class CheckMethods extends ValidationBase {
             ejbCreateName.replace(0, 1, "ejbC");
 
             try {
-                if (EnterpriseBean.class.isAssignableFrom(bean)) {
+                if (javax.ejb.EnterpriseBean.class.isAssignableFrom(bean)) {
                     bean.getMethod(ejbCreateName.toString(), create.getParameterTypes());
                 } else {
                     // TODO: Check for Init method in pojo session bean class

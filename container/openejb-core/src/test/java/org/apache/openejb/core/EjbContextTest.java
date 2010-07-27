@@ -92,7 +92,7 @@ public class EjbContextTest extends TestCase {
     public static class MySessionBean implements SessionBean {
 
         private Exception exception;
-
+        public void ejbCreate() throws CreateException{}
         public void test() throws Exception {
             if (exception != null) throw exception;
         }
