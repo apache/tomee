@@ -61,6 +61,14 @@ public class CheckInvalidCallbacksTest extends TestCase {
         return ejbJar;
     }
 
+    @Keys(@Key("aroundInvoke.missing.possibleTypo"))
+    public EjbJar test1() {
+        EjbJar ejbJar = new EjbJar();
+        StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
+        testBean.addAroundInvoke("foo");
+        return ejbJar;
+    }
+
     public static class TestBean implements Callable {
         public Object call() throws Exception {
             return null;
@@ -151,5 +159,10 @@ public class CheckInvalidCallbacksTest extends TestCase {
 
         @Override
         public void beforeCompletion() throws EJBException, RemoteException {}
+    }
+    
+    public static class MoonBean{
+        public Object foo(){return null;}
+        public void foo(String str){}
     }
 }
