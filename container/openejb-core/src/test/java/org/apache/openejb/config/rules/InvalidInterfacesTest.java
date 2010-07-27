@@ -118,6 +118,14 @@ public class InvalidInterfacesTest {
         return ejbJar;
     
     }
+    @Keys({@Key(value="ann.remoteOrLocal.converse.parent",count=2)})
+    public EjbJar test2(){
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(EBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(FBean.class));
+        return ejbJar;
+    
+    }
     @After
     public void after() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "false");
@@ -185,4 +193,14 @@ public class InvalidInterfacesTest {
         public void foo(){}
         @AroundInvoke public Object bar(){return null;}
     }
+    @Local
+    public static interface E{}
+    @Remote
+    public static interface E1 extends E{}
+    public static class EBean implements E1{}
+    @Remote
+    public static interface F{}
+    @Local
+    public static interface F1 extends F{}
+    public static class FBean implements F1{}
 }
