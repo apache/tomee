@@ -17,24 +17,28 @@
 package org.apache.openejb.config.rules;
 
 import static org.apache.openejb.util.Join.join;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.util.Join;
-
-import java.util.Map;
-import java.util.List;
 
 /**
  * @version $Rev$ $Date$
  */
 public class CheckAssemblyBindings extends ValidationBase {
     public void validate(EjbModule ejbModule) {
-
+        checkUnusedInterceptors(ejbModule);
         Map<String, EnterpriseBean> ejbsByName = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
         AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
@@ -80,5 +84,27 @@ public class CheckAssemblyBindings extends ValidationBase {
             }
         }
     }
-
+    private void checkUnusedInterceptors(EjbModule ejbModule) {
+        AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
+        Interceptor[] interceptorsArray = ejbModule.getEjbJar().getInterceptors();
+        List<Interceptor> interceptors = Arrays.asList(interceptorsArray);
+        Set<String> interceptorClassNames = new HashSet<String>(interceptors.size());
+        for (Interceptor interceptor : interceptors) {
+            interceptorClassNames.add(interceptor.getInterceptorClass());
+        }
+        Set<String> interceptorClassNamesUsedInBindings = new HashSet<String>();
+        for (InterceptorBinding binding : assembly.getInterceptorBinding()) {
+            List<String> interceptorClass = binding.getInterceptorClass();
+            interceptorClassNamesUsedInBindings.addAll(interceptorClass);
+        }
+        Set<String> unusedInterceptors = new HashSet<String>();
+        for (String clazz : interceptorClassNames) {
+            if (!interceptorClassNamesUsedInBindings.contains(clazz)) {
+                unusedInterceptors.add(clazz);
+            }
+        }
+        for (String clazz : unusedInterceptors) {
+            warn("Interceptors", "interceptor.unused", clazz);
+        }
+    }
 }

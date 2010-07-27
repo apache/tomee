@@ -37,9 +37,9 @@ import org.junit.runner.RunWith;
 public class CheckInvalidInterceptorTest extends TestCase {
     @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
             @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2), @Key("interceptor.callback.missing"),
-            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod"),@Key("interceptor.callback.missing.possibleTypo") })
+            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod"),
+            @Key("interceptor.callback.missing.possibleTypo") })
     public EjbJar test() throws Exception {
-        System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         Interceptor interceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(CallbackMissingInterceptor.class));
@@ -53,6 +53,18 @@ public class CheckInvalidInterceptorTest extends TestCase {
         InterceptorBinding binding1 = new InterceptorBinding();
         binding1.setMethod(new NamedMethod("aMethod"));
         interceptorBindings.add(binding1);
+        return ejbJar;
+    }
+    @Keys({@Key(value="interceptor.unused",count=2,type=KeyType.WARNING),@Key("aroundInvoke.invalidArguments")})
+    public EjbJar test1() {
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));
+        Interceptor unused = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UnusedInterceptor.class));
+        Interceptor unused1 = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UnusedInterceptor1.class));
+        Interceptor used = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(UsedInterceptor.class));
+        List<InterceptorBinding> interceptorBindings = ejbJar.getAssemblyDescriptor().getInterceptorBinding();
+        InterceptorBinding binding = new InterceptorBinding("BarBean",used);
+        interceptorBindings.add(binding);
         return ejbJar;
     }
 
@@ -79,7 +91,18 @@ public class CheckInvalidInterceptorTest extends TestCase {
 
     public static class CallbackMissingInterceptor {
         public void interceptSomething() {}
-        public void foo(String str){}
-        public void foo(int x){}
+
+        public void foo(String str) {}
+
+        public void foo(int x) {}
     }
+
+    public static class UnusedInterceptor {
+        // need this to cause validation failure
+        @AroundInvoke
+        public Object interceptAroundInvoke() {return null;}
+    }
+    public static class UnusedInterceptor1 {}
+    public static class UsedInterceptor {}
+    public static class BarBean{}
 }
