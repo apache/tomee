@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckNoCreateMethodsTest {
     @Keys( { @Key(value = "no.home.create", count = 4), @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
-            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create") })
+            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create"),@Key("session.no.ejb.create") })
     public EjbJar noCreateMethod() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
@@ -59,6 +59,9 @@ public class CheckNoCreateMethodsTest {
         bean1.setLocalHome(MyLocalHome.class.getName());
         bean1.setLocal(MyLocal.class.getName());
         ejbJar.addEnterpriseBean(bean1);
+        StatelessBean bar = new StatelessBean(BarStateless.class);
+        bar.setHomeAndRemote(BarStatelessHome.class, BarStatelessRemote.class);
+        ejbJar.addEnterpriseBean(bar);
         return ejbJar;
     }
 
@@ -174,4 +177,25 @@ public class CheckNoCreateMethodsTest {
         @Override
         public void unsetEntityContext() throws EJBException, RemoteException {}
     }
+ 
+    private static interface BarStatelessHome extends javax.ejb.EJBHome {
+        public BarStatelessRemote create() throws CreateException,RemoteException;
+    }
+
+    private static interface BarStatelessRemote extends javax.ejb.EJBObject {}
+    private static class BarStateless implements SessionBean {
+
+        @Override
+        public void ejbActivate() throws EJBException, RemoteException {}
+
+        @Override
+        public void ejbPassivate() throws EJBException, RemoteException {}
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {}
+
+        @Override
+        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+    }
+
 }
