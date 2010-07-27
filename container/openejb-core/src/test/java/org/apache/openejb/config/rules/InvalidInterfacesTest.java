@@ -34,10 +34,9 @@ import org.junit.runner.RunWith;
  * @version $Rev$ $Date$
  */
 @RunWith(ValidationRunner.class)
-public class InvalidInterfacesTest  {
+public class InvalidInterfacesTest {
     @Keys
     public EjbJar testCorrectInterfaces() throws Exception {
-
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         bean.setHomeAndRemote(FooEJBHome.class, FooEJBObject.class);
@@ -46,50 +45,75 @@ public class InvalidInterfacesTest  {
         bean.addBusinessRemote(FooRemote.class.getName());
         return ejbJar;
     }
-    @Keys( { @Key("xml.remote.businessLocal"), @Key("xml.home.businessLocal"),@Key("xml.local.businessLocal"), @Key("xml.localHome.businessLocal") })
+
+    @Keys( { @Key("xml.remote.businessLocal"), @Key("xml.home.businessLocal"), @Key("xml.local.businessLocal"), @Key("xml.localHome.businessLocal") })
     public EjbJar testBusinessLocal() throws Exception {
         return validate(FooLocal.class);
     }
-    @Keys( { @Key("xml.remote.businessRemote"), @Key("xml.home.businessRemote"),@Key("xml.local.businessRemote"), @Key("xml.localHome.businessRemote") })
+
+    @Keys( { @Key("xml.remote.businessRemote"), @Key("xml.home.businessRemote"), @Key("xml.local.businessRemote"), @Key("xml.localHome.businessRemote") })
     public EjbJar testBusinessRemote() throws Exception {
         return validate(FooRemote.class);
     }
-    @Keys( { @Key("xml.home.ejbObject"), @Key("xml.local.ejbObject"),@Key("xml.localHome.ejbObject"), @Key("xml.businessLocal.ejbObject"), @Key("xml.businessRemote.ejbObject") })
+
+    @Keys( { @Key("xml.home.ejbObject"), @Key("xml.local.ejbObject"), @Key("xml.localHome.ejbObject"), @Key("xml.businessLocal.ejbObject"), @Key("xml.businessRemote.ejbObject") })
     public EjbJar testEJBObject() throws Exception {
         return validate(FooEJBObject.class);
     }
-    @Keys( { @Key("xml.remote.ejbHome"), @Key("xml.local.ejbHome"),@Key("xml.localHome.ejbHome"), @Key("xml.businessLocal.ejbHome"), @Key("xml.businessRemote.ejbHome") })
+
+    @Keys( { @Key("xml.remote.ejbHome"), @Key("xml.local.ejbHome"), @Key("xml.localHome.ejbHome"), @Key("xml.businessLocal.ejbHome"), @Key("xml.businessRemote.ejbHome") })
     public EjbJar testEJBHome() throws Exception {
         return validate(FooEJBHome.class);
     }
-    @Keys( { @Key("xml.remote.ejbLocalHome"), @Key("xml.home.ejbLocalHome"),@Key("xml.local.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessRemote.ejbLocalHome") })
+
+    @Keys( { @Key("xml.remote.ejbLocalHome"), @Key("xml.home.ejbLocalHome"), @Key("xml.local.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalHome"),
+            @Key("xml.businessRemote.ejbLocalHome") })
     public EjbJar testEJBLocalHome() throws Exception {
         return validate(FooEJBLocalHome.class);
     }
-    @Keys( { @Key("xml.remote.ejbLocalObject"), @Key("xml.home.ejbLocalObject"),@Key("xml.localHome.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalObject"), @Key("xml.businessRemote.ejbLocalObject") })
+
+    @Keys( { @Key("xml.remote.ejbLocalObject"), @Key("xml.home.ejbLocalObject"), @Key("xml.localHome.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalObject"),
+            @Key("xml.businessRemote.ejbLocalObject") })
     public EjbJar testEJBLocalObject() throws Exception {
         return validate(FooEJBLocalObject.class);
     }
-    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"),@Key("xml.localHome.unknown"), @Key("xml.local.unknown"), @Key("xml.localRemote.conflict")})
+
+    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"), @Key("xml.localHome.unknown"), @Key("xml.local.unknown"), @Key("xml.localRemote.conflict") })
     public EjbJar testUnkown() throws Exception {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         return validate(FooUnknown.class);
     }
-    @Keys( { @Key("xml.remote.beanClass"), @Key("xml.home.beanClass"),@Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"), @Key("xml.businessLocal.beanClass") })
+
+    @Keys( { @Key("xml.remote.beanClass"), @Key("xml.home.beanClass"), @Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"),
+            @Key("xml.businessLocal.beanClass") })
     public EjbJar testBeanClass() throws Exception {
         return validate(FooBean.class);
     }
-    @Keys( { @Key("xml.remote.notInterface"), @Key("xml.home.notInterface"),@Key("xml.localHome.notInterface"), @Key("xml.local.notInterface"), @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface") })
+
+    @Keys( { @Key("xml.remote.notInterface"), @Key("xml.home.notInterface"), @Key("xml.localHome.notInterface"), @Key("xml.local.notInterface"),
+            @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface") })
     public EjbJar testNotInterface() throws Exception {
         return validate(FooClass.class);
     }
- 
+
+    @Keys( { @Key("ann.notAnInterface"), @Key("xml.businessLocal.notInterface"), @Key("ann.localRemote.conflict"), @Key("ann.remoteOrLocal.ejbHome"),
+            @Key("xml.businessRemote.ejbHome"), @Key("ann.remoteOrLocal.ejbObject"), @Key("xml.businessRemote.ejbObject"), @Key(value = "ann.remoteOrLocal.ejbLocalHome"),
+            @Key(value = "ann.remoteOrLocal.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalObject") })
+    public EjbJar test() throws OpenEJBException {
+        SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(BBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(CBean.class));
+        StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
+        return ejbJar;
+    }
+
     @After
-    public void after(){
+    public void after() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "false");
     }
-    private EjbJar validate(Class interfaceClass) throws OpenEJBException {
 
+    private EjbJar validate(Class interfaceClass) throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         StatelessBean bean = ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         bean.setHomeAndLocal(interfaceClass, interfaceClass);
@@ -99,34 +123,46 @@ public class InvalidInterfacesTest  {
         return ejbJar;
     }
 
-    public static class FooBean {
+    public static class FooBean {}
 
-    }
+    public static interface FooEJBHome extends EJBHome {}
 
-    public static interface FooEJBHome extends EJBHome {
-    }
+    public static interface FooEJBObject extends EJBObject {}
 
-    public static interface FooEJBObject extends EJBObject {
-    }
+    public static interface FooEJBLocalHome extends EJBLocalHome {}
 
-    public static interface FooEJBLocalHome extends EJBLocalHome {
-    }
-
-    public static interface FooEJBLocalObject extends EJBLocalObject {
-    }
+    public static interface FooEJBLocalObject extends EJBLocalObject {}
 
     @Remote
-    public static interface FooRemote {
-    }
+    public static interface FooRemote {}
 
     @Local
-    public static interface FooLocal {
-    }
+    public static interface FooLocal {}
 
-    public static interface FooUnknown {
-    }
+    public static interface FooUnknown {}
 
-    public static class FooClass {
+    public static class FooClass {}
 
-    }
+    public static interface MyRemoteHome extends EJBHome {}
+
+    public static interface MyLocalHome extends EJBLocalHome {}
+
+    public static interface MyRemote extends EJBObject {}
+
+    public static interface MyLocal extends EJBLocalObject {}
+
+    @Remote( { MyRemoteHome.class, MyRemote.class })
+    @Local( { MyLocalHome.class, MyLocal.class })
+    public static class MyBean {}
+
+    public static class ABean {}
+
+    @Local(ABean.class)
+    public static class BBean extends ABean {}
+
+    public static interface C {}
+
+    @Local(C.class)
+    @Remote(C.class)
+    public static class CBean {}
 }
