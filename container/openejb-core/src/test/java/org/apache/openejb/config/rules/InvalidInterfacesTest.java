@@ -120,6 +120,7 @@ public class InvalidInterfacesTest {
     }
     @Keys({@Key(value="ann.remoteOrLocal.converse.parent",count=2)})
     public EjbJar test2(){
+      SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(EBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FBean.class));
