@@ -58,6 +58,13 @@ public class InvalidEjbRefTest extends TestCase {
         return ejbJar;
     }
 
+    @Keys( { @Key("ejbAnnotation.onClassWithNoBeanInterface"), @Key("ejbAnnotation.onClassWithNoName") })
+    public EjbJar test1() throws Exception {
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(MyBean.class));
+        return ejbJar;
+    }
+
     public static class EjbRefBean implements EjbRefBeanLocal {
         // valid because fooBean will be a LocalBean (because it has no interfaces)
         @EJB
@@ -140,4 +147,6 @@ public class InvalidEjbRefTest extends TestCase {
     
     public static class FooImpl implements FooLocal {
     }
+    @EJB
+    public static class MyBean{}
 }
