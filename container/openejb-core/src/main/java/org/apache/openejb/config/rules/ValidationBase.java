@@ -76,7 +76,7 @@ public abstract class ValidationBase implements ValidationRule {
         warn(bean.getEjbName(), key, details);
     }
 
-    private void warn(String componentName, String key, Object... details) {
+    protected void warn(String componentName, String key, Object... details) {
         module.getValidation().warn(componentName, key, details);
     }
 
