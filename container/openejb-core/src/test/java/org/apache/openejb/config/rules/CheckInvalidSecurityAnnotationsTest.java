@@ -18,6 +18,7 @@ package org.apache.openejb.config.rules;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -25,13 +26,14 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidSecurityAnnotationsTest {
-    @Keys( { @Key("conflictingSecurityAnnotations") })
+    @Keys( { @Key("conflictingSecurityAnnotations"),@Key("permitAllAndRolesAllowedOnClass") })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
         return ejbJar;
     }
-
+    @PermitAll
+    @RolesAllowed(value = { "" })
     public static class FooBean {
         @PermitAll
         @DenyAll
