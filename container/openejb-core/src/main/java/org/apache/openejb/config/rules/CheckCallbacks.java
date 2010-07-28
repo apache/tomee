@@ -278,7 +278,22 @@ public class CheckCallbacks extends ValidationBase {
     private void checkCallback(Class<?> ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
         try {
             Method method = getMethod(ejbClass, callback.getMethodName(), parameterTypes);
-
+            if (implementsSessionBean(ejbClass)) {
+                SessionBean sb = (SessionBean) bean;
+                if ("PreDestroy".equals(type)) {
+                    if (!callback.getMethodName().equals("ejbRemove"))
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                } else if ("PostActivate".equals(type)) {
+                    if (!callback.getMethodName().equals("ejbActivate"))
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                } else if ("PrePassivate".equals(type)) {
+                    if (!callback.getMethodName().equals("ejbPassivate"))
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                } else if ("PostConstruct".equals(type)) { //TODO KSM: need to check if @PostConstruct usage on Stateless session bean ejbCreate() is valid?
+                    fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                }
+                // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing javax.ejb.SessionBean
+            }
             Class<?> returnType = method.getReturnType();
 
             if (!returnType.equals(Void.TYPE)) {
@@ -300,6 +315,15 @@ public class CheckCallbacks extends ValidationBase {
                 fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), callback.getClassName());
             }
         }
+    }
+
+    private boolean implementsSessionBean(Class<?> ejbClass) {
+        Class<?>[] interfaces = ejbClass.getInterfaces();
+        for (Class<?> interfce : interfaces) {
+            if(interfce.equals(javax.ejb.SessionBean.class))
+                return true;
+        }
+        return false;
     }
 
     private void checkCallback(Class interceptorClass, String type, CallbackMethod callback, Interceptor interceptor) {
