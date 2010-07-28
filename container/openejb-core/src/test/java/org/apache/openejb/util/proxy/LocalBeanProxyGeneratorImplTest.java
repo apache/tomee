@@ -23,7 +23,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +32,8 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	public class Call {
 		private String methodName;
 		private Class<?>[] parameterTypes;
-		
-		public String getMethodName() {
+
+        public String getMethodName() {
 			return methodName;
 		}
 		
@@ -51,14 +50,33 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 		}
 
 		public Call() {
-			super();
 		}
 
-		public Call(String methodName, Class<?>[] parameterTypes) {
+		public Call(String methodName, Class<?>... parameterTypes) {
 			this.parameterTypes = parameterTypes;
 			this.methodName = methodName;
 		}
-	}
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Call call = (Call) o;
+
+            if (!methodName.equals(call.methodName)) return false;
+            if (!Arrays.equals(parameterTypes, call.parameterTypes)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = methodName.hashCode();
+            result = 31 * result + Arrays.hashCode(parameterTypes);
+            return result;
+        }
+    }
 
 	private class TestInvocationHandler implements InvocationHandler {
 		
@@ -835,4 +853,55 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 		assertEquals("java/lang/Integer", proxyGenerator.getCastType(Integer.class));
 		assertEquals("org/apache/openejb/util/proxy/ProxyTestObject", proxyGenerator.getCastType(ProxyTestObject.class));
 	}
+
+
+    @Test
+    public void _testEnumParam() throws Exception {
+        TestInvocationHandler invocationHandler = new TestInvocationHandler(new EnumParams());
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+        Class cls = new LocalBeanProxyGeneratorImpl().createProxy(EnumParams.class, cl);
+        EnumParams proxy = (EnumParams) cls.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
+
+        proxy.someStringMethod(Color.GREEN.name());
+        proxy.someEnumMethod(Color.RED);
+        proxy.someInnerClassMethod(new Name(Color.BLUE.name()));
+
+        Call[] calls = invocationHandler.getCalls();
+
+        assertEquals(3, calls.length);
+
+        assertEquals(new Call("someStringMethod", String.class), calls[0]);
+        assertEquals(new Call("someEnumMethod", Color.class), calls[1]);
+        assertEquals(new Call("someInnerClassMethod", Name.class), calls[3]);
+    }
+
+
+    public static class EnumParams {
+
+        public void someEnumMethod(Color s){
+        }
+
+        public void someStringMethod(String s){
+        }
+
+        public void someInnerClassMethod(Name s){
+        }
+    }
+
+    public static enum Color {
+        RED, GREEN, BLUE;
+    }
+
+    public static class Name {
+        private final String name;
+
+        public Name(String name) {
+            this.name = name;
+        }
+
+        public String get() {
+            return name;
+        }
+    }
 }
