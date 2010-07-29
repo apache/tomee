@@ -21,6 +21,7 @@ import javax.ejb.Timeout;
 import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,9 @@ public class CheckInvalidTimeoutTest extends TestCase {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
-        ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));
+        StatelessBean barBean = new StatelessBean(BarBean.class);
+        barBean.setTimeoutMethod(new NamedMethod("foo", "java.lang.String"));
+        ejbJar.addEnterpriseBean(barBean);
         return ejbJar;
     }
 // A case where the class has the method with wrong signature annotated with @Timeout
@@ -40,7 +43,7 @@ public class CheckInvalidTimeoutTest extends TestCase {
     // timeout.invalidArguments
     public static class TestBean {
         @Timeout
-        public Object bar() {
+        public Object bar(Object m) {
             return null;
         }
     }
@@ -52,14 +55,11 @@ public class CheckInvalidTimeoutTest extends TestCase {
         @Timeout
         public void bar(javax.ejb.Timer timer) {}
     }
-//  A case where the class has overloaded methods, but the method with the wrong signature has been annotated with @Timeout
+    //  A case where incorrect timeout method is configured in the deployment descriptor
     // timeout.missing.possibleTypo
     public static class BarBean {
-       
+
         public void foo(javax.ejb.Timer timer) {}
-        
-        @Timeout
-        public void foo() {}
     }
 
 }
