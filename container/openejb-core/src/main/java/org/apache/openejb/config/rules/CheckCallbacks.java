@@ -102,6 +102,9 @@ public class CheckCallbacks extends ValidationBase {
                     for (LifecycleCallback callback : session.getAfterCompletion()) {
                         checkCallback(ejbClass, "AfterCompletion", callback, bean, boolean.class);
                     }
+//                    for (LifecycleCallback callback : session.getAfterCompletion()) {
+//                        checkCallback(ejbClass, "Init", callback, bean, boolean.class);
+//                    }
 
                     for (AroundTimeout aroundTimeout : session.getAroundTimeout()) {
                         ignoredAnnotation("aroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
@@ -282,15 +285,21 @@ public class CheckCallbacks extends ValidationBase {
                 SessionBean sb = (SessionBean) bean;
                 if ("PreDestroy".equals(type)) {
                     if (!callback.getMethodName().equals("ejbRemove"))
-                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
                 } else if ("PostActivate".equals(type)) {
                     if (!callback.getMethodName().equals("ejbActivate"))
-                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
                 } else if ("PrePassivate".equals(type)) {
                     if (!callback.getMethodName().equals("ejbPassivate"))
-                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
-                } else if ("PostConstruct".equals(type)) { //TODO KSM: need to check if @PostConstruct usage on Stateless session bean ejbCreate() is valid?
-                    fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type,callback.getMethodName(),ejbClass);
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                } else if ("PostConstruct".equals(type)) { 
+                    if (sb.getSessionType().equals(SessionType.STATELESS)) {
+                        if (!callback.getMethodName().equals("ejbCreate")) {
+                            fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                        }
+                    } else {
+                        fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
+                    }
                 }
                 // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing javax.ejb.SessionBean
             }

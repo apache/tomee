@@ -199,7 +199,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
 
         @PreDestroy
         public void myPreDestroy() {}
-
+        @PostConstruct
         public void ejbCreate() throws CreateException {}
 
         @Override
