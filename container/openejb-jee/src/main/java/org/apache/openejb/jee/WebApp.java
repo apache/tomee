@@ -183,7 +183,7 @@ public class WebApp implements WebCommon {
     protected Boolean metadataComplete;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String version;
+    protected String version = "3.0";
 
 
 
