@@ -25,6 +25,8 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityBean;
 import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
+import javax.ejb.LocalHome;
+import javax.ejb.RemoteHome;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -39,7 +41,7 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckNoCreateMethodsTest {
     @Keys( { @Key(value = "no.home.create", count = 4), @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
-            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create"),@Key("session.no.ejb.create") })
+            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create"),@Key(value="session.no.ejb.create",count=2) })
     public EjbJar noCreateMethod() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
@@ -62,6 +64,8 @@ public class CheckNoCreateMethodsTest {
         StatelessBean bar = new StatelessBean(BarStateless.class);
         bar.setHomeAndRemote(BarStatelessHome.class, BarStatelessRemote.class);
         ejbJar.addEnterpriseBean(bar);
+        StatefulBean bazStateful = new StatefulBean(BazStateful.class);
+        ejbJar.addEnterpriseBean(bazStateful);
         return ejbJar;
     }
 
@@ -198,4 +202,32 @@ public class CheckNoCreateMethodsTest {
         public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
     }
 
+    private static interface BazStatefulHome extends javax.ejb.EJBHome {
+        public BazStatefulRemote create() throws CreateException,RemoteException;
+    }
+
+    private static interface BazStatefulRemote extends javax.ejb.EJBObject {}
+
+    private static interface BazStatefulLocalHome extends javax.ejb.EJBLocalHome {
+        public BazStatefulLocal create() throws CreateException;
+    }
+
+    private static interface BazStatefulLocal extends javax.ejb.EJBLocalObject {}
+    @RemoteHome(BazStatefulHome.class)
+    @LocalHome(BazStatefulLocalHome.class)
+    private static class BazStateful implements SessionBean {
+       // missing ejbCreate method
+
+        @Override
+        public void ejbActivate() throws EJBException, RemoteException {}
+
+        @Override
+        public void ejbPassivate() throws EJBException, RemoteException {}
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {}
+
+        @Override
+        public void setSessionContext(SessionContext arg0) throws EJBException, RemoteException {}
+    }
 }

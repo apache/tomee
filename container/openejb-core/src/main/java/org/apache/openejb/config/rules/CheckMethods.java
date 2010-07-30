@@ -22,6 +22,7 @@ import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
@@ -246,9 +247,12 @@ public class CheckMethods extends ValidationBase {
                     fail(b, "entity.no.ejb.create", b.getEjbClass(), entity.getPrimKeyClass(), ejbCreateName.toString(), paramString);
 
                 } else {
-
-                    fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);
-
+                    if (b instanceof SessionBean) {
+                        SessionBean sb = (SessionBean) b;
+                        // Under EJB 3.1, it is not required that a stateless session bean have an ejbCreate method, even when it has a home interface
+                        if (!sb.getSessionType().equals(SessionType.STATELESS))
+                            fail(b, "session.no.ejb.create", b.getEjbClass(), ejbCreateName.toString(), paramString);
+                    }
                 }
             }
         }
