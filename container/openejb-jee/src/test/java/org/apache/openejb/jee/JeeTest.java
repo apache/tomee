@@ -15,6 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.apache.openejb.jee;
 
 import java.io.BufferedInputStream;
@@ -24,12 +25,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
@@ -50,12 +49,12 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @version $Revision$ $Date$
  */
 public class JeeTest extends TestCase {
+
     public void testEjbJar() throws Exception {
         String fileName = "ejb-jar-example1.xml";
-//        String fileName = "ejb-jar-empty.xml";
+        //        String fileName = "ejb-jar-empty.xml";
 
-//        marshalAndUnmarshal(EjbJar.class, fileName);
-
+        //        marshalAndUnmarshal(EjbJar.class, fileName);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -64,8 +63,8 @@ public class JeeTest extends TestCase {
 
         long start = System.currentTimeMillis();
 
-//        Unmarshaller unmarshaller = new UnmarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
-//        Marshaller marshaller = new MarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
+        //        Unmarshaller unmarshaller = new UnmarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
+        //        Marshaller marshaller = new MarshallerImpl(Collections.<JAXBMarshaller>singleton(EjbJarJaxB.INSTANCE));
         JAXBContext ctx = JAXBContextFactory.newInstance(EjbJar.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         Marshaller marshaller = ctx.createMarshaller();
@@ -100,8 +99,8 @@ public class JeeTest extends TestCase {
         assertTrue("The bean A is not a SessionBean", bean instanceof SessionBean);
         SessionBean sbean = (SessionBean) bean;
 
-		assertNotNull("Unable to get the AccessTimeout value", sbean.getAccessTimeout());
-		assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
+        assertNotNull("Unable to get the AccessTimeout value", sbean.getAccessTimeout());
+        assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
     }
 
     public void testSessionSynchronization() throws Exception {
@@ -140,8 +139,45 @@ public class JeeTest extends TestCase {
         AroundTimeout beanAroundTimeout = sbean.getAroundTimeout().get(0);
         assertEquals("aroundTimeout", beanAroundTimeout.getMethodName());
 
-        AroundTimeout interceptorAroundTimeout =ejbJar.getInterceptors()[0].getAroundTimeout().get(0);
+        AroundTimeout interceptorAroundTimeout = ejbJar.getInterceptors()[0].getAroundTimeout().get(0);
         assertEquals("aroundTimeout", interceptorAroundTimeout.getMethodName());
+    }
+
+    public void testTimerSchedule() throws Exception {
+        String fileName = "ejb-jar-timeschedule.xml";
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
+
+        Object o = JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+
+        EjbJar ejbJar = (EjbJar) o;
+        EnterpriseBean bean = ejbJar.getEnterpriseBean("TestBean");
+
+        assertTrue("The bean TestBean  is not a SessionBean", bean instanceof SessionBean);
+        SessionBean sbean = (SessionBean) bean;
+
+        List<Timer> timers = sbean.getTimer();
+        assertEquals(1, timers.size());
+
+        Timer timer = timers.get(0);
+        TimerSchedule timerSchedule = timer.getSchedule();
+        assertEquals("10", timerSchedule.getSecond());
+        assertEquals("10", timerSchedule.getMinute());
+        assertEquals("*", timerSchedule.getDayOfMonth());
+        assertEquals("Mon", timerSchedule.getDayOfWeek());
+        assertEquals("*", timerSchedule.getHour());
+        assertEquals("Nov", timerSchedule.getMonth());
+        assertEquals("*", timerSchedule.getYear());
+
+        assertEquals("2010-03-01T13:00:00Z", timer.getStart().toXMLFormat());
+        assertEquals("2012-12-11T14:19:00Z", timer.getEnd().toXMLFormat());
+
+        NamedMethod timeoutMethod = timer.getTimeoutMethod();
+        assertEquals("testScheduleMethod", timeoutMethod.getMethodName());
+        assertEquals("javax.ejb.Timer", timeoutMethod.getMethodParams().getMethodParam().get(0));
+
+        assertEquals(Boolean.FALSE, timer.getPersistent());
+        assertEquals("America/New_York", timer.getTimezone());
+        assertEquals("TestInfo", timer.getInfo());
     }
 
     public void testEjbJarMdb20() throws Exception {
@@ -158,9 +194,9 @@ public class JeeTest extends TestCase {
 
         assertEquals(4, properties.size());
         /*
-      <message-selector>mySelector</message-selector>
-      <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
-      <message-driven-destination>
+        <message-selector>mySelector</message-selector>
+        <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+        <message-driven-destination>
         <destination-type>javax.jms.Queue</destination-type>
         <subscription-durability>Durable</subscription-durability>
 
@@ -261,6 +297,7 @@ public class JeeTest extends TestCase {
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
+
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
         public NamespaceFilter(XMLReader xmlReader) {
@@ -305,6 +342,7 @@ public class JeeTest extends TestCase {
     }
 
     private static class TestValidationEventHandler implements ValidationEventHandler {
+
         public boolean handleEvent(ValidationEvent validationEvent) {
             System.out.println(validationEvent.getMessage());
             System.out.println(validationEvent.getLocator());

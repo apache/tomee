@@ -16,9 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import junit.framework.TestCase;
-
-import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -27,9 +24,14 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import junit.framework.TestCase;
 
 /**
  * This test verifies that no architectural constraints have been violated
@@ -45,7 +47,7 @@ import java.util.Set;
  * Keeps the Info Objects inline with the concept of a basic AST (Abstract Syntax Tree)
  * which is produced by the ConfigurationFactory and built by the Assembler,
  *
- * See http://openejb.apache.org/configuration-and-assembly.html 
+ * See http://openejb.apache.org/configuration-and-assembly.html
  *
  * @version $Rev$ $Date$
  */
@@ -132,6 +134,10 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
             // OK
             if (QName.class.isAssignableFrom(type)) {
+                continue;
+            }
+
+            if(Date.class.isAssignableFrom(type)) {
                 continue;
             }
 

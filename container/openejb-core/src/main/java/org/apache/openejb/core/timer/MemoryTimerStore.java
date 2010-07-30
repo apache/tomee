@@ -18,6 +18,7 @@
 package org.apache.openejb.core.timer;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +32,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
@@ -84,9 +87,28 @@ public class MemoryTimerStore implements TimerStore {
         getTasks().addTimerData(timerData);
     }
 
-    public TimerData createTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) throws TimerStoreException {
+    @Override
+    public TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression scheduleExpression, TimerConfig timerConfig)
+            throws TimerStoreException {
         long id = counter.incrementAndGet();
-        TimerData timerData = new TimerData(id, timerService, deploymentId, primaryKey, info, expiration, intervalDuration);
+        TimerData timerData = new CalendarTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, scheduleExpression);
+        getTasks().addTimerData(timerData);
+        return timerData;
+    }
+
+    @Override
+    public TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig)
+            throws TimerStoreException {
+        long id = counter.incrementAndGet();
+        TimerData timerData = new IntervalTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, initialExpiration, intervalDuration);
+        getTasks().addTimerData(timerData);
+        return timerData;
+    }
+
+    @Override
+    public TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig) throws TimerStoreException {
+        long id = counter.incrementAndGet();
+        TimerData timerData = new SingleActionTimerData(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig, expiration);
         getTasks().addTimerData(timerData);
         return timerData;
     }

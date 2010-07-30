@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.util.Date;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -30,5 +32,8 @@ public class ScheduleInfo extends InfoObject {
     public String year;
     public String info;
     public boolean persistent;
+    public Date start;
+    public Date end;
+    public String timezone;
 
 }

@@ -44,14 +44,14 @@ public class TimerImpl implements Timer {
 
     public long getTimeRemaining() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        long now = System.currentTimeMillis();
-        long then = timerData.getExpiration().getTime();
-        return then - now;
+        /*long now = System.currentTimeMillis();
+        long then = timerData.getExpiration().getTime();*/
+        return timerData.getTimeRemaining();
     }
 
     public Date getNextTimeout() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        return timerData.getExpiration();
+        return timerData.getNextTimeout();
     }
 
     public Serializable getInfo() throws IllegalStateException, NoSuchObjectLocalException {
@@ -65,15 +65,21 @@ public class TimerImpl implements Timer {
     }
 
     public ScheduleExpression getSchedule() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
-        throw new UnsupportedOperationException("not yet implemented");
+        checkState();
+        if (timerData.getType() == TimerType.Calendar) {
+            return ((CalendarTimerData) timerData).getSchedule();
+        }
+        throw new IllegalStateException("The target timer is not a calendar-based type ");
     }
 
     public boolean isPersistent() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
-        throw new UnsupportedOperationException("not yet implemented");
+       checkState();
+       return timerData.isPersistent();
     }
 
     public boolean isCalendarTimer() throws EJBException, IllegalStateException, NoSuchObjectLocalException {
-        throw new UnsupportedOperationException("not yet implemented");
+        checkState();
+        return timerData.getType() == TimerType.Calendar;
     }
 
     /**
@@ -88,5 +94,5 @@ public class TimerImpl implements Timer {
             throw new NoSuchObjectLocalException("Timer has been cancelled");
         }
     }
-    
+
 }

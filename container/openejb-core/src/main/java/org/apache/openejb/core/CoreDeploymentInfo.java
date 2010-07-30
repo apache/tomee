@@ -21,20 +21,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.ejb.LockType;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -579,7 +581,13 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         }
         return methodContext;
     }
-    
+
+    // TODO The MethodContext object has Method as a variable, so we could change this
+    // to simply return methodContextMap.values() which would be cleaner
+    public Iterator<Entry<Method, MethodContext>> iteratorMethodContext() {
+        return methodContextMap.entrySet().iterator();
+    }
+
     public void setMethodConcurrencyAttribute(Method method, LockType concurrencyAttribute) {
         getMethodContext(method).setLockType(concurrencyAttribute);
     }

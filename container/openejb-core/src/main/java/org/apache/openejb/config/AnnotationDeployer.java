@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.config;
 
-
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.util.Arrays.asList;
 import static org.apache.openejb.util.Join.join;
@@ -136,7 +135,6 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.MethodSchedule;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
@@ -161,6 +159,7 @@ import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.Tag;
 import org.apache.openejb.jee.TimeUnitType;
 import org.apache.openejb.jee.Timeout;
+import org.apache.openejb.jee.Timer;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.TldTaglib;
@@ -600,8 +599,6 @@ public class AnnotationDeployer implements DynamicDeployer {
         private boolean isValidEjbAnnotationUsage(Class annotationClass, Class<?> beanClass, String ejbName, EjbModule ejbModule) {
             List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
-
-            Map<String, Class<? extends Annotation>> names = new HashMap<String, Class<? extends Annotation>>();
 
             boolean b = true;
             for (Class<? extends Annotation> secondAnnotation : annotations) {
@@ -1057,6 +1054,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @PrePassivate
                  * @Init
                  * @Remove
+                 * @AroundTimeout
+                 * @AfterBegin
+                 * @BeforeCompletion
+                 * @AfterCompletion
                  */
                 processCallbacks(bean, inheritedClassFinder);
 
@@ -1135,48 +1136,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @Schedule
                  * @Schedules
                  */
-                Set<Method> scheduleMethods = new HashSet<Method>();
-                scheduleMethods.addAll(inheritedClassFinder.findAnnotatedMethods(javax.ejb.Schedules.class));
-                scheduleMethods.addAll(inheritedClassFinder.findAnnotatedMethods(javax.ejb.Schedule.class));
-
-                Map<String, List<MethodAttribute>> existingDeclarations = assemblyDescriptor.getMethodScheduleMap(ejbName);
-
-                for (Method method : scheduleMethods) {
-
-                    // Don't add the schedules from annotations if the schedules have been
-                    // supplied for this method via xml.  The xml is considered an override.
-                    if (hasMethodAttribute(existingDeclarations, method)) break;
-
-                    List<javax.ejb.Schedule> list = new ArrayList<javax.ejb.Schedule>();
-
-                    javax.ejb.Schedules schedulesAnnotation = method.getAnnotation(javax.ejb.Schedules.class);
-                    if (schedulesAnnotation != null) {
-                        list.addAll(asList(schedulesAnnotation.value()));
-                    }
-
-                    javax.ejb.Schedule scheduleAnnotation = method.getAnnotation(javax.ejb.Schedule.class);
-                    if (scheduleAnnotation != null) {
-                        list.add(scheduleAnnotation);
-                    }
-
-                    if (list.size() == 0) continue;
-
-                    MethodSchedule methodSchedule = new MethodSchedule(ejbName, method);
-                    for (javax.ejb.Schedule schedule : list) {
-                        TimerSchedule s = new TimerSchedule();
-                        s.setSecond(schedule.second());
-                        s.setMinute(schedule.minute());
-                        s.setHour(schedule.hour());
-                        s.setDayOfWeek(schedule.dayOfWeek());
-                        s.setDayOfMonth(schedule.dayOfMonth());
-                        s.setMonth(schedule.month());
-                        s.setYear(schedule.year());
-                        s.setPersistent(schedule.persistent());
-                        s.setInfo(schedule.info());
-                        methodSchedule.getSchedule().add(s);
-                    }
-                    assemblyDescriptor.getMethodSchedule().add(methodSchedule);
-                }
+                processSchedules(bean, inheritedClassFinder);
 
                 /*
                  * Add any interceptors they may have referenced in xml but did not declare
@@ -1566,30 +1526,6 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
-        }
-
-        private boolean hasMethodAttribute(Map<String, List<MethodAttribute>> existingDeclarations, Method method) {
-            List<MethodAttribute> list = existingDeclarations.get(method.getName());
-            if (list == null) return false;
-
-            for (MethodAttribute attribute : list) {
-                MethodParams methodParams = attribute.getMethodParams();
-                if (methodParams == null) break;
-
-                List<String> params1 = methodParams.getMethodParam();
-                String[] params2 = asStrings(method.getParameterTypes());
-                if (params1.size() != params2.length) break;
-
-                for (int i = 0; i < params1.size(); i++) {
-                    String a = params1.get(i);
-                    String b = params2[i];
-                    if (!a.equals(b)) break;
-                }
-
-                return true;
-            }
-
-            return false;
         }
 
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
@@ -2071,6 +2007,67 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
+        private void processSchedules(EnterpriseBean bean, ClassFinder classFinder) {
+            if(! (bean instanceof TimerConsumer)){
+                return;
+            }
+            TimerConsumer timerConsumer = (TimerConsumer)bean;
+            Set<Method> scheduleMethods = new HashSet<Method>();
+            scheduleMethods.addAll(classFinder.findAnnotatedMethods(javax.ejb.Schedules.class));
+            scheduleMethods.addAll(classFinder.findAnnotatedMethods(javax.ejb.Schedule.class));
+
+            List<Timer> timers = timerConsumer.getTimer();
+
+            // TODO : The NamedMethod object implements equals and hashCode, so we could rely on that rather than collecting strings
+            Set<String> methodsConfiguredInDeploymentXml = new HashSet<String>();
+            for (Timer timer : timers) {
+                NamedMethod namedMethod = timer.getTimeoutMethod();
+                methodsConfiguredInDeploymentXml.add(namedMethod.getMethodName() + (namedMethod.getMethodParams() == null ? "" : Join.join("", namedMethod.getMethodParams().getMethodParam())));
+            }
+
+            for (Method method : scheduleMethods) {
+
+                // Don't add the schedules from annotations if the schedules have been
+                // supplied for this method via xml.  The xml is considered an override.
+                if (methodsConfiguredInDeploymentXml.contains(method.getName() + Join.join("", (Object[]) asStrings(method.getParameterTypes())))) {
+                    continue;
+                }
+
+                List<javax.ejb.Schedule> scheduleAnnotationList = new ArrayList<javax.ejb.Schedule>();
+
+                javax.ejb.Schedules schedulesAnnotation = method.getAnnotation(javax.ejb.Schedules.class);
+                if (schedulesAnnotation != null) {
+                    scheduleAnnotationList.addAll(asList(schedulesAnnotation.value()));
+                }
+
+                javax.ejb.Schedule scheduleAnnotation = method.getAnnotation(javax.ejb.Schedule.class);
+                if (scheduleAnnotation != null) {
+                    scheduleAnnotationList.add(scheduleAnnotation);
+                }
+
+                for (javax.ejb.Schedule schedule : scheduleAnnotationList) {
+                    Timer timer = new Timer();
+                    timer.setInfo(schedule.info());
+                    timer.setPersistent(schedule.persistent());
+                    timer.setInfo(schedule.info());
+                    timer.setTimezone(schedule.timezone());
+                    //Copy TimerSchedule
+                    TimerSchedule timerSchedule = new TimerSchedule();
+                    timerSchedule.setSecond(schedule.second());
+                    timerSchedule.setMinute(schedule.minute());
+                    timerSchedule.setHour(schedule.hour());
+                    timerSchedule.setDayOfWeek(schedule.dayOfWeek());
+                    timerSchedule.setDayOfMonth(schedule.dayOfMonth());
+                    timerSchedule.setMonth(schedule.month());
+                    timerSchedule.setYear(schedule.year());
+                    timer.setSchedule(timerSchedule);
+                    //Copy Method Signature
+                    timer.setTimeoutMethod(new NamedMethod(method));
+
+                    timers.add(timer);
+                }
+            }
+        }
 
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
             /*

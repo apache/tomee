@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.Local;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
@@ -168,6 +169,11 @@ public class TimeoutAroundTest extends TestCase {
             return ret;
         }
 
+        @Schedule(info = "badValue", year="1970")
+        public void scheduleBeanA(javax.ejb.Timer timer) {
+            result.add(Call.BAD_VALUE);
+            fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
+        }
     }
 
     @Stateless
@@ -188,6 +194,11 @@ public class TimeoutAroundTest extends TestCase {
             return ret;
         }
 
+        @Schedule(info = "badValue", year="1970")
+        public void scheduleBeanB(javax.ejb.Timer timer) {
+            result.add(Call.BAD_VALUE);
+            fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
+        }
     }
 
     @Stateless
@@ -211,6 +222,12 @@ public class TimeoutAroundTest extends TestCase {
             Object ret = context.proceed();
             result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
             return ret;
+        }
+
+        @Schedule(info = "badValue", year="1970")
+        public void scheduleBeanC(javax.ejb.Timer timer) {
+            result.add(Call.BAD_VALUE);
+            fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
     }
 

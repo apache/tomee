@@ -17,6 +17,8 @@
 
 package org.apache.openejb.core.timer;
 
+import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +32,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
+import java.lang.reflect.Method;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -72,6 +75,27 @@ public class DatabaseTimerStore implements TimerStore {
 
     public Collection<TimerData> getTimers(String deploymentId) {
         // todo not implemented
+        return null;
+    }
+
+    @Override
+    public TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig)
+            throws TimerStoreException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration,
+            TimerConfig timerConfig) throws TimerStoreException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig)
+            throws TimerStoreException {
+        // TODO Auto-generated method stub
         return null;
     }
 
@@ -149,13 +173,14 @@ public class DatabaseTimerStore implements TimerStore {
             close(c, !threwException);
         }
 
-        TimerData timerData = new TimerData(id, timerService, deploymentId, primaryKey, info, expiration, intervalDuration);
-        return timerData;
+        //TimerData timerData = new TimerData(id, timerService, deploymentId, primaryKey, info, expiration, intervalDuration);
+        //return timerData;
+        return null;
     }
 
 
     /**
-     * Used to restore a Timer that was cancelled, but the Transaction has been rolled back. 
+     * Used to restore a Timer that was cancelled, but the Transaction has been rolled back.
      */
     public void addTimerData(TimerData timerData) throws TimerStoreException {
         // TODO Need to verify how to handle this. Presumably, the Transaction rollback would "restore" this timer. So, no further action would be required.
@@ -206,8 +231,8 @@ public class DatabaseTimerStore implements TimerStore {
                         Date time = new Date(timeMillis);
                         long period = taskRS.getLong(5);
 
-                        TimerData timerData = new TimerData(id, timerService, deploymentId, userId, userInfo, time, period);
-                        timerDatas.add(timerData);
+                        /*TimerData timerData = new TimerData(id, timerService, deploymentId, userId, userInfo, time, period);
+                        timerDatas.add(timerData);*/
                     }
                 } finally {
                     taskRS.close();
@@ -231,7 +256,7 @@ public class DatabaseTimerStore implements TimerStore {
             c = getConnection();
             PreparedStatement updateStatement = c.prepareStatement(fixedRateUpdateSQL);
             try {
-                updateStatement.setLong(1, timerData.getExpiration().getTime());
+                //updateStatement.setLong(1, timerData.getExpiration().getTime());
                 updateStatement.setLong(2, timerData.getId());
                 updateStatement.execute();
             } finally {

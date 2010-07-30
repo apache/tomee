@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.List;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -26,4 +28,7 @@ public interface TimerConsumer {
     void setTimeoutMethod(NamedMethod value);
     
     String getTimerConsumerName();
+
+    List<Timer> getTimer();
+
 }

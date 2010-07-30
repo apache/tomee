@@ -57,6 +57,8 @@ public class EjbJarBuilder {
         ModuleContext moduleContext = new ModuleContext(ejbJar.moduleId, context, moduleJndiContext);
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
 
+        MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
+
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections);
@@ -64,11 +66,13 @@ public class EjbJarBuilder {
 
                 interceptorBindingBuilder.build(deployment, ejbInfo);
 
+                methodScheduleBuilder.build(deployment, ejbInfo);
+
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 
                 // TODO: replace with get() on application context or parent
                 Container container = (Container) props.get(ejbInfo.containerId);
-                
+
                 if (container == null) throw new IllegalStateException("Container does not exist: " + ejbInfo.containerId + ".  Referenced by deployment: " + deployment.getDeploymentID());
                 // Don't deploy to the container, yet. That will be done by deploy() once Assembler as finished configuring the DeploymentInfo
                 deployment.setContainer(container);

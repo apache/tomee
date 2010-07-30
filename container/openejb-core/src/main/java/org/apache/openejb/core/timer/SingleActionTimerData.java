@@ -1,0 +1,64 @@
+/**
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.apache.openejb.core.timer;
+
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.util.Date;
+
+import javax.ejb.TimerConfig;
+
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class SingleActionTimerData extends TimerData {
+
+    private final Date expiration;
+
+    public SingleActionTimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig, Date expiration) {
+        super(id, timerService, deploymentId, primaryKey, timeoutMethod, timerConfig);
+        this.expiration = expiration;
+    }
+
+    @Override
+    public TimerType getType() {
+        return TimerType.SingleAction;
+    }
+
+    public Date getExpiration() {
+        return expiration;
+    }
+
+    @Override
+    public Trigger initializeTrigger() {
+        SimpleTrigger simpleTrigger = new SimpleTrigger();
+        Date startTime = new Date();
+        simpleTrigger.setStartTime(startTime);
+        simpleTrigger.setRepeatInterval(expiration.getTime() - startTime.getTime());
+        simpleTrigger.setRepeatCount(1);
+        return simpleTrigger;
+    }
+
+    @Override
+    public String toString() {
+        return TimerType.SingleAction.name() + " expiration = [" + DateFormat.getDateTimeInstance().format(expiration) + "]";
+    }
+}

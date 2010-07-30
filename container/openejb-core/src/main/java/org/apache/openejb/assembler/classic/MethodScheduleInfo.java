@@ -23,8 +23,6 @@ public class MethodScheduleInfo extends InfoObject {
 
     public String description;
 
-    public String ejbName;
-
     public final List<ScheduleInfo> schedules = new ArrayList<ScheduleInfo>();
 
     public NamedMethodInfo method;

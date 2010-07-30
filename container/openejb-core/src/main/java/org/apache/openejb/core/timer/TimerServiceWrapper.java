@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.core.timer;
 
-import javax.ejb.EJBException;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
-import javax.ejb.TimerConfig;
-import javax.ejb.ScheduleExpression;
-
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ThreadContext;
 
 public class TimerServiceWrapper implements TimerService {
 
@@ -50,7 +50,7 @@ public class TimerServiceWrapper implements TimerService {
         return getTimerService().createTimer(duration, info);
     }
 
-    public Collection getTimers() throws IllegalStateException, EJBException {
+    public Collection<Timer> getTimers() throws IllegalStateException, EJBException {
         return getTimerService().getTimers();
     }
 
@@ -80,11 +80,13 @@ public class TimerServiceWrapper implements TimerService {
 
     private TimerService getTimerService() throws IllegalStateException {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
         EjbTimerService timerService = deploymentInfo.getEjbTimerService();
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
+        } else if(deploymentInfo.getEjbTimeout() == null) {
+            throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID() + " due to no timeout method is configured");
         }
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), deploymentInfo.getEjbTimeout());
     }
 }

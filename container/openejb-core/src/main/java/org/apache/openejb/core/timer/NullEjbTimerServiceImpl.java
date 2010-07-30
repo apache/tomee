@@ -16,49 +16,49 @@
  */
 package org.apache.openejb.core.timer;
 
-import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
 
 import org.apache.openejb.OpenEJBException;
 
 /**
- * Idempotent EjbTimerServiceImplementation. Used if a Bean does not implement a timeout method. 
+ * Idempotent EjbTimerServiceImplementation. Used if a Bean does not implement a timeout method or no auto-started timer is configured by annotation or deployment plan.
  * This differs from OpenEJB 2.x behavior, which did not create a TimerService for a bean which did not have a timeout method.
  * There's nothing in the spec which says a timeout-less bean cannot call getTimerService. So, we now have NullEjbTimerServiceImpl, which does not do very much...
  */
 public class NullEjbTimerServiceImpl implements EjbTimerService {
 
-    public NullEjbTimerServiceImpl() {
-    }
-    
-    public Timer createTimer(Object primaryKey, Date initialExpiration,
-            long intervalDuration, Serializable info) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig) {
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method or auto-started task");
     }
 
-    public Timer createTimer(Object primaryKey, Date expiration,
-            Serializable info) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig) {
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
     }
 
-    public Timer createTimer(Object primaryKey, long initialDuration,
-            long intervalDuration, Serializable info) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig) {
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
     }
 
-    public Timer createTimer(Object primaryKey, long duration, Serializable info) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, long initialDuration, long intervalDuration, TimerConfig timerConfig) {
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
+    }
+
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, long duration, TimerConfig timerConfig) {
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
     }
 
     public Timer getTimer(long id) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
     }
 
     public Collection<Timer> getTimers(Object primaryKey) {
-        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method");
+        throw new IllegalStateException("TimerService operation not supported for a bean without an ejbTimeout method  or auto-started task");
     }
 
     public void start() throws OpenEJBException {
