@@ -68,8 +68,6 @@ import java.util.Collection;
         "containerTransaction",
         //TODO moved out of assembly descriptor in schema
         "containerConcurrency",
-        //TODO moved out of assembly descriptor in schema
-        "methodSchedule",
         "interceptorBinding",
         "messageDestination",
         "excludeList",
@@ -86,9 +84,6 @@ public class AssemblyDescriptor {
     //TODO moved out of assembly descriptor in schema
     @XmlElement(name = "container-concurrency", required = true)
     protected List<ContainerConcurrency> containerConcurrency;
-    //TODO moved out of assembly descriptor in schema
-    @XmlElement(name = "method-schedule", required = true)
-    protected List<MethodSchedule> methodSchedule;
     @XmlElement(name = "interceptor-binding", required = true)
     protected List<InterceptorBinding> interceptorBinding;
     @XmlElement(name = "message-destination", required = true)
@@ -137,38 +132,8 @@ public class AssemblyDescriptor {
     }
 
     //TODO moved out of assembly descriptor in schema
-
-    public List<MethodSchedule> getMethodSchedule() {
-        if (methodSchedule == null) {
-            methodSchedule = new ArrayList<MethodSchedule>();
-        }
-        return this.methodSchedule;
-    }
-
-    //TODO moved out of assembly descriptor in schema
-
     public Map<String, List<MethodAttribute>> getMethodConcurrencyMap(String ejbName) {
         return getMethodAttributes(ejbName, getContainerConcurrency());
-    }
-
-    //TODO moved out of assembly descriptor in schema
-
-    public Map<String, List<MethodAttribute>> getMethodScheduleMap(String ejbName) {
-        Map<String, List<MethodAttribute>> methods = new LinkedHashMap<String, List<MethodAttribute>>();
-
-        for (MethodSchedule methodSchedule : getMethodSchedule()) {
-            if (!methodSchedule.getEjbName().equals(ejbName)) continue;
-
-            NamedMethod method = methodSchedule.getMethod();
-            String methodName = method.getMethodName();
-            List<MethodAttribute> list = methods.get(methodName);
-            if (list == null) {
-                list = new ArrayList<MethodAttribute>();
-                methods.put(methodName, list);
-            }
-            list.add(new MethodAttribute(methodSchedule.getAttribute(), ejbName, method));
-        }
-        return methods;
     }
 
     private Map<String, List<MethodAttribute>> getMethodAttributes(String ejbName, List<? extends AttributeBinding> bindings) {

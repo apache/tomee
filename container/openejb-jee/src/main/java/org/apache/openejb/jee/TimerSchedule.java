@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -81,12 +80,6 @@ public class TimerSchedule {
     @XmlID
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
-
-    //TODO not in xml but in annotation???
-    @XmlTransient
-    protected String info;
-    @XmlTransient
-    protected boolean persistent = true;
 
     public String getSecond() {
         return second;
@@ -150,23 +143,5 @@ public class TimerSchedule {
 
     public void setId(java.lang.String value) {
         this.id = value;
-    }
-
-    //TODO not in xml schema but in annotation
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public boolean isPersistent() {
-        return persistent;
-    }
-
-    public void setPersistent(boolean persistent) {
-        this.persistent = persistent;
     }
 }

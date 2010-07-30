@@ -16,102 +16,113 @@
  */
 package org.apache.openejb.core.timer;
 
-import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.RpcContainer;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.loader.SystemInstance;
-
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.Timer;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
-import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.TimerTask;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.lang.reflect.Method;
+import java.util.Properties;
+
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.TransactionManager;
+
+import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.InterfaceType;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+
 
 public class EjbTimerServiceImpl implements EjbTimerService {
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
 
+    public static final String QUARTZ_THREAD_POOL_ADAPTER = "openejb.org.quartz.threadPool.class";
+
+    public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
+    public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
     private final TransactionManager transactionManager;
     final DeploymentInfo deployment;
     private final boolean transacted;
     private final int retryAttempts;
 
     private final TimerStore timerStore;
-    private final Executor threadPool;
 
-    private java.util.Timer timer;
+    private Scheduler scheduler;
 
     public EjbTimerServiceImpl(DeploymentInfo deployment) {
-        this(deployment, getDefaultTransactionManager(), getDefaultExecutor(), new MemoryTimerStore(getDefaultTransactionManager()), 1);
-    }
-
-    public static Executor getDefaultExecutor() {
-        Executor executor = SystemInstance.get().getComponent(Executor.class);
-        if (executor == null) {
-            executor = Executors.newFixedThreadPool(10);
-            SystemInstance.get().setComponent(Executor.class, executor);
-        }
-        return executor;
+        this(deployment, getDefaultTransactionManager(), getDefaultScheduler(), new MemoryTimerStore(getDefaultTransactionManager()), 1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
 
-    public EjbTimerServiceImpl(DeploymentInfo deployment, TransactionManager transactionManager, Executor threadPool, TimerStore timerStore, int retryAttempts) {
-        if (deployment.getEjbTimeout() == null) throw new IllegalArgumentException("Ejb does not have an ejbTimeout method " + deployment.getDeploymentID());
-
+    public EjbTimerServiceImpl(DeploymentInfo deployment, TransactionManager transactionManager, Scheduler scheduler, TimerStore timerStore, int retryAttempts) {
         this.deployment = deployment;
         this.transactionManager = transactionManager;
-        this.threadPool = threadPool;
+        this.scheduler = scheduler;
         this.timerStore = timerStore;
         TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
     }
 
+    public static synchronized Scheduler getDefaultScheduler() {
+        Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
+        if (scheduler == null) {
+            Properties properties = new Properties();
+            properties.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SystemInstance.get().hasProperty(QUARTZ_THREAD_POOL_ADAPTER) ? SystemInstance.get().getProperty(QUARTZ_THREAD_POOL_ADAPTER)
+                    : DefaultTimerThreadPoolAdapter.class.getName());
+            properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
+            try {
+                scheduler = new StdSchedulerFactory(properties).getScheduler();
+                scheduler.start();
+                //durability is configured with true, which means that the job will be kept in the store even if no trigger is attached to it.
+                //Currently, all the EJB beans share with the same job instance
+                scheduler.addJob(new JobDetail(OPENEJB_TIMEOUT_JOB_NAME, OPENEJB_TIMEOUT_JOB_GROUP_NAME, EjbTimeoutJob.class, false, true, false), true);
+            } catch (SchedulerException e) {
+                throw new RuntimeException("Fail to initialize the default scheduler", e);
+            }
+            SystemInstance.get().setComponent(Scheduler.class, scheduler);
+        }
+        return scheduler;
+    }
+
     public void start() throws TimerStoreException {
-        // load saved timers
-        Collection timerDatas = timerStore.loadTimers(this, (String)deployment.getDeploymentID());
-
-        // create a new java.util.Timer
-        timer = new java.util.Timer(true);
-
+         // load saved timers
+        Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String)deployment.getDeploymentID());
         // schedule the saved timers
-        for (Iterator iterator = timerDatas.iterator(); iterator.hasNext();) {
-            TimerData timerData = (TimerData) iterator.next();
-
-            // schedule the timer with the java.util.Timer
-            schedule(timerData);
+        for (TimerData timerData : timerDatas) {
+            initializeNewTimer(timerData);
         }
     }
 
     public void stop() {
         // stop all timers
-        for (Iterator iterator = timerStore.getTimers((String)deployment.getDeploymentID()).iterator(); iterator.hasNext();) {
-            TimerData timerData = (TimerData) iterator.next();
-            timerData.stop();
+        for (TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
+            try {
+                timerData.stop();
+            } catch (EJBException e) {
+                //Suppress all the exception as we are in the shutdown process
+                log.error("fail to stop timer", e);
+            }
         }
-
-        // stop the java.util.Timer
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
+        //scheduler.shutdown();
     }
 
     public TransactionManager getTransactionManager() {
@@ -123,18 +134,19 @@ public class EjbTimerServiceImpl implements EjbTimerService {
      * @param timerData the timer to schedule
      */
     public void schedule(TimerData timerData) {
-        if (timer == null) throw new IllegalStateException("Timer is stopped");
+        if (scheduler == null) throw new IllegalStateException("scheduler is configured properly");
 
+        Trigger trigger = timerData.getTrigger();
+        trigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
+        trigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
+        JobDataMap triggerDataMap = trigger.getJobDataMap();
+        triggerDataMap.put(EjbTimeoutJob.EJB_TIMERS_SERVICE, this);
+        triggerDataMap.put(EjbTimeoutJob.TIMER_DATA,timerData);
         try {
-            EjbTimeoutTimerTask timerTask = new EjbTimeoutTimerTask(timerData);
-            timerData.setTimerTask(timerTask);
-            if (timerData.isOneTime()) {
-                timer.schedule(timerTask, timerData.getExpiration());
-            } else {
-                timer.scheduleAtFixedRate(timerTask, timerData.getExpiration(), timerData.getIntervalDuration());
-            }
+            scheduler.scheduleJob(trigger);
         } catch (Exception e) {
-            log.warning("Could not schedule timer " + e.getMessage() + " at (now) " + System.currentTimeMillis() + " for " + timerData.getExpiration().getTime());
+            //TODO Any other actions we could do ?
+            log.warning("Could not schedule timer " + timerData, e);
         }
     }
 
@@ -155,7 +167,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         try {
             timerStore.addTimerData(timerData);
         } catch (Exception e) {
-            log.warning("Could not add timer " + e.getMessage() + " at (now) " + System.currentTimeMillis() + " for " + timerData.getExpiration().getTime());
+            log.warning("Could not add timer of type "+ timerData.getType().name() + " due to " + e.getMessage());
         }
     }
 
@@ -172,78 +184,103 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         checkState();
 
         Collection<Timer> timers = new ArrayList<Timer>();
-        for (Iterator iterator = timerStore.getTimers((String)deployment.getDeploymentID()).iterator(); iterator.hasNext();) {
-            TimerData timerData = (TimerData) iterator.next();
-            Timer timer = timerData.getTimer();
-            timers.add(timer);
+        for (TimerData timerData : timerStore.getTimers((String)deployment.getDeploymentID())) {
+            timers.add(timerData.getTimer());
         }
         return timers;
     }
 
-    public Timer createTimer(Object primaryKey, long duration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    @Override
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, long duration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (duration < 0) throw new IllegalArgumentException("duration is negative: " + duration);
         checkState();
 
-        Date time = new Date(System.currentTimeMillis() + duration);
+        Date expiration = new Date(System.currentTimeMillis() + duration);
         try {
-            TimerData timerData = createTimerData(primaryKey, time, 0, info);
+            TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
+            initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
             throw new EJBException(e);
         }
     }
 
-    public Timer createTimer(Object primaryKey, long initialDuration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    @Override
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, long initialDuration, long intervalDuration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (initialDuration < 0) throw new IllegalArgumentException("initialDuration is negative: " + initialDuration);
         if (intervalDuration < 0) throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
         checkState();
 
 
-        Date time = new Date(System.currentTimeMillis() + initialDuration);
+        Date initialExpiration = new Date(System.currentTimeMillis() + initialDuration);
         try {
-            TimerData timerData = createTimerData(primaryKey, time, intervalDuration, info);
+            TimerData timerData = timerStore.createIntervalTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, initialExpiration, intervalDuration, timerConfig);
+            initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
             throw new EJBException(e);
         }
     }
 
-    public Timer createTimer(Object primaryKey, Date expiration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    @Override
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (expiration == null) throw new IllegalArgumentException("expiration is null");
         if (expiration.getTime() < 0) throw new IllegalArgumentException("expiration is negative: " + expiration.getTime());
         checkState();
 
         try {
-            TimerData timerData = createTimerData(primaryKey, expiration, 0, info);
+            TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
+            initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
             throw new EJBException(e);
         }
     }
 
-    public Timer createTimer(Object primaryKey, Date initialExpiration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
+    @Override
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
         if (initialExpiration == null) throw new IllegalArgumentException("initialExpiration is null");
         if (initialExpiration.getTime() < 0) throw new IllegalArgumentException("initialExpiration is negative: " + initialExpiration.getTime());
         if (intervalDuration < 0) throw new IllegalArgumentException("intervalDuration is negative: " + intervalDuration);
         checkState();
 
         try {
-            TimerData timerData = createTimerData(primaryKey, initialExpiration, intervalDuration, info);
+            TimerData timerData = timerStore.createIntervalTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, initialExpiration, intervalDuration, timerConfig);
+            initializeNewTimer(timerData);
             return timerData.getTimer();
         } catch (TimerStoreException e) {
             throw new EJBException(e);
         }
     }
 
-    private TimerData createTimerData(Object primaryKey, Date expiration, long intervalDuration, Object info) throws TimerStoreException {
-        TimerData timerData = timerStore.createTimer(this, (String)deployment.getDeploymentID(), primaryKey, info, expiration, intervalDuration);
-
-        // mark this as a new timer... when the transaction completes it will schedule the timer
-        timerData.newTimer();
-
-        return timerData;
+    @Override
+    public Timer createTimer(Object primaryKey, Method timeoutMethod, ScheduleExpression scheduleExpression, TimerConfig timerConfig) {
+        if(scheduleExpression == null) {
+            throw new IllegalArgumentException("scheduleExpression is null");
+        }
+        //TODO add more schedule expression validation logic ?
+        checkState();
+        try {
+            TimerData timerData = timerStore.createCalendarTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, scheduleExpression, timerConfig);
+            initializeNewTimer(timerData);
+            return timerData.getTimer();
+        } catch (TimerStoreException e) {
+            throw new EJBException(e);
+        }
     }
 
+    public TimerStore getTimerStore() {
+        return timerStore;
+    }
+
+    public Scheduler getScheduler(){
+        return scheduler;
+    }
+
+    private void initializeNewTimer(TimerData timerData){
+        // mark this as a new timer... when the transaction completes it will schedule the timer
+        timerData.newTimer();
+    }
     /**
      * Insure that timer methods can be invoked for the current operation on this Context.
      */
@@ -261,7 +298,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
      *
      * @param timerData the timer to call.
      */
-    private void ejbTimeout(TimerData timerData) {
+    public void ejbTimeout(TimerData timerData) {
         try {
             Timer timer = getTimer(timerData.getId());
             if (timer == null) {
@@ -282,7 +319,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 // call the timeout method
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
-                    Method ejbTimeout = deployment.getEjbTimeout();
+                    Method ejbTimeout = timerData.getTimeoutMethod();
                     container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] { timer }, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     // exception from a timer does not necessairly mean failure
@@ -293,10 +330,10 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                     try {
                         if (!transacted || transactionManager.getStatus() == Status.STATUS_ACTIVE) {
                             // clean up the timer store
-                            if (timerData.isOneTime()) {
+                            //TODO shall we do all this via Quartz listener ???
+                            if (timerData.getType() == TimerType.SingleAction) {
                                 timerStore.removeTimer(timerData.getId());
                             } else {
-                                timerData.nextTime();
                                 timerStore.updateIntervalTimer(timerData);
                             }
 
@@ -328,7 +365,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             throw e;
         } finally {
             // if this is a single action timer, mark it as cancelled
-            if (timerData.isOneTime()) {
+            if (timerData.getType() == TimerType.SingleAction) {
                 cancelled(timerData);
             }
         }
@@ -339,7 +376,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
      * simply adds an execution of the ejbTimeout method to the thread pool.  It is
      * important to use the thread pool, since the java.util.Timer is single threaded.
      */
-    private class EjbTimeoutTimerTask extends TimerTask {
+    /*private class EjbTimeoutTimerTask extends TimerTask {
         private final TimerData timerData;
 
         public EjbTimeoutTimerTask(TimerData timerData) {
@@ -353,5 +390,5 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 }
             });
         }
-    }
+    }*/
 }

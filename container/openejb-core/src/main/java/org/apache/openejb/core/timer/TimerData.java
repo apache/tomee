@@ -17,31 +17,43 @@
 
 package org.apache.openejb.core.timer;
 
+import java.lang.reflect.Method;
+import java.util.Date;
+
+import javax.ejb.EJBException;
+import javax.ejb.NoMoreTimeoutsException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
+
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 
-import javax.ejb.Timer;
-import javax.transaction.Synchronization;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import java.util.Date;
-import java.util.TimerTask;
+public abstract class TimerData {
 
-public class TimerData {
+    public static final String OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX = "OPEN_EJB_TIMEOUT_TRIGGER_";
+    public static final String OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME = "OPEN_EJB_TIMEOUT_TRIGGER_GROUP";
+
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
     private final long id;
     final EjbTimerServiceImpl timerService;
     private final String deploymentId;
     private final Object primaryKey;
+    private final Method timeoutMethod;
+
     private final Object info;
-    private final long intervalDuration;
-    private Date expiration;
+    private boolean persistent;
+
+    protected Trigger trigger;
 
     // EJB Timer object given to user code
     private final Timer timer;
 
-    // TimerTask object registered with the java.util.timer
-    private TimerTask timerTask;
 
     /**
      * Is this a new timer?  A new timer must be scheduled with the java.util.Timer
@@ -61,21 +73,24 @@ public class TimerData {
      */
     private boolean synchronizationRegistered = false;
 
-    public TimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) {
+    public TimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig) {
         this.id = id;
         this.timerService = timerService;
         this.deploymentId = deploymentId;
         this.primaryKey = primaryKey;
-        this.info = info;
-        this.expiration = expiration;
-        this.intervalDuration = intervalDuration;
+        this.info =timerConfig.getInfo();
+        this.persistent = timerConfig.isPersistent();
         this.timer = new TimerImpl(this);
+        this.timeoutMethod = timeoutMethod;
     }
 
     public void stop() {
-        if (timerTask != null) {
-            timerTask.cancel();
-            timerTask = null;
+        if (trigger != null) {
+            try {
+                timerService.getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+            } catch (SchedulerException e) {
+                throw new EJBException("fail to cancel the timer", e);
+            }
         }
         cancelled = true;
     }
@@ -96,35 +111,8 @@ public class TimerData {
         return info;
     }
 
-    public Date getExpiration() {
-        return expiration;
-    }
-
-    public long getIntervalDuration() {
-        return intervalDuration;
-    }
-
-    public TimerTask getTimerTask() {
-        return timerTask;
-    }
-
-    public void setTimerTask(TimerTask timerTask) {
-        this.timerTask = timerTask;
-    }
-
     public Timer getTimer() {
         return timer;
-    }
-
-    public boolean isOneTime() {
-        return intervalDuration <= 0;
-    }
-
-    void nextTime() {
-        if (isOneTime()) {
-            throw new IllegalStateException("This is a one-time timerTask");
-        }
-        expiration = new Date(expiration.getTime() + intervalDuration);
     }
 
     public boolean isNewTimer() {
@@ -132,6 +120,10 @@ public class TimerData {
     }
 
     public void newTimer() {
+        //Initialize the Quartz Trigger
+        trigger = initializeTrigger();
+        trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
+        trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
         newTimer = true;
         registerTimerDataSynchronization();
     }
@@ -142,12 +134,19 @@ public class TimerData {
 
     public void cancel() {
         timerService.cancelled(TimerData.this);
-        if (timerTask != null) {
-            timerTask.cancel();
-            timerTask = null;
+        if (trigger != null) {
+            try {
+                timerService.getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+            } catch (SchedulerException e) {
+                throw new EJBException("fail to cancel the timer", e);
+            }
         }
         cancelled = true;
         registerTimerDataSynchronization();
+    }
+
+    public Method getTimeoutMethod() {
+        return timeoutMethod;
     }
 
     private void transactionComplete(boolean committed) {
@@ -199,4 +198,35 @@ public class TimerData {
             transactionComplete(status == Status.STATUS_COMMITTED);
         }
     }
+
+    public boolean isPersistent(){
+        return persistent;
+    }
+
+    public Trigger getTrigger() {
+        return trigger;
+    }
+
+    public Date getNextTimeout() throws NoSuchObjectLocalException, NoMoreTimeoutsException {
+        if (cancelled) {
+            throw new NoSuchObjectLocalException("The timer has been cancelled");
+        }
+        Date nextTimeout = trigger.getNextFireTime();
+        if (nextTimeout == null) {
+            throw new NoMoreTimeoutsException("The timer has no future timeouts");
+        } else if (nextTimeout.getTime() < System.currentTimeMillis()) {
+            //TODO Double check whether the thrown exception is expected, this may occurs while the timeout is arrived, but the task has not scheduled yet.
+            throw new NoSuchObjectLocalException("The timer has been expired");
+        }
+        return nextTimeout;
+    }
+
+    public long getTimeRemaining() throws NoSuchObjectLocalException, NoMoreTimeoutsException {
+        Date nextTimeout = getNextTimeout();
+        return nextTimeout.getTime() - System.currentTimeMillis();
+    }
+
+    public abstract TimerType getType();
+
+    protected abstract Trigger initializeTrigger();
 }

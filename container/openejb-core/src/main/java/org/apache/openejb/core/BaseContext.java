@@ -178,7 +178,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
         if (timerService == null) {
             throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
         }
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey());
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), deploymentInfo.getEjbTimeout());
     }
 
     public boolean isTimerMethodAllowed() {

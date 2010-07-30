@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.jee;
 
-import java.util.List;
 import java.util.Collection;
 
 /**

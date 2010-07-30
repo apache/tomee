@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import static org.apache.openejb.assembler.classic.MethodInfoUtil.matchingMethods;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
@@ -342,7 +341,25 @@ class EnterpriseBeanBuilder {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
                 timeout = ejbClass.getMethod("ejbTimeout", Timer.class);
             } else if (info.methodParams != null) {
-                timeout = toMethod(ejbClass, info);
+                try {
+                    timeout = toMethod(ejbClass, info);
+                } catch (IllegalStateException e) {
+                    //Spec 18.2.5.3 [102] For the compatibility of timeout method signature, if method-params is  not set, it is also required to search the method signaure below :
+                    //void <METHOD> (Timer timer)
+
+                    // TODO Lets move this fallback searching into the config side so people do
+                    // not get 'Callback method does not exist' runtime exceptions and instead
+                    // get a validation failure.  Then we can explicitly add the (Timer) param
+                    // if the fallback method does exist.
+                    if (info.methodParams.size() == 0) {
+                        NamedMethodInfo candidateInfo = new NamedMethodInfo();
+                        candidateInfo.className = info.className;
+                        candidateInfo.id = info.id;
+                        candidateInfo.methodName = info.methodName;
+                        candidateInfo.methodParams = Arrays.asList(Timer.class.getName());
+                        timeout = toMethod(ejbClass, candidateInfo);
+                    }
+                }
             }
         } catch (Exception e) {
             warnings.add(e);

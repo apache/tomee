@@ -51,7 +51,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public final List<String> businessLocal = new ArrayList<String>();
     public final List<String> businessRemote = new ArrayList<String>();
     public boolean localbean;
-    
+
     public String ejbClass;
     public String ejbName;
 
@@ -82,4 +82,5 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
 
     public TimeoutInfo statefulTimeout;
     public TimeoutInfo accessTimeout;
+    public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
 }

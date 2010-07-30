@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
@@ -54,14 +53,13 @@ import org.apache.openejb.assembler.classic.SingletonBeanInfo;
 import org.apache.openejb.assembler.classic.StatefulBeanInfo;
 import org.apache.openejb.assembler.classic.StatelessBeanInfo;
 import org.apache.openejb.assembler.classic.TimeoutInfo;
-import org.apache.openejb.jee.ConcurrencyManagementType;
-import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ApplicationException;
 import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
+import org.apache.openejb.jee.ConcurrencyManagementType;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbRelation;
@@ -78,7 +76,6 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.Method;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.MethodSchedule;
 import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.PersistenceType;
@@ -87,11 +84,13 @@ import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.RemoveMethod;
 import org.apache.openejb.jee.ResultTypeMapping;
-import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.SecurityRole;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.Timeout;
+import org.apache.openejb.jee.Timer;
+import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.Jndi;
@@ -183,7 +182,6 @@ public class EjbJarInfoBuilder {
             initExcludesList(jar, ejbds, ejbJar);
             initMethodTransactions(jar, ejbds, ejbJar);
             initMethodConcurrency(jar, ejbds, ejbJar);
-            initMethodSchedules(jar, ejbds, ejbJar);
             initApplicationExceptions(jar, ejbJar);
 
             for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
@@ -346,31 +344,45 @@ public class EjbJarInfoBuilder {
         }
     }
 
-    private void initMethodSchedules(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
-
-        List<MethodSchedule> methodSchedule = jar.getEjbJar().getAssemblyDescriptor().getMethodSchedule();
-        for (MethodSchedule att : methodSchedule) {
-            MethodScheduleInfo info = new MethodScheduleInfo();
-
-            info.description = att.getDescription();
-            info.method = toInfo(att.getMethod());
-
-            for (TimerSchedule schedule : att.getSchedule()) {
-                ScheduleInfo scheduleInfo = new ScheduleInfo();
-                scheduleInfo.second = schedule.getSecond();
-                scheduleInfo.minute = schedule.getMinute();
-                scheduleInfo.hour = schedule.getHour();
-                scheduleInfo.dayOfWeek = schedule.getDayOfWeek();
-                scheduleInfo.dayOfMonth = schedule.getDayOfMonth();
-                scheduleInfo.month = schedule.getMonth();
-                scheduleInfo.year = schedule.getYear();
-                scheduleInfo.info = schedule.getInfo();
-                scheduleInfo.persistent = schedule.isPersistent();
-                info.schedules.add(scheduleInfo);
+    private void copySchedules(List<Timer> timers, List<MethodScheduleInfo> scheduleInfos) {
+        Map<NamedMethod, MethodScheduleInfo> methodScheduleInfoMap = new HashMap<NamedMethod, MethodScheduleInfo>();
+        for (Timer timer : timers) {
+            NamedMethod timeoutMethod = timer.getTimeoutMethod();
+            MethodScheduleInfo methodScheduleInfo = methodScheduleInfoMap.get(timer.getTimeoutMethod());
+            if (methodScheduleInfo == null) {
+                methodScheduleInfo = new MethodScheduleInfo();
+                methodScheduleInfoMap.put(timeoutMethod, methodScheduleInfo);
+                methodScheduleInfo.method = toInfo(timeoutMethod);
+            }
+            ScheduleInfo scheduleInfo = new ScheduleInfo();
+            //Copy TimerSchedule
+            TimerSchedule timerSchedule = timer.getSchedule();
+            if (timerSchedule != null) {
+                scheduleInfo.second = timerSchedule.getSecond();
+                scheduleInfo.minute = timerSchedule.getMinute();
+                scheduleInfo.hour = timerSchedule.getHour();
+                scheduleInfo.dayOfWeek = timerSchedule.getDayOfWeek();
+                scheduleInfo.dayOfMonth = timerSchedule.getDayOfMonth();
+                scheduleInfo.month = timerSchedule.getMonth();
+                scheduleInfo.year = timerSchedule.getYear();
+            }
+            //Copy other attributes
+            scheduleInfo.timezone = timer.getTimezone();
+            if (timer.getStart() != null) {
+                scheduleInfo.start = timer.getStart().toGregorianCalendar().getTime();
+            }
+            if (timer.getEnd() != null) {
+                scheduleInfo.end = timer.getEnd().toGregorianCalendar().getTime();
             }
 
-            ejbJarInfo.methodSchedules.add(info);
+            scheduleInfo.info = timer.getInfo();
+            if (timer.getPersistent() != null) {
+                scheduleInfo.persistent = timer.getPersistent();
+            }
+
+            methodScheduleInfo.schedules.add(scheduleInfo);
         }
+        scheduleInfos.addAll(methodScheduleInfoMap.values());
     }
 
     private void initApplicationExceptions(EjbModule jar, EjbJarInfo ejbJarInfo) {
@@ -532,16 +544,20 @@ public class EjbJarInfoBuilder {
             ConcurrencyManagementType type = s.getConcurrencyManagementType();
             bean.concurrencyType = (type != null) ? type.toString() : ConcurrencyManagementType.CONTAINER.toString();
             bean.loadOnStartup = s.getInitOnStartup();
+
+            copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
+            copySchedules(s.getTimer(), bean.methodScheduleInfos);
             // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
         } else {
             bean = new StatelessBeanInfo();
+            copySchedules(s.getTimer(), bean.methodScheduleInfos);
         }
 
         if (s.getSessionType() != SessionType.STATEFUL) {
             copyCallbacks(s.getAroundTimeout(),bean.aroundTimeout);
         }
-        
+
         bean.localbean = s.getLocalBean() != null;
 
 
@@ -599,10 +615,13 @@ public class EjbJarInfoBuilder {
         MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
         bean.timeoutMethod = toInfo(mdb.getTimeoutMethod());
+        copyCallbacks(mdb.getAroundTimeout(),bean.aroundTimeout);
 
         copyCallbacks(mdb.getAroundInvoke(), bean.aroundInvoke);
         copyCallbacks(mdb.getPostConstruct(), bean.postConstruct);
         copyCallbacks(mdb.getPreDestroy(), bean.preDestroy);
+
+        copySchedules(mdb.getTimer(), bean.methodScheduleInfos);
 
         EjbDeployment d = (EjbDeployment) m.get(mdb.getEjbName());
         if (d == null) {

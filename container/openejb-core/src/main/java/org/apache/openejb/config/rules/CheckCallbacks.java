@@ -47,6 +47,7 @@ import org.apache.openejb.jee.RemoveMethod;
 import org.apache.openejb.jee.Session;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.Timer;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.util.Join;
 import org.apache.xbean.finder.ClassFinder;
@@ -110,21 +111,25 @@ public class CheckCallbacks extends ValidationBase {
 //                    }
 
                     for (AroundTimeout aroundTimeout : session.getAroundTimeout()) {
-                        ignoredAnnotation("aroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
+                        ignoredAnnotation("AroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
+                    }
+
+                    for (Timer timer : session.getTimer()) {
+                        ignoredAnnotation("Schedule/Schedules", bean, bean.getEjbClass(), timer.getTimeoutMethod().getMethodName(), SessionType.STATEFUL.getName());
                     }
 
                 } else {
 
                     for (LifecycleCallback callback : session.getAfterBegin()) {
-                        ignoredAnnotation("afterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("AfterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getBeforeCompletion()) {
-                        ignoredAnnotation("beforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("BeforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getAfterCompletion()) {
-                        ignoredAnnotation("afterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredAnnotation("AfterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getPrePassivate()) {
@@ -162,15 +167,15 @@ public class CheckCallbacks extends ValidationBase {
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
-                    ignoredAnnotation("afterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("AfterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
-                    ignoredAnnotation("beforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("BeforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
-                    ignoredAnnotation("afterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredAnnotation("AfterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
             }
 
@@ -184,6 +189,10 @@ public class CheckCallbacks extends ValidationBase {
                 }
                 for (AroundTimeout aroundTimeout : bean.getAroundTimeout()) {
                     checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
+                }
+
+                for(Timer timer : ((TimerConsumer) bean).getTimer()) {
+                    checkTimeOut(ejbClass, timer.getTimeoutMethod(), bean);
                 }
             }
         }

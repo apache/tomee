@@ -17,19 +17,31 @@
 
 package org.apache.openejb.core.timer;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.ejb.ScheduleExpression;
+import javax.ejb.TimerConfig;
+
 public interface TimerStore {
+
     TimerData getTimer(String deploymentId, long timerId);
-    
+
     Collection<TimerData> getTimers(String deploymentId);
 
     Collection<TimerData> loadTimers(EjbTimerServiceImpl timerService, String deploymentId) throws TimerStoreException;
-    
+
     void addTimerData(TimerData timerData) throws TimerStoreException;
 
-    TimerData createTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Object info, Date expiration, long intervalDuration) throws TimerStoreException;
+    TimerData createSingleActionTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig)
+            throws TimerStoreException;
+
+    TimerData createIntervalTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig)
+            throws TimerStoreException;
+
+    TimerData createCalendarTimer(EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig)
+            throws TimerStoreException;
 
     void removeTimer(long timerId);
 

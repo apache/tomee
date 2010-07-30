@@ -17,25 +17,30 @@
 
 package org.apache.openejb.core.timer;
 
-import org.apache.openejb.OpenEJBException;
-
-import javax.ejb.Timer;
-import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+
+import org.apache.openejb.OpenEJBException;
 
 public interface EjbTimerService {
     Timer getTimer(long id);
 
     Collection<Timer> getTimers(Object primaryKey);
 
-    Timer createTimer(Object primaryKey, Date initialExpiration, long intervalDuration, Serializable info);
+    Timer createTimer(Object primaryKey, Method timeoutMethod, Date initialExpiration, long intervalDuration, TimerConfig timerConfig);
 
-    Timer createTimer(Object primaryKey, Date expiration, Serializable info);
+    Timer createTimer(Object primaryKey, Method timeoutMethod, Date expiration, TimerConfig timerConfig);
 
-    Timer createTimer(Object primaryKey, long initialDuration, long intervalDuration, Serializable info);
+    Timer createTimer(Object primaryKey, Method timeoutMethod, long initialDuration, long intervalDuration, TimerConfig timerConfig);
 
-    Timer createTimer(Object primaryKey, long duration, Serializable info);
+    Timer createTimer(Object primaryKey, Method timeoutMethod, long duration, TimerConfig timerConfig);
+
+    Timer createTimer(Object primaryKey, Method timeoutMethod, ScheduleExpression schedule, TimerConfig timerConfig);
 
     void start() throws OpenEJBException;
 

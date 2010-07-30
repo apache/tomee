@@ -16,66 +16,69 @@
  */
 package org.apache.openejb.core.timer;
 
-import javax.ejb.EJBException;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
-import javax.ejb.TimerConfig;
-import javax.ejb.ScheduleExpression;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
 
 public class TimerServiceImpl implements TimerService {
     private final EjbTimerService ejbTimerService;
     private final Object primaryKey;
+    private final Method ejbTimeout;
 
-    public TimerServiceImpl(EjbTimerService ejbTimerService, Object primaryKey) {
+    public TimerServiceImpl(EjbTimerService ejbTimerService, Object primaryKey, Method ejbTimeout) {
         this.ejbTimerService = ejbTimerService;
         this.primaryKey = primaryKey;
+        this.ejbTimeout = ejbTimeout;
     }
 
     public Timer createTimer(Date initialExpiration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, initialExpiration, intervalDuration, info);
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialExpiration, intervalDuration, new TimerConfig(info, false));
     }
 
     public Timer createTimer(Date expiration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, expiration, info);
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, expiration, new TimerConfig(info, false));
     }
 
     public Timer createTimer(long initialDuration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, initialDuration, intervalDuration, info);
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialDuration, intervalDuration, new TimerConfig(info, false));
     }
 
     public Timer createTimer(long duration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, duration, info);
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, duration, new TimerConfig(info, false));
     }
 
-    public Collection getTimers() throws IllegalStateException, EJBException {
+    public Collection<Timer> getTimers() throws IllegalStateException, EJBException {
         return ejbTimerService.getTimers(primaryKey);
     }
 
-    public Timer createSingleActionTimer(long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Timer createSingleActionTimer(long duration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, duration, timerConfig);
     }
 
-    public Timer createSingleActionTimer(Date date, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Timer createSingleActionTimer(Date expiration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, expiration, timerConfig);
     }
 
-    public Timer createIntervalTimer(long l, long l1, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Timer createIntervalTimer(long initialDuration, long intervalDuration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialDuration, intervalDuration, timerConfig);
     }
 
-    public Timer createIntervalTimer(Date date, long l, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Timer createIntervalTimer(Date initialExpiration, long lintervalDuration, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialExpiration, lintervalDuration, timerConfig);
     }
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, scheduleExpression, new TimerConfig(null, false));
     }
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        throw new UnsupportedOperationException("not yet implemented");
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, scheduleExpression, timerConfig);
     }
-
 }

@@ -22,8 +22,6 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.timer.ScheduleData;
-import org.apache.openejb.OpenEJBException;
-
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
 import java.util.List;
@@ -33,19 +31,10 @@ public class MethodScheduleBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodScheduleBuilder.class.getPackage().getName());
 
-    private final List<MethodScheduleInfo> methodSchedules;
+    public void build(CoreDeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
+        Class<?> clazz = deploymentInfo.getBeanClass();
 
-    public MethodScheduleBuilder(EjbJarInfo ejbJarInfo) throws OpenEJBException {
-        methodSchedules = ejbJarInfo.methodSchedules;
-    }
-
-    public void build(CoreDeploymentInfo deploymentInfo) {
-        Class clazz = deploymentInfo.getBeanClass();
-        String ejbName = deploymentInfo.getEjbName();
-
-        for (MethodScheduleInfo info : methodSchedules) {
-            if (!ejbName.equals(info.ejbName)) continue;
-
+        for (MethodScheduleInfo info : beanInfo.methodScheduleInfos) {
             Method method;
             try {
                 method = getMethod(clazz, info.method.methodName, toClasses(info.method.methodParams, clazz.getClassLoader()));
@@ -63,13 +52,16 @@ public class MethodScheduleBuilder {
                 for (ScheduleInfo scheduleInfo : info.schedules) {
 
                     ScheduleExpression expr = new ScheduleExpression();
-                    expr.second(scheduleInfo.second);
-                    expr.minute(scheduleInfo.minute);
-                    expr.hour(scheduleInfo.hour);
-                    expr.dayOfWeek(scheduleInfo.dayOfWeek);
-                    expr.dayOfMonth(scheduleInfo.dayOfMonth);
-                    expr.month(scheduleInfo.month);
-                    expr.year(scheduleInfo.year);
+                    expr.second(scheduleInfo.second == null ? "0" : scheduleInfo.second);
+                    expr.minute(scheduleInfo.minute == null ? "0" : scheduleInfo.minute);
+                    expr.hour(scheduleInfo.hour == null ? "0" : scheduleInfo.hour);
+                    expr.dayOfWeek(scheduleInfo.dayOfWeek == null ? "*" : scheduleInfo.dayOfWeek);
+                    expr.dayOfMonth(scheduleInfo.dayOfMonth == null ? "*" : scheduleInfo.dayOfMonth);
+                    expr.month(scheduleInfo.month == null ? "*" : scheduleInfo.month);
+                    expr.year(scheduleInfo.year == null ? "*" : scheduleInfo.year);
+                    expr.timezone(scheduleInfo.timezone);
+                    expr.start(scheduleInfo.start);
+                    expr.end(scheduleInfo.end);
 
                     TimerConfig config = new TimerConfig();
                     config.setInfo(scheduleInfo.info);
@@ -81,8 +73,8 @@ public class MethodScheduleBuilder {
         }
     }
 
-    private Class[] toClasses(List<String> params, ClassLoader classLoader) throws ClassNotFoundException {
-        Class[] paramsArray = new Class[params.size()];
+    private Class<?>[] toClasses(List<String> params, ClassLoader classLoader) throws ClassNotFoundException {
+        Class<?>[] paramsArray = new Class[params.size()];
         for (int j = 0; j < paramsArray.length; j++) {
             String methodParam = params.get(j);
             paramsArray[j] = Classes.forName(methodParam, classLoader);
@@ -106,7 +98,7 @@ public class MethodScheduleBuilder {
      * @return
      * @throws NoSuchMethodException if the method is not found in this class or any of its parent classes
      */
-    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+    private Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         NoSuchMethodException original = null;
         while (clazz != null){
             try {

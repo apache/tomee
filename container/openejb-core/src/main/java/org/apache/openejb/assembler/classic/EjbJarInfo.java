@@ -33,7 +33,6 @@ public class EjbJarInfo extends InfoObject {
     public final List<MethodPermissionInfo> methodPermissions= new ArrayList<MethodPermissionInfo>();
     public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
     public final List<MethodConcurrencyInfo> methodConcurrency = new ArrayList<MethodConcurrencyInfo>();
-    public final List<MethodScheduleInfo> methodSchedules = new ArrayList<MethodScheduleInfo>();
     public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
     public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<InterceptorBindingInfo>();
     public final List<MethodInfo> excludeList = new ArrayList<MethodInfo>();

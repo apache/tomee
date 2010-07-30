@@ -68,18 +68,21 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.MethodContext;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
-import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
+import org.apache.openejb.core.timer.ScheduleData;
+import org.apache.openejb.core.timer.TimerStore;
 import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.SimpleBootstrapContext;
 import org.apache.openejb.core.transaction.SimpleWorkManager;
@@ -538,12 +541,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
                 jaccPermissionsBuilder.install(policyContext);
 
-                MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder(ejbJar);
                 TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-
-                    methodScheduleBuilder.build(coreDeploymentInfo);
 
                     coreDeploymentInfo.setTransactionPolicyFactory(transactionPolicyFactory);
                 }
@@ -566,14 +566,38 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
                     if (coreDeploymentInfo.getComponentType() != BeanType.STATEFUL) {
                         Method ejbTimeout = coreDeploymentInfo.getEjbTimeout();
+                        boolean timerServiceRequired = false;
                         if (ejbTimeout != null) {
                             // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
                             if (coreDeploymentInfo.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
                                 coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
                             }
-
+                            timerServiceRequired = true;
+                        }
+                        for (Iterator<Map.Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                            Map.Entry<Method, MethodContext> entry = it.next();
+                            MethodContext methodContext = entry.getValue();
+                            if (methodContext.getSchedules().size() > 0) {
+                                timerServiceRequired = true;
+                                Method method = entry.getKey();
+                                //TODO Need ?
+                                if (coreDeploymentInfo.getTransactionType(method) == TransactionType.RequiresNew) {
+                                    coreDeploymentInfo.setMethodTransactionAttribute(method, TransactionType.Required);
+                                }
+                            }
+                        }
+                        if (timerServiceRequired) {
                             // Create the timer
                             EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(coreDeploymentInfo);
+                            //Load auto-start timers
+                            TimerStore timerStore = timerService.getTimerStore();
+                            for (Iterator<Map.Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                                Map.Entry<Method, MethodContext> entry = it.next();
+                                MethodContext methodContext = entry.getValue();
+                                for(ScheduleData scheduleData : methodContext.getSchedules()) {
+                                    timerStore.createCalendarTimer(timerService, (String) deploymentInfo.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
+                                }
+                            }
                             coreDeploymentInfo.setEjbTimerService(timerService);
                         } else {
                             coreDeploymentInfo.setEjbTimerService(new NullEjbTimerServiceImpl());
@@ -643,7 +667,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (String clientClassName : clientInfo.remoteClients) {
                     containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                 }
-                
+
                 for (String clientClassName : clientInfo.localClients) {
                     containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
@@ -765,7 +789,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 return aa - bb;
             }
         });
-        
+
         return deployments;
     }
 
