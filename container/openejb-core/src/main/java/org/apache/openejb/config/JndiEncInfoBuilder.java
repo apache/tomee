@@ -390,10 +390,12 @@ public class JndiEncInfoBuilder {
 
         EjbResolver ejbResolver = getEjbResolver(moduleId);
 
-        for (String ejbName : sessionBean.getDependsOn()) {
-            String deploymentId = ejbResolver.resolve(new SimpleRef(ejbName), moduleUri);
-            if (deploymentId != null) {
-                beanInfo.dependsOn.add(deploymentId);
+        if (sessionBean.getDependsOn() != null) {
+            for (String ejbName : sessionBean.getDependsOn()) {
+                String deploymentId = ejbResolver.resolve(new SimpleRef(ejbName), moduleUri);
+                if (deploymentId != null) {
+                    beanInfo.dependsOn.add(deploymentId);
+                }
             }
         }
 
