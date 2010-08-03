@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.util;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
-
-import org.springframework.asm.commons.Method;
 
 /**
  * @version $Rev$ $Date$
