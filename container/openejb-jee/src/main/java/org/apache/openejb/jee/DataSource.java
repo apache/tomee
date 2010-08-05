@@ -289,6 +289,8 @@ public class DataSource implements Keyable<String> {
 
     @Override
     public String getKey() {
-        return name;
+        String name = getName();
+        if (name == null || name.startsWith("java:")) return name;
+        return "java:comp/env/" + name;
     }
 }
