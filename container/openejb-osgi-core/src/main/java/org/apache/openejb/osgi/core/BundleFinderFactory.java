@@ -42,9 +42,11 @@ public class BundleFinderFactory extends FinderFactory {
             BundleContext bundleContext = bundle.getBundleContext();
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
             PackageAdmin packageAdmin = (PackageAdmin) bundleContext.getService(sr);
-
             final String location = module.getModuleId();
-            if (location != null && !location.isEmpty()) {
+            boolean useLocation = location != null
+                    && !location.isEmpty()
+                    && !module.getJarLocation().endsWith(".war");
+            if (useLocation) {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
                     @Override
