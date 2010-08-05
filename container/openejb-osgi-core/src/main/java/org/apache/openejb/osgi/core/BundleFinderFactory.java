@@ -67,7 +67,25 @@ public class BundleFinderFactory extends FinderFactory {
 
                 return new BundleAnnotationFinder(packageAdmin, bundle, filter);
             } else {
-                return new BundleAnnotationFinder(packageAdmin, bundle);
+                ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
+
+                    @Override
+                    public boolean rangeDiscoveryRequired(DiscoveryRange discoveryRange) {
+                        return discoveryRange == DiscoveryRange.BUNDLE_CLASSPATH || discoveryRange == DiscoveryRange.FRAGMENT_BUNDLES;
+                    }
+
+                    @Override
+                    public boolean zipFileDiscoveryRequired(String s) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean directoryDiscoveryRequired(String s) {
+                        return true;
+                    }
+                };
+
+                return new BundleAnnotationFinder(packageAdmin, bundle, filter);
             }
         }
 
