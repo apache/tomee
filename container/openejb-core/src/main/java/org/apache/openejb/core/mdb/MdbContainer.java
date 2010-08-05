@@ -81,6 +81,7 @@ public class MdbContainer implements RpcContainer {
 
     private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
     private final XAResourceWrapper xaResourceWrapper;
+    private final InboundRecovery inboundRecovery;
 
     public MdbContainer(Object containerID, SecurityService securityService, ResourceAdapter resourceAdapter, Class messageListenerInterface, Class activationSpecClass, int instanceLimit) {
         this.containerID = containerID;
@@ -90,6 +91,7 @@ public class MdbContainer implements RpcContainer {
         this.activationSpecClass = activationSpecClass;
         this.instanceLimit = instanceLimit;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
+        inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
     }
 
     public DeploymentInfo [] deployments() {
@@ -132,6 +134,10 @@ public class MdbContainer implements RpcContainer {
         // create the activation spec
         ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
 
+        if (inboundRecovery != null) {
+            inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
+        }
+        
         Options options = new Options(deploymentInfo.getProperties());
         int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
