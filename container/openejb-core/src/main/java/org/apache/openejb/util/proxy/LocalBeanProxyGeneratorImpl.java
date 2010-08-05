@@ -526,10 +526,16 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 			}
 		} else {
 			if (! parameterType.isPrimitive()) {
-				if (wrap) {
-					return "L" + parameterType.getCanonicalName().replaceAll("\\.", "/") + ";";
+                String clsName = parameterType.getCanonicalName();
+
+                if (parameterType.isMemberClass()) {
+                    int lastDot = clsName.lastIndexOf(".");
+                    clsName = clsName.substring(0, lastDot) + "$" + clsName.substring(lastDot + 1);
+                }
+                if (wrap) {
+					return "L" + clsName.replaceAll("\\.", "/") + ";";
 				} else {
-					return parameterType.getCanonicalName().replaceAll("\\.", "/");
+					return clsName.replaceAll("\\.", "/");
 				}
 			} else {
 				return getPrimitiveLetter(parameterType);

@@ -856,7 +856,7 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 
 
     @Test
-    public void _testEnumParam() throws Exception {
+    public void testEnumParam() throws Exception {
         TestInvocationHandler invocationHandler = new TestInvocationHandler(new EnumParams());
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
@@ -873,7 +873,13 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 
         assertEquals(new Call("someStringMethod", String.class), calls[0]);
         assertEquals(new Call("someEnumMethod", Color.class), calls[1]);
-        assertEquals(new Call("someInnerClassMethod", Name.class), calls[3]);
+        assertEquals(new Call("someInnerClassMethod", Name.class), calls[2]);
+    }
+
+    public void testGetEnumType() throws Exception {
+        System.out.println(Color.class.getCanonicalName());
+        LocalBeanProxyGeneratorImpl localBeanProxyGenerator = new LocalBeanProxyGeneratorImpl();
+        assertEquals("Lorg/apache/openejb/util/proxy/LocalBeanProxyGeneratorImplTest$Color;", localBeanProxyGenerator.getAsmTypeAsString(Color.class, true));
     }
 
 
