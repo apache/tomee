@@ -41,4 +41,11 @@ public class IntraVmJndiReference extends Reference {
             throw (NamingException)new NamingException("could not look up " + jndiName).initCause(e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "IntraVmJndiReference{" +
+                "jndiName='" + jndiName + '\'' +
+                '}';
+    }
 }
