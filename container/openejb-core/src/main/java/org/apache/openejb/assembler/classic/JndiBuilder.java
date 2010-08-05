@@ -426,8 +426,10 @@ public class JndiBuilder {
     private void optionalBind(Bindings bindings, Reference ref, String name) throws NamingException {
         try {
             openejbContext.bind(name, ref);
+            logger.debug("bound ejb at name: " + name + ", ref: " + ref);
             bindings.add(name);
         } catch (NamingException okIfBindFails) {
+            logger.debug("failed to bind ejb at name: " + name + ", ref: " + ref);
         }
     }
 
@@ -485,6 +487,7 @@ public class JndiBuilder {
         } else {
             try {
                 openejbContext.bind(name, ref);
+                logger.debug("bound ejb at name: " + name + ", ref: " + ref);
                 bindings.add(name);
             } catch (NameAlreadyBoundException e) {
                 logger.error("Jndi name could not be bound; it may be taken by another ejb.  Jndi(name=" + name + ")");
