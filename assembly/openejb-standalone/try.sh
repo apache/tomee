@@ -25,6 +25,7 @@ cd target/
 
 tar xzvf openejb-$VERSION.tar.gz
 cd openejb-$VERSION
+mkdir apps
 cp $JAR apps/
 ./bin/openejb start &
 sleep 1
