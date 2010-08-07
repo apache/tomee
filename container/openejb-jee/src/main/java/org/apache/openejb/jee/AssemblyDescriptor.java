@@ -206,7 +206,7 @@ public class AssemblyDescriptor {
         return getApplicationException(clazz.getName());
     }
 
-    public void addApplicationException(Class clazz, boolean rollback) {
+    public void addApplicationException(Class clazz, boolean rollback, boolean inherited) {
         getApplicationException().add(new ApplicationException(clazz, rollback));
     }
 

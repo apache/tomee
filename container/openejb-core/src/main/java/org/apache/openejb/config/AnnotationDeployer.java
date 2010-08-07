@@ -233,6 +233,16 @@ public class AnnotationDeployer implements DynamicDeployer {
         return getModule().getValidation();
     }
 
+    private static void mergeApplicationExceptionAnnotation(AssemblyDescriptor assemblyDescriptor, Class<?> exceptionClass, ApplicationException annotation) {
+        org.apache.openejb.jee.ApplicationException applicationException = assemblyDescriptor.getApplicationException(exceptionClass);
+        if (applicationException.getRollback() == null) {
+            applicationException.setRollback(annotation.rollback());
+        }
+        if (applicationException.getInherited() == null) {
+            applicationException.setInherited(annotation.inherited());
+        }
+    }
+
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
 
         public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
@@ -547,24 +557,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 ejbModule.getEjbJar().setAssemblyDescriptor(assemblyDescriptor);
             }
 
-            // https://issues.apache.org/jira/browse/OPENEJB-980
-            startupLogger.debug("Searching for inherited application exceptions (see OPENEJB-980) - it doesn't care whether inherited is true/false");
-            List<Class> appExceptions;
-            appExceptions = finder.findInheritedAnnotatedClasses(ApplicationException.class);
+            startupLogger.debug("Searching for annotated application exceptions (see OPENEJB-980)");
+            List<Class> appExceptions = finder.findAnnotatedClasses(ApplicationException.class);
             for (Class<?> exceptionClass : appExceptions) {
                 startupLogger.debug("...handling " + exceptionClass);
+                ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
                 if (assemblyDescriptor.getApplicationException(exceptionClass) == null) {
-                    ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
-                    // OPENEJB-980
-                    if (annotation == null) {
-                        Class<?> parentExceptionClass = exceptionClass;
-                        while (annotation == null) {
-                            parentExceptionClass = parentExceptionClass.getSuperclass();
-                            annotation = parentExceptionClass.getAnnotation(ApplicationException.class);
-                        }
-                    }
                     startupLogger.debug("...adding " + exceptionClass + " with rollback=" + annotation.rollback());
-                    assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback());
+                    assemblyDescriptor.addApplicationException(exceptionClass, annotation.rollback(), annotation.inherited());
+                } else {
+                    mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
                 }
             }
 
@@ -1528,6 +1530,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbModule;
         }
 
+        //TODO why is this necessary, we scan for exceptions with this annotation elsewhere.
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
             /*
              * @ApplicationException
@@ -1536,8 +1539,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 for (Class<?> exception : method.getExceptionTypes()) {
                     ApplicationException annotation = exception.getAnnotation(ApplicationException.class);
                     if (annotation == null) continue;
-                    if (assemblyDescriptor.getApplicationException(exception) != null) continue;
-                    assemblyDescriptor.addApplicationException(exception, annotation.rollback());
+                    if (assemblyDescriptor.getApplicationException(exception) != null) {
+                        mergeApplicationExceptionAnnotation(assemblyDescriptor, exception, annotation);
+                    } else {
+                        logger.info("Found previously undetected application exception {} listed on a method {} with annotation {}", method, exception, annotation);
+                        assemblyDescriptor.addApplicationException(exception, annotation.rollback(), annotation.inherited());
+                    }
                 }
             }
         }

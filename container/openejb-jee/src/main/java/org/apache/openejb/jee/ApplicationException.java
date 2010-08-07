@@ -63,8 +63,8 @@ public class ApplicationException implements Keyable<String> {
 
     @XmlElement(name = "exception-class", required = true)
     protected String exceptionClass;
-    protected boolean rollback;
-    protected boolean inherited;
+    protected Boolean rollback;
+    protected Boolean inherited;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -90,19 +90,27 @@ public class ApplicationException implements Keyable<String> {
         this.exceptionClass = value;
     }
 
-    public boolean getRollback() {
+    public Boolean getRollback() {
         return rollback;
     }
 
-    public void setRollback(boolean value) {
+    public boolean isRollback() {
+        return rollback == null? false: rollback;
+    }
+
+    public void setRollback(Boolean value) {
         this.rollback = value;
     }
 
-    public boolean isInherited() {
+    public Boolean getInherited() {
         return inherited;
     }
 
-    public void setInherited(boolean inherited) {
+    public boolean isInherited() {
+        return inherited == null? true: inherited;
+    }
+
+    public void setInherited(Boolean inherited) {
         this.inherited = inherited;
     }
 

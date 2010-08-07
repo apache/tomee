@@ -610,7 +610,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
                         for (DeploymentInfo deploymentInfo : deployments.values()) {
                             CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-                            coreDeploymentInfo.addApplicationException(exceptionClass, exceptionInfo.rollback);
+                            coreDeploymentInfo.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
                         }
                     } catch (ClassNotFoundException e) {
                         logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());

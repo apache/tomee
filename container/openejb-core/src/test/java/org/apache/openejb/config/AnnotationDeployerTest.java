@@ -57,12 +57,11 @@ public class AnnotationDeployerTest {
                 assemblyDescriptor.getApplicationException(BusinessException.class);
         assertThat(appEx, notNullValue());
         assertThat(appEx.getExceptionClass(), is(BusinessException.class.getName()));
-        assertThat(appEx.getRollback(), is(true));
+        assertThat(appEx.isRollback(), is(true));
 
+        //inheritance is now handled at runtime, only explicitly mentioned exceptions are in the assembly descriptor
         appEx = assemblyDescriptor.getApplicationException(ValueRequiredException.class);
-        assertThat(appEx, notNullValue());
-        assertThat(appEx.getExceptionClass(), is(ValueRequiredException.class.getName()));
-        assertThat(appEx.getRollback(), is(true));
+        assertThat(appEx, nullValue());
     }
     
     @Test

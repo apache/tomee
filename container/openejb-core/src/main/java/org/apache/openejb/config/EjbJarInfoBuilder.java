@@ -389,7 +389,8 @@ public class EjbJarInfoBuilder {
         for (ApplicationException applicationException : jar.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
             ApplicationExceptionInfo info = new ApplicationExceptionInfo();
             info.exceptionClass = applicationException.getExceptionClass();
-            info.rollback = applicationException.getRollback();
+            info.rollback = applicationException.isRollback();
+            info.inherited = applicationException.isInherited();
             ejbJarInfo.applicationException.add(info);
         }
     }
