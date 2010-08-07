@@ -260,8 +260,8 @@ public class EntityManagerPropogationTest extends TestCase {
         ejbJar.addEnterpriseBean(new StatefulBean("Transactionx6", EndNodeBean.class));
         
         ejbJar.setAssemblyDescriptor(new AssemblyDescriptor());
-        ejbJar.getAssemblyDescriptor().addApplicationException(IllegalArgumentException.class, false);
-        ejbJar.getAssemblyDescriptor().addApplicationException(ArgumentException.class, false);
+        ejbJar.getAssemblyDescriptor().addApplicationException(IllegalArgumentException.class, false, true);
+        ejbJar.getAssemblyDescriptor().addApplicationException(ArgumentException.class, false, true);
         
 //        List<ContainerTransaction> declared = ejbJar.getAssemblyDescriptor().getContainerTransaction();
 

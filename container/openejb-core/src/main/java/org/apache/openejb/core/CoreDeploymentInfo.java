@@ -256,11 +256,19 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         }
     }
 
-    public void addApplicationException(Class exception, boolean rollback) {
-        if (rollback) {
-            exceptions.put(exception, ExceptionType.APPLICATION_ROLLBACK);
+    public void addApplicationException(Class exception, boolean rollback, boolean inherited) {
+        if (inherited) {
+            if (rollback) {
+                exceptions.put(exception, ExceptionType.APPLICATION_ROLLBACK);
+            } else {
+                exceptions.put(exception, ExceptionType.APPLICATION);
+            }
         } else {
-            exceptions.put(exception, ExceptionType.APPLICATION);
+            if (rollback) {
+                exceptions.put(exception, ExceptionType.APPLICATION_ROLLBACK_NOT_INHERITED);
+            } else {
+                exceptions.put(exception, ExceptionType.APPLICATION_NOT_INHERITED);
+            }
         }
     }
 
@@ -271,9 +279,24 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         }
 
         // check the registered app exceptions
-        ExceptionType type = exceptions.get(e.getClass());
-        if (type != null) {
-            return type;
+        Class<?> exceptionClass = e.getClass();
+        boolean inherited = false;
+        while (exceptionClass != Object.class) {
+            ExceptionType type = exceptions.get(exceptionClass);
+            if (type == ExceptionType.APPLICATION || type == ExceptionType.APPLICATION_ROLLBACK) {
+                return type;
+            }
+            if (type != null) {
+                if (inherited) {
+                    return ExceptionType.SYSTEM;
+                }
+                if (type == ExceptionType.APPLICATION_NOT_INHERITED) {
+                    return ExceptionType.APPLICATION;
+                }
+                return ExceptionType.APPLICATION_ROLLBACK;
+            }
+            exceptionClass = exceptionClass.getSuperclass();
+            inherited = true;
         }
 
         // Unregistered - runtime exceptions are system exception and the rest are application exceptions
