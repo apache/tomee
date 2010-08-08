@@ -79,14 +79,16 @@ import org.xml.sax.SAXException;
 public class DeploymentLoader {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
-    private String ddDir;
+    private final String ddDir;
+    private final boolean preferEjb;
 
     public DeploymentLoader() {
-        this("META-INF/");
+        this("META-INF/", false);
     }
 
-    public DeploymentLoader(String ddDir) {
+    public DeploymentLoader(String ddDir, boolean preferEjb) {
         this.ddDir = ddDir;
+        this.preferEjb = preferEjb;
     }
 
     public AppModule load(File jarFile) throws OpenEJBException {
@@ -1170,6 +1172,10 @@ public class DeploymentLoader {
         if (descriptors.containsKey("ejb-jar.xml")) {
             return EjbModule.class;
         }
+        if (preferEjb) {
+            Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
+            if (cls != null) return cls;
+        }
 
         if (descriptors.containsKey("application-client.xml")) {
             return ClientModule.class;
@@ -1195,6 +1201,20 @@ public class DeploymentLoader {
             }
         }
 
+        if (!preferEjb) {
+            Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
+            if (cls != null) return cls;
+        }
+
+        if (descriptors.containsKey("persistence.xml")) {
+            return PersistenceModule.class;
+        }
+
+        throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
+    }
+
+    private Class<? extends DeploymentModule> checkAnnotations(URL baseUrl, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {
+        Class<? extends DeploymentModule> cls = null;
         if (scanPotentialEjbModules || scanPotentialClientModules) {
             AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
 
@@ -1217,20 +1237,15 @@ public class DeploymentLoader {
             };
 
             if (classFinder.find(filter)) {
-                return EjbModule.class;
+                cls = EjbModule.class;
             }
 
             if (otherTypes.size() > 0){
                 // We may want some ordering/sorting if we add more type scanning
-                return otherTypes.iterator().next();
+                cls =otherTypes.iterator().next();
             }
         }
-
-        if (descriptors.containsKey("persistence.xml")) {
-            return PersistenceModule.class;
-        }
-
-        throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
+        return cls;
     }
 
     private static File unpack(File jarFile) throws OpenEJBException {
