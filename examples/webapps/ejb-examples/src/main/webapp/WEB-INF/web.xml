@@ -116,6 +116,14 @@
     <auth-method>BASIC</auth-method>
   </login-config>
 
+  <security-role>
+      <role-name>manager</role-name>
+  </security-role>
+    
+  <security-role>
+      <role-name>user</role-name>
+  </security-role>
+
   <env-entry>
     <env-entry-name>web.xml/env-entry</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
