@@ -183,6 +183,30 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static final Logger startupLogger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
 
+    public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
+            "javax.ejb.SessionContext",
+            "javax.ejb.EntityContext",
+            "javax.ejb.MessageDrivenContext",
+            "javax.transaction.UserTransaction",
+            "javax.jms.Queue",
+            "javax.jms.Topic",
+            "javax.xml.ws.WebServiceContext",
+            "javax.ejb.TimerService"
+    ));
+
+    public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
+            "boolean", "java.lang.Boolean",
+            "char", "java.lang.Character",
+            "byte", "java.lang.Byte",
+            "short", "java.lang.Short",
+            "int", "java.lang.Integer",
+            "long", "java.lang.Long",
+            "float", "java.lang.Float",
+            "double", "java.lang.Double",
+            "java.lang.String",
+            "java.lang.Class"
+    ));
+    
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
@@ -243,30 +267,11 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
     }
 
+    public static boolean isKnownEnvironmentEntryType(Class type) {
+        return knownEnvironmentEntries.contains(type.getName()) || type.isEnum();
+    }
+    
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
-
-        public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
-                "javax.ejb.SessionContext",
-                "javax.ejb.EntityContext",
-                "javax.ejb.MessageDrivenContext",
-                "javax.transaction.UserTransaction",
-                "javax.jms.Queue",
-                "javax.jms.Topic",
-                "javax.xml.ws.WebServiceContext",
-                "javax.ejb.TimerService"
-        ));
-
-        public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
-                "boolean", "java.lang.Boolean",
-                "char", "java.lang.Character",
-                "byte", "java.lang.Byte",
-                "short", "java.lang.Short",
-                "int", "java.lang.Integer",
-                "long", "java.lang.Long",
-                "float", "java.lang.Float",
-                "double", "java.lang.Double",
-                "java.lang.String"
-        ));
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
@@ -640,28 +645,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
-        public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
-                "javax.ejb.SessionContext",
-                "javax.ejb.EntityContext",
-                "javax.ejb.MessageDrivenContext",
-                "javax.transaction.UserTransaction",
-                "javax.jms.Queue",
-                "javax.jms.Topic",
-                "javax.xml.ws.WebServiceContext",
-                "javax.ejb.TimerService"
-        ));
 
-        public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
-                "boolean", "java.lang.Boolean",
-                "char", "java.lang.Character",
-                "byte", "java.lang.Byte",
-                "short", "java.lang.Short",
-                "int", "java.lang.Integer",
-                "long", "java.lang.Long",
-                "float", "java.lang.Float",
-                "double", "java.lang.Double",
-                "java.lang.String"
-        ));
         private static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -2656,14 +2640,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (shouldReturn) return;
                 }
 
-                String type;
+                Class type;
                 if (resource.type() != java.lang.Object.class) {
-                    type = resource.type().getName();
+                    type = resource.type();
                 } else {
-                    type = member.getType().getName();
+                    type = member.getType();
                 }
 
-                if (knownResourceEnvTypes.contains(type)) {
+                if (knownResourceEnvTypes.contains(type.getName())) {
                     /*
                      * @Resource <resource-env-ref>
                      */
@@ -2675,14 +2659,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (resourceEnvRef.getResourceEnvRefType() == null || ("").equals(resourceEnvRef.getResourceEnvRefType())) {
-                        if (resource.type() != java.lang.Object.class) {
-                            resourceEnvRef.setResourceEnvRefType(resource.type().getName());
-                        } else {
-                            resourceEnvRef.setResourceEnvRefType(member.getType().getName());
-                        }
+                        resourceEnvRef.setResourceEnvRefType(type.getName());
                     }
                     reference = resourceEnvRef;
-                } else if (!knownEnvironmentEntries.contains(type)) {
+                } else if (!isKnownEnvironmentEntryType(type)) {
                     /*
                      * @Resource <resource-ref>
                      */
@@ -2703,11 +2683,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     if (resourceRef.getResType() == null || ("").equals(resourceRef.getResType())) {
-                        if (resource.type() != java.lang.Object.class) {
-                            resourceRef.setResType(resource.type().getName());
-                        } else {
-                            resourceRef.setResType(member.getType().getName());
-                        }
+                        resourceRef.setResType(type.getName());
                     }
 
                     if (resourceRef.getResSharingScope() == null) {
