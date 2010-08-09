@@ -184,6 +184,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     private static final ThreadLocal<DeploymentModule> currentModule = new ThreadLocal<DeploymentModule>();
 
     public static final Set<String> knownResourceEnvTypes = new TreeSet<String>(asList(
+            "javax.ejb.EJBContext",
             "javax.ejb.SessionContext",
             "javax.ejb.EntityContext",
             "javax.ejb.MessageDrivenContext",
