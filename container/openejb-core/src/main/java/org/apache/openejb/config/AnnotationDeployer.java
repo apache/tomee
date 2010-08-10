@@ -649,6 +649,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
+        private static final Method LOOKUP_METHOD = getLookupMethod();
+        
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 setModule(ejbModule);
@@ -2728,8 +2730,35 @@ public class AnnotationDeployer implements DynamicDeployer {
                 reference.setMappedName(resource.mappedName());
             }
 
+            // Override the lookup name if not set
+            if (reference.getLookupName() == null) {
+                String lookupName = getLookupName(resource);
+                if (!lookupName.equals("")) {
+                    reference.setLookupName(lookupName);
+                }
+            }
         }
 
+        private static Method getLookupMethod() {
+            try {
+                return Resource.class.getMethod("lookup", null);
+            } catch (NoSuchMethodException e) {
+                return null;
+            }
+        }
+        
+        private static String getLookupName(Resource resource) {
+            String value = "";
+            if (LOOKUP_METHOD != null) {
+                try {
+                    value = (String) LOOKUP_METHOD.invoke(resource, null);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            return value;
+        }
+        
         /**
          * Process @PersistenceUnit into <persistence-unit> for the specified member (field or method)
          *
