@@ -77,7 +77,7 @@ public class OpenEjbContainer extends EJBContainer {
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> properties) {
             Object provider = properties.get(EJBContainer.PROVIDER);
-            if (provider != null && !provider.equals(Provider.class) && !provider.equals(Provider.class.getName())) {
+            if (provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())) {
                 return null;
             }
             String appId = (String) properties.get(EJBContainer.APP_NAME);
