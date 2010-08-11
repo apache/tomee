@@ -18,6 +18,7 @@ package org.apache.openejb.util.proxy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -100,8 +101,12 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		mv.visitEnd();
 
 		// loop through public methods, and push something to the class
-		Method[] methods = clsToProxy.getDeclaredMethods();
+		Method[] methods = clsToProxy.getMethods();
 		for (Method method : methods) {
+		    if (Modifier.isFinal(method.getModifiers())) {
+		        // can't proxy final methods
+		        continue;
+		    }
 			processMethod(cw, method, proxyClassName, clsToOverride);
 		}
 		
