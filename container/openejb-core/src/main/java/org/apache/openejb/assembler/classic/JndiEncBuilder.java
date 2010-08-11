@@ -23,6 +23,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.ivm.naming.ClassReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
@@ -203,6 +204,10 @@ public class JndiEncBuilder {
                     obj = new Character(sb.charAt(0));
                 } else if (type == URL.class) {
                     obj = new URL(entry.value);
+                } else if (type == Class.class) {
+                    obj = new ClassReference(entry.value.trim());
+                } else if (type.isEnum()) {
+                    obj = Enum.valueOf(type, entry.value.trim());
                 } else {
                     throw new IllegalArgumentException("Invalid env-ref-type " + type);
                 }
