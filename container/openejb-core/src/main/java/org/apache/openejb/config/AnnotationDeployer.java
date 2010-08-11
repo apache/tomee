@@ -116,6 +116,7 @@ import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EjbReference;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.ExcludeList;
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.FacesManagedBean;
@@ -2665,7 +2666,28 @@ public class AnnotationDeployer implements DynamicDeployer {
                         resourceEnvRef.setResourceEnvRefType(type.getName());
                     }
                     reference = resourceEnvRef;
-                } else if (!isKnownEnvironmentEntryType(type)) {
+                } else if (isKnownEnvironmentEntryType(type)) {
+                    /*
+                     * @Resource <env-entry>    
+                     * 
+                     * Add an env-entry via @Resource if 'lookup' attribute is set.
+                     */ 
+                    String lookupName = getLookupName(resource);
+                    if (!lookupName.equals("")) {
+                        EnvEntry envEntry = new EnvEntry();
+                        envEntry.setName(refName);
+                        consumer.getEnvEntry().add(envEntry);
+                        
+                        envEntry.setLookupName(lookupName);
+                        
+                        reference = envEntry;
+                    } else {
+                        /*
+                         * Can't add env-entry since @Resource.lookup is not set. 
+                         */
+                        return;
+                    }
+                } else {
                     /*
                      * @Resource <resource-ref>
                      */
@@ -2698,20 +2720,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     reference = resourceRef;
                 }
-            }
-
-            /*
-             * @Resource <env-entry>
-             *
-             * Can't add an env-entry via @Resource as there needs to
-             * be a corresponding value specified in the ejb-jar.xml.
-             *
-             * If we didn't find a reference (env-entry) in the ejb-jar.xml
-             * and this is not a resource-env-ref or a resource-ref then
-             * this is not a valid @Resource reference.
-             */
-            if (reference == null) {
-                return;
             }
 
             /*

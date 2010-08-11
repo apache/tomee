@@ -329,8 +329,8 @@ public class JndiEncInfoBuilder {
 
     private void buildEnvEntryInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
         for (EnvEntry env : item.getEnvEntry()) {
-            // ignore env entries without a value
-            if (env.getEnvEntryValue() == null) {
+            // ignore env entries without a value and lookup name
+            if (env.getEnvEntryValue() == null && env.getLookupName() == null) {
                 continue;
             }
               //TODO this is wrong, need to infer type from injections.
@@ -354,13 +354,19 @@ public class JndiEncInfoBuilder {
     }
 
     public ReferenceLocationInfo buildLocationInfo(JndiReference reference) {
-        String mappedName = reference.getMappedName();
-        if (mappedName == null || !mappedName.startsWith("jndi:")) {
-            return null;
+        String lookupName = reference.getLookupName();
+        if (lookupName != null) {
+            ReferenceLocationInfo location = new ReferenceLocationInfo();
+            location.jndiName = lookupName;
+            return location;
         }
-        ReferenceLocationInfo location = new ReferenceLocationInfo();
-        location.jndiName = mappedName.replaceFirst("^jndi:", "");
-        return location;
+        String mappedName = reference.getMappedName();
+        if (mappedName != null && mappedName.startsWith("jndi:")) {
+            ReferenceLocationInfo location = new ReferenceLocationInfo();
+            location.jndiName = mappedName.substring(5);
+            return location;
+        }
+        return null;
     }
 
     public Collection<? extends InjectionInfo> buildInjectionInfos(Injectable injectable) {
