@@ -83,6 +83,10 @@ public class XmlOverridesTest extends TestCase {
         bean.getEnvEntry().add(new EnvEntry(name("booolean"), "java.lang.String", "seven"));
         bean.getEnvEntry().add(new EnvEntry(name("byyte"), "java.lang.String", "eight"));
         bean.getEnvEntry().add(new EnvEntry(name("chaaracter"), "java.lang.String", "nine"));
+        
+        EnvEntry lookupEntry = new EnvEntry(name("lookup"), "java.lang.String", null);
+        lookupEntry.setLookupName("java:app/AppName");
+        bean.getEnvEntry().add(lookupEntry);
 
         bean.getResourceRef().add(new ResourceRef(name("daataSource"), DataSource.class.getName(), ResAuth.CONTAINER, ResSharingScope.SHAREABLE));
 
@@ -106,7 +110,7 @@ public class XmlOverridesTest extends TestCase {
         assertEquals("Enc.ejbLocalReferences.get(0).link", "BarBean", enc.ejbLocalReferences.get(0).link);
         assertEquals("Enc.ejbReferences.size()", 0, enc.ejbReferences.size());
 
-        assertEquals("Enc.envEntries.size()", 9, enc.envEntries.size());
+        assertEquals("Enc.envEntries.size()", 10, enc.envEntries.size());
         Map<String, EnvEntryInfo> entries = map(enc.envEntries);
 
         assertEnvEntry(entries, name("striing"), "java.lang.Integer", "2");
@@ -118,6 +122,7 @@ public class XmlOverridesTest extends TestCase {
         assertEnvEntry(entries, name("booolean"), "java.lang.String", "seven");
         assertEnvEntry(entries, name("byyte"), "java.lang.String", "eight");
         assertEnvEntry(entries, name("chaaracter"), "java.lang.String", "nine");
+        assertEnvEntryLookup(entries, name("lookup"), "java.lang.String", "java:app/AppName");
 
         assertEquals("Enc.persistenceContextRefs.size()", 1, enc.persistenceContextRefs.size());
         PersistenceContextReferenceInfo context = enc.persistenceContextRefs.get(0);
@@ -141,6 +146,15 @@ public class XmlOverridesTest extends TestCase {
         assertNotNull(name, entryInfo);
         assertEquals(name + ".type", type, entryInfo.type);
         assertEquals(name + ".value", value, entryInfo.value);
+    }
+    
+    private void assertEnvEntryLookup(Map<String, EnvEntryInfo> entries, String name, String type, String lookup) {
+        EnvEntryInfo entryInfo = entries.get(name);
+        assertNotNull(name, entryInfo);
+        assertEquals(name + ".type", type, entryInfo.type);
+        assertNull(name + ".value", entryInfo.value);
+        assertNotNull(name + ".location", entryInfo.location);
+        assertEquals(name + ".location.jndiName", lookup, entryInfo.location.jndiName);        
     }
 
     private <T extends InjectableInfo> Map<String, T> map(List<T> list) {
@@ -197,6 +211,9 @@ public class XmlOverridesTest extends TestCase {
 
         @Resource
         private Character chaaracter = 'D';
+        
+        @Resource
+        private String lookup;
 
         @Resource(authenticationType = Resource.AuthenticationType.APPLICATION, shareable = false)
         private DataSource daataSource;
