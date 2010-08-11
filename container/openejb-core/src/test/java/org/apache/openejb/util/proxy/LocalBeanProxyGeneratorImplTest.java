@@ -882,7 +882,18 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
         assertEquals("Lorg/apache/openejb/util/proxy/LocalBeanProxyGeneratorImplTest$Color;", localBeanProxyGenerator.getAsmTypeAsString(Color.class, true));
     }
 
-
+    @Test
+    public void testInheritedMethod() throws Exception {
+        TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+        SampleLocalBean proxy = loadProxy(invocationHandler);
+        String result = proxy.hello("Bob");
+        
+        assertEquals("Hello Bob", result);
+        assertEquals(1, invocationHandler.getCalls().length);
+        Call call = invocationHandler.getCalls()[0];
+        assertEquals("hello", call.getMethodName());
+    }
+    
     public static class EnumParams {
 
         public void someEnumMethod(Color s){

@@ -22,9 +22,8 @@ import java.util.List;
 
 import javax.ejb.LocalBean;
 
-
 @LocalBean
-public class SampleLocalBean {
+public class SampleLocalBean extends BaseLocalBean {
 
 	public SampleLocalBean() {
 		super();
