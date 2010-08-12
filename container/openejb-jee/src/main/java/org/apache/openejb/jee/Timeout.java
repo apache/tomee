@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -80,7 +82,8 @@ public class Timeout {
     @XmlElement(required = true)
     protected long timeout;
     @XmlElement(required = true)
-    protected TimeUnitType unit;
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    protected TimeUnit unit;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -95,11 +98,11 @@ public class Timeout {
         this.timeout = value;
     }
 
-    public TimeUnitType getUnit() {
+    public TimeUnit getUnit() {
         return unit;
     }
 
-    public void setUnit(TimeUnitType value) {
+    public void setUnit(TimeUnit value) {
         this.unit = value;
     }
 
