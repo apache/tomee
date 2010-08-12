@@ -45,7 +45,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
                     null, null,
                     null,
                     String.class,
-                    BeanType.CMP_ENTITY);
+                    BeanType.CMP_ENTITY, false);
             ((CoreDeploymentInfo)deploymentInfo).createMethodMap();
         } catch (SystemException e) {
             throw new RuntimeException(e);

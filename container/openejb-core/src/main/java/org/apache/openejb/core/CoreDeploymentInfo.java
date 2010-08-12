@@ -120,7 +120,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     private final Map<Class, ExceptionType> exceptions = new HashMap<Class, ExceptionType>();
 
     private boolean loadOnStartup;
-    private boolean localbean;
+    private final boolean localbean;
     private Duration accessTimeout;
     private Duration statefulTimeout;
 
@@ -171,8 +171,8 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
                               Class localHomeInterface,
                               Class localInterface,
                               Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
-                              BeanType componentType
-    ) throws SystemException {
+                              BeanType componentType,
+                              boolean localBean) throws SystemException {
         super(id, moduleContext.getOptions());
         this.moduleContext = moduleContext;
         this.jndiContext = jndiContext;
@@ -196,6 +196,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         this.serviceEndpointInterface = serviceEndpointInterface;
 
         this.componentType = componentType;
+        this.localbean = localBean;
 
 //        if (businessLocal != null && localHomeInterface == null){
 //            this.localHomeInterface = BusinessLocalHome.class;
@@ -237,6 +238,9 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         addInterface(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
         for (Class businessLocal : this.businessLocals) {
             addInterface(businessLocal, InterfaceType.BUSINESS_LOCAL);
+        }
+        if (localBean) {
+            addInterface(beanClass, InterfaceType.LOCALBEAN);
         }
     }
 
@@ -324,6 +328,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             }
         }
         createMethodMap();
+        localbean = false;
     }
 
 
@@ -1016,10 +1021,6 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
 
     public boolean isLocalbean() {
         return localbean;
-    }
-
-    public void setLocalbean(boolean localbean) {
-        this.localbean = localbean;
     }
 
     public Class getBusinessLocalBeanInterface() {
