@@ -213,6 +213,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         sys = configuration;
     }
 
+    public ConfigurationFactory(boolean offline,
+                                Chain deployerChain,
+                                OpenEjbConfiguration configuration) {
+        this.offline = offline;
+        this.deploymentLoader = new DeploymentLoader();
+        this.deployer = deployerChain;
+        this.sys = configuration;
+    }
+    
     public static List<HandlerChainInfo> toHandlerChainInfo(HandlerChains chains) {
         List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
         if (chains == null) return handlerChains;
@@ -238,7 +247,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         return handlerChains;
     }
 
-    public static class Chain implements DynamicDeployer{
+    public static class Chain implements DynamicDeployer {
         private final List<DynamicDeployer> chain = new ArrayList<DynamicDeployer>();
 
         public boolean add(DynamicDeployer o) {
