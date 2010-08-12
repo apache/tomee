@@ -27,13 +27,13 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.TimeUnitType;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.Local;
 import javax.ejb.Stateful;
 import javax.naming.InitialContext;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
 
 public class StatefulConcurrencyTest extends TestCase {
 
@@ -59,7 +59,7 @@ public class StatefulConcurrencyTest extends TestCase {
 
         final Timeout timeout = new Timeout();
         timeout.setTimeout(1000);
-        timeout.setUnit(TimeUnitType.Milliseconds);
+        timeout.setUnit(TimeUnit.MILLISECONDS);
         bean.setAccessTimeout(timeout);
 
         ejbJar.addEnterpriseBean(bean);

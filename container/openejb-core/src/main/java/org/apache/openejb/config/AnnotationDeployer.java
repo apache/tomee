@@ -158,7 +158,6 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.Tag;
-import org.apache.openejb.jee.TimeUnitType;
 import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.Timer;
 import org.apache.openejb.jee.TimerConsumer;
@@ -1104,7 +1103,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if(annotation != null) {
                             final Timeout timeout = new Timeout();
                             timeout.setTimeout(annotation.value());
-                            timeout.setUnit(TimeUnitType.valueOf(annotation.unit().toString()));
+                            timeout.setUnit(annotation.unit());
                             sessionBean.setAccessTimeout(timeout);
                         }
                     }
@@ -1115,7 +1114,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         if(annotation != null) {
                             final Timeout timeout = new Timeout();
                             timeout.setTimeout(annotation.value());
-                            timeout.setUnit(TimeUnitType.valueOf(annotation.unit().toString()));
+                            timeout.setUnit(annotation.unit());
                             sessionBean.setStatefulTimeout(timeout);
                         }
                     }

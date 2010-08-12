@@ -599,14 +599,14 @@ public class EjbJarInfoBuilder {
         if(statefulTimeout != null) {
         	bean.statefulTimeout = new TimeoutInfo();
             bean.statefulTimeout.time = statefulTimeout.getTimeout();
-            bean.statefulTimeout.unit = statefulTimeout.getUnit().toTimeUnit().toString();
+            bean.statefulTimeout.unit = statefulTimeout.getUnit().toString();
         }
 
         final Timeout accessTimeout = s.getAccessTimeout();
         if(accessTimeout != null) {
             bean.accessTimeout = new TimeoutInfo();
             bean.accessTimeout.time = accessTimeout.getTimeout();
-            bean.accessTimeout.unit = accessTimeout.getUnit().toTimeUnit().toString();
+            bean.accessTimeout.unit = accessTimeout.getUnit().toString();
         }
 
         return bean;
