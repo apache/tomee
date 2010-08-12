@@ -38,6 +38,7 @@ import org.apache.openejb.core.stateful.StatefulEjbObjectHandler;
 import org.apache.openejb.core.singleton.SingletonEjbObjectHandler;
 import org.apache.openejb.core.managed.ManagedObjectHandler;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 /**
@@ -122,10 +123,14 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
             }
 
-            List<Class> interfaces = new ArrayList<Class>();
-            interfaces.addAll(di.getInterfaces(interfaceType));
-            interfaces.add(IntraVmProxy.class);
-            return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
+            if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
+                return LocalBeanProxyFactory.newProxyInstance(di.getClassLoader(), di.getBeanClass(), handler);
+            } else {
+                List<Class> interfaces = new ArrayList<Class>();
+                interfaces.addAll(di.getInterfaces(interfaceType));
+                interfaces.add(IntraVmProxy.class);
+                return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
+            }
         } catch (IllegalAccessException iae) {
             throw new InternalErrorException("Could not create IVM proxy for " + interfce.getName() + " interface", iae);
         }

@@ -67,6 +67,7 @@ public enum InterfaceType {
         switch(this){
             case BUSINESS_LOCAL: return true;
             case BUSINESS_REMOTE: return true;
+            case LOCALBEAN: return true;
         }
         return false;
     }
@@ -87,6 +88,7 @@ public enum InterfaceType {
             case EJB_LOCAL: return true;
             case BUSINESS_LOCAL: return true;
             case BUSINESS_LOCAL_HOME: return true;
+            case LOCALBEAN: return true;
         }
         return false;
     }

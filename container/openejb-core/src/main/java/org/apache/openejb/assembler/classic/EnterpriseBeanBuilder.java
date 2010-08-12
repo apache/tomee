@@ -145,7 +145,7 @@ class EnterpriseBeanBuilder {
 
         CoreDeploymentInfo deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType);
+            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
@@ -226,8 +226,6 @@ class EnterpriseBeanBuilder {
             // Allow dependsOn to work for all session beans
             deployment.getDependsOn().addAll(bean.dependsOn);
 
-            // @LocalBean should work for any kind of Session Bean
-            deployment.setLocalbean(bean.localbean);
         }
 
         if (ejbType == BeanType.SINGLETON) {
