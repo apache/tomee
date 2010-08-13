@@ -160,12 +160,11 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(ref));
             info.localbean = isIntefaceLocalBean(moduleId, info.interfaceClassName);
 
-
             if (info.location != null) {
                 if (ref.getRefType() == EjbReference.Type.LOCAL){
-                    compJndiEnc.ejbLocalReferences.add(toLocal(info));
+                    insert(toLocal(info), appInfo.globalJndiEnc.ejbLocalReferences, appInfo.appJndiEnc.ejbLocalReferences, moduleJndiEnc.ejbLocalReferences, compJndiEnc.ejbLocalReferences);
                 } else {
-                    compJndiEnc.ejbReferences.add(info);
+                    insert(info, appInfo.globalJndiEnc.ejbReferences, appInfo.appJndiEnc.ejbReferences, moduleJndiEnc.ejbReferences, compJndiEnc.ejbReferences);
                 }
                 continue;
             }
