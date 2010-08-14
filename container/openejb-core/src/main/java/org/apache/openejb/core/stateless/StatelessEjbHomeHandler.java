@@ -28,8 +28,8 @@ import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, interfaceType, interfaces);
+    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, interfaceType, interfaces, mainInterface);
     }
 
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
@@ -45,8 +45,8 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        return new StatelessEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces);
+    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new StatelessEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

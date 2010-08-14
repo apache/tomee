@@ -29,8 +29,8 @@ import java.util.List;
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
-    public StatelessEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, pk, interfaceType, interfaces);
+    public StatelessEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {

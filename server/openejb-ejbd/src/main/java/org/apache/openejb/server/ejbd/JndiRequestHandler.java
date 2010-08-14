@@ -54,7 +54,6 @@ import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
 import org.apache.openejb.client.WsMetaData;
-import org.apache.openejb.client.InterfaceType;
 import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.webservices.HandlerChainData;
@@ -378,7 +377,10 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1, convert(proxyInfo.getInterfaceType()), null);
+                        -1,
+                        convert(proxyInfo.getInterfaceType()),
+                        null,
+                        proxyInfo.getInterface());
                 metaData.loadProperties(deployment.getProperties());
 
                 res.setResult(metaData);
@@ -397,7 +399,10 @@ class JndiRequestHandler {
                         deployment.getPrimaryKeyClass(),
                         deployment.getComponentType().toString(),
                         deploymentID,
-                        -1, convert(proxyInfo.getInterfaceType()), proxyInfo.getInterfaces());
+                        -1,
+                        convert(proxyInfo.getInterfaceType()),
+                        proxyInfo.getInterfaces(),
+                        proxyInfo.getInterface());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(deployment.getProperties());
 

@@ -18,7 +18,6 @@ package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -522,17 +521,18 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         return ejbLocalHomeRef;
     }
 
+    //unused
     public BusinessLocalHome getBusinessLocalHome() {
-        return getBusinessLocalHome(getBusinessLocalInterfaces());
+        return getBusinessLocalHome(getBusinessLocalInterfaces(), null);
     }
 
     public BusinessLocalBeanHome getBusinessLocalBeanHome() {
         List<Class> interfaces = new ArrayList<Class>();
         interfaces.add(this.beanClass);
-        return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces);
+        return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces, this.beanClass);
     }
 
-    public BusinessLocalHome getBusinessLocalHome(List<Class> interfaces) {
+    public BusinessLocalHome getBusinessLocalHome(List<Class> interfaces, Class mainInterface) {
         if (getBusinessLocalInterfaces().size() == 0){
             throw new IllegalStateException("This component has no business local interfaces: " + getDeploymentID());
         }
@@ -545,14 +545,15 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             }
         }
 
-        return (BusinessLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCAL_HOME, interfaces);
+        return (BusinessLocalHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCAL_HOME, interfaces, mainInterface);
     }
 
+    //unused
     public BusinessRemoteHome getBusinessRemoteHome() {
-        return getBusinessRemoteHome(getBusinessRemoteInterfaces());
+        return getBusinessRemoteHome(getBusinessRemoteInterfaces(), null);
     }
 
-    public BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces) {
+    public BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces, Class mainInterface) {
         if (getBusinessRemoteInterfaces().size() == 0){
             throw new IllegalStateException("This component has no business remote interfaces: " + getDeploymentID());
         }
@@ -565,7 +566,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             }
         }
 
-        return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, interfaces);
+        return (BusinessRemoteHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_REMOTE_HOME, interfaces, mainInterface);
     }
 
     public String getDestinationId() {

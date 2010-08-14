@@ -36,7 +36,6 @@ import java.rmi.RemoteException;
 import java.rmi.AccessException;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.WeakHashMap;
@@ -56,7 +55,6 @@ import javax.transaction.TransactionRolledbackException;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -107,7 +105,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     private transient WeakHashMap<Class,Object> interfaces;
     private transient WeakReference<Class> mainInterface;
 
-    public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
+    public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
         this.container = (RpcContainer) deploymentInfo.getContainer();
         this.deploymentID = deploymentInfo.getDeploymentID();
         this.interfaceType = interfaceType;
@@ -117,22 +115,16 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (interfaces == null || interfaces.size() == 0) {
             InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
             interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
+            if (mainInterface == null && interfaces.size() == 1) {
+                mainInterface = interfaces.get(0);
+            }
         }
-
-        this.setDoIntraVmCopy(!interfaceType.isLocal() && !interfaceType.isLocalBean());
-
-        if (!interfaceType.isLocal()&& !interfaceType.isLocalBean()){
-            setDoIntraVmCopy(REMOTE_COPY_ENABLED);
-        }
-
         setInterfaces(interfaces);
-
-        if (interfaceType.isHome()){
-            setMainInterface(deploymentInfo.getInterface(interfaceType));
-        } else {
-            // Then arbitrarily pick the first interface
-            setMainInterface(interfaces.get(0));
+        setMainInterface(mainInterface);
+        if (mainInterface == null) {
+            throw new IllegalArgumentException("No mainInterface: otherwise di: " + deploymentInfo + " InterfaceType: " + interfaceType + " interfaces: " + interfaces );
         }
+        this.setDoIntraVmCopy(REMOTE_COPY_ENABLED && !interfaceType.isLocal() && !interfaceType.isLocalBean());
     }
 
     protected void setDoIntraVmCopy(boolean doIntraVmCopy) {
@@ -172,7 +164,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         // If our "main" interface is or extends the method's declaring class
         // then we're good.  We know the main interface has the method being
         // invoked and it's safe to return it as the invoked interface.
-        if (declaringClass.isAssignableFrom(mainInterface)){
+        if (mainInterface != null && declaringClass.isAssignableFrom(mainInterface)){
             return mainInterface;
         }
 
@@ -235,12 +227,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
             if (methodName.equals("toString")) return toString();
             else if (methodName.equals("equals")) return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
             else if (methodName.equals("hashCode")) return new Integer(hashCode());
-            else throw new UnsupportedOperationException("Unkown method: " + method);
+            else throw new UnsupportedOperationException("Unknown method: " + method);
         } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
 
             if (methodName.equals("writeReplace")) return _writeReplace(proxy);
-            else throw new UnsupportedOperationException("Unkown method: " + method);
+            else throw new UnsupportedOperationException("Unknown method: " + method);
         }
 
         Class interfce = getInvokedInterface(method);
@@ -442,12 +434,17 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         } catch (IllegalArgumentException e) {
             return false;
         }
-        BaseEjbProxyHandler other = (BaseEjbProxyHandler) obj;
-        if (primaryKey == null) {
-            return other.primaryKey == null && deploymentID.equals(other.deploymentID);
-        } else {
-            return primaryKey.equals(other.primaryKey) && deploymentID.equals(other.deploymentID);
+        if (this == obj) {
+            return true;
         }
+        BaseEjbProxyHandler other = (BaseEjbProxyHandler) obj;
+        return equalHandler(other);
+    }
+
+    protected boolean equalHandler(BaseEjbProxyHandler other) {
+        return (primaryKey == null? other.primaryKey == null: primaryKey.equals(other.primaryKey))
+                && deploymentID.equals(other.deploymentID)
+                && getMainInterface().equals(other.getMainInterface());
     }
 
     protected abstract Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable;

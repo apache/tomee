@@ -49,8 +49,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         
     }
 
-    public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, pk, interfaceType, interfaces);
+    public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
     }
 
     public abstract Object getRegistryId();
@@ -170,7 +170,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getInterfaces(), interfaceType);
+        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getInterfaces(), interfaceType, getMainInterface());
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {
@@ -217,17 +217,15 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         return container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
     }
 
-    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType) {
-        
-
-        return createProxy(deploymentInfo, primaryKey, interfaceType, null);
+    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, Class mainInterface) {
+        return createProxy(deploymentInfo, primaryKey, interfaceType, null, mainInterface);
     }
 
-    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, List<Class> interfaces) {
+    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
         if (!interfaceType.isHome()){
             interfaceType = interfaceType.getCounterpart();
         }
-        EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces);
-        return homeHandler.createProxy(primaryKey);
+        EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces, mainInterface);
+        return homeHandler.createProxy(primaryKey, mainInterface);
     }
 }

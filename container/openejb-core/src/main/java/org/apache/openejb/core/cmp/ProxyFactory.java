@@ -61,7 +61,7 @@ public class ProxyFactory {
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = remoteHandler.createProxy(primaryKey);
+        Object proxy = remoteHandler.createProxy(primaryKey, deploymentInfo.getRemoteInterface());
         return proxy;
     }
 
@@ -71,7 +71,7 @@ public class ProxyFactory {
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = localHandler.createProxy(primaryKey);
+        Object proxy = localHandler.createProxy(primaryKey, deploymentInfo.getLocalInterface());
         return proxy;
 
     }

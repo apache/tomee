@@ -18,7 +18,6 @@ package org.apache.openejb.server.ejbd;
 
 import java.net.URI;
 import java.util.Properties;
-import java.util.Map;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.ProxyInfo;
@@ -144,7 +143,10 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), info.getInterfaces());
+                idCode,
+                convert(info.getInterfaceType()),
+                info.getInterfaces(),
+                info.getInterface());
         eMetaData.loadProperties(deployment.getProperties());
         
         Object primKey = info.getPrimaryKey();
@@ -194,7 +196,10 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 deployment.getPrimaryKeyClass(),
                 deployment.getComponentType().toString(),
                 deployment.getDeploymentID().toString(),
-                idCode, convert(info.getInterfaceType()), null);
+                idCode,
+                convert(info.getInterfaceType()),
+                info.getInterfaces(),
+                info.getInterface());
         eMetaData.loadProperties(deployment.getProperties());
         return eMetaData;
     }
