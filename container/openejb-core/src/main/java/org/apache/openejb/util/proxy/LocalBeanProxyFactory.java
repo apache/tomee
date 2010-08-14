@@ -17,8 +17,8 @@
 package org.apache.openejb.util.proxy;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
 
 public class LocalBeanProxyFactory {
 
@@ -39,4 +39,19 @@ public class LocalBeanProxyFactory {
         }
     }
 
+    public static InvocationHandler getInvocationHandler(Object proxy) {
+        try {
+            Field field = proxy.getClass().getDeclaredField("invocationHandler");
+            field.setAccessible(true);
+            try {
+                return (InvocationHandler) field.get(proxy);
+            } finally {
+                field.setAccessible(false);
+            }
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

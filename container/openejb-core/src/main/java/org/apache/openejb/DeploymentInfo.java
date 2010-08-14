@@ -113,11 +113,11 @@ public interface DeploymentInfo {
 
     BusinessLocalBeanHome getBusinessLocalBeanHome();
 
-    BusinessLocalHome getBusinessLocalHome(List<Class> interfaces);
+    BusinessLocalHome getBusinessLocalHome(List<Class> interfaces, Class mainInterface);
 
     BusinessRemoteHome getBusinessRemoteHome();
 
-    BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces);
+    BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces, Class mainInterface);
 
     String getDestinationId();
 

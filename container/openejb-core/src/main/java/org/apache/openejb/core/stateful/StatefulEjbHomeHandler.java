@@ -30,12 +30,12 @@ import org.apache.openejb.util.proxy.ProxyManager;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, interfaceType, interfaces);
+    public StatefulEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, interfaceType, interfaces, mainInterface);
     }
 
-    public Object createProxy(Object primaryKey) {
-        Object proxy = super.createProxy(primaryKey);
+    public Object createProxy(Object primaryKey, Class mainInterface) {
+        Object proxy = super.createProxy(primaryKey, mainInterface);
         EjbObjectProxyHandler handler = null;
 
         try {
@@ -62,8 +62,8 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        return new StatefulEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces);
+    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new StatefulEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

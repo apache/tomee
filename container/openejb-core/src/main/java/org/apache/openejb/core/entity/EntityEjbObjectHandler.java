@@ -39,8 +39,8 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     */
     private Object registryId;
 
-    public EntityEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, pk, interfaceType, interfaces);
+    public EntityEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
     }
 
     /*

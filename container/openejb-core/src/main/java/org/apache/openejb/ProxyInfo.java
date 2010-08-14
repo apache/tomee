@@ -26,16 +26,18 @@ public class ProxyInfo {
     protected List<Class> proxyInterfaces;
     protected RpcContainer beanContainer;
     protected InterfaceType interfaceType;
+    protected Class mainInterface;
 
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType proxyType) {
+    public ProxyInfo(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType proxyType, Class mainInterface) {
         this.deploymentInfo = deploymentInfo;
         this.primaryKey = primaryKey;
         this.proxyInterfaces = interfaces;
         this.interfaceType = proxyType;
         this.beanContainer = (RpcContainer) deploymentInfo.getContainer();
+        this.mainInterface = mainInterface;
     }
 
     /**
@@ -48,7 +50,7 @@ public class ProxyInfo {
      * @param pk
      */
     public ProxyInfo(DeploymentInfo depInfo, Object pk) {
-        this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN);
+        this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN, null);
     }
 
     public InterfaceType getInterfaceType() {
@@ -64,7 +66,7 @@ public class ProxyInfo {
     }
 
     public Class getInterface() {
-        return proxyInterfaces.get(0);
+        return mainInterface == null && proxyInterfaces != null && !proxyInterfaces.isEmpty()? proxyInterfaces.get(0): mainInterface;
     }
 
     public List<Class> getInterfaces() {

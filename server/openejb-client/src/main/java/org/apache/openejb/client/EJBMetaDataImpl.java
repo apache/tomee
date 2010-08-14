@@ -51,6 +51,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     protected final transient List<Class> businessClasses = new ArrayList<Class>();
 
+    protected transient Class mainInterface;
+
     protected final transient Properties properties = new Properties();
 
     protected transient Class keyClass;
@@ -99,7 +101,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         this.deploymentID = deploymentID;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces, Class mainInterface) {
         this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, interfaceType, businessInterfaces);
         this.deploymentCode = deploymentCode;
     }
@@ -156,6 +158,10 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         return businessClasses;
     }
 
+    public Class getMainInterface() {
+        return mainInterface;
+    }
+
     public Properties getProperties() {
         return properties;
     }
@@ -170,7 +176,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out the version of the serialized data for future use
-        out.writeByte(2);
+        out.writeByte(3);
 
         out.writeObject(homeClass);
         out.writeObject(remoteClass);
@@ -186,7 +192,7 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (businessClasses.size() >0){
             out.writeObject(primaryKey);
         }
-
+        out.writeObject(mainInterface);
         out.writeByte(interfaceType.ordinal());
 
         if (properties.size() == 0) {
@@ -221,7 +227,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (businessClasses.size() > 0){
             primaryKey = in.readObject();
         }
-
+        if (version > 2) {
+            mainInterface = (Class) in.readObject();
+        }
         if (version > 1) {
             byte typeIndex = in.readByte();
             interfaceType = InterfaceType.values()[typeIndex];

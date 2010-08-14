@@ -26,9 +26,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
-import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.apache.openejb.util.proxy.InvocationHandler;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.RemoveException;
@@ -37,12 +35,12 @@ import javax.ejb.EJBObject;
 
 public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public EntityEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, interfaceType, interfaces);
+    public EntityEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, interfaceType, interfaces, mainInterface);
     }
 
-    public Object createProxy(Object primaryKey) {
-        Object proxy = super.createProxy(primaryKey);
+    public Object createProxy(Object primaryKey, Class mainInterface) {
+        Object proxy = super.createProxy(primaryKey, mainInterface);
         EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(proxy);
 
         /* 
@@ -71,14 +69,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             Vector proxies = new Vector();
             for (int i = 0; i < proxyInfos.length; i++) {
                 ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
-                proxies.addElement(createProxy(proxyInfo.getPrimaryKey()));
+                proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;
         } else if (retValue instanceof org.apache.openejb.util.ArrayEnumeration) {
             org.apache.openejb.util.ArrayEnumeration enumeration = (org.apache.openejb.util.ArrayEnumeration) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
                 ProxyInfo proxyInfo = ((ProxyInfo) enumeration.get(i));
-                enumeration.set(i, createProxy(proxyInfo.getPrimaryKey()));
+                enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return enumeration;
         } else if (retValue instanceof java.util.Enumeration) {
@@ -87,14 +85,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
             java.util.List proxies = new java.util.ArrayList();
             while (enumeration.hasMoreElements()) {
                 ProxyInfo proxyInfo = ((ProxyInfo) enumeration.nextElement());
-                proxies.add(createProxy(proxyInfo.getPrimaryKey()));
+                proxies.add(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return new org.apache.openejb.util.ArrayEnumeration(proxies);
         } else {
             org.apache.openejb.ProxyInfo proxyInfo = (org.apache.openejb.ProxyInfo) retValue;
 
 
-            return createProxy(proxyInfo.getPrimaryKey());
+            return createProxy(proxyInfo.getPrimaryKey(), getMainInterface());
         }
 
     }
@@ -148,8 +146,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         return sb.toString();
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        return new EntityEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces);
+    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new EntityEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

@@ -29,8 +29,8 @@ import java.io.Serializable;
 
 public class ManagedObjectHandler extends EjbObjectProxyHandler {
 
-    public ManagedObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces) {
-        super(deploymentInfo, pk, interfaceType, interfaces);
+    public ManagedObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
     }
 
     public Object getRegistryId() {

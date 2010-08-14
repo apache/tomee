@@ -43,11 +43,11 @@ public class IntraVmServer implements org.apache.openejb.spi.ApplicationServer {
     }
 
     public EJBObject getEJBObject(ProxyInfo pi) {
-        return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces());
+        return (EJBObject) EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces(), pi.getInterface());
     }
 
     public Object getBusinessObject(ProxyInfo pi) {
-        return EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces());
+        return EjbObjectProxyHandler.createProxy(pi.getDeploymentInfo(), pi.getPrimaryKey(), pi.getInterfaceType(), pi.getInterfaces(), pi.getInterface());
     }
 
     public EJBHome getEJBHome(ProxyInfo pi) {

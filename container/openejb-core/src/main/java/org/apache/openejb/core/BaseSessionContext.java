@@ -16,15 +16,12 @@
  */
 package org.apache.openejb.core;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.ArrayList;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
+
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.SessionContext;
-import javax.ejb.TimerService;
 import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
@@ -64,7 +61,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
         if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
 
-        return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL);
+        return (EJBLocalObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, di.getLocalInterface());
     }
 
     public EJBObject getEJBObject() throws IllegalStateException {
@@ -73,7 +70,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         DeploymentInfo di = threadContext.getDeploymentInfo();
         if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
 
-        return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT);
+        return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, di.getRemoteInterface());
     }
 
     public MessageContext getMessageContext() throws IllegalStateException {
@@ -105,19 +102,19 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             EjbObjectProxyHandler handler;
             switch(di.getComponentType()){
                 case STATEFUL: {
-                    handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
                 }
                 case STATELESS: {
-                    handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
                 }
                 case SINGLETON: {
-                    handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
                 }
                 case MANAGED: {
-                    handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>());
+                    handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
                     break;
                 }
                 default: throw new IllegalStateException("Bean is not a session bean: "+di.getComponentType());
