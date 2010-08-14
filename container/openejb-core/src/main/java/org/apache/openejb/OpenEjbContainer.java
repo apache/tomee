@@ -37,6 +37,8 @@ import javax.naming.NamingException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentsResolver;
+import org.apache.openejb.config.RequireDescriptors;
 import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
@@ -84,6 +86,8 @@ public class OpenEjbContainer extends EJBContainer {
             try {
                 Properties props = new Properties();
                 props.put(DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
+                //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
+                props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");
                 props.putAll(properties);
                 OpenEJB.init(props);
                 ConfigurationFactory configurationFactory = new ConfigurationFactory();
