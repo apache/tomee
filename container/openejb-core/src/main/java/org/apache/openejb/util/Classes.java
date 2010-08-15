@@ -19,6 +19,7 @@ package org.apache.openejb.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.lang.reflect.Array;
 
 /**
@@ -26,16 +27,27 @@ import java.lang.reflect.Array;
  */
 public class Classes {
 
-    private static final HashMap<String, Class> primitives = new HashMap();
+    private static final Map<Class<?>, Class<?>> primitiveWrappers = new HashMap<Class<?>, Class<?>>();
+    private static final HashMap<String, Class> primitives = new HashMap<String, Class>();
+    
     static {
-        Classes.primitives.put("boolean", boolean.class);
-        Classes.primitives.put("byte", byte.class);
-        Classes.primitives.put("char", char.class);
-        Classes.primitives.put("short", short.class);
-        Classes.primitives.put("int", int.class);
-        Classes.primitives.put("long", long.class);
-        Classes.primitives.put("float", float.class);
-        Classes.primitives.put("double", double.class);
+        primitives.put("boolean", boolean.class);
+        primitives.put("byte", byte.class);
+        primitives.put("char", char.class);
+        primitives.put("short", short.class);
+        primitives.put("int", int.class);
+        primitives.put("long", long.class);
+        primitives.put("float", float.class);
+        primitives.put("double", double.class);
+        
+        primitiveWrappers.put(boolean.class, Boolean.class);
+        primitiveWrappers.put(byte.class, Byte.class);
+        primitiveWrappers.put(char.class, Character.class);
+        primitiveWrappers.put(double.class, Double.class);
+        primitiveWrappers.put(float.class, Float.class);
+        primitiveWrappers.put(int.class, Integer.class);
+        primitiveWrappers.put(long.class, Long.class);
+        primitiveWrappers.put(short.class, Short.class);       
     }
 
     public static Class forName(String string, ClassLoader classLoader) throws ClassNotFoundException {
@@ -75,5 +87,9 @@ public class Classes {
         }
 
         return list;
+    }
+    
+    public static Class<?> deprimitivize(Class<?> fieldType) {
+        return fieldType = fieldType.isPrimitive() ? primitiveWrappers.get(fieldType): fieldType;
     }
 }

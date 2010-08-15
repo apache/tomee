@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import junit.framework.TestCase;
 
@@ -34,6 +35,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.StatelessBean;
 
 /**
@@ -50,6 +52,7 @@ public class InjectionTest extends TestCase {
 
         Widget widget = (Widget) object;
 
+        // injected via annotations
         assertEquals("2", widget.getString());
         assertEquals(3.0D, widget.getDouble());
         assertEquals(new Long(4), widget.getLong());
@@ -60,6 +63,10 @@ public class InjectionTest extends TestCase {
         assertEquals(new Character('9'), widget.getCharacter());
         assertEquals(Widget.class, widget.getMyClass());
         assertEquals(TimeUnit.HOURS, widget.getTimeUnit());
+                
+        // injected via DD
+        assertEquals(true, widget.getInjectedBoolean());
+        assertEquals(true, widget.lookup("injectedBoolean"));
     }
 
     protected void setUp() throws Exception {
@@ -101,6 +108,10 @@ public class InjectionTest extends TestCase {
         bean.getEnvEntry().add(new EnvEntry(name("myCharacter"), "java.lang.Character", "9"));
         bean.getEnvEntry().add(new EnvEntry(name("myClass"), "java.lang.Class", Widget.class.getName()));
         bean.getEnvEntry().add(new EnvEntry(name("myTimeUnit"), TimeUnit.class.getName(), "HOURS"));
+        
+        EnvEntry entry = new EnvEntry("injectedBoolean", (String) null, "true");
+        entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedBoolean")));
+        bean.getEnvEntry().add(entry);
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
@@ -121,6 +132,10 @@ public class InjectionTest extends TestCase {
         Byte getByte();
         Class getMyClass();
         TimeUnit getTimeUnit();
+        
+        Object lookup(String name) throws NamingException;
+        
+        boolean getInjectedBoolean();
     }
 
     public static interface RemoteWidget extends Widget {
@@ -129,6 +144,8 @@ public class InjectionTest extends TestCase {
     @Stateless
     public static class WidgetBean implements Widget, RemoteWidget {
 
+        private SessionContext sessionContext;
+        
         @Resource
         private String myString = "1";
 
@@ -162,13 +179,21 @@ public class InjectionTest extends TestCase {
         @Resource
         private TimeUnit myTimeUnit = TimeUnit.DAYS;
 
+        // injected via DD
+        private boolean injectedBoolean = false;
+        
         public WidgetBean() {           
         }
 
         @Resource
         public void setSessionContext(SessionContext sessionContext) {
+            this.sessionContext = sessionContext;
         }
 
+        public Object lookup(String name) throws NamingException {
+            return sessionContext.lookup(name);
+        }
+        
         public Boolean getBoolean() {
             return myBoolean;
         }
@@ -213,5 +238,8 @@ public class InjectionTest extends TestCase {
             return myTimeUnit;
         }
 
+        public boolean getInjectedBoolean() {
+            return injectedBoolean;
+        }
     }
 }
