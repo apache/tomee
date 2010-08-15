@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.util;
 
+import java.beans.Introspector;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Field;
@@ -283,5 +284,29 @@ public class IntrospectionSupport {
             }
         }
 
+    }
+    
+    public static Class getPropertyType(Class clazz, String propertyName) throws NoSuchFieldException {
+        do {
+            try {
+                return clazz.getDeclaredField(propertyName).getType();
+            } catch (NoSuchFieldException e) {
+                //look at superclass
+            }
+            for (Method method: clazz.getDeclaredMethods()) {
+                if (method.getReturnType() == void.class && method.getParameterTypes().length == 1) {
+                    String methodName = method.getName();
+                    if (methodName.startsWith("set")) {
+                        String type = Introspector.decapitalize(methodName.substring(3));
+                        if (propertyName.equals(type)) {
+                            return method.getParameterTypes()[0];
+                        }
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass();
+        } while (clazz != null);
+        
+        throw new NoSuchFieldException(propertyName);
     }
 }

@@ -39,6 +39,8 @@ import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.util.Classes;
+import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
@@ -179,9 +181,9 @@ public class JndiEncBuilder {
                 bindings.put(normalize(entry.referenceName), reference);
                 continue;
             }
-
+            
             try {
-                Class type = Class.forName(entry.type.trim());
+                Class type = Classes.deprimitivize(getType(entry.type, entry));
                 Object obj = null;
                 if (type == String.class)
                     obj = new String(entry.value);
@@ -213,8 +215,6 @@ public class JndiEncBuilder {
                 }
 
                 bindings.put(normalize(entry.referenceName), obj);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Invalid environment entry type: " + entry.type.trim() + " for entry: " + entry.referenceName, e);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("The env-entry-value for entry " + entry.referenceName + " was not recognizable as type " + entry.type + ". Received Message: " + e.getLocalizedMessage(), e);
             } catch (MalformedURLException e) {
@@ -448,6 +448,32 @@ public class JndiEncBuilder {
         return name;
     }
 
+    private Class getType(String type, InjectableInfo injectable) throws OpenEJBException {
+        if (type != null) {
+            try {
+                return classLoader.loadClass(type.trim());
+            } catch (ClassNotFoundException e) {
+                throw new OpenEJBException("Unable to load type '" + type + "' for " + injectable.referenceName);
+            }
+        }
+        return inferType(injectable);   
+    }
+    
+    private Class inferType(InjectableInfo injectable) throws OpenEJBException {
+        for (InjectionInfo injection : injectable.targets) {
+            try {
+                Class target = classLoader.loadClass(injection.className.trim());
+                Class type = IntrospectionSupport.getPropertyType(target, injection.propertyName.trim());
+                return type;
+            } catch (ClassNotFoundException e) {
+                // ignore
+            } catch (NoSuchFieldException e) {
+                // ignore
+            }
+        }
+        throw new OpenEJBException("Unable to infer type for " + injectable.referenceName);
+    }
+    
     private static class Ref implements EjbResolver.Reference, Serializable {
         private final EjbReferenceInfo info;
 
