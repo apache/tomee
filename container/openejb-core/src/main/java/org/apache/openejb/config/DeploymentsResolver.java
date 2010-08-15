@@ -44,7 +44,7 @@ public class DeploymentsResolver {
 
     public static final String DEPLOYMENTS_CLASSPATH_PROPERTY = "openejb.deployments.classpath";
     static final String SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY = DEPLOYMENTS_CLASSPATH_PROPERTY;
-    private static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
+    public static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
     private static final String CLASSPATH_REQUIRE_DESCRIPTOR = RequireDescriptors.PROPERTY;
     private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";

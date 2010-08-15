@@ -45,8 +45,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
-import static org.apache.openejb.config.DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -85,7 +83,7 @@ public class OpenEjbContainer extends EJBContainer {
             String appId = (String) properties.get(EJBContainer.APP_NAME);
             try {
                 Properties props = new Properties();
-                props.put(DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
+                props.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
                 props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");
                 props.putAll(properties);
