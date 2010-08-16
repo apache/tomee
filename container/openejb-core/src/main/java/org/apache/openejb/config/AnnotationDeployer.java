@@ -2487,7 +2487,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
-
+            
+            // Set lookup name, if any
+            String lookupName = ejb.lookup();
+            if (lookupName.equals("")) {
+                lookupName = null;
+            }
+            ejbRef.setLookupName(lookupName);
 
             Map<String, EjbRef> remoteRefs = consumer.getEjbRefMap();
             if (remoteRefs.containsKey(ejbRef.getName())) {
