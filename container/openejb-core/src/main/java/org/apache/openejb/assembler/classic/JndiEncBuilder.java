@@ -262,33 +262,27 @@ public class JndiEncBuilder {
         }
 
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
-            LinkRef linkRef = null;
-            try {
-                Class<?> type = Class.forName(referenceInfo.resourceEnvRefType, true, EJBContext.class.getClassLoader());
-                if (EJBContext.class.isAssignableFrom(type)) {
-                    String jndiName = "comp/EJBContext";
-                    linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
-                    continue;
-                } else if (WebServiceContext.class.equals(type)) {
-                    String jndiName = "comp/WebServiceContext";
-                    linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
-                    continue;
-                } else if (TimerService.class.equals(type)) {
-                    String jndiName = "comp/TimerService";
-                    linkRef = new LinkRef(jndiName);
-                    bindings.put(normalize(referenceInfo.referenceName), linkRef);
-                    continue;
-                }
-            } catch (ClassNotFoundException e) {
+            
+            if (referenceInfo.location != null) {
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.referenceName), reference);
+                continue;
             }
-
+            
+            Class<?> type = getType(referenceInfo.resourceEnvRefType, referenceInfo);
+            
             Object reference = null;
-            if (UserTransaction.class.getName().equals(referenceInfo.resourceEnvRefType)) {
+            if (EJBContext.class.isAssignableFrom(type)) {
+                String jndiName = "comp/EJBContext";
+                reference = new LinkRef(jndiName);
+            } else if (WebServiceContext.class.equals(type)) {
+                String jndiName = "comp/WebServiceContext";
+                reference = new LinkRef(jndiName);
+            } else if (TimerService.class.equals(type)) {
+                String jndiName = "comp/TimerService";
+                reference = new LinkRef(jndiName);
+            } else if (UserTransaction.class.equals(type)) {
                 reference = new IntraVmJndiReference("comp/UserTransaction");
-            } else if (referenceInfo.location != null){
-                reference = buildReferenceLocation(referenceInfo.location);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
@@ -296,9 +290,7 @@ public class JndiEncBuilder {
                 String jndiName = "openejb/Resource/" + referenceInfo.referenceName;
                 reference = new IntraVmJndiReference(jndiName);
             }
-            if (reference != null) {
-                bindings.put(normalize(referenceInfo.referenceName), reference);
-            }
+            bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
         for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
