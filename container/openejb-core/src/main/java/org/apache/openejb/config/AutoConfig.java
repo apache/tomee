@@ -799,10 +799,13 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void processResourceRef(ResourceRef ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
+        // skip destinations with lookup name
+        if (ref.getLookupName() != null) {
+            return;
+        }
         // skip destinations with a global jndi name
-        String mappedName = ref.getMappedName();
-        if (mappedName == null) mappedName = "";
-        if ((mappedName).startsWith("jndi:")){
+        String mappedName = (ref.getMappedName() == null) ? "": ref.getMappedName();
+        if (mappedName.startsWith("jndi:")) {
             return;
         }
 
@@ -832,9 +835,13 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void processResourceEnvRef(JndiReference ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
+        // skip destinations with lookup name
+        if (ref.getLookupName() != null) {
+            return;
+        }
         // skip destinations with a global jndi name
-        String mappedName = (ref.getMappedName() == null)? "": ref.getMappedName();
-        if (mappedName.startsWith("jndi:")){
+        String mappedName = (ref.getMappedName() == null) ? "": ref.getMappedName();
+        if (mappedName.startsWith("jndi:")) {
             return;
         }
 
