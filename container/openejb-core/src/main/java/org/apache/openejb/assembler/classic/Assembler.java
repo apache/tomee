@@ -480,8 +480,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
         List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
         appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
-        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, classLoader).build(false);
-        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, null, classLoader).build(false);
+        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, classLoader).build(JndiEncBuilder.JndiScope.global);
+        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, null, classLoader).build(JndiEncBuilder.JndiScope.app);
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses
@@ -650,7 +650,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                Context context = (Context) jndiEncBuilder.build(true);
+                Context context = (Context) jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
 
                 containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
                 if (clientInfo.codebase != null) {

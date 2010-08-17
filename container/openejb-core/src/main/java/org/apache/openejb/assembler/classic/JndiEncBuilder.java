@@ -78,6 +78,13 @@ import java.io.Serializable;
 public class JndiEncBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncBuilder.class.getPackage().getName());
 
+    public static enum JndiScope {
+        comp,
+        module,
+        app,
+        global,
+    }
+    
     private final boolean beanManagedTransactions;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
@@ -120,24 +127,35 @@ public class JndiEncBuilder {
         this.client = client;
     }
 
-    public Context build(boolean isComp) throws OpenEJBException {
+    public Context build(JndiScope type) throws OpenEJBException {
         JndiFactory jndiFactory = SystemInstance.get().getComponent(JndiFactory.class);
 
-        if (SystemInstance.get().hasProperty("openejb.geronimo")){
+        if (SystemInstance.get().hasProperty("openejb.geronimo")) {
             return jndiFactory.createComponentContext(new HashMap());
         }
 
         Map<String, Object> bindings = buildMap();
-        if (isComp) {
+        switch(type) {
+        case comp:
             addSpecialCompBindings(bindings);
+            break;
+        case module:
+            addSpecialModuleBindings(bindings);
+            break;
+        case app:
+            addSpecialAppBindings(bindings);
+            break;
+        case global:
+            addSpecialGlobalBindings(bindings);
+            break;          
         }
 
         return jndiFactory.createComponentContext(bindings);
     }
-
+    
     public Map<String, Object> buildMap() throws OpenEJBException {
         Map<String, Object> bindings = new HashMap<String, Object>();
-
+        
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
@@ -426,6 +444,33 @@ public class JndiEncBuilder {
         }
     }
 
+    private void addSpecialModuleBindings(Map<String, Object> bindings) {
+        if (moduleUri != null) {
+            bindings.put("module/ModuleName", moduleUri.toString());
+        }
+        // ensure the bindings will be non-empty
+        if (bindings.isEmpty()) {
+            bindings.put("module/dummy", "dummy");
+        }
+    }
+    
+    private void addSpecialAppBindings(Map<String, Object> bindings) {
+        if (moduleUri != null) {
+            bindings.put("app/AppName", moduleUri.toString());
+        }
+        // ensure the bindings will be non-empty
+        if (bindings.isEmpty()) {
+            bindings.put("app/dummy", "dummy");
+        }
+    }
+    
+    private void addSpecialGlobalBindings(Map<String, Object> bindings) {
+        // ensure the bindings will be non-empty
+        if (bindings.isEmpty()) {
+            bindings.put("global/dummy", "dummy");
+        }
+    }
+    
     public static boolean bindingExists(Context context, Name contextName) {
         try {
             return context.lookup(contextName) != null;
