@@ -31,6 +31,8 @@ import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
 import javax.naming.InitialContext;
 
@@ -43,6 +45,7 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.stateful.StatefulInterceptorTest.Call;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
@@ -113,12 +116,18 @@ public class StatefulSessionSynchronizationTest extends TestCase {
         ejbJar.addEnterpriseBean(subBeanG);
         assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(subBeanG, interceptor));
 
+        //Test SessionSynchronization interface but methods are in the parent class
+        //Interceptor is declared on the bean method
+        StatefulBean subBeanH = new StatefulBean(SubBeanH.class);
+        ejbJar.addEnterpriseBean(subBeanH);
+
         EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
         InitialContext context = new InitialContext();
 
-        List<Call> expectedResult = Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.BEAN_BEFORE_COMPLETION,
-                Call.INTERCEPTOR_AFTER_COMPLETION, Call.BEAN_AFTER_COMPLETION);
+        List<Call> expectedResult = Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD,
+                Call.BEAN_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.BEAN_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION,
+                Call.BEAN_AFTER_COMPLETION);
 
         {
             BeanInterface beanA = (BeanInterface) context.lookup("SubBeanALocal");
@@ -151,21 +160,32 @@ public class StatefulSessionSynchronizationTest extends TestCase {
         {
             BeanInterface beanE = (BeanInterface) context.lookup("SubBeanELocal");
             beanE.simpleMethod();
-            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION), result);
+            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD,
+                    Call.BEAN_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION), result);
             result.clear();
         }
 
         {
             BeanInterface beanF = (BeanInterface) context.lookup("SubBeanFLocal");
             beanF.simpleMethod();
-            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION, Call.BEAN_AFTER_COMPLETION), result);
+            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD, Call.BEAN_AROUND_INVOKE_AFTER,
+                    Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION, Call.BEAN_AFTER_COMPLETION), result);
             result.clear();
         }
 
         {
             BeanInterface beanG = (BeanInterface) context.lookup("SubBeanGLocal");
             beanG.simpleMethod();
-            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.BEAN_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION), result);
+            assertEquals(Arrays.asList(Call.INTERCEPTOR_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD, Call.BEAN_AROUND_INVOKE_AFTER,
+                    Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.INTERCEPTOR_BEFORE_COMPLETION, Call.BEAN_BEFORE_COMPLETION, Call.INTERCEPTOR_AFTER_COMPLETION), result);
+            result.clear();
+        }
+
+        {
+            BeanInterface beanG = (BeanInterface) context.lookup("SubBeanHLocal");
+            beanG.simpleMethod();
+            assertEquals(Arrays.asList(Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD, Call.BEAN_AROUND_INVOKE_AFTER,
+                    Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.BEAN_BEFORE_COMPLETION, Call.BEAN_AFTER_COMPLETION), result);
             result.clear();
         }
     }
@@ -179,7 +199,15 @@ public class StatefulSessionSynchronizationTest extends TestCase {
 
         @TransactionAttribute(TransactionAttributeType.REQUIRED)
         public void simpleMethod() {
+            result.add(Call.BEAN_METHOD);
+        }
 
+        @AroundInvoke
+        public Object invoke(InvocationContext context) throws Exception {
+            result.add(Call.BEAN_AROUND_INVOKE_BEGIN);
+            Object o = context.proceed();
+            result.add(Call.BEAN_AROUND_INVOKE_AFTER);
+            return o;
         }
 
     }
@@ -324,9 +352,52 @@ public class StatefulSessionSynchronizationTest extends TestCase {
             result.add(Call.INTERCEPTOR_AFTER_COMPLETION);
             invocationContext.proceed();
         }
+
+        @AroundInvoke
+        public Object invoke(InvocationContext context) throws Exception {
+            result.add(Call.INTERCEPTOR_AROUND_INVOKE_BEGIN);
+            Object o = context.proceed();
+            result.add(Call.INTERCEPTOR_AROUND_INVOKE_AFTER);
+            return o;
+        }
+    }
+
+    public static class BaseBeanB implements BeanInterface {
+
+        @TransactionAttribute(TransactionAttributeType.REQUIRED)
+        @Interceptors(SimpleInterceptor.class)
+        public void simpleMethod() {
+            result.add(Call.BEAN_METHOD);
+        }
+
+        public void afterBegin() {
+            result.add(Call.BEAN_AFTER_BEGIN);
+        }
+
+        public void afterCompletion(boolean arg0) {
+            result.add(Call.BEAN_AFTER_COMPLETION);
+        }
+
+        public void beforeCompletion() {
+            result.add(Call.BEAN_BEFORE_COMPLETION);
+        }
+
+        @AroundInvoke
+        public Object aroundInvoke(InvocationContext context) throws Exception {
+            result.add(Call.BEAN_AROUND_INVOKE_BEGIN);
+            Object o = context.proceed();
+            result.add(Call.BEAN_AROUND_INVOKE_AFTER);
+            return o;
+        }
+
+    }
+
+    @Stateful
+    @Local(BeanInterface.class)
+    public static class SubBeanH extends BaseBeanB implements SessionSynchronization {
     }
 
     public static enum Call {
-        BEAN_AFTER_BEGIN, BEAN_BEFORE_COMPLETION, BEAN_AFTER_COMPLETION, BAD_VALUE, INTERCEPTOR_AFTER_BEGIN, INTERCEPTOR_BEFORE_COMPLETION, INTERCEPTOR_AFTER_COMPLETION
+        BEAN_METHOD, BEAN_AROUND_INVOKE_BEGIN, BEAN_AROUND_INVOKE_AFTER, INTERCEPTOR_AROUND_INVOKE_BEGIN, INTERCEPTOR_AROUND_INVOKE_AFTER, BEAN_AFTER_BEGIN, BEAN_BEFORE_COMPLETION, BEAN_AFTER_COMPLETION, BAD_VALUE, INTERCEPTOR_AFTER_BEGIN, INTERCEPTOR_BEFORE_COMPLETION, INTERCEPTOR_AFTER_COMPLETION
     }
 }
