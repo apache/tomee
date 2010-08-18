@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
@@ -29,6 +30,7 @@ import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.MessageDestination;
@@ -48,6 +50,7 @@ import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.jee.oejb3.ResourceLink;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -742,17 +745,17 @@ public class AutoConfig implements DynamicDeployer {
 
             // Resource reference
             for (ResourceRef ref : bean.getResourceRef()) {
-                processResourceRef(ref, ejbDeployment, appResources);
+                processResourceRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
             }
 
             // Resource env reference
             for (JndiReference ref : bean.getResourceEnvRef()) {
-                processResourceEnvRef(ref, ejbDeployment, appResources);
+                processResourceEnvRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
             }
 
             // Message destination reference
             for (MessageDestinationRef ref : bean.getMessageDestinationRef()) {
-                processResourceEnvRef(ref, ejbDeployment, appResources);
+                processResourceEnvRef(ref, ejbDeployment, appResources, ejbModule.getClassLoader());
             }
 
 
@@ -798,7 +801,10 @@ public class AutoConfig implements DynamicDeployer {
         return containerInfo.id;
     }
 
-    private void processResourceRef(ResourceRef ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
+    private void processResourceRef(ResourceRef ref, 
+                                    EjbDeployment ejbDeployment, 
+                                    AppResources appResources,
+                                    ClassLoader classLoader) throws OpenEJBException {
         // skip destinations with lookup name
         if (ref.getLookupName() != null) {
             return;
@@ -810,7 +816,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         String refName = ref.getName();
-        String refType = ref.getType();
+        String refType = getType(ref, classLoader); 
 
         // skip references such as URLs which are automatically handled by the server
         if (ignoredReferenceTypes.contains(refType)) {
@@ -834,7 +840,10 @@ public class AutoConfig implements DynamicDeployer {
         }
     }
 
-    private void processResourceEnvRef(JndiReference ref, EjbDeployment ejbDeployment, AppResources appResources) throws OpenEJBException {
+    private void processResourceEnvRef(JndiReference ref, 
+                                       EjbDeployment ejbDeployment, 
+                                       AppResources appResources, 
+                                       ClassLoader classLoader) throws OpenEJBException {
         // skip destinations with lookup name
         if (ref.getLookupName() != null) {
             return;
@@ -846,7 +855,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         String refName = ref.getName();
-        String refType = ref.getType();
+        String refType = getType(ref, classLoader); 
 
         // skip references such as SessionContext which are automatically handled by the server
         if (ignoredReferenceTypes.contains(refType)) {
@@ -875,6 +884,27 @@ public class AutoConfig implements DynamicDeployer {
         }
     }
 
+    private String getType(JndiReference ref, ClassLoader classLoader) throws OpenEJBException {
+        if (ref.getType() != null) {
+            return ref.getType();
+        }
+        if (classLoader != null) {
+            List<InjectionTarget> injections = ref.getInjectionTarget();
+            for (InjectionTarget injection : injections) {
+                try {
+                    Class target = classLoader.loadClass(injection.getInjectionTargetClass().trim());
+                    Class type = IntrospectionSupport.getPropertyType(target, injection.getInjectionTargetName().trim());
+                    return type.getName();
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                } catch (NoSuchFieldException e) {
+                    // ignore
+                }
+            }
+        }
+        throw new OpenEJBException("Unable to infer type for " + ref.getKey());
+    }
+    
     private static boolean skipMdb(Object bean) {
         return bean instanceof MessageDrivenBean && SystemInstance.get().hasProperty("openejb.geronimo");
     }
