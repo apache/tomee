@@ -596,14 +596,6 @@ public class EntityBean implements RemoteBean {
         this.id = value;
     }
 
-    public List<AroundInvoke> getAroundInvoke() {
-        return Collections.emptyList();
-    }
-
-
-    public void addAroundInvoke(String method){
-    }
-
     public TransactionType getTransactionType() {
         return TransactionType.CONTAINER;
     }
@@ -611,10 +603,4 @@ public class EntityBean implements RemoteBean {
     public void setTransactionType(TransactionType type){
     }
 
-    public void addAroundTimeout(String method) {
-    }
-
-    public List<AroundTimeout> getAroundTimeout() {
-        return Collections.emptyList();
-    }
 }

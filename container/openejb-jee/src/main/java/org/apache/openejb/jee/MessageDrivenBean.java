@@ -105,7 +105,7 @@ import java.util.Map;
         "securityRoleRef",
         "securityIdentity"
         })
-public class MessageDrivenBean implements EnterpriseBean, TimerConsumer  {
+public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokable {
 
     @XmlTransient
     protected TextMap description = new TextMap();
