@@ -429,6 +429,9 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         try {
             obj = ProxyManager.getInvocationHandler(obj);
         } catch (IllegalArgumentException e) {
