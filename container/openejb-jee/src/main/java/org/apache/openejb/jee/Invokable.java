@@ -21,28 +21,12 @@ import java.util.List;
 /**
  * @version $Rev$ $Date$
  */
-public interface Session extends Lifecycle, Invokable {
-    List<LifecycleCallback> getPostActivate();
+public interface Invokable {
+    List<AroundInvoke> getAroundInvoke();
 
-    void addPostActivate(String method);
+    void addAroundInvoke(String method);
 
-    List<LifecycleCallback> getPrePassivate();
+    List<AroundTimeout> getAroundTimeout();
 
-    void addPrePassivate(String method);
-
-    List<InitMethod> getInitMethod();
-
-    List<RemoveMethod> getRemoveMethod();
-
-    List<LifecycleCallback> getAfterBegin();
-
-    void addAfterBegin(String method);
-
-    List<LifecycleCallback> getBeforeCompletion();
-
-    void addBeforeCompletion(String method);
-
-    List<LifecycleCallback> getAfterCompletion();
-
-    void addAfterCompletion(String method);
+    void addAroundTimeout(String method);
 }

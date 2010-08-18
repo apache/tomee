@@ -22,9 +22,6 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public interface Lifecycle {
-    List<AroundInvoke> getAroundInvoke();
-
-    void addAroundInvoke(String method);
 
     List<LifecycleCallback> getPostConstruct();
 
@@ -34,7 +31,4 @@ public interface Lifecycle {
 
     void addPreDestroy(String method);
 
-    List<AroundTimeout> getAroundTimeout();
-
-    void addAroundTimeout(String method);
 }

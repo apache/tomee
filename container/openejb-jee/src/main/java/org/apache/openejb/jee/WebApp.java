@@ -98,7 +98,7 @@ import java.util.Map;
         "moduleName"
 
 })
-public class WebApp implements WebCommon {
+public class WebApp implements WebCommon, Lifecycle {
     @XmlTransient
     private String contextRoot;
 
@@ -510,6 +510,10 @@ public class WebApp implements WebCommon {
         return this.persistenceUnitRef.toMap();
     }
 
+    public void addPostConstruct(String method) {
+        throw new UnsupportedOperationException();
+    }
+    
     @Override
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
@@ -518,6 +522,10 @@ public class WebApp implements WebCommon {
         return this.postConstruct;
     }
 
+    public void addPreDestroy(String method) {
+        throw new UnsupportedOperationException();
+    }
+    
     @Override
     public List<LifecycleCallback> getPreDestroy() {
         if (preDestroy == null) {

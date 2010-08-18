@@ -127,6 +127,7 @@ import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
 import org.apache.openejb.jee.Lifecycle;
@@ -2084,26 +2085,30 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            /*
-             * @AroundInvoke
-             */
-            AroundInvoke aroundInvoke = getFirst(bean.getAroundInvoke());
-            if (aroundInvoke == null) {
-                for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
-                    bean.getAroundInvoke().add(new AroundInvoke(method));
+            if (bean instanceof Invokable) {
+                Invokable invokable = (Invokable) bean;
+                
+                /*
+                 * @AroundInvoke
+                 */
+                AroundInvoke aroundInvoke = getFirst(invokable.getAroundInvoke());
+                if (aroundInvoke == null) {
+                    for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
+                        invokable.getAroundInvoke().add(new AroundInvoke(method));
+                    }
+                }
+
+                /*
+                 *  @AroundTimeout
+                 */
+                AroundTimeout aroundTimeout = getFirst(invokable.getAroundTimeout());
+                if (aroundTimeout == null) {
+                    for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundTimeout.class)) {
+                        invokable.getAroundTimeout().add(new AroundTimeout(method));
+                    }
                 }
             }
-
-            /*
-             *  @AroundTimeout
-             */
-            AroundTimeout aroundTimeout = getFirst(bean.getAroundTimeout());
-            if (aroundTimeout == null) {
-                for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundTimeout.class)) {
-                    bean.getAroundTimeout().add(new AroundTimeout(method));
-                }
-            }
-
+            
             /*
              * @Timeout
              */

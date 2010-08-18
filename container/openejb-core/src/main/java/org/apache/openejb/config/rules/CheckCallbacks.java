@@ -41,6 +41,7 @@ import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.RemoveMethod;
@@ -66,8 +67,16 @@ public class CheckCallbacks extends ValidationBase {
                 continue;
             }
 
-            for (AroundInvoke aroundInvoke : bean.getAroundInvoke()) {
-                checkAroundInvoke(ejbClass, aroundInvoke, bean.getEjbName());
+            if (bean instanceof Invokable) {
+                Invokable invokable = (Invokable) bean;
+                
+                for (AroundInvoke aroundInvoke : invokable.getAroundInvoke()) {
+                    checkAroundInvoke(ejbClass, aroundInvoke, bean.getEjbName());
+                }
+                
+                for (AroundTimeout aroundTimeout : invokable.getAroundTimeout()) {
+                    checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
+                }
             }
 
             for (LifecycleCallback callback : bean.getPostConstruct()) {
@@ -187,10 +196,7 @@ public class CheckCallbacks extends ValidationBase {
                 if (timeoutMethods.size() > 1) {
                     fail(timerConsumer.getTimerConsumerName(), "timeout.tooManyMethods", timeoutMethods.size(), Join.join(",", timeoutMethods));
                 }
-                for (AroundTimeout aroundTimeout : bean.getAroundTimeout()) {
-                    checkAroundTimeout(ejbClass, aroundTimeout, bean.getEjbName());
-                }
-
+                
                 for(Timer timer : ((TimerConsumer) bean).getTimer()) {
                     checkTimeOut(ejbClass, timer.getTimeoutMethod(), bean);
                 }
