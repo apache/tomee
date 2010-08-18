@@ -61,9 +61,13 @@ public class LegacyProcessor implements DynamicDeployer {
             SessionBean sessionBean = (SessionBean) bean;
 
             if (sessionBean.getSessionType() == STATEFUL && SessionSynchronization.class.isAssignableFrom(clazz)) {
-                sessionBean.getAfterBegin().add(new LifecycleCallback(clazz.getName(), "afterBegin"));
-                sessionBean.getBeforeCompletion().add(new LifecycleCallback(clazz.getName(), "beforeCompletion"));
-                sessionBean.getAfterCompletion().add(new LifecycleCallback(clazz.getName(), "afterCompletion"));
+                try {
+                    sessionBean.getAfterBegin().add(new LifecycleCallback(clazz.getMethod("afterBegin")));
+                    sessionBean.getBeforeCompletion().add(new LifecycleCallback(clazz.getMethod("beforeCompletion")));
+                    sessionBean.getAfterCompletion().add(new LifecycleCallback(clazz.getMethod("afterCompletion", boolean.class)));
+                } catch (NoSuchMethodException e) {
+                    //Ignore, should never happen
+                }
             }
 
             if (javax.ejb.SessionBean.class.isAssignableFrom(clazz)) {
@@ -91,4 +95,5 @@ public class LegacyProcessor implements DynamicDeployer {
             }
         }
     }
+
 }
