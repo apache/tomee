@@ -20,6 +20,7 @@ package org.apache.openejb.config;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.naming.InitialContext;
@@ -36,6 +37,7 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.StatelessBean;
 
 /**
@@ -43,7 +45,7 @@ import org.apache.openejb.jee.StatelessBean;
  */
 public class InjectionTest extends TestCase {
 
-    public void testEnvEntryInjections() throws Exception {       
+    public void testInjections() throws Exception {       
         InitialContext ctx = new InitialContext();
 
         Object object = ctx.lookup("WidgetBeanLocal");
@@ -67,6 +69,7 @@ public class InjectionTest extends TestCase {
         // injected via DD
         assertEquals(true, widget.getInjectedBoolean());
         assertEquals(true, widget.lookup("injectedBoolean"));
+        assertNotNull(widget.getInjectedContext());
     }
 
     protected void setUp() throws Exception {
@@ -112,6 +115,10 @@ public class InjectionTest extends TestCase {
         EnvEntry entry = new EnvEntry("injectedBoolean", (String) null, "true");
         entry.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedBoolean")));
         bean.getEnvEntry().add(entry);
+        
+        ResourceEnvRef resourceEnvRef = new ResourceEnvRef("injectedContext", (String) null);
+        resourceEnvRef.getInjectionTarget().add((new InjectionTarget(WidgetBean.class.getName(), "injectedContext")));
+        bean.getResourceEnvRef().add(resourceEnvRef);
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
@@ -136,6 +143,7 @@ public class InjectionTest extends TestCase {
         Object lookup(String name) throws NamingException;
         
         boolean getInjectedBoolean();
+        EJBContext getInjectedContext();
     }
 
     public static interface RemoteWidget extends Widget {
@@ -181,6 +189,9 @@ public class InjectionTest extends TestCase {
 
         // injected via DD
         private boolean injectedBoolean = false;
+        
+        // injected via DD
+        private EJBContext injectedContext;
         
         public WidgetBean() {           
         }
@@ -240,6 +251,10 @@ public class InjectionTest extends TestCase {
 
         public boolean getInjectedBoolean() {
             return injectedBoolean;
+        }
+        
+        public EJBContext getInjectedContext() {
+            return injectedContext;
         }
     }
 }
