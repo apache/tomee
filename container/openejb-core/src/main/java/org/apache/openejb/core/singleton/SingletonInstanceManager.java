@@ -41,8 +41,10 @@ import javax.xml.ws.WebServiceContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -52,6 +54,8 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.transaction.EjbTransactionUtil;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -189,13 +193,39 @@ public class SingletonInstanceManager {
             List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
-            interceptorStack.invoke();
+            //Transaction Demarcation for Singleton PostConstruct method
+            TransactionType transactionType;
+
+            if (deploymentInfo.getComponentType() == BeanType.SINGLETON) {
+                List<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
+                if (callbacks.isEmpty()) {
+                    transactionType = TransactionType.RequiresNew;
+                } else {
+                    transactionType = deploymentInfo.getTransactionType(callbacks.get(0));
+                    if (transactionType == TransactionType.Required) {
+                        transactionType = TransactionType.RequiresNew;
+                    }
+                }
+            } else {
+                transactionType = deploymentInfo.isBeanManagedTransaction()? TransactionType.BeanManaged: TransactionType.NotSupported;
+            }
+            TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
+            try{
+                //Call the chain
+                interceptorStack.invoke();                
+            } catch(Throwable e) {
+                //RollBack Transaction
+                EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
+            }
+            finally{
+                EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
+            }
+
         } catch (Throwable re) {
             logger.error("Singleton shutdown failed: "+deploymentInfo.getDeploymentID(), re);
         }
-
     }
-
+    
     /**
      * This method has no work to do as all instances are removed from
      * the pool on getInstance(...) and not returned via poolInstance(...)
