@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ejb.EJBException;
+
 public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	
 	public class Call {
@@ -174,9 +176,8 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 
 	private SampleLocalBean loadProxy(TestInvocationHandler invocationHandler) throws Exception {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-        Class cls = new LocalBeanProxyGeneratorImpl().createProxy(SampleLocalBean.class, cl);
-        return (SampleLocalBean) cls.getConstructor(new Class[] { InvocationHandler.class }).newInstance(invocationHandler);
+		
+		return (SampleLocalBean) LocalBeanProxyFactory.newProxyInstance(cl, SampleLocalBean.class, invocationHandler);
 	}
 
 	public void testShouldReturnCorrectMethodSignatures() throws Exception {
@@ -202,6 +203,26 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 		
 		assertEquals("(Ljava/lang/Integer;Ljava/lang/Integer;)Ljava/lang/Integer;", proxyGenerator.getMethodSignatureAsString(Integer.class, new Class<?>[] { Integer.class, Integer.class }));
 		assertEquals("([Ljava/lang/Integer;[Ljava/lang/Integer;)[Ljava/lang/Integer;", proxyGenerator.getMethodSignatureAsString(Integer[].class, new Class<?>[] { Integer[].class, Integer[].class }));
+	}
+	
+	@Test
+	public void testNonPublicMethods() throws Exception {
+	    TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+	    SampleLocalBean proxy = loadProxy(invocationHandler);
+
+	    try {
+	        proxy.protectedMethod();
+	        fail("Protected method did not throw exception");
+	    } catch (EJBException e) {
+	        // that's what we expect
+	    }
+
+	    try {
+	        proxy.defaultMethod();
+	        fail("Default method did not throw exception");
+	    } catch (EJBException e) {
+	        // that's what we expect
+	    }
 	}
 	
 	@Test
@@ -886,12 +907,16 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
     public void testInheritedMethod() throws Exception {
         TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         SampleLocalBean proxy = loadProxy(invocationHandler);
-        String result = proxy.hello("Bob");
         
+        // call inherited method
+        String result = proxy.hello("Bob");
         assertEquals("Hello Bob", result);
         assertEquals(1, invocationHandler.getCalls().length);
         Call call = invocationHandler.getCalls()[0];
         assertEquals("hello", call.getMethodName());
+        
+        // call overridden method
+        assertEquals(SampleLocalBean.class.getName(), proxy.overriddenMethod());
     }
     
     public static class EnumParams {

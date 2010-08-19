@@ -24,11 +24,20 @@ import javax.ejb.LocalBean;
 
 @LocalBean
 public class SampleLocalBean extends BaseLocalBean {
-
+    
 	public SampleLocalBean() {
 		super();
 	}
 	
+	int defaultMethod() {
+	    return -1;
+	}
+	
+	@Override
+	public String overriddenMethod() {
+	    return getClass().getName();
+	}
+	   
 	/* 1. void return, no arg */
 	public void doWork() {
 		System.out.println("void doWork()");

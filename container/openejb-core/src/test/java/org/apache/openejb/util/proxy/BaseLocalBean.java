@@ -25,4 +25,14 @@ public class BaseLocalBean {
 	public final void finalMethod() {	    
 	}
 		
+	protected String protectedMethod() {
+	    return "protected method";
+	}
+	
+	protected String overriddenMethod() {
+	    return getClass().getName();
+	}
+	
+	public static void staticMethod() {	    
+	}
 }
