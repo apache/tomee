@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -85,7 +86,15 @@ public class StatelessInstanceManager {
 
         executor = new ThreadPoolExecutor(callbackThreads, callbackThreads*2,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
+                new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
+                    public Thread newThread(Runnable runable) {
+                        Thread t = new Thread(runable, "StatelessPool");
+                        t.setDaemon(true);
+                        return t;
+                    }
+                });
+
+
     }
 
     private class StatelessSupplier implements Pool.Supplier<Instance> {
