@@ -53,6 +53,8 @@ import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.timer.EjbTimerService;
+import org.apache.openejb.core.transaction.EjbTransactionUtil;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
@@ -704,6 +706,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
 
     public void setCallbackInterceptors(List<InterceptorData> callbackInterceptors) {
+        //TODO shouldn't we remove the old callbackInterceptors from instanceScopedInterceptors before adding the new ones?
         this.callbackInterceptors.clear();
         this.callbackInterceptors.addAll(callbackInterceptors);
         this.instanceScopedInterceptors.addAll(callbackInterceptors);
@@ -1090,11 +1093,38 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
             final List<InterceptorData> callbackInterceptors = this.getCallbackInterceptors();
             final InterceptorStack postConstruct = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
-            postConstruct.invoke();
+            
+            //Transaction Demarcation for Singleton PostConstruct method
+            TransactionType transactionType;
+
+            if (getComponentType() == BeanType.SINGLETON) {
+                List<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPostConstruct();
+                if (callbacks.isEmpty()) {
+                    transactionType = TransactionType.RequiresNew;
+                } else {
+                    transactionType = getTransactionType(callbacks.get(0));
+                    if (transactionType == TransactionType.Required) {
+                        transactionType = TransactionType.RequiresNew;
+                    }
+                }
+            } else {
+                transactionType = isBeanManagedTransaction()? TransactionType.BeanManaged: TransactionType.NotSupported;
+            }
+            TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
+            try{
+                //Call the chain
+                postConstruct.invoke();                
+            } catch(Throwable e) {
+                //RollBack Transaction
+                EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
+            }
+            finally{
+                EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
+            }
 
             return new InstanceContext(this, bean, interceptorInstances);
         } finally {
             ThreadContext.exit(oldContext);
-        }
+        }                        
     }
 }
