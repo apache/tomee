@@ -21,6 +21,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.FieldVisitor;
@@ -31,6 +36,9 @@ import org.apache.xbean.asm.Type;
 
 public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opcodes {
 
+    static final String BUSSINESS_HANDLER_NAME = "businessHandler";    
+    static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
+    
     private static final sun.misc.Unsafe unsafe;
 
     static {
@@ -84,38 +92,107 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, null);
 		cw.visitSource(clsToOverride + ".java", null);
 
-		// push InvocationHandler field
-		fv = cw.visitField(ACC_FINAL + ACC_PRIVATE, "invocationHandler", "Ljava/lang/reflect/InvocationHandler;", null, null);
+		// push InvocationHandler fields
+		fv = cw.visitField(ACC_FINAL + ACC_PRIVATE, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null);
+		fv.visitEnd();
+		fv = cw.visitField(ACC_FINAL + ACC_PRIVATE, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null);
 		fv.visitEnd();
 		
-		// push constructor
+		// push single argument constructor
 		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/reflect/InvocationHandler;)V", null, null);
+		mv.visitCode();
+		mv.visitVarInsn(ALOAD, 0);
+		mv.visitVarInsn(ALOAD, 1);
+		mv.visitVarInsn(ALOAD, 1);
+		mv.visitMethodInsn(INVOKESPECIAL, proxyName, "<init>", "(Ljava/lang/reflect/InvocationHandler;Ljava/lang/reflect/InvocationHandler;)V");
+		mv.visitInsn(RETURN);
+		mv.visitMaxs(0, 0);
+		mv.visitEnd();
+
+		// push double argument constructor
+		mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/reflect/InvocationHandler;Ljava/lang/reflect/InvocationHandler;)V", null, null);
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitMethodInsn(INVOKESPECIAL, clsToOverride, "<init>", "()V");
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitVarInsn(ALOAD, 1);
-		mv.visitFieldInsn(PUTFIELD, proxyName, "invocationHandler", "Ljava/lang/reflect/InvocationHandler;");
+		mv.visitFieldInsn(PUTFIELD, proxyName, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;");
+		mv.visitVarInsn(ALOAD, 0);
+		mv.visitVarInsn(ALOAD, 2);
+		mv.visitFieldInsn(PUTFIELD, proxyName, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;");
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 
-		// loop through public methods, and push something to the class
-		Method[] methods = clsToProxy.getMethods();
-		for (Method method : methods) {
-		    if (Modifier.isFinal(method.getModifiers())) {
-		        // can't proxy final methods
-		        continue;
+		Map<String, List<Method>> methodMap = getNonPrivateMethods(clsToProxy);
+
+		for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
+		    for (Method method : entry.getValue()) {	
+		        String name = method.getName();
+                int modifiers = method.getModifiers();
+                if (Modifier.isPublic(modifiers) ||
+                    (method.getParameterTypes().length == 0 &&
+                            ("finalize".equals(name) || "clone".equals(name)))) {
+                    // forward invocations of any public methods or 
+                    // finalize/clone methods to businessHandler 
+                    processMethod(cw, method, proxyClassName, BUSSINESS_HANDLER_NAME);                    
+                } else {
+                    // forward invocations of any other methods to nonBusinessHandler
+                    processMethod(cw, method, proxyClassName, NON_BUSINESS_HANDLER_NAME);
+                }
 		    }
-			processMethod(cw, method, proxyClassName, clsToOverride);
 		}
 		
 		byte[] clsBytes = cw.toByteArray();
 		return clsBytes;
 	}
 
+	/*
+	 * Return all protected, public, and default methods of a given class
+	 * that are not final or static. The returned map includes the inherited methods
+	 * and ensures that overridden methods are included once.
+	 */
+	private Map<String, List<Method>> getNonPrivateMethods(Class<?> clazz) {
+	    Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        while (clazz != null) {
+            for (Method method : clazz.getDeclaredMethods()) {
+                int modifiers = method.getModifiers();
+                if (Modifier.isFinal(modifiers) || 
+                    Modifier.isPrivate(modifiers) || 
+                    Modifier.isStatic(modifiers)) {
+                    continue;
+                }
+                
+                List<Method> methods = methodMap.get(method.getName());
+                if (methods == null) {
+                    methods = new ArrayList<Method>();
+                    methods.add(method);
+                    methodMap.put(method.getName(), methods);
+                } else {
+                    if (isOverridden(methods, method)) {
+                        // method is overridden in superclass, so do nothing
+                    } else {
+                        // method is not overridden, so add it
+                        methods.add(method);
+                    }
+                }
+            }
+            
+            clazz = clazz.getSuperclass();
+        }
+        return methodMap;
+	}
+	
+	private boolean isOverridden(List<Method> methods, Method method) {
+	    for (Method m : methods) {
+	        if (Arrays.equals(m.getParameterTypes(), method.getParameterTypes())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 
-	private void processMethod(ClassWriter cw, Method method, String proxyName, String clsToOverride) throws ProxyGenerationException {
+	private void processMethod(ClassWriter cw, Method method, String proxyName, String handlerName) throws ProxyGenerationException {
 		if ("<init>".equals(method.getName())) {
 			return;
 		}
@@ -123,9 +200,16 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		Class<?> returnType = method.getReturnType();
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		Class<?>[] exceptionTypes = method.getExceptionTypes();
+		int modifiers = method.getModifiers();
 		
 		// push the method definition
-		MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, method.getName(), getMethodSignatureAsString(returnType, parameterTypes), null, null);
+		int modifier = 0;
+		if (Modifier.isPublic(modifiers)) {
+		    modifier = ACC_PUBLIC;
+		} else if (Modifier.isProtected(modifiers)) {
+		    modifier = ACC_PROTECTED;
+		}
+		MethodVisitor mv = cw.visitMethod(modifier, method.getName(), getMethodSignatureAsString(returnType, parameterTypes), null, null);
 		mv.visitCode();
 
 		// push try/catch block, to catch declared exceptions, and to catch java.lang.Throwable
@@ -142,6 +226,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		
 		// push try code
 		mv.visitLabel(l0);
+		String clsToOverride = method.getDeclaringClass().getName().replaceAll("\\.", "/");
 		mv.visitLdcInsn(Type.getType("L" + clsToOverride + ";"));
 		
 		// the following code generates the bytecode for this line of Java:
@@ -182,7 +267,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		}
 		
 		// invoke getMethod() with the method name and the array of types		
-		mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
+		mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
 	
 		// store the returned method for later
 		mv.visitVarInsn(ASTORE, length);
@@ -195,7 +280,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		mv.visitVarInsn(ALOAD, 0);
 		
 		// get the invocationHandler field from this class
-		mv.visitFieldInsn(GETFIELD, proxyName, "invocationHandler", "Ljava/lang/reflect/InvocationHandler;");
+		mv.visitFieldInsn(GETFIELD, proxyName, handlerName, "Ljava/lang/reflect/InvocationHandler;");
 		
 		// we want to pass "this" in as the first parameter
 		mv.visitVarInsn(ALOAD, 0);
