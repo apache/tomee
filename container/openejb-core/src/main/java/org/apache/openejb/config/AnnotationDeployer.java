@@ -1199,7 +1199,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setExcludeDefaultInterceptors(true);
                 }
 
-                for (Method method : classFinder.findAnnotatedMethods(ExcludeDefaultInterceptors.class)) {
+                for (Method method : inheritedClassFinder.findAnnotatedMethods(ExcludeDefaultInterceptors.class)) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeDefaultInterceptors(true);
                     binding.setMethod(new NamedMethod(method));
@@ -1211,7 +1211,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setExcludeClassInterceptors(true);
                 }
 
-                for (Method method : classFinder.findAnnotatedMethods(ExcludeClassInterceptors.class)) {
+                for (Method method : inheritedClassFinder.findAnnotatedMethods(ExcludeClassInterceptors.class)) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeClassInterceptors(true);
                     binding.setMethod(new NamedMethod(method));
