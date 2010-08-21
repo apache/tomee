@@ -195,7 +195,7 @@ public class Deploy {
                 }
                 AppInfo appInfo = deployer.deploy(location);
 
-                System.out.println(messages.format("cmd.deploy.successful", path, appInfo.jarPath));
+                System.out.println(messages.format("cmd.deploy.successful", path, appInfo.path));
 
                 if (line.hasOption("quiet")) {
                     continue;
@@ -222,7 +222,7 @@ public class Deploy {
                 if (!delete(destFile)){
                     System.out.println(messages.format("cmd.deploy.cantDelete.deploy", destFile.getAbsolutePath()));
                 }
-            } catch (OpenEJBException e) {
+            } catch (Throwable e) {
                 System.out.println(messages.format("cmd.deploy.failed", path));
                 e.printStackTrace(System.out);
                 exitCode++;
@@ -253,10 +253,10 @@ public class Deploy {
     }
 
     private static void print(AppInfo appInfo) {
-        System.out.println("App(id=" + appInfo.jarPath + ")");
+        System.out.println("App(id=" + appInfo.path + ")");
 
         for (EjbJarInfo info : appInfo.ejbJars) {
-            System.out.println("    EjbJar(id=" + info.moduleId + ", path=" + info.jarPath + ")");
+            System.out.println("    EjbJar(id=" + info.moduleId + ", path=" + info.path + ")");
             for (EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
                 System.out.println("        Ejb(ejb-name=" + beanInfo.ejbName + ", id=" + beanInfo.ejbDeploymentId + ")");
                 for (String name : beanInfo.jndiNames) {
@@ -270,15 +270,15 @@ public class Deploy {
             System.out.println("");
         }
         for (ClientInfo clientInfo : appInfo.clients) {
-            System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.codebase + ")");
+            System.out.println("    Client(main-class=" + clientInfo.mainClass + ", id=" + clientInfo.moduleId + ", path=" + clientInfo.path + ")");
             System.out.println("");
         }
         for (ConnectorInfo connectorInfo : appInfo.connectors) {
-            System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.codebase + ")");
+            System.out.println("    Connector(id=" + connectorInfo.moduleId + ", path=" + connectorInfo.path + ")");
             System.out.println("");
         }
         for (WebAppInfo webAppInfo : appInfo.webApps) {
-            System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.codebase + ")");
+            System.out.println("    WebApp(context-root=" + webAppInfo.contextRoot + ", id=" + webAppInfo.moduleId + ", path=" + webAppInfo.path + ")");
             System.out.println("");
         }
         for (PersistenceUnitInfo persistenceUnitInfo : appInfo.persistenceUnits) {

@@ -145,8 +145,7 @@ public class DeploymentLoader {
                 EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
 
                 // wrap the EJB Module with an Application Module
-                AppModule appModule = new AppModule(ejbModule.getClassLoader(), null);
-                appModule.getEjbModules().add(ejbModule);
+                AppModule appModule = new AppModule(ejbModule);
 
                 // Persistence Units
                 addPersistenceUnits(appModule, baseUrl);
@@ -157,31 +156,27 @@ public class DeploymentLoader {
                 ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
-                AppModule appModule = new AppModule(clientModule.getClassLoader(), null);
-                appModule.getClientModules().add(clientModule);
-
-                return appModule;
+                return new AppModule(clientModule);
             } else if (ConnectorModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
                 ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), null);
 
                 // Wrap the resource module with an Application Module
-                AppModule appModule = new AppModule(connectorModule.getClassLoader(), null);
-                appModule.getResourceModules().add(connectorModule);
-
-                return appModule;
+                return new AppModule(connectorModule);
             } else if (WebModule.class.equals(moduleClass)) {
-                String moduleId = toFile(baseUrl).getName();
+                final File file = toFile(baseUrl);
+                String moduleId = file.getName();
                 String warPath = URLs.toFilePath(baseUrl);
 
-                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), null);
+                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath());
                 addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
                 return appModule;
             } else if (PersistenceModule.class.equals(moduleClass)) {
+                String jarLocation = URLs.toFilePath(baseUrl);
                 ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
 
                 // wrap the EJB Module with an Application Module
-                AppModule appModule = new AppModule(classLoader, null);
+                AppModule appModule = new AppModule(classLoader, jarLocation);
 
                 // Persistence Units
                 addPersistenceUnits(appModule, baseUrl);
@@ -348,7 +343,7 @@ public class DeploymentLoader {
             // Create the AppModule and all nested module objects
             //
 
-            AppModule appModule = new AppModule(appClassLoader, appId, application);
+            AppModule appModule = new AppModule(appClassLoader, appId, application, false);
             appModule.getAdditionalLibraries().addAll(extraLibs);
             appModule.getAltDDs().putAll(appDescriptors);
             appModule.getWatchedResources().add(appId);
@@ -392,7 +387,7 @@ public class DeploymentLoader {
                     URL rarUrl = resouceModules.get(moduleName);
                     ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
 
-                    appModule.getResourceModules().add(connectorModule);
+                    appModule.getConnectorModules().add(connectorModule);
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }

@@ -29,13 +29,20 @@ public class AppContext extends DeploymentContext {
     private final ClassLoader classLoader;
     private final Context globalJndiContext;
     private final Context appJndiContext;
+    private final boolean standaloneModule;
 
-    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext) {
+    public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
         this.classLoader = classLoader;
         this.systemInstance = systemInstance;
         this.globalJndiContext = globalJndiContext;
         this.appJndiContext = appJndiContext;
+        this.standaloneModule = standaloneModule;
+    }
+
+    @Override
+    public String getId() {
+        return super.getId();
     }
 
     public ClassLoader getClassLoader() {
@@ -52,5 +59,9 @@ public class AppContext extends DeploymentContext {
 
     public Context getGlobalJndiContext() {
         return globalJndiContext;
+    }
+
+    public boolean isStandaloneModule() {
+        return standaloneModule;
     }
 }

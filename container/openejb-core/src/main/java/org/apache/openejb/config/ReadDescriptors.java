@@ -80,7 +80,7 @@ public class ReadDescriptors implements DynamicDeployer {
             readAppClient(clientModule, appModule);
         }
 
-        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
             readConnector(connectorModule, appModule);
         }
 

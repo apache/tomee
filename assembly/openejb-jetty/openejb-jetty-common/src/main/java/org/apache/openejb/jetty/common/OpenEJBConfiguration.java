@@ -155,10 +155,7 @@ public class OpenEJBConfiguration implements Configuration {
         WebModule webModule = createWebModule(application);
 
         // create the app module
-        AppModule appModule = new AppModule(webModule.getClassLoader(), webModule.getJarLocation());
-
-        // add the web module itself
-        appModule.getWebModules().add(webModule);
+        AppModule appModule = new AppModule(webModule);
 
         // check each url to determine if it is an ejb jar
         for (URL url : getUrls(application)) {

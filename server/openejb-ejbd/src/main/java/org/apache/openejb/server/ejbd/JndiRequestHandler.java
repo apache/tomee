@@ -64,6 +64,7 @@ import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -173,7 +174,7 @@ class JndiRequestHandler {
 
         try {
 
-            if (name.equals("comp/injections")) {
+            if (name.equals("info/injections")) {
 
                 //noinspection unchecked
                 List<Injection> injections = (List<Injection>) context.lookup(name);
@@ -184,15 +185,6 @@ class JndiRequestHandler {
                 res.setResponseCode(ResponseCodes.JNDI_INJECTIONS);
                 res.setResult(metaData);
                 return;
-            } else if (name.startsWith("comp/env/")){
-                // In the assembler we do a "clientContext.bind("comp/env", envContext)"
-                // seems the result of binding a context into a context is that name
-                // lookups don't resolve correctly when spanning the two contexts.
-                // As a hack, we first lookup "comp/env/", then finish our lookup on
-                // the returned context.
-                context = (Context) context.lookup("comp/env/");
-                name = name.substring("comp/env/".length());
-                object = context.lookup(name);
             } else {
                 object = context.lookup(name);
             }

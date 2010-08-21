@@ -549,7 +549,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     public AppInfo configureApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
         Application application = new Application();
         application.setApplicationName(id);
-        AppModule collection = new AppModule(classLoader, null, application);
+        AppModule collection = new AppModule(classLoader, id, application, false);
         Map<String, Object> altDDs = collection.getAltDDs();
 
         for (File jarFile : jarFiles) {
@@ -562,7 +562,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 collection.getClientModules().addAll(module.getClientModules());
                 collection.getEjbModules().addAll(module.getEjbModules());
                 collection.getPersistenceModules().addAll(module.getPersistenceModules());
-                collection.getResourceModules().addAll(module.getResourceModules());
+                collection.getConnectorModules().addAll(module.getConnectorModules());
                 collection.getWebModules().addAll(module.getWebModules());
                 collection.getWatchedResources().addAll(module.getWatchedResources());
 
@@ -618,30 +618,22 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public EjbJarInfo configureApplication(EjbModule ejbModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), null);
-        appModule.getEjbModules().add(ejbModule);
-        AppInfo appInfo = configureApplication(appModule);
+        AppInfo appInfo = configureApplication(new AppModule(ejbModule));
         return appInfo.ejbJars.get(0);
     }
 
     public ClientInfo configureApplication(ClientModule clientModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(clientModule.getClassLoader(), null);
-        appModule.getClientModules().add(clientModule);
-        AppInfo appInfo = configureApplication(appModule);
+        AppInfo appInfo = configureApplication(new AppModule(clientModule));
         return appInfo.clients.get(0);
     }
 
     public ConnectorInfo configureApplication(ConnectorModule connectorModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(connectorModule.getClassLoader(), null);
-        appModule.getResourceModules().add(connectorModule);
-        AppInfo appInfo = configureApplication(appModule);
+        AppInfo appInfo = configureApplication(new AppModule(connectorModule));
         return appInfo.connectors.get(0);
     }
 
     public WebAppInfo configureApplication(WebModule webModule) throws OpenEJBException {
-        AppModule appModule = new AppModule(webModule.getClassLoader(), null);
-        appModule.getWebModules().add(webModule);
-        AppInfo appInfo = configureApplication(appModule);
+        AppInfo appInfo = configureApplication(new AppModule(webModule));
         return appInfo.webApps.get(0);
     }
 

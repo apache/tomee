@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class WebAppInfo extends InfoObject {
-    public String codebase;
+    public String path;
     public String description;
     public String displayName;
     public String smallIcon;

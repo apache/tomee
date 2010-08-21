@@ -78,7 +78,7 @@ public class QuartzMdbContainerTest extends TestCase {
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(Job.class, JobSpec.class));
         listener.getActivationSpec().addRequiredConfigProperty("cronExpression");
-        app.getResourceModules().add(new ConnectorModule(connector));
+        app.getConnectorModules().add(new ConnectorModule(connector));
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(CronBean.class));

@@ -27,6 +27,7 @@ import javax.jms.MessageListener;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ModuleContext;
 import org.apache.openejb.core.ivm.naming.BusinessLocalBeanReference;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -40,6 +41,7 @@ import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.util.StringTemplate;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -197,9 +199,21 @@ public class JndiBuilder {
                 beanInfos.put(beanInfo.ejbDeploymentId, beanInfo);
             }
 
+            final Iterator<DeploymentInfo> it = deployments.values().iterator();
+            if (!it.hasNext()) return;
+
+            final ModuleContext moduleContext = ((CoreDeploymentInfo) it.next()).getModuleContext();
+
             appContext = new HashMap<String, String>();
             putAll(appContext, SystemInstance.get().getProperties());
-            putAll(appContext, ejbJarInfo.properties);
+            putAll(appContext, moduleContext.getAppContext().getProperties());
+            putAll(appContext, moduleContext.getProperties());
+
+            appContext.put("appName", moduleContext.getAppContext().getId());
+            appContext.put("appId", moduleContext.getAppContext().getId());
+
+            appContext.put("moduleName", moduleContext.getId());
+            appContext.put("moduleId", moduleContext.getId());
         }
 
         private void putAll(Map<String, String> map, Properties properties) {
@@ -228,7 +242,6 @@ public class JndiBuilder {
 
             beanContext = new HashMap<String, String>(appContext);
             putAll(beanContext, deploymentInfo.getProperties());
-            beanContext.put("moduleId", deploymentInfo.getModuleID());
             beanContext.put("ejbType", deploymentInfo.getComponentType().name());
             beanContext.put("ejbClass", deploymentInfo.getBeanClass().getName());
             beanContext.put("ejbClass.simpleName", deploymentInfo.getBeanClass().getSimpleName());
@@ -531,7 +544,7 @@ public class JndiBuilder {
         Context appContext = cdi.getModuleContext().getAppContext().getAppJndiContext();
         Context globalContext = cdi.getModuleContext().getAppContext().getGlobalJndiContext();
 
-        String appName = cdi.getModuleContext().getAppContext().getId() == null? "": cdi.getModuleContext().getAppContext().getId() + "/";
+        String appName = cdi.getModuleContext().getAppContext().isStandaloneModule() ? "" : cdi.getModuleContext().getAppContext().getId() + "/";
         String moduleName = cdi.getModuleID() + "/";
         String beanName = cdi.getEjbName();
         if (interfaceName != null) {

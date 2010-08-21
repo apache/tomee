@@ -23,7 +23,6 @@ package org.apache.openejb.core;
 import java.util.HashMap;
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import org.apache.openejb.loader.SystemInstance;
 import org.junit.Test;
 
@@ -54,7 +53,7 @@ public class InheritedAppExceptionTest {
     @Test
     public void testRollback() throws Exception {
         SystemInstance.init(new Properties());
-        CoreDeploymentInfo cdi = new CoreDeploymentInfo("foo", null, new ModuleContext("foo", new AppContext("foo", SystemInstance.get(), null, null, null), null), Object.class, null, new HashMap<String, String>());
+        CoreDeploymentInfo cdi = new CoreDeploymentInfo("foo", null, new ModuleContext("foo", new AppContext("foo", SystemInstance.get(), null, null, null, false), null), Object.class, null, new HashMap<String, String>());
         cdi.addApplicationException(AE1.class, true, true);
         cdi.addApplicationException(AE3.class, true, false);
         cdi.addApplicationException(AE6.class, false, true);

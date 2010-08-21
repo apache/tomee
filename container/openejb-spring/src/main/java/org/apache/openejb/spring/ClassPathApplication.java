@@ -81,18 +81,18 @@ public class ClassPathApplication extends AbstractApplication {
         Set<String> declaredApps = new TreeSet<String>();
         Collection<AppInfo> applications = getAssembler().getDeployedApplications();
         for (AppInfo application : applications) {
-            declaredApps.add(application.jarPath);
+            declaredApps.add(application.path);
             for (EjbJarInfo ejbJar : application.ejbJars) {
-                declaredApps.add(ejbJar.jarPath);
+                declaredApps.add(ejbJar.path);
             }
             for (ConnectorInfo connector : application.connectors) {
-                declaredApps.add(connector.codebase);
+                declaredApps.add(connector.path);
             }
             for (WebAppInfo webApp : application.webApps) {
-                declaredApps.add(webApp.codebase);
+                declaredApps.add(webApp.path);
             }
             for (ClientInfo client : application.clients) {
-                declaredApps.add(client.codebase);
+                declaredApps.add(client.path);
             }
         }
         return declaredApps;

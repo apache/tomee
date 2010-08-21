@@ -129,7 +129,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
                 if (e instanceof OpenEJBException) {
                     throw (OpenEJBException) e;
                 }
-                throw new OpenEJBException("Error starting application " + appInfo.jarPath, e);
+                throw new OpenEJBException("Error starting application " + appInfo.path, e);
             }
         }
     }
@@ -208,9 +208,9 @@ public abstract class AbstractApplication implements ApplicationContextAware {
 
         for (AppInfo application : applications) {
             try {
-                getAssembler().destroyApplication(application.jarPath);
+                getAssembler().destroyApplication(application.path);
             } catch (Exception e) {
-                logger.error("Error stopping application " + application.jarPath, e);
+                logger.error("Error stopping application " + application.path, e);
             }
         }
     }

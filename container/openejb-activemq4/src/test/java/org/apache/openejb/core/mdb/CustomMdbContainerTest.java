@@ -87,7 +87,7 @@ public class CustomMdbContainerTest extends TestCase {
         MessageAdapter messageAdapter = inbound.setMessageAdapter(new MessageAdapter());
         MessageListener listener = messageAdapter.addMessageListener(new MessageListener(EmailConsumer.class, EmailAccountInfo.class));
         listener.getActivationSpec().addRequiredConfigProperty("address");
-        app.getResourceModules().add(new ConnectorModule(connector));
+        app.getConnectorModules().add(new ConnectorModule(connector));
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new MessageDrivenBean(EmailBean.class));

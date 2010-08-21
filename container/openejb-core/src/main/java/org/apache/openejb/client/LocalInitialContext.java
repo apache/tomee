@@ -187,8 +187,8 @@ public class LocalInitialContext extends ContextWrapper {
         while (clazz != null && !clazz.equals(Object.class)) {
             try {
                 String moduleId = (String) clients.lookup(clazz.getName());
-                injections = (List<Injection>) clients.lookup(moduleId + "/comp/injections");
                 context = (Context) clients.lookup(moduleId);
+                injections = (List<Injection>) context.lookup("info/injections");
                 break;
             } catch (NamingException e) {
                 clazz = clazz.getSuperclass();

@@ -196,7 +196,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     public void afterApplicationCreated(AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
             Map<String,String> contextData = new HashMap<String,String>();
-            contextData.put("appId", appInfo.jarPath);
+            contextData.put("appId", appInfo.path);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
                 Map<String, PortInfo> ports = new TreeMap<String,PortInfo>();
                 for (PortInfo port : ejbJar.portInfos) {
@@ -205,9 +205,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
                 URL moduleBaseUrl = null;
                 try {
-                    moduleBaseUrl = new File(ejbJar.jarPath).toURI().toURL();
+                    moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
                 } catch (MalformedURLException e) {
-                    logger.error("Invalid ejb jar location " + ejbJar.jarPath, e);
+                    logger.error("Invalid ejb jar location " + ejbJar.path, e);
                 }
 
                 StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
@@ -290,9 +290,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
         URL moduleBaseUrl = null;
         try {
-            moduleBaseUrl = new File(webApp.codebase).toURI().toURL();
+            moduleBaseUrl = new File(webApp.path).toURI().toURL();
         } catch (MalformedURLException e) {
-            logger.error("Invalid ejb jar location " + webApp.codebase, e);
+            logger.error("Invalid ejb jar location " + webApp.path, e);
         }
 
         for (ServletInfo servlet : webApp.servlets) {

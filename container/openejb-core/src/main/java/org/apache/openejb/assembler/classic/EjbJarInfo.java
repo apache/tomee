@@ -26,7 +26,7 @@ public class EjbJarInfo extends InfoObject {
     public final Properties properties = new Properties();
 
     public String moduleId;
-    public String jarPath;
+    public String path;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 
     public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();

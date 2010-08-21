@@ -112,7 +112,7 @@ public class DeployerEjb implements Deployer {
             for (DeploymentModule module : appModule.getWebModules()) {
                 modules.put(module.getModuleId(), module);
             }
-            for (DeploymentModule module : appModule.getResourceModules()) {
+            for (DeploymentModule module : appModule.getConnectorModules()) {
                 modules.put(module.getModuleId(), module);
             }
 

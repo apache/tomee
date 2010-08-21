@@ -98,7 +98,13 @@ class AppInfoBuilder {
     public AppInfo build(AppModule appModule) throws OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.appId = appModule.getModuleId();
+        appInfo.path = appModule.getJarLocation();
+        appInfo.standaloneModule = appModule.isStandaloneModule();
+        appInfo.watchedResources.addAll(appModule.getWatchedResources());
 
+        if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
+        if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
+        
         //
         //  J2EE Connectors
         //
@@ -143,7 +149,7 @@ class AppInfoBuilder {
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-                ejbJarInfos.put(ejbJarInfo.jarPath, ejbJarInfo);
+                ejbJarInfos.put(ejbJarInfo.path, ejbJarInfo);
 
                 appInfo.ejbJars.add(ejbJarInfo);
 
@@ -196,7 +202,7 @@ class AppInfoBuilder {
             });
         } catch (CircularReferencesException e) {
             List<List> circuits = e.getCircuits();
-
+            // TODO Seems we lost circular reference detection, or we do it elsewhere and don't need it here
         }
 
         //
@@ -213,8 +219,6 @@ class AppInfoBuilder {
         //
         //  Final AppInfo creation
         //
-        appInfo.jarPath = appModule.getJarLocation();
-        appInfo.watchedResources.addAll(appModule.getWatchedResources());
         List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
             File file = toFile(url);
@@ -238,7 +242,7 @@ class AppInfoBuilder {
         ReportValidationResults reportValidationResults = new ReportValidationResults();
         reportValidationResults.deploy(appModule);
 
-        logger.info("config.appLoaded", appInfo.jarPath);
+        logger.info("config.appLoaded", appInfo.path);
         return appInfo;
 
     }
@@ -249,7 +253,7 @@ class AppInfoBuilder {
             ClientInfo clientInfo = new ClientInfo();
             clientInfo.description = applicationClient.getDescription();
             clientInfo.displayName = applicationClient.getDisplayName();
-            clientInfo.codebase = clientModule.getJarLocation();
+            clientInfo.path = clientModule.getJarLocation();
             clientInfo.mainClass = clientModule.getMainClass();
             clientInfo.localClients.addAll(clientModule.getLocalClients());
             clientInfo.remoteClients.addAll(clientModule.getRemoteClients());
@@ -268,7 +272,7 @@ class AppInfoBuilder {
             WebAppInfo webAppInfo = new WebAppInfo();
             webAppInfo.description = webApp.getDescription();
             webAppInfo.displayName = webApp.getDisplayName();
-            webAppInfo.codebase = webModule.getJarLocation();
+            webAppInfo.path = webModule.getJarLocation();
             webAppInfo.moduleId = webModule.getModuleId();
             webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
 
@@ -294,7 +298,7 @@ class AppInfoBuilder {
     private void buildConnectorModules(AppModule appModule, AppInfo appInfo) throws OpenEJBException {
         String appId = appModule.getModuleId();
 
-        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
             // the id generation code in AutoConfig$AppResources
@@ -305,7 +309,7 @@ class AppInfoBuilder {
             ConnectorInfo connectorInfo = new ConnectorInfo();
             connectorInfo.description = connector.getDescription();
             connectorInfo.displayName = connector.getDisplayName();
-            connectorInfo.codebase = connectorModule.getJarLocation();
+            connectorInfo.path = connectorModule.getJarLocation();
             connectorInfo.moduleId = connectorModule.getModuleId();
             connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
 
