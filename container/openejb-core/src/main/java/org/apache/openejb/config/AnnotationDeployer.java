@@ -292,7 +292,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     removeModule();
                 }
             }
-            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
                 setModule(connectorModule);
                 try {
                     deploy(connectorModule);
@@ -648,7 +648,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
     public static class ProcessAnnotatedBeans implements DynamicDeployer {
 
-        private static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
+        public static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
@@ -667,7 +667,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     removeModule();
                 }
             }
-            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
                 setModule(connectorModule);
                 try {
                     deploy(connectorModule);
@@ -1285,7 +1285,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                          * @WebService
                          * @WebServiceProvider
                          */
-                        processSessionInterfaces(sessionBean, clazz, ejbModule);
+//                        boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
+                        if (false) {
+                            processSessionInterfacesStrict(sessionBean, clazz, ejbModule);
+                        } else {
+                            processSessionInterfaces(sessionBean, clazz, ejbModule);
+                        }
 
                         /*
                          * Allow for all session bean types
@@ -1528,7 +1533,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     if (assemblyDescriptor.getApplicationException(exception) != null) {
                         mergeApplicationExceptionAnnotation(assemblyDescriptor, exception, annotation);
                     } else {
-                        logger.info("Found previously undetected application exception {} listed on a method {} with annotation {}", method, exception, annotation);
+                        logger.debug("Found previously undetected application exception {0} listed on a method {1} with annotation {2}", method, exception, annotation);
                         assemblyDescriptor.addApplicationException(exception, annotation.rollback(), annotation.inherited());
                     }
                 }
@@ -1824,6 +1829,192 @@ public class AnnotationDeployer implements DynamicDeployer {
                 sessionBean.setLocalBean(new Empty());
             }
 
+        }
+
+        private void processSessionInterfacesStrict(SessionBean sessionBean, Class<?> beanClass, EjbModule ejbModule) {
+
+            ValidationContext validation = ejbModule.getValidation();
+            String ejbName = sessionBean.getEjbName();
+
+//            boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
+
+            /*
+             * Collect all interfaces explicitly declared via xml.
+             * We will subtract these from the interfaces implemented
+             * by the bean and do annotation scanning on the remainder.
+             */
+            List<String> descriptor = new ArrayList<String>();
+            descriptor.add(sessionBean.getHome());
+            descriptor.add(sessionBean.getRemote());
+            descriptor.add(sessionBean.getLocalHome());
+            descriptor.add(sessionBean.getLocal());
+            descriptor.addAll(sessionBean.getBusinessLocal());
+            descriptor.addAll(sessionBean.getBusinessRemote());
+            descriptor.add(sessionBean.getServiceEndpoint());
+
+            BusinessInterfaces xml = new BusinessInterfaces();
+            xml.addLocals(sessionBean.getBusinessLocal(), ejbModule.getClassLoader());
+            xml.addRemotes(sessionBean.getBusinessRemote(), ejbModule.getClassLoader());
+
+            /**
+             * Anything declared as both <business-local> and <business-remote> is invalid in strict mode
+             */
+            for (Class interfce : xml.local) {
+                if (xml.remote.contains(interfce)) {
+                    validation.fail(ejbName, "xml.localRemote.conflict", interfce.getName());
+                }
+            }
+            
+            /*
+             * Merge the xml declared business interfaces into the complete set
+             */
+            BusinessInterfaces all = new BusinessInterfaces();
+            all.local.addAll(xml.local);
+            all.remote.addAll(xml.remote);
+
+            BusinessInterfaces annotated = new BusinessInterfaces();
+            LinkedHashSet<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+            boolean localBean = false;
+            /*
+            * @WebService
+            * @WebServiceProvider
+            */
+            if (sessionBean.getServiceEndpoint() == null) {
+                Class defaultEndpoint = DeploymentInfo.ServiceEndpoint.class;
+
+                for (Class interfce : beanClass.getInterfaces()) {
+                    if (interfce.isAnnotationPresent(WebService.class)) {
+                        defaultEndpoint = interfce;
+                    }
+                }
+
+                WebService webService = beanClass.getAnnotation(WebService.class);
+                if (webService != null) {
+
+                    String className = webService.endpointInterface();
+
+                    if (!className.equals("")) {
+                        sessionBean.setServiceEndpoint(className);
+                    } else {
+                        sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                    }
+                } else if (beanClass.isAnnotationPresent(WebServiceProvider.class)) {
+                    sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                } else if (!defaultEndpoint.equals(DeploymentInfo.ServiceEndpoint.class)) {
+                    sessionBean.setServiceEndpoint(defaultEndpoint.getName());
+                }
+            }
+            /*
+             * 4.9.2.1 client views are specified on the session bean class itself, not on any superclasses.
+             */
+
+            /*
+             * 4.9.7  par 5.3
+             * 4.9.8 par 1.3
+            * These interface types are not eligible to be business interfaces.
+            * java.io.Serializable
+            * java.io.Externalizable
+            * javax.ejb.*
+            */
+            for (Class<?> interfce : beanClass.getInterfaces()) {
+                String name = interfce.getName();
+                if (!name.equals("java.io.Serializable") &&
+                        !name.equals("java.io.Externalizable") &&
+                        !name.startsWith("javax.ejb.")) {
+                    interfaces.add(interfce);
+                }
+            }
+            localBean |= beanClass.getAnnotation(LocalBean.class) != null;
+            if (beanClass.getAnnotation(Local.class) != null) {
+                annotated.local.addAll(toList(beanClass.getAnnotation(Local.class).value()));
+            }
+            if (beanClass.getAnnotation(Remote.class) != null) {
+                annotated.remote.addAll(toList(beanClass.getAnnotation(Remote.class).value()));
+            }
+
+            if (localBean) {
+                sessionBean.setLocalBean(new Empty());
+            }
+            /**
+             * 4.9.8 implied local bean
+             */
+            if (sessionBean.getLocalBean() == null
+                    && beanClass.getInterfaces().length == 0
+                    && annotated.local.isEmpty()
+                    && annotated.remote.isEmpty()
+                    && xml.local.isEmpty()
+                    && xml.remote.isEmpty()
+                    && sessionBean.getHome() == null
+                    && sessionBean.getRemote() == null
+                    && sessionBean.getLocalHome() == null
+                    && sessionBean.getLocal() == null
+                    && sessionBean.getServiceEndpoint() == null) {
+                sessionBean.setLocalBean(new Empty());
+                //nothing else to do...
+                return;
+            }
+            /**
+             * 4.9.7 par 5.1 single interface.
+             * Requires: not no-interface, no interface specified by @Local or @Remote on a bean class(?) and only one implemented interface.
+             */
+            if (sessionBean.getLocalBean() == null
+                    && interfaces.size() == 1
+                    && annotated.local.isEmpty()
+                    && annotated.remote.isEmpty()
+                    && xml.local.isEmpty()
+                    && xml.remote.isEmpty()) {
+                Class<?> interfce = interfaces.iterator().next();
+                if (interfce.getAnnotation(Remote.class) != null) {
+                    validateRemoteInterface(interfce, validation, ejbName);
+                    sessionBean.getBusinessRemote().add(interfce.getName());
+                } else {
+                    validateLocalInterface(interfce, validation, ejbName);
+                    sessionBean.getBusinessLocal().add(interfce.getName());
+                }
+                return;
+            }
+
+            /**
+             * 4.9.7 par 5.2 and 5.5
+             * All other interfaces must be specified as local or remote on the interface or in the beans @Local/@Remote annotation
+             * (or the xml)
+             */
+            for (Class<?> interfce: interfaces) {
+                if (interfce.getAnnotation(Local.class) != null) {
+                    annotated.local.add(interfce);
+                }
+                if (interfce.getAnnotation(Remote.class) != null) {
+                    annotated.remote.add(interfce);
+                }
+            }
+
+            /**
+             * 4.9.7 par 5.4
+             * No interface can be both Local and Remote
+             */
+            // TODO This isn't right either, xml always wins over annotation so there can never be this mixed "some combination of xml and annotations" case
+            all.local.addAll(annotated.local);
+            all.remote.addAll(annotated.remote);
+            for (Class<?> local: all.local) {
+                if (all.remote.contains(local)) {
+                    validation.fail(ejbName, "ann.localRemote.generalconflict", local);
+                }
+            }
+
+            //add to xml
+            annotated.local.removeAll(xml.local);
+            annotated.remote.removeAll(xml.remote);
+            for (Class<?> local: annotated.local) {
+                sessionBean.getBusinessLocal().add(local.getName());
+            }
+            for (Class<?> remote: annotated.remote) {
+                sessionBean.getBusinessRemote().add(remote.getName());
+            }
+        }
+
+        private List<? extends Class> toList(Class[] classes) {
+            if (classes == null) return Collections.emptyList();
+            return asList(classes);
         }
 
         private static class BusinessInterfaces {

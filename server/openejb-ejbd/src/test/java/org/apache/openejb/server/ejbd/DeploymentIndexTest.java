@@ -40,7 +40,7 @@ public class DeploymentIndexTest {
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        deploymentInfo = new CoreDeploymentInfo("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null, null, null), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, false);
+        deploymentInfo = new CoreDeploymentInfo("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null, null, null, false), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, false);
         deploymentIndex = new DeploymentIndex(new DeploymentInfo[] { deploymentInfo, deploymentInfo });
     }
 

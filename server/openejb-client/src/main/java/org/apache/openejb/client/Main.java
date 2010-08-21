@@ -48,7 +48,7 @@ public class Main {
         InitialContext initialContext = new InitialContext();
 
         // path to the client jar file
-        String path = (String) initialContext.lookup("java:comp/path");
+        String path = (String) initialContext.lookup("java:info/path");
         // TODO: Download the file
         File file = new File(path);
 
@@ -63,7 +63,7 @@ public class Main {
 
         // load the main class and get the main method
         // do this first so we fail fast on a bad class path
-        String mainClassName = (String) initialContext.lookup("java:comp/mainClass");
+        String mainClassName = (String) initialContext.lookup("java:info/mainClass");
         Class mainClass = classLoader.loadClass(mainClassName);
         final Method mainMethod = mainClass.getMethod("main", String[].class);
 
@@ -71,16 +71,16 @@ public class Main {
         // again do this before any major work so we can fail fase
         Class callbackHandlerClass = null;
         try {
-            String callbackHandlerName = (String) initialContext.lookup("java:comp/callbackHandler");
+            String callbackHandlerName = (String) initialContext.lookup("java:info/callbackHandler");
             callbackHandlerClass = classLoader.loadClass(callbackHandlerName);
         } catch (NameNotFoundException ignored) {
         }
 
-        InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:comp/injections");
+        InjectionMetaData injectionMetaData = (InjectionMetaData) initialContext.lookup("java:info/injections");
         ClientInstance.get().setComponent(InjectionMetaData.class, injectionMetaData);
         for (Injection injection : injectionMetaData.getInjections()) {
             try {
-                Object value = initialContext.lookup("java:comp/env/" + injection.getJndiName());
+                Object value = initialContext.lookup("java:" + injection.getJndiName());
                 Class target = classLoader.loadClass(injection.getTargetClass());
                 Field field = target.getDeclaredField(injection.getName());
                 setAccessible(field);

@@ -36,6 +36,7 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.config.RequireDescriptors;
@@ -83,6 +84,7 @@ public class OpenEjbContainer extends EJBContainer {
             String appId = (String) properties.get(EJBContainer.APP_NAME);
             try {
                 Properties props = new Properties();
+                props.put(AnnotationDeployer.ProcessAnnotatedBeans.STRICT_INTERFACE_DECLARATION, Boolean.toString(true));
                 props.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
                 props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");

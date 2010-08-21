@@ -31,7 +31,6 @@ import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * A potential issue with this feature is that the stateless bean is created
@@ -62,7 +61,7 @@ public class EjbRefTest extends TestCase {
 
     protected void tearDown() throws Exception {
         for (AppInfo appInfo : assembler.getDeployedApplications()) {
-            assembler.destroyApplication(appInfo.jarPath);
+            assembler.destroyApplication(appInfo.path);
         }
         SystemInstance.get().setComponent(Assembler.class, null);
         SystemInstance.get().setComponent(ContainerSystem.class, null);

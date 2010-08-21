@@ -19,7 +19,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.InjectionInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
@@ -141,7 +140,7 @@ public class AutoConfig implements DynamicDeployer {
         for (ClientModule clientModule : appModule.getClientModules()) {
             deploy(clientModule, appResources);
         }
-        for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
             deploy(connectorModule);
         }
         for (WebModule webModule : appModule.getWebModules()) {
@@ -1627,7 +1626,7 @@ public class AutoConfig implements DynamicDeployer {
             // the id generation code in ConfigurationFactory.configureApplication(AppModule appModule)
             //
 
-            for (ConnectorModule connectorModule : appModule.getResourceModules()) {
+            for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
                 Connector connector = connectorModule.getConnector();
 
                 ResourceAdapter resourceAdapter = connector.getResourceAdapter();

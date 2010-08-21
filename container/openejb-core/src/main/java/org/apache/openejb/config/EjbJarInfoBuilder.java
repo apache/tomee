@@ -134,10 +134,10 @@ public class EjbJarInfoBuilder {
         Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 
         EjbJarInfo ejbJar = new EjbJarInfo();
-        ejbJar.jarPath = jar.getJarLocation();
+        ejbJar.path = jar.getJarLocation();
         ejbJar.moduleId = jar.getModuleId();
         if (ejbJar.moduleId == null) {
-            ejbJar.moduleId = new File(ejbJar.jarPath).getName().replaceFirst(".jar$","");
+            ejbJar.moduleId = new File(ejbJar.path).getName().replaceFirst(".jar$","");
         }
         ejbJar.watchedResources.addAll(jar.getWatchedResources());
 

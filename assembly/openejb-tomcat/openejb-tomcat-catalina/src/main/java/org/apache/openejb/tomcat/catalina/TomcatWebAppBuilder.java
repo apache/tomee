@@ -213,7 +213,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
-                String contextXmlFile = webApp.codebase + "/META-INF/context.xml";
+                String contextXmlFile = webApp.path + "/META-INF/context.xml";
                 if (new File(contextXmlFile).exists()) {
                     standardContext.setConfigFile(contextXmlFile);
                     standardContext.setOverride(true);
@@ -222,7 +222,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.addLifecycleListener(contextConfig);
 
                 standardContext.setPath("/" + webApp.contextRoot);
-                standardContext.setDocBase(webApp.codebase);
+                standardContext.setDocBase(webApp.path);
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
 
@@ -480,7 +480,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null) {
             try {
-                assembler.destroyApplication(contextInfo.appInfo.jarPath);
+                assembler.destroyApplication(contextInfo.appInfo.path);
             } catch (Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
@@ -524,9 +524,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 DeployedApplication deployedApplication = entry.getValue();
                 if (deployedApplication.isModified()) {
                     try {
-                        assembler.destroyApplication(deployedApplication.appInfo.jarPath);
+                        assembler.destroyApplication(deployedApplication.appInfo.path);
                     } catch (Exception e) {
-                        logger.error("Unable to application " + deployedApplication.appInfo.jarPath + ": Exception: " + e.getMessage(), e);
+                        logger.error("Unable to application " + deployedApplication.appInfo.path + ": Exception: " + e.getMessage(), e);
                     }
                     iterator.remove();
                 }
@@ -660,7 +660,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         WebModule webModule = createWebModule(standardContext);
 
         // create the app module
-        AppModule appModule = new AppModule(webModule.getClassLoader(), webModule.getJarLocation());
+        AppModule appModule = new AppModule(webModule);
 
         // add the web module itself
         appModule.getWebModules().add(webModule);

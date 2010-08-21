@@ -36,7 +36,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new CoreDeploymentInfo("book", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext()), new IvmContext()),
+            deploymentInfo = new CoreDeploymentInfo("book", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
                     BookBean.class,
                     null,
                     null,

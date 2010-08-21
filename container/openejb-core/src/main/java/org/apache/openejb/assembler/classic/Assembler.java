@@ -98,6 +98,7 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
+import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -164,10 +165,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (DeploymentListener listener : listeners) {
             String listenerName = listener.getClass().getSimpleName();
             try {
-                logger.debug("appCreationEvent.start", listenerName, getPath(appInfo));
+                logger.debug("appCreationEvent.start", listenerName, appInfo.path);
                 listener.afterApplicationCreated(appInfo);
             } catch (Throwable e) {
-                logger.error("appCreationEvent.failed", e, listenerName, getPath(appInfo));
+                logger.error("appCreationEvent.failed", e, listenerName, appInfo.path);
             }
         }
     }
@@ -180,10 +181,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (DeploymentListener listener : listeners) {
             String listenerName = listener.getClass().getSimpleName();
             try {
-                logger.debug("appDestroyedEvent.start", listenerName, getPath(appInfo));
+                logger.debug("appDestroyedEvent.start", listenerName, appInfo.path);
                 listener.beforeApplicationDestroyed(appInfo);
             } catch (Throwable e) {
-                logger.error("appDestroyedEvent.failed", e, listenerName, getPath(appInfo));
+                logger.error("appDestroyedEvent.failed", e, listenerName, appInfo.path);
             }
         }
     }
@@ -371,7 +372,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (Throwable e) {
-                logger.error("appNotDeployed", e, getPath(appInfo));
+                logger.error("appNotDeployed", e, appInfo.path);
             }
         }
     }
@@ -386,7 +387,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = ejbJar.jarPath;
+        appInfo.path = ejbJar.path;
+        appInfo.appId = ejbJar.moduleId;
         appInfo.ejbJars.add(ejbJar);
         createApplication(appInfo);
     }
@@ -397,49 +399,56 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = ejbJar.jarPath;
+        appInfo.path = ejbJar.path;
+        appInfo.appId = ejbJar.moduleId;
         appInfo.ejbJars.add(ejbJar);
         createApplication(appInfo, classLoader);
     }
 
     public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = clientInfo.moduleId;
+        appInfo.path = clientInfo.path;
+        appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         createApplication(appInfo);
     }
 
     public void createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = clientInfo.moduleId;
+        appInfo.path = clientInfo.path;
+        appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
         createApplication(appInfo, classLoader);
     }
 
     public void createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = connectorInfo.moduleId;
+        appInfo.path = connectorInfo.path;
+        appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
         createApplication(appInfo);
     }
 
     public void createConnector(ConnectorInfo connectorInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = connectorInfo.moduleId;
+        appInfo.path = connectorInfo.path;
+        appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
         createApplication(appInfo, classLoader);
     }
 
     public void createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = webAppInfo.moduleId;
+        appInfo.path = webAppInfo.path;
+        appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
         createApplication(appInfo);
     }
 
     public void createWebApp(WebAppInfo webAppInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
-        appInfo.jarPath = webAppInfo.moduleId;
+        appInfo.path = webAppInfo.path;
+        appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
         createApplication(appInfo, classLoader);
     }
@@ -453,8 +462,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public List<DeploymentInfo> createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
+        // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places 
+        if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
+        if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
 
-        logger.info("createApplication.start", getPath(appInfo));
+        logger.info("createApplication.start", appInfo.path);
+
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            Thread.interrupted();
+//        }
 
         // To start out, ensure we don't already have any beans deployed with duplicate IDs.  This
         // is a conflict we can't handle.
@@ -468,7 +487,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         if (used.size() > 0) {
-            String message = logger.error("createApplication.appFailedDuplicateIds", getPath(appInfo));
+            String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
             for (String id : used) {
                 logger.debug("createApplication.deploymentIdInUse", id);
                 message += "\n    "+id;
@@ -488,10 +507,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             CmpJarBuilder cmpJarBuilder = new CmpJarBuilder(appInfo, classLoader);
             File generatedJar = cmpJarBuilder.getJarFile();
             if (generatedJar != null) {
-                classLoader = ClassLoaderUtil.createClassLoader(getPath(appInfo), new URL []{generatedJar.toURI().toURL()}, classLoader);
+                classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
-            AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext);
+            AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, false);
             
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
@@ -652,17 +671,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = (Context) jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
 
+                Debug.printContext(context);
+                
                 containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
-                if (clientInfo.codebase != null) {
-                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/path", clientInfo.codebase);
+
+                if (clientInfo.path != null) {
+                    context.bind("info/path", clientInfo.path);
                 }
                 if (clientInfo.mainClass != null) {
-                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/mainClass", clientInfo.mainClass);
+                    context.bind("info/mainClass", clientInfo.mainClass);
                 }
                 if (clientInfo.callbackHandler != null) {
-                    containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/callbackHandler", clientInfo.callbackHandler);
+                    context.bind("info/callbackHandler", clientInfo.callbackHandler);
                 }
-                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId + "/comp/injections", injections);
+                context.bind("info/injections", injections);
 
                 for (String clientClassName : clientInfo.remoteClients) {
                     containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
@@ -688,9 +710,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 globalEjbResolver.addAll(appInfo.ejbJars);
             }
 
-            logger.info("createApplication.success", getPath(appInfo));
+            logger.info("createApplication.success", appInfo.path);
 
-            deployedApplications.put(getPath(appInfo), appInfo);
+            deployedApplications.put(appInfo.path, appInfo);
             fireAfterApplicationCreated(appInfo);
 
             return allDeployments;
@@ -698,30 +720,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             try {
                 destroyApplication(appInfo);
             } catch (Exception e1) {
-                logger.debug("createApplication.undeployFailed", e1, getPath(appInfo));
+                logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
 
-            throw new OpenEJBException(messages.format("createApplication.failed", getPath(appInfo)), t);
+            throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
         }
-    }
-
-    private String getPath(AppInfo appInfo) {
-        if (appInfo.jarPath != null) {
-            return appInfo.jarPath;
-        }
-        for (EjbJarInfo ejbJarInfo: appInfo.ejbJars) {
-            return ejbJarInfo.jarPath;
-        }
-        for (ConnectorInfo connectorInfo: appInfo.connectors) {
-            return connectorInfo.codebase;
-        }
-        for (WebAppInfo webAppInfo: appInfo.webApps) {
-            return webAppInfo.codebase;
-        }
-        for (ClientInfo clientInfo: appInfo.clients) {
-            return clientInfo.codebase;
-        }
-        throw new IllegalStateException("Nothing in app to locate it: " + appInfo);
     }
 
     private TransactionPolicyFactory createTransactionPolicyFactory(EjbJarInfo ejbJar, ClassLoader classLoader) {
@@ -798,9 +801,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Assembler assembler = this;
         for (AppInfo appInfo : assembler.getDeployedApplications()) {
             try {
-                assembler.destroyApplication(getPath(appInfo));
+                assembler.destroyApplication(appInfo.path);
             } catch (UndeployException e) {
-                logger.error("Undeployment failed: " + getPath(appInfo), e);
+                logger.error("Undeployment failed: " + appInfo.path, e);
             } catch (NoSuchApplicationException e) {
             }
         }
@@ -841,7 +844,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyApplication(AppInfo appInfo) throws UndeployException {
-        logger.info("destroyApplication.start", getPath(appInfo));
+        logger.info("destroyApplication.start", appInfo.path);
 
         fireBeforeApplicationDestroyed(appInfo);
 
@@ -854,14 +857,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
 
         Context globalContext = containerSystem.getJNDIContext();
-        UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", getPath(appInfo)));
+        UndeployException undeployException = new UndeployException(messages.format("destroyApplication.failed", appInfo.path));
 
         WebAppBuilder webAppBuilder = SystemInstance.get().getComponent(WebAppBuilder.class);
         if (webAppBuilder != null) {
             try {
                 webAppBuilder.undeployWebApps(appInfo);
             } catch (Exception e) {
-                undeployException.getCauses().add(new Exception("App: " + getPath(appInfo) + ": " + e.getMessage(), e));
+                undeployException.getCauses().add(new Exception("App: " + appInfo.path + ": " + e.getMessage(), e));
             }
         }
 
@@ -970,22 +973,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        ClassLoaderUtil.destroyClassLoader(getPath(appInfo));
+        ClassLoaderUtil.destroyClassLoader(appInfo.path);
 
         if (undeployException.getCauses().size() > 0) {
             throw undeployException;
         }
 
-        logger.debug("destroyApplication.success", getPath(appInfo));
+        logger.debug("destroyApplication.success", appInfo.path);
     }
 
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
         List<URL> jars = new ArrayList<URL>();
         for (EjbJarInfo info : appInfo.ejbJars) {
-            jars.add(toUrl(info.jarPath));
+            jars.add(toUrl(info.path));
         }
         for (ClientInfo info : appInfo.clients) {
-            jars.add(toUrl(info.codebase));
+            jars.add(toUrl(info.path));
         }
         for (ConnectorInfo info : appInfo.connectors) {
             for (String jarPath : info.libs) {
@@ -997,7 +1000,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // Create the class loader
-        ClassLoader classLoader = ClassLoaderUtil.createClassLoader(getPath(appInfo), jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
+        ClassLoader classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, jars.toArray(new URL[jars.size()]), OpenEJB.class.getClassLoader());
         return classLoader;
     }
 

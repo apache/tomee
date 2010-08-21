@@ -218,6 +218,16 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>catalina</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-impl</artifactId>
+      <version>1.2.2</version>
+    </dependency>
   </dependencies>
 </project>
 

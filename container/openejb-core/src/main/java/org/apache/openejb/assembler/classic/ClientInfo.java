@@ -23,7 +23,7 @@ import java.util.TreeSet;
 
 public class ClientInfo extends InfoObject {
 
-    public String codebase;
+    public String path;
     public String description;
     public String displayName;
     public String smallIcon;

@@ -147,6 +147,13 @@ public class Application implements JndiConsumer {
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
 
+    public Application() {
+    }
+
+    public Application(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
     public String getApplicationName() {
         return applicationName;
     }

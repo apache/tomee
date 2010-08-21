@@ -54,29 +54,29 @@ public class MainTest extends TestCase {
         LoginTestUtil.initialize();
 
         jndi.clear();
-        jndi.put("java:comp/path", "fake.jar");
-        jndi.put("java:comp/injections", new InjectionMetaData());
+        jndi.put("java:info/path", "fake.jar");
+        jndi.put("java:info/injections", new InjectionMetaData());
     }
 
     public void testSecureMain() throws Exception {
-        jndi.put("java:comp/callbackHandler", StaticUsernamePasswordCallbackHandler.class.getName());
+        jndi.put("java:info/callbackHandler", StaticUsernamePasswordCallbackHandler.class.getName());
 
         StaticUsernamePasswordCallbackHandler.setUsername("victoria");
         StaticUsernamePasswordCallbackHandler.setPassword("secret");
         LoginTestUtil.setAuthGranted();
         
-        jndi.put("java:comp/mainClass", SecureMain.class.getName());
+        jndi.put("java:info/mainClass", SecureMain.class.getName());
         Main.main(new String[0]);
     }
 
     public void testSecureMainFailed() throws Exception {
-        jndi.put("java:comp/callbackHandler", StaticUsernamePasswordCallbackHandler.class.getName());
+        jndi.put("java:info/callbackHandler", StaticUsernamePasswordCallbackHandler.class.getName());
 
         StaticUsernamePasswordCallbackHandler.setUsername("victoria");
         StaticUsernamePasswordCallbackHandler.setPassword("secret");
         LoginTestUtil.setAuthDenied();
 
-        jndi.put("java:comp/mainClass", SecureMain.class.getName());
+        jndi.put("java:info/mainClass", SecureMain.class.getName());
         try {
             Main.main(new String[0]);
             fail("Expected main method to throw FailedLoginException");
@@ -101,7 +101,7 @@ public class MainTest extends TestCase {
     }
 
     public void testNormalMain() throws Exception {
-        jndi.put("java:comp/mainClass", NormalMain.class.getName());
+        jndi.put("java:info/mainClass", NormalMain.class.getName());
         Main.main(new String[0]);
     }
 

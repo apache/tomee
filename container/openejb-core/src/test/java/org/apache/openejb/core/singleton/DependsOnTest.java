@@ -31,18 +31,15 @@ import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.OpenEJBException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
@@ -89,7 +86,7 @@ public class DependsOnTest extends TestCase {
 
         // startup and trigger @PreDestroy
         for (AppInfo appInfo : assembler.getDeployedApplications()) {
-            assembler.destroyApplication(appInfo.jarPath);
+            assembler.destroyApplication(appInfo.path);
         }
 
         assertEquals(expected(one, two, three, four), actual);

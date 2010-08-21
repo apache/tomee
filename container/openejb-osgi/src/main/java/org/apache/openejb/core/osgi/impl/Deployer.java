@@ -78,7 +78,7 @@ public class Deployer implements BundleListener {
                     System.out.println(appInfo);
                     assembler.createApplication(appInfo);
 
-                    System.out.println("[Deployer] Application deployed: " + appInfo.jarPath);
+                    System.out.println("[Deployer] Application deployed: " + appInfo.path);
 
                     registerService(bundle, appInfo);
 

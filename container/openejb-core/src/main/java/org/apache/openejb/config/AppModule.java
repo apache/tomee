@@ -48,11 +48,32 @@ public class AppModule implements DeploymentModule {
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final String moduleId;
     private final Set<String> watchedResources = new TreeSet<String>();
+    private final boolean standaloneModule;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
-        this(classLoader, jarLocation, null);
+        this(classLoader, jarLocation, null, false);
     }
-    public AppModule(ClassLoader classLoader, String jarLocation, Application application) {
+
+    public <T extends DeploymentModule> AppModule(T module) {
+        this(module.getClassLoader(), module.getJarLocation(), new Application(module.getModuleId()), true);
+        final Class<? extends DeploymentModule> type = module.getClass();
+
+        if (type == EjbModule.class) {
+            getEjbModules().add((EjbModule) module);
+        } else if (type == ClientModule.class) {
+            getClientModules().add((ClientModule) module);
+        } else if (type == ConnectorModule.class) {
+            getConnectorModules().add((ConnectorModule) module);
+        } else if (type == WebModule.class) {
+            getWebModules().add((WebModule) module);
+        } else if (type == PersistenceModule.class) {
+            getPersistenceModules().add((PersistenceModule) module);
+        } else {
+            throw new IllegalArgumentException("Unknown module type: " + type.getName());
+        }
+    }
+
+    public AppModule(ClassLoader classLoader, String jarLocation, Application application, boolean standaloneModule) {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
         this.application = application;
@@ -69,7 +90,15 @@ public class AppModule implements DeploymentModule {
         } else {
             this.moduleId = application.getApplicationName();
         }
+        if (this.jarLocation == null) throw new IllegalArgumentException("jarLocation cannot be null");
+        if (this.moduleId == null) throw new IllegalArgumentException("moduleId cannot be null");
+
         this.validation = new ValidationContext(AppModule.class, jarLocation);
+        this.standaloneModule = standaloneModule;
+    }
+
+    public boolean isStandaloneModule() {
+        return standaloneModule;
     }
 
     public ValidationContext getValidation() {
@@ -191,7 +220,7 @@ public class AppModule implements DeploymentModule {
         this.cmpMappings = cmpMappings;
     }
 
-    public List<ConnectorModule> getResourceModules() {
+    public List<ConnectorModule> getConnectorModules() {
         return connectorModules;
     }
 

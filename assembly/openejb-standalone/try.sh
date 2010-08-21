@@ -26,12 +26,13 @@ cd target/
 tar xzvf openejb-$VERSION.tar.gz
 cd openejb-$VERSION
 mkdir apps
-cp $JAR apps/
+mkdir logs
+#cp $JAR apps/
 ./bin/openejb start &
 sleep 1
-tail -f logs/openejb.log
-#sleep 14
-#./bin/openejb deploy -h
-#$JAR
+tail -f logs/openejb.log &
+sleep 14
+echo ./bin/openejb deploy $JAR
+./bin/openejb deploy $JAR
 
 

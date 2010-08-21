@@ -169,48 +169,48 @@ public class VmDeploymentManager implements DeploymentManager {
             InfoObject infoObject = infos.get(0);
             if (infoObject instanceof ClientInfo) {
                 ClientInfo clientInfo = (ClientInfo) infoObject;
-                if (appInfo.jarPath.equals(clientInfo.codebase)) {
+                if (appInfo.path.equals(clientInfo.path)) {
                     // are client modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.CAR)) {
                         return null;
                     }
-                    if (clientInfo.moduleId == appInfo.jarPath) {
+                    if (clientInfo.moduleId == appInfo.path) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
                     }
                 }
             }
             if (infoObject instanceof EjbJarInfo) {
                 EjbJarInfo ejbJarInfo = (EjbJarInfo) infoObject;
-                if (appInfo.jarPath.equals(ejbJarInfo.jarPath)) {
+                if (appInfo.path.equals(ejbJarInfo.path)) {
                     // are ejb modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
                         return null;
                     }
-                    if (ejbJarInfo.moduleId == appInfo.jarPath) {
+                    if (ejbJarInfo.moduleId == appInfo.path) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
                     }
                 }
             }
             if (infoObject instanceof ConnectorInfo) {
                 ConnectorInfo connectorInfo = (ConnectorInfo) infoObject;
-                if (appInfo.jarPath.equals(connectorInfo.codebase)) {
+                if (appInfo.path.equals(connectorInfo.path)) {
                     // are connector modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.RAR)) {
                         return null;
                     }
-                    if (connectorInfo.moduleId == appInfo.jarPath) {
+                    if (connectorInfo.moduleId == appInfo.path) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, connectorInfo.moduleId);
                     }
                 }
             }
             if (infoObject instanceof WebAppInfo) {
                 WebAppInfo webAppInfo = (WebAppInfo) infoObject;
-                if (appInfo.jarPath.equals(webAppInfo.codebase)) {
+                if (appInfo.path.equals(webAppInfo.path)) {
                     // are web app modules allowed
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.WAR)) {
                         return null;
                     }
-                    if (webAppInfo.moduleId == appInfo.jarPath) {
+                    if (webAppInfo.moduleId == appInfo.path) {
                         return new TargetModuleIDImpl(DEFAULT_TARGET, webAppInfo.moduleId); //todo web module
                     }
                 }
@@ -224,7 +224,7 @@ public class VmDeploymentManager implements DeploymentManager {
             return null;
         }
 
-        TargetModuleIDImpl earModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, appInfo.jarPath);
+        TargetModuleIDImpl earModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, appInfo.path);
         for (ClientInfo clientInfo : appInfo.clients) {
             TargetModuleIDImpl clientModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, clientInfo.moduleId);
             clientModuleId.setParentTargetModuleID(earModuleId);
