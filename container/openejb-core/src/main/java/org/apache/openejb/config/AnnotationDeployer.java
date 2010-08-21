@@ -650,8 +650,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
-        private static final Method LOOKUP_METHOD = getLookupMethod();
-        
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 setModule(ejbModule);
@@ -2494,7 +2492,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ejbRef.setMappedName(mappedName);
             
             // Set lookup name, if any
-            String lookupName = ejb.lookup();
+            String lookupName = getLookupName(ejb);
             if (lookupName.equals("")) {
                 lookupName = null;
             }
@@ -2531,6 +2529,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     break;
             }
         }
+
+
 
         private String normalize(String refName) {
             if (refName.startsWith("java:")) {
@@ -2757,9 +2757,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private static Method getLookupMethod() {
+        private static Method getLookupMethod(Class cls) {
             try {
-                return Resource.class.getMethod("lookup", null);
+                return cls.getMethod("lookup", null);
             } catch (NoSuchMethodException e) {
                 return null;
             }
@@ -2767,16 +2767,32 @@ public class AnnotationDeployer implements DynamicDeployer {
         
         private static String getLookupName(Resource resource) {
             String value = "";
-            if (LOOKUP_METHOD != null) {
+            Method lookupMethod = getLookupMethod(Resource.class);
+            if (lookupMethod != null) {
                 try {
-                    value = (String) LOOKUP_METHOD.invoke(resource, null);
+                    value = (String) lookupMethod.invoke(resource, null);
                 } catch (Exception e) {
                     // ignore
                 }
             }
             return value;
         }
-        
+
+
+        private static String getLookupName(EJB ejb) {
+            String value = "";
+            Method lookupMethod = getLookupMethod(EJB.class);
+            if (lookupMethod != null) {
+                try {
+                    value = (String) lookupMethod.invoke(ejb, null);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            return value;
+        }
+
+
         /**
          * Process @PersistenceUnit into <persistence-unit> for the specified member (field or method)
          *
