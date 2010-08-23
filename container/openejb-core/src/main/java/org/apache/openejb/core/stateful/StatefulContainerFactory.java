@@ -85,6 +85,10 @@ public class StatefulContainerFactory {
         properties.put("BulkPassivate", s);
     }
 
+    public void setFrequency(String s) {
+        properties.put("Frequency", s);
+    }
+    
     public Properties getProperties() {
         return properties;
     }
@@ -98,6 +102,7 @@ public class StatefulContainerFactory {
         if (cache == null) {
             buildCache();
         }
+        cache.init();
         return new StatefulContainer(id, securityService, cache, accessTimeout);
     }
 

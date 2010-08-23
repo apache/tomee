@@ -63,6 +63,7 @@ public class Compat3to2Test extends TestCase {
         StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
         statefulContainerInfo.properties.setProperty("PoolSize", "0");
         statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
+        statefulContainerInfo.properties.setProperty("Frequency", "0");
         assembler.createContainer(statefulContainerInfo);
 
         EjbJar ejbJar = new EjbJar();

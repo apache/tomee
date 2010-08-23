@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.core.stateful;
 
+import org.apache.openejb.util.Duration;
+
 public interface Cache<K, V> {
     /**
      * Gets the listener for cache events.
@@ -60,9 +62,19 @@ public interface Cache<K, V> {
     V remove(K key);
 
     /**
-     * Removes all of th entries that match the specified filter.
+     * Removes all of the entries that match the specified filter.
      */
     void removeAll(CacheFilter<V> filter);
+    
+    /**
+     * Initialize the cache.
+     */
+    void init();
+    
+    /**
+     * Destroy the cache.
+     */
+    void destroy();
 
     /**
      * Callback listener for cache events.
@@ -98,5 +110,15 @@ public interface Cache<K, V> {
          * True if the filter matches the value.
          */
         boolean matches(V v);
+    }
+    
+    /**
+     * A cache entry can implement this interface
+     * to provide its timeout.     
+     */
+    public interface TimeOut {
+        
+        Duration getTimeOut();
+        
     }
 }
