@@ -377,12 +377,18 @@
 
     Passivator org.apache.openejb.core.stateful.SimplePassivater
 
-    # Specifies the time to wait between invocations. This
-    # value is measured in minutes. A value of 5 would
+    # Specifies the time a bean can be idle before it is removed by the container. 
+    # This value is measured in minutes. A value of 5 would
     # result in a time-out of 5 minutes between invocations.
-    # A value of zero would mean no timeout.
+    # A value of -1 would mean no timeout.
+    # A value of 0 would mean a bean can be immediately removed by the container.
 
     TimeOut 20
+    
+    # Specifies the frequency (in seconds) at which the bean cache is checked for 
+    # idle beans.
+    
+    Frequency 60
 
     # Specifies the size of the bean pools for this
     # stateful SessionBean container.
