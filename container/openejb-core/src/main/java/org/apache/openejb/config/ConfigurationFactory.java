@@ -547,12 +547,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * @throws OpenEJBException on error
      */
     public AppInfo configureApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
-        if (id == null) {
+        final boolean standaloneModule = id == null;
+        if (standaloneModule) {
             id = "";
         }
         Application application = new Application();
         application.setApplicationName(id);
-        AppModule collection = new AppModule(classLoader, id, application, false);
+        AppModule collection = new AppModule(classLoader, id, application, standaloneModule);
         Map<String, Object> altDDs = collection.getAltDDs();
 
         for (File jarFile : jarFiles) {
