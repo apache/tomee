@@ -24,7 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -69,9 +73,20 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     /**
      * A bean may be destroyed if it isn't used in this length of time (in
      * milliseconds).
+     * A time out of value -1 means a bean will never be destroyed due to time out.
+     * A time out of value 0 means a bean can be immediately destroyed.
      */
-    private long timeOut;
+    private long timeOut = -1;
 
+    private ScheduledExecutorService executor;
+    
+    /**
+     * Specifies how often the cache is checked for timed out beans.
+     */
+    private long frequency = 60 * 1000;
+    
+    private ScheduledFuture future;
+    
     public SimpleCache() {
     }
 
@@ -83,6 +98,36 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         this.timeOut = timeOut.getTime(TimeUnit.MILLISECONDS);
     }
 
+    public synchronized void init() {
+        if (frequency > 0 && future == null) {
+            initScheduledExecutorService();
+        
+            future = executor.scheduleWithFixedDelay(new Runnable() {
+                         public void run() {     
+                             processLRU();
+                         }               
+                     }, frequency, frequency, TimeUnit.MILLISECONDS);
+        }
+    }
+    
+    public synchronized void destroy() {    
+        if (future != null) {
+            future.cancel(false);
+        }
+    }
+    
+    private synchronized void initScheduledExecutorService() {
+        if (executor == null) {
+            executor = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+                public Thread newThread(Runnable runable) {
+                    Thread t = new Thread(runable, "Stateful cache");
+                    t.setDaemon(true);
+                    return t;
+                }
+            });               
+        }
+    }
+    
     public synchronized CacheListener<V> getListener() {
         return listener;
     }
@@ -132,6 +177,22 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         this.timeOut = timeOut * 60 * 1000;
     }
 
+    public void setScheduledExecutorService(ScheduledExecutorService executor) {
+        this.executor = executor;
+    }
+    
+    public ScheduledExecutorService getScheduledExecutorService() {
+        return executor;
+    }
+    
+    public void setFrequency(long frequency) {
+        this.frequency = frequency * 1000;
+    }
+    
+    public long getFrequency() {
+        return frequency;
+    }
+    
     public void add(K key, V value) {
         // find the existing entry
         Entry entry = cache.get(key);
@@ -183,7 +244,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                         // Entry has been removed between get and lock (most likely by undeploying the EJB), simply drop the instance
                         return null;
                 }
-
+                
                 // mark entry as in-use
                 entry.setState(EntryState.CHECKED_OUT);
 
@@ -236,7 +297,9 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             entry.lock.unlock();
         }
 
-        processLRU();
+        if (frequency == 0) {
+            processLRU();
+        }
     }
 
     public V remove(K key) {
@@ -291,6 +354,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         CacheListener<V> listener = this.getListener();
 
         // check for timed out entries
+        // go through all lru entries since even though entries are in
+        // least recently used order they might have different timeouts.
         Iterator<Entry> iterator = lru.iterator();
         while (iterator.hasNext()) {
             Entry entry = iterator.next();
@@ -326,10 +391,6 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                             logger.error("An unexpected exception occured from timedOut callback", e);
                         }
                     }
-                } else {
-                    // entries are in order of last updates, so if this bean isn't timed out
-                    // no further entries will be timed out
-                    break;
                 }
             } finally {
                 entry.lock.unlock();
@@ -380,7 +441,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
                     // there is a race condition where the item could get added back into the lru
                     lru.remove(entry);
 
-                    // if the entry is actually timed out we just destroy it; othewise it is written to disk
+                    // if the entry is actually timed out we just destroy it; otherwise it is written to disk
                     if (entry.isTimedOut()) {
                         entry.setState(EntryState.REMOVED);
                         if (listener != null) {
@@ -480,12 +541,21 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         private final ReentrantLock lock = new ReentrantLock();
         private EntryState state;
         private long lastAccess;
+        private long timeOut;
 
         private Entry(K key, V value, EntryState state) {
             this.key = key;
             this.value = value;
             this.state = state;
-            lastAccess = System.currentTimeMillis();
+            
+            if (value instanceof Cache.TimeOut) {
+                Duration duration = ((Cache.TimeOut) value).getTimeOut();
+                this.timeOut = (duration != null) ? duration.getTime(TimeUnit.MILLISECONDS) : getTimeOut(); 
+            } else {
+                this.timeOut = getTimeOut();
+            }
+            
+            lastAccess = System.currentTimeMillis();                                 
         }
 
         private K getKey() {
@@ -511,18 +581,20 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         private boolean isTimedOut() {
             assertLockHeld();
 
-            long timeOut = getTimeOut();
-            if (timeOut == 0) {
+            if (timeOut < 0) {
                 return false;
+            } else if (timeOut == 0) {
+                return true;
+            } else {
+                long now = System.currentTimeMillis();
+                return (now - lastAccess) > timeOut;
             }
-            long now = System.currentTimeMillis();
-            return (now - lastAccess) > timeOut;
         }
 
         private void resetTimeOut() {
             assertLockHeld();
 
-            if (getTimeOut() > 0) {
+            if (timeOut > 0) {
                 lastAccess = System.currentTimeMillis();
             }
         }
@@ -533,4 +605,5 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             }
         }
     }
+    
 }

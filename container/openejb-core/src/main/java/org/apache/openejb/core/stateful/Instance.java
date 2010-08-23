@@ -32,10 +32,11 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.PojoSerialization;
 
-public class Instance implements Serializable {
+public class Instance implements Serializable, Cache.TimeOut {
     private static final long serialVersionUID = 2862563626506556542L;
     public final CoreDeploymentInfo deploymentInfo;
     public final Object primaryKey;
@@ -73,6 +74,10 @@ public class Instance implements Serializable {
         this.entityManagerArray = entityManagerArray;
     }
 
+    public Duration getTimeOut() {
+        return deploymentInfo.getStatefulTimeout();
+    }
+    
     public synchronized boolean isInUse() {
         return inUse;
     }
