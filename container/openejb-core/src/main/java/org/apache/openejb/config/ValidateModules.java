@@ -21,6 +21,7 @@ import org.apache.openejb.OpenEJBException;
 /**
  * @version $Rev$ $Date$
  */
+// START SNIPPET : code
 public class ValidateModules implements DynamicDeployer {
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -29,3 +30,4 @@ public class ValidateModules implements DynamicDeployer {
     }
 
 }
+// END SNIPPET : code

@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 /**
  * @version $Rev$ $Date$
  */
+// START SNIPPET : code
 @RunWith(ValidationRunner.class)
 public class CheckInjectionTargetsTest {
     @Keys(@Key(value="injectionTarget.nameContainsSet",count=2,type=KeyType.WARNING))
@@ -55,3 +56,4 @@ public class CheckInjectionTargetsTest {
         public void sayCheese(){}
     }
 }
+// END SNIPPET : code
