@@ -139,13 +139,13 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         chain.add(new GeneratedClientModules.Prune());
 
         chain.add(new ClearEmptyMappedName());
-
+      //START SNIPPET: code
         if (!options.get(VALIDATION_SKIP_PROPERTY, false)) {
             chain.add(new ValidateModules());
         } else {
             DeploymentLoader.logger.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
         }
-
+      //END SNIPPET: code 
         chain.add(new InitEjbDeployments());
 
         if (options.get(DEBUGGABLE_VM_HACKERY_PROPERTY, false)){

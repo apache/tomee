@@ -69,7 +69,7 @@ public class AppValidator {
         ValidationResults[] ejbSets = new ValidationResults[sets.size()];
         return sets.toArray(ejbSets);
     }
-
+// START SNIPPET : code2
     public AppModule validate(final AppModule appModule) {
         try {
             ValidationRule[] rules = getValidationRules();
@@ -85,7 +85,8 @@ public class AppValidator {
         }
         return appModule;
     }
-
+// START SNIPPET : code2    
+// START SNIPPET : code1
     protected ValidationRule[] getValidationRules() {
         ValidationRule[] rules = new ValidationRule[]{
                 new CheckClasses(),
@@ -99,7 +100,7 @@ public class AppValidator {
         };
         return rules;
     }
-
+// END SNIPPET : code1
     public void printResults(ValidationResults set) {
         if (!set.hasErrors() && !set.hasFailures() && (!PRINT_WARNINGS || !set.hasWarnings())) {
             return;
