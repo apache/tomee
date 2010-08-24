@@ -22,6 +22,7 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
 import org.apache.openejb.core.transaction.EjbUserTransaction;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.spi.SecurityService;
 
 import javax.ejb.EJBContext;
@@ -142,9 +143,10 @@ public abstract class BaseContext implements EJBContext, Serializable {
         if (txPolicy == null) {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
-        if (!txPolicy.isTransactionActive()) {
-            // this would be true for Supports tx attribute where no tx was propagated
-            throw new IllegalStateException("No current transaction");
+        if (txPolicy.getTransactionType() == TransactionType.Never
+                || txPolicy.getTransactionType() == TransactionType.NotSupported
+                || txPolicy.getTransactionType() == TransactionType.Supports) {
+            throw new IllegalStateException("setRollbackOnly accessible only from MANDATORY, REQUIRED, or REQUIRES_NEW");
         }
         txPolicy.setRollbackOnly();
     }
@@ -158,15 +160,16 @@ public abstract class BaseContext implements EJBContext, Serializable {
             throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
         }
 
-        TransactionPolicy transactionPolicy = threadContext.getTransactionPolicy();
-        if (transactionPolicy == null) {
+        TransactionPolicy txPolicy = threadContext.getTransactionPolicy();
+        if (txPolicy == null) {
             throw new IllegalStateException("ThreadContext does not contain a TransactionEnvironment");
         }
-        if (!transactionPolicy.isTransactionActive()) {
-            // this would be true for Supports tx attribute where no tx was propagated
-            throw new IllegalStateException("No current transaction");
+        if (txPolicy.getTransactionType() == TransactionType.Never
+                || txPolicy.getTransactionType() == TransactionType.NotSupported
+                || txPolicy.getTransactionType() == TransactionType.Supports) {
+            throw new IllegalStateException("getRollbackOnly accessible only from MANDATORY, REQUIRED, or REQUIRES_NEW");
         }
-        return transactionPolicy.isRollbackOnly();
+        return txPolicy.isRollbackOnly();
     }
 
     public TimerService getTimerService() throws IllegalStateException {
