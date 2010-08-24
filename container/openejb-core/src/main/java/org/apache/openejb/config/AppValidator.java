@@ -85,7 +85,7 @@ public class AppValidator {
         }
         return appModule;
     }
-// START SNIPPET : code2    
+// END SNIPPET : code2    
 // START SNIPPET : code1
     protected ValidationRule[] getValidationRules() {
         ValidationRule[] rules = new ValidationRule[]{
