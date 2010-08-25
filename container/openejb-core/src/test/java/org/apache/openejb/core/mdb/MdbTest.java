@@ -182,6 +182,10 @@ public class MdbTest extends TestCase {
                 throw new UnavailableException(e);
             }
         }
+        
+        public MessageEndpoint createEndpoint(XAResource xaResource, long timeout) throws UnavailableException {
+            return createEndpoint(xaResource);
+        }
 
         public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
             return false;

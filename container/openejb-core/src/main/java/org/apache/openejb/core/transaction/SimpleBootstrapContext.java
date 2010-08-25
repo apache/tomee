@@ -18,9 +18,12 @@
 package org.apache.openejb.core.transaction;
 
 import java.util.Timer;
-import javax.resource.spi.work.WorkManager;
-import javax.resource.spi.XATerminator;
+
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkContext;
+import javax.resource.spi.work.WorkManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 public class SimpleBootstrapContext implements BootstrapContext {
     private final WorkManager workManager;
@@ -46,5 +49,18 @@ public class SimpleBootstrapContext implements BootstrapContext {
 
     public Timer createTimer() {
         return new Timer(true);
+    }
+
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
+        // for Geronimo transaction manager, it implements XATerminator, TransactionManager & TransactionSynchronizationRegistry
+        if (this.xaTerminator != null && this.xaTerminator instanceof TransactionSynchronizationRegistry) {
+            return (TransactionSynchronizationRegistry)this.xaTerminator;
+        }
+        return null;
+    }
+
+    public boolean isContextSupported(Class<? extends WorkContext> arg0) {
+        // TODO: add work context support
+        return false;
     }
 }
