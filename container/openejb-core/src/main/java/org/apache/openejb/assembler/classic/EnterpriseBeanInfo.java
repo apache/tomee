@@ -83,4 +83,5 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public TimeoutInfo statefulTimeout;
     public TimeoutInfo accessTimeout;
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
+    public final List<ConcurrentMethodInfo> concurrentMethodInfos = new ArrayList<ConcurrentMethodInfo>();
 }

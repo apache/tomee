@@ -25,10 +25,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.ejb.LockType;
+
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
 import org.apache.openejb.assembler.classic.CmrFieldInfo;
+import org.apache.openejb.assembler.classic.ConcurrentMethodInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
@@ -60,6 +64,8 @@ import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.ConcurrencyManagementType;
+import org.apache.openejb.jee.ConcurrentLockType;
+import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbRelation;
@@ -525,6 +531,8 @@ public class EjbJarInfoBuilder {
                 remove.retainIfException = removeMethod.getRetainIfException();
                 stateful.removeMethods.add(remove);
             }
+            
+            copyConcurrentMethods(s.getConcurrentMethod(), bean.concurrentMethodInfos);
 
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
@@ -550,6 +558,8 @@ public class EjbJarInfoBuilder {
             copySchedules(s.getTimer(), bean.methodScheduleInfos);
             // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
+            
+            copyConcurrentMethods(s.getConcurrentMethod(), bean.concurrentMethodInfos);
         } else {
             bean = new StatelessBeanInfo();
             copySchedules(s.getTimer(), bean.methodScheduleInfos);
@@ -595,23 +605,21 @@ public class EjbJarInfoBuilder {
         bean.serviceEndpoint = s.getServiceEndpoint();
         bean.properties.putAll(d.getProperties());
 
-        final Timeout statefulTimeout = s.getStatefulTimeout();
-        if(statefulTimeout != null) {
-        	bean.statefulTimeout = new TimeoutInfo();
-            bean.statefulTimeout.time = statefulTimeout.getTimeout();
-            bean.statefulTimeout.unit = statefulTimeout.getUnit().toString();
-        }
-
-        final Timeout accessTimeout = s.getAccessTimeout();
-        if(accessTimeout != null) {
-            bean.accessTimeout = new TimeoutInfo();
-            bean.accessTimeout.time = accessTimeout.getTimeout();
-            bean.accessTimeout.unit = accessTimeout.getUnit().toString();
-        }
+        bean.statefulTimeout = toInfo(s.getStatefulTimeout());
+        bean.accessTimeout = toInfo(s.getAccessTimeout());
 
         return bean;
     }
 
+    private TimeoutInfo toInfo(Timeout timeout) {
+        if (timeout == null) return null;
+        
+        TimeoutInfo accessTimeout = new TimeoutInfo();
+        accessTimeout.time = timeout.getTimeout();
+        accessTimeout.unit = timeout.getUnit().toString();
+        return accessTimeout;
+    }
+    
     private EnterpriseBeanInfo initMessageBean(MessageDrivenBean mdb, Map m) throws OpenEJBException {
         MessageDrivenBeanInfo bean = new MessageDrivenBeanInfo();
 
@@ -780,5 +788,17 @@ public class EjbJarInfoBuilder {
             }
         }
         return bean;
+    }
+    
+    private void copyConcurrentMethods(List<ConcurrentMethod> from, List<ConcurrentMethodInfo> to) {
+        for (ConcurrentMethod method : from) {
+            ConcurrentMethodInfo methodInfo = new ConcurrentMethodInfo();
+            methodInfo.accessTimeout = toInfo(method.getAccessTimeout());
+            methodInfo.method = toInfo(method.getMethod());
+            if (method.getLock() != null) {
+                methodInfo.lockType = method.getLock().value().toUpperCase();
+            }
+            to.add(methodInfo);
+        }
     }
 }

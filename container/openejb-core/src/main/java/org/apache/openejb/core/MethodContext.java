@@ -48,7 +48,7 @@ public class MethodContext {
     }
 
     public Duration getAccessTimeout() {
-        return accessTimeout != null? accessTimeout: beanContext.getAccessTimeout();
+        return accessTimeout;
     }
 
     public CoreDeploymentInfo getBeanContext() {

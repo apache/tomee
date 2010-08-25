@@ -46,7 +46,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
     private Stack<Transaction> transaction = new Stack<Transaction>();
-    private final Lock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
@@ -112,9 +112,14 @@ public class Instance implements Serializable, Cache.TimeOut {
         } else if (transaction != null){
             this.transaction.push(transaction);
         }
-
     }
 
+    public synchronized void releaseLock() {
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
+    }
+    
     public synchronized Map<EntityManagerFactory, EntityManager> getEntityManagers(Index<EntityManagerFactory, Map> factories) {
         if (entityManagers == null && entityManagerArray != null) {
             entityManagers = new HashMap<EntityManagerFactory, EntityManager>();
