@@ -1286,7 +1286,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                          * @WebServiceProvider
                          */
 //                        boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
-                        if (false) {
+                        if (SystemInstance.get().hasProperty("openejb.geronimo.strict.interface.declaration")) {
                             processSessionInterfacesStrict(sessionBean, clazz, ejbModule);
                         } else {
                             processSessionInterfaces(sessionBean, clazz, ejbModule);
