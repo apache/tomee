@@ -68,6 +68,30 @@ public class EndpointFactory implements MessageEndpointFactory {
         MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         return messageEndpoint;
     }
+    
+    public MessageEndpoint createEndpoint(XAResource xaResource, long timeout)  throws UnavailableException {
+        if (timeout <= 0) {
+            return createEndpoint(xaResource);
+        }
+        
+        long end = System.currentTimeMillis() + timeout;
+        MessageEndpoint messageEndpoint = null;
+        
+        while (System.currentTimeMillis() <= end) {
+            try {
+                messageEndpoint = createEndpoint(xaResource);
+                break;
+            } catch (Exception ex) {
+                // ignore so we can keep trying
+            }
+        }
+        
+        if (messageEndpoint != null) {
+            return messageEndpoint;
+        } else {
+            throw new UnavailableException("Unable to create end point within the specified timeout " + timeout);
+        }
+    }
 
     public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
         TransactionType transactionType = deploymentInfo.getTransactionType(method);
