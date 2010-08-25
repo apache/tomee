@@ -127,6 +127,7 @@ import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChains;
 import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
@@ -1514,22 +1515,33 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * mandated by the design of the spec.
                  */
                 for (EnterpriseBean bean : enterpriseBeans) {
-                    // DMB: TODO, we should actually check to see if the ref exists in the bean's enc.
-                    bean.getEnvEntry().addAll(interceptor.getEnvEntry());
-                    bean.getEjbRef().addAll(interceptor.getEjbRef());
-                    bean.getEjbLocalRef().addAll(interceptor.getEjbLocalRef());
-                    bean.getResourceRef().addAll(interceptor.getResourceRef());
-                    bean.getResourceEnvRef().addAll(interceptor.getResourceEnvRef());
-                    bean.getPersistenceContextRef().addAll(interceptor.getPersistenceContextRef());
-                    bean.getPersistenceUnitRef().addAll(interceptor.getPersistenceUnitRef());
-                    bean.getMessageDestinationRef().addAll(interceptor.getMessageDestinationRef());
-                    bean.getServiceRef().addAll(interceptor.getServiceRef());
+                    // Just simply merge the injection targets of the interceptors to enterprise beans
+                    mergeJndiReferences(interceptor.getEnvEntryMap(), bean.getEnvEntryMap());
+                    mergeJndiReferences(interceptor.getEjbRefMap(), bean.getEjbRefMap());
+                    mergeJndiReferences(interceptor.getEjbLocalRefMap(), bean.getEjbLocalRefMap());
+                    mergeJndiReferences(interceptor.getResourceRefMap(), bean.getResourceRefMap());
+                    mergeJndiReferences(interceptor.getResourceEnvRefMap(), bean.getResourceEnvRefMap());
+                    mergeJndiReferences(interceptor.getPersistenceContextRefMap(), bean.getPersistenceContextRefMap());
+                    mergeJndiReferences(interceptor.getPersistenceUnitRefMap(), bean.getPersistenceUnitRefMap());
+                    mergeJndiReferences(interceptor.getMessageDestinationRefMap(), bean.getMessageDestinationRefMap());
+                    mergeJndiReferences(interceptor.getServiceRefMap(), bean.getServiceRefMap());
                 }
             }
 
             return ejbModule;
         }
 
+        private <T extends Injectable> void mergeJndiReferences(Map<String, T> from, Map<String, T> to) {
+            for (Map.Entry<String, T> entry : from.entrySet()) {
+                Injectable injectable = to.get(entry.getKey());
+                if (injectable == null) {
+                    to.put(entry.getKey(), entry.getValue());
+                } else {
+                    injectable.getInjectionTarget().addAll(entry.getValue().getInjectionTarget());
+                }
+            }
+        }
+        
         //TODO why is this necessary, we scan for exceptions with this annotation elsewhere.
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
             /*
