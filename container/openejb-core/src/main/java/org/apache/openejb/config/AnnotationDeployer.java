@@ -65,6 +65,8 @@ import javax.ejb.Init;
 import javax.ejb.Local;
 import javax.ejb.LocalBean;
 import javax.ejb.LocalHome;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.MessageDriven;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
@@ -108,6 +110,7 @@ import org.apache.openejb.jee.AroundTimeout;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.ConcurrencyManagementType;
 import org.apache.openejb.jee.ConcurrentLockType;
+import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
@@ -1098,7 +1101,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // Merge AccessTimeout value from XML - XML value takes precedence
                     if(sessionBean.getAccessTimeout() == null) {
-                        final AccessTimeout annotation = clazz.getAnnotation(AccessTimeout.class);
+                        final AccessTimeout annotation = getInheritableAnnotation(clazz, AccessTimeout.class);
                         if(annotation != null) {
                             final Timeout timeout = new Timeout();
                             timeout.setTimeout(annotation.value());
@@ -1109,7 +1112,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                     // Merge StatefulTimeout value from XML - XML value takes precedence
                     if(sessionBean.getStatefulTimeout() == null) {
-                        final StatefulTimeout annotation = clazz.getAnnotation(StatefulTimeout.class);
+                        final StatefulTimeout annotation = getInheritableAnnotation(clazz, StatefulTimeout.class);
                         if(annotation != null) {
                             final Timeout timeout = new Timeout();
                             timeout.setTimeout(annotation.value());
@@ -1117,6 +1120,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                             sessionBean.setStatefulTimeout(timeout);
                         }
                     }
+                    
+                    /*
+                     * @AccessTimeout
+                     * @Lock 
+                     */
+                    processAccessTimeoutAndLock(sessionBean, inheritedClassFinder);
                 }
 
 
@@ -2253,6 +2262,64 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
+        private ConcurrentMethod findConcurrentMethod(Map<NamedMethod, ConcurrentMethod> methodMap, Method method) {
+            // step 1: lookup by method name and parameters
+            NamedMethod lookup = new NamedMethod(method);
+            ConcurrentMethod concurrentMethod = methodMap.get(lookup);
+            if (concurrentMethod == null) {
+                // step 2: lookup by method name only
+                lookup.setMethodParams(null);
+                concurrentMethod = methodMap.get(lookup);
+            }
+            return concurrentMethod;
+        }
+        
+        private void processAccessTimeoutAndLock(SessionBean bean, ClassFinder classFinder) {
+            Map<NamedMethod, ConcurrentMethod> methodMap = new HashMap<NamedMethod, ConcurrentMethod>();
+            for (ConcurrentMethod concurrentMethod : bean.getConcurrentMethod()) {
+                methodMap.put(concurrentMethod.getMethod(), concurrentMethod);
+            }
+            
+            for (Method method : classFinder.findAnnotatedMethods(AccessTimeout.class)) {
+                ConcurrentMethod concurrentMethod = findConcurrentMethod(methodMap, method);
+                if (concurrentMethod == null) {
+                    // create new and add to the list
+                    concurrentMethod = new ConcurrentMethod();
+                    concurrentMethod.setMethod(new NamedMethod(method));
+                    bean.getConcurrentMethod().add(concurrentMethod);
+                }
+                
+                AccessTimeout annotation = method.getAnnotation(AccessTimeout.class);
+                
+                if (concurrentMethod.getAccessTimeout() == null) {
+                    Timeout timeout = new Timeout();
+                    timeout.setTimeout(annotation.value());
+                    timeout.setUnit(annotation.unit());
+                    concurrentMethod.setAccessTimeout(timeout);                    
+                }
+            }
+            
+            for (Method method : classFinder.findAnnotatedMethods(Lock.class)) {
+                ConcurrentMethod concurrentMethod = findConcurrentMethod(methodMap, method);
+                if (concurrentMethod == null) {
+                    // create new and add to the list
+                    concurrentMethod = new ConcurrentMethod();
+                    concurrentMethod.setMethod(new NamedMethod(method));
+                    bean.getConcurrentMethod().add(concurrentMethod);
+                }
+                
+                Lock annotation = method.getAnnotation(Lock.class);
+                                               
+                if (concurrentMethod.getLock() == null) {
+                    if (LockType.READ.equals(annotation.value())) {
+                        concurrentMethod.setLock(ConcurrentLockType.READ);
+                    } else if (LockType.WRITE.equals(annotation.value())) {
+                        concurrentMethod.setLock(ConcurrentLockType.WRITE);
+                    }
+                }
+            }
+        }
+        
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
             /*
              * @PostConstruct

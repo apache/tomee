@@ -58,6 +58,8 @@ public class EjbJarBuilder {
         InterceptorBindingBuilder interceptorBindingBuilder = new InterceptorBindingBuilder(context.getClassLoader(), ejbJar);
 
         MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
+        
+        ConcurrentMethodBuilder concurrentMethodBuilder = new ConcurrentMethodBuilder();
 
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
@@ -67,6 +69,8 @@ public class EjbJarBuilder {
                 interceptorBindingBuilder.build(deployment, ejbInfo);
 
                 methodScheduleBuilder.build(deployment, ejbInfo);
+                
+                concurrentMethodBuilder.build(deployment, ejbInfo);
 
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 

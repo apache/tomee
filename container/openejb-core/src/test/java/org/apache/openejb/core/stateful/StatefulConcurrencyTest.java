@@ -16,7 +16,16 @@
  */
 package org.apache.openejb.core.stateful;
 
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.Local;
+import javax.ejb.Stateful;
+import javax.naming.InitialContext;
+
 import junit.framework.TestCase;
+
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
@@ -24,16 +33,9 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatefulBean;
-
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.ejb.Local;
-import javax.ejb.Stateful;
-import javax.naming.InitialContext;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.TimeUnit;
+import org.apache.openejb.jee.Timeout;
 
 public class StatefulConcurrencyTest extends TestCase {
 
@@ -51,108 +53,104 @@ public class StatefulConcurrencyTest extends TestCase {
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
 
         final StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
-        statefulContainerInfo.properties.setProperty("BulkPassivate", "1");
         assembler.createContainer(statefulContainerInfo);
 
         final EjbJar ejbJar = new EjbJar();
-        final StatefulBean bean = new StatefulBean(MyLocalBeanImpl.class);
+                
+        StatefulBean bean1 = new StatefulBean(MyLocalBeanImpl.class);
+        Timeout timeout1 = new Timeout();
+        timeout1.setTimeout(1000);
+        timeout1.setUnit(TimeUnit.MILLISECONDS);
+        bean1.setAccessTimeout(timeout1);
+        
+        StatefulBean bean2 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
+        Timeout timeout2 = new Timeout();
+        timeout2.setTimeout(-1);
+        timeout2.setUnit(TimeUnit.MILLISECONDS);
+        bean2.setAccessTimeout(timeout2);
 
-        final Timeout timeout = new Timeout();
-        timeout.setTimeout(1000);
-        timeout.setUnit(TimeUnit.MILLISECONDS);
-        bean.setAccessTimeout(timeout);
-
-        ejbJar.addEnterpriseBean(bean);
+        ejbJar.addEnterpriseBean(bean1);
+        ejbJar.addEnterpriseBean(bean2);
 
         assembler.createApplication(config.configureApplication(ejbJar));
     }
 
     public void testConcurrentMethodCall() throws Exception {
+        MyLocalBeanImpl.semaphore = new Semaphore(0);
+        
         InitialContext ctx = new InitialContext();
         MyLocalBean bean = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
         MyLocalBean bean2 = (MyLocalBean) ctx.lookup("MyLocalBeanImplLocal");
+        
+        CallRentrantThread call = new CallRentrantThread(bean, 3000);
+        (new Thread(call)).start();
+        
+        // ensure the call on thread came in
+        assertTrue(MyLocalBeanImpl.semaphore.tryAcquire(1, 30, TimeUnit.SECONDS));
+        
+        try {
+            bean2.callRentrant(bean, 0);
+            fail("Expected exception");
+        } catch (Exception e) {
+            if (e.getCause() instanceof ConcurrentAccessTimeoutException) {
+                // that's what we want
+            } else {
+                throw e;
+            }
+        }
+    }
+  
+    public void testNegativeAccessTimeout() throws Exception {
+        MyLocalBeanImpl.semaphore = new Semaphore(0);
+        
+        InitialContext ctx = new InitialContext();
+        MyLocalBean bean = (MyLocalBean) ctx.lookup("BeanNegativeLocal");
+        
+        CallRentrantThread call = new CallRentrantThread(bean, 3000);
+        (new Thread(call)).start();
+        
+        // ensure the call on thread came in
+        assertTrue(MyLocalBeanImpl.semaphore.tryAcquire(1, 30, TimeUnit.SECONDS));
 
-        boolean error = bean.method1(bean, 2000);
-        assertTrue(error);
-
-        error = bean2.method1(bean, 500);
-        assertFalse(error);
+        bean.callRentrant(bean, 0);
     }
 
     @Local
     public static interface MyLocalBean {
-        boolean method1(MyLocalBean bean, long sleep);
-
-        void method2(CyclicBarrier barrier);
+        void callRentrant(MyLocalBean myself, long sleep);
+        void sleep(long sleep);
     }
 
     @Stateful
     public static class MyLocalBeanImpl implements MyLocalBean {
 
+        public static Semaphore semaphore;
+        
+        public void callRentrant(MyLocalBean myself, long sleep) {
+            semaphore.release();
+            myself.sleep(sleep);
+        }
 
-        public boolean method1(MyLocalBean bean, long sleep) {
-            System.out.println("Method 1 invoked! Thread: " + Thread.currentThread().getName());
-
-            CyclicBarrier barrier = new CyclicBarrier(1);
-            MyRunningMethod method = new MyRunningMethod(barrier, bean);
-            Thread thread = new Thread(method);
-            thread.setName("MyRunningMethodThread");
-            thread.start();
+        public void sleep(long sleep) {
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
-            try {
-                barrier.await();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            return method.isError();
-        }
-
-        public void method2(CyclicBarrier barrier) {
-            System.out.println("Method 2 invoked! Thread: "
-                    + Thread.currentThread().getName());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                barrier.await();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
-
-    public static class MyRunningMethod implements Runnable {
+    
+    public class CallRentrantThread implements Runnable {
         private final MyLocalBean bean;
-        private final CyclicBarrier barrier;
-
-        private boolean error;
-
-        public MyRunningMethod(CyclicBarrier barrier, MyLocalBean bean) {
-            super();
+        private final long sleep;
+        
+        public CallRentrantThread(MyLocalBean bean, long sleep) {
             this.bean = bean;
-            this.barrier = barrier;
-        }
-
-        public boolean isError() {
-            return error;
+            this.sleep = sleep;
         }
 
         public void run() {
-            try {
-                bean.method2(barrier);
-                error = false;
-            } catch (ConcurrentAccessTimeoutException e) {
-                error = true;
-            }
+            bean.callRentrant(bean, sleep);
         }
     }
-
 }

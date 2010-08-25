@@ -61,6 +61,8 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
 import static org.apache.openejb.core.ExceptionType.SYSTEM;
+
+import org.apache.openejb.core.MethodContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.InstanceContext;
@@ -107,7 +109,7 @@ public class StatefulContainer implements RpcContainer {
     private final SessionContext sessionContext;
 
     public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache) {
-        this(id, securityService, cache, new Duration(0, TimeUnit.MILLISECONDS));
+        this(id, securityService, cache, new Duration(-1, TimeUnit.MILLISECONDS));
     }
 
     public StatefulContainer(Object id, SecurityService securityService, Cache<Object, Instance> cache, Duration accessTimeout) {
@@ -468,7 +470,7 @@ public class StatefulContainer implements RpcContainer {
             Method runMethod = null;
             try {
                 // Obtain instance
-                instance = obtainInstance(primKey, callContext);
+                instance = obtainInstance(primKey, callContext, callMethod);
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
@@ -568,7 +570,7 @@ public class StatefulContainer implements RpcContainer {
             Instance instance = null;
             try {
                 // Obtain instance
-                instance = obtainInstance(primKey, callContext);
+                instance = obtainInstance(primKey, callContext, callMethod);
 
                 // Resume previous Bean transaction if there was one
                 if (txPolicy instanceof BeanTransactionPolicy){
@@ -610,7 +612,7 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private Instance obtainInstance(Object primaryKey, ThreadContext callContext) throws OpenEJBException {
+    private Instance obtainInstance(Object primaryKey, ThreadContext callContext, Method callMethod) throws OpenEJBException {
         if (primaryKey == null) {
             throw new SystemException(new NullPointerException("Cannot obtain an instance of the stateful session bean with a null session id"));
         }
@@ -618,37 +620,42 @@ public class StatefulContainer implements RpcContainer {
         Transaction currentTransaction = getTransaction(callContext);
 
         // Find the instance
-        Instance instance = checkedOutInstances.get(primaryKey);
-        if (instance == null) {
-            try {
-                instance = cache.checkOut(primaryKey);
-            } catch (OpenEJBException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new SystemException("Unexpected load exception", e);
-            }
-
-            // Did we find the instance?
+        Instance instance;
+        synchronized (primaryKey) {
+            instance = checkedOutInstances.get(primaryKey);
             if (instance == null) {
-                throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
+                try {
+                    instance = cache.checkOut(primaryKey);
+                } catch (OpenEJBException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new SystemException("Unexpected load exception", e);
+                }
+
+                // Did we find the instance?
+                if (instance == null) {
+                    throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
+                }
+
+                
+                // remember instance until it is returned to the cache                
+                checkedOutInstances.put(primaryKey, instance);
             }
-
-            // remember instance until it is returned to the cache
-            checkedOutInstances.put(primaryKey, instance);
         }
-
-
-        Duration accessTimeout = instance.deploymentInfo.getAccessTimeout();
-        if (accessTimeout == null) accessTimeout = this.accessTimeout;
+        
+        Duration accessTimeout = getAccessTimeout(instance.deploymentInfo, callMethod);
 
         final Lock currLock = instance.getLock();
-    	final boolean lockAcquired;
-    	if(accessTimeout == null) {
-    		// returns immediately true if the lock is available 
+        final boolean lockAcquired;
+        if (accessTimeout == null || accessTimeout.getTime() < 0) {
+            // wait indefinitely for a lock
+            currLock.lock();
+            lockAcquired = true;
+        } else if (accessTimeout.getTime() == 0) {
+            // concurrent calls are not allowed, lock only once
     		lockAcquired = currLock.tryLock();
     	} else {
-    		// AccessTimeout annotation found. 
-    		// Trying to get the lock within the specified period. 
+    		// try to get a lock within the specified period. 
     		try {
 				lockAcquired = currLock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
 			} catch (InterruptedException e) {
@@ -657,14 +664,14 @@ public class StatefulContainer implements RpcContainer {
     	}
         // Did we acquire the lock to the current execution?
         if (!lockAcquired) {
-        	 throw new ApplicationException(new ConcurrentAccessTimeoutException("Unable to get lock."));
+            throw new ApplicationException(new ConcurrentAccessTimeoutException("Unable to get lock."));
         }
         
-        if (instance.getTransaction() != null){
+        if (instance.getTransaction() != null) {
             if (!instance.getTransaction().equals(currentTransaction) && !instance.getLock().tryLock()) {
                 throw new ApplicationException(new RemoteException("Instance is in a transaction and cannot be invoked outside that transaction.  See EJB 3.0 Section 4.4.4"));
             }
-        } else {
+        } else { 
             instance.setTransaction(currentTransaction);
         }
 
@@ -673,6 +680,19 @@ public class StatefulContainer implements RpcContainer {
         return instance;
     }
 
+    private Duration getAccessTimeout(CoreDeploymentInfo deploymentInfo, Method callMethod) {
+        Duration accessTimeout = null;
+        callMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+        MethodContext methodContext = deploymentInfo.getMethodContext(callMethod);
+        if (methodContext != null) {
+            accessTimeout = methodContext.getAccessTimeout();
+        }
+        if (accessTimeout == null) {
+            accessTimeout = deploymentInfo.getAccessTimeout();
+        }
+        return (accessTimeout == null) ? this.accessTimeout : accessTimeout;
+    }
+    
     private Transaction getTransaction(ThreadContext callContext) {
         TransactionPolicy policy = callContext.getTransactionPolicy();
 
@@ -698,11 +718,13 @@ public class StatefulContainer implements RpcContainer {
         instance.setInUse(false);
 
         if (instance.getTransaction() == null) {
-            // return to cache
-            cache.checkIn(instance.primaryKey);
+            synchronized (instance.primaryKey) {
+                // return to cache
+                cache.checkIn(instance.primaryKey);
 
-            // no longer checked out
-            checkedOutInstances.remove(instance.primaryKey);
+                // no longer checked out
+                checkedOutInstances.remove(instance.primaryKey);
+            }
         }
     }
 
@@ -757,6 +779,9 @@ public class StatefulContainer implements RpcContainer {
                 instance.setInUse(false);
             }
             EjbTransactionUtil.afterInvoke(txPolicy, callContext);
+            if (instance != null) {
+                instance.releaseLock();
+            }
         }
     }
 

@@ -59,9 +59,12 @@ public class StatefulTransactionLockingTest extends TestCase {
 
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+        
+        StatefulSessionContainerInfo statefulContainerInfo = config.configureService(StatefulSessionContainerInfo.class);
+        statefulContainerInfo.properties.setProperty("AccessTimeout", "0 milliseconds");
 
         // containers
-        assembler.createContainer(config.configureService(StatefulSessionContainerInfo.class));
+        assembler.createContainer(statefulContainerInfo);
 
         // Setup the descriptor information
 
