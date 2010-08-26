@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 
 import javax.naming.Context;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -30,6 +33,9 @@ public class AppContext extends DeploymentContext {
     private final Context globalJndiContext;
     private final Context appJndiContext;
     private final boolean standaloneModule;
+
+    // TODO perhaps to be deleted
+    private final List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
 
     public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
@@ -47,6 +53,10 @@ public class AppContext extends DeploymentContext {
 
     public ClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    public List<DeploymentInfo> getDeployments() {
+        return deployments;
     }
 
     public SystemInstance getSystemInstance() {

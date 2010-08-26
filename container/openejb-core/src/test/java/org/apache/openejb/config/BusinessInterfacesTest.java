@@ -27,6 +27,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.rules.ValidationAssertions;
 
 import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.Remote;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,13 +118,20 @@ public class BusinessInterfacesTest extends TestCase {
     public static class YellowFiveBean implements YellowFiveRemote, Serializable {
     }
 
+
+    // - - -
+
+    public static class YellowSixBean implements Serializable {
+    }
+
+
     public void testYellow() throws Exception {
         // Results should be the same with strict on or off
         for (boolean strict : Arrays.asList(false, true)) {
             setUp();
             strict(strict);
 
-            Map<String, EnterpriseBeanInfo> beans = deploy(YellowOneBean.class, YellowTwoBean.class, YellowThreeBean.class, YellowFourBean.class, YellowFiveBean.class);
+            Map<String, EnterpriseBeanInfo> beans = deploy(YellowOneBean.class, YellowTwoBean.class, YellowThreeBean.class, YellowFourBean.class, YellowFiveBean.class, YellowSixBean.class);
 
             EnterpriseBeanInfo beanInfo;
 
@@ -131,29 +139,249 @@ public class BusinessInterfacesTest extends TestCase {
 
             assertEquals(list(YellowOneLocal.class), sort(beanInfo.businessLocal));
             assertEquals(list(), sort(beanInfo.businessRemote));
+            assertFalse(beanInfo.localbean);
 
             beanInfo = beans.get("YellowTwoBean");
 
             assertEquals(list(), sort(beanInfo.businessLocal));
             assertEquals(list(YellowTwoRemote.class), sort(beanInfo.businessRemote));
+            assertFalse(beanInfo.localbean);
 
             beanInfo = beans.get("YellowThreeBean");
 
             assertEquals(list(YellowThreeUnspecified.class), sort(beanInfo.businessLocal));
             assertEquals(list(), sort(beanInfo.businessRemote));
+            assertFalse(beanInfo.localbean);
 
             beanInfo = beans.get("YellowFourBean");
 
             assertEquals(list(YellowFourLocal.class), sort(beanInfo.businessLocal));
             assertEquals(list(), sort(beanInfo.businessRemote));
+            assertFalse(beanInfo.localbean);
 
             beanInfo = beans.get("YellowFiveBean");
 
             assertEquals(list(), sort(beanInfo.businessLocal));
             assertEquals(list(YellowFiveRemote.class), sort(beanInfo.businessRemote));
+            assertFalse(beanInfo.localbean);
+
+            beanInfo = beans.get("YellowSixBean");
+
+            assertEquals(list(), sort(beanInfo.businessLocal));
+            assertEquals(list(), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
 
         }
     }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    //  Lemon -- implied LocalBean and subclassing
+    // ----------------------------------------------------------------------------------------------------------------
+
+    public static class LemonOneBean extends YellowOneBean {
+    }
+
+    public static class LemonTwoBean extends YellowTwoBean {
+    }
+
+    public static class LemonThreeBean extends YellowThreeBean {
+    }
+
+    public static class LemonFourBean extends YellowFourBean {
+    }
+
+    public static class LemonFiveBean extends YellowFiveBean {
+    }
+
+    public static class LemonSixBean extends YellowSixBean {
+    }
+
+    public void testLemon() throws Exception {
+        setUp();
+        strict(false);
+
+        Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
+
+        EnterpriseBeanInfo beanInfo;
+
+        beanInfo = beans.get("LemonOneBean");
+
+        assertEquals(list(YellowOneLocal.class), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonTwoBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(YellowTwoRemote.class), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonThreeBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonFourBean");
+
+        assertEquals(list(YellowFourLocal.class), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonFiveBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(YellowFiveRemote.class), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonSixBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+    }
+
+    public void testLemonStrict() throws Exception {
+        setUp();
+        strict(true);
+
+        Map<String, EnterpriseBeanInfo> beans = deploy(LemonOneBean.class, LemonTwoBean.class, LemonThreeBean.class, LemonFourBean.class, LemonFiveBean.class, LemonSixBean.class);
+
+        EnterpriseBeanInfo beanInfo;
+
+        beanInfo = beans.get("LemonOneBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonTwoBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonThreeBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonFourBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonFiveBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("LemonSixBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    //  Magenta -- explicit @LocalBean
+    // ----------------------------------------------------------------------------------------------------------------
+
+    public static interface MagentaOneLocal {
+    }
+
+    @Local
+    @LocalBean
+    public static class MagentaOneBean implements MagentaOneLocal, Serializable {
+    }
+
+    // - - -
+
+    public static interface MagentaTwoRemote {
+    }
+
+    @Remote
+    @LocalBean
+    public static class MagentaTwoBean implements MagentaTwoRemote, Serializable {
+    }
+
+    // - - -
+
+    public static interface MagentaThreeUnspecified {
+    }
+
+    @LocalBean
+    public static class MagentaThreeBean implements MagentaThreeUnspecified, Serializable {
+    }
+
+    // - - -
+
+    @Local
+    public static interface MagentaFourLocal {
+    }
+
+    @LocalBean
+    public static class MagentaFourBean implements MagentaFourLocal, Serializable {
+    }
+
+    // - - -
+
+    @Remote
+    public static interface MagentaFiveRemote {
+    }
+
+    @LocalBean
+    public static class MagentaFiveBean implements MagentaFiveRemote, Serializable {
+    }
+
+    public void testMagenta() throws Exception {
+        // Results should be the same with strict on or off
+        for (boolean strict : Arrays.asList(false, true)) {
+            setUp();
+            strict(strict);
+
+            Map<String, EnterpriseBeanInfo> beans = deploy(MagentaOneBean.class, MagentaTwoBean.class, MagentaThreeBean.class, MagentaFourBean.class, MagentaFiveBean.class);
+
+            EnterpriseBeanInfo beanInfo;
+
+            beanInfo = beans.get("MagentaOneBean");
+
+            assertEquals(list(MagentaOneLocal.class), sort(beanInfo.businessLocal));
+            assertEquals(list(), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
+
+            beanInfo = beans.get("MagentaTwoBean");
+
+            assertEquals(list(), sort(beanInfo.businessLocal));
+            assertEquals(list(MagentaTwoRemote.class), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
+
+            beanInfo = beans.get("MagentaThreeBean");
+
+            assertEquals(list(), sort(beanInfo.businessLocal));
+            assertEquals(list(), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
+
+            beanInfo = beans.get("MagentaFourBean");
+
+            assertEquals(list(MagentaFourLocal.class), sort(beanInfo.businessLocal));
+            assertEquals(list(), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
+
+            beanInfo = beans.get("MagentaFiveBean");
+
+            assertEquals(list(), sort(beanInfo.businessLocal));
+            assertEquals(list(MagentaFiveRemote.class), sort(beanInfo.businessRemote));
+            assertTrue(beanInfo.localbean);
+
+        }
+    }
+
 
     // ----------------------------------------------------------------------------------------------------------------
     //  InvalidYellow
@@ -316,12 +544,12 @@ public class BusinessInterfacesTest extends TestCase {
 
         EnterpriseBeanInfo beanInfo = beans.get("OrangeOneBean");
 
-        assertEquals(list(OrangeOneLocal.class, OrangeOneBoth.class, OrangeOneUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(OrangeOneLocal.class, OrangeOneBoth.class), sort(beanInfo.businessLocal));
         assertEquals(list(OrangeOneRemote.class, OrangeOneBoth.class), sort(beanInfo.businessRemote));
 
         beanInfo = beans.get("OrangeTwoBean");
 
-        assertEquals(list(OrangeTwoLocal.class, OrangeTwoBoth.class, OrangeTwoUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(OrangeTwoLocal.class, OrangeTwoBoth.class), sort(beanInfo.businessLocal));
         assertEquals(list(OrangeTwoRemote.class, OrangeTwoBoth.class), sort(beanInfo.businessRemote));
     }
 
@@ -393,12 +621,12 @@ public class BusinessInterfacesTest extends TestCase {
 
         EnterpriseBeanInfo beanInfo = beans.get("RedOneBean");
 
-        assertEquals(list(RedOneLocal.class, RedOneUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedOneLocal.class), sort(beanInfo.businessLocal));
         assertEquals(list(RedOneRemote.class, RedOneOverridden.class), sort(beanInfo.businessRemote));
 
         beanInfo = beans.get("RedTwoBean");
 
-        assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class, RedTwoUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class), sort(beanInfo.businessLocal));
         assertEquals(list(RedTwoRemote.class), sort(beanInfo.businessRemote));
     }
 
@@ -414,16 +642,69 @@ public class BusinessInterfacesTest extends TestCase {
 
         EnterpriseBeanInfo beanInfo = beans.get("RedOneBean");
 
-        assertEquals(list(RedOneLocal.class, RedOneUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedOneLocal.class), sort(beanInfo.businessLocal));
         assertEquals(list(RedOneRemote.class, RedOneOverridden.class), sort(beanInfo.businessRemote));
 
         beanInfo = beans.get("RedTwoBean");
 
-        assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class, RedTwoUnspecified.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class), sort(beanInfo.businessLocal));
         assertEquals(list(RedTwoRemote.class), sort(beanInfo.businessRemote));
     }
 
+    public static class CrimsonOneBean extends RedOneBean {
+    }
+    
+    public static class CrimsonTwoBean extends RedTwoBean {
+    }
+    
 
+    /**
+     * Super class definitions are retrieved 
+     * @throws Exception
+     */
+    public void testCrimsonNotStrict() throws Exception {
+        strict(false);
+
+        Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
+
+        EnterpriseBeanInfo beanInfo = beans.get("CrimsonOneBean");
+
+        assertEquals(list(RedOneLocal.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedOneRemote.class, RedOneOverridden.class), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+        
+        beanInfo = beans.get("CrimsonTwoBean");
+
+        assertEquals(list(RedTwoLocal.class, RedTwoOverridden.class), sort(beanInfo.businessLocal));
+        assertEquals(list(RedTwoRemote.class), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+    }
+
+    /**
+     * Test results should NOT be the same as above. Super class should not be consulted
+     * 
+     * @throws Exception
+     */
+    public void testCrimsonStrict() throws Exception {
+        strict(true);
+
+        Map<String, EnterpriseBeanInfo> beans = deploy(CrimsonOneBean.class, CrimsonTwoBean.class);
+
+        EnterpriseBeanInfo beanInfo = beans.get("CrimsonOneBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+
+        beanInfo = beans.get("CrimsonTwoBean");
+
+        assertEquals(list(), sort(beanInfo.businessLocal));
+        assertEquals(list(), sort(beanInfo.businessRemote));
+        assertTrue(beanInfo.localbean);
+    }
+
+    
+    
     private <T extends Comparable<? super T>> List<T> sort(List<T> list) {
         Collections.sort(list);
         return list;
