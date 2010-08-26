@@ -36,8 +36,9 @@ import org.junit.runner.RunWith;
  */
 @RunWith(ValidationRunner.class)
 public class InvalidEjbRefTest extends TestCase {
-    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
-    public EjbJar _test() throws Exception {
+//    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
+    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject")})
+    public EjbJar test() throws Exception {
 
         EjbJar ejbJar = new EjbJar();
 
