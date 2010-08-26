@@ -62,7 +62,6 @@ import org.apache.openejb.core.ExceptionType;
 import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
 import static org.apache.openejb.core.ExceptionType.SYSTEM;
 
-import org.apache.openejb.core.MethodContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.InstanceContext;
@@ -681,16 +680,16 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private Duration getAccessTimeout(CoreDeploymentInfo deploymentInfo, Method callMethod) {
-        Duration accessTimeout = null;
         callMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
-        MethodContext methodContext = deploymentInfo.getMethodContext(callMethod);
-        if (methodContext != null) {
-            accessTimeout = methodContext.getAccessTimeout();
-        }
+        
+        Duration accessTimeout = deploymentInfo.getAccessTimeout(callMethod);
         if (accessTimeout == null) {
             accessTimeout = deploymentInfo.getAccessTimeout();
+            if (accessTimeout == null) {
+                accessTimeout = this.accessTimeout;
+            }
         }
-        return (accessTimeout == null) ? this.accessTimeout : accessTimeout;
+        return accessTimeout;
     }
     
     private Transaction getTransaction(ThreadContext callContext) {

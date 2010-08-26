@@ -76,8 +76,7 @@ public class SingletonContainer implements RpcContainer {
 
     private Object containerID = null;
     private SecurityService securityService;
-    private long wait = 30;
-    private TimeUnit unit = TimeUnit.SECONDS;
+    private Duration accessTimeout;
     private BlockingQueue<Runnable> asynchQueue = new LinkedBlockingQueue<Runnable>();
     private ThreadPoolExecutor asynchPool = new ThreadPoolExecutor(1, 20, 60, TimeUnit.SECONDS, asynchQueue);
     private CompletionService<Object> asynchService = new ExecutorCompletionService<Object>(asynchPool);
@@ -95,10 +94,7 @@ public class SingletonContainer implements RpcContainer {
     }
 
     public void setAccessTimeout(Duration duration){
-        if (duration.getUnit() != null) {
-            this.unit = duration.getUnit();
-        }
-        this.wait = duration.getTime();
+        this.accessTimeout = duration;
     }
 
     public synchronized DeploymentInfo [] deployments() {
@@ -243,10 +239,11 @@ public class SingletonContainer implements RpcContainer {
 
     protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType callType) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-
+               
+        Duration accessTimeout = getAccessTimeout(deploymentInfo, runMethod);        
         boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == javax.ejb.LockType.READ;
-
-        final Lock lock = aquireLock(read, instance);
+        
+        final Lock lock = aquireLock(read, accessTimeout, instance);
 
         Object returnValue;
         try {
@@ -288,21 +285,47 @@ public class SingletonContainer implements RpcContainer {
         return returnValue;
     }
 
-    private Lock aquireLock(boolean read, Instance instance) {
+    private Duration getAccessTimeout(CoreDeploymentInfo deploymentInfo, Method callMethod) {
+        Duration accessTimeout = deploymentInfo.getAccessTimeout(callMethod);
+        if (accessTimeout == null) {
+            accessTimeout = deploymentInfo.getAccessTimeout();
+            if (accessTimeout == null) {
+                accessTimeout = this.accessTimeout;
+            }
+        }
+        return accessTimeout;
+    }
+    
+    private Lock aquireLock(boolean read, Duration accessTimeout, Instance instance) {
         final Lock lock;
         if (read) {
             lock = instance.lock.readLock();
         } else {
             lock = instance.lock.writeLock();
         }
-
-        try {
-            if (!lock.tryLock(wait, unit)){
-                throw new ConcurrentAccessTimeoutException();
+        
+        boolean lockAcquired;
+        if (accessTimeout == null || accessTimeout.getTime() < 0) {
+            // wait indefinitely for a lock
+            lock.lock();
+            lockAcquired = true;
+        } else if (accessTimeout.getTime() == 0) {
+            // concurrent calls are not allowed, lock only once
+            lockAcquired = lock.tryLock();
+        } else {
+            // try to get a lock within the specified period. 
+            try {
+                lockAcquired = lock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
+            } catch (InterruptedException e) {
+                throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException().initCause(e);
             }
-        } catch (InterruptedException e) {
-            throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException().initCause(e);
         }
+
+        // Did we acquire the lock to the current execution?
+        if (!lockAcquired) {
+            throw new ConcurrentAccessTimeoutException("Unable to get lock.");
+        }
+
         return lock;
     }
 
