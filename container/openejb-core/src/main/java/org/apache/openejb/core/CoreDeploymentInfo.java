@@ -1034,6 +1034,10 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         return null;
     }
 
+    public Duration getAccessTimeout(Method beanMethod) {
+        return getMethodContext(beanMethod).getAccessTimeout();
+    }
+    
 	public Duration getAccessTimeout() {
 		return accessTimeout;
 	}

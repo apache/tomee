@@ -326,7 +326,7 @@
           constructor="id, securityService"
           class-name="org.apache.openejb.core.singleton.SingletonContainer">
 
-    AccessTimeout = 30 seconds
+    AccessTimeout = -1 seconds
     
   </ServiceProvider>
 
@@ -353,7 +353,7 @@
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
-    AccessTimeout = -1 milliseconds
+    AccessTimeout = -1 seconds
 
     # The cache is responsible for managing stateful bean
     # instances.  The cache can page instances to disk as memory
