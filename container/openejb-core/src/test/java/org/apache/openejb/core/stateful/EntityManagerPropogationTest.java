@@ -38,6 +38,7 @@ import org.apache.openjpa.persistence.ArgumentException;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.ejb.Local;
 import javax.ejb.Remove;
 import javax.ejb.NoSuchEJBException;
 import javax.naming.InitialContext;
@@ -66,7 +67,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("ExtendedLocal");
+        Node node = (Node) ctx.lookup("ExtendedLocalBean");
 
         // This bean should still be attached
         // when the transaction commits
@@ -91,7 +92,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("ExtendedLocal");
+        Node node = (Node) ctx.lookup("ExtendedLocalBean");
 
         // This bean should still be attached
         // when the transaction commits
@@ -130,9 +131,9 @@ public class EntityManagerPropogationTest extends TestCase {
         InitialContext ctx = new InitialContext();
 
         // Stateful Node tree A and Node tree B are syblings
-        Node chainA = (Node) ctx.lookup("ExtendedLocal");
+        Node chainA = (Node) ctx.lookup("ExtendedLocalBean");
 
-        Node chainB = (Node) ctx.lookup("ExtendedLocal");
+        Node chainB = (Node) ctx.lookup("ExtendedLocalBean");
 
         // This bean should still be attached
         // when the transaction commits
@@ -151,7 +152,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("TransactionLocal");
+        Node node = (Node) ctx.lookup("TransactionLocalBean");
 
         // This bean should not still be attached
         // when the transaction commits
@@ -170,7 +171,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("TransactionToExtendedLocal");
+        Node node = (Node) ctx.lookup("TransactionToExtendedLocalBean");
 
         try {
 //	    System.out.println("SFSB+TPC --> SFSB+EPC");
@@ -190,13 +191,14 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("ExtendedToTransactionLocal");
+        Node node = (Node) ctx.lookup("ExtendedToTransactionLocalBean");
         
         try {
 //	    System.out.println("SFSB+EPC --> SLSB+TPC --> SFSB+EPC");
 	    node.createUntilLeaf(6, "red");
 	    
 	} catch (EJBException e) {
+            e.printStackTrace();
 	    fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
 		"\n\t--> the SFSB+EPC is the one who starts the transaction and then calls the " +
 		"SLSB+TPC who then calls back to the SFSB+EPC \n\t--> IT SHOULD WORK ...");
@@ -208,7 +210,7 @@ public class EntityManagerPropogationTest extends TestCase {
 
         InitialContext ctx = new InitialContext();
 
-        Node node = (Node) ctx.lookup("TransactionToExtendedLocal");
+        Node node = (Node) ctx.lookup("TransactionToExtendedLocalBean");
         
         try {
 //            System.out.println("SLSB+TPC --> SFSB+EPC");
@@ -333,6 +335,7 @@ public class EntityManagerPropogationTest extends TestCase {
         }
     }
 
+    @Local
     public static interface Node {
 
         void remove();
