@@ -453,15 +453,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         createApplication(appInfo, classLoader);
     }
 
-    public void createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, createAppClassLoader(appInfo));
+    public AppContext createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
+        return createApplication(appInfo, createAppClassLoader(appInfo));
     }
 
-    public void createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
-        createApplication(appInfo, classLoader, true);
+    public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader) throws OpenEJBException, IOException, NamingException {
+        return createApplication(appInfo, classLoader, true);
     }
 
-    public List<DeploymentInfo> createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
+    public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places 
         if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
@@ -715,7 +715,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             deployedApplications.put(appInfo.path, appInfo);
             fireAfterApplicationCreated(appInfo);
 
-            return allDeployments;
+            appContext.getDeployments().addAll(allDeployments);
+
+            return appContext;
         } catch (Throwable t) {
             try {
                 destroyApplication(appInfo);

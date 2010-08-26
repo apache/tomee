@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -84,7 +85,6 @@ public class OpenEjbContainer extends EJBContainer {
             String appId = (String) properties.get(EJBContainer.APP_NAME);
             try {
                 Properties props = new Properties();
-                props.put(AnnotationDeployer.ProcessAnnotatedBeans.STRICT_INTERFACE_DECLARATION, Boolean.toString(true));
                 props.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
                 props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");
@@ -143,30 +143,19 @@ public class OpenEjbContainer extends EJBContainer {
                 if (moduleLocations.isEmpty()) {
                     throw new IllegalStateException("No modules to deploy found");
                 }
+
                 AppInfo appInfo = configurationFactory.configureApplication(classLoader, appId, moduleLocations);
 
                 Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+
+                final AppContext appContext;
+
                 try {
-                    assembler.createApplication(appInfo, classLoader);
+                    appContext = assembler.createApplication(appInfo, classLoader);
                 } catch (Exception e) {
                     throw new IllegalStateException("Could not deploy embedded app", e);
                 }
-                Collection<AppInfo> apps = assembler.getDeployedApplications();
-                if (apps.size() != 1) {
-                    throw new IllegalStateException("not exactly one app deployed in embedded: " + apps.size());
-                }
-                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                AppContext appContext = null;
-                DeploymentInfo[] infos = containerSystem.deployments();
-                for (DeploymentInfo info: infos) {
-                    if (info instanceof CoreDeploymentInfo) {
-                        appContext = ((CoreDeploymentInfo)info).getModuleContext().getAppContext();
-                        break;
-                    }
-                }
-                if (appContext == null) {
-                    throw new IllegalStateException("Could not locate app context");
-                }
+
                 final Context globalJndiContext = appContext.getGlobalJndiContext();
                 return new OpenEjbContainer(new ContextFlyweight() {
 
