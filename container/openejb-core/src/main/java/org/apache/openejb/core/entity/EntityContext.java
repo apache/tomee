@@ -89,6 +89,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
         final Operation operation = ThreadContext.getThreadContext().getCurrentOperation();
         switch (call) {
             case getUserTransaction:
+            case getContextData:
                 throw illegal(call, operation);
             case getPrimaryKey:
             case getEJBLocalObject:
