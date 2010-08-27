@@ -51,6 +51,7 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
         switch (call) {
             case getUserTransaction:
             case getTimerService:
+            case getContextData:
                 switch (operation) {
                     case INJECTION:
                         throw illegal(call, operation);

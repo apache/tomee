@@ -42,6 +42,7 @@ public class SingletonContext extends BaseSessionContext {
             case getBusinessObject:
             case getUserTransaction:
             case getTimerService:
+            case getContextData:
                 switch (operation) {
                     case INJECTION:
                         throw illegal(call, operation);

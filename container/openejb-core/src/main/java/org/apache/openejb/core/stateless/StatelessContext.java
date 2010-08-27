@@ -46,6 +46,7 @@ public class StatelessContext extends BaseSessionContext implements Flushable {
             case getBusinessObject:
             case getUserTransaction:
             case getTimerService:
+            case getContextData:
                 switch (operation) {
                     case INJECTION:
                         throw illegal(call, operation);

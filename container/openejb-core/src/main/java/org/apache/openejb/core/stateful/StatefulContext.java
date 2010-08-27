@@ -45,6 +45,7 @@ public class StatefulContext extends BaseSessionContext {
             case getEJBLocalObject:
             case getEJBObject:
             case getBusinessObject:
+            case getContextData:
                 switch (operation) {
                     case INJECTION:
                         throw illegal(call, operation);

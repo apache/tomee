@@ -66,6 +66,7 @@ public class InterceptorStack {
                 interceptors.add(interceptor);
             }
         }
+
     }
 
     private static final ThreadLocal<Stack> stack = new ThreadLocal<Stack>();
@@ -118,20 +119,35 @@ public class InterceptorStack {
     }
 
     public Object invoke(Object... parameters) throws Exception {
-        InvocationContext invocationContext = createInvocationContext(parameters);
-        Object value = invocationContext.proceed();
-        return value;
+        try {
+            InvocationContext invocationContext = createInvocationContext(parameters);
+            ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
+            Object value = invocationContext.proceed();
+            return value;
+        } finally {
+            ThreadContext.getThreadContext().remove(InvocationContext.class);
+        }
     }
 
     public Object invoke(javax.xml.ws.handler.MessageContext messageContext, Object... parameters) throws Exception {
-        InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
-        Object value = invocationContext.proceed();
-        return value;
+        try {
+            InvocationContext invocationContext = new JaxWsInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
+            ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
+            Object value = invocationContext.proceed();
+            return value;
+        } finally {
+            ThreadContext.getThreadContext().remove(InvocationContext.class);
+        }
     }
 
     public Object invoke(javax.xml.rpc.handler.MessageContext messageContext, Object... parameters) throws Exception {
-        InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
-        Object value = invocationContext.proceed();
-        return value;
+        try {
+            InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
+            ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
+            Object value = invocationContext.proceed();
+            return value;
+        } finally {
+            ThreadContext.getThreadContext().remove(InvocationContext.class);
+        }
     }
 }

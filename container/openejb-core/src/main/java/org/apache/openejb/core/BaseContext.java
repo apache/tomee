@@ -29,6 +29,7 @@ import javax.ejb.EJBContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.TimerService;
+import javax.interceptor.InvocationContext;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.transaction.HeuristicMixedException;
@@ -51,7 +52,7 @@ import java.util.Properties;
 public abstract class BaseContext implements EJBContext, Serializable {
 
     public static enum Call {
-        getEJBObject, getEJBLocalObject, isCallerInRole, setRollbackOnly, getCallerPrincipal, getRollbackOnly, getTimerService, getUserTransaction, getBusinessObject, timerMethod, getInvokedBusinessInterface, UserTransactionMethod, getMessageContext, getPrimaryKey
+        getEJBObject, getEJBLocalObject, isCallerInRole, setRollbackOnly, getCallerPrincipal, getRollbackOnly, getTimerService, getUserTransaction, getBusinessObject, timerMethod, getInvokedBusinessInterface, UserTransactionMethod, getMessageContext, getPrimaryKey, getContextData
 
     }
 
@@ -74,8 +75,10 @@ public abstract class BaseContext implements EJBContext, Serializable {
     }
 
     public Map<String, Object> getContextData() {
-        throw new UnsupportedOperationException("not yet implemented");
+        check(Call.getContextData);
+        return ThreadContext.getThreadContext().get(InvocationContext.class).getContextData();
     }
+
     public EJBHome getEJBHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
         DeploymentInfo di = threadContext.getDeploymentInfo();

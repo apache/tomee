@@ -19,10 +19,11 @@ package org.apache.openejb.core;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.core.transaction.TransactionPolicy;
 
 public class ThreadContext {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -164,7 +165,7 @@ public class ThreadContext {
     public BaseContext.State[] setCurrentAllowedStates(BaseContext.State[] newAllowedStates) {
         return null;
     }
-    
+
     @SuppressWarnings({"unchecked"})
     public <T> T get(Class<T> type) {
         return (T)data.get(type);
@@ -173,6 +174,11 @@ public class ThreadContext {
     @SuppressWarnings({"unchecked"})
     public <T> T set(Class<T> type, T value) {
         return (T) data.put(type, value);
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public <T> T remove(Class<T> type) {
+        return (T) data.remove(type);
     }
 
     public boolean isDiscardInstance() {
