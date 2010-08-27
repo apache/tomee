@@ -251,7 +251,14 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkAroundTypeInvoke(String aroundType, Class ejbClass, String declaringClassName, String declaringMethodName, String componentName) {
         try {
-            Method method = getMethod(ejbClass, declaringMethodName, InvocationContext.class);
+            Class<?> delcaringClass = null;
+            try {
+                delcaringClass = declaringClassName == null ? ejbClass : loadClass(declaringClassName);
+            } catch (OpenEJBException e) {
+                fail(componentName, "missing.class", declaringClassName, aroundType, ejbClass.getName());
+                return;
+            }
+            Method method = getMethod(delcaringClass, declaringMethodName, InvocationContext.class);
 
             Class<?> returnType = method.getReturnType();
 
@@ -301,7 +308,14 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkCallback(Class<?> ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
         try {
-            Method method = getMethod(ejbClass, callback.getMethodName(), parameterTypes);
+            Class<?> delcaringClass = null;
+            try {
+                delcaringClass = callback.getClassName() == null ? ejbClass : loadClass(callback.getClassName());
+            } catch (OpenEJBException e) {
+                fail(type, "missing.class", callback.getClassName(), type, bean.getEjbName());
+                return;
+            }
+            Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
             if (implementsSessionBean(ejbClass)) {
                 SessionBean sb = (SessionBean) bean;
                 if ("PreDestroy".equals(type)) {
@@ -358,7 +372,14 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkCallback(Class interceptorClass, String type, CallbackMethod callback, Interceptor interceptor) {
         try {
-            Method method = getMethod(interceptorClass, callback.getMethodName(), InvocationContext.class);
+            Class<?> delcaringClass = null;
+            try {
+                delcaringClass = callback.getClassName() == null ? interceptorClass : loadClass(callback.getClassName());
+            } catch (OpenEJBException e) {
+                fail(type, "missing.class", callback.getClassName(), type, interceptor.getInterceptorClass());
+                return;
+            }
+            Method method = getMethod(delcaringClass, callback.getMethodName(), InvocationContext.class);
 
             Class<?> returnType = method.getReturnType();
 

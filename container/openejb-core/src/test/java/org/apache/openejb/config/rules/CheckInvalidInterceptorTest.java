@@ -23,12 +23,14 @@ import javax.annotation.PreDestroy;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
 import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
 
 import junit.framework.TestCase;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Interceptor;
 import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.junit.runner.RunWith;
@@ -68,10 +70,27 @@ public class CheckInvalidInterceptorTest extends TestCase {
         return ejbJar;
     }
 
+    /**
+     * Should not get any failure message, as we explicitly configure the methods in the base class
+     * @return
+     */
+    @Keys
+    public EjbJar testDeclaringInterceptorClass() {
+        EjbJar ejbJar = new EjbJar();
+        Interceptor subInterceptor = ejbJar.addInterceptor(new org.apache.openejb.jee.Interceptor(SubInterceptor.class));
+        subInterceptor.getPostConstruct().add(new LifecycleCallback(BaseInterceptor.class.getName(), "interceptPostConstruct"));
+        subInterceptor.getPreDestroy().add(new LifecycleCallback(BaseInterceptor.class.getName(), "interceptPreDestroy"));
+        subInterceptor.getAroundInvoke().add(new org.apache.openejb.jee.AroundInvoke(BaseInterceptor.class.getName(), "interceptAroundInvoke"));
+        subInterceptor.getAroundTimeout().add(new org.apache.openejb.jee.AroundTimeout(BaseInterceptor.class.getName(), "interceptAroundTimeout"));
+        return ejbJar;
+    }
+
     @Interceptors(Interzeptor.class)
-    public static class FooBean {}
+    public static class FooBean {
+    }
 
     public static class Interzeptor {
+
         @PostConstruct
         public Object interceptPostConstruct() {
             return null;
@@ -83,10 +102,46 @@ public class CheckInvalidInterceptorTest extends TestCase {
         }
 
         @AroundInvoke
-        public void interceptAroundInvoke() {}
+        public void interceptAroundInvoke() {
+        }
 
         @AroundTimeout
-        public void interceptAroundTimeout() {}
+        public void interceptAroundTimeout() {
+        }
+    }
+
+    public static class BaseInterceptor {
+
+        public void interceptPostConstruct(InvocationContext context) throws Exception {
+        }
+
+        public void interceptPreDestroy(InvocationContext context) throws Exception {
+        }
+
+        public Object interceptAroundInvoke(InvocationContext context) throws Exception {
+            return null;
+        }
+
+        public Object interceptAroundTimeout(InvocationContext context) throws Exception {
+            return null;
+        }
+    }
+
+    public static class SubInterceptor extends BaseInterceptor {
+
+        private final Object interceptPostConstruct() {
+            return null;
+        }
+
+        private final Object interceptPreDestroy() {
+            return null;
+        }
+
+        private final void interceptAroundInvoke() {
+        }
+
+        private final void interceptAroundTimeout() {
+        }
     }
 
     public static class CallbackMissingInterceptor {
