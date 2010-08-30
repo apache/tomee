@@ -16,13 +16,17 @@
  */
 package org.superbiz.counter;
 
+import javax.ejb.Local;
+
 /**
  * This is an EJB 3 local business interface
  * A local business interface may be annotated with the @Local
- * annotation, but it's optional. A business interface which is
- * not annotated with @Local or @Remote is assumed to be Local
+ * annotation, but it's optional. If a bean implements only a
+ * single interface and that interface is not annotated with 
+ * @Local or @Remote, it is assumed to be Local.
  */
 //START SNIPPET: code
+@Local
 public interface CounterLocal {
 
     public int increment();

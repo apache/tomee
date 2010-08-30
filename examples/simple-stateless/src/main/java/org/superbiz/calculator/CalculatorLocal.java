@@ -16,13 +16,13 @@
  */
 package org.superbiz.calculator;
 
+import javax.ejb.Local;
+
 /**
  * This is an EJB 3 local business interface
- * A local business interface may be annotated with the @Local
- * annotation, but it's optional. A business interface which is 
- * not annotated with @Local or @Remote is assumed to be Local
  */
 //START SNIPPET: code
+@Local
 public interface CalculatorLocal {
 	
 	public int sum(int add1, int add2);
