@@ -16,11 +16,9 @@
  */
 package org.superbiz.calculator;
 
-//END SNIPPET: code
+import javax.ejb.Local;
 
-//END SNIPPET: code
-
-//START SNIPPET: code
+@Local
 public interface CalculatorLocal extends CalculatorWs {
 
 }
