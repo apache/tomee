@@ -140,9 +140,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "postActivate",
         "prePassivate",
         "securityRoleRef",
-        "securityIdentity",
-        //TODO not actually specified in schema
-        "accessTimeout"
+        "securityIdentity"
 })
 public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
@@ -250,11 +248,6 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     private List<LifecycleCallback> beforeCompletion;
     @XmlTransient
     private List<LifecycleCallback> afterCompletion;
-
-    //Not in schema, but can be specified with annotation
-//    @XmlTransient
-    @XmlElement(name = "access-timeout")
-    protected Timeout accessTimeout;
 
     public SessionBean() {
     }
@@ -866,14 +859,6 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
             timer = new ArrayList<Timer>();
         }
         return this.timer;
-    }
-
-    public Timeout getAccessTimeout() {
-        return accessTimeout;
-    }
-
-    public void setAccessTimeout(Timeout accessTimeout) {
-        this.accessTimeout = accessTimeout;
     }
 
     public void addAroundTimeout(String method) {

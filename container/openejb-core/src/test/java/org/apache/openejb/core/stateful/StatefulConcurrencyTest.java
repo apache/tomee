@@ -33,7 +33,9 @@ import org.apache.openejb.assembler.classic.StatefulSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.client.LocalInitialContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
 
@@ -61,13 +63,19 @@ public class StatefulConcurrencyTest extends TestCase {
         Timeout timeout1 = new Timeout();
         timeout1.setTimeout(1000);
         timeout1.setUnit(TimeUnit.MILLISECONDS);
-        bean1.setAccessTimeout(timeout1);
+        ConcurrentMethod method1 = new ConcurrentMethod();
+        method1.setMethod(new NamedMethod("*"));
+        method1.setAccessTimeout(timeout1);
+        bean1.getConcurrentMethod().add(method1);
         
         StatefulBean bean2 = new StatefulBean("BeanNegative", MyLocalBeanImpl.class);
         Timeout timeout2 = new Timeout();
         timeout2.setTimeout(-1);
         timeout2.setUnit(TimeUnit.MILLISECONDS);
-        bean2.setAccessTimeout(timeout2);
+        ConcurrentMethod method2 = new ConcurrentMethod();
+        method2.setMethod(new NamedMethod("*"));
+        method2.setAccessTimeout(timeout2);
+        bean2.getConcurrentMethod().add(method2);
 
         ejbJar.addEnterpriseBean(bean1);
         ejbJar.addEnterpriseBean(bean2);

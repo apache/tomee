@@ -26,13 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.LockType;
-
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
 import org.apache.openejb.assembler.classic.CmrFieldInfo;
-import org.apache.openejb.assembler.classic.ConcurrentMethodInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityBeanInfo;
@@ -64,7 +61,6 @@ import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
 import org.apache.openejb.jee.ConcurrencyManagementType;
-import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ConcurrentMethod;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -152,7 +148,7 @@ public class EjbJarInfoBuilder {
         for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
             EnterpriseBeanInfo beanInfo;
             if (bean instanceof org.apache.openejb.jee.SessionBean) {
-                beanInfo = initSessionBean((SessionBean) bean, ejbds);
+                beanInfo = initSessionBean((SessionBean) bean, ejbJar, ejbds);
             } else if (bean instanceof org.apache.openejb.jee.EntityBean) {
                 beanInfo = initEntityBean((EntityBean) bean, ejbds);
             } else if (bean instanceof org.apache.openejb.jee.MessageDrivenBean) {
@@ -325,7 +321,6 @@ public class EjbJarInfoBuilder {
     }
 
     private void initMethodTransactions(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
-
         List<ContainerTransaction> containerTransactions = jar.getEjbJar().getAssemblyDescriptor().getContainerTransaction();
         for (ContainerTransaction cTx : containerTransactions) {
             MethodTransactionInfo info = new MethodTransactionInfo();
@@ -338,14 +333,33 @@ public class EjbJarInfoBuilder {
     }
 
     private void initMethodConcurrency(EjbModule jar, Map ejbds, EjbJarInfo ejbJarInfo) {
-
         List<ContainerConcurrency> containerConcurrency = jar.getEjbJar().getAssemblyDescriptor().getContainerConcurrency();
         for (ContainerConcurrency att : containerConcurrency) {
             MethodConcurrencyInfo info = new MethodConcurrencyInfo();
 
             info.description = att.getDescription();
-            info.concurrencyAttribute = att.getLock().toString();
-            info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));
+            if (att.getLock() != null) {
+                info.concurrencyAttribute = att.getLock().toString();
+            }
+            info.accessTimeout = toInfo(att.getAccessTimeout());
+
+            info.methods.addAll(getMethodInfos(att.getMethod(), ejbds));           
+            ejbJarInfo.methodConcurrency.add(info);
+        }
+    }
+    
+    private void copyConcurrentMethods(SessionBean bean, EjbJarInfo ejbJarInfo, Map ejbds) {
+        for (ConcurrentMethod method : bean.getConcurrentMethod()) {
+            MethodConcurrencyInfo info = new MethodConcurrencyInfo();
+            
+            if (method.getLock() != null) {
+                info.concurrencyAttribute = method.getLock().toString();
+            }
+            info.accessTimeout = toInfo(method.getAccessTimeout());
+            
+            Method m = new Method(bean.getEjbName(), null, method.getMethod().getMethodName());
+            m.setMethodParams(method.getMethod().getMethodParams());            
+            info.methods.add(getMethodInfo(m, ejbds));            
             ejbJarInfo.methodConcurrency.add(info);
         }
     }
@@ -504,7 +518,7 @@ public class EjbJarInfoBuilder {
         return methodInfo;
     }
 
-    private EnterpriseBeanInfo initSessionBean(SessionBean s, Map m) throws OpenEJBException {
+    private EnterpriseBeanInfo initSessionBean(SessionBean s, EjbJarInfo ejbJar, Map m) throws OpenEJBException {
         EnterpriseBeanInfo bean = null;
 
         if (s.getSessionType() == SessionType.STATEFUL) {
@@ -532,7 +546,7 @@ public class EjbJarInfoBuilder {
                 stateful.removeMethods.add(remove);
             }
             
-            copyConcurrentMethods(s.getConcurrentMethod(), bean.concurrentMethodInfos);
+            copyConcurrentMethods(s, ejbJar, m);
 
         } else if (s.getSessionType() == SessionType.MANAGED) {
             bean = new ManagedBeanInfo();
@@ -559,7 +573,7 @@ public class EjbJarInfoBuilder {
             // See JndiEncInfoBuilder.buildDependsOnRefs for processing of DependsOn
             // bean.dependsOn.addAll(s.getDependsOn());
             
-            copyConcurrentMethods(s.getConcurrentMethod(), bean.concurrentMethodInfos);
+            copyConcurrentMethods(s, ejbJar, m);
         } else {
             bean = new StatelessBeanInfo();
             copySchedules(s.getTimer(), bean.methodScheduleInfos);
@@ -606,7 +620,6 @@ public class EjbJarInfoBuilder {
         bean.properties.putAll(d.getProperties());
 
         bean.statefulTimeout = toInfo(s.getStatefulTimeout());
-        bean.accessTimeout = toInfo(s.getAccessTimeout());
 
         return bean;
     }
@@ -790,15 +803,4 @@ public class EjbJarInfoBuilder {
         return bean;
     }
     
-    private void copyConcurrentMethods(List<ConcurrentMethod> from, List<ConcurrentMethodInfo> to) {
-        for (ConcurrentMethod method : from) {
-            ConcurrentMethodInfo methodInfo = new ConcurrentMethodInfo();
-            methodInfo.accessTimeout = toInfo(method.getAccessTimeout());
-            methodInfo.method = toInfo(method.getMethod());
-            if (method.getLock() != null) {
-                methodInfo.lockType = method.getLock().value().toUpperCase();
-            }
-            to.add(methodInfo);
-        }
-    }
 }

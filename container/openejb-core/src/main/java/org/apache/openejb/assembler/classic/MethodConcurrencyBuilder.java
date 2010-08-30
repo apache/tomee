@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.MethodContext;
 
 import javax.ejb.LockType;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import java.lang.reflect.Method;
 
 /**
@@ -56,16 +59,24 @@ public class MethodConcurrencyBuilder {
             for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
                 Method method = entry.getKey();
                 MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
-                log.debug("Concurrency Attribute: " + method + " -- " + MethodInfoUtil.toString(value));
+                log.debug("Concurrency Attribute: " + method + " -- " + MethodInfoUtil.toString(value));      
             }
         }
 
         for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
             MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
 
-//            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
-            String s = value.concurrencyAttribute.toUpperCase();
-            deploymentInfo.setMethodConcurrencyAttribute(entry.getKey(), LockType.valueOf(s));
+            MethodContext methodContext = deploymentInfo.getMethodContext(entry.getKey());
+            
+            if (value.concurrencyAttribute != null) {
+                String s = value.concurrencyAttribute.toUpperCase();
+                methodContext.setLockType(LockType.valueOf(s));
+            }
+            
+            if (value.accessTimeout != null) {
+                Duration accessTimeout = new Duration(value.accessTimeout.time, TimeUnit.valueOf(value.accessTimeout.unit));
+                methodContext.setAccessTimeout(accessTimeout);
+            }
         }
     }
 
@@ -88,6 +99,7 @@ public class MethodConcurrencyBuilder {
                 newInfo.description = oldInfo.description;
                 newInfo.methods.add(methodInfo);
                 newInfo.concurrencyAttribute = oldInfo.concurrencyAttribute;
+                newInfo.accessTimeout = oldInfo.accessTimeout;
 
                 normalized.add(newInfo);
             }
