@@ -63,29 +63,17 @@
                 <configuration>
                     <instructions>
                         <Bundle-Activator>org.apache.openejb.core.osgi.impl.Activator</Bundle-Activator>
-                        <Require-Bundle>
-                            org.apache.openejb.core,
-                            org.apache.openejb.loader,
-                            org.apache.openejb.jee
-                        </Require-Bundle>
                         <Export-Package>org.apache.openejb.core.osgi.*</Export-Package>
                         <Import-Package>
                             javax.transaction;version="[1.1,1.2)",
                             javax.transaction.xa;version="[1.1,1.2)",
+                            org.apache.openejb*;version="[3.1,3.2)", 
                             javax.naming,
                             javax.jms,
                             org.apache.commons.logging,
-                            org.apache.openejb.assembler.classic,
-                            org.apache.openejb.config,
-                            org.apache.openejb.spi,
-                            org.apache.openejb.resource.activemq,
-                            org.apache.openejb.client,
                             org.apache.activemq.ra,
-                            org.apache.openejb;version="3.1",
-                            org.apache.openejb.core.osgi.impl,
-                            org.apache.openejb.loader;version="3.1",
-                            org.apache.openejb.util;version="3.1",
-                            org.osgi.framework;version="1.4"
+                            org.osgi.framework;version="[1.4,1.5)", 
+                            *
                         </Import-Package>
                         <Include-Resource>${pom.basedir}/src/main/resources</Include-Resource>
                     </instructions>
