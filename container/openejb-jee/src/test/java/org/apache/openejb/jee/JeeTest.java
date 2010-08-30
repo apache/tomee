@@ -99,7 +99,6 @@ public class JeeTest extends TestCase {
         assertTrue("The bean A is not a SessionBean", bean instanceof SessionBean);
         SessionBean sbean = (SessionBean) bean;
 
-        assertNotNull("Unable to get the AccessTimeout value", sbean.getAccessTimeout());
         assertNotNull("Unable to get the StatefulTimeout value", sbean.getStatefulTimeout());
     }
 

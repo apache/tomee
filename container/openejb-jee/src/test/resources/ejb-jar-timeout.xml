@@ -26,11 +26,6 @@
 				<timeout>1234</timeout>
 				<unit>Seconds</unit>
 			</stateful-timeout>
-			<access-timeout>
-				<timeout>1234</timeout>
-				<unit>Seconds</unit>
-			</access-timeout>
-
         </session>
     </enterprise-beans>
 </ejb-jar>

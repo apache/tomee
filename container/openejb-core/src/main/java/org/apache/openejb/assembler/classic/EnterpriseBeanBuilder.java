@@ -168,10 +168,6 @@ class EnterpriseBeanBuilder {
             deployment.setStatefulTimeout(new Duration(bean.statefulTimeout.time, TimeUnit.valueOf(bean.statefulTimeout.unit)));
         }
 
-        if (bean.accessTimeout != null) {
-            deployment.setAccessTimeout(new Duration(bean.accessTimeout.time, TimeUnit.valueOf(bean.accessTimeout.unit)));
-        }
-
         if (bean instanceof StatefulBeanInfo) {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
 

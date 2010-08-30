@@ -43,6 +43,8 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
     protected List<Method> method;
     @XmlElement(name = "concurrency-attribute", required = true)
     protected ConcurrentLockType lock;
+    @XmlTransient
+    protected Timeout accessTimeout;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -97,6 +99,14 @@ public class ContainerConcurrency implements AttributeBinding<ConcurrentLockType
         this.lock = value;
     }
 
+    public Timeout getAccessTimeout() {
+        return accessTimeout;
+    }
+
+    public void setAccessTimeout(Timeout value) {
+        this.accessTimeout = value;
+    }
+    
     public String getId() {
         return id;
     }

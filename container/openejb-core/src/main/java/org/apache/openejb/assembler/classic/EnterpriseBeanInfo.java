@@ -80,8 +80,7 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public boolean loadOnStartup;
     public final List<String> dependsOn = new ArrayList<String>() ;
 
-    public TimeoutInfo statefulTimeout;
-    public TimeoutInfo accessTimeout;
+    public TimeoutInfo statefulTimeout;    
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
-    public final List<ConcurrentMethodInfo> concurrentMethodInfos = new ArrayList<ConcurrentMethodInfo>();
+
 }

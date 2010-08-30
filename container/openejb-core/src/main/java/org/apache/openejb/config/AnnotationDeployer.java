@@ -1097,39 +1097,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 processSecurityAnnotations(clazz, ejbName, ejbModule, inheritedClassFinder, bean);
 
-                if (bean instanceof SessionBean) {
-                    SessionBean sessionBean = (SessionBean) bean;
-
-                    // Merge AccessTimeout value from XML - XML value takes precedence
-                    if(sessionBean.getAccessTimeout() == null) {
-                        final AccessTimeout annotation = getInheritableAnnotation(clazz, AccessTimeout.class);
-                        if(annotation != null) {
-                            final Timeout timeout = new Timeout();
-                            timeout.setTimeout(annotation.value());
-                            timeout.setUnit(annotation.unit());
-                            sessionBean.setAccessTimeout(timeout);
-                        }
-                    }
-
-                    // Merge StatefulTimeout value from XML - XML value takes precedence
-                    if(sessionBean.getStatefulTimeout() == null) {
-                        final StatefulTimeout annotation = getInheritableAnnotation(clazz, StatefulTimeout.class);
-                        if(annotation != null) {
-                            final Timeout timeout = new Timeout();
-                            timeout.setTimeout(annotation.value());
-                            timeout.setUnit(annotation.unit());
-                            sessionBean.setStatefulTimeout(timeout);
-                        }
-                    }
-                    
-                    /*
-                     * @AccessTimeout
-                     * @Lock 
-                     */
-                    processAccessTimeoutAndLock(sessionBean, inheritedClassFinder);
-                }
-
-
                 /*
                  * @Schedule
                  * @Schedules
@@ -1337,12 +1304,20 @@ public class AnnotationDeployer implements DynamicDeployer {
                             /*
                              * @Lock
                              */
+                            LockHandler lockHandler = new LockHandler(assemblyDescriptor, sessionBean);                            
                             if (sessionBean.getConcurrencyManagementType() == ConcurrencyManagementType.CONTAINER) {
-                                processAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), clazz, inheritedClassFinder);
+                                processAttributes(lockHandler, clazz, inheritedClassFinder);
                             } else {
-                                checkAttributes(new ConcurrencyAttributeHandler(assemblyDescriptor, ejbName), ejbName, ejbModule, classFinder, "invalidConcurrencyAttribute");
+                                checkAttributes(lockHandler, ejbName, ejbModule, classFinder, "invalidConcurrencyAttribute");
                             }
 
+                            /*
+                             * @AccessTimeout
+                             */
+                            AccessTimeoutHandler accessTimeoutHandler = 
+                                new AccessTimeoutHandler(assemblyDescriptor, sessionBean, lockHandler.getContainerConcurrency());
+                            processAttributes(accessTimeoutHandler, clazz, inheritedClassFinder);
+                            
                             /*
                              * @Startup
                              */
@@ -1351,6 +1326,30 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 sessionBean.setInitOnStartup(startup != null);
                             }
 
+                        } else if (sessionBean.getSessionType() == SessionType.STATEFUL) {
+                            /*
+                             * Annotations specific to @Stateful beans
+                             */
+                            
+                            /*
+                             * @StatefulTimeout
+                             */
+                            if (sessionBean.getStatefulTimeout() == null) {
+                                final StatefulTimeout annotation = getInheritableAnnotation(clazz, StatefulTimeout.class);
+                                if(annotation != null) {
+                                    final Timeout timeout = new Timeout();
+                                    timeout.setTimeout(annotation.value());
+                                    timeout.setUnit(annotation.unit());
+                                    sessionBean.setStatefulTimeout(timeout);
+                                }
+                            }
+                            
+                            /*
+                             * @AccessTimeout
+                             */
+                            AccessTimeoutHandler accessTimeoutHandler = new AccessTimeoutHandler(assemblyDescriptor, sessionBean);
+                            processAttributes(accessTimeoutHandler, clazz, inheritedClassFinder);
+                            
                         }
                     }
                 }
@@ -2116,64 +2115,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     timer.setTimeoutMethod(new NamedMethod(method));
 
                     timers.add(timer);
-                }
-            }
-        }
-
-        private ConcurrentMethod findConcurrentMethod(Map<NamedMethod, ConcurrentMethod> methodMap, Method method) {
-            // step 1: lookup by method name and parameters
-            NamedMethod lookup = new NamedMethod(method);
-            ConcurrentMethod concurrentMethod = methodMap.get(lookup);
-            if (concurrentMethod == null) {
-                // step 2: lookup by method name only
-                lookup.setMethodParams(null);
-                concurrentMethod = methodMap.get(lookup);
-            }
-            return concurrentMethod;
-        }
-        
-        private void processAccessTimeoutAndLock(SessionBean bean, ClassFinder classFinder) {
-            Map<NamedMethod, ConcurrentMethod> methodMap = new HashMap<NamedMethod, ConcurrentMethod>();
-            for (ConcurrentMethod concurrentMethod : bean.getConcurrentMethod()) {
-                methodMap.put(concurrentMethod.getMethod(), concurrentMethod);
-            }
-            
-            for (Method method : classFinder.findAnnotatedMethods(AccessTimeout.class)) {
-                ConcurrentMethod concurrentMethod = findConcurrentMethod(methodMap, method);
-                if (concurrentMethod == null) {
-                    // create new and add to the list
-                    concurrentMethod = new ConcurrentMethod();
-                    concurrentMethod.setMethod(new NamedMethod(method));
-                    bean.getConcurrentMethod().add(concurrentMethod);
-                }
-                
-                AccessTimeout annotation = method.getAnnotation(AccessTimeout.class);
-                
-                if (concurrentMethod.getAccessTimeout() == null) {
-                    Timeout timeout = new Timeout();
-                    timeout.setTimeout(annotation.value());
-                    timeout.setUnit(annotation.unit());
-                    concurrentMethod.setAccessTimeout(timeout);                    
-                }
-            }
-            
-            for (Method method : classFinder.findAnnotatedMethods(Lock.class)) {
-                ConcurrentMethod concurrentMethod = findConcurrentMethod(methodMap, method);
-                if (concurrentMethod == null) {
-                    // create new and add to the list
-                    concurrentMethod = new ConcurrentMethod();
-                    concurrentMethod.setMethod(new NamedMethod(method));
-                    bean.getConcurrentMethod().add(concurrentMethod);
-                }
-                
-                Lock annotation = method.getAnnotation(Lock.class);
-                                               
-                if (concurrentMethod.getLock() == null) {
-                    if (LockType.READ.equals(annotation.value())) {
-                        concurrentMethod.setLock(ConcurrentLockType.READ);
-                    } else if (LockType.WRITE.equals(annotation.value())) {
-                        concurrentMethod.setLock(ConcurrentLockType.WRITE);
-                    }
                 }
             }
         }
@@ -3301,39 +3242,132 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        public static class ConcurrencyAttributeHandler implements AnnotationHandler<javax.ejb.Lock> {
+        private static class ConcurrentMethodHandler {
+            
+            protected final AssemblyDescriptor assemblyDescriptor;
+            protected final SessionBean bean;
+            protected final Map<Object, ContainerConcurrency> methods;
 
-            private final AssemblyDescriptor assemblyDescriptor;
-            private final String ejbName;
-
-            public ConcurrencyAttributeHandler(AssemblyDescriptor assemblyDescriptor, String ejbName) {
+            public ConcurrentMethodHandler(AssemblyDescriptor assemblyDescriptor, 
+                                           SessionBean bean, 
+                                           Map<Object, ContainerConcurrency> methods) {
                 this.assemblyDescriptor = assemblyDescriptor;
-                this.ejbName = ejbName;
+                this.bean = bean;
+                this.methods = methods;
             }
-
+            
             public Map<String, List<MethodAttribute>> getExistingDeclarations() {
-                return assemblyDescriptor.getMethodConcurrencyMap(ejbName);
+                Map<String, List<MethodAttribute>> declarations = new HashMap<String, List<MethodAttribute>>();
+                List<ConcurrentMethod> methods = bean.getConcurrentMethod();
+                for (ConcurrentMethod method : methods) {
+                    List<MethodAttribute> list = declarations.get(method.getMethod().getMethodName());
+                    if (list == null) {
+                        list = new ArrayList<MethodAttribute>();
+                        declarations.put(method.getMethod().getMethodName(), list);
+                    }
+                    list.add(new MethodAttribute(null, bean.getEjbName(), method.getMethod()));
+                }
+                return declarations;
+            }
+            
+            public ContainerConcurrency getContainerConcurrency(Method method) {
+                ContainerConcurrency concurrency = methods.get(method);
+                if (concurrency == null) {
+                    concurrency = new ContainerConcurrency(null, bean.getEjbName(), method);
+                    methods.put(method, concurrency);
+                    assemblyDescriptor.getContainerConcurrency().add(concurrency);
+                }
+                return concurrency;
+            }
+            
+            public ContainerConcurrency getContainerConcurrency(Class clazz) {
+                ContainerConcurrency concurrency = methods.get(clazz);
+                if (concurrency == null) {
+                    concurrency = new ContainerConcurrency(null, clazz.getName(), bean.getEjbName(), "*");
+                    methods.put(clazz, concurrency);
+                    assemblyDescriptor.getContainerConcurrency().add(concurrency); 
+                }
+                return concurrency;
+            }
+            
+            protected Map<Object, ContainerConcurrency> getContainerConcurrency() {
+                return methods;
+            }
+        }
+        
+        public static class LockHandler extends ConcurrentMethodHandler implements AnnotationHandler<Lock> {
+
+            public LockHandler(AssemblyDescriptor assemblyDescriptor, 
+                               SessionBean bean) {
+                this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
             }
 
-            //TODO uses non-existent ContainerConcurrency
-            public void addClassLevelDeclaration(javax.ejb.Lock attribute, Class type) {
-                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), type.getName(), ejbName, "*");
-                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            public LockHandler(AssemblyDescriptor assemblyDescriptor, 
+                               SessionBean bean, 
+                               Map<Object, ContainerConcurrency> methods) {
+                super(assemblyDescriptor, bean, methods);
+            }
+            
+            public void addClassLevelDeclaration(Lock attribute, Class type) {
+                ContainerConcurrency concurrency = getContainerConcurrency(type);
+                concurrency.setLock(toLock(attribute));
             }
 
-            //TODO uses non-existent ContainerConcurrency
-            public void addMethodLevelDeclaration(javax.ejb.Lock attribute, Method method) {
-                ContainerConcurrency ctx = new ContainerConcurrency(cast(attribute.value()), ejbName, method);
-                assemblyDescriptor.getContainerConcurrency().add(ctx);
+            public void addMethodLevelDeclaration(Lock attribute, Method method) {
+                ContainerConcurrency concurrency = getContainerConcurrency(method);
+                concurrency.setLock(toLock(attribute));
             }
 
-            public Class<javax.ejb.Lock> getAnnotationClass() {
-                return javax.ejb.Lock.class;
+            private ConcurrentLockType toLock(Lock annotation) {
+                if (LockType.READ.equals(annotation.value())) {
+                    return ConcurrentLockType.READ;
+                } else if (LockType.WRITE.equals(annotation.value())) {
+                    return ConcurrentLockType.WRITE;
+                } else {
+                    throw new IllegalArgumentException("Unknown lock annotation: " + annotation.value());
+                }
+            }
+            
+            public Class<Lock> getAnnotationClass() {
+                return Lock.class;
             }
 
-            private ConcurrentLockType cast(javax.ejb.LockType lockType) {
-                return ConcurrentLockType.valueOf(lockType.toString());
+        }
+        
+        public static class AccessTimeoutHandler extends ConcurrentMethodHandler implements AnnotationHandler<AccessTimeout> {
+
+            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor, 
+                                        SessionBean bean) {
+                this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
             }
+
+            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor, 
+                                        SessionBean bean, 
+                                        Map<Object, ContainerConcurrency> methods) {
+                super(assemblyDescriptor, bean, methods);
+            }
+
+            public void addClassLevelDeclaration(AccessTimeout attribute, Class type) {
+                ContainerConcurrency concurrency = getContainerConcurrency(type);
+                concurrency.setAccessTimeout(toTimeout(attribute));
+            }
+
+            public void addMethodLevelDeclaration(AccessTimeout attribute, Method method) {
+                ContainerConcurrency concurrency = getContainerConcurrency(method);
+                concurrency.setAccessTimeout(toTimeout(attribute));
+            }
+
+            private Timeout toTimeout(AccessTimeout annotation) {
+                Timeout timeout = new Timeout();
+                timeout.setTimeout(annotation.value());
+                timeout.setUnit(annotation.unit());
+                return timeout;
+            }
+            
+            public Class<AccessTimeout> getAnnotationClass() {
+                return AccessTimeout.class;
+            }
+
         }
 
         private <A extends Annotation> void checkAttributes(AnnotationHandler<A> handler, String ejbName, EjbModule ejbModule, ClassFinder classFinder, String messageKey) {
@@ -3374,7 +3408,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-
 
             List<Method> methods = classFinder.findAnnotatedMethods(annotationClass);
             for (Method method : methods) {

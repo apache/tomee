@@ -59,8 +59,6 @@ public class EjbJarBuilder {
 
         MethodScheduleBuilder methodScheduleBuilder = new MethodScheduleBuilder();
         
-        ConcurrentMethodBuilder concurrentMethodBuilder = new ConcurrentMethodBuilder();
-
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
                 EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections);
@@ -70,8 +68,6 @@ public class EjbJarBuilder {
 
                 methodScheduleBuilder.build(deployment, ejbInfo);
                 
-                concurrentMethodBuilder.build(deployment, ejbInfo);
-
                 deployments.put(ejbInfo.ejbDeploymentId, deployment);
 
                 // TODO: replace with get() on application context or parent
