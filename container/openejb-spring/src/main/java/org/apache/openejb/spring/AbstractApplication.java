@@ -29,6 +29,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -109,7 +110,8 @@ public abstract class AbstractApplication implements ApplicationContextAware {
         Assembler assembler = getAssembler();
         for (AppInfo appInfo : appInfos) {
             try {
-                List<DeploymentInfo> deployments = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), true);
+                AppContext appContext = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), true);
+				List<DeploymentInfo> deployments = appContext.getDeployments();
                 if (export) {
                     for (DeploymentInfo deployment : deployments) {
                         JndiNameStrategy strategy = createStrategy(appInfo, deployments, deployment);
