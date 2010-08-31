@@ -19,8 +19,6 @@ package org.apache.openejb.assembler.classic;
 import junit.framework.TestCase;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.jee.ConcurrentLockType;
-import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
@@ -30,12 +28,10 @@ import javax.ejb.AccessTimeout;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
 
 /**
  * @version $Rev$ $Date$
@@ -114,8 +110,10 @@ public class AccessTimeoutTest extends TestCase {
     private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
         ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) system.getDeploymentInfo(deploymentId);
-        List<MethodConcurrencyInfo> infos = MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency);
-        attributes = MethodInfoUtil.resolveAttributes(infos, deploymentInfo);
+        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
+        attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, deploymentInfo);
     }
 
     private void assertAttribute(long time, TimeUnit unit, Method method) {

@@ -30,6 +30,7 @@ import javax.ejb.Local;
 import javax.ejb.Lock;
 import javax.ejb.Remote;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -116,8 +117,10 @@ public class ConcurrentLockTypeTest extends TestCase {
     private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
         ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) system.getDeploymentInfo(deploymentId);
-        List<MethodConcurrencyInfo> infos = MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency);
-        attributes = MethodInfoUtil.resolveAttributes(infos, deploymentInfo);
+        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
+        attributes = MethodInfoUtil.resolveAttributes(lockInfos, deploymentInfo);
     }
 
     private void assertAttribute(String attribute, Method method) {

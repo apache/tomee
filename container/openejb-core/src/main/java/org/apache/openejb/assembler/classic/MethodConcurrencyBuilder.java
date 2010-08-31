@@ -50,33 +50,51 @@ public class MethodConcurrencyBuilder {
 
         if (deploymentInfo.isBeanManagedConcurrency()) return;
 
-        methodConcurrencyInfos = MethodConcurrencyBuilder.normalize(methodConcurrencyInfos);
-
-        Map<Method, MethodAttributeInfo> attributes = MethodInfoUtil.resolveAttributes(methodConcurrencyInfos, deploymentInfo);
-
         Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodConcurrencyBuilder.class);
+        
+        List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
+        List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        
+        MethodConcurrencyBuilder.normalize(methodConcurrencyInfos, lockInfos, accessTimeoutInfos);
+        
+        Map<Method, MethodAttributeInfo> attributes;
+        
+        // handle @Lock
+        attributes = MethodInfoUtil.resolveAttributes(lockInfos, deploymentInfo);
+        
         if (log.isDebugEnabled()) {
             for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
                 Method method = entry.getKey();
                 MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
-                log.debug("Concurrency Attribute: " + method + " -- " + MethodInfoUtil.toString(value));      
+                log.debug("Lock: " + method + " -- " + MethodInfoUtil.toString(value.methods.get(0)) + 
+                          " " + value.concurrencyAttribute);
             }
         }
 
         for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
             MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
-
             MethodContext methodContext = deploymentInfo.getMethodContext(entry.getKey());
+            String s = value.concurrencyAttribute.toUpperCase();
+            methodContext.setLockType(LockType.valueOf(s));
+        }
+        
+        // handle @AccessTimeout
+        attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, deploymentInfo);
             
-            if (value.concurrencyAttribute != null) {
-                String s = value.concurrencyAttribute.toUpperCase();
-                methodContext.setLockType(LockType.valueOf(s));
+        if (log.isDebugEnabled()) {
+            for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+                Method method = entry.getKey();
+                MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
+                log.debug("AccessTimeout: " + method + " -- " + MethodInfoUtil.toString(value.methods.get(0)) + " " +
+                		  " " + value.accessTimeout.time + " " + value.accessTimeout.unit);
             }
-            
-            if (value.accessTimeout != null) {
-                Duration accessTimeout = new Duration(value.accessTimeout.time, TimeUnit.valueOf(value.accessTimeout.unit));
-                methodContext.setAccessTimeout(accessTimeout);
-            }
+        }
+        
+        for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
+            MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
+            MethodContext methodContext = deploymentInfo.getMethodContext(entry.getKey());
+            Duration accessTimeout = new Duration(value.accessTimeout.time, TimeUnit.valueOf(value.accessTimeout.unit));
+            methodContext.setAccessTimeout(accessTimeout);
         }
     }
 
@@ -91,8 +109,9 @@ public class MethodConcurrencyBuilder {
      * @param infos
      * @return a normalized list of new MethodConcurrencyInfo objects
      */
-    public static List<MethodConcurrencyInfo> normalize(List<MethodConcurrencyInfo> infos){
-        List<MethodConcurrencyInfo> normalized = new ArrayList<MethodConcurrencyInfo>();
+    public static void normalize(List<MethodConcurrencyInfo> infos,
+                                 List<MethodConcurrencyInfo> lockInfos,
+                                 List<MethodConcurrencyInfo> accessTimeoutInfos) {
         for (MethodConcurrencyInfo oldInfo : infos) {
             for (MethodInfo methodInfo : oldInfo.methods) {
                 MethodConcurrencyInfo newInfo = new MethodConcurrencyInfo();
@@ -101,14 +120,20 @@ public class MethodConcurrencyBuilder {
                 newInfo.concurrencyAttribute = oldInfo.concurrencyAttribute;
                 newInfo.accessTimeout = oldInfo.accessTimeout;
 
-                normalized.add(newInfo);
+               if (oldInfo.concurrencyAttribute != null) {
+                    lockInfos.add(newInfo);
+               }
+               if (oldInfo.accessTimeout != null) {
+                    accessTimeoutInfos.add(newInfo);
+               }
             }
         }
 
-        Collections.reverse(normalized);
-        Collections.sort(normalized, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
+        Collections.reverse(lockInfos);
+        Collections.sort(lockInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
 
-        return normalized;
+        Collections.reverse(accessTimeoutInfos);
+        Collections.sort(accessTimeoutInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
     }
 
     public static class MethodConcurrencyComparator extends MethodInfoUtil.BaseComparator<MethodConcurrencyInfo> {
