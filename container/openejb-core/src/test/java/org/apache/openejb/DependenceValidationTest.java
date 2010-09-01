@@ -54,16 +54,16 @@ public class DependenceValidationTest extends TestCase {
 
         // Nothing may depend on the Assembler except the config code
         String dynamicAssembler = "org.apache.openejb.assembler.dynamic";
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.assembler.classic", "org.apache.openejb.assembler", "org.apache.openejb.config", "org.apache.openejb.assembler.dynamic", "org.apache.openejb.assembler.classic.cmd", "org.apache.openejb.cdi");
 
         // Nothing may depend on the Dynamic Assembler
         assertNotDependentOn("org.apache.openejb", dynamicAssembler);
 
         // Nothing may depend on the JAXB Tree except the Config code
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys");
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.jee", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.cdi");
 
         // Nothing may depend on the Config code except it's subpackages
-        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler",  dynamicAssembler);
+        assertNotDependentOn("org.apache.openejb", "org.apache.openejb.config", "org.apache.openejb.config.rules", "org.apache.openejb.config.sys", "org.apache.openejb.assembler","org.apache.openejb.cdi",  dynamicAssembler);
 
         // The assembler may not be dependent on the config factory Implementation
         assertNotDependentOn("org.apache.openejb.assembler.classic", "org.apache.openejb.config");

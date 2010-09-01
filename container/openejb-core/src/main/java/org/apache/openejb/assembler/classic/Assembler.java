@@ -68,6 +68,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -641,6 +642,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             allDeployments = sort(allDeployments);
 
+            CdiBuilder cdiBuilder = new CdiBuilder(appInfo, appContext);
+            cdiBuilder.build(allDeployments);
+            
             // now that everything is configured, deploy to the container
             if (start) {
                 for (DeploymentInfo deployment : allDeployments) {
@@ -660,7 +664,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, classLoader);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, classLoader, appContext);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag

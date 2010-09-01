@@ -67,6 +67,7 @@ public class MethodContext {
     public List<InterceptorData> getInterceptors() {
         List<InterceptorData> datas = beanContext.getInterceptorData();
         datas.addAll(interceptors);
+        datas.addAll(beanContext.getCdiInterceptors());
         return datas;
     }
 

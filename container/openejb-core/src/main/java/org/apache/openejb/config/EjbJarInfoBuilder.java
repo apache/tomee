@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ApplicationExceptionInfo;
+import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.CallbackInfo;
 import org.apache.openejb.assembler.classic.CmrFieldInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -193,6 +194,15 @@ public class EjbJarInfoBuilder {
 
         if (jar.getEjbJar().getRelationships() != null) {
             initRelationships(jar, infos);
+        }
+
+        if (jar.getBeans() != null) {
+            ejbJar.beans = new BeansInfo();
+            ejbJar.beans.interceptors.addAll(jar.getBeans().getInterceptors());
+            ejbJar.beans.decorators.addAll(jar.getBeans().getDecorators());
+            ejbJar.beans.alternativeClasses.addAll(jar.getBeans().getAlternativeClasses());
+            ejbJar.beans.alternativeStereotypes.addAll(jar.getBeans().getAlternativeStereotypes());
+            ejbJar.beans.managedClasses.addAll(jar.getBeans().getManagedClasses());
         }
 
         return ejbJar;

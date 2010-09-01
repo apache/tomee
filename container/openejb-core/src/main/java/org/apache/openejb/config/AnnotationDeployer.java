@@ -102,6 +102,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ApplicationClient;
@@ -233,6 +234,12 @@ public class AnnotationDeployer implements DynamicDeployer {
         } finally {
             removeModule();
         }
+    }
+
+    // TODO Remove this section.  It's called by some code in the assembler.
+    // The scanning portion should be completed prior to this point 
+    public void deploy(CdiBeanInfo beanInfo) throws OpenEJBException{
+        this.processAnnotatedBeans.deploy(beanInfo);
     }
 
     public WebModule deploy(WebModule webModule) throws OpenEJBException {
@@ -654,6 +661,22 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         public static final String STRICT_INTERFACE_DECLARATION = "openejb.strict.interface.declaration";
 
+        public void deploy(CdiBeanInfo beanInfo) throws OpenEJBException{
+
+            ClassFinder inheritedClassFinder = createInheritedClassFinder(beanInfo.getBeanClass());
+            /*
+             * @EJB
+             * @Resource
+             * @WebServiceRef
+             * @PersistenceUnit
+             * @PersistenceContext
+             */
+            buildAnnotatedRefs(beanInfo, inheritedClassFinder, beanInfo.getClassLoader());
+
+            processWebServiceClientHandlers(beanInfo, beanInfo.getClassLoader());
+
+        }
+        
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 setModule(ejbModule);
