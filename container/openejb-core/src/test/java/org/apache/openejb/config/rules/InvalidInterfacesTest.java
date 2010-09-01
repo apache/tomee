@@ -49,59 +49,99 @@ public class InvalidInterfacesTest {
         return ejbJar;
     }
 
-    @Keys( { @Key("xml.remote.businessLocal"), @Key("xml.home.businessLocal"), @Key("xml.local.businessLocal"), @Key("xml.localHome.businessLocal") })
+    @Keys( { @Key(value = "xml.remote.businessLocal", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.businessLocal", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.businessLocal", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.businessLocal", type = KeyType.FAILURE) })
     public EjbJar testBusinessLocal() throws Exception {
         return validate(FooLocal.class);
     }
 
-    @Keys( { @Key("xml.remote.businessRemote"), @Key("xml.home.businessRemote"), @Key("xml.local.businessRemote"), @Key("xml.localHome.businessRemote") })
+    @Keys( { @Key(value = "xml.remote.businessRemote", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.businessRemote", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.businessRemote", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.businessRemote", type = KeyType.FAILURE) })
     public EjbJar testBusinessRemote() throws Exception {
         return validate(FooRemote.class);
     }
 
-    @Keys( { @Key("xml.home.ejbObject"), @Key("xml.local.ejbObject"), @Key("xml.localHome.ejbObject"), @Key("xml.businessLocal.ejbObject"), @Key("xml.businessRemote.ejbObject") })
+    @Keys( { @Key(value = "xml.home.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessRemote.ejbObject", type = KeyType.FAILURE) })
     public EjbJar testEJBObject() throws Exception {
         return validate(FooEJBObject.class);
     }
 
-    @Keys( { @Key("xml.remote.ejbHome"), @Key("xml.local.ejbHome"), @Key("xml.localHome.ejbHome"), @Key("xml.businessLocal.ejbHome"), @Key("xml.businessRemote.ejbHome") })
+    @Keys( { @Key(value = "xml.remote.ejbHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.ejbHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.ejbHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessRemote.ejbHome", type = KeyType.FAILURE) })
     public EjbJar testEJBHome() throws Exception {
         return validate(FooEJBHome.class);
     }
 
-    @Keys( { @Key("xml.remote.ejbLocalHome"), @Key("xml.home.ejbLocalHome"), @Key("xml.local.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalHome"),
-            @Key("xml.businessRemote.ejbLocalHome") })
+    @Keys( { @Key(value = "xml.remote.ejbLocalHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.ejbLocalHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.ejbLocalHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbLocalHome", type = KeyType.FAILURE),
+             @Key(value = "xml.businessRemote.ejbLocalHome", type = KeyType.FAILURE) })
     public EjbJar testEJBLocalHome() throws Exception {
         return validate(FooEJBLocalHome.class);
     }
 
-    @Keys( { @Key("xml.remote.ejbLocalObject"), @Key("xml.home.ejbLocalObject"), @Key("xml.localHome.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalObject"),
-            @Key("xml.businessRemote.ejbLocalObject") })
+    @Keys( { @Key(value = "xml.remote.ejbLocalObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.ejbLocalObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.ejbLocalObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbLocalObject", type = KeyType.FAILURE),
+             @Key(value = "xml.businessRemote.ejbLocalObject", type = KeyType.FAILURE) })
     public EjbJar testEJBLocalObject() throws Exception {
         return validate(FooEJBLocalObject.class);
     }
 
-    @Keys( { @Key("xml.remote.unknown"), @Key("xml.home.unknown"), @Key("xml.localHome.unknown"), @Key("xml.local.unknown"), @Key("xml.localRemote.conflict") })
+    @Keys( { @Key(value = "xml.remote.unknown", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.unknown", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.unknown", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.unknown", type = KeyType.FAILURE), 
+             @Key(value = "xml.localRemote.conflict", type = KeyType.FAILURE) })
     public EjbJar testUnkown() throws Exception {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         return validate(FooUnknown.class);
     }
 
-    @Keys( { @Key("xml.remote.beanClass"), @Key("xml.home.beanClass"), @Key("xml.localHome.beanClass"), @Key("xml.local.beanClass"), @Key("xml.businessRemote.beanClass"),
-            @Key("xml.businessLocal.beanClass") })
+    @Keys( { @Key(value = "xml.remote.beanClass", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.beanClass", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.beanClass", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.beanClass", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessRemote.beanClass", type = KeyType.FAILURE),
+             @Key(value = "xml.businessLocal.beanClass", type = KeyType.FAILURE) })
     public EjbJar testBeanClass() throws Exception {
         return validate(FooBean.class);
     }
 
-    @Keys( { @Key("xml.remote.notInterface"), @Key("xml.home.notInterface"), @Key("xml.localHome.notInterface"), @Key("xml.local.notInterface"),
-            @Key("xml.businessRemote.notInterface"), @Key("xml.businessLocal.notInterface") })
+    @Keys( { @Key(value = "xml.remote.notInterface", type = KeyType.FAILURE), 
+             @Key(value = "xml.home.notInterface", type = KeyType.FAILURE), 
+             @Key(value = "xml.localHome.notInterface", type = KeyType.FAILURE), 
+             @Key(value = "xml.local.notInterface", type = KeyType.FAILURE),
+             @Key(value = "xml.businessRemote.notInterface", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.notInterface", type = KeyType.FAILURE) })
     public EjbJar testNotInterface() throws Exception {
         return validate(FooClass.class);
     }
 
-    @Keys( { @Key("ann.notAnInterface"), @Key("xml.businessLocal.notInterface"), @Key("ann.localRemote.conflict"), @Key("ann.remoteOrLocal.ejbHome"),
-            @Key("xml.businessRemote.ejbHome"), @Key("ann.remoteOrLocal.ejbObject"), @Key("xml.businessRemote.ejbObject"), @Key(value = "ann.remoteOrLocal.ejbLocalHome"),
-            @Key(value = "ann.remoteOrLocal.ejbLocalObject"), @Key("xml.businessLocal.ejbLocalHome"), @Key("xml.businessLocal.ejbLocalObject") })
+    @Keys( { @Key(value = "ann.notAnInterface", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.notInterface", type = KeyType.FAILURE), 
+             @Key(value = "ann.localRemote.conflict", type = KeyType.FAILURE), 
+             @Key(value = "ann.remoteOrLocal.ejbHome", type = KeyType.FAILURE),
+             @Key(value = "xml.businessRemote.ejbHome", type = KeyType.FAILURE), 
+             @Key(value = "ann.remoteOrLocal.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessRemote.ejbObject", type = KeyType.FAILURE), 
+             @Key(value = "ann.remoteOrLocal.ejbLocalHome", type = KeyType.FAILURE),
+             @Key(value = "ann.remoteOrLocal.ejbLocalObject", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbLocalHome", type = KeyType.FAILURE), 
+             @Key(value = "xml.businessLocal.ejbLocalObject", type = KeyType.FAILURE) })
     public EjbJar test() throws OpenEJBException {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         EjbJar ejbJar = new EjbJar();
@@ -110,7 +150,9 @@ public class InvalidInterfacesTest {
         StatelessBean mybean1 = ejbJar.addEnterpriseBean(new StatelessBean("MyBean1", MyBean.class));
         return ejbJar;
     }
-    @Keys({@Key(value="interface.beanOnlyAnnotation",type=KeyType.WARNING),@Key(value="interfaceMethod.beanOnlyAnnotation",type=KeyType.WARNING),@Key("aroundInvoke.invalidArguments")})
+    @Keys({@Key(value="interface.beanOnlyAnnotation",type=KeyType.WARNING),
+          @Key(value="interfaceMethod.beanOnlyAnnotation",type=KeyType.WARNING),
+          @Key(value="aroundInvoke.invalidArguments", type = KeyType.FAILURE)})
     public EjbJar test1(){
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         EjbJar ejbJar = new EjbJar();
@@ -118,7 +160,7 @@ public class InvalidInterfacesTest {
         return ejbJar;
     
     }
-    @Keys({@Key(value="ann.remoteOrLocal.converse.parent",count=2)})
+    @Keys({@Key(value="ann.remoteOrLocal.converse.parent",count=2, type = KeyType.FAILURE)})
     public EjbJar test2(){
       SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         EjbJar ejbJar = new EjbJar();

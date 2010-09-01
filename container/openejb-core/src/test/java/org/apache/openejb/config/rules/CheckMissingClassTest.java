@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckMissingClassTest {
-    @Keys(@Key(value = "missing.class", count = 16))
+    @Keys(@Key(value = "missing.class", count = 16, type = KeyType.FAILURE))
     public EjbJar wrongClassType() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();

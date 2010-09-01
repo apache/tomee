@@ -26,7 +26,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckDependsOnTest {
-    @Keys( { @Key(value = "dependsOn.circuit", count = 2), @Key(value = "dependsOn.noSuchEjb", count = 2) })
+    @Keys( { @Key(value = "dependsOn.circuit", count = 2, type = KeyType.FAILURE), 
+             @Key(value = "dependsOn.noSuchEjb", count = 2, type = KeyType.FAILURE) })
     public EjbJar dependsOn() throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         SingletonBean one = new SingletonBean(One.class);
