@@ -20,6 +20,7 @@ import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class AppContext extends DeploymentContext {
     private final Context globalJndiContext;
     private final Context appJndiContext;
     private final boolean standaloneModule;
+    private BeanManager beanManager;
 
     // TODO perhaps to be deleted
     private final List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
@@ -44,6 +46,19 @@ public class AppContext extends DeploymentContext {
         this.globalJndiContext = globalJndiContext;
         this.appJndiContext = appJndiContext;
         this.standaloneModule = standaloneModule;
+    }
+
+    public BeanManager getBeanManager() {
+        return beanManager;
+    }
+
+    /**
+     * TODO: Ideally this would be a final field
+     * @param beanManager
+     */
+    @Deprecated
+    public void setBeanManager(BeanManager beanManager) {
+        this.beanManager = beanManager;
     }
 
     @Override

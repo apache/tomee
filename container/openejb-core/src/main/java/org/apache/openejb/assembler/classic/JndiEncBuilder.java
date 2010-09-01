@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.core.AppContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
@@ -90,17 +91,19 @@ public class JndiEncBuilder {
     private final URI moduleUri;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
-
+    private final AppContext appContext;
+    
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, classLoader);
+        this(jndiEnc, injections, null, moduleId, classLoader, null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, ClassLoader classLoader) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
+        this.appContext = appContext;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
         try {

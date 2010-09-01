@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.Connector10;
 import org.apache.openejb.jee.EjbJar;
@@ -71,6 +72,10 @@ public class ReadDescriptors implements DynamicDeployer {
 
             if (ejbModule.getOpenejbJar() == null) {
                 readOpenejbJar(ejbModule);
+            }
+
+            if (ejbModule.getBeans() == null) {
+                readBeans(ejbModule, appModule);
             }
 
             readCmpOrm(ejbModule);
@@ -256,6 +261,22 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
+    private void readBeans(EjbModule ejbModule, AppModule appModule) throws OpenEJBException {
+        if (ejbModule.getBeans() != null) return;
+
+        Object data = ejbModule.getAltDDs().get("beans.xml");
+        if (data instanceof Beans) {
+            ejbModule.setBeans((Beans) data);
+        } else if (data instanceof URL) {
+            URL url = (URL) data;
+            Beans beans = readBeans(url);
+            ejbModule.setBeans(beans);
+        } else {
+            DeploymentLoader.logger.debug("No beans.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
+            ejbModule.setBeans(new Beans());
+        }
+    }
+
     private void readCmpOrm(EjbModule ejbModule) throws OpenEJBException {
         Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data == null || data instanceof EntityMappings) {
@@ -337,6 +358,20 @@ public class ReadDescriptors implements DynamicDeployer {
             throw new OpenEJBException("Cannot read the ejb-jar.xml file: " + url.toExternalForm(), e);
         } catch (Exception e) {
             throw new OpenEJBException("Encountered unknown error parsing the ejb-jar.xml file: " + url.toExternalForm(), e);
+        }
+    }
+
+    public static Beans readBeans(URL url) throws OpenEJBException {
+        try {
+            return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, url.openStream());
+        } catch (SAXException e) {
+            throw new OpenEJBException("Cannot parse the beans.xml file: " + url.toExternalForm(), e);
+        } catch (JAXBException e) {
+            throw new OpenEJBException("Cannot unmarshall the beans.xml file: " + url.toExternalForm(), e);
+        } catch (IOException e) {
+            throw new OpenEJBException("Cannot read the beans.xml file: " + url.toExternalForm(), e);
+        } catch (Exception e) {
+            throw new OpenEJBException("Encountered unknown error parsing the beans.xml file: " + url.toExternalForm(), e);
         }
     }
 

@@ -148,4 +148,10 @@ public class InterceptorData {
 
         return data;
     }
+
+    @Override
+    public String toString() {
+        return "InterceptorData{" +
+                "clazz=" + clazz.getSimpleName() + '}';
+    }
 }

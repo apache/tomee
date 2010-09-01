@@ -61,6 +61,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.recipe.ConstructionException;
 
 public class CoreDeploymentInfo extends DeploymentContext implements org.apache.openejb.DeploymentInfo {
@@ -699,9 +700,12 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         return systemInterceptors;
     }
 
+    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
+
     public List<InterceptorData> getCallbackInterceptors() {
         List<InterceptorData> datas = getInterceptorData();
         datas.addAll(callbackInterceptors);
+        datas.addAll(cdiInterceptors);
         return datas;
     }
 
@@ -710,6 +714,16 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         this.callbackInterceptors.clear();
         this.callbackInterceptors.addAll(callbackInterceptors);
         this.instanceScopedInterceptors.addAll(callbackInterceptors);
+    }
+
+    public List<InterceptorData> getCdiInterceptors() {
+        return new ArrayList<InterceptorData>(cdiInterceptors);
+    }
+
+    public void setCdiInterceptors(List<InterceptorData> cdiInterceptors) {
+        this.cdiInterceptors.clear();
+        this.cdiInterceptors.addAll(cdiInterceptors);
+        this.instanceScopedInterceptors.addAll(cdiInterceptors);
     }
 
     public List<InterceptorData> getMethodInterceptors(Method method) {
@@ -1067,6 +1081,10 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             final InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, this.getInjections(), null, null, org.apache.openejb.InjectionProcessor.unwrap(ctx));
             final Object bean = injectionProcessor.createInstance();
 
+            // TODO we likely don't want to create a new one each time -- investigate the destroy() method
+            OWBInjector beanInjector = new OWBInjector();
+            beanInjector.inject(bean);
+
             // Create interceptors
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
 
@@ -1085,6 +1103,11 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
                 final InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
+
+                    // TODO we likely don't want to create a new one each time -- investigate the destroy() method
+                    OWBInjector interceptorCdiInjector = new OWBInjector();                    
+                    interceptorCdiInjector.inject(interceptorInstance);
+
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
                 } catch (ConstructionException e) {
                     throw new Exception("Failed to create interceptor: " + clazz.getName(), e);

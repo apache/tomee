@@ -1,0 +1,38 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<!-- CDI TCK Excludes for current 1.0 branch -->
+
+<suite name="CDI TCK" verbose="0">
+  <test name="CDI TCK">
+    <!--<method-selectors>-->
+    <!--<method-selector>-->
+    <!--<selector-class name=" org.apache.openejb.cdi.tck.TestMethodSelector" />-->
+    <!--</method-selector>-->
+    <!--</method-selectors>-->
+    <packages>
+      <!--<package name="org.jboss.jsr299.tck.tests.*" />-->
+      <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*" />-->
+      <package name="org.jboss.jsr299.tck.tests.interceptors.definition.*"/>
+    </packages>
+    <classes>
+      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.observer.DecoratorInvocationTest">-->
+        <!--<methods>-->
+          <!--<exclude name="testDecoratorInvocation"/>-->
+        <!--</methods>-->
+      <!--</class>-->
+      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.producer.method.DecoratorInvocationTest">-->
+        <!--<methods>-->
+          <!--<exclude name="testDecoratorInvocation"/>-->
+        <!--</methods>-->
+      <!--</class>-->
+      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest">-->
+        <!--<methods>-->
+          <!--<exclude name="testChainedDecoratorInvocation"/>-->
+          <!--<exclude name="testDecoratorInvocation"/>-->
+        <!--</methods>-->
+      <!--</class>-->
+
+    </classes>
+  </test>
+
+</suite>
