@@ -24,7 +24,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidContainerTransactionTest {
-    @Keys( { @Key("containerTransaction.ejbNameRequired"), @Key("containerTransaction.noSuchEjbName") })
+    @Keys( { @Key(value = "containerTransaction.ejbNameRequired", type = KeyType.FAILURE), 
+             @Key(value = "containerTransaction.noSuchEjbName", type = KeyType.FAILURE) })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ContainerTransaction tx = new ContainerTransaction(TransAttribute.REQUIRED, new Method((String) null, (String) null));

@@ -27,7 +27,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidTimeoutTest extends TestCase {
-    @Keys( { @Key(value = "timeout.badReturnType"), @Key("timeout.invalidArguments"), @Key("timeout.tooManyMethods") , @Key("timeout.missing.possibleTypo")})
+    @Keys( { @Key(value = "timeout.badReturnType", type = KeyType.FAILURE), 
+             @Key(value = "timeout.invalidArguments", type = KeyType.FAILURE),
+             @Key(value = "timeout.tooManyMethods", type = KeyType.FAILURE) , 
+             @Key(value = "timeout.missing.possibleTypo", type = KeyType.FAILURE)})
     public EjbJar test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();

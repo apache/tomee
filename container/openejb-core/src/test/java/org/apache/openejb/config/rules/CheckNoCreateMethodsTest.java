@@ -40,8 +40,11 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckNoCreateMethodsTest {
-    @Keys( { @Key(value = "no.home.create", count = 4), @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
-            @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),@Key("entity.no.ejb.create"),@Key(value="session.no.ejb.create",count=2) })
+    @Keys( { @Key(value = "no.home.create", count = 4, type = KeyType.FAILURE), 
+             @Key(value = "unused.ejb.create", count = 2, type = KeyType.WARNING),
+             @Key(value = "unused.ejbPostCreate", type = KeyType.WARNING),
+             @Key(value = "entity.no.ejb.create", type = KeyType.FAILURE),
+             @Key(value="session.no.ejb.create",count=2, type = KeyType.FAILURE) })
     public EjbJar noCreateMethod() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();

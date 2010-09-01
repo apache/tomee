@@ -37,10 +37,15 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidInterceptorTest extends TestCase {
-    @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2), @Key(value = "interceptor.callback.invalidArguments", count = 2),
-            @Key(value = "aroundInvoke.badReturnType", count = 2), @Key(value = "aroundInvoke.invalidArguments", count = 2), @Key("interceptor.callback.missing"),
-            @Key("aroundInvoke.missing"), @Key("interceptorBinding.noSuchEjbName"), @Key("interceptorBinding.ejbNameRequiredWithMethod"),
-            @Key("interceptor.callback.missing.possibleTypo") })
+    @Keys( { @Key(value = "interceptor.callback.badReturnType", count = 2, type = KeyType.FAILURE), 
+             @Key(value = "interceptor.callback.invalidArguments", count = 2, type = KeyType.FAILURE),
+             @Key(value = "aroundInvoke.badReturnType", count = 2, type = KeyType.FAILURE), 
+             @Key(value = "aroundInvoke.invalidArguments", count = 2, type = KeyType.FAILURE), 
+             @Key(value = "interceptor.callback.missing", type = KeyType.FAILURE),
+             @Key(value = "aroundInvoke.missing", type = KeyType.FAILURE), 
+             @Key(value = "interceptorBinding.noSuchEjbName", type = KeyType.FAILURE), 
+             @Key(value = "interceptorBinding.ejbNameRequiredWithMethod", type = KeyType.FAILURE),
+             @Key(value = "interceptor.callback.missing.possibleTypo", type = KeyType.FAILURE) })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));
@@ -57,7 +62,8 @@ public class CheckInvalidInterceptorTest extends TestCase {
         interceptorBindings.add(binding1);
         return ejbJar;
     }
-    @Keys({@Key(value="interceptor.unused",count=2,type=KeyType.WARNING),@Key("aroundInvoke.invalidArguments")})
+    @Keys({@Key(value="interceptor.unused",count=2,type=KeyType.WARNING),
+           @Key(value = "aroundInvoke.invalidArguments", type = KeyType.FAILURE)})
     public EjbJar test1() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(BarBean.class));

@@ -30,15 +30,18 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceUnitUsageTest {
-    @Keys( { @Key(value = "persistenceUnitRef.noPersistenceUnits", count = 3), @Key("persistenceUnitAnnotation.onClassWithNoName"),
-            @Key("persistenceUnitAnnotation.onEntityManager"), @Key("persistenceUnitAnnotation.onNonEntityManagerFactory") })
+    @Keys( { @Key(value = "persistenceUnitRef.noPersistenceUnits", count = 3, type = KeyType.FAILURE), 
+             @Key(value ="persistenceUnitAnnotation.onClassWithNoName", type = KeyType.FAILURE),
+             @Key(value = "persistenceUnitAnnotation.onEntityManager", type = KeyType.FAILURE), 
+             @Key(value = "persistenceUnitAnnotation.onNonEntityManagerFactory", type = KeyType.FAILURE) })
     public EjbJar wrongUsage() throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "persistenceUnitRef.noMatches"), @Key(value = "persistenceUnitRef.noUnitName") })
+    @Keys( { @Key(value = "persistenceUnitRef.noMatches", type = KeyType.FAILURE), 
+             @Key(value = "persistenceUnitRef.noUnitName", type = KeyType.FAILURE) })
     public AppModule noUnitName() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessOne.class));
@@ -54,7 +57,7 @@ public class CheckPersistenceUnitUsageTest {
         return appModule;
     }
 
-    @Keys( { @Key(value = "persistenceUnitRef.vagueMatches") })
+    @Keys( { @Key(value = "persistenceUnitRef.vagueMatches", type = KeyType.FAILURE) })
     public AppModule vagueMatches() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessTwo.class));

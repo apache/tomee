@@ -37,7 +37,8 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class InvalidEjbRefTest extends TestCase {
 //    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject"),@Key("ann.ejb.beanClass"),@Key("ann.ejb.notInterface")})
-    @Keys({@Key("ann.ejb.ejbObject"),@Key("ann.ejb.ejbLocalObject")})
+    @Keys({@Key(value = "ann.ejb.ejbObject", type = KeyType.FAILURE),
+           @Key(value = "ann.ejb.ejbLocalObject", type = KeyType.FAILURE)})
     public EjbJar test() throws Exception {
 
         EjbJar ejbJar = new EjbJar();
@@ -59,7 +60,8 @@ public class InvalidEjbRefTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys( { @Key("ejbAnnotation.onClassWithNoBeanInterface"), @Key("ejbAnnotation.onClassWithNoName") })
+    @Keys( { @Key(value = "ejbAnnotation.onClassWithNoBeanInterface", type = KeyType.FAILURE), 
+             @Key(value = "ejbAnnotation.onClassWithNoName", type = KeyType.FAILURE) })
     public EjbJar test1() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(MyBean.class));
