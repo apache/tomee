@@ -57,14 +57,14 @@ public class TomcatThreadContextListener implements ThreadContextListener {
         try {
             // someone decided to make the getThreadName package protected so we have to use reflection
             method = ContextBindings.class.getDeclaredMethod("getThreadName");
-            accessible = method.isAccessible();
+//            accessible = method.isAccessible();
             method.setAccessible(true);
         } catch (NoSuchMethodException e) {
             logger.error("Expected ContextBinding to have the method getThreadName()");
-        } finally {
-            if (!accessible) {
-                method.setAccessible(accessible);
-            }
+//        } finally {
+//            if (!accessible) {
+//                method.setAccessible(accessible);
+//            }
         }
     }
 

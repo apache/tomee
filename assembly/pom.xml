@@ -37,6 +37,8 @@
     <module>openejb-jetty</module>
     <module>openejb-webapp</module>
     <module>javaee-api-libs</module>
+    <!-- don't run this just yet, its in progress -->
+    <!-- <module>itest-runner</module> -->
   </modules>
 </project>
 
