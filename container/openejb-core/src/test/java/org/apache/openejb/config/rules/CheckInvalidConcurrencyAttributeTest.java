@@ -29,8 +29,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidConcurrencyAttributeTest extends TestCase {
-    @Keys( { @Key(value = "ann.invalidConcurrencyAttribute", type = KeyType.WARNING), 
-             @Key(value = "aroundInvoke.invalidArguments", type = KeyType.FAILURE) })
+    @Keys( { @Key(value = "ann.invalidConcurrencyAttribute", type = KeyType.WARNING), @Key(value = "aroundInvoke.invalidArguments") })
     public EjbJar test() throws Exception {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();

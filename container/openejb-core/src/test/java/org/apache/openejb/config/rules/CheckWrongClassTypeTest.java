@@ -24,8 +24,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckWrongClassTypeTest {
-    @Keys( { @Key(value = "wrong.class.type", type = KeyType.FAILURE), 
-             @Key(value = "noInterfaceDeclared.entity", type = KeyType.FAILURE) })
+    @Keys( { @Key("wrong.class.type"), @Key("noInterfaceDeclared.entity") })
     public EjbJar wrongClassType() throws OpenEJBException {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();

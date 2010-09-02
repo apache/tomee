@@ -23,8 +23,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidMethodPermissionsTest {
-    @Keys( { @Key(value = "methodPermission.ejbNameRequired", type = KeyType.FAILURE), 
-             @Key(value = "methodPermission.noSuchEjbName", type = KeyType.FAILURE) })
+    @Keys( { @Key("methodPermission.ejbNameRequired"), @Key("methodPermission.noSuchEjbName") })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         MethodPermission permission = new MethodPermission(new Method((String) null, (String) null));

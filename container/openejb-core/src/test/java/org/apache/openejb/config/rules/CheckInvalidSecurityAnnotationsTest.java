@@ -26,8 +26,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckInvalidSecurityAnnotationsTest {
-    @Keys( { @Key(value = "conflictingSecurityAnnotations", type = KeyType.FAILURE),
-             @Key(value = "permitAllAndRolesAllowedOnClass", type = KeyType.FAILURE) })
+    @Keys( { @Key("conflictingSecurityAnnotations"),@Key("permitAllAndRolesAllowedOnClass") })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBean.class));

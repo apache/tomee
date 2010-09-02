@@ -33,8 +33,7 @@ public class CheckInvalidAnnotatedInterfacesTest {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
     }
 
-    @Keys( { @Key(value = "ann.local.noAttributes", type = KeyType.FAILURE), 
-             @Key(value = "ann.remote.noAttributes", type = KeyType.FAILURE) })
+    @Keys( { @Key("ann.local.noAttributes"), @Key("ann.remote.noAttributes") })
     public EjbJar noAttributes() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooBeanLocal.class));
@@ -42,8 +41,7 @@ public class CheckInvalidAnnotatedInterfacesTest {
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "ann.localRemote.ambiguous", type = KeyType.FAILURE), 
-             @Key(value = "ann.localRemote.conflict", type = KeyType.FAILURE) })
+    @Keys( { @Key("ann.localRemote.ambiguous"), @Key("ann.localRemote.conflict") })
     public EjbJar ambiguous() {
         SystemInstance.get().setProperty("openejb.strict.interface.declaration", "true");
         EjbJar ejbJar = new EjbJar();

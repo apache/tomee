@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckUserTransactionRefsTest  {
 
-    @Keys(@Key(value = "userTransactionRef.forbiddenForCmtdBeans", type = KeyType.FAILURE))
+    @Keys(@Key("userTransactionRef.forbiddenForCmtdBeans"))
     public EjbJar testSLSBwithUserTransaction() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(TestBean.class));
