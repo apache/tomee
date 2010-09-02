@@ -66,7 +66,7 @@ public class InvokeMethod extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        Map<KeyType, List<String>> expectedKeys = validateKeys();
+        Map<Integer, List<String>> expectedKeys = validateKeys();
         setUp();
         Object obj = testMethod.invokeExplosively(target);
         try {
@@ -122,7 +122,7 @@ public class InvokeMethod extends Statement {
      * @return
      * @throws Exception
      */
-    private Map<KeyType, List<String>> validateKeys() throws Exception {
+    private Map<Integer, List<String>> validateKeys() throws Exception {
         Keys annotation = testMethod.getAnnotation(Keys.class);
         Key[] keys = annotation.value();
         ArrayList<String> wrongKeys = new ArrayList<String>();
@@ -134,20 +134,20 @@ public class InvokeMethod extends Statement {
             }
         }
         if (wrongKeys.isEmpty()) {
-            Map<KeyType, List<String>> validKeys = new HashMap<KeyType, List<String>>();
+            Map<Integer, List<String>> validKeys = new HashMap<Integer, List<String>>();
             ArrayList<String> failureKeys = new ArrayList<String>();
             ArrayList<String> warningKeys = new ArrayList<String>();
             ArrayList<String> errorKeys = new ArrayList<String>();
             for (Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
                     switch (key.type()) {
-                    case FAILURE:
+                    case KeyType.FAILURE:
                         failureKeys.add(key.value());
                         break;
-                    case WARNING:
+                    case KeyType.WARNING:
                         warningKeys.add(key.value());
                         break;
-                    case ERROR:
+                    case KeyType.ERROR:
                         errorKeys.add(key.value());
                         break;
                     }
@@ -165,10 +165,10 @@ public class InvokeMethod extends Statement {
         }
     }
 
-    private boolean isEmpty(Map<KeyType, List<String>> expectedKeys) {
+    private boolean isEmpty(Map<Integer, List<String>> expectedKeys) {
         boolean empty = true;
-        Set<Entry<KeyType, List<String>>> entrySet = expectedKeys.entrySet();
-        for (Entry<KeyType, List<String>> entry : entrySet) {
+        Set<Entry<Integer, List<String>>> entrySet = expectedKeys.entrySet();
+        for (Entry<Integer, List<String>> entry : entrySet) {
             empty = entry.getValue().size() == 0;
             if (!empty)
                 return empty;

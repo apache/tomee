@@ -34,8 +34,7 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class CheckInvalidAroundTimeoutTest extends TestCase {
 
-    @Keys({@Key(value="aroundInvoke.invalidArguments",count=2, type = KeyType.FAILURE),
-           @Key(value="aroundInvoke.badReturnType",count=2, type = KeyType.FAILURE)})
+    @Keys({@Key(value="aroundInvoke.invalidArguments",count=2),@Key(value="aroundInvoke.badReturnType",count=2)})
     public EjbJar testInvalidAroundTimeoutParameter() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutParameterBean", TestInvalidAroundTimeoutParameterBean.class));
@@ -43,8 +42,7 @@ public class CheckInvalidAroundTimeoutTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys({@Key(value="aroundInvoke.badReturnType",count=2, type = KeyType.FAILURE),
-           @Key(value="aroundInvoke.mustThrowException",count=2, type = KeyType.FAILURE)})
+    @Keys({@Key(value="aroundInvoke.badReturnType",count=2),@Key(value="aroundInvoke.mustThrowException",count=2)})
     public EjbJar testInvalidAroundTimeoutReturnValue() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean("TestInvalidAroundTimeoutReturnValueBean", TestInvalidAroundTimeoutReturnValueBean.class));

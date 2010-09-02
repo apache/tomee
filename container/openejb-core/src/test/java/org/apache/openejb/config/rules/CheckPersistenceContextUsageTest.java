@@ -32,19 +32,16 @@ import org.junit.runner.RunWith;
 
 @RunWith(ValidationRunner.class)
 public class CheckPersistenceContextUsageTest {
-    @Keys( { @Key(value = "persistenceContextExtented.nonStateful", type = KeyType.FAILURE), 
-             @Key(value = "persistenceContextRef.noPersistenceUnits", count = 3, type = KeyType.FAILURE),
-             @Key(value = "persistenceContextAnnotation.onClassWithNoName", type = KeyType.FAILURE), 
-             @Key(value = "persistenceContextAnnotation.onEntityManagerFactory", type = KeyType.FAILURE),
-             @Key(value = "persistenceContextAnnotation.onNonEntityManager", type = KeyType.FAILURE) })
+    @Keys( { @Key(value = "persistenceContextExtented.nonStateful"), @Key(value = "persistenceContextRef.noPersistenceUnits", count = 3),
+            @Key(value = "persistenceContextAnnotation.onClassWithNoName"), @Key(value = "persistenceContextAnnotation.onEntityManagerFactory"),
+            @Key(value = "persistenceContextAnnotation.onNonEntityManager") })
     public EjbJar wrongUsage() throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));
         return ejbJar;
     }
 
-    @Keys( { @Key(value = "persistenceContextRef.noUnitName", type = KeyType.FAILURE),
-             @Key(value = "persistenceContextRef.noMatches", type = KeyType.FAILURE) })
+    @Keys( { @Key(value = "persistenceContextRef.noUnitName"),@Key(value = "persistenceContextRef.noMatches") })
     public AppModule noUnitName() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessOne.class));
@@ -60,7 +57,7 @@ public class CheckPersistenceContextUsageTest {
         return appModule;
     }
 
-    @Keys( { @Key(value = "persistenceContextRef.vagueMatches", type = KeyType.FAILURE) })
+    @Keys( { @Key(value = "persistenceContextRef.vagueMatches") })
     public AppModule vagueMatches() {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStatelessTwo.class));

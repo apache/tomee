@@ -48,14 +48,9 @@ import org.junit.runner.RunWith;
  */
 @RunWith(ValidationRunner.class)
 public class CheckInvalidCallbacksTest extends TestCase {
-    @Keys({ @Key(value = "ignoredAnnotation", count = 10, type = KeyType.WARNING), 
-            @Key(value = "callback.missing.possibleTypo", type = KeyType.FAILURE), 
-            @Key(value = "callback.badReturnType", type = KeyType.FAILURE),
-            @Key(value = "callback.badModifier", type = KeyType.FAILURE), 
-            @Key(value = "callback.invalidArguments", type = KeyType.FAILURE), 
-            @Key(value = "aroundInvoke.missing", type = KeyType.FAILURE), 
-            @Key(value = "callback.missing", type = KeyType.FAILURE),
-            @Key(value = "callback.sessionSynchronization.invalidUse", count = 2, type = KeyType.FAILURE) })
+    @Keys({ @Key(value = "ignoredAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.missing.possibleTypo"), @Key("callback.badReturnType"),
+                    @Key("callback.badModifier"), @Key("callback.invalidArguments"), @Key("aroundInvoke.missing"), @Key("callback.missing"),
+                    @Key(value = "callback.sessionSynchronization.invalidUse", count = 2) })
     public EjbJar test() throws Exception {
         EjbJar ejbJar = new EjbJar();
         StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean("TestStateless", TestBean.class));
@@ -71,7 +66,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys(@Key(value = "aroundInvoke.missing.possibleTypo", type = KeyType.FAILURE))
+    @Keys(@Key("aroundInvoke.missing.possibleTypo"))
     public EjbJar test1() {
         EjbJar ejbJar = new EjbJar();
         StatelessBean testBean = ejbJar.addEnterpriseBean(new StatelessBean(MoonBean.class));
@@ -79,7 +74,7 @@ public class CheckInvalidCallbacksTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys(@Key(value = "callback.sessionbean.invalidusage", count = 6, type = KeyType.FAILURE))
+    @Keys(@Key(value = "callback.sessionbean.invalidusage", count = 6))
     public EjbJar test2() {
         System.setProperty("openejb.validation.output.level", "VERBOSE");
         EjbJar ejbJar = new EjbJar();
