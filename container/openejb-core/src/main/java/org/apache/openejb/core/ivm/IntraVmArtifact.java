@@ -26,11 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntraVmArtifact implements Externalizable {
-    private static final List<Object> staticHandles = new ArrayList<Object>();
+    
+    private static final Handles staticHandles = new Handles() {
+        @Override
+        public synchronized int add(Object obj) {
+            return super.add(obj);
+        }
+        @Override
+        public synchronized Object get(int id) {
+            return super.get(id);
+        }
+    };
 
-    private static final ThreadLocal<List<Object>> threadHandles = new ThreadLocal<List<Object>>() {
-        protected List<Object> initialValue() {
-            return new ArrayList<Object>();
+    private static final ThreadLocal<Handles> threadHandles = new ThreadLocal<Handles>() {
+        protected Handles initialValue() {
+            return new Handles();
         }
     };
 
@@ -46,35 +56,50 @@ public class IntraVmArtifact implements Externalizable {
 
     public IntraVmArtifact(Object obj, boolean storeStatically) {
         this.staticArtifact = storeStatically;
-        List<Object> list = getHandles(storeStatically);
-        instanceHandle = list.size();
-        list.add(obj);
+        Handles handles = getHandles(storeStatically);
+        instanceHandle = handles.add(obj);
     }
 
-    private static List<Object> getHandles(boolean staticArtifact) {
-        return (staticArtifact)? staticHandles: threadHandles.get();
+    private static Handles getHandles(boolean staticArtifact) {
+        return (staticArtifact) ? staticHandles : threadHandles.get();
     }
 
     public IntraVmArtifact() {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.write(instanceHandle);
+        out.writeBoolean(staticArtifact);
+        out.write(instanceHandle);        
     }
 
     public void readExternal(ObjectInput in) throws IOException {
-        instanceHandle = in.read();
+        staticArtifact = in.readBoolean();
+        instanceHandle = in.read();        
     }
 
     protected Object readResolve() throws ObjectStreamException {
-        List<Object> list = getHandles(staticArtifact);
-        Object artifact = list.get(instanceHandle);
+        Handles handles = getHandles(staticArtifact);
+        Object artifact = handles.get(instanceHandle);
         if (artifact == null) throw new InvalidObjectException(NO_ARTIFACT_ERROR + instanceHandle);
-        // todo WHY?
-        if (list.size() == instanceHandle + 1) {
-            list.clear();
-        }
         return artifact;
     }
 
+    private static class Handles {
+        private List<Object> list = new ArrayList<Object>();
+        
+        public int add(Object obj) {
+            int id = list.size();
+            list.add(obj);
+            return id;
+        }
+        
+        public Object get(int id) {
+            Object obj = list.get(id);
+            // todo WHY?
+            if (list.size() == id + 1) {
+                list.clear();
+            }
+            return obj;
+        }
+    }
 }
