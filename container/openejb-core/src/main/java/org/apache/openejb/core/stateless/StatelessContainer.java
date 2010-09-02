@@ -111,7 +111,6 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     public void deploy(DeploymentInfo info) throws OpenEJBException {
         CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
-        instanceManager.deploy(deploymentInfo);
         String id = (String) deploymentInfo.getDeploymentID();
         synchronized (this) {
             deploymentRegistry.put(id, deploymentInfo);
@@ -124,6 +123,14 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         }
     }
 
+    public void start(DeploymentInfo info) throws OpenEJBException {  
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+        instanceManager.deploy(deploymentInfo);
+    }
+    
+    public void stop(DeploymentInfo info) throws OpenEJBException {        
+    }
+    
     public void undeploy(DeploymentInfo info) {
         undeploy((CoreDeploymentInfo)info);
     }

@@ -80,6 +80,7 @@ import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
+import org.apache.openejb.core.singleton.SingletonContainer;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
@@ -647,6 +648,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             
             // now that everything is configured, deploy to the container
             if (start) {
+                // deploy
                 for (DeploymentInfo deployment : allDeployments) {
                     try {
                         Container container = deployment.getContainer();
@@ -654,6 +656,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                     } catch (Throwable t) {
                         throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
+                    }
+                }
+                
+                // start
+                for (DeploymentInfo deployment : allDeployments) {
+                    try {
+                        Container container = deployment.getContainer();
+                        container.start(deployment);
+                        logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());                        
+                    } catch (Throwable t) {
+                        throw new OpenEJBException("Error starting '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                     }
                 }
             }
@@ -901,6 +914,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // reverse that to get the stopping order
         Collections.reverse(deployments);
 
+        // stop
+        for (DeploymentInfo deployment : deployments) {
+            String deploymentID = deployment.getDeploymentID() + "";
+            try {
+                Container container = deployment.getContainer();
+                container.stop(deployment);
+            } catch (Throwable t) {
+                undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
+            }
+        }
+        
+        // undeploy
         for (DeploymentInfo deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {

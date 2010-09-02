@@ -184,6 +184,12 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
+    public void start(DeploymentInfo deploymentInfo) throws OpenEJBException {        
+    }
+    
+    public void stop(DeploymentInfo deploymentInfo) throws OpenEJBException {        
+    }
+    
     public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
         EjbTimerService timerService = deploymentInfo.getEjbTimerService();
         if (timerService != null) {
