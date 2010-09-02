@@ -233,6 +233,12 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
+    public void start(DeploymentInfo info) throws OpenEJBException {        
+    }
+    
+    public void stop(DeploymentInfo info) throws OpenEJBException {        
+    }
+    
     public void undeploy(DeploymentInfo info) throws OpenEJBException {
         if (!(info instanceof CoreDeploymentInfo)) {
             return;

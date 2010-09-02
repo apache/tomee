@@ -243,8 +243,14 @@ public class StatefulContainer implements RpcContainer {
         deploy((CoreDeploymentInfo) deploymentInfo);
     }
 
-    public void undeploy(DeploymentInfo info) throws OpenEJBException {
-        undeploy((CoreDeploymentInfo) info);
+    public void start(DeploymentInfo deploymentInfo) throws OpenEJBException {        
+    }
+    
+    public void stop(DeploymentInfo deploymentInfo) throws OpenEJBException {        
+    }
+    
+    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
+        undeploy((CoreDeploymentInfo) deploymentInfo);
     }
 
     private synchronized void undeploy(final CoreDeploymentInfo deploymentInfo) throws OpenEJBException {

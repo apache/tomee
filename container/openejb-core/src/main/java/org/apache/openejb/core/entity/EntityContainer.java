@@ -119,6 +119,12 @@ public class EntityContainer implements RpcContainer {
         }
     }
 
+    public void start(DeploymentInfo info) throws OpenEJBException {        
+    }
+    
+    public void stop(DeploymentInfo info) throws OpenEJBException {        
+    }
+    
     public void undeploy(DeploymentInfo info) throws OpenEJBException {
         EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {

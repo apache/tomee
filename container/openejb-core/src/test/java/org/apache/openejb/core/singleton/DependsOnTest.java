@@ -21,9 +21,9 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
+import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ValidationFailedException;
 import org.apache.openejb.config.ValidationFailure;
@@ -63,11 +63,11 @@ public class DependsOnTest extends TestCase {
 
         // containers
         assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
-
+        
         StatelessSessionContainerInfo statelessContainer = config.configureService(StatelessSessionContainerInfo.class);
         statelessContainer.properties.setProperty("MinSize", "1");
         assembler.createContainer(statelessContainer);
-        
+
         actual.clear();
 
         EjbJar ejbJar = new EjbJar();
@@ -92,6 +92,44 @@ public class DependsOnTest extends TestCase {
         assertEquals(expected(one, two, three, four), actual);
     }
 
+    public void testNoStartUp() throws Exception {
+
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        Assembler assembler = new Assembler();
+        ConfigurationFactory config = new ConfigurationFactory();
+
+        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        // containers
+        assembler.createContainer(config.configureService(SingletonSessionContainerInfo.class));
+        
+        actual.clear();
+
+        EjbJar ejbJar = new EjbJar();
+
+        ejbJar.addEnterpriseBean(new SingletonBean(Two.class)).setInitOnStartup(false);
+        ejbJar.addEnterpriseBean(new SingletonBean(One.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(Four.class)).setInitOnStartup(false);
+        ejbJar.addEnterpriseBean(new SingletonBean(Three.class)).setInitOnStartup(false);
+
+        // startup and trigger @PostConstruct
+        assembler.createApplication(config.configureApplication(ejbJar));
+
+        assertEquals(expected(four, three, two, one), actual);
+
+        actual.clear();
+
+        // startup and trigger @PreDestroy
+        for (AppInfo appInfo : assembler.getDeployedApplications()) {
+            assembler.destroyApplication(appInfo.path);
+        }
+
+        assertEquals(expected(one, two, three, four), actual);
+    }
+    
     public void testNoSuchEjb() throws Exception {
 
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
@@ -212,6 +250,4 @@ public class DependsOnTest extends TestCase {
             actual.add(four);
         }
     }
-
-
 }

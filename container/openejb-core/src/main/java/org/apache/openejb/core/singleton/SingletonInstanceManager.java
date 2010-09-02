@@ -42,9 +42,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.openejb.BeanType;
+import org.apache.openejb.Container;
+import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -56,6 +59,7 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -74,9 +78,9 @@ public class SingletonInstanceManager {
         sessionContext = new SingletonContext(this.securityService);
         webServiceContext = (WebServiceContext) new EjbWsContext(sessionContext);
     }
-
+    
     public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
-        final CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        final CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();                      
         Data data = (Data) deploymentInfo.getContainerData();
         AtomicReference<Future<Instance>> singleton = data.singleton;
         try {
@@ -90,11 +94,10 @@ public class SingletonInstanceManager {
             // We will construct this FutureTask and compete with the
             // other threads for the right to create the singleton
             FutureTask<Instance> task = new FutureTask<Instance>(new Callable<Instance>() {
-                public Instance call() throws Exception {
+                public Instance call() throws Exception {                    
                     return createInstance(callContext, deploymentInfo);
                 }
             });
-
 
             do {
                 // If our FutureTask was the one to win the slot
@@ -126,9 +129,25 @@ public class SingletonInstanceManager {
         }
     }
 
-    private Instance createInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws org.apache.openejb.ApplicationException {
-
+    private void initializeDependencies(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
+        SystemInstance systemInstance = SystemInstance.get();
+        ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
+        for (String dependencyId : deploymentInfo.getDependsOn()) {
+            DeploymentInfo dependencyInfo = containerSystem.getDeploymentInfo(dependencyId);
+            if (dependencyInfo == null) {
+                throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+dependencyInfo+"')");
+            }
+            Container dependencyContainer = dependencyInfo.getContainer();
+            if (dependencyContainer instanceof SingletonContainer) {
+                ((SingletonContainer) dependencyContainer).initialize(dependencyInfo);
+            }
+        }        
+    }
+    
+    private Instance createInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws ApplicationException {
         try {
+            initializeDependencies(deploymentInfo);
+            
             final InstanceContext context = deploymentInfo.newInstance();
 
             if (context.getBean() instanceof SessionBean){
