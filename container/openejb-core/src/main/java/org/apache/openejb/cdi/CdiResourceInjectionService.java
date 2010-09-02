@@ -73,14 +73,16 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
             deployer.deploy(cdiInfo);
 
             JndiEncInfoBuilder infoBuilder = new JndiEncInfoBuilder(appModule);
-            JndiEncInfo encInfo = new JndiEncInfo();
-            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.path, null, encInfo);
+            JndiEncInfo moduleJndiEnc = new JndiEncInfo();
+            JndiEncInfo jndiEnc = new JndiEncInfo();
+            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.path, moduleJndiEnc, jndiEnc);
 
             InjectionBuilder builder = new InjectionBuilder(classLoader);
-            List<Injection> injections = builder.buildInjections(encInfo);
+            List<Injection> injections = builder.buildInjections(jndiEnc);
 
             cdiInfo.setInjections(injections);
-            JndiEncBuilder encBuilder = new JndiEncBuilder(encInfo, injections, appModule.path, classLoader);
+            // TODO: handle app/global/module namespaces?
+            JndiEncBuilder encBuilder = new JndiEncBuilder(jndiEnc, injections, appModule.path, classLoader);
             this.contexts.put(cdiInfo, encBuilder.build(JndiEncBuilder.JndiScope.comp));
         }
     }
