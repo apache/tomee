@@ -121,6 +121,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
+          <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>-Xmx256m "-javaagent:${basedir}/target/openejb-javaagent-${version}.jar" -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemProperties>
@@ -135,8 +136,27 @@
           </systemProperties>
           <excludes>
             <exclude>**/TestHandler.java</exclude>
+            <exclude>org/apache/openejb/cdi/**</exclude>
           </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <id>test-testng</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <junitArtifactName>none:none</junitArtifactName>
+              <excludes>
+                <exclude>**</exclude>
+              </excludes>
+              <includes>
+                <include>org/apache/openejb/cdi/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
