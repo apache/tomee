@@ -454,6 +454,16 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+	<repository>
+		<id>jboss snapshot</id>
+		<url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+		<releases>
+			<enabled>true</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache M2 Snapshot Repository</name>
