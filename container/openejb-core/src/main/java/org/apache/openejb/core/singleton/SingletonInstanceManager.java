@@ -42,7 +42,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.openejb.BeanType;
-import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ApplicationException;
@@ -63,12 +62,10 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.SafeToolkit;
 
 public class SingletonInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    protected final SafeToolkit toolkit = SafeToolkit.getToolkit("SingletonInstanceManager");
     private SecurityService securityService;
     private final SingletonContext sessionContext;
     private final WebServiceContext webServiceContext;
@@ -78,7 +75,29 @@ public class SingletonInstanceManager {
         sessionContext = new SingletonContext(this.securityService);
         webServiceContext = (WebServiceContext) new EjbWsContext(sessionContext);
     }
-    
+
+    protected void start(DeploymentInfo info) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+        if (deploymentInfo.isLoadOnStartup()) {
+            initialize(info);
+        }
+    }
+
+    private void initialize(DeploymentInfo info) throws OpenEJBException {
+        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
+        try {
+            ThreadContext callContext = new ThreadContext(deploymentInfo, null);
+            ThreadContext old = ThreadContext.enter(callContext);
+            try {
+                getInstance(callContext);
+            } finally{
+                ThreadContext.exit(old);
+            }
+        } catch (OpenEJBException e) {
+            throw new OpenEJBException("Singleton startup failed: "+deploymentInfo.getDeploymentID(), e);
+        }
+    }
+
     public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
         final CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();                      
         Data data = (Data) deploymentInfo.getContainerData();
@@ -101,7 +120,7 @@ public class SingletonInstanceManager {
 
             do {
                 // If our FutureTask was the one to win the slot
-                // than we are the ones responsisble for creating
+                // than we are the ones responsible for creating
                 // the singleton while the others wait.
                 if (singleton.compareAndSet(null, task)) {
                     task.run();
@@ -133,15 +152,21 @@ public class SingletonInstanceManager {
         SystemInstance systemInstance = SystemInstance.get();
         ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
         for (String dependencyId : deploymentInfo.getDependsOn()) {
-            DeploymentInfo dependencyInfo = containerSystem.getDeploymentInfo(dependencyId);
+            CoreDeploymentInfo dependencyInfo = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(dependencyId);
             if (dependencyInfo == null) {
-                throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+dependencyInfo+"')");
+                throw new OpenEJBException("Deployment does not exist. Deployment(id='"+dependencyInfo+"')");
             }
-            Container dependencyContainer = dependencyInfo.getContainer();
-            if (dependencyContainer instanceof SingletonContainer) {
-                ((SingletonContainer) dependencyContainer).initialize(dependencyInfo);
+
+            final Object containerData = dependencyInfo.getContainerData();
+
+            // Bean may not be a singleton or may be a singleton
+            // managed by a different container implementation
+            if (containerData instanceof Data) {
+                Data data = (Data) containerData;
+
+                data.initialize();
             }
-        }        
+        }
     }
     
     private Instance createInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws ApplicationException {
@@ -258,7 +283,7 @@ public class SingletonInstanceManager {
     }
 
     public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Data data = new Data();
+        Data data = new Data(deploymentInfo);
         deploymentInfo.setContainerData(data);
 
         deploymentInfo.set(EJBContext.class, this.sessionContext);
@@ -311,13 +336,23 @@ public class SingletonInstanceManager {
         deploymentInfo.setContainerData(null);
     }
 
-    private static final class Data {
+    private final class Data {
         private final AtomicReference<Future<Instance>> singleton = new AtomicReference<Future<Instance>>();
         private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final CoreDeploymentInfo info;
+
+        public Data(CoreDeploymentInfo info) {
+            this.info = info;
+        }
 
         public ObjectName add(ObjectName name) {
             jmxNames.add(name);
             return name;
+        }
+
+
+        public void initialize() throws OpenEJBException {
+            SingletonInstanceManager.this.initialize(info);
         }
     }
 

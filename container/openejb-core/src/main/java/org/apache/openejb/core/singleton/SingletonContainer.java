@@ -131,28 +131,10 @@ public class SingletonContainer implements RpcContainer {
     }
     
     public void start(DeploymentInfo info) throws OpenEJBException {    
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
-        if (deploymentInfo.isLoadOnStartup()) {
-            initialize(info);
-        }
+        instanceManager.start(info);
     }
     
     public void stop(DeploymentInfo info) throws OpenEJBException {        
-    }
-    
-    protected void initialize(DeploymentInfo info) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
-        try {
-            ThreadContext callContext = new ThreadContext(deploymentInfo, null);
-            ThreadContext old = ThreadContext.enter(callContext);
-            try {
-                instanceManager.getInstance(callContext);
-            } finally{
-                ThreadContext.exit(old);
-            }
-        } catch (OpenEJBException e) {
-            throw new OpenEJBException("Singleton startup failed: "+deploymentInfo.getDeploymentID(), e);
-        }       
     }
     
     public void undeploy(DeploymentInfo info) {
