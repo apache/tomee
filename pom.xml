@@ -443,17 +443,17 @@
     </profile>
   </profiles>
   <repositories>
-    <repository>
-      <id>codehaus-snapshot</id>
-      <name>CodeHaus SNAPSHOT repository</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
+    <!--<repository>-->
+      <!--<id>codehaus-snapshot</id>-->
+      <!--<name>CodeHaus SNAPSHOT repository</name>-->
+      <!--<url>http://snapshots.repository.codehaus.org</url>-->
+      <!--<releases>-->
+        <!--<enabled>false</enabled>-->
+      <!--</releases>-->
+      <!--<snapshots>-->
+        <!--<enabled>true</enabled>-->
+      <!--</snapshots>-->
+    <!--</repository>-->
 	<repository>
 		<id>jboss snapshot</id>
 		<url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
@@ -461,7 +461,7 @@
 			<enabled>true</enabled>
 		</releases>
 		<snapshots>
-			<enabled>true</enabled>
+			<enabled>false</enabled>
 		</snapshots>
 	</repository>
     <repository>
@@ -475,28 +475,17 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>apache-incubating-repository</id>
-      <name>Apache Incubating Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>tomcat-private-repository</id>
-      <name>Tomcat Private Repository</name>
-      <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
+    <!--<repository>-->
+      <!--<id>apache-incubating-repository</id>-->
+      <!--<name>Apache Incubating Repository</name>-->
+      <!--<url>http://people.apache.org/repo/m2-incubating-repository</url>-->
+      <!--<releases>-->
+        <!--<enabled>true</enabled>-->
+      <!--</releases>-->
+      <!--<snapshots>-->
+        <!--<enabled>false</enabled>-->
+      <!--</snapshots>-->
+    <!--</repository>-->
     <repository>
       <id>openejb-3rdparty-builds</id>
       <name>3rd Party Build Repository</name>
@@ -509,11 +498,11 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/1</url>
-      <layout>legacy</layout>
-    </repository>
+    <!--<repository>-->
+      <!--<id>java.net</id>-->
+      <!--<url>http://download.java.net/maven/1</url>-->
+      <!--<layout>legacy</layout>-->
+    <!--</repository>-->
   </repositories>
   <pluginRepositories>
     <pluginRepository>
