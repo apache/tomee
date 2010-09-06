@@ -92,7 +92,7 @@
             </goals>
             <configuration>
               <tasks>
-                <unzip src="${project.build.directory}/javaee-api-${pom.version}.jar"
+                <unzip src="${project.build.directory}/javaee-api-${project.version}.jar"
                        dest="${project.build.directory}/classes"/>
               </tasks>
             </configuration>

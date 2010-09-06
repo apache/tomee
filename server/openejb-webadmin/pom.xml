@@ -46,7 +46,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>${version}</version>
+                  <version>${project.version}</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -60,7 +60,7 @@
         <configuration>
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/target/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
-          <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${version}.jar=foo=bar"</argLine>
+          <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${project.version}.jar=foo=bar"</argLine>
           <systemProperties>
             <property>
               <name>openejb.home</name>
@@ -81,27 +81,27 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>

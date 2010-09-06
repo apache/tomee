@@ -15,7 +15,7 @@
     <dependency>
       <groupId>org.superbiz.quartz</groupId>
       <artifactId>quartz-ra</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     

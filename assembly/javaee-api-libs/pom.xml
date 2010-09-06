@@ -67,7 +67,7 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptor>src/main/assembly/bin.xml</descriptor>
-          <finalName>javaee-api-libs-${pom.version}</finalName>
+          <finalName>javaee-api-libs-${project.version}</finalName>
         </configuration>
       </plugin>
     </plugins>
