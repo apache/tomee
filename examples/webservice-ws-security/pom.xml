@@ -91,7 +91,9 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -100,6 +102,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <jdk>1.5</jdk>
           <excludes>

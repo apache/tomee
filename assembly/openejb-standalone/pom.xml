@@ -104,7 +104,7 @@
               <mainClass>org.apache.openejb.test.Main</mainClass>
             </manifest>
           </archive>
-          <finalName>openejb-${pom.version}</finalName>
+          <finalName>openejb-${project.version}</finalName>
         </configuration>
       </plugin>
       <plugin>
@@ -132,12 +132,12 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-loader</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -151,44 +151,44 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-server</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-ejbd</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-multicast</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-hsql</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-http</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-telnet</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -199,13 +199,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-client</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-beans</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -220,12 +220,12 @@
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-itests-client</artifactId>
-          <version>${version}</version>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.openejb</groupId>
           <artifactId>openejb-itests-beans</artifactId>
-          <version>${version}</version>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>junit</groupId>
@@ -248,16 +248,16 @@
                 <configuration>
                   <tasks>
                     <property name="targetDir" value="${basedir}/target/" />
-                    <property name="openejb.home" value="${targetDir}/openejb-${pom.version}" />
-                    <property name="openejb.dist" value="${targetDir}/openejb-${pom.version}-bin.zip" />
-                    <property name="openejb.version" value="${pom.version}" />
+                    <property name="openejb.home" value="${targetDir}/openejb-${project.version}" />
+                    <property name="openejb.dist" value="${targetDir}/openejb-${project.version}-bin.zip" />
+                    <property name="openejb.version" value="${project.version}" />
 
                     <unjar src="${openejb.dist}" dest="${targetDir}" />
-                    <copy file="${targetDir}/openejb-${pom.version}-test.jar" todir="${openejb.home}/apps" />
+                    <copy file="${targetDir}/openejb-${project.version}-test.jar" todir="${openejb.home}/apps" />
 
                     <java classname="org.apache.openejb.test.Main" fork="yes">
                       <classpath>
-                        <pathelement location="${targetDir}/openejb-${pom.version}-test.jar" />
+                        <pathelement location="${targetDir}/openejb-${project.version}-test.jar" />
                         <fileset dir="${openejb.home}/lib">
                           <include name="*.jar" />
                         </fileset>

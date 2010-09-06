@@ -36,6 +36,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
@@ -64,9 +65,7 @@
     </repository>
     <repository>
       <id>java.net</id>
-      <url>http://download.java.net/maven/1
-      </url>
-      <layout>legacy</layout>
+      <url>http://download.java.net/maven/1</url>
     </repository>
   </repositories>
   <dependencies>

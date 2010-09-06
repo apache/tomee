@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.superbiz</groupId>
       <artifactId>business-model</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
