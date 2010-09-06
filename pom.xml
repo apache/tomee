@@ -375,8 +375,7 @@
     <profile>
       <id>rat</id>
       <modules>
-	<module>deps</module>
-	<module>api</module>
+        <module>deps</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
