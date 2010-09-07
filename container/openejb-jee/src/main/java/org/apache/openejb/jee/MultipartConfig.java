@@ -58,11 +58,11 @@ public class MultipartConfig {
 
     protected String location;
     @XmlElement(name = "max-file-size")
-    protected Long maxFileSize;
+    protected long maxFileSize;
     @XmlElement(name = "max-request-size")
-    protected Long maxRequestSize;
+    protected long maxRequestSize;
     @XmlElement(name = "file-size-threshold")
-    protected BigInteger fileSizeThreshold;
+    protected int fileSizeThreshold;
 
     public String getLocation() {
         return location;
@@ -72,27 +72,27 @@ public class MultipartConfig {
         this.location = value;
     }
 
-    public Long getMaxFileSize() {
+    public long getMaxFileSize() {
         return maxFileSize;
     }
 
-    public void setMaxFileSize(Long value) {
+    public void setMaxFileSize(long value) {
         this.maxFileSize = value;
     }
 
-    public Long getMaxRequestSize() {
+    public long getMaxRequestSize() {
         return maxRequestSize;
     }
 
-    public void setMaxRequestSize(Long value) {
+    public void setMaxRequestSize(long value) {
         this.maxRequestSize = value;
     }
 
-    public BigInteger getFileSizeThreshold() {
+    public int getFileSizeThreshold() {
         return fileSizeThreshold;
     }
 
-    public void setFileSizeThreshold(BigInteger value) {
+    public void setFileSizeThreshold(int value) {
         this.fileSizeThreshold = value;
     }
 
