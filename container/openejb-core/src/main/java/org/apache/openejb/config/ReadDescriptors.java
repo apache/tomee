@@ -54,6 +54,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -363,6 +364,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static Beans readBeans(URL url) throws OpenEJBException {
         try {
+            if (isEmptyBeansXml(url)) return new Beans();
             return (Beans) JaxbJavaee.unmarshalJavaee(Beans.class, url.openStream());
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the beans.xml file: " + url.toExternalForm(), e);
@@ -376,7 +378,8 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static boolean isEmptyEjbJar(URL url) throws IOException, ParserConfigurationException, SAXException {
-        InputSource inputSource = new InputSource(url.openStream());
+        final LengthInputStream in = new LengthInputStream(url.openStream());
+        InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -395,7 +398,33 @@ public class ReadDescriptors implements DynamicDeployer {
             });
             return true;
         } catch (SAXException e) {
-            return false;
+            return in.getLength() == 0;
+        }
+    }
+
+    private static boolean isEmptyBeansXml(URL url) throws IOException, ParserConfigurationException, SAXException {
+
+        final LengthInputStream in = new LengthInputStream(url.openStream());
+        InputSource inputSource = new InputSource(in);
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        SAXParser parser = factory.newSAXParser();
+
+        try {
+            parser.parse(inputSource, new DefaultHandler(){
+                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+                    if (!localName.equals("beans")) throw new SAXException(localName);
+                }
+
+                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+                    return new InputSource(new ByteArrayInputStream(new byte[0]));
+                }
+            });
+            return true;
+        } catch (SAXException e) {
+            return in.getLength() == 0;
         }
     }
 
@@ -579,4 +608,36 @@ public class ReadDescriptors implements DynamicDeployer {
         }
     }
 
+    private static class LengthInputStream extends FilterInputStream {
+        private long length;
+
+        public LengthInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        public int read() throws IOException {
+            final int i = super.read();
+            if (i > 0) length++;
+            return i;
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            final int i = super.read(b);
+            if (i > 0) length += i;
+            return i;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            final int i = super.read(b, off, len);
+            if (i > 0) length += i;
+            return i;
+        }
+
+        public long getLength() {
+            return length;
+        }
+    }
 }

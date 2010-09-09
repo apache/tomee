@@ -4,15 +4,15 @@
 
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
-    <!--<method-selectors>-->
-    <!--<method-selector>-->
-    <!--<selector-class name=" org.apache.openejb.cdi.tck.TestMethodSelector" />-->
-    <!--</method-selector>-->
-    <!--</method-selectors>-->
+    <method-selectors>
+    <method-selector>
+    <selector-class name="org.jboss.jsr299.tck.impl.WebProfileMethodSelector" />
+    </method-selector>
+    </method-selectors>
     <packages>
-      <!--<package name="org.jboss.jsr299.tck.tests.*" />-->
-      <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*" />-->
-      <package name="org.jboss.jsr299.tck.tests.interceptors.definition.*"/>
+      <package name="org.jboss.jsr299.tck.tests.*" />
+      <package name="org.jboss.jsr299.tck.interceptors.tests.*" />
+      <!--<package name="org.jboss.jsr299.tck.tests.interceptors.definition.*"/>-->
     </packages>
     <classes>
       <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.observer.DecoratorInvocationTest">-->
