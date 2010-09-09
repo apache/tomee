@@ -28,10 +28,12 @@ import javax.el.ELContext;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.AppContext;
@@ -138,10 +140,14 @@ public class ServiceProviders {
                 assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
                 assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
 
-                final EjbJarInfo ejbJar = config.configureApplication(ejbModule);
-                ejbJar.beans.managedClasses.addAll(classNames);
+                final AppInfo appInfo = config.configureApplication(new AppModule(ejbModule));
 
-                appContext = assembler.createApplication(ejbJar);
+                for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                    // TODO We need to improve our scanning so this isn't necessary
+                    ejbJar.beans.managedClasses.addAll(classNames);
+                }
+
+                appContext = assembler.createApplication(appInfo);
 
                 // This must be set or the OWB static lookup code won't work and everything will fall apart
                 Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
