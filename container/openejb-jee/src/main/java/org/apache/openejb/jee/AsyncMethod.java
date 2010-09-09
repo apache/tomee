@@ -68,6 +68,18 @@ public class AsyncMethod {
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
 
+    public AsyncMethod(){
+    }
+
+    public AsyncMethod(java.lang.reflect.Method method) {
+        this.methodName = method.getName();
+        MethodParams methodParams = new MethodParams();
+        for (Class<?> type : method.getParameterTypes()) {
+            methodParams.getMethodParam().add(type.getCanonicalName());
+        }
+        this.methodParams = methodParams;
+    }
+
     public String getMethodName() {
         return methodName;
     }

@@ -26,16 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBHome;
@@ -54,7 +47,6 @@ import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.asynch.AsynchMethodRunnable;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -77,9 +69,6 @@ public class SingletonContainer implements RpcContainer {
     private Object containerID = null;
     private SecurityService securityService;
     private Duration accessTimeout;
-    private BlockingQueue<Runnable> asynchQueue = new LinkedBlockingQueue<Runnable>();
-    private ThreadPoolExecutor asynchPool = new ThreadPoolExecutor(1, 20, 60, TimeUnit.SECONDS, asynchQueue);
-    private CompletionService<Object> asynchService = new ExecutorCompletionService<Object>(asynchPool);
 
     public SingletonContainer(Object id, SecurityService securityService) throws OpenEJBException {
         this.containerID = id;
@@ -183,12 +172,6 @@ public class SingletonContainer implements RpcContainer {
         if (type == null) type = deployInfo.getInterfaceType(callInterface);
 
         Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
-        if(runMethod.getAnnotation(Asynchronous.class) != null){
-        	// Need to invoke this bean asynchronously
-        	AsynchMethodRunnable asynch = new SingletonMethodRunnable(callMethod, runMethod, args, type, deployInfo, primKey);
-        	Future<Object> future = this.asynchService.submit(asynch);
-        	return future;
-        }
 
         ThreadContext callContext = new ThreadContext(deployInfo, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
@@ -374,30 +357,5 @@ public class SingletonContainer implements RpcContainer {
 
     protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
         return new ProxyInfo(deploymentInfo, null);
-    }
-
-    public class SingletonMethodRunnable extends AsynchMethodRunnable{
-
-    	public SingletonMethodRunnable(
-				Method callMethod,
-				Method runMethod, Object[] args, InterfaceType type,
-				CoreDeploymentInfo deployInfo, Object primKey) {
-			super(callMethod, runMethod, args, type, deployInfo, primKey);
-		}
-
-		protected Object performInvoke(Object bean, ThreadContext callContext) throws OpenEJBException{
-    		return _invoke(this.callMethod, this.runMethod, this.args, (Instance)bean, callContext, this.type);
-    	}
-
-		@Override
-		protected Object createBean(ThreadContext callContext) throws OpenEJBException{
-			return instanceManager.getInstance(callContext);
-		}
-
-		@Override
-		protected void releaseBean(Object bean, ThreadContext callContext) throws OpenEJBException{
-			// Singleton doesn't have to do anything here
-		}
-
     }
 }

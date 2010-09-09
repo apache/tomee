@@ -20,33 +20,46 @@ import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
+import org.apache.openejb.core.AppContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-    static final java.util.HashMap dispatchTable;
+    static final Map<String, Integer> dispatchTable;
 
     static {
-        dispatchTable = new java.util.HashMap();
-        dispatchTable.put("getHandle", new Integer(1));
-        dispatchTable.put("getPrimaryKey", new Integer(2));
-        dispatchTable.put("isIdentical", new Integer(3));
-        dispatchTable.put("remove", new Integer(4));
-        dispatchTable.put("getEJBHome", new Integer(5));
-        dispatchTable.put("getEJBLocalHome", new Integer(6));
-        
+        dispatchTable = new HashMap<String, Integer>();
+        dispatchTable.put("getHandle", Integer.valueOf(1));
+        dispatchTable.put("getPrimaryKey", Integer.valueOf(2));
+        dispatchTable.put("isIdentical", Integer.valueOf(3));
+        dispatchTable.put("remove", Integer.valueOf(4));
+        dispatchTable.put("getEJBHome", Integer.valueOf(5));
+        dispatchTable.put("getEJBLocalHome", Integer.valueOf(6));
     }
 
     public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
@@ -63,15 +76,15 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             if (logger.isDebugEnabled()) {
                 logger.debug("invoking method " + m.getName() + " on " + deploymentID + " with identity " + primaryKey);
             }
-            Integer operation = (Integer) dispatchTable.get(m.getName());
+            Integer operation = dispatchTable.get(m.getName());
             if(operation != null){
                 if(operation.intValue() == 3){
                     if(m.getParameterTypes()[0] != EJBObject.class && m.getParameterTypes()[0] != EJBLocalObject.class ){
-                        operation = null;  
+                        operation = null;
                     }
                 } else {
                     operation = (m.getParameterTypes().length == 0)?operation:null;
-                }                
+                }
             }
             if (operation == null || !interfaceType.isComponent() ) {
                 retValue = businessMethod(interfce, m, a, p);
@@ -212,8 +225,28 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected abstract Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 
-    protected Object businessMethod(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
-//        checkAuthorization(method);
+    protected Object businessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
+        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) getDeploymentInfo();
+        if (coreDeploymentInfo.isAsynchronous(method)) {
+            return asynchronizedBusinessMethod(interfce, method, args, proxy);
+        } else {
+            return synchronizedBusinessMethod(interfce, method, args, proxy);
+        }
+    }
+
+    protected Object asynchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
+        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) getDeploymentInfo();
+        AtomicBoolean asynchronousCancelled = new AtomicBoolean(false);
+        AsynchronousCall asynchronousCall = new AsynchronousCall(interfce, method, args, asynchronousCancelled);
+        try {
+            Future<Object> retValue = coreDeploymentInfo.getModuleContext().getAppContext().submitTask(asynchronousCall);
+            return new FutureAdapter<Object>(retValue, asynchronousCancelled, coreDeploymentInfo.getModuleContext().getAppContext());
+        } catch (RejectedExecutionException e) {
+            throw new EJBException("fail to allocate internal resource to execute the target task", e);
+        }
+    }
+
+    protected Object synchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
         return container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
     }
 
@@ -227,5 +260,122 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         }
         EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces, mainInterface);
         return homeHandler.createProxy(primaryKey, mainInterface);
+    }
+
+    private class AsynchronousCall implements Callable<Object> {
+
+        private Class<?> interfce;
+
+        private Method method;
+
+        private Object[] args;
+
+        private AtomicBoolean asynchronousCancelled;
+
+        public AsynchronousCall(Class<?> interfce, Method method, Object[] args, AtomicBoolean asynchronousCancelled) {
+            this.interfce = interfce;
+            this.method = method;
+            this.args = args;
+            this.asynchronousCancelled = asynchronousCancelled;
+        }
+
+        @Override
+        public Object call() throws Exception {
+            try {
+                ThreadContext.initAsynchronousCancelled(asynchronousCancelled);
+                Object retValue = container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
+                if (retValue == null) {
+                    return null;
+                } else if (retValue instanceof Future<?>) {
+                    //TODO do we need to strictly check AsyncResult  or just Future ?
+                    Future<?> asyncResult = (Future<?>) retValue;
+                    return asyncResult.get();
+                } else {
+                    // The bean isn't returning the right result!
+                    // We should never arrive here !
+                    return null;
+                }
+            } finally {
+                ThreadContext.removeAsynchronousCancelled();
+            }
+        }
+    }
+
+    private class FutureAdapter<T> implements Future<T> {
+
+        private Future<T> target;
+
+        private AtomicBoolean asynchronousCancelled;
+
+        private AppContext appContext;
+
+        private volatile boolean canceled;
+
+        public FutureAdapter(Future<T> target, AtomicBoolean asynchronousCancelled, AppContext appContext) {
+            this.target = target;
+            this.asynchronousCancelled = asynchronousCancelled;
+            this.appContext = appContext;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            /*In EJB 3.1 spec 3.4.8.1.1
+             *a. If a client calls cancel on its Future object, the container will attempt to cancel the associated asynchronous invocation only if that invocation has not already been dispatched.
+             *  There is no guarantee that an asynchronous invocation can be cancelled, regardless of how quickly cancel is called after the client receives its Future object.
+             *  If the asynchronous invocation can not be cancelled, the method must return false.
+             *  If the asynchronous invocation is successfully cancelled, the method must return true.
+             *b. the meaning of parameter mayInterruptIfRunning is changed.
+             *  So, we should never call cancel(true), or the underlying Future object will try to interrupt the target thread.
+            */
+            /**
+             * We use our own flag canceled to identify whether the task is canceled successfully.
+             */
+            if(canceled) {
+                return true;
+            }
+            if (appContext.removeTask((Runnable) target)) {
+                //We successfully remove the task from the queue
+                canceled = true;
+                return true;
+            } else {
+                //Not find the task in the queue, the status might be ran/canceled or running
+                //Future.isDone() will return true when the task has been ran or canceled,
+                //since we never call the Future.cancel method, the isDone method will only return true when the task has ran
+                if (!target.isDone()) {
+                    //The task is in the running state
+                    asynchronousCancelled.set(mayInterruptIfRunning);
+                }
+                return false;
+            }
+        }
+
+        @Override
+        public T get() throws InterruptedException, ExecutionException {
+            if(canceled) {
+                throw new CancellationException();
+            }
+            return target.get();
+        }
+
+        @Override
+        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            if (canceled) {
+                throw new CancellationException();
+            }
+            return target.get(timeout, unit);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return canceled;
+        }
+
+        @Override
+        public boolean isDone() {
+            if(canceled) {
+                return false;
+            }
+            return target.isDone();
+        }
     }
 }

@@ -16,34 +16,35 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.BeanType;
-import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ModuleContext;
-import org.apache.openejb.core.cmp.CmpUtil;
-import org.apache.openejb.util.Index;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Classes;
-import org.apache.openejb.util.Duration;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+
+import org.apache.openejb.BeanType;
+import org.apache.openejb.Injection;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.core.cmp.CmpUtil;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Classes;
+import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.Index;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.SafeToolkit;
 
 class EnterpriseBeanBuilder {
     protected static final Messages messages = new Messages("org.apache.openejb.util.resources");
@@ -269,6 +270,19 @@ class EnterpriseBeanBuilder {
         }
 
         deployment.createMethodMap();
+
+        //Configure asynchronous tag after the method map is created, so while we check whether the method is asynchronous,
+        //we could directly check the matching bean method.
+        if (ejbType == BeanType.STATELESS || ejbType == BeanType.SINGLETON || ejbType == BeanType.STATEFUL) {
+            for (NamedMethodInfo methodInfo : bean.asynchronous) {
+                Method method = toMethod(ejbClass, methodInfo);
+                deployment.getMethodContext(deployment.getMatchingBeanMethod(method)).setAsynchronous(true);
+            }
+            for (String className : bean.asynchronousClasses) {
+                deployment.getAsynchronousClasses().add(loadClass(className, "classNotFound.ejbClass"));
+            }
+            deployment.createAsynchronousMethodSet();
+        }
 
         return deployment;
     }

@@ -16,22 +16,22 @@
  */
 package org.apache.openejb.config.rules;
 
-import static org.apache.openejb.util.Join.join;
-import org.apache.openejb.config.ValidationRule;
+import java.lang.reflect.Method;
+
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.ClientModule;
-import org.apache.openejb.config.ValidationContext;
 import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.ValidationContext;
+import org.apache.openejb.config.ValidationRule;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.PersistenceType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
-
-import java.lang.reflect.Method;
-import java.util.List;
+import org.apache.openejb.util.SafeToolkit;
 
 /**
  * @version $Rev$ $Date$
@@ -84,6 +84,14 @@ public abstract class ValidationBase implements ValidationRule {
         fail(bean, key, methodName, returnType.getName(), getParameters(paramTypes));
     }
 
+    public void ignoredMethodAnnotation(String annotationType, EnterpriseBean bean, String className, String methodName, String beanType) {
+        warn(bean, "ignoredMethodAnnotation", annotationType, beanType, className, methodName);
+    }
+
+    public void ignoredClassAnnotation(String annotationType, EnterpriseBean bean, String className, String beanType) {
+        warn(bean, "ignoredClassAnnotation", annotationType, beanType, className);
+    }
+
     public static boolean paramsMatch(Method methodA, Method methodB) {
         if (methodA.getParameterTypes().length != methodB.getParameterTypes().length){
             return false;
@@ -103,7 +111,7 @@ public abstract class ValidationBase implements ValidationRule {
     }
 
     public String getParameters(Class... params) {
-        StringBuffer paramString = new StringBuffer(512);
+        StringBuilder paramString = new StringBuilder(512);
 
         if (params.length > 0) {
             paramString.append(params[0].getName());
@@ -117,10 +125,18 @@ public abstract class ValidationBase implements ValidationRule {
         return paramString.toString();
     }
 
+    public String getParameters(MethodParams methodParams) {
+        if(methodParams == null) {
+            return "";
+        } else {
+            return Join.join(",", methodParams.getMethodParam());
+        }
+    }
+
     protected Class loadClass(String clazz) throws OpenEJBException {
         ClassLoader cl = module.getClassLoader();
         try {
-            return cl.loadClass(clazz);
+            return Classes.forName(clazz, cl);
         } catch (ClassNotFoundException cnfe) {
             throw new OpenEJBException(SafeToolkit.messages.format("cl0007", clazz, module.getJarLocation()), cnfe);
         }

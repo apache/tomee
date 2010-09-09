@@ -73,7 +73,7 @@ public class SingletonInstanceManager {
     public SingletonInstanceManager(SecurityService securityService) {
         this.securityService = securityService;
         sessionContext = new SingletonContext(this.securityService);
-        webServiceContext = (WebServiceContext) new EjbWsContext(sessionContext);
+        webServiceContext = new EjbWsContext(sessionContext);
     }
 
     protected void start(DeploymentInfo info) throws OpenEJBException {

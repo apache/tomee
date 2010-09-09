@@ -18,11 +18,12 @@ package org.apache.openejb.core.asynch;
 
 import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -43,100 +44,305 @@ import org.junit.Test;
 
 /**
  * Testing of the @Asynchronous annotation on beans.
- * 
- * @author Matthew B. Jones
  *
  */
 public class AsynchTest{
-	private Context context = null;
-	
-	@Before
-	public void beforeTest() throws Exception{
-		System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+
+    private Assembler assembler;
+
+    private ConfigurationFactory config;
+
+    @Before
+    public void beforeTest() throws Exception {
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        config = new ConfigurationFactory();
+        assembler = new Assembler();
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-        AppModule app = new AppModule(this.getClass().getClassLoader(), "testasynch");
+    }
+
+	@After
+	public void afterTest() throws Exception{
+	    assembler.destroy();
+	}
+
+	@Test
+	public void testMethodScopeAsynch() throws Exception{
+	    System.out.println(long.class.getName());
+	    System.out.println(String[].class.getCanonicalName());
+	    //Build the application
+	    AppModule app = new AppModule(this.getClass().getClassLoader(), "testasynch");
         EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(new StatelessBean(AsynchBeanImpl.class));
-        ejbJar.addEnterpriseBean(new SingletonBean(AsynchSingletonBeanImpl.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(TestBeanC.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(TestBeanD.class));
         app.getEjbModules().add(new EjbModule(ejbJar));
 
         AppInfo appInfo = config.configureApplication(app);
         assembler.createApplication(appInfo);
-	}
 
-	@After
-	public void afterTest() throws Exception{
-		if(this.context != null) this.context.close();
-	}
-	
-	@Test
-	public void testAsynch() throws Exception{
 		InitialContext context = new InitialContext();
-		String[] beans = new String[]{"AsynchBeanImplLocal", "AsynchSingletonBeanImplLocal"};
+
+		String[] beans = new String[]{"TestBeanCLocal", "TestBeanDLocal"};
 		for(String beanName : beans){
-			AsynchBean bean = (AsynchBean)context.lookup(beanName);
-			
-			long before = System.currentTimeMillis();
-			bean.executeAsynch();
-			long delta = System.currentTimeMillis() - before;
-			Thread.sleep(1500); // Wait for asynch execution
-			Assert.assertTrue(beanName + " was never excuted", bean.wasFired());
-			Assert.assertTrue(beanName + " was executed in a blocking fashion", delta < 1000);
-			
-			bean.reset();
-			before = System.currentTimeMillis();
-			Future<Boolean> future = bean.executeAsynchWithFuture();
-			delta = System.currentTimeMillis() - before;
-			Assert.assertTrue("The Future for " + beanName + " should not be done yet", !future.isDone());
-			Thread.sleep(1500); // Wait for asynch execution
-			Assert.assertTrue(beanName + " was never excuted", bean.wasFired());
-			Assert.assertTrue("The Future for " + beanName + " should be done now", future.isDone());
-			Assert.assertTrue(beanName + " was executed in a blocking fashion", delta < 1000);
-			Assert.assertTrue(beanName + " was expected to return a value of true", future.get());
+			TestBean testBean = (TestBean)context.lookup(beanName);
+
+			testBean.testA(Thread.currentThread().getId());
+			Thread.sleep(1000L);
+	        Assert.assertEquals("testA was never executed", "testA" , testBean.getLastInvokeMethod());
+	        Future<String> future = testBean.testB(Thread.currentThread().getId());
+			Thread.sleep(1000L);
+			Assert.assertTrue("The task should be done", future.isDone());
+	        Assert.assertEquals("testB was never executed", "testB" , testBean.getLastInvokeMethod());
+	        testBean.testC(Thread.currentThread().getId());
+	        Assert.assertEquals("testC was never executed", "testC" , testBean.getLastInvokeMethod());
+	        testBean.testD(Thread.currentThread().getId());
+	        Assert.assertEquals("testD was never executed", "testD" , testBean.getLastInvokeMethod());
 		}
-	}
-	
-	public interface AsynchBean{
-		public void reset();
-		public boolean wasFired();
-		public void executeAsynch();
-		public Future<Boolean> executeAsynchWithFuture();
 	}
 
-	@Stateless
-	public static class AsynchBeanImpl implements AsynchBean{
-		private static boolean FIRED = false;
-		public void reset(){ FIRED = false; }
-		public boolean wasFired(){ return FIRED; }
-		@Asynchronous
-		public void executeAsynch(){
-			FIRED = true;
-			try{Thread.sleep(1000);}catch(Exception e){}
-		}
-		@Asynchronous
-		public Future<Boolean> executeAsynchWithFuture(){
-			executeAsynch();
-			return new AsyncResult<Boolean>(true);
-		}
+	@Test
+	public void testClassScopeAsynch() throws Exception {
+	    //Build the application
+        AppModule app = new AppModule(this.getClass().getClassLoader(), "testclassasynch");
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new SingletonBean(TestBeanA.class));
+        app.getEjbModules().add(new EjbModule(ejbJar));
+
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+
+        InitialContext context = new InitialContext();
+        TestBean test = (TestBean)context.lookup("TestBeanALocal");
+
+        test.testA(Thread.currentThread().getId());
+        Thread.sleep(1000L);
+        Assert.assertEquals("testA was never executed", "testA" , test.getLastInvokeMethod());
+
+        Future<String> future = test.testB(Thread.currentThread().getId());
+        Thread.sleep(1000L);
+        Assert.assertTrue("The task should be done", future.isDone());
+        Assert.assertEquals("testB was never executed", "testB" , test.getLastInvokeMethod());
+
+        test.testC(Thread.currentThread().getId());
+        Assert.assertEquals("testC was never executed", "testC" , test.getLastInvokeMethod());
+
+        test.testD(Thread.currentThread().getId());
+        Assert.assertEquals("testD was never executed", "testD" , test.getLastInvokeMethod());
 	}
-	
-	@Singleton
-	public static class AsynchSingletonBeanImpl implements AsynchBean{
-		private static boolean FIRED = false;
-		public void reset(){ FIRED = false; }
-		public boolean wasFired(){ return FIRED; }
-		@Asynchronous
-		public void executeAsynch(){
-			FIRED = true;
-			try{Thread.sleep(1000);}catch(Exception e){}
-		}
-		@Asynchronous
-		public Future<Boolean> executeAsynchWithFuture(){
-			executeAsynch();
-			return new AsyncResult<Boolean>(true);
-		}
-	}
+
+    @Test
+    public void testSessionContext() throws Exception {
+        //Build the application
+        AppModule app = new AppModule(this.getClass().getClassLoader(), "testcanceltask");
+        EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new StatelessBean(TestBeanB.class));
+        app.getEjbModules().add(new EjbModule(ejbJar));
+
+        AppInfo appInfo = config.configureApplication(app);
+        assembler.createApplication(appInfo);
+
+        InitialContext context = new InitialContext();
+        TestBean test = (TestBean) context.lookup("TestBeanBLocal");
+
+        test.testA(Thread.currentThread().getId());
+        Assert.assertEquals("testA was never executed", "testA", test.getLastInvokeMethod());
+
+        Future<String> future = test.testB(Thread.currentThread().getId());
+        Thread.sleep(1000L);
+        Assert.assertFalse(future.cancel(true));
+        Assert.assertFalse(future.isCancelled());
+        Assert.assertFalse(future.isDone());
+        Thread.sleep(3000L);
+        Assert.assertTrue(future.isDone());
+        Assert.assertEquals("testB was never executed", "testB", test.getLastInvokeMethod());
+
+        test.testC(Thread.currentThread().getId());
+        Assert.assertEquals("testC was never executed", "testC", test.getLastInvokeMethod());
+
+        test.testD(Thread.currentThread().getId());
+        Thread.sleep(3000L);
+        Assert.assertEquals("testD was never executed", "testD", test.getLastInvokeMethod());
+    }
+
+    public interface TestBean {
+
+        public void testA(long callerThreadId);
+
+        public Future<String> testB(long callerThreadId);
+
+        public Future<String> testC(long callerThreadId);
+
+        public void testD(long callerThreadId);
+
+        public String getLastInvokeMethod();
+    }
+
+    @Stateless
+    public static class TestBeanC implements TestBean {
+
+        private String lastInvokeMethod;
+
+        @Asynchronous
+        public void testA(long callerThreadId) {
+            Assert.assertFalse("testA should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testA";
+        }
+
+        @Asynchronous
+        public Future<String> testB(long callerThreadId) {
+            Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testB";
+            return new AsyncResult<String>("testB");
+        }
+
+        public Future<String> testC(long callerThreadId) {
+            Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testC";
+            return new AsyncResult<String>("testC");
+        }
+
+        public void testD(long callerThreadId) {
+            Assert.assertTrue("testD should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testD";
+        }
+
+        public String getLastInvokeMethod() {
+            return lastInvokeMethod;
+        }
+    }
+
+    @Singleton
+    public static class TestBeanD implements TestBean {
+
+        private String lastInvokeMethod;
+
+        @Asynchronous
+        public void testA(long callerThreadId) {
+            Assert.assertFalse("testA should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testA";
+        }
+
+        @Asynchronous
+        public Future<String> testB(long callerThreadId) {
+            Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testB";
+            return new AsyncResult<String>("testB");
+        }
+
+        public Future<String> testC(long callerThreadId) {
+            Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testC";
+            return new AsyncResult<String>("testC");
+        }
+
+        public void testD(long callerThreadId) {
+            Assert.assertTrue("testD should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testD";
+        }
+
+        public String getLastInvokeMethod() {
+            return lastInvokeMethod;
+        }
+    }
+
+    @Asynchronous
+    public static abstract class AbstractBean implements TestBean {
+
+        protected String lastInvokeMethod;
+
+        public void testA(long callerThreadId) {
+            Assert.assertFalse("testA should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testA";
+        }
+
+        public Future<String> testB(long callerThreadId) {
+            Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testB";
+            return new AsyncResult<String>("testB" + callerThreadId);
+        }
+
+    }
+
+    @Singleton
+    public static class TestBeanA extends AbstractBean implements TestBean {
+
+        public  String getLastInvokeMethod() {
+            return lastInvokeMethod;
+        }
+
+        public Future<String> testC(long callerThreadId) {
+            Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testC";
+            return new AsyncResult<String>("testC");
+        }
+
+        public void testD(long callerThreadId) {
+            Assert.assertTrue("testD should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            lastInvokeMethod = "testD";
+        }
+    }
+
+    @Stateless
+    public static class TestBeanB implements TestBean {
+
+        private String lastInvokeMethod;
+
+        @Resource
+        private SessionContext sessionContext;
+
+        public void testA(long callerThreadId) {
+            Assert.assertTrue("testA should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            Exception expectedException = null;
+            try {
+                sessionContext.wasCancelCalled();
+            } catch (IllegalStateException e) {
+                expectedException = e;
+            }
+            lastInvokeMethod = "testA";
+            Assert.assertNotNull("IllegalStateException should be thrown", expectedException);
+        }
+
+        @Asynchronous
+        public Future<String> testB(long callerThreadId) {
+            Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            Assert.assertFalse(sessionContext.wasCancelCalled());
+            try {
+                Thread.sleep(3000L);
+            } catch (InterruptedException e) {
+            }
+            Assert.assertTrue(sessionContext.wasCancelCalled());
+            lastInvokeMethod = "testB";
+            return new AsyncResult<String>("echoB");
+        }
+
+        public Future<String> testC(long callerThreadId) {
+            Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
+            Exception expectedException = null;
+            try {
+                sessionContext.wasCancelCalled();
+            } catch (IllegalStateException e) {
+                expectedException = e;
+            }
+            Assert.assertNotNull("IllegalStateException should be thrown", expectedException);
+            lastInvokeMethod = "testC";
+            return null;
+        }
+
+        @Asynchronous
+        public void testD(long callerThreadId) {
+            Assert.assertFalse("testD should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
+            Exception expectedException = null;
+            try {
+                sessionContext.wasCancelCalled();
+            } catch (IllegalStateException e) {
+                expectedException = e;
+            }
+            Assert.assertNotNull("IllegalStateException should be thrown", expectedException);
+            lastInvokeMethod = "testD";
+        }
+
+        public String getLastInvokeMethod() {
+            return lastInvokeMethod;
+        }
+    }
 }

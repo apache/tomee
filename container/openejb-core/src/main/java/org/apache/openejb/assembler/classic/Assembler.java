@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -582,7 +583,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 //bind ejbs into global jndi
                 jndiBuilder.build(ejbJar, deployments);
 
-                // setup timers - must be after transaction attibutes are set
+                // setup timers/asynchronous methods - must be after transaction attributes are set
                 for (DeploymentInfo deploymentInfo : deployments.values()) {
                     CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
                     if (coreDeploymentInfo.getComponentType() != BeanType.STATEFUL) {
@@ -622,6 +623,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             coreDeploymentInfo.setEjbTimerService(timerService);
                         } else {
                             coreDeploymentInfo.setEjbTimerService(new NullEjbTimerServiceImpl());
+                        }
+                    }
+                    //set asynchronous methods transaction
+                    //TODO ???
+                    for (Iterator<Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                        Entry<Method, MethodContext> entry = it.next();
+                        if (entry.getValue().isAsynchronous() && coreDeploymentInfo.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
+                            coreDeploymentInfo.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
                         }
                     }
                 }

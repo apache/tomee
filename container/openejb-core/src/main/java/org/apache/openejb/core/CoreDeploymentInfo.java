@@ -17,6 +17,7 @@
 package org.apache.openejb.core;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.concurrent.Future;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -43,10 +45,10 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.Container;
 import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
@@ -63,6 +65,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.recipe.ConstructionException;
+
 
 public class CoreDeploymentInfo extends DeploymentContext implements org.apache.openejb.DeploymentInfo {
 
@@ -125,6 +128,9 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     private final boolean localbean;
     private Duration accessTimeout;
     private Duration statefulTimeout;
+
+    private Set<Class<?>> asynchronousClasses =  new HashSet<Class<?>>();
+    private Set<String> asynchronousMethodSignatures = new HashSet<String>();
 
     public Class getInterface(InterfaceType interfaceType) {
         switch(interfaceType){
@@ -637,7 +643,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
             if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
 
-                if (method.equals(this.ejbTimeout) && transactionType == TransactionType.RequiresNew) {
+                if ((method.equals(this.ejbTimeout) || methodContextMap.get(method).isAsynchronous()) && transactionType == TransactionType.RequiresNew) {
                     // do nothing. This is allowed as the timer callback method for a message driven bean
                     // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
                 } else {
@@ -921,6 +927,19 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         return this.postCreateMethodMap.get(createMethod);
     }
 
+    public boolean isAsynchronous(Method method) {
+        Method matchingBeanMethod = getMatchingBeanMethod(method);
+        Class<?> returnType = matchingBeanMethod.getReturnType();
+        if (returnType != void.class && returnType != Future.class) {
+            return false;
+        }
+        if (asynchronousClasses.contains(matchingBeanMethod.getDeclaringClass())) {
+            return true;
+        }
+        MethodContext methodContext = methodContextMap.get(matchingBeanMethod);
+        return methodContext == null ? false : methodContext.isAsynchronous();
+    }
+
     //
     // CMP specific data
     //
@@ -1153,5 +1172,36 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         } finally {
             ThreadContext.exit(oldContext);
         }                        
+    }
+
+    public Set<Class<?>> getAsynchronousClasses() {
+        return asynchronousClasses;
+    }
+
+    public Set<String> getAsynchronousMethodSignatures() {
+        return asynchronousMethodSignatures;
+    }
+
+    public void createAsynchronousMethodSet(){
+        for(Map.Entry<Method, MethodContext> entry : methodContextMap.entrySet()) {
+            if(entry.getValue().isAsynchronous()) {
+                asynchronousMethodSignatures.add(generateMethodSignature(entry.getKey()));
+            }
+        }
+        for(Class<?> cls : asynchronousClasses) {
+            for(Method method : cls.getDeclaredMethods()) {
+                if(Modifier.isPublic(method.getModifiers())) {
+                    asynchronousMethodSignatures.add(generateMethodSignature(method));
+                }
+            }
+        }
+    }
+
+    private String generateMethodSignature(Method method) {
+        StringBuilder buffer = new StringBuilder(method.getName());
+        for(Class<?> parameterType : method.getParameterTypes()) {
+            buffer.append(parameterType.getName());
+        }
+        return buffer.toString();
     }
 }

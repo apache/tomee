@@ -21,9 +21,11 @@ package org.apache.openejb.jee;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -200,6 +202,8 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     protected NamedMethod beforeCompletionMethod;
     @XmlTransient
     protected NamedMethod afterCompletionMethod;
+    @XmlTransient
+    private Set<String> asynchronousClasses;
     @XmlElement(name = "around-invoke", required = true)
     protected List<AroundInvoke> aroundInvoke;
     @XmlElement(name = "around-timeout")
@@ -866,7 +870,17 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }
 
-    @Override
+    public Set<String> getAsynchronousClasses(){
+        if(asynchronousClasses == null) {
+            asynchronousClasses = new HashSet<String>();
+        }
+        return asynchronousClasses;
+    }
+
+    public void addAsynchronousClass(String cls) {
+        getAsynchronousClasses().add(cls);
+    }
+
     public String getTimerConsumerName() {
         return ejbName;
     }

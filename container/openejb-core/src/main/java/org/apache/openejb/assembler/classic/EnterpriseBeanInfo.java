@@ -17,8 +17,10 @@
 package org.apache.openejb.assembler.classic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public abstract class EnterpriseBeanInfo extends InfoObject {
 
@@ -70,6 +72,9 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
 
     public final List<CallbackInfo> aroundTimeout = new ArrayList<CallbackInfo>();
+
+    public final List<NamedMethodInfo> asynchronous = new ArrayList<NamedMethodInfo>();
+    public Set<String> asynchronousClasses = new HashSet<String>();
 
     public String containerId;
     public String serviceEndpoint;
