@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -384,76 +385,76 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return new ArrayList<AppInfo>(deployedApplications.values());
     }
 
-    public void createApplication(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
-        createEjbJar(ejbJar);
+    public AppContext createApplication(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+        return createEjbJar(ejbJar);
     }
 
-    public void createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
+    public AppContext createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
         appInfo.appId = ejbJar.moduleId;
         appInfo.ejbJars.add(ejbJar);
-        createApplication(appInfo);
+        return createApplication(appInfo);
     }
 
-    public void createApplication(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
-        createEjbJar(ejbJar, classLoader);
+    public AppContext createApplication(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+        return createEjbJar(ejbJar, classLoader);
     }
 
-    public void createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public AppContext createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
         appInfo.appId = ejbJar.moduleId;
         appInfo.ejbJars.add(ejbJar);
-        createApplication(appInfo, classLoader);
+        return createApplication(appInfo, classLoader);
     }
 
-    public void createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
+    public AppContext createClient(ClientInfo clientInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = clientInfo.path;
         appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
-        createApplication(appInfo);
+        return createApplication(appInfo);
     }
 
-    public void createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public AppContext createClient(ClientInfo clientInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = clientInfo.path;
         appInfo.appId = clientInfo.moduleId;
         appInfo.clients.add(clientInfo);
-        createApplication(appInfo, classLoader);
+        return createApplication(appInfo, classLoader);
     }
 
-    public void createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
+    public AppContext createConnector(ConnectorInfo connectorInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = connectorInfo.path;
         appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
-        createApplication(appInfo);
+        return createApplication(appInfo);
     }
 
-    public void createConnector(ConnectorInfo connectorInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public AppContext createConnector(ConnectorInfo connectorInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = connectorInfo.path;
         appInfo.appId = connectorInfo.moduleId;
         appInfo.connectors.add(connectorInfo);
-        createApplication(appInfo, classLoader);
+        return createApplication(appInfo, classLoader);
     }
 
-    public void createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
+    public AppContext createWebApp(WebAppInfo webAppInfo) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = webAppInfo.path;
         appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
-        createApplication(appInfo);
+        return createApplication(appInfo);
     }
 
-    public void createWebApp(WebAppInfo webAppInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
+    public AppContext createWebApp(WebAppInfo webAppInfo, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = webAppInfo.path;
         appInfo.appId = webAppInfo.moduleId;
         appInfo.webApps.add(webAppInfo);
-        createApplication(appInfo, classLoader);
+        return createApplication(appInfo, classLoader);
     }
 
     public AppContext createApplication(AppInfo appInfo) throws OpenEJBException, IOException, NamingException {
@@ -465,7 +466,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
-        // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places 
+        // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
         if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
 
@@ -514,7 +515,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, false);
-            
+
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
@@ -654,7 +655,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             CdiBuilder cdiBuilder = new CdiBuilder(appInfo, appContext);
             cdiBuilder.build(allDeployments);
-            
+
             // now that everything is configured, deploy to the container
             if (start) {
                 // deploy
@@ -667,13 +668,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                     }
                 }
-                
+
                 // start
                 for (DeploymentInfo deployment : allDeployments) {
                     try {
                         Container container = deployment.getContainer();
                         container.start(deployment);
-                        logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());                        
+                        logger.info("createApplication.startedEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
                     } catch (Throwable t) {
                         throw new OpenEJBException("Error starting '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                     }
@@ -695,10 +696,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 }
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
-                Context context = (Context) jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
+                Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
 
                 Debug.printContext(context);
-                
+
                 containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
 
                 if (clientInfo.path != null) {
@@ -933,7 +934,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
             }
         }
-        
+
         // undeploy
         for (DeploymentInfo deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
