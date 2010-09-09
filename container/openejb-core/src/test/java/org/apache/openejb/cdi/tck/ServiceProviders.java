@@ -16,48 +16,35 @@
  */
 package org.apache.openejb.cdi.tck;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
-import org.apache.webbeans.container.BeanManagerImpl;
-import org.jboss.testharness.api.DeploymentException;
-import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.xbean.finder.ClassFinder;
-
-import javax.el.ELContext;
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InterceptionType;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.ObserverMethod;
-import javax.enterprise.inject.spi.Decorator;
-import javax.enterprise.inject.spi.Interceptor;
 import java.io.File;
 import java.net.URL;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 import java.util.List;
-import java.lang.reflect.Type;
-import java.lang.annotation.Annotation;
+import java.util.Map;
+
+import javax.el.ELContext;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.spi.BeanManager;
+
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.SecurityServiceInfo;
+import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.AppContext;
+import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.webbeans.context.AbstractContext;
+import org.apache.webbeans.context.ContextFactory;
+import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.context.type.ContextTypes;
+import org.apache.xbean.finder.ClassFinder;
+import org.jboss.testharness.api.DeploymentException;
 
 /**
  * @version $Rev$ $Date$
@@ -76,33 +63,39 @@ public class ServiceProviders {
     }
 
     public static class BeansProvider implements org.jboss.jsr299.tck.spi.Beans {
+
         public boolean isProxy(Object instance) {
-            System.out.println("ServiceProviders$BeansProvider.isProxy");
-            return false;
+            return instance.getClass().getName().contains("$$");
         }
     }
 
-    public static class ContextsProvider implements org.jboss.jsr299.tck.spi.Contexts {
-        public void setActive(Context context) {
-            System.out.println("ServiceProviders$ContextsProvider.setActive");
+    public static class ContextsProvider implements org.jboss.jsr299.tck.spi.Contexts<AbstractContext> {
+
+        public AbstractContext getRequestContext() {
+            RequestContext ctx = (RequestContext) ContextFactory.getStandardContext(RequestScoped.class);
+
+            if (ctx == null) {
+                ContextFactory.initRequestContext(null);
+            }
+
+            return (AbstractContext) ContextFactory.getStandardContext(ContextTypes.REQUEST);
         }
 
-        public void setInactive(Context context) {
-            System.out.println("ServiceProviders$ContextsProvider.setInactive");
+        public void setActive(AbstractContext context) {
+            context.setActive(true);
+
         }
 
-        public Context getRequestContext() {
-            System.out.println("ServiceProviders$ContextsProvider.getRequestContext");
-            return null;
+        public void setInactive(AbstractContext context) {
+            context.setActive(false);
         }
 
-        public Context getDependentContext() {
-            System.out.println("ServiceProviders$ContextsProvider.getDependentContext");
-            return null;
+        public AbstractContext getDependentContext() {
+            return (AbstractContext) ContextFactory.getStandardContext(ContextTypes.DEPENDENT);
         }
 
-        public void destroyContext(Context context) {
-            System.out.println("ServiceProviders$ContextsProvider.destroyContext");
+        public void destroyContext(AbstractContext context) {
+            context.destroy();
         }
     }
 
@@ -111,18 +104,15 @@ public class ServiceProviders {
         private DeploymentException deploymentException;
 
         public void deploy(Collection<Class<?>> classes) throws DeploymentException {
-            System.out.println("ServiceProviders$StandaloneContainersProvider.deploy");
-            System.out.println("StandaloneContainersImpl.deploy(classes)");
-            for (Class<?> clazz : classes) {
-                System.out.println("clazz = " + clazz);
-            }
+            deploy(classes, Collections.<URL> emptyList());
         }
 
         public boolean deploy(Collection<Class<?>> classes, Collection<URL> urls) {
             System.out.println("ServiceProviders$StandaloneContainersProvider.deploy");
             List<String> classNames = new ArrayList<String>();
 
-            for (Class<?> clazz : classes) classNames.add(clazz.getName());
+            for (Class<?> clazz : classes)
+                classNames.add(clazz.getName());
             Collections.sort(classNames);
 
             for (String clazz : classNames) {
@@ -136,7 +126,7 @@ public class ServiceProviders {
                 EjbModule ejbModule = new EjbModule(new EjbJar("beans"));
                 ejbModule.setFinder(new ClassFinder(new ArrayList(classes)));
 
-                Map<String,Object> dds = ejbModule.getAltDDs();
+                Map<String, Object> dds = ejbModule.getAltDDs();
 
                 for (URL url : urls) {
                     final File file = new File(url.getFile());
@@ -151,13 +141,7 @@ public class ServiceProviders {
                 final EjbJarInfo ejbJar = config.configureApplication(ejbModule);
                 ejbJar.beans.managedClasses.addAll(classNames);
 
-
-                assembler.createApplication(ejbJar);
-
-                final ContainerSystem component = SystemInstance.get().getComponent(ContainerSystem.class);
-
-                final CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) component.deployments()[0];
-                appContext = deploymentInfo.getModuleContext().getAppContext();
+                appContext = assembler.createApplication(ejbJar);
 
                 // This must be set or the OWB static lookup code won't work and everything will fall apart
                 Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
@@ -167,13 +151,13 @@ public class ServiceProviders {
                 deploymentException = new DeploymentException("Deploy failed", e);
                 return false;
             }
-//            System.out.println("StandaloneContainersImpl.deploy(classes, urls)");
-//            for (Class<?> clazz : classes) {
-//                System.out.println("clazz = " + clazz);
-//            }
-//            for (URL url : urls) {
-//                System.out.println("url = " + url);
-//            }
+            //            System.out.println("StandaloneContainersImpl.deploy(classes, urls)");
+            //            for (Class<?> clazz : classes) {
+            //                System.out.println("clazz = " + clazz);
+            //            }
+            //            for (URL url : urls) {
+            //                System.out.println("url = " + url);
+            //            }
             return true;
         }
 
