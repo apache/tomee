@@ -5,32 +5,56 @@
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
     <method-selectors>
-    <method-selector>
-    <selector-class name="org.jboss.jsr299.tck.impl.WebProfileMethodSelector" />
-    </method-selector>
+      <method-selector>
+        <selector-class name="org.jboss.jsr299.tck.impl.WebProfileMethodSelector"/>
+      </method-selector>
+      <method-selector>
+        <selector-class name="org.jboss.testharness.impl.testng.ExcludeIncontainerUnderInvestigationMethodSelector"/>
+      </method-selector>
     </method-selectors>
+    <groups>
+      <run>
+        <exclude name="ri-broken"/>
+        <exclude name="jboss-as-broken"/>
+        <exclude name="broken"/>
+      </run>
+    </groups>
     <packages>
-      <package name="org.jboss.jsr299.tck.tests.*" />
-      <package name="org.jboss.jsr299.tck.interceptors.tests.*" />
+      <package name="org.jboss.jsr299.tck.tests.*"/>
+      <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
       <!--<package name="org.jboss.jsr299.tck.tests.interceptors.definition.*"/>-->
     </packages>
     <classes>
-      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.observer.DecoratorInvocationTest">-->
-        <!--<methods>-->
-          <!--<exclude name="testDecoratorInvocation"/>-->
-        <!--</methods>-->
-      <!--</class>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.producer.method.DecoratorInvocationTest">-->
-        <!--<methods>-->
-          <!--<exclude name="testDecoratorInvocation"/>-->
-        <!--</methods>-->
-      <!--</class>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest">-->
-        <!--<methods>-->
-          <!--<exclude name="testChainedDecoratorInvocation"/>-->
-          <!--<exclude name="testDecoratorInvocation"/>-->
-        <!--</methods>-->
-      <!--</class>-->
+      <!-- ERROR IN CDI-TCK-137 -->
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest">
+        <methods>
+          <exclude name="testChainedDecoratorInvocation"></exclude>
+        </methods>
+      </class>
+
+
+      <!-- ERROR IN CDI-TCK-138 -->
+      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.InjectionPointTest">
+        <methods>
+          <exclude name="testIsDelegate"></exclude>
+        </methods>
+      </class>
+
+
+      <!-- ERROR IN CDITCK-165 -->
+      <class name="org.jboss.jsr299.tck.tests.context.NormalContextTest">
+        <methods>
+          <exclude name="testSameNormalScopeBeanInjectedEverywhere"/>
+        </methods>
+      </class>
+
+
+      <!-- Web Service Integration not required for Web Profile -->
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
+        <methods>
+          <exclude name="testInjectionIntoWebServiceEndpoint"/>
+        </methods>
+      </class>
 
     </classes>
   </test>
