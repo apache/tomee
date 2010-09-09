@@ -52,6 +52,7 @@ import javax.ejb.AccessTimeout;
 import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
 import javax.ejb.ApplicationException;
+import javax.ejb.Asynchronous;
 import javax.ejb.BeforeCompletion;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.DependsOn;
@@ -109,6 +110,7 @@ import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.AroundTimeout;
 import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.AsyncMethod;
 import org.apache.openejb.jee.ConcurrencyManagementType;
 import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ConcurrentMethod;
@@ -213,7 +215,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             "java.lang.String",
             "java.lang.Class"
     ));
-    
+
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
@@ -283,7 +285,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static boolean isKnownEnvironmentEntryType(Class type) {
         return knownEnvironmentEntries.contains(type.getName()) || type.isEnum();
     }
-    
+
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -1288,6 +1290,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                         processSessionInterfaces(sessionBean, clazz, ejbModule);
 
                         /*
+                         * @Asynchronous
+                         */
+                        processAsynchronous(bean, inheritedClassFinder);
+
+                        /*
                          * Allow for all session bean types
                          * @DependsOn
                          */
@@ -1548,6 +1555,30 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbModule;
         }
 
+        private void processAsynchronous(EnterpriseBean bean, ClassFinder classFinder) {
+            if (!(bean instanceof SessionBean)) {
+                return;
+            }
+
+            SessionBean sessionBean = (SessionBean) bean;
+            
+            List<Method> asyncMethods = classFinder.findAnnotatedMethods(Asynchronous.class);
+            for (Method method : asyncMethods) {
+                sessionBean.getAsyncMethod().add(new AsyncMethod(method));
+            }
+            
+            List<Class> clses = classFinder.findAnnotatedClasses(Asynchronous.class);
+
+            //Spec 4.5.1 @Asynchronous could be used at the class level of a bean-class ( or superclass ).
+            //Seems that it should not be used on the any interface view
+
+            for (Class<?> cls : clses) {
+                if (!cls.isInterface()) {
+                    sessionBean.getAsynchronousClasses().add(cls.getName());
+                }
+            }
+        }
+
         private <T extends Injectable> void mergeJndiReferences(Map<String, T> from, Map<String, T> to) {
             for (Map.Entry<String, T> entry : from.entrySet()) {
                 Injectable injectable = to.get(entry.getKey());
@@ -1794,7 +1825,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                           implemented.remote.add(interfce);
                         }
                     }
-                      
+
                 }
 
                 interfaces.removeAll(implemented.local);
@@ -2197,7 +2228,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                   //Validation Logic is moved to CheckCallback class.
                     if(timeoutMethods.size() == 1){
                         timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0)));
-                    }                    
+                    }
                 }
             }
 

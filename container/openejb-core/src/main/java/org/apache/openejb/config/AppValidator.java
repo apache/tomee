@@ -96,7 +96,8 @@ public class AppValidator {
                 new CheckInjectionTargets(),
                 new CheckPersistenceRefs(),
                 new CheckDependsOn(),
-                new CheckUserTransactionRefs()
+                new CheckUserTransactionRefs(),
+                new CheckAsynchronous()
         };
         return rules;
     }
@@ -208,7 +209,7 @@ public class AppValidator {
             }
         }
     }
-    
+
     public static void main(String[] args) throws SystemExitException {
         CommandLineParser parser = new PosixParser();
 
@@ -237,7 +238,7 @@ public class AppValidator {
             System.out.println("Must specify an module id.");
             AppValidator.help(options);
         }
-        
+
         DeploymentLoader deploymentLoader = new DeploymentLoader();
 
         try {
@@ -252,7 +253,7 @@ public class AppValidator {
             e.printStackTrace();
         }
     }
-    
+
     private static void help(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("validate [options] <file> [<file>...]", "\n"+ AppValidator.i18n("cmd.validate.description"), options, "\n");

@@ -88,7 +88,7 @@ public class CheckCallbacks extends ValidationBase {
             }
 
             ClassFinder finder = new ClassFinder(ejbClass);
-            
+
             if (bean instanceof Session ) {
                 SessionBean session = (SessionBean) bean;
 
@@ -120,71 +120,71 @@ public class CheckCallbacks extends ValidationBase {
 //                    }
 
                     for (AroundTimeout aroundTimeout : session.getAroundTimeout()) {
-                        ignoredAnnotation("AroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
+                        ignoredMethodAnnotation("AroundTimeout", bean, bean.getEjbClass(), aroundTimeout.getMethodName(), SessionType.STATEFUL.getName());
                     }
 
                     for (Timer timer : session.getTimer()) {
-                        ignoredAnnotation("Schedule/Schedules", bean, bean.getEjbClass(), timer.getTimeoutMethod().getMethodName(), SessionType.STATEFUL.getName());
+                        ignoredMethodAnnotation("Schedule/Schedules", bean, bean.getEjbClass(), timer.getTimeoutMethod().getMethodName(), SessionType.STATEFUL.getName());
                     }
 
                 } else {
 
                     for (LifecycleCallback callback : session.getAfterBegin()) {
-                        ignoredAnnotation("AfterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("AfterBegin", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getBeforeCompletion()) {
-                        ignoredAnnotation("BeforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("BeforeCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getAfterCompletion()) {
-                        ignoredAnnotation("AfterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("AfterCompletion", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getPrePassivate()) {
-                        ignoredAnnotation("PrePassivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("PrePassivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (LifecycleCallback callback : session.getPostActivate()) {
-                        ignoredAnnotation("PostActivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("PostActivate", bean, bean.getEjbClass(), callback.getMethodName(), session.getSessionType().getName());
                     }
 
                     for (RemoveMethod method : session.getRemoveMethod()) {
-                        ignoredAnnotation("Remove", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("Remove", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
 
                     for (InitMethod method : session.getInitMethod()) {
-                        ignoredAnnotation("Init", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
+                        ignoredMethodAnnotation("Init", bean, bean.getEjbClass(), method.getBeanMethod().getMethodName(), session.getSessionType().getName());
                     }
                 }
             } else {
 
                 for (Method method : finder.findAnnotatedMethods(PrePassivate.class)) {
-                    ignoredAnnotation("PrePassivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("PrePassivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(PostActivate.class)) {
-                    ignoredAnnotation("PostActivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("PostActivate", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(Remove.class)) {
-                    ignoredAnnotation("Remove", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("Remove", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(Init.class)) {
-                    ignoredAnnotation("Init", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("Init", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterBegin.class)) {
-                    ignoredAnnotation("AfterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("AfterBegin", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(BeforeCompletion.class)) {
-                    ignoredAnnotation("BeforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("BeforeCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
 
                 for (Method method : finder.findAnnotatedMethods(AfterCompletion.class)) {
-                    ignoredAnnotation("AfterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
+                    ignoredMethodAnnotation("AfterCompletion", bean, bean.getEjbClass(), method.getName(), bean.getClass().getSimpleName());
                 }
             }
 
@@ -302,10 +302,6 @@ public class CheckCallbacks extends ValidationBase {
         checkAroundTypeInvoke("AroundTimeout", ejbClass, aroundTimeout.getClassName(), aroundTimeout.getMethodName(), componentName);
     }
 
-    private void ignoredAnnotation(String annotationType, EnterpriseBean bean, String className, String methodName, String beanType) {
-        warn(bean, "ignoredAnnotation", annotationType, beanType, className, methodName);
-    }
-
     private void checkCallback(Class<?> ejbClass, String type, CallbackMethod callback, EnterpriseBean bean, Class... parameterTypes) {
         try {
             Class<?> delcaringClass = null;
@@ -327,7 +323,7 @@ public class CheckCallbacks extends ValidationBase {
                 } else if ("PrePassivate".equals(type)) {
                     if (!callback.getMethodName().equals("ejbPassivate"))
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
-                } else if ("PostConstruct".equals(type)) { 
+                } else if ("PostConstruct".equals(type)) {
                     if (sb.getSessionType().equals(SessionType.STATELESS)) {
                         if (!callback.getMethodName().equals("ejbCreate")) {
                             fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);

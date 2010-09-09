@@ -29,6 +29,7 @@ public class ThreadContext {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<ThreadContext>();
     private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<ThreadContextListener>();
+    private static final ThreadLocal<AtomicBoolean> asynchronousCancelled = new ThreadLocal<AtomicBoolean>();
 
     public static ThreadContext getThreadContext() {
         ThreadContext threadContext = threadStorage.get();
@@ -82,6 +83,18 @@ public class ThreadContext {
                 log.debug("ThreadContextListener threw an exception", e);
             }
         }
+    }
+
+    public static void initAsynchronousCancelled(AtomicBoolean initializeValue) {
+        asynchronousCancelled.set(initializeValue);
+    }
+
+    public static boolean isAsynchronousCancelled() {
+        return asynchronousCancelled.get().get();
+    }
+
+    public static void removeAsynchronousCancelled() {
+        asynchronousCancelled.remove();
     }
 
     public static void addThreadContextListener(ThreadContextListener listener) {

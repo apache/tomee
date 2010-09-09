@@ -50,7 +50,7 @@ public class CheckInvalidAroundTimeoutTest extends TestCase {
         return ejbJar;
     }
 
-    @Keys(@Key(value="ignoredAnnotation",type=KeyType.WARNING))
+    @Keys(@Key(value="ignoredMethodAnnotation",type=KeyType.WARNING))
     public EjbJar testIgnoredAroundTimeout() throws Exception {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatefulBean("TestAroundTimeout", TestAroundTimeout.class));

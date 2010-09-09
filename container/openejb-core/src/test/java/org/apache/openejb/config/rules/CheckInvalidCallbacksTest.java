@@ -48,7 +48,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(ValidationRunner.class)
 public class CheckInvalidCallbacksTest extends TestCase {
-    @Keys({ @Key(value = "ignoredAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.missing.possibleTypo"), @Key("callback.badReturnType"),
+    @Keys({ @Key(value = "ignoredMethodAnnotation", count = 10, type = KeyType.WARNING), @Key("callback.missing.possibleTypo"), @Key("callback.badReturnType"),
                     @Key("callback.badModifier"), @Key("callback.invalidArguments"), @Key("aroundInvoke.missing"), @Key("callback.missing"),
                     @Key(value = "callback.sessionSynchronization.invalidUse", count = 2) })
     public EjbJar test() throws Exception {

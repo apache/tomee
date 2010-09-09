@@ -24,6 +24,13 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -36,6 +43,9 @@ public class AppContext extends DeploymentContext {
     private final boolean standaloneModule;
     private BeanManager beanManager;
 
+    private BlockingQueue<Runnable> blockingQueue;
+    private ExecutorService asynchPool;
+
     // TODO perhaps to be deleted
     private final List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
 
@@ -46,6 +56,8 @@ public class AppContext extends DeploymentContext {
         this.globalJndiContext = globalJndiContext;
         this.appJndiContext = appJndiContext;
         this.standaloneModule = standaloneModule;
+        this.blockingQueue = new LinkedBlockingQueue<Runnable>();
+        this.asynchPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue);
     }
 
     public BeanManager getBeanManager() {
@@ -89,4 +101,17 @@ public class AppContext extends DeploymentContext {
     public boolean isStandaloneModule() {
         return standaloneModule;
     }
+
+    /**
+     *  Asynchronous Invocation Thread Pool Methods
+     */
+    public Future<Object> submitTask(Callable<Object> callable){
+        return asynchPool.submit(callable);
+    }
+
+    public boolean removeTask(Runnable task) {
+        return blockingQueue.remove(task);
+    }
+
+
 }

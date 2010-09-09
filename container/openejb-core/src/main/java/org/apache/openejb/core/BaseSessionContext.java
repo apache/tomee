@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.core;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -51,7 +52,16 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     }
 
     public boolean wasCancelCalled() {
-        throw new UnsupportedOperationException("not yet implemented");
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        CoreDeploymentInfo di = threadContext.getDeploymentInfo();
+        Method runningMethod = threadContext.get(Method.class);
+        if (di.isAsynchronous(runningMethod)) {
+            if(runningMethod.getReturnType() == void.class) {
+                throw new IllegalStateException("Current running method " + runningMethod.getName() + " is an asynchronous method, but its return type is void :" + di.getDestinationId());
+            }
+            return ThreadContext.isAsynchronousCancelled();
+        }
+        throw new IllegalStateException("Current running method " + runningMethod.getName() + " is not an asynchronous method :" + di.getDestinationId());
     }
 
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {

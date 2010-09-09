@@ -37,6 +37,7 @@ public class MethodContext {
     private LockType lockType;
     private TransactionType transactionType;
     private Duration accessTimeout;
+    private boolean asynchronous;
 
     public MethodContext(CoreDeploymentInfo beanContext, Method beanMethod) {
         this.beanContext = beanContext;
@@ -89,6 +90,14 @@ public class MethodContext {
 
     public List<ScheduleData> getSchedules() {
         return schedules;
+    }
+
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(boolean asynchronous) {
+        this.asynchronous = asynchronous;
     }
 
     /**

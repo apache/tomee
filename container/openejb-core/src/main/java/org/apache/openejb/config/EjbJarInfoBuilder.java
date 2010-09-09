@@ -58,6 +58,7 @@ import org.apache.openejb.assembler.classic.TimeoutInfo;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.ApplicationException;
+import org.apache.openejb.jee.AsyncMethod;
 import org.apache.openejb.jee.CallbackMethod;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.CmpVersion;
@@ -602,6 +603,10 @@ public class EjbJarInfoBuilder {
         copyCallbacks(s.getPostConstruct(), bean.postConstruct);
         copyCallbacks(s.getPreDestroy(), bean.preDestroy);
 
+        copyAsynchronous(s.getAsyncMethod(), bean.asynchronous);
+        bean.asynchronousClasses.addAll(s.getAsynchronousClasses());
+
+
         EjbDeployment d = (EjbDeployment) m.get(s.getEjbName());
         if (d == null) {
             throw new OpenEJBException("No deployment information in openejb-jar.xml for bean "
@@ -632,6 +637,17 @@ public class EjbJarInfoBuilder {
         bean.statefulTimeout = toInfo(s.getStatefulTimeout());
 
         return bean;
+    }
+
+    private void copyAsynchronous(List<AsyncMethod> methods, List<NamedMethodInfo> methodInfos) {
+        for (AsyncMethod asyncMethod : methods) {
+            NamedMethodInfo info = new NamedMethodInfo();
+            info.methodName = asyncMethod.getMethodName();
+            if (asyncMethod.getMethodParams() != null) {
+                info.methodParams = asyncMethod.getMethodParams().getMethodParam();
+            }
+            methodInfos.add(info);
+        }
     }
 
     private TimeoutInfo toInfo(Timeout timeout) {

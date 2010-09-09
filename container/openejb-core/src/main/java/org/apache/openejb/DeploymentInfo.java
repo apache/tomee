@@ -160,4 +160,6 @@ public interface DeploymentInfo {
     public Set<String> getDependsOn();
 
     public boolean isSessionSynchronized();
+
+    public Set<String> getAsynchronousMethodSignatures();
 }
