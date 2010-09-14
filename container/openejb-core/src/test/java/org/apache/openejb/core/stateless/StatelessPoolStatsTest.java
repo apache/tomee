@@ -101,6 +101,7 @@ public class StatelessPoolStatsTest extends TestCase {
         expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts.Latest", "java.lang.String", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesActive", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesIdle", "int", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("InstancesInitializing", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesPooled", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("MaxAge", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("MaxAgeOffset", "double", "", true, false, false));
@@ -134,6 +135,7 @@ public class StatelessPoolStatsTest extends TestCase {
         expectedAttributesValue.put("InstancesPooled", (int) 3);
         expectedAttributesValue.put("InstancesActive", (int) 0);
         expectedAttributesValue.put("InstancesIdle", (int) 3);
+        expectedAttributesValue.put("InstancesInitializing", (int) 0);
         expectedAttributesValue.put("MaxAge", (long) 0);
         expectedAttributesValue.put("MaxAgeOffset", (double) (-1.0));
         expectedAttributesValue.put("MaxSize", (int) 15);
