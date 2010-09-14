@@ -947,7 +947,12 @@ public class Pool<T> {
 
         @Managed
         private int getInstancesIdle() {
-            return getInstancesPooled() - getInstancesActive();
+            return Math.max(0, getInstancesPooled() - getInstancesActive());
+        }
+
+        @Managed
+        private int getInstancesInitializing() {
+            return Math.max(0, getInstancesActive() - getInstancesPooled());
         }
 
         @Managed
