@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.entity;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ApplicationException;
 
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -42,12 +42,12 @@ public class EntrancyTracker {
         this.synchronizationRegistry = synchronizationRegistry;
     }
 
-    public void enter(DeploymentInfo deploymentInfo, Object primaryKey) throws ApplicationException {
-        if (primaryKey == null || deploymentInfo.isReentrant()) {
+    public void enter(BeanContext beanContext, Object primaryKey) throws ApplicationException {
+        if (primaryKey == null || beanContext.isReentrant()) {
             return;
         }
 
-        Object deploymentId = deploymentInfo.getDeploymentID();
+        Object deploymentId = beanContext.getDeploymentID();
         InstanceKey key = new InstanceKey(deploymentId, primaryKey);
 
 
@@ -71,12 +71,12 @@ public class EntrancyTracker {
 
     }
 
-    public void exit(DeploymentInfo deploymentInfo, Object primaryKey) throws ApplicationException {
-        if (primaryKey == null || deploymentInfo.isReentrant()) {
+    public void exit(BeanContext beanContext, Object primaryKey) throws ApplicationException {
+        if (primaryKey == null || beanContext.isReentrant()) {
             return;
         }
 
-        Object deploymentId = deploymentInfo.getDeploymentID();
+        Object deploymentId = beanContext.getDeploymentID();
         InstanceKey key = new InstanceKey(deploymentId, primaryKey);
 
         Set<InstanceKey> inCall = null;

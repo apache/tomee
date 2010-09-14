@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core;
+package org.apache.openejb;
 
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -30,7 +30,7 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class MethodContext {
-    private final CoreDeploymentInfo beanContext;
+    private final BeanContext beanContext;
     private final Method beanMethod;
     private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
     private final List<InterceptorData> interceptors = new ArrayList<InterceptorData>();
@@ -39,7 +39,7 @@ public class MethodContext {
     private Duration accessTimeout;
     private boolean asynchronous;
 
-    public MethodContext(CoreDeploymentInfo beanContext, Method beanMethod) {
+    public MethodContext(BeanContext beanContext, Method beanMethod) {
         this.beanContext = beanContext;
         this.beanMethod = beanMethod;
     }
@@ -52,7 +52,7 @@ public class MethodContext {
         return accessTimeout;
     }
 
-    public CoreDeploymentInfo getBeanContext() {
+    public BeanContext getBeanContext() {
         return beanContext;
     }
 

@@ -22,14 +22,14 @@ import java.util.List;
 import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
 public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatelessEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, interfaceType, interfaces, mainInterface);
+    public StatelessEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
@@ -45,8 +45,8 @@ public class StatelessEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        return new StatelessEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
+    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new StatelessEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

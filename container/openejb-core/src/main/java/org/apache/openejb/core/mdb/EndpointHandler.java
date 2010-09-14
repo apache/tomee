@@ -19,8 +19,7 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.mdb.Instance;
+import org.apache.openejb.BeanContext;
 
 import javax.ejb.EJBException;
 import javax.resource.spi.ApplicationServerInternalException;
@@ -64,14 +63,14 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     private final MdbContainer container;
-    private final CoreDeploymentInfo deployment;
+    private final BeanContext deployment;
     private final MdbInstanceFactory instanceFactory;
     private final XAResource xaResource;
 
     private State state = State.NONE;
     private Object instance;
 
-    public EndpointHandler(MdbContainer container, CoreDeploymentInfo deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
+    public EndpointHandler(MdbContainer container, BeanContext deployment, MdbInstanceFactory instanceFactory, XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceFactory = instanceFactory;

@@ -30,7 +30,7 @@ import javax.ejb.TimerConfig;
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
@@ -56,7 +56,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
     public static final String OPENEJB_TIMEOUT_JOB_NAME = "OPENEJB_TIMEOUT_JOB";
     public static final String OPENEJB_TIMEOUT_JOB_GROUP_NAME = "OPENEJB_TIMEOUT_GROUP";
     private final TransactionManager transactionManager;
-    final DeploymentInfo deployment;
+    final BeanContext deployment;
     private final boolean transacted;
     private final int retryAttempts;
 
@@ -64,7 +64,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
 
     private Scheduler scheduler;
 
-    public EjbTimerServiceImpl(DeploymentInfo deployment) {
+    public EjbTimerServiceImpl(BeanContext deployment) {
         this(deployment, getDefaultTransactionManager(), getDefaultScheduler(), new MemoryTimerStore(getDefaultTransactionManager()), 1);
     }
 
@@ -72,7 +72,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
 
-    public EjbTimerServiceImpl(DeploymentInfo deployment, TransactionManager transactionManager, Scheduler scheduler, TimerStore timerStore, int retryAttempts) {
+    public EjbTimerServiceImpl(BeanContext deployment, TransactionManager transactionManager, Scheduler scheduler, TimerStore timerStore, int retryAttempts) {
         this.deployment = deployment;
         this.transactionManager = transactionManager;
         this.scheduler = scheduler;

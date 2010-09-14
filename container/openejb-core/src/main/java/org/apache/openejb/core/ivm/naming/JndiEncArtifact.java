@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.DeploymentInfo;
 /*
   This class is used as a replacement when a IvmContext referenced by a stateful bean 
   is being serialized for passivation along with the bean.  It ensures that the entire
   JNDI ENC graph is not serialized with the bean and returns a reference to the correct
   IvmContext when its deserialized.
 
-  Stateful beans are activated by a thread with the relavent DeploymentInfo object in the 
+  Stateful beans are activated by a thread with the relavent BeanContext object in the 
   ThreadContext which makes it possible to lookup the correct IvmContext and swap in place of 
   this object.
 */
@@ -42,7 +42,7 @@ public class JndiEncArtifact implements java.io.Serializable {
 
     public Object readResolve() throws java.io.ObjectStreamException {
         ThreadContext thrdCntx = ThreadContext.getThreadContext();
-        DeploymentInfo deployment = thrdCntx.getDeploymentInfo();
+        BeanContext deployment = thrdCntx.getBeanContext();
         javax.naming.Context cntx = deployment.getJndiEnc();
         try {
             Object obj = cntx.lookup(path);

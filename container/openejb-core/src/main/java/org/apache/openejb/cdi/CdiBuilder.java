@@ -16,15 +16,14 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -32,11 +31,8 @@ import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.inject.AlternativesManager;
-import org.apache.webbeans.intercept.InterceptorComparator;
 import org.apache.webbeans.intercept.InterceptorData;
 import org.apache.webbeans.intercept.InterceptorsManager;
-import org.apache.webbeans.intercept.WebBeansInterceptorConfig;
-import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
 import org.apache.webbeans.plugins.PluginLoader;
 import org.apache.webbeans.portable.AnnotatedElementFactory;
 import org.apache.webbeans.portable.events.ExtensionLoader;
@@ -46,15 +42,12 @@ import org.apache.webbeans.util.AnnotationUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.InterceptionType;
 import javax.interceptor.Interceptor;
-import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -92,7 +85,7 @@ public class CdiBuilder {
         }
     }
 
-    public void build(List<DeploymentInfo> ejbDeployments) throws OpenEJBException {
+    public void build(List<BeanContext> ejbDeployments) throws OpenEJBException {
 
         long startTime = System.currentTimeMillis();
         final ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
@@ -157,10 +150,10 @@ public class CdiBuilder {
                 //Discover classpath classes
                 deployManagedBeans(cdiScanner.getBeanClasses());
 
-                for (DeploymentInfo deployment : ejbDeployments) {
-                    if (!deployment.getComponentType().isSession()) continue;
+                for (BeanContext beanContext : ejbDeployments) {
+                    if (!beanContext.getComponentType().isSession()) continue;
 
-                    final Class implClass = deployment.getBeanClass();
+                    final Class implClass = beanContext.getBeanClass();
 
                     //Define annotation type
                     AnnotatedType<?> annotatedType = AnnotatedElementFactory.getInstance().newAnnotatedType(implClass);
@@ -174,12 +167,11 @@ public class CdiBuilder {
                         continue;
                     }
 
-                    CdiEjbBean<Object> bean = new CdiEjbBean<Object>(deployment);
+                    CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext);
 
-                    CoreDeploymentInfo info = (CoreDeploymentInfo) deployment;
-                    info.set(CdiEjbBean.class, bean);
+                    beanContext.set(CdiEjbBean.class, bean);
                     
-                    info.addSystemInterceptor(new CdiInterceptor(bean, manager, cdiPlugin.getContexsServices()));
+                    beanContext.addSystemInterceptor(new CdiInterceptor(bean, manager, cdiPlugin.getContexsServices()));
 
                     EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
@@ -195,10 +187,9 @@ public class CdiBuilder {
                 //Validate injection Points
                 BeansDeployer.validateInjectionPoints(manager);
 
-                for (DeploymentInfo deployment : ejbDeployments) {
-                    final CoreDeploymentInfo info = (CoreDeploymentInfo) deployment;
-                    if (!info.getComponentType().isSession()) continue;
-                    final CdiEjbBean bean = info.get(CdiEjbBean.class);
+                for (BeanContext beanContext : ejbDeployments) {
+                    if (!beanContext.getComponentType().isSession()) continue;
+                    final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
 
                     // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate. 
                     final List<InterceptorData> datas = bean.getInterceptorStack();
@@ -209,7 +200,7 @@ public class CdiBuilder {
                         converted.add(org.apache.openejb.core.interceptor.InterceptorData.scan(data.getInterceptorClass()));
                     }
 
-                    info.setCdiInterceptors(converted);
+                    beanContext.setCdiInterceptors(converted);
                 }
 
                 //Fire Event

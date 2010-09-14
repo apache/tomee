@@ -21,8 +21,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.webadmin.HttpRequest;
@@ -131,7 +130,7 @@ public class DeploymentListBean extends WebAdminBean {
         SystemInstance system = SystemInstance.get();
         ContainerSystem containerSystem = system.getComponent(ContainerSystem.class);
 
-        CoreDeploymentInfo di = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(id);
+        BeanContext beanContext = containerSystem.getBeanContext(id);
 
         printRow("Name", bean.ejbName, body);
         printRow(
@@ -141,7 +140,7 @@ public class DeploymentListBean extends WebAdminBean {
 
         String type = null;
 
-        switch (di.getComponentType()) {
+        switch (beanContext.getComponentType()) {
             case CMP_ENTITY :
                 type = "EntityBean with Container-Managed Persistence";
                 break;
@@ -172,7 +171,7 @@ public class DeploymentListBean extends WebAdminBean {
         printRow("Jar location", bean.codebase, body);
 
         //String container = URLEncoder.encode("" + di.getContainer().getContainerID());
-        String container = (String)di.getContainer().getContainerID();
+        String container = (String) beanContext.getContainer().getContainerID();
         printRow("Deployed in", container, body);
 
         body.println("</table>");
@@ -230,7 +229,7 @@ public class DeploymentListBean extends WebAdminBean {
         SystemInstance system = SystemInstance.get();
         ContainerSystem containerSystem = system.getComponent(ContainerSystem.class);
 
-        DeploymentInfo[] deployments = containerSystem.deployments();
+        BeanContext[] deployments = containerSystem.deployments();
         String[] deploymentString = new String[deployments.length];
         out.println("<table width=\"100%\" border=\"1\">");
         out.println("<tr bgcolor=\"#5A5CB8\">");

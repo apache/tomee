@@ -16,13 +16,12 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.MethodContext;
+import org.apache.openejb.MethodContext;
 
 import javax.ejb.LockType;
 import java.util.HashMap;
@@ -40,15 +39,15 @@ public class MethodConcurrencyBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodConcurrencyBuilder.class);
 
-    public void build(HashMap<String, DeploymentInfo> deployments, List<MethodConcurrencyInfo> methodConcurrencys) throws OpenEJBException {
-        for (DeploymentInfo deploymentInfo : deployments.values()) {
-            MethodConcurrencyBuilder.applyConcurrencyAttributes((CoreDeploymentInfo) deploymentInfo, methodConcurrencys);
+    public void build(HashMap<String, BeanContext> deployments, List<MethodConcurrencyInfo> methodConcurrencys) throws OpenEJBException {
+        for (BeanContext beanContext : deployments.values()) {
+            MethodConcurrencyBuilder.applyConcurrencyAttributes(beanContext, methodConcurrencys);
         }
     }
 
-    public static void applyConcurrencyAttributes(CoreDeploymentInfo deploymentInfo, List<MethodConcurrencyInfo> methodConcurrencyInfos) throws OpenEJBException {
+    public static void applyConcurrencyAttributes(BeanContext beanContext, List<MethodConcurrencyInfo> methodConcurrencyInfos) throws OpenEJBException {
 
-        if (deploymentInfo.isBeanManagedConcurrency()) return;
+        if (beanContext.isBeanManagedConcurrency()) return;
 
         Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodConcurrencyBuilder.class);
         
@@ -60,7 +59,7 @@ public class MethodConcurrencyBuilder {
         Map<Method, MethodAttributeInfo> attributes;
         
         // handle @Lock
-        attributes = MethodInfoUtil.resolveAttributes(lockInfos, deploymentInfo);
+        attributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
         
         if (log.isDebugEnabled()) {
             for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
@@ -73,13 +72,13 @@ public class MethodConcurrencyBuilder {
 
         for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
             MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
-            MethodContext methodContext = deploymentInfo.getMethodContext(entry.getKey());
+            MethodContext methodContext = beanContext.getMethodContext(entry.getKey());
             String s = value.concurrencyAttribute.toUpperCase();
             methodContext.setLockType(LockType.valueOf(s));
         }
         
         // handle @AccessTimeout
-        attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, deploymentInfo);
+        attributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
             
         if (log.isDebugEnabled()) {
             for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
@@ -92,7 +91,7 @@ public class MethodConcurrencyBuilder {
         
         for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
             MethodConcurrencyInfo value = (MethodConcurrencyInfo) entry.getValue();
-            MethodContext methodContext = deploymentInfo.getMethodContext(entry.getKey());
+            MethodContext methodContext = beanContext.getMethodContext(entry.getKey());
             Duration accessTimeout = new Duration(value.accessTimeout.time, TimeUnit.valueOf(value.accessTimeout.unit));
             methodContext.setAccessTimeout(accessTimeout);
         }

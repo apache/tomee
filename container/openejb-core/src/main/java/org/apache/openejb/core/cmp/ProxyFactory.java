@@ -18,7 +18,7 @@
 package org.apache.openejb.core.cmp;
 
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -27,28 +27,28 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EntityBean;
 
 public class ProxyFactory {
-    private final CoreDeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
     private final KeyGenerator keyGenerator;
     private final Class remoteInterface;
     private final EntityEjbHomeHandler remoteHandler;
     private final Class localInterface;
     private final EntityEjbHomeHandler localHandler;
 
-    public ProxyFactory(CoreDeploymentInfo deploymentInfo) {
-        this.deploymentInfo = deploymentInfo;
-        keyGenerator = deploymentInfo.getKeyGenerator();
+    public ProxyFactory(BeanContext beanContext) {
+        this.beanContext = beanContext;
+        keyGenerator = beanContext.getKeyGenerator();
 
-        remoteInterface = deploymentInfo.getRemoteInterface();
+        remoteInterface = beanContext.getRemoteInterface();
         if (remoteInterface != null) {
-            EJBHome homeProxy = deploymentInfo.getEJBHome();
+            EJBHome homeProxy = beanContext.getEJBHome();
             remoteHandler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(homeProxy);
         } else {
             remoteHandler = null;
         }
 
-        localInterface = deploymentInfo.getLocalInterface();
+        localInterface = beanContext.getLocalInterface();
         if (localInterface != null) {
-            EJBLocalHome localHomeProxy = deploymentInfo.getEJBLocalHome();
+            EJBLocalHome localHomeProxy = beanContext.getEJBLocalHome();
             localHandler = (EntityEjbHomeHandler) ProxyManager.getInvocationHandler(localHomeProxy);
         } else {
             localHandler = null;
@@ -61,7 +61,7 @@ public class ProxyFactory {
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = remoteHandler.createProxy(primaryKey, deploymentInfo.getRemoteInterface());
+        Object proxy = remoteHandler.createProxy(primaryKey, beanContext.getRemoteInterface());
         return proxy;
     }
 
@@ -71,7 +71,7 @@ public class ProxyFactory {
         Object primaryKey = keyGenerator.getPrimaryKey(bean);
 
         // create the proxy
-        Object proxy = localHandler.createProxy(primaryKey, deploymentInfo.getLocalInterface());
+        Object proxy = localHandler.createProxy(primaryKey, beanContext.getLocalInterface());
         return proxy;
 
     }

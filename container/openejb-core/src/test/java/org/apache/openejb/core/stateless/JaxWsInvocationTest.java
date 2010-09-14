@@ -17,6 +17,7 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
@@ -30,7 +31,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 
@@ -86,11 +86,11 @@ public class JaxWsInvocationTest extends TestCase {
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo("EchoBean");
+        BeanContext beanContext = containerSystem.getBeanContext("EchoBean");
 
-        assertNotNull(deploymentInfo);
+        assertNotNull(beanContext);
 
-        assertEquals("ServiceEndpointInterface", EchoServiceEndpoint.class, deploymentInfo.getServiceEndpointInterface());
+        assertEquals("ServiceEndpointInterface", EchoServiceEndpoint.class, beanContext.getServiceEndpointInterface());
 
 
         // OK, Now let's fake a web serivce invocation coming from any random
@@ -114,7 +114,7 @@ public class JaxWsInvocationTest extends TestCase {
 
         // Let's grab the container as the Web Service Provider would do and
         // perform an invocation
-        RpcContainer container = (RpcContainer) deploymentInfo.getContainer();
+        RpcContainer container = (RpcContainer) beanContext.getContainer();
 
         Method echoMethod = EchoServiceEndpoint.class.getMethod("echo", String.class);
 

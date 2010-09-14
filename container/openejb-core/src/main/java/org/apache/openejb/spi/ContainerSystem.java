@@ -16,26 +16,23 @@
  */
 package org.apache.openejb.spi;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.WebDeploymentInfo;
-import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.WebContext;
 
 import javax.naming.Context;
-import javax.xml.namespace.QName;
-import java.net.URL;
 
 public interface ContainerSystem {
 
-    public DeploymentInfo getDeploymentInfo(Object id);
+    public BeanContext getBeanContext(Object id);
 
-    public DeploymentInfo [] deployments();
+    public BeanContext[] deployments();
 
     public Container getContainer(Object id);
 
     public Container [] containers();
 
-    WebDeploymentInfo getWebDeploymentInfo(String id);
+    WebContext getWebContext(String id);
 
     Context getJNDIContext();
 }

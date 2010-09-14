@@ -18,21 +18,21 @@
 package org.apache.openejb.server.cxf.ejb;
 
 import org.apache.cxf.Bus;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.CxfWsContainer;
 
 public class EjbWsContainer extends CxfWsContainer {
-    private final DeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
 
-    public EjbWsContainer(Bus bus, PortData port, DeploymentInfo deploymentInfo) {
+    public EjbWsContainer(Bus bus, PortData port, BeanContext beanContext) {
         super(bus, port);
-        if (deploymentInfo == null) throw new NullPointerException("deploymentInfo is null");
-        this.deploymentInfo = deploymentInfo;
+        if (beanContext == null) throw new NullPointerException("deploymentInfo is null");
+        this.beanContext = beanContext;
     }
 
     protected EjbEndpoint createEndpoint() {
-    	EjbEndpoint ep = new EjbEndpoint(bus, port, deploymentInfo, httpTransportFactory);
+    	EjbEndpoint ep = new EjbEndpoint(bus, port, beanContext, httpTransportFactory);
         return ep;
     }
 

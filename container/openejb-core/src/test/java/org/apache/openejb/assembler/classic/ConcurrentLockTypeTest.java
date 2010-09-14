@@ -17,8 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.EjbJar;
@@ -116,11 +116,11 @@ public class ConcurrentLockTypeTest extends TestCase {
 
     private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
         ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) system.getDeploymentInfo(deploymentId);
+        BeanContext beanContext = system.getBeanContext(deploymentId);
         List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
         List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
-        attributes = MethodInfoUtil.resolveAttributes(lockInfos, deploymentInfo);
+        attributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
     }
 
     private void assertAttribute(String attribute, Method method) {

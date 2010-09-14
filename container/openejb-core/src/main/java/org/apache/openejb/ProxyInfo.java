@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class ProxyInfo {
 
-    protected DeploymentInfo deploymentInfo;
+    protected BeanContext beanContext;
     protected Object primaryKey;
     protected List<Class> proxyInterfaces;
     protected RpcContainer beanContainer;
@@ -31,12 +31,12 @@ public class ProxyInfo {
     protected ProxyInfo() {
     }
 
-    public ProxyInfo(DeploymentInfo deploymentInfo, Object primaryKey, List<Class> interfaces, InterfaceType proxyType, Class mainInterface) {
-        this.deploymentInfo = deploymentInfo;
+    public ProxyInfo(BeanContext beanContext, Object primaryKey, List<Class> interfaces, InterfaceType proxyType, Class mainInterface) {
+        this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.proxyInterfaces = interfaces;
         this.interfaceType = proxyType;
-        this.beanContainer = (RpcContainer) deploymentInfo.getContainer();
+        this.beanContainer = (RpcContainer) beanContext.getContainer();
         this.mainInterface = mainInterface;
     }
 
@@ -49,7 +49,7 @@ public class ProxyInfo {
      * @param depInfo
      * @param pk
      */
-    public ProxyInfo(DeploymentInfo depInfo, Object pk) {
+    public ProxyInfo(BeanContext depInfo, Object pk) {
         this(depInfo, pk, new ArrayList<Class>(), InterfaceType.UNKNOWN, null);
     }
 
@@ -57,8 +57,8 @@ public class ProxyInfo {
         return interfaceType;
     }
 
-    public DeploymentInfo getDeploymentInfo() {
-        return deploymentInfo;
+    public BeanContext getBeanContext() {
+        return beanContext;
     }
 
     public Object getPrimaryKey() {

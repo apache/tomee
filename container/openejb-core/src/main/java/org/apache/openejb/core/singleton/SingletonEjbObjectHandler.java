@@ -18,8 +18,7 @@ package org.apache.openejb.core.singleton;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.ivm.BaseEjbProxyHandler;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -30,8 +29,8 @@ import java.util.List;
 public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
-    public SingletonEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
+    public SingletonEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {

@@ -21,7 +21,7 @@ import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.HandlerData;
@@ -67,8 +67,8 @@ public class AxisService extends WsService {
         return serviceInfo;
     }
 
-    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) throws Exception {
-        ClassLoader classLoader = deploymentInfo.getClassLoader();
+    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext) throws Exception {
+        ClassLoader classLoader = beanContext.getClassLoader();
 
         // todo build JaxRpcServiceInfo in assembler
         JaxRpcServiceInfo serviceInfo = getJaxRpcServiceInfo(classLoader);
@@ -78,17 +78,17 @@ public class AxisService extends WsService {
         JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
 
         // Create service
-        RPCProvider provider = new EjbContainerProvider(deploymentInfo, createHandlerInfos(port.getHandlerChains()));
+        RPCProvider provider = new EjbContainerProvider(beanContext, createHandlerInfos(port.getHandlerChains()));
         SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(serviceDesc);
 
         // Set class name
-        service.setOption("className", deploymentInfo.getServiceEndpointInterface().getName());
-        serviceDesc.setImplClass(deploymentInfo.getServiceEndpointInterface());
+        service.setOption("className", beanContext.getServiceEndpointInterface().getName());
+        serviceDesc.setImplClass(beanContext.getServiceEndpointInterface());
 
         // Create container
         AxisWsContainer container = new AxisWsContainer(port.getWsdlUrl(), service, null, classLoader);
-        wsContainers.put(deploymentInfo.getDeploymentID().toString(), container);
+        wsContainers.put(beanContext.getDeploymentID().toString(), container);
         return container;
     }
 

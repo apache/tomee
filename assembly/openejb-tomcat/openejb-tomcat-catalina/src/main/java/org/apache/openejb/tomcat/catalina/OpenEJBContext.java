@@ -254,7 +254,7 @@ public class OpenEJBContext implements Context {
      */
     private Context getThreadContext() throws NamingException {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        Context context = threadContext.getDeploymentInfo().getJndiEnc();
+        Context context = threadContext.getBeanContext().getJndiEnc();
         return context;
     }
 

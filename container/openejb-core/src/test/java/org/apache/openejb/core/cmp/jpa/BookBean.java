@@ -17,11 +17,11 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.cmp.cmp2.SetValuedCmr;
 import org.apache.openejb.core.cmp.cmp2.Cmp2Entity;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -36,7 +36,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new CoreDeploymentInfo("book", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
+            deploymentInfo = new BeanContext("book", null, new ModuleContext("", new AppContext("", SystemInstance.get(), Book.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
                     BookBean.class,
                     null,
                     null,
@@ -46,7 +46,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
                     null,
                     String.class,
                     BeanType.CMP_ENTITY, false);
-            ((CoreDeploymentInfo)deploymentInfo).createMethodMap();
+            ((BeanContext) deploymentInfo).createMethodMap();
         } catch (SystemException e) {
             throw new RuntimeException(e);
         }

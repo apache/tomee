@@ -16,16 +16,16 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 
 /**
  * @version $Rev$ $Date$
  */
 public class    BusinessRemoteReference extends Reference {
 
-    private final DeploymentInfo.BusinessRemoteHome businessHome;
+    private final BeanContext.BusinessRemoteHome businessHome;
 
-    public BusinessRemoteReference(DeploymentInfo.BusinessRemoteHome businessHome) {
+    public BusinessRemoteReference(BeanContext.BusinessRemoteHome businessHome) {
         this.businessHome = businessHome;
     }
 

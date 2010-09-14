@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.BeanContext;
+
 import java.util.Map;
 
 /**
@@ -23,7 +25,7 @@ import java.util.Map;
  */
 public class InstanceContext {
 
-    private final CoreDeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
     private final Object bean;
     private final Map<String, Object> interceptors;
 
@@ -33,14 +35,14 @@ public class InstanceContext {
      */
     private Object instanceData;
 
-    public InstanceContext(CoreDeploymentInfo deploymentInfo, Object bean, Map<String, Object> interceptors) {
-        this.deploymentInfo = deploymentInfo;
+    public InstanceContext(BeanContext beanContext, Object bean, Map<String, Object> interceptors) {
+        this.beanContext = beanContext;
         this.bean = bean;
         this.interceptors = interceptors;
     }
 
-    public CoreDeploymentInfo getDeploymentInfo() {
-        return deploymentInfo;
+    public BeanContext getBeanContext() {
+        return beanContext;
     }
 
     public Object getBean() {

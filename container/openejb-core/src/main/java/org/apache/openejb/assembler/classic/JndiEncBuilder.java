@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.AppContext;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;

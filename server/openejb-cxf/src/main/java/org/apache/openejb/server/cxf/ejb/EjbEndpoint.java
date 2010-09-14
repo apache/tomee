@@ -26,7 +26,7 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.handler.logical.LogicalHandlerInInterceptor;
 import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
@@ -42,11 +42,11 @@ import java.util.List;
  * A web service endpoint which invokes an EJB container.
  */
 public class EjbEndpoint extends CxfEndpoint {
-    private final DeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
 
-    public EjbEndpoint(Bus bus, PortData portData, DeploymentInfo deploymentInfo, HttpTransportFactory httpTransportFactory) {
-        super(bus, portData, deploymentInfo.getJndiEnc(), deploymentInfo.getBeanClass(), httpTransportFactory);
-        this.deploymentInfo = deploymentInfo;
+    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HttpTransportFactory httpTransportFactory) {
+        super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory);
+        this.beanContext = beanContext;
 
         String bindingURI = JaxWsUtils.getBindingURI(portData.getBindingID());
         implInfo = new JaxWsImplementorInfoImpl((Class) implementor, bindingURI);
@@ -74,7 +74,7 @@ public class EjbEndpoint extends CxfEndpoint {
         }
 
         // Set service to invoke the target ejb
-        service.setInvoker(new EjbMethodInvoker(this.bus, deploymentInfo));
+        service.setInvoker(new EjbMethodInvoker(this.bus, beanContext));
 
         // Remove interceptors that perform handler processing since
         // handler processing must happen within the EJB container.

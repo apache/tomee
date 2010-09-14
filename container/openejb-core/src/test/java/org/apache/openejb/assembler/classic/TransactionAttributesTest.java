@@ -18,12 +18,13 @@ package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.assembler.classic.MethodTransactionBuilder.normalize;
 import junit.framework.TestCase;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.core.CoreDeploymentInfo;
+
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.*;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
@@ -115,9 +116,9 @@ public class TransactionAttributesTest extends TestCase {
 
     private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
         ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) system.getDeploymentInfo(deploymentId);
+        BeanContext beanContext = system.getBeanContext(deploymentId);
         List<MethodTransactionInfo> infos = normalize(ejbJarInfo.methodTransactions);
-        attributes = resolveAttributes(infos, deploymentInfo);
+        attributes = resolveAttributes(infos, beanContext);
     }
 
     private void assertAttribute(String attribute, Method method) {

@@ -19,7 +19,6 @@ package org.apache.openejb.webadmin.clienttools;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -27,24 +26,18 @@ import javax.naming.InitialContext;
 import javax.ejb.Stateless;
 import javax.ejb.RemoteHome;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.webadmin.HttpRequest;
 import org.apache.openejb.webadmin.HttpResponse;
 import org.apache.openejb.webadmin.HttpSession;
 import org.apache.openejb.webadmin.WebAdminBean;
 import org.apache.openejb.webadmin.HttpHome;
-import org.apache.openejb.assembler.classic.ContainerInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.BeanType;
 
 /**
@@ -102,7 +95,7 @@ public class ViewEjbBean extends WebAdminBean implements Constants {
 
         String id = (name.startsWith("/")) ? name.substring(1, name.length()) : name;
 
-        org.apache.openejb.DeploymentInfo ejb = containerSystem.getDeploymentInfo(id);
+        BeanContext ejb = containerSystem.getBeanContext(id);
 
 
         if (ejb == null) {
@@ -217,7 +210,7 @@ public class ViewEjbBean extends WebAdminBean implements Constants {
             printRow(pepperImg, invokerURL, out);
         }
 
-        Context enc = ((org.apache.openejb.core.CoreDeploymentInfo) ejb).getJndiEnc();
+        Context enc = ejb.getJndiEnc();
         String ctxID = "enc" + enc.hashCode();
         session.setAttribute(ctxID, enc);
         String jndiURL =

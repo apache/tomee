@@ -177,7 +177,7 @@ public final class OpenEJB {
                 logger.debug("startup.debugDeployments", containerSystem.deployments().length);
                 if (containerSystem.deployments().length > 0) {
                     logger.debug("startup.debugDeploymentsType");
-                    DeploymentInfo[] d = containerSystem.deployments();
+                    BeanContext[] d = containerSystem.deployments();
                     for (int i = 0; i < d.length; i++) {
                         String entry = "   ";
                         switch (d[i].getComponentType()) {

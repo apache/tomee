@@ -22,12 +22,44 @@ import org.apache.openejb.Injection;
 import javax.naming.Context;
 import java.util.Collection;
 
-public interface WebDeploymentInfo {
-    String getId();
 
-    ClassLoader getClassLoader();
+import org.apache.openejb.Injection;
 
-    Collection<Injection> getInjections();
+import javax.naming.Context;
+import java.util.Collection;
+import java.util.ArrayList;
 
-    Context getJndiEnc();
+public class WebContext {
+    private String id;
+    private ClassLoader classLoader;
+    private final Collection<Injection> injections = new ArrayList<Injection>();
+    private Context jndiEnc;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public Collection<Injection> getInjections() {
+        return injections;
+    }
+
+    public Context getJndiEnc() {
+        return jndiEnc;
+    }
+
+    public void setJndiEnc(Context jndiEnc) {
+        this.jndiEnc = jndiEnc;
+    }
 }

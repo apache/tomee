@@ -26,9 +26,8 @@ import javax.ejb.EJBException;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.ThreadContext;
 
 public class TimerImpl implements Timer {
     private final TimerData timerData;
@@ -86,7 +85,7 @@ public class TimerImpl implements Timer {
      * Insure that timer methods can be invoked for the current operation on this Context.
      */
     private void checkState() throws IllegalStateException, NoSuchObjectLocalException {
-        final DeploymentInfo deployment = timerData.timerService.deployment;
+        final BeanContext deployment = timerData.timerService.deployment;
         final BaseContext context = (BaseContext) deployment.get(EJBContext.class);
         context.check(BaseContext.Call.timerMethod);
 

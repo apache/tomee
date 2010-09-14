@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.core.stateless;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -29,8 +29,8 @@ import java.util.List;
 public class StatelessEjbObjectHandler extends EjbObjectProxyHandler {
     public Object registryId;
 
-    public StatelessEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
+    public StatelessEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
     public static Object createRegistryId(Object primKey, Object deployId, Container contnr) {

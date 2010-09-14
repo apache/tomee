@@ -16,14 +16,11 @@
  */
 package org.apache.openejb.jetty.common;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.security.SecurityServiceImpl;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.DeploymentInfo;
-import org.eclipse.jetty.plus.jaas.JAASUserPrincipal;
 import org.eclipse.jetty.server.Authentication;
 
 import javax.security.auth.Subject;
-import java.security.Principal;
 import java.util.LinkedList;
 
 public class JettySecurityService extends SecurityServiceImpl {
@@ -60,8 +57,8 @@ public class JettySecurityService extends SecurityServiceImpl {
         }
     }
 
-    protected Subject getRunAsSubject(DeploymentInfo callingDeploymentInfo) {
-        Subject runAsSubject = super.getRunAsSubject(callingDeploymentInfo);
+    protected Subject getRunAsSubject(BeanContext callingBeanContext) {
+        Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) return runAsSubject;
 
         LinkedList<Subject> stack = runAsStack.get();

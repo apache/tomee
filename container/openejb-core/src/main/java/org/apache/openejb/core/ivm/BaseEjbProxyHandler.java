@@ -52,9 +52,9 @@ import javax.ejb.AccessLocalException;
 import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -77,7 +77,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public boolean inProxyMap = false;
 
-    private transient WeakReference<DeploymentInfo> deploymentInfo;
+    private transient WeakReference<BeanContext> beanContextRef;
 
     public transient RpcContainer container;
 
@@ -105,16 +105,16 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     private transient WeakHashMap<Class,Object> interfaces;
     private transient WeakReference<Class> mainInterface;
 
-    public BaseEjbProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        this.container = (RpcContainer) deploymentInfo.getContainer();
-        this.deploymentID = deploymentInfo.getDeploymentID();
+    public BaseEjbProxyHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        this.container = (RpcContainer) beanContext.getContainer();
+        this.deploymentID = beanContext.getDeploymentID();
         this.interfaceType = interfaceType;
         this.primaryKey = pk;
-        this.setDeploymentInfo(deploymentInfo);
+        this.setBeanContext(beanContext);
 
         if (interfaces == null || interfaces.size() == 0) {
             InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
-            interfaces = new ArrayList<Class>(deploymentInfo.getInterfaces(objectInterfaceType));
+            interfaces = new ArrayList<Class>(beanContext.getInterfaces(objectInterfaceType));
             if (mainInterface == null && interfaces.size() == 1) {
                 mainInterface = interfaces.get(0);
             }
@@ -122,7 +122,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         setInterfaces(interfaces);
         setMainInterface(mainInterface);
         if (mainInterface == null) {
-            throw new IllegalArgumentException("No mainInterface: otherwise di: " + deploymentInfo + " InterfaceType: " + interfaceType + " interfaces: " + interfaces );
+            throw new IllegalArgumentException("No mainInterface: otherwise di: " + beanContext + " InterfaceType: " + interfaceType + " interfaces: " + interfaces );
         }
         this.setDoIntraVmCopy(REMOTE_COPY_ENABLED && !interfaceType.isLocal() && !interfaceType.isLocalBean());
     }
@@ -249,7 +249,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
                 IntraVmCopyMonitor.pre(strategy);
                 ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(getDeploymentInfo().getClassLoader());
+                Thread.currentThread().setContextClassLoader(getBeanContext().getClassLoader());
                 try {
                     args = copyArgs(args);
                     method = copyMethod(method);
@@ -307,7 +307,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 throw new NoSuchEJBException("reference is invalid");
             }
         }
-        getDeploymentInfo(); // will throw an exception if app has been undeployed.
+        getBeanContext(); // will throw an exception if app has been undeployed.
     }
 
     /**
@@ -513,7 +513,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public void invalidateReference() {
         this.container = null;
-        this.setDeploymentInfo(null);
+        this.setBeanContext(null);
         this.isInvalidReference = true;
     }
 
@@ -544,25 +544,25 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
     public abstract org.apache.openejb.ProxyInfo getProxyInfo();
 
-    public DeploymentInfo getDeploymentInfo() {
-        DeploymentInfo info = deploymentInfo.get();
-        if (info == null|| info.isDestroyed()){
+    public BeanContext getBeanContext() {
+        BeanContext beanContext = beanContextRef.get();
+        if (beanContext == null|| beanContext.isDestroyed()){
             invalidateReference();
             throw new IllegalStateException("Bean '"+deploymentID+"' has been undeployed.");
         }
-        return info;
+        return beanContext;
     }
 
-    public void setDeploymentInfo(DeploymentInfo deploymentInfo) {
-        this.deploymentInfo = new WeakReference<DeploymentInfo>(deploymentInfo);
+    public void setBeanContext(BeanContext beanContext) {
+        this.beanContextRef = new WeakReference<BeanContext>(beanContext);
     }
 
     public Hashtable getLiveHandleRegistry() {
-        DeploymentInfo deploymentInfo = getDeploymentInfo();
-        ProxyRegistry proxyRegistry = deploymentInfo.get(ProxyRegistry.class);
+        BeanContext beanContext = getBeanContext();
+        ProxyRegistry proxyRegistry = beanContext.get(ProxyRegistry.class);
         if (proxyRegistry == null){
             proxyRegistry = new ProxyRegistry();
-            deploymentInfo.set(ProxyRegistry.class, proxyRegistry);
+            beanContext.set(ProxyRegistry.class, proxyRegistry);
         }
         return proxyRegistry.liveHandleRegistry;
     }
@@ -579,8 +579,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         in.defaultReadObject();
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        setDeploymentInfo(containerSystem.getDeploymentInfo(deploymentID));
-        container = (RpcContainer) getDeploymentInfo().getContainer();
+        setBeanContext(containerSystem.getBeanContext(deploymentID));
+        container = (RpcContainer) getBeanContext().getContainer();
 
         if (IntraVmCopyMonitor.isCrossClassLoaderOperation()) {
             setDoCrossClassLoaderCopy(true);

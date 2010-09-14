@@ -17,8 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.loader.SystemInstance;
@@ -72,12 +72,12 @@ public class ConcurrentMethodTest extends TestCase {
 
     private void loadAttributes(EjbJarInfo ejbJarInfo, String deploymentId) {
         ContainerSystem system = SystemInstance.get().getComponent(ContainerSystem.class);
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) system.getDeploymentInfo(deploymentId);
+        BeanContext beanContext = system.getBeanContext(deploymentId);
         List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
         List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
         MethodConcurrencyBuilder.normalize(ejbJarInfo.methodConcurrency, lockInfos, accessTimeoutInfos);
-        accessTimeoutAttributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, deploymentInfo);
-        lockAttributes = MethodInfoUtil.resolveAttributes(lockInfos, deploymentInfo);
+        accessTimeoutAttributes = MethodInfoUtil.resolveAttributes(accessTimeoutInfos, beanContext);
+        lockAttributes = MethodInfoUtil.resolveAttributes(lockInfos, beanContext);
     }
 
     private void assertAccessTimeoutAttribute(long time, TimeUnit unit, Method method) {

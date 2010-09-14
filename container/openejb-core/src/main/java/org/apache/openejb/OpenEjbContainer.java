@@ -17,12 +17,10 @@
 package org.apache.openejb;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,14 +35,9 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.openejb.config.RequireDescriptors;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 /**

@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -60,29 +59,27 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.DuplicateDeploymentIdException;
 import org.apache.openejb.Injection;
+import org.apache.openejb.MethodContext;
 import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.cdi.CdiBuilder;
-import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
-import org.apache.openejb.core.MethodContext;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
-import org.apache.openejb.core.singleton.SingletonContainer;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
@@ -484,7 +481,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         List<String> used = new ArrayList<String>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
-                if (containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId) != null) {
+                if (containerSystem.getBeanContext(beanInfo.ejbDeploymentId) != null) {
                     used.add(beanInfo.ejbDeploymentId);
                 }
             }
@@ -553,22 +550,21 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            List<DeploymentInfo> allDeployments = new ArrayList<DeploymentInfo>();
+            List<BeanContext> allDeployments = new ArrayList<BeanContext>();
 
             // EJB
             EjbJarBuilder ejbJarBuilder = new EjbJarBuilder(props, appContext);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-                HashMap<String, DeploymentInfo> deployments = ejbJarBuilder.build(ejbJar, appInjections);
+                HashMap<String, BeanContext> deployments = ejbJarBuilder.build(ejbJar, appInjections);
 
                 JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
                 PolicyContext policyContext = jaccPermissionsBuilder.build(ejbJar, deployments);
                 jaccPermissionsBuilder.install(policyContext);
 
                 TransactionPolicyFactory transactionPolicyFactory = createTransactionPolicyFactory(ejbJar, classLoader);
-                for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
+                for (BeanContext beanContext : deployments.values()) {
 
-                    coreDeploymentInfo.setTransactionPolicyFactory(transactionPolicyFactory);
+                    beanContext.setTransactionPolicyFactory(transactionPolicyFactory);
                 }
 
                 MethodTransactionBuilder methodTransactionBuilder = new MethodTransactionBuilder();
@@ -577,61 +573,60 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 MethodConcurrencyBuilder methodConcurrencyBuilder = new MethodConcurrencyBuilder();
                 methodConcurrencyBuilder.build(deployments, ejbJar.methodConcurrency);
 
-                for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    containerSystem.addDeployment(deploymentInfo);
+                for (BeanContext beanContext : deployments.values()) {
+                    containerSystem.addDeployment(beanContext);
                 }
 
                 //bind ejbs into global jndi
                 jndiBuilder.build(ejbJar, deployments);
 
                 // setup timers/asynchronous methods - must be after transaction attributes are set
-                for (DeploymentInfo deploymentInfo : deployments.values()) {
-                    CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-                    if (coreDeploymentInfo.getComponentType() != BeanType.STATEFUL) {
-                        Method ejbTimeout = coreDeploymentInfo.getEjbTimeout();
+                for (BeanContext beanContext : deployments.values()) {
+                    if (beanContext.getComponentType() != BeanType.STATEFUL) {
+                        Method ejbTimeout = beanContext.getEjbTimeout();
                         boolean timerServiceRequired = false;
                         if (ejbTimeout != null) {
                             // If user set the tx attribute to RequiresNew change it to Required so a new transaction is not started
-                            if (coreDeploymentInfo.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
-                                coreDeploymentInfo.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
+                            if (beanContext.getTransactionType(ejbTimeout) == TransactionType.RequiresNew) {
+                                beanContext.setMethodTransactionAttribute(ejbTimeout, TransactionType.Required);
                             }
                             timerServiceRequired = true;
                         }
-                        for (Iterator<Map.Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                        for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
                             Map.Entry<Method, MethodContext> entry = it.next();
                             MethodContext methodContext = entry.getValue();
                             if (methodContext.getSchedules().size() > 0) {
                                 timerServiceRequired = true;
                                 Method method = entry.getKey();
                                 //TODO Need ?
-                                if (coreDeploymentInfo.getTransactionType(method) == TransactionType.RequiresNew) {
-                                    coreDeploymentInfo.setMethodTransactionAttribute(method, TransactionType.Required);
+                                if (beanContext.getTransactionType(method) == TransactionType.RequiresNew) {
+                                    beanContext.setMethodTransactionAttribute(method, TransactionType.Required);
                                 }
                             }
                         }
                         if (timerServiceRequired) {
                             // Create the timer
-                            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(coreDeploymentInfo);
+                            EjbTimerServiceImpl timerService = new EjbTimerServiceImpl(beanContext);
                             //Load auto-start timers
                             TimerStore timerStore = timerService.getTimerStore();
-                            for (Iterator<Map.Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                            for (Iterator<Map.Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
                                 Map.Entry<Method, MethodContext> entry = it.next();
                                 MethodContext methodContext = entry.getValue();
                                 for(ScheduleData scheduleData : methodContext.getSchedules()) {
-                                    timerStore.createCalendarTimer(timerService, (String) deploymentInfo.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
+                                    timerStore.createCalendarTimer(timerService, (String) beanContext.getDeploymentID(), null, entry.getKey(), scheduleData.getExpression(), scheduleData.getConfig());
                                 }
                             }
-                            coreDeploymentInfo.setEjbTimerService(timerService);
+                            beanContext.setEjbTimerService(timerService);
                         } else {
-                            coreDeploymentInfo.setEjbTimerService(new NullEjbTimerServiceImpl());
+                            beanContext.setEjbTimerService(new NullEjbTimerServiceImpl());
                         }
                     }
                     //set asynchronous methods transaction
                     //TODO ???
-                    for (Iterator<Entry<Method, MethodContext>> it = coreDeploymentInfo.iteratorMethodContext(); it.hasNext();) {
+                    for (Iterator<Entry<Method, MethodContext>> it = beanContext.iteratorMethodContext(); it.hasNext();) {
                         Entry<Method, MethodContext> entry = it.next();
-                        if (entry.getValue().isAsynchronous() && coreDeploymentInfo.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
-                            coreDeploymentInfo.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
+                        if (entry.getValue().isAsynchronous() && beanContext.getTransactionType(entry.getKey()) == TransactionType.RequiresNew) {
+                            beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.Required);
                         }
                     }
                 }
@@ -639,9 +634,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (ApplicationExceptionInfo exceptionInfo : ejbJar.applicationException) {
                     try {
                         Class exceptionClass = classLoader.loadClass(exceptionInfo.exceptionClass);
-                        for (DeploymentInfo deploymentInfo : deployments.values()) {
-                            CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) deploymentInfo;
-                            coreDeploymentInfo.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
+                        for (BeanContext beanContext : deployments.values()) {
+                            beanContext.addApplicationException(exceptionClass, exceptionInfo.rollback, exceptionInfo.inherited);
                         }
                     } catch (ClassNotFoundException e) {
                         logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());
@@ -659,7 +653,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // now that everything is configured, deploy to the container
             if (start) {
                 // deploy
-                for (DeploymentInfo deployment : allDeployments) {
+                for (BeanContext deployment : allDeployments) {
                     try {
                         Container container = deployment.getContainer();
                         container.deploy(deployment);
@@ -670,7 +664,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 // start
-                for (DeploymentInfo deployment : allDeployments) {
+                for (BeanContext deployment : allDeployments) {
                     try {
                         Container container = deployment.getContainer();
                         container.start(deployment);
@@ -787,12 +781,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return factory;
     }
 
-    private static List<DeploymentInfo> sort(List<DeploymentInfo> deployments) {
+    private static List<BeanContext> sort(List<BeanContext> deployments) {
         // Sort all the singletons to the back of the list.  We want to make sure
         // all non-singletons are created first so that if a singleton refers to them
         // they are available.
-        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
-            public int compare(DeploymentInfo a, DeploymentInfo b) {
+        Collections.sort(deployments, new Comparator<BeanContext>(){
+            public int compare(BeanContext a, BeanContext b) {
                 int aa = (a.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
                 int bb = (b.getComponentType() == BeanType.SINGLETON) ? 1 : 0;
                 return aa - bb;
@@ -801,12 +795,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Sort all the beans with references to the back of the list.  Beans
         // without references to ther beans will be deployed first.
-        deployments = References.sort(deployments, new References.Visitor<DeploymentInfo>(){
-            public String getName(DeploymentInfo t) {
+        deployments = References.sort(deployments, new References.Visitor<BeanContext>(){
+            public String getName(BeanContext t) {
                 return (String) t.getDeploymentID();
             }
 
-            public Set<String> getReferences(DeploymentInfo t) {
+            public Set<String> getReferences(BeanContext t) {
                 return t.getDependsOn();
             }
         });
@@ -814,8 +808,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Now Sort all the MDBs to the back of the list.  The Resource Adapter
         // may attempt to use the MDB on endpointActivation and the MDB may have
         // references to other ejbs that would need to be available first.
-        Collections.sort(deployments, new Comparator<DeploymentInfo>(){
-            public int compare(DeploymentInfo a, DeploymentInfo b) {
+        Collections.sort(deployments, new Comparator<BeanContext>(){
+            public int compare(BeanContext a, BeanContext b) {
                 int aa = (a.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
                 int bb = (b.getComponentType() == BeanType.MESSAGE_DRIVEN) ? 1 : 0;
                 return aa - bb;
@@ -898,15 +892,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // get all of the ejb deployments
-        List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
+        List<BeanContext> deployments = new ArrayList<BeanContext>();
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
             for (EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
                 String deploymentId = beanInfo.ejbDeploymentId;
-                CoreDeploymentInfo deployment = (CoreDeploymentInfo) containerSystem.getDeploymentInfo(deploymentId);
-                if (deployment == null) {
+                BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+                if (beanContext == null) {
                     undeployException.getCauses().add(new Exception("deployment not found: " + deploymentId));
                 } else {
-                    deployments.add(deployment);
+                    deployments.add(beanContext);
                 }
             }
         }
@@ -925,7 +919,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         Collections.reverse(deployments);
 
         // stop
-        for (DeploymentInfo deployment : deployments) {
+        for (BeanContext deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {
                 Container container = deployment.getContainer();
@@ -936,16 +930,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // undeploy
-        for (DeploymentInfo deployment : deployments) {
-            String deploymentID = deployment.getDeploymentID() + "";
+        for (BeanContext bean : deployments) {
+            String deploymentID = bean.getDeploymentID() + "";
             try {
-                Container container = deployment.getContainer();
-                container.undeploy(deployment);
-                deployment.setContainer(null);
+                Container container = bean.getContainer();
+                container.undeploy(bean);
+                bean.setContainer(null);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
             } finally {
-                ((CoreDeploymentInfo)deployment).setDestroyed(true);
+                bean.setDestroyed(true);
             }
         }
 
@@ -962,10 +956,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         // Clear out naming for all components first
-        for (DeploymentInfo deployment : deployments) {
+        for (BeanContext deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {
-                containerSystem.removeDeploymentInfo(deployment);
+                containerSystem.removeBeanContext(deployment);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception(deploymentID, t));
             }

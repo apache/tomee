@@ -17,12 +17,11 @@
 package org.apache.openejb.core.entity;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.InvalidateReferenceException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.NoSuchObjectException;
@@ -62,18 +61,18 @@ public class EntityInstanceManager {
         this.poolsize = poolSize;
         poolMap = new HashMap<Object,LinkedListStack>();// put size in later
 
-        DeploymentInfo[] deploymentInfos = container.deployments();
-        for (DeploymentInfo deploymentInfo : deploymentInfos) {
-            deploy(deploymentInfo);
+        BeanContext[] beanContexts = container.getBeanContexts();
+        for (BeanContext beanContext : beanContexts) {
+            deploy(beanContext);
         }
     }
 
-    public void deploy(DeploymentInfo deploymentInfo) {
-        poolMap.put(deploymentInfo.getDeploymentID(), new LinkedListStack(poolsize / 2));
+    public void deploy(BeanContext beanContext) {
+        poolMap.put(beanContext.getDeploymentID(), new LinkedListStack(poolsize / 2));
     }
 
-    public void undeploy(DeploymentInfo deploymentInfo) {
-        poolMap.remove(deploymentInfo.getDeploymentID());
+    public void undeploy(BeanContext beanContext) {
+        poolMap.remove(beanContext.getDeploymentID());
     }
 
     public EntityBean obtainInstance(ThreadContext callContext) throws OpenEJBException {
@@ -82,7 +81,7 @@ public class EntityInstanceManager {
         TransactionPolicy txPolicy = callContext.getTransactionPolicy();
         if (callContext.getPrimaryKey() != null && txPolicy != null && txPolicy.isTransactionActive()) {
 
-            Key key = new Key(callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
+            Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
             SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
 
             if (wrapper != null) {// if true, the requested bean instance is already enrolled in a transaction
@@ -129,7 +128,7 @@ public class EntityInstanceManager {
                 * so it needs to be enrolled in the transaction.
                 */
                 EntityBean bean = getPooledInstance(callContext);
-                wrapper = new SynchronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, false, key, txPolicy);
+                wrapper = new SynchronizationWrapper(callContext.getBeanContext(), primaryKey, bean, false, key, txPolicy);
 
                 if (callContext.getCurrentOperation() == Operation.REMOVE) {
                     /*
@@ -181,16 +180,16 @@ public class EntityInstanceManager {
     }
 
     protected EntityBean getPooledInstance(ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Stack methodReadyPool = poolMap.get(deploymentInfo.getDeploymentID());
-        if (methodReadyPool == null) throw new SystemException("Invalid deployment id " + deploymentInfo.getDeploymentID() + " for this container");
+        BeanContext beanContext = callContext.getBeanContext();
+        Stack methodReadyPool = poolMap.get(beanContext.getDeploymentID());
+        if (methodReadyPool == null) throw new SystemException("Invalid deployment id " + beanContext.getDeploymentID() + " for this container");
 
         EntityBean bean = (EntityBean) methodReadyPool.pop();
         if (bean == null) {
             try {
-                bean = (EntityBean) deploymentInfo.getBeanClass().newInstance();
+                bean = (EntityBean) beanContext.getBeanClass().newInstance();
             } catch (Exception e) {
-                logger.error("Bean instantiation failed for class " + deploymentInfo.getBeanClass(), e);
+                logger.error("Bean instantiation failed for class " + beanContext.getBeanClass(), e);
                 throw new SystemException(e);
             }
 
@@ -274,7 +273,7 @@ public class EntityInstanceManager {
         TransactionPolicy txPolicy = callContext.getTransactionPolicy();
         if (primaryKey != null && txPolicy != null && txPolicy.isTransactionActive()) {
 
-            Key key = new Key(callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
+            Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
             SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
 
             if (wrapper != null) {
@@ -290,7 +289,7 @@ public class EntityInstanceManager {
                     * If the bean has been removed then the bean instance is no longer needed and can return to the methodReadyPool
                     * to service another identity.
                     */
-                    Stack methodReadyPool = poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
+                    Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
                     methodReadyPool.push(bean);
                 } else {
                     if (callContext.getCurrentOperation() == Operation.CREATE) {
@@ -307,7 +306,7 @@ public class EntityInstanceManager {
                 tx ready pool
                 */
 
-                wrapper = new SynchronizationWrapper(callContext.getDeploymentInfo(), primaryKey, bean, true, key, txPolicy);
+                wrapper = new SynchronizationWrapper(callContext.getBeanContext(), primaryKey, bean, true, key, txPolicy);
 
                 txPolicy.registerSynchronization(wrapper);
 
@@ -354,7 +353,7 @@ public class EntityInstanceManager {
             * method and is not still part of a tx.  While in the method ready pool the bean instance is not associated with a
             * primary key and may be used to service a request for any bean of the same class.
             */
-            Stack methodReadyPool = poolMap.get(callContext.getDeploymentInfo().getDeploymentID());
+            Stack methodReadyPool = poolMap.get(callContext.getBeanContext().getDeploymentID());
             methodReadyPool.push(bean);
         }
 
@@ -404,7 +403,7 @@ public class EntityInstanceManager {
         // especially important in the obtainInstance( ) method where a disassociated wrapper
         // in the txReadyPool is indicative of an entity bean that has been removed via
         // ejbRemove() rather than freed because of an error condition as is the case here.
-        Key key = new Key(callContext.getDeploymentInfo().getDeploymentID(), primaryKey);
+        Key key = new Key(callContext.getBeanContext().getDeploymentID(), primaryKey);
         SynchronizationWrapper wrapper = (SynchronizationWrapper) txPolicy.getResource(key);
         if (wrapper != null) {
             /*
@@ -474,18 +473,18 @@ public class EntityInstanceManager {
         private boolean available;
         private boolean associated;
         private final Key readyPoolKey;
-        private final CoreDeploymentInfo deploymentInfo;
+        private final BeanContext beanContext;
         private final Object primaryKey;
         private final TransactionPolicy txPolicy;
 
-        public SynchronizationWrapper(CoreDeploymentInfo deploymentInfo, Object primaryKey, EntityBean bean, boolean available, Key readyPoolKey, TransactionPolicy txPolicy) {
+        public SynchronizationWrapper(BeanContext beanContext, Object primaryKey, EntityBean bean, boolean available, Key readyPoolKey, TransactionPolicy txPolicy) {
             if (bean == null) throw new IllegalArgumentException("bean is null");
             if (readyPoolKey == null) throw new IllegalArgumentException("key is null");
-            if (deploymentInfo == null) throw new IllegalArgumentException("deploymentInfo is null");
+            if (beanContext == null) throw new IllegalArgumentException("deploymentInfo is null");
             if (primaryKey == null) throw new IllegalArgumentException("primaryKey is null");
             if (txPolicy == null) throw new IllegalArgumentException("txEnv is null");
 
-            this.deploymentInfo = deploymentInfo;
+            this.beanContext = beanContext;
             this.bean = bean;
             this.primaryKey = primaryKey;
             this.available = available;
@@ -527,7 +526,7 @@ public class EntityInstanceManager {
                     bean = this.bean;
                 }
 
-                ThreadContext callContext = new ThreadContext(deploymentInfo, primaryKey);
+                ThreadContext callContext = new ThreadContext(beanContext, primaryKey);
                 callContext.setCurrentOperation(Operation.STORE);
 
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);

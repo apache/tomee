@@ -25,7 +25,7 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.server.DiscoveryAgent;
 import org.apache.openejb.loader.SystemInstance;
@@ -185,11 +185,11 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
         clusterHandler.processRequest(in, out);
     }
 
-    protected DeploymentInfo getDeployment(EJBRequest req) throws RemoteException {
+    protected BeanContext getDeployment(EJBRequest req) throws RemoteException {
         String deploymentId = req.getDeploymentId();
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
-        if (deploymentInfo == null) throw new RemoteException("No deployment: "+deploymentId);
-        return deploymentInfo;
+        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+        if (beanContext == null) throw new RemoteException("No deployment: "+deploymentId);
+        return beanContext;
     }
 
     public void processEjbRequest(ObjectInputStream in, ObjectOutputStream out) {

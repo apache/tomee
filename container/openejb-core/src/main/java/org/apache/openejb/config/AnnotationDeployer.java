@@ -99,7 +99,7 @@ import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
@@ -1663,7 +1663,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @WebServiceProvider
                  */
                 if (sessionBean.getServiceEndpoint() == null) {
-                    Class defaultEndpoint = DeploymentInfo.ServiceEndpoint.class;
+                    Class defaultEndpoint = BeanContext.ServiceEndpoint.class;
 
                     for (Class interfce : clazz.getInterfaces()) {
                         if (interfce.isAnnotationPresent(WebService.class)) {
@@ -1683,7 +1683,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
                     } else if (clazz.isAnnotationPresent(WebServiceProvider.class)) {
                         sessionBean.setServiceEndpoint(defaultEndpoint.getName());
-                    } else if (!defaultEndpoint.equals(DeploymentInfo.ServiceEndpoint.class)) {
+                    } else if (!defaultEndpoint.equals(BeanContext.ServiceEndpoint.class)) {
                         sessionBean.setServiceEndpoint(defaultEndpoint.getName());
                     }
                 }

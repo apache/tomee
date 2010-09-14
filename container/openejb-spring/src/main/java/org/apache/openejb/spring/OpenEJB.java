@@ -33,7 +33,7 @@ import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ContainerInfo;
@@ -382,7 +382,7 @@ public class OpenEJB implements ApplicationContextAware {
             logger.debug("startup.debugDeployments", containerSystem.deployments().length);
             if (containerSystem.deployments().length > 0) {
                 logger.debug("startup.debugDeploymentsType");
-                for (DeploymentInfo deployment : containerSystem.deployments()) {
+                for (BeanContext deployment : containerSystem.deployments()) {
                     String entry = "   ";
                     switch (deployment.getComponentType()) {
                         case BMP_ENTITY:

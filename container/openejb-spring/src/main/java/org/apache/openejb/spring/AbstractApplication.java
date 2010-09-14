@@ -27,10 +27,9 @@ import java.util.Map.Entry;
 import javax.annotation.PreDestroy;
 import javax.annotation.PostConstruct;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -111,11 +110,11 @@ public abstract class AbstractApplication implements ApplicationContextAware {
         for (AppInfo appInfo : appInfos) {
             try {
                 AppContext appContext = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), true);
-				List<DeploymentInfo> deployments = appContext.getDeployments();
+				List<BeanContext> deployments = appContext.getDeployments();
                 if (export) {
-                    for (DeploymentInfo deployment : deployments) {
+                    for (BeanContext deployment : deployments) {
                         JndiNameStrategy strategy = createStrategy(appInfo, deployments, deployment);
-                        Map<String, EJB> bindings = getEjbBindings(strategy, (CoreDeploymentInfo) deployment);
+                        Map<String, EJB> bindings = getEjbBindings(strategy, deployment);
                         for (Entry<String, EJB> entry : bindings.entrySet()) {
                             String beanName = entry.getKey();
                             if (!applicationContext.containsBean(beanName)) {
@@ -136,7 +135,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
         }
     }
 
-    public Map<String, EJB> getEjbBindings(JndiNameStrategy strategy, CoreDeploymentInfo deployment) {
+    public Map<String, EJB> getEjbBindings(JndiNameStrategy strategy, BeanContext deployment) {
         strategy.begin(deployment);
 
         Map<String, EJB> bindings = new TreeMap<String, EJB>();
@@ -174,7 +173,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
         return bindings;
     }
 
-    public JndiNameStrategy createStrategy(AppInfo appInfo, List<DeploymentInfo> deployments, DeploymentInfo deployment) throws OpenEJBException {
+    public JndiNameStrategy createStrategy(AppInfo appInfo, List<BeanContext> deployments, BeanContext deployment) throws OpenEJBException {
         JndiNameStrategy strategy = nameStrategies.get(deployment.getModuleID());
         if (strategy != null) {
             return strategy;
@@ -187,10 +186,10 @@ public abstract class AbstractApplication implements ApplicationContextAware {
                 for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
                     moduleDeploymentIds.add(enterpriseBean.ejbDeploymentId);
                 }
-                Map<String, DeploymentInfo> moduleDeployments = new TreeMap<String, DeploymentInfo>();
-                for (DeploymentInfo deploymentInfo : deployments) {
+                Map<String, BeanContext> moduleDeployments = new TreeMap<String, BeanContext>();
+                for (BeanContext beanContext : deployments) {
                     if (moduleDeploymentIds.contains(deploymentId)) {
-                        moduleDeployments.put((String) deploymentInfo.getDeploymentID(), deploymentInfo);
+                        moduleDeployments.put((String) beanContext.getDeploymentID(), beanContext);
                     }
                 }
                 strategy = JndiBuilder.createStrategy(ejbJar, moduleDeployments);

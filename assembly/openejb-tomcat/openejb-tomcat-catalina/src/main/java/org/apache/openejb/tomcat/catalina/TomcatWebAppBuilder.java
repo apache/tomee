@@ -344,11 +344,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 jndiBuilder.mergeJndi();
 
                 // add WebDeploymentInfo to ContainerSystem
-                CoreWebDeploymentInfo webDeploymentInfo = new CoreWebDeploymentInfo();
-                webDeploymentInfo.setId(webAppInfo.moduleId);
-                webDeploymentInfo.setClassLoader(standardContext.getLoader().getClassLoader());
-                webDeploymentInfo.getInjections().addAll(injections);
-                getContainerSystem().addWebDeployment(webDeploymentInfo);
+                CoreWebDeploymentInfo webContext = new CoreWebDeploymentInfo();
+                webContext.setId(webAppInfo.moduleId);
+                webContext.setClassLoader(standardContext.getLoader().getClassLoader());
+                webContext.getInjections().addAll(injections);
+                getContainerSystem().addWebDeployment(webContext);
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
@@ -414,9 +414,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                 if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
-                    CoreWebDeploymentInfo webDeploymentInfo = (CoreWebDeploymentInfo) getContainerSystem().getWebDeploymentInfo(webAppInfo.moduleId);
-                    if (webDeploymentInfo != null) {
-                        webDeploymentInfo.setJndiEnc(comp);
+                    CoreWebDeploymentInfo webContext = (CoreWebDeploymentInfo) getContainerSystem().getWebContext(webAppInfo.moduleId);
+                    if (webContext != null) {
+                        webContext.setJndiEnc(comp);
                     }
                     break;
                 }

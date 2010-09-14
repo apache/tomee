@@ -19,37 +19,36 @@ package org.apache.openejb.server.ejbd;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.client.EJBMetaDataImpl;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.InterfaceType;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.AppContext;
 import org.junit.Before;
 import org.junit.Test;
 
 public class DeploymentIndexTest {
 
     private Method method;
-    private DeploymentInfo deploymentInfo;
+    private BeanContext beanContext;
     private DeploymentIndex deploymentIndex;
 
     @Before
     public void setUp() throws SystemException {
         method = Method.class.getMethods()[0];
-        deploymentInfo = new CoreDeploymentInfo("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null, null, null, false), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, false);
-        deploymentIndex = new DeploymentIndex(new DeploymentInfo[] { deploymentInfo, deploymentInfo });
+        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null, null, null, false), null), DeploymentIndexTest.class, null, null, null, null, null, null, null, null, null, false);
+        deploymentIndex = new DeploymentIndex(new BeanContext[] {beanContext, beanContext});
     }
 
     @Test
     public void testGetDeploymentEJBRequest() throws RemoteException {
         EJBMetaDataImpl ejbMetadataWithId = new EJBMetaDataImpl(null, null, null, null, null, 1, InterfaceType.BUSINESS_REMOTE, null, null);
         EJBRequest request = new EJBRequest(0, ejbMetadataWithId, method, null, null);
-        DeploymentInfo info = deploymentIndex.getDeployment(request);
-        assert deploymentInfo.equals(info);
+        BeanContext info = deploymentIndex.getDeployment(request);
+        assert beanContext.equals(info);
         assert request.getDeploymentId().equals(info.getDeploymentID());
     }
 

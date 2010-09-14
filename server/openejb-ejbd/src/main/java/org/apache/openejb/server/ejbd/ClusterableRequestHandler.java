@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.client.ClusterableRequest;
 import org.apache.openejb.client.ClusterableResponse;
 
 public interface ClusterableRequestHandler {
-    void updateServer(DeploymentInfo deploymentInfo, ClusterableRequest req, ClusterableResponse res);
+    void updateServer(BeanContext beanContext, ClusterableRequest req, ClusterableResponse res);
 }

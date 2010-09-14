@@ -21,7 +21,7 @@
 
 <%@ page import="
 org.apache.openejb.BeanType,
-org.apache.openejb.DeploymentInfo,
+org.apache.openejb.BeanContext,
 org.apache.openejb.loader.SystemInstance,
 org.apache.openejb.spi.ContainerSystem,
 javax.naming.Context,
@@ -116,10 +116,10 @@ javax.naming.InitialContext
 </html>
 
 <%!
-    private DeploymentInfo getDeployment(String deploymentID) {
+    private BeanContext getDeployment(String deploymentID) {
         try {
             ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-            DeploymentInfo ejb = containerSystem.getDeploymentInfo(deploymentID);
+            BeanContext ejb = containerSystem.getBeanContext(deploymentID);
             return ejb;
         } catch (Exception e) {
             return null;
@@ -130,7 +130,7 @@ javax.naming.InitialContext
 
     public void printEjb(String name,String jndiName, String contextID, javax.servlet.jsp.JspWriter out, HttpSession session) throws Exception {
         String id = (name.startsWith("/")) ? name.substring(1, name.length()) : name;
-        DeploymentInfo ejb = getDeployment(id);
+        BeanContext ejb = getDeployment(id);
 
         if (ejb == null) {
             out.print("No such EJB: " + id);

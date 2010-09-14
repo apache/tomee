@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.resource.XAResourceWrapper;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.transaction.TransactionType;
 
 import javax.resource.spi.UnavailableException;
@@ -35,17 +35,17 @@ import java.util.List;
 public class EndpointFactory implements MessageEndpointFactory {
     private final ActivationSpec activationSpec;
     private final MdbContainer container;
-    private final CoreDeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
     private final MdbInstanceFactory instanceFactory;
     private final ClassLoader classLoader;
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     
-    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, CoreDeploymentInfo deploymentInfo, MdbInstanceFactory instanceFactory, XAResourceWrapper xaResourceWrapper) {
+    public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, BeanContext beanContext, MdbInstanceFactory instanceFactory, XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
         this.container = container;
-        this.deploymentInfo = deploymentInfo;
+        this.beanContext = beanContext;
         this.instanceFactory = instanceFactory;
         classLoader = container.getMessageListenerInterface().getClassLoader();
         interfaces = new Class[]{container.getMessageListenerInterface(), MessageEndpoint.class};
@@ -64,7 +64,7 @@ public class EndpointFactory implements MessageEndpointFactory {
         if (xaResource != null && xaResourceWrapper != null) {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
-        EndpointHandler endpointHandler = new EndpointHandler(container, deploymentInfo, instanceFactory, xaResource);
+        EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
         MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
         return messageEndpoint;
     }
@@ -94,7 +94,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     }
 
     public boolean isDeliveryTransacted(Method method) throws NoSuchMethodException {
-        TransactionType transactionType = deploymentInfo.getTransactionType(method);
+        TransactionType transactionType = beanContext.getTransactionType(method);
         return TransactionType.Required == transactionType;
     }
 }

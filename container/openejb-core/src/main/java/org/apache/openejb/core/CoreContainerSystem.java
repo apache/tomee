@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.Map;
@@ -29,9 +29,9 @@ import javax.naming.Context;
  * @org.apache.xbean.XBean element="containerSystem"
  */
 public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
-    Map<Object, DeploymentInfo> deployments = new ConcurrentHashMap<Object, DeploymentInfo>();
+    Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
-    Map<String, WebDeploymentInfo> webDeployments = new ConcurrentHashMap<String, WebDeploymentInfo>();
+    Map<String, WebContext> webDeployments = new ConcurrentHashMap<String, WebContext>();
     private final Context jndiContext;
 
 
@@ -71,19 +71,19 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
      * 
      * @param deploymentID The deployment ID of an EJB
      */
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public BeanContext getBeanContext(Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
-    public DeploymentInfo [] deployments() {
-        return deployments.values().toArray(new DeploymentInfo [deployments.size()]);
+    public BeanContext[] deployments() {
+        return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
-    public void addDeployment(DeploymentInfo deployment) {
+    public void addDeployment(BeanContext deployment) {
         this.deployments.put(deployment.getDeploymentID(), deployment);
     }
 
-    public void removeDeploymentInfo(DeploymentInfo info){
+    public void removeBeanContext(BeanContext info){
         this.deployments.remove(info.getDeploymentID());
     }
 
@@ -103,19 +103,19 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         containers.remove(id);
     }
 
-    public WebDeploymentInfo getWebDeploymentInfo(String id) {
+    public WebContext getWebContext(String id) {
         return webDeployments.get(id);
     }
 
-    public WebDeploymentInfo [] WebDeployments() {
-        return webDeployments.values().toArray(new WebDeploymentInfo [webDeployments.size()]);
+    public WebContext[] WebDeployments() {
+        return webDeployments.values().toArray(new WebContext[webDeployments.size()]);
     }
 
-    public void addWebDeployment(WebDeploymentInfo webDeployment) {
+    public void addWebDeployment(WebContext webDeployment) {
         this.webDeployments.put(webDeployment.getId(), webDeployment);
     }
 
-    public void removeWebDeploymentInfo(WebDeploymentInfo info){
+    public void removeWebDeploymentInfo(WebContext info){
         this.webDeployments.remove(info.getId());
     }
 

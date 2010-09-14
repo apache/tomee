@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.server.axis2;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.axis2.ejb.EjbWsContainer;
@@ -36,10 +36,10 @@ public class Axis2Service extends WsService {
         return "axis2";
     }
 
-    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) throws Exception {
-        EjbWsContainer container = new EjbWsContainer(port, deploymentInfo);
+    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext) throws Exception {
+        EjbWsContainer container = new EjbWsContainer(port, beanContext);
         container.start();
-        wsContainers.put(deploymentInfo.getDeploymentID().toString(), container);
+        wsContainers.put(beanContext.getDeploymentID().toString(), container);
         return container;
     }
 

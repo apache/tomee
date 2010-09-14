@@ -17,7 +17,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
@@ -56,9 +56,9 @@ public class EjbDeploymentPropertiesTest extends TestCase {
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo("WidgetBean");
+        BeanContext beanContext = containerSystem.getBeanContext("WidgetBean");
 
-        Properties properties = deploymentInfo.getProperties();
+        Properties properties = beanContext.getProperties();
         assertTrue(properties.containsKey("color"));
         assertEquals("orange", properties.getProperty("color"));
     }

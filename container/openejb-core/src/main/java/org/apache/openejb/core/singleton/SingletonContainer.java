@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
@@ -37,13 +36,12 @@ import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.interceptor.AroundInvoke;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -64,7 +62,7 @@ public class SingletonContainer implements RpcContainer {
 
     private SingletonInstanceManager instanceManager;
 
-    private HashMap<String,DeploymentInfo> deploymentRegistry = new HashMap<String,DeploymentInfo>();
+    private HashMap<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
 
     private Object containerID = null;
     private SecurityService securityService;
@@ -76,9 +74,8 @@ public class SingletonContainer implements RpcContainer {
 
         instanceManager = new SingletonInstanceManager(securityService);
 
-        for (DeploymentInfo deploymentInfo : deploymentRegistry.values()) {
-            org.apache.openejb.core.CoreDeploymentInfo di = (org.apache.openejb.core.CoreDeploymentInfo) deploymentInfo;
-            di.setContainer(this);
+        for (BeanContext beanContext : deploymentRegistry.values()) {
+            beanContext.setContainer(this);
         }
     }
 
@@ -86,11 +83,11 @@ public class SingletonContainer implements RpcContainer {
         this.accessTimeout = duration;
     }
 
-    public synchronized DeploymentInfo [] deployments() {
-        return deploymentRegistry.values().toArray(new DeploymentInfo[deploymentRegistry.size()]);
+    public synchronized BeanContext[] getBeanContexts() {
+        return deploymentRegistry.values().toArray(new BeanContext[deploymentRegistry.size()]);
     }
 
-    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public synchronized BeanContext getBeanContext(Object deploymentID) {
         String id = (String) deploymentID;
         return deploymentRegistry.get(id);
     }
@@ -103,51 +100,46 @@ public class SingletonContainer implements RpcContainer {
         return containerID;
     }
 
-    public void deploy(DeploymentInfo info) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
-        instanceManager.deploy(deploymentInfo);
-        String id = (String) deploymentInfo.getDeploymentID();
+    public void deploy(BeanContext beanContext) throws OpenEJBException {
+        instanceManager.deploy(beanContext);
+        String id = (String) beanContext.getDeploymentID();
         synchronized (this) {
-            deploymentRegistry.put(id, deploymentInfo);
-            deploymentInfo.setContainer(this);
+            deploymentRegistry.put(id, beanContext);
+            beanContext.setContainer(this);
         }
 
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
         }
         
     }
     
-    public void start(DeploymentInfo info) throws OpenEJBException {    
+    public void start(BeanContext info) throws OpenEJBException {
         instanceManager.start(info);
     }
     
-    public void stop(DeploymentInfo info) throws OpenEJBException {        
+    public void stop(BeanContext info) throws OpenEJBException {
     }
     
-    public void undeploy(DeploymentInfo info) {
-        undeploy((CoreDeploymentInfo)info);
-    }
-
-    private void undeploy(CoreDeploymentInfo deploymentInfo) {
-        ThreadContext threadContext = new ThreadContext(deploymentInfo, null);
+    public void undeploy(BeanContext beanContext) {
+        ThreadContext threadContext = new ThreadContext(beanContext, null);
         ThreadContext old = ThreadContext.enter(threadContext);
         try {
             instanceManager.freeInstance(threadContext);
         } finally{
             ThreadContext.exit(old);
         }
-        instanceManager.undeploy(deploymentInfo);
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        instanceManager.undeploy(beanContext);
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.stop();
         }
 
         synchronized (this) {
-            String id = (String) deploymentInfo.getDeploymentID();
-            deploymentInfo.setContainer(null);
-            deploymentInfo.setContainerData(null);
+            String id = (String) beanContext.getDeploymentID();
+            beanContext.setContainer(null);
+            beanContext.setContainerData(null);
             deploymentRegistry.remove(id);
         }
     }
@@ -164,16 +156,16 @@ public class SingletonContainer implements RpcContainer {
     }
 
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        if (beanContext == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
 
         // Use the backup way to determine call type if null was supplied.
-        if (type == null) type = deployInfo.getInterfaceType(callInterface);
+        if (type == null) type = beanContext.getInterfaceType(callInterface);
 
-        Method runMethod = deployInfo.getMatchingBeanMethod(callMethod);
+        Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
 
-        ThreadContext callContext = new ThreadContext(deployInfo, primKey);
+        ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             boolean authorized = type == InterfaceType.TIMEOUT || getSecurityService().isCallerAuthorized(callMethod, type);
@@ -183,7 +175,7 @@ public class SingletonContainer implements RpcContainer {
             Class declaringClass = callMethod.getDeclaringClass();
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (callMethod.getName().startsWith("create")) {
-                    return createEJBObject(deployInfo, callMethod);
+                    return createEJBObject(beanContext, callMethod);
                 } else
                     return null;// EJBHome.remove( ) and other EJBHome methods are not process by the container
             } else if (EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) {
@@ -211,30 +203,30 @@ public class SingletonContainer implements RpcContainer {
     }
 
     protected Object _invoke(Method callMethod, Method runMethod, Object[] args, Instance instance, ThreadContext callContext, InterfaceType callType) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        BeanContext beanContext = callContext.getBeanContext();
                
-        Duration accessTimeout = getAccessTimeout(deploymentInfo, runMethod);        
-        boolean read = deploymentInfo.getConcurrencyAttribute(runMethod) == javax.ejb.LockType.READ;
+        Duration accessTimeout = getAccessTimeout(beanContext, runMethod);
+        boolean read = beanContext.getConcurrencyAttribute(runMethod) == javax.ejb.LockType.READ;
         
         final Lock lock = aquireLock(read, accessTimeout, instance);
 
         Object returnValue;
         try {
-            TransactionPolicy txPolicy = createTransactionPolicy(deploymentInfo.getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
 
             returnValue = null;
             try {
                 if (callType == InterfaceType.SERVICE_ENDPOINT) {
                     callContext.setCurrentOperation(Operation.BUSINESS_WS);
-                    returnValue = invokeWebService(args, deploymentInfo, runMethod, instance);
+                    returnValue = invokeWebService(args, beanContext, runMethod, instance);
                 } else {
-                    List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                    List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                     InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, callType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS, interceptors,
                             instance.interceptors);
                     returnValue = interceptorStack.invoke(args);
                 }
             } catch (Throwable e) {// handle reflection exception
-                ExceptionType type = deploymentInfo.getExceptionType(e);
+                ExceptionType type = beanContext.getExceptionType(e);
                 if (type == ExceptionType.SYSTEM) {
                     /* System Exception ****************************/
 
@@ -258,10 +250,10 @@ public class SingletonContainer implements RpcContainer {
         return returnValue;
     }
 
-    private Duration getAccessTimeout(CoreDeploymentInfo deploymentInfo, Method callMethod) {
-        Duration accessTimeout = deploymentInfo.getAccessTimeout(callMethod);
+    private Duration getAccessTimeout(BeanContext beanContext, Method callMethod) {
+        Duration accessTimeout = beanContext.getAccessTimeout(callMethod);
         if (accessTimeout == null) {
-            accessTimeout = deploymentInfo.getAccessTimeout();
+            accessTimeout = beanContext.getAccessTimeout();
             if (accessTimeout == null) {
                 accessTimeout = this.accessTimeout;
             }
@@ -302,7 +294,7 @@ public class SingletonContainer implements RpcContainer {
         return lock;
     }
 
-    private Object invokeWebService(Object[] args, CoreDeploymentInfo deploymentInfo, Method runMethod, Instance instance) throws Exception {
+    private Object invokeWebService(Object[] args, BeanContext beanContext, Method runMethod, Instance instance) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor, [arg...]}.");
         }
@@ -328,7 +320,7 @@ public class SingletonContainer implements RpcContainer {
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(deploymentInfo.getMethodInterceptors(runMethod));
+        List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>(beanContext.getMethodInterceptors(runMethod));
         {
             InterceptorData providerData = new InterceptorData(interceptor.getClass());
             ClassFinder finder = new ClassFinder(interceptor.getClass());
@@ -355,7 +347,7 @@ public class SingletonContainer implements RpcContainer {
         throw new IllegalArgumentException("Uknown MessageContext type: " + messageContext.getClass().getName());
     }
 
-    protected ProxyInfo createEJBObject(org.apache.openejb.core.CoreDeploymentInfo deploymentInfo, Method callMethod) {
-        return new ProxyInfo(deploymentInfo, null);
+    protected ProxyInfo createEJBObject(BeanContext beanContext, Method callMethod) {
+        return new ProxyInfo(beanContext, null);
     }
 }

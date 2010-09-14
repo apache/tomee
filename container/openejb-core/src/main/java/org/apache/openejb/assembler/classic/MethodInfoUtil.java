@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.util.Join;
 
 import javax.ejb.EJBLocalObject;
@@ -211,36 +211,36 @@ public class MethodInfoUtil {
 
     }
 
-    public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, DeploymentInfo deploymentInfo) {
+    public static Map<Method, MethodAttributeInfo> resolveAttributes(List<? extends MethodAttributeInfo> infos, BeanContext beanContext) {
         Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
 
-        Method[] wildCardView = getWildCardView(deploymentInfo).toArray(new Method[]{});
+        Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
 
         for (MethodAttributeInfo attributeInfo : infos) {
             for (MethodInfo methodInfo : attributeInfo.methods) {
 
-                if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(deploymentInfo.getEjbName())) {
+                if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
 
                     List<Method> methods = new ArrayList<Method>();
 
                     if (methodInfo.methodIntf == null) {
                         methods.addAll(matchingMethods(methodInfo, wildCardView));
                     } else if (methodInfo.methodIntf.equals("Home")) {
-                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getHomeInterface()));
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getHomeInterface()));
                     } else if (methodInfo.methodIntf.equals("Remote")) {
-                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getRemoteInterface()));
-                        for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
+                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("LocalHome")) {
-                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalHomeInterface()));
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getLocalHomeInterface()));
                     } else if (methodInfo.methodIntf.equals("Local")) {
-                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getLocalInterface()));
-                        for (Class intf : deploymentInfo.getBusinessRemoteInterfaces()) {
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
+                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
-                        methods.addAll(matchingMethods(methodInfo, deploymentInfo.getServiceEndpointInterface()));
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getServiceEndpointInterface()));
                     }
 
                     for (Method method : methods) {
@@ -264,7 +264,7 @@ public class MethodInfoUtil {
                 !method.getName().equals("remove");
     }
 
-    private static List<Method> getWildCardView(DeploymentInfo info) {
+    private static List<Method> getWildCardView(BeanContext info) {
         List<Method> methods = new ArrayList<Method>();
 
         List<Method> beanMethods = asList(info.getBeanClass().getMethods());

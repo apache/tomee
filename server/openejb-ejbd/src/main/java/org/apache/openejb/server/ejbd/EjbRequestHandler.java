@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.client.EJBHomeProxyHandle;
@@ -72,7 +72,7 @@ class EjbRequestHandler {
         }
 
         CallContext call = null;
-        DeploymentInfo di = null;
+        BeanContext di = null;
         RpcContainer c = null;
 
         try {
@@ -107,7 +107,7 @@ class EjbRequestHandler {
         try {
             call = CallContext.getCallContext();
             call.setEJBRequest(req);
-            call.setDeploymentInfo(di);
+            call.setBeanContext(di);
         } catch (Throwable t) {
             replyWithFatalError(out, t, "Unable to set the thread context for this request");
             return;
@@ -226,14 +226,14 @@ class EjbRequestHandler {
 
     protected void updateServer(EJBRequest req, EJBResponse res) {
         CallContext callContext = CallContext.getCallContext();
-        DeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        clusterableRequestHandler.updateServer(deploymentInfo, req, res);
+        BeanContext beanContext = callContext.getBeanContext();
+        clusterableRequestHandler.updateServer(beanContext, req, res);
     }
 
     protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -247,7 +247,7 @@ class EjbRequestHandler {
     protected void doEjbHome_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -261,7 +261,7 @@ class EjbRequestHandler {
     protected void doEjbHome_CREATE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -283,7 +283,7 @@ class EjbRequestHandler {
     protected void doEjbHome_FIND(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -359,7 +359,7 @@ class EjbRequestHandler {
     protected void doEjbObject_REMOVE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -381,7 +381,7 @@ class EjbRequestHandler {
     protected void doEjbHome_REMOVE_BY_HANDLE(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -395,7 +395,7 @@ class EjbRequestHandler {
     protected void doEjbHome_REMOVE_BY_PKEY(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getDeploymentInfo().getContainer();
+        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
 
         Object result = c.invoke(req.getDeploymentId(),
                 req.getInterfaceClass(), req.getMethodInstance(),
@@ -408,16 +408,6 @@ class EjbRequestHandler {
 
     protected void checkMethodAuthorization(EJBRequest req, EJBResponse res) throws Exception {
         res.setResponse(ResponseCodes.EJB_OK, null);
-//        SecurityService sec = SystemInstance.get().getComponent(SecurityService.class);
-//        CallContext caller = CallContext.getCallContext();
-//        DeploymentInfo di = caller.getDeploymentInfo();
-//
-//        if (sec.isCallerAuthorized(req.getMethodInstance(), null)) {
-//            res.setResponse(ResponseCodes.EJB_OK, null);
-//        } else {
-//            logger.info(req + "Unauthorized Access by Principal Denied");
-//            res.setResponse(ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(new EJBAccessException("Unauthorized Access by Principal Denied")));
-//        }
     }
 
     private void replyWithFatalError(ObjectOutputStream out, Throwable error, String message) {

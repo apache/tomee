@@ -17,18 +17,15 @@
 package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
-import org.apache.openejb.client.LocalInitialContextFactory;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.server.ServicePool;
 import org.apache.openejb.server.ServiceDaemon;
@@ -80,7 +77,7 @@ public class UberInterfaceTest extends TestCase {
         assembler.createApplication(ejbJarInfo);
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        DeploymentInfo deployment = containerSystem.getDeploymentInfo(beanInfo.ejbDeploymentId);
+        BeanContext deployment = containerSystem.getBeanContext(beanInfo.ejbDeploymentId);
 
         assertEquals(asList(Everything.class), deployment.getBusinessLocalInterfaces());
         assertEquals(asList(Everything.class), deployment.getBusinessRemoteInterfaces());
