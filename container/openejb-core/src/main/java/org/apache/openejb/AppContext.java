@@ -14,11 +14,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.core;
+package org.apache.openejb;
 
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.loader.Options;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
@@ -47,7 +45,7 @@ public class AppContext extends DeploymentContext {
     private ExecutorService asynchPool;
 
     // TODO perhaps to be deleted
-    private final List<DeploymentInfo> deployments = new ArrayList<DeploymentInfo>();
+    private final List<BeanContext> deployments = new ArrayList<BeanContext>();
 
     public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
@@ -82,7 +80,7 @@ public class AppContext extends DeploymentContext {
         return classLoader;
     }
 
-    public List<DeploymentInfo> getDeployments() {
+    public List<BeanContext> getDeployments() {
         return deployments;
     }
 

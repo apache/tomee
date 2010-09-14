@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -43,7 +44,7 @@ public class ThreadContext {
 
         // set the thread context class loader
         newContext.oldClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(newContext.deploymentInfo.getClassLoader());
+        Thread.currentThread().setContextClassLoader(newContext.beanContext.getClassLoader());
 
         // update thread local
         ThreadContext oldContext = threadStorage.get();
@@ -105,7 +106,7 @@ public class ThreadContext {
         listeners.remove(listener);
     }
 
-    private final CoreDeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
     private final Object primaryKey;
     private final HashMap<Class, Object> data = new HashMap<Class, Object>();
     private ClassLoader oldClassLoader;
@@ -119,28 +120,28 @@ public class ThreadContext {
      */
     private boolean discardInstance;
 
-    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey) {
-        this(deploymentInfo, primaryKey, null);
+    public ThreadContext(BeanContext beanContext, Object primaryKey) {
+        this(beanContext, primaryKey, null);
     }
 
-    public ThreadContext(CoreDeploymentInfo deploymentInfo, Object primaryKey, Operation operation) {
-        if (deploymentInfo == null) {
+    public ThreadContext(BeanContext beanContext, Object primaryKey, Operation operation) {
+        if (beanContext == null) {
             throw new NullPointerException("deploymentInfo is null");
         }
-        this.deploymentInfo = deploymentInfo;
+        this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.currentOperation = operation;
     }
 
     public ThreadContext(ThreadContext that) {
-        this.deploymentInfo = that.deploymentInfo;
+        this.beanContext = that.beanContext;
         this.primaryKey = that.primaryKey;
         this.data.putAll(that.data);
         this.oldClassLoader = that.oldClassLoader;
     }
 
-    public CoreDeploymentInfo getDeploymentInfo() {
-        return deploymentInfo;
+    public BeanContext getBeanContext() {
+        return beanContext;
     }
 
     public Object getPrimaryKey() {

@@ -16,11 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.assembler.classic.EjbResolver;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
@@ -73,9 +72,9 @@ public class LazyEjbReference extends Reference {
 
         ContainerSystem containerSystem = systemInstance.getComponent(ContainerSystem.class);
 
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
+        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
 
-        if (deploymentInfo == null) {
+        if (beanContext == null) {
             String message = messages.format("deploymentNotFound", info.getName(), deploymentId);
             throw new NameNotFoundException(message);
         }
@@ -88,7 +87,7 @@ public class LazyEjbReference extends Reference {
 
         String jndiName = "openejb/Deployment/" + JndiBuilder.format(deploymentId, info.getInterface(), type);
 
-        if (useCrossClassLoaderRef && isRemote(deploymentInfo)) {
+        if (useCrossClassLoaderRef && isRemote(beanContext)) {
             reference = new CrossClassLoaderJndiReference(jndiName);
         } else {
             reference = new IntraVmJndiReference(jndiName);
@@ -97,12 +96,12 @@ public class LazyEjbReference extends Reference {
         return reference.getObject();
     }
 
-    private boolean isRemote(DeploymentInfo deploymentInfo) {
+    private boolean isRemote(BeanContext beanContext) {
         switch(info.getRefType()){
             case REMOTE: return true;
             case LOCAL: return false;
             case UNKNOWN:{
-                for (Class clazz : deploymentInfo.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
+                for (Class clazz : beanContext.getInterfaces(InterfaceType.BUSINESS_REMOTE)) {
                     if (clazz.getName().equals(info.getInterface())) return true;
                 }
             };

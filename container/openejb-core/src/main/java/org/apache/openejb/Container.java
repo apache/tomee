@@ -22,16 +22,16 @@ public interface Container {
 
     public Object getContainerID();
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID);
+    public BeanContext getBeanContext(Object deploymentID);
 
-    public DeploymentInfo [] deployments();
+    public BeanContext[] getBeanContexts();
 
-    public void deploy(DeploymentInfo info) throws OpenEJBException;
+    public void deploy(BeanContext info) throws OpenEJBException;
         
-    public void start(DeploymentInfo info) throws OpenEJBException;
+    public void start(BeanContext info) throws OpenEJBException;
     
-    public void stop(DeploymentInfo info) throws OpenEJBException;
+    public void stop(BeanContext info) throws OpenEJBException;
     
-    public void undeploy(DeploymentInfo info) throws OpenEJBException;
+    public void undeploy(BeanContext info) throws OpenEJBException;
     
 }

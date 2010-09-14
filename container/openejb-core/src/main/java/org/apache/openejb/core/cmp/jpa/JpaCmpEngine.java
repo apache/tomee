@@ -34,8 +34,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.CmpCallback;
 import org.apache.openejb.core.cmp.CmpEngine;
@@ -80,18 +80,18 @@ public class JpaCmpEngine implements CmpEngine {
         this.cmpCallback = cmpCallback;
     }
 
-    public synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        configureKeyGenerator(deploymentInfo);
+    public synchronized void deploy(BeanContext beanContext) throws OpenEJBException {
+        configureKeyGenerator(beanContext);
     }
 
-    public synchronized void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploymentInfo.setKeyGenerator(null);
+    public synchronized void undeploy(BeanContext beanContext) throws OpenEJBException {
+        beanContext.setKeyGenerator(null);
     }
 
-    private EntityManager getEntityManager(CoreDeploymentInfo deploymentInfo) {
+    private EntityManager getEntityManager(BeanContext beanContext) {
         EntityManager entityManager = null;
         try {
-            entityManager = (EntityManager) deploymentInfo.getJndiEnc().lookup(CMP_PERSISTENCE_CONTEXT_REF_NAME);
+            entityManager = (EntityManager) beanContext.getJndiEnc().lookup(CMP_PERSISTENCE_CONTEXT_REF_NAME);
         } catch (NamingException ignored) {
             //TODO see OPENEJB-1259 temporary hack until geronimo jndi integration works better
             try {
@@ -102,7 +102,7 @@ public class JpaCmpEngine implements CmpEngine {
         }
 
         if (entityManager == null) {
-            throw new EJBException("Entity manager not found at \"openejb/cmp\" in jndi ejb " + deploymentInfo.getDeploymentID());
+            throw new EJBException("Entity manager not found at \"openejb/cmp\" in jndi ejb " + beanContext.getDeploymentID());
         }
 
         registerListener(entityManager);
@@ -133,15 +133,15 @@ public class JpaCmpEngine implements CmpEngine {
         TransactionPolicy txPolicy = startTransaction("persist", callContext);
         creating.get().add(bean);
         try {
-            CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
-            EntityManager entityManager = getEntityManager(deploymentInfo);
+            BeanContext beanContext = callContext.getBeanContext();
+            EntityManager entityManager = getEntityManager(beanContext);
 
             entityManager.persist(bean);
             entityManager.flush();
             bean = entityManager.merge(bean);
 
             // extract the primary key from the bean
-            KeyGenerator kg = deploymentInfo.getKeyGenerator();
+            KeyGenerator kg = beanContext.getKeyGenerator();
             Object primaryKey = kg.getPrimaryKey(bean);
 
             return primaryKey;
@@ -154,11 +154,11 @@ public class JpaCmpEngine implements CmpEngine {
     public Object loadBean(ThreadContext callContext, Object primaryKey) {
         TransactionPolicy txPolicy = startTransaction("load", callContext);
         try {
-            CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) callContext.getDeploymentInfo();
-            Class<?> beanClass = deploymentInfo.getCmpImplClass();
+            BeanContext beanContext = callContext.getBeanContext();
+            Class<?> beanClass = beanContext.getCmpImplClass();
 
             // Try to load it from the entity manager
-            EntityManager entityManager = getEntityManager(deploymentInfo);
+            EntityManager entityManager = getEntityManager(beanContext);
             return entityManager.find(beanClass, primaryKey);
         } finally {
             commitTransaction("load", callContext, txPolicy);
@@ -175,7 +175,7 @@ public class JpaCmpEngine implements CmpEngine {
         try {
             // only store if we started a new transaction
             if (txPolicy.isNewTransaction()) {
-                EntityManager entityManager = getEntityManager(callContext.getDeploymentInfo());
+                EntityManager entityManager = getEntityManager(callContext.getBeanContext());
                 entityManager.merge(bean);
             }
         } finally {
@@ -186,7 +186,7 @@ public class JpaCmpEngine implements CmpEngine {
     public void removeBean(ThreadContext callContext) {
         TransactionPolicy txPolicy = startTransaction("remove", callContext);
         try {
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            BeanContext deploymentInfo = callContext.getBeanContext();
             Class<?> beanClass = deploymentInfo.getCmpImplClass();
 
             EntityManager entityManager = getEntityManager(deploymentInfo);
@@ -202,7 +202,7 @@ public class JpaCmpEngine implements CmpEngine {
     }
 
     public List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        BeanContext deploymentInfo = callContext.getBeanContext();
         EntityManager entityManager = getEntityManager(deploymentInfo);
 
         StringBuilder queryName = new StringBuilder();
@@ -231,8 +231,8 @@ public class JpaCmpEngine implements CmpEngine {
         return executeSelectQuery(query, args);
     }
 
-    public List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
-        EntityManager entityManager = getEntityManager(deploymentInfo);
+    public List<Object> queryBeans(BeanContext beanContext, String signature, Object[] args) throws FinderException {
+        EntityManager entityManager = getEntityManager(beanContext);
 
         Query query = createNamedQuery(entityManager, signature);
         if (query == null) {
@@ -280,8 +280,8 @@ public class JpaCmpEngine implements CmpEngine {
         return results;
     }
 
-    public int executeUpdateQuery(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException {
-        EntityManager entityManager = getEntityManager(deploymentInfo);
+    public int executeUpdateQuery(BeanContext beanContext, String signature, Object[] args) throws FinderException {
+        EntityManager entityManager = getEntityManager(beanContext);
 
         Query query = createNamedQuery(entityManager, signature);
         if (query == null) {
@@ -342,7 +342,7 @@ public class JpaCmpEngine implements CmpEngine {
         }
     }
 
-    private void configureKeyGenerator(CoreDeploymentInfo di) throws OpenEJBException {
+    private void configureKeyGenerator(BeanContext di) throws OpenEJBException {
         if (di.isCmp2()) {
             di.setKeyGenerator(new Cmp2KeyGenerator());
         } else {

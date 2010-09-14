@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.core.ivm.naming;
 
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.core.ivm.naming.Reference;
+import org.apache.openejb.BeanContext;
 
 /**
  * @version $Rev$ $Date$
  */
 public class BusinessLocalBeanReference extends Reference {
 
-    private final DeploymentInfo.BusinessLocalBeanHome businessHome;
+    private final BeanContext.BusinessLocalBeanHome businessHome;
 
-    public BusinessLocalBeanReference(DeploymentInfo.BusinessLocalBeanHome localBeanHome) {
+    public BusinessLocalBeanReference(BeanContext.BusinessLocalBeanHome localBeanHome) {
         this.businessHome = localBeanHome;
     }
 

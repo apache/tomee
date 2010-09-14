@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.client.ServerMetaData;
 
@@ -42,12 +42,12 @@ public class CallContext {
         return (T) data.put(type, value);
     }
 
-    public DeploymentInfo getDeploymentInfo() {
-        return get(DeploymentInfo.class);
+    public BeanContext getBeanContext() {
+        return get(BeanContext.class);
     }
 
-    public void setDeploymentInfo(DeploymentInfo info) {
-        set(DeploymentInfo.class, info);
+    public void setBeanContext(BeanContext info) {
+        set(BeanContext.class, info);
     }
 
 

@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.client.EJBRequest;
 import org.apache.openejb.util.Messages;
 
@@ -28,14 +28,14 @@ public class DeploymentIndex {
 
     Messages messages = new Messages("org.apache.openejb.server.ejbd");
 
-    DeploymentInfo[] deployments = null;
+    BeanContext[] deployments = null;
 
     Map index = null;
 
-    public DeploymentIndex(DeploymentInfo[] deploymentInfos) {
-        DeploymentInfo[] ds = deploymentInfos;
+    public DeploymentIndex(BeanContext[] beanContexts) {
+        BeanContext[] ds = beanContexts;
 
-        deployments = new DeploymentInfo[ ds.length + 1 ];
+        deployments = new BeanContext[ ds.length + 1 ];
 
         System.arraycopy(ds, 0, deployments, 1, ds.length);
 
@@ -45,9 +45,9 @@ public class DeploymentIndex {
         }
     }
 
-    public DeploymentInfo getDeployment(EJBRequest req) throws RemoteException {
+    public BeanContext getDeployment(EJBRequest req) throws RemoteException {
 
-        DeploymentInfo info = null;
+        BeanContext info = null;
 
         int deploymentCode = req.getDeploymentCode();
         if (deploymentCode > 0 && deploymentCode < deployments.length) {
@@ -73,7 +73,7 @@ public class DeploymentIndex {
         return deployments[req.getDeploymentCode()];
     }
 
-    public int getDeploymentIndex(DeploymentInfo deployment) {
+    public int getDeploymentIndex(BeanContext deployment) {
         return getDeploymentIndex((String) deployment.getDeploymentID());
     }
 
@@ -83,15 +83,15 @@ public class DeploymentIndex {
         return (idCode == null) ? -1 : idCode.intValue();
     }
 
-    public DeploymentInfo getDeployment(String deploymentID) {
+    public BeanContext getDeployment(String deploymentID) {
         return getDeployment(getDeploymentIndex(deploymentID));
     }
 
-    public DeploymentInfo getDeployment(Integer index) {
+    public BeanContext getDeployment(Integer index) {
         return (index == null) ? null : getDeployment(index.intValue());
     }
 
-    public DeploymentInfo getDeployment(int index) {
+    public BeanContext getDeployment(int index) {
         return deployments[index];
     }
 }

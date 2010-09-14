@@ -19,8 +19,8 @@ package org.apache.openejb.server.ejbd;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ClusteredRPCContainer;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.client.ClusterableRequest;
 import org.apache.openejb.client.ClusterableResponse;
 import org.apache.openejb.client.ServerMetaData;
@@ -35,7 +35,7 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
     private BasicClusterableRequestHandler requestHandler;
     private ClusterableRequest request;
     private ClusterableResponse response;
-    private DeploymentInfo deploymentInfo;
+    private BeanContext beanContext;
     private ClusteredRPCContainer clusteredContainer;
 
     @Override
@@ -43,23 +43,23 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
         requestHandler = new BasicClusterableRequestHandler();
         request = (ClusterableRequest) mock(ClusterableRequest.class);
         response = (ClusterableResponse) mock(ClusterableResponse.class);
-        deploymentInfo = (DeploymentInfo) mock(DeploymentInfo.class);
+        beanContext = (BeanContext) mock(BeanContext.class);
         clusteredContainer = (ClusteredRPCContainer) mock(ClusteredRPCContainer.class);
     }
     
     public void testNoOpWhenNotAClusteredContainer() throws Exception {
-        deploymentInfo.getContainer();
+        beanContext.getContainer();
         
         startVerification();
         
-        requestHandler.updateServer(deploymentInfo, request, response);
+        requestHandler.updateServer(beanContext, request, response);
     }
 
     public void testUpdateServerWhenRequestHashDiffersFromServerSideHash() throws Exception {
         final URI[] locations = new URI[] {new URI("ejbd://localhost:4201")};
         ServerMetaData server = new ServerMetaData(locations);
 
-        deploymentInfo.getContainer();
+        beanContext.getContainer();
         modify().returnValue(clusteredContainer);
 
         request.getServerHash();
@@ -77,30 +77,30 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
             }
         });
         
-        clusteredContainer.getLocations(deploymentInfo);
+        clusteredContainer.getLocations(beanContext);
         modify().returnValue(locations);
         
         startVerification();
         
-        requestHandler.updateServer(deploymentInfo, request, response);
+        requestHandler.updateServer(beanContext, request, response);
     }
 
     public void testServerIsNotUpdatedWhenRequestHashEqualsServerSideHash() throws Exception {
         URI[] locations = new URI[] {new URI("ejbd://localhost:4201")};
         ServerMetaData server = new ServerMetaData(locations);
 
-        deploymentInfo.getContainer();
+        beanContext.getContainer();
         modify().returnValue(clusteredContainer);
 
         request.getServerHash();
         modify().returnValue(server.buildHash());
 
-        clusteredContainer.getLocations(deploymentInfo);
+        clusteredContainer.getLocations(beanContext);
         modify().returnValue(locations);
 
         startVerification();
         
-        requestHandler.updateServer(deploymentInfo, request, response);
+        requestHandler.updateServer(beanContext, request, response);
     }
 
 }

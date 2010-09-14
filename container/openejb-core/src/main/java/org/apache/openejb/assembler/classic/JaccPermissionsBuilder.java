@@ -16,14 +16,13 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
-import org.apache.openejb.core.CoreDeploymentInfo;
 
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
@@ -75,7 +74,7 @@ public class JaccPermissionsBuilder {
 
     private static Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), JaccPermissionsBuilder.class);
 
-    public PolicyContext build(EjbJarInfo ejbJar, HashMap<String, DeploymentInfo> deployments) throws OpenEJBException {
+    public PolicyContext build(EjbJarInfo ejbJar, HashMap<String, BeanContext> deployments) throws OpenEJBException {
 
         List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
 
@@ -90,8 +89,8 @@ public class JaccPermissionsBuilder {
 
         perms = MethodInfoUtil.normalizeMethodPermissionInfos(perms);
 
-        for (DeploymentInfo deploymentInfo : deployments.values()) {
-            Map<Method, MethodAttributeInfo> attributes = resolveAttributes(perms, deploymentInfo);
+        for (BeanContext beanContext : deployments.values()) {
+            Map<Method, MethodAttributeInfo> attributes = resolveAttributes(perms, beanContext);
 
             if (log.isDebugEnabled()) {
                 for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
@@ -113,8 +112,8 @@ public class JaccPermissionsBuilder {
                 MethodInfo am = a.methods.get(0);
                 MethodInfo bm = new MethodInfo();
 
-                bm.ejbName = deploymentInfo.getEjbName();
-                bm.ejbDeploymentId = deploymentInfo.getDeploymentID() + "";
+                bm.ejbName = beanContext.getEjbName();
+                bm.ejbDeploymentId = beanContext.getDeploymentID() + "";
                 bm.methodIntf = am.methodIntf;
 
                 bm.className = method.getDeclaringClass().getName();
@@ -136,7 +135,7 @@ public class JaccPermissionsBuilder {
         PolicyContext policyContext = new PolicyContext(ejbJar.moduleId);
 
         for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
-            CoreDeploymentInfo deployment = (CoreDeploymentInfo) deployments.get(enterpriseBean.ejbDeploymentId);
+            BeanContext beanContext = deployments.get(enterpriseBean.ejbDeploymentId);
 
             Permissions permissions = new Permissions();
 
@@ -145,11 +144,11 @@ public class JaccPermissionsBuilder {
             for (InterfaceType type : InterfaceType.values()) {
                 if (type == InterfaceType.UNKNOWN) continue;
 
-                for (Class interfce : deployment.getInterfaces(type)) {
+                for (Class interfce : beanContext.getInterfaces(type)) {
                     addPossibleEjbMethodPermissions(permissions, ejbName, type.getSpecName(), interfce);
                 }
             }
-            addPossibleEjbMethodPermissions(permissions, ejbName, null, deployment.getBeanClass());
+            addPossibleEjbMethodPermissions(permissions, ejbName, null, beanContext.getBeanClass());
 
             addDeclaredEjbPermissions(ejbJar, enterpriseBean, null, permissions, policyContext);
 

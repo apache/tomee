@@ -43,8 +43,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.openejb.ApplicationException;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.OpenEJBException;
@@ -54,7 +54,6 @@ import org.apache.openejb.SystemException;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ExceptionType;
 import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
 import static org.apache.openejb.core.ExceptionType.SYSTEM;
@@ -96,7 +95,7 @@ public class ManagedContainer implements RpcContainer {
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
      */
-    protected final Map<Object, DeploymentInfo> deploymentsById = new HashMap<Object, DeploymentInfo>();
+    protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
 
     protected final Cache<Object, Instance> cache;
     private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
@@ -110,14 +109,14 @@ public class ManagedContainer implements RpcContainer {
         sessionContext = new ManagedContext(securityService, new ManagedUserTransaction(new EjbUserTransaction(), entityManagerRegistry));
     }
 
-    private Map<Method, MethodType> getLifecycleMethodsOfInterface(CoreDeploymentInfo deploymentInfo) {
+    private Map<Method, MethodType> getLifecycleMethodsOfInterface(BeanContext beanContext) {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
 
-        List<Method> removeMethods = deploymentInfo.getRemoveMethods();
+        List<Method> removeMethods = beanContext.getRemoveMethods();
         for (Method removeMethod : removeMethods) {
             methods.put(removeMethod, MethodType.REMOVE);
 
-            for (Class businessLocal : deploymentInfo.getBusinessLocalInterfaces()) {
+            for (Class businessLocal : beanContext.getBusinessLocalInterfaces()) {
                 try {
                     Method method = businessLocal.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
@@ -125,7 +124,7 @@ public class ManagedContainer implements RpcContainer {
                 }
             }
 
-            for (Class businessRemote : deploymentInfo.getBusinessRemoteInterfaces()) {
+            for (Class businessRemote : beanContext.getBusinessRemoteInterfaces()) {
                 try {
                     Method method = businessRemote.getMethod(removeMethod.getName());
                     methods.put(method, MethodType.REMOVE);
@@ -134,7 +133,7 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class legacyRemote = deploymentInfo.getRemoteInterface();
+        Class legacyRemote = beanContext.getRemoteInterface();
         if (legacyRemote != null) {
             try {
                 Method method = legacyRemote.getMethod("remove");
@@ -143,7 +142,7 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class legacyLocal = deploymentInfo.getLocalInterface();
+        Class legacyLocal = beanContext.getLocalInterface();
         if (legacyLocal != null) {
             try {
                 Method method = legacyLocal.getMethod("remove");
@@ -152,9 +151,9 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class businessLocalHomeInterface = deploymentInfo.getBusinessLocalInterface();
+        Class businessLocalHomeInterface = beanContext.getBusinessLocalInterface();
         if (businessLocalHomeInterface != null) {
-            for (Method method : DeploymentInfo.BusinessLocalHome.class.getMethods()) {
+            for (Method method : BeanContext.BusinessLocalHome.class.getMethods()) {
                 if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
                 } else if (method.getName().equals("remove")) {
@@ -163,9 +162,9 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class businessLocalBeanHomeInterface = deploymentInfo.getBusinessLocalBeanInterface();
+        Class businessLocalBeanHomeInterface = beanContext.getBusinessLocalBeanInterface();
         if (businessLocalBeanHomeInterface != null) {
-            for (Method method : DeploymentInfo.BusinessLocalBeanHome.class.getMethods()) {
+            for (Method method : BeanContext.BusinessLocalBeanHome.class.getMethods()) {
                 if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
                 } else if (method.getName().equals("remove")) {
@@ -174,9 +173,9 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class businessRemoteHomeInterface = deploymentInfo.getBusinessRemoteInterface();
+        Class businessRemoteHomeInterface = beanContext.getBusinessRemoteInterface();
         if (businessRemoteHomeInterface != null) {
-            for (Method method : DeploymentInfo.BusinessRemoteHome.class.getMethods()) {
+            for (Method method : BeanContext.BusinessRemoteHome.class.getMethods()) {
                 if (method.getName().startsWith("create")) {
                     methods.put(method, MethodType.CREATE);
                 } else if (method.getName().equals("remove")) {
@@ -185,7 +184,7 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class homeInterface = deploymentInfo.getHomeInterface();
+        Class homeInterface = beanContext.getHomeInterface();
         if (homeInterface != null) {
             for (Method method : homeInterface.getMethods()) {
                 if (method.getName().startsWith("create")) {
@@ -196,7 +195,7 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        Class localHomeInterface = deploymentInfo.getLocalHomeInterface();
+        Class localHomeInterface = beanContext.getLocalHomeInterface();
         if (localHomeInterface != null) {
             for (Method method : localHomeInterface.getMethods()) {
                 if (method.getName().startsWith("create")) {
@@ -221,30 +220,22 @@ public class ManagedContainer implements RpcContainer {
         return containerID;
     }
 
-    public synchronized DeploymentInfo[] deployments() {
-        return deploymentsById.values().toArray(new DeploymentInfo[deploymentsById.size()]);
+    public synchronized BeanContext[] getBeanContexts() {
+        return deploymentsById.values().toArray(new BeanContext[deploymentsById.size()]);
     }
 
-    public synchronized DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public synchronized BeanContext getBeanContext(Object deploymentID) {
         return deploymentsById.get(deploymentID);
     }
 
-    public void deploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        deploy((CoreDeploymentInfo) deploymentInfo);
-    }
-
-    public void start(DeploymentInfo deploymentInfo) throws OpenEJBException {        
+    public void start(BeanContext beanContext) throws OpenEJBException {
     }
     
-    public void stop(DeploymentInfo deploymentInfo) throws OpenEJBException {        
-    }
-    
-    public void undeploy(DeploymentInfo deploymentInfo) throws OpenEJBException {
-        undeploy((CoreDeploymentInfo) deploymentInfo);
+    public void stop(BeanContext beanContext) throws OpenEJBException {
     }
 
-    private synchronized void undeploy(final CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Data data = (Data) deploymentInfo.getContainerData();
+    public synchronized void undeploy(final BeanContext bean) throws OpenEJBException {
+        Data data = (Data) bean.getContainerData();
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         for (ObjectName objectName : data.jmxNames) {
@@ -255,38 +246,38 @@ public class ManagedContainer implements RpcContainer {
             }
         }
 
-        deploymentsById.remove(deploymentInfo.getDeploymentID());
-        deploymentInfo.setContainer(null);
-        deploymentInfo.setContainerData(null);
+        deploymentsById.remove(bean.getDeploymentID());
+        bean.setContainer(null);
+        bean.setContainerData(null);
 
         cache.removeAll(new CacheFilter<Instance>() {
             public boolean matches(Instance instance) {
-                return deploymentInfo == instance.deploymentInfo;
+                return bean == instance.beanContext;
             }
         });
     }
 
-    private synchronized void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Map<Method, MethodType> methods = getLifecycleMethodsOfInterface(deploymentInfo);
+    public synchronized void deploy(BeanContext beanContext) throws OpenEJBException {
+        Map<Method, MethodType> methods = getLifecycleMethodsOfInterface(beanContext);
 
-        deploymentsById.put(deploymentInfo.getDeploymentID(), deploymentInfo);
-        deploymentInfo.setContainer(this);
+        deploymentsById.put(beanContext.getDeploymentID(), beanContext);
+        beanContext.setContainer(this);
         Data data = new Data(new Index<Method, MethodType>(methods));
-        deploymentInfo.setContainerData(data);
+        beanContext.setContainerData(data);
 
         // Create stats interceptor
-        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
-        deploymentInfo.addSystemInterceptor(stats);
+        StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+        beanContext.addSystemInterceptor(stats);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
         jmxName.set("J2EEApplication", null);
-        jmxName.set("EJBModule", deploymentInfo.getModuleID());
-        jmxName.set("StatelessSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("EJBModule", beanContext.getModuleID());
+        jmxName.set("StatelessSessionBean", beanContext.getEjbName());
         jmxName.set("j2eeType", "");
-        jmxName.set("name", deploymentInfo.getEjbName());
+        jmxName.set("name", beanContext.getEjbName());
 
         // register the invocation stats interceptor
         try {
@@ -298,13 +289,13 @@ public class ManagedContainer implements RpcContainer {
         }
 
         try {
-            final Context context = deploymentInfo.getJndiEnc();
+            final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", sessionContext);
         } catch (NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
 
-        deploymentInfo.set(EJBContext.class, this.sessionContext);
+        beanContext.set(EJBContext.class, this.sessionContext);
     }
 
     /**
@@ -319,45 +310,45 @@ public class ManagedContainer implements RpcContainer {
     }
 
     public Object invoke(Object deployID, InterfaceType type, Class callInterface, Method callMethod, Object[] args, Object primKey) throws OpenEJBException {
-        CoreDeploymentInfo deployInfo = (CoreDeploymentInfo) this.getDeploymentInfo(deployID);
+        BeanContext beanContext = this.getBeanContext(deployID);
 
-        if (deployInfo == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
+        if (beanContext == null) throw new OpenEJBException("Deployment does not exist in this container. Deployment(id='"+deployID+"'), Container(id='"+containerID+"')");
 
         // Use the backup way to determine call type if null was supplied.
-        if (type == null) type = deployInfo.getInterfaceType(callInterface);
+        if (type == null) type = beanContext.getInterfaceType(callInterface);
 
-        Data data = (Data) deployInfo.getContainerData();
+        Data data = (Data) beanContext.getContainerData();
         MethodType methodType = data.getMethodIndex().get(callMethod);
         methodType = (methodType != null) ? methodType : MethodType.BUSINESS;
 
         switch (methodType) {
             case CREATE:
-                return createEJBObject(deployInfo, callMethod, args, type);
+                return createEJBObject(beanContext, callMethod, args, type);
             case REMOVE:
-                return removeEJBObject(deployInfo, primKey, callInterface, callMethod, args, type);
+                return removeEJBObject(beanContext, primKey, callInterface, callMethod, args, type);
             default:
-                return businessMethod(deployInfo, primKey, callInterface, callMethod, args, type);
+                return businessMethod(beanContext, primKey, callInterface, callMethod, args, type);
         }
     }
 
-    protected ProxyInfo createEJBObject(CoreDeploymentInfo deploymentInfo, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
+    protected ProxyInfo createEJBObject(BeanContext beanContext, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         // generate a new primary key
         Object primaryKey = newPrimaryKey();
 
 
-        ThreadContext createContext = new ThreadContext(deploymentInfo, primaryKey);
+        ThreadContext createContext = new ThreadContext(beanContext, primaryKey);
         ThreadContext oldCallContext = ThreadContext.enter(createContext);
         try {
             // Security check
             checkAuthorization(callMethod, interfaceType);
 
             // Create the extended entity managers for this instance
-            Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(deploymentInfo);
+            Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(beanContext);
 
             // Register the newly created entity managers
             if (entityManagers != null) {
                 try {
-                    entityManagerRegistry.addEntityManagers((String) deploymentInfo.getDeploymentID(), primaryKey, entityManagers);
+                    entityManagerRegistry.addEntityManagers((String) beanContext.getDeploymentID(), primaryKey, entityManagers);
                 } catch (EntityManagerAlreadyRegisteredException e) {
                     throw new EJBException(e);
                 }
@@ -367,17 +358,17 @@ public class ManagedContainer implements RpcContainer {
             createContext.setCurrentAllowedStates(null);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getDeploymentInfo().getTransactionType(callMethod), createContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod), createContext);
 
             Instance instance = null;
             try {
                 // Create new instance
 
                 try {
-                    final InstanceContext context = deploymentInfo.newInstance();
+                    final InstanceContext context = beanContext.newInstance();
 
                     // Wrap-up everthing into a object
-                    instance = new Instance(deploymentInfo, primaryKey, context.getBean(), context.getInterceptors(), entityManagers);
+                    instance = new Instance(beanContext, primaryKey, context.getBean(), context.getInterceptors(), entityManagers);
 
                 } catch (Throwable throwable) {
                     ThreadContext callContext = ThreadContext.getThreadContext();
@@ -395,12 +386,12 @@ public class ManagedContainer implements RpcContainer {
                 registerSessionSynchronization(instance, createContext);
 
                 // Invoke create for legacy beans
-                if (!callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalHome.class) &&
-                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessRemoteHome.class) &&
-                        !callMethod.getDeclaringClass().equals(DeploymentInfo.BusinessLocalBeanHome.class)) {
+                if (!callMethod.getDeclaringClass().equals(BeanContext.BusinessLocalHome.class) &&
+                        !callMethod.getDeclaringClass().equals(BeanContext.BusinessRemoteHome.class) &&
+                        !callMethod.getDeclaringClass().equals(BeanContext.BusinessLocalBeanHome.class)) {
 
                     // Setup for business invocation
-                    Method createOrInit = deploymentInfo.getMatchingBeanMethod(callMethod);
+                    Method createOrInit = beanContext.getMatchingBeanMethod(callMethod);
                     createContext.set(Method.class, createOrInit);
 
                     // Initialize interceptor stack
@@ -419,7 +410,7 @@ public class ManagedContainer implements RpcContainer {
                 afterInvoke(createContext, txPolicy, instance);
             }
 
-            return new ProxyInfo(deploymentInfo, primaryKey);
+            return new ProxyInfo(beanContext, primaryKey);
         } finally {
             ThreadContext.exit(oldCallContext);
         }
@@ -429,10 +420,10 @@ public class ManagedContainer implements RpcContainer {
         return new VMID();
     }
 
-    protected Object removeEJBObject(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
+    protected Object removeEJBObject(BeanContext beanContext, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         if (primKey == null) throw new NullPointerException("primKey is null");
 
-        ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
+        ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
@@ -457,7 +448,7 @@ public class ManagedContainer implements RpcContainer {
             }
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getDeploymentInfo().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
 
             Object returnValue = null;
             boolean retain = false;
@@ -488,7 +479,7 @@ public class ManagedContainer implements RpcContainer {
                 callContext.setCurrentOperation(Operation.REMOVE);
                 callContext.setCurrentAllowedStates(null);
                 callContext.setInvokedInterface(callInterface);
-                runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                runMethod = beanContext.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
 
                 // Do not pass arguments on home.remove(remote) calls
@@ -498,7 +489,7 @@ public class ManagedContainer implements RpcContainer {
                 }
                 
                 // Initialize interceptor stack
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
 
                 // Invoke
@@ -511,7 +502,7 @@ public class ManagedContainer implements RpcContainer {
                 throw e;
             } catch (Throwable e) {
                 if (interfaceType.isBusiness()) {
-                    retain = deploymentInfo.retainIfExeption(runMethod);
+                    retain = beanContext.retainIfExeption(runMethod);
                     handleException(callContext, txPolicy, e);
                 } else {
                     try {
@@ -524,7 +515,7 @@ public class ManagedContainer implements RpcContainer {
                 if (!retain) {
                     try {
                         callContext.setCurrentOperation(Operation.PRE_DESTROY);
-                        List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                        List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
                         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
                         interceptorStack.invoke();
                     } catch (Throwable callbackException) {
@@ -551,15 +542,15 @@ public class ManagedContainer implements RpcContainer {
         }
     }
 
-    protected Object businessMethod(CoreDeploymentInfo deploymentInfo, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
-        ThreadContext callContext = new ThreadContext(deploymentInfo, primKey);
+    protected Object businessMethod(BeanContext beanContext, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
+        ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
             checkAuthorization(callMethod, interfaceType);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getDeploymentInfo().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
 
             Object returnValue = null;
             Instance instance = null;
@@ -586,11 +577,11 @@ public class ManagedContainer implements RpcContainer {
                 callContext.setCurrentOperation(Operation.BUSINESS);
                 callContext.setCurrentAllowedStates(null);
                 callContext.setInvokedInterface(callInterface);
-                Method runMethod = deploymentInfo.getMatchingBeanMethod(callMethod);
+                Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
                 callContext.set(Method.class, runMethod);
 
                 // Initialize interceptor stack
-                List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+                List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.BUSINESS, interceptors, instance.interceptors);
 
                 // Invoke
@@ -674,7 +665,7 @@ public class ManagedContainer implements RpcContainer {
 
     private void releaseInstance(Instance instance) {
         // Don't pool if the bean has been undeployed
-        if (instance.deploymentInfo.isDestroyed()) return;
+        if (instance.beanContext.isDestroyed()) return;
 
         // verify the instance is not associated with a bean-managed transaction
         if (instance.getBeanTransaction() != null) {
@@ -715,7 +706,7 @@ public class ManagedContainer implements RpcContainer {
             throw (ApplicationException) e;
         }
 
-        ExceptionType type = callContext.getDeploymentInfo().getExceptionType(e);
+        ExceptionType type = callContext.getBeanContext().getExceptionType(e);
         if (type == SYSTEM) {
             discardInstance(callContext);
             handleSystemException(txPolicy, e, callContext);
@@ -747,9 +738,9 @@ public class ManagedContainer implements RpcContainer {
         }
     }
 
-    private Index<EntityManagerFactory, EntityManager> createEntityManagers(CoreDeploymentInfo deploymentInfo) {
+    private Index<EntityManagerFactory, EntityManager> createEntityManagers(BeanContext beanContext) {
         // create the extended entity managers
-        Index<EntityManagerFactory, Map> factories = deploymentInfo.getExtendedEntityManagerFactories();
+        Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
         Index<EntityManagerFactory, EntityManager> entityManagers = null;
         if (factories != null && factories.size() > 0) {
             entityManagers = new Index<EntityManagerFactory, EntityManager>(new ArrayList<EntityManagerFactory>(factories.keySet()));
@@ -775,10 +766,10 @@ public class ManagedContainer implements RpcContainer {
     private void registerEntityManagers(Instance instance, ThreadContext callContext) throws OpenEJBException {
         if (entityManagerRegistry == null) return;
 
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        BeanContext beanContext = callContext.getBeanContext();
 
         // get the factories
-        Index<EntityManagerFactory, Map> factories = deploymentInfo.getExtendedEntityManagerFactories();
+        Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
         if (factories == null) return;
 
         // get the managers for the factories
@@ -787,7 +778,7 @@ public class ManagedContainer implements RpcContainer {
 
         // register them
         try {
-            entityManagerRegistry.addEntityManagers((String) deploymentInfo.getDeploymentID(), instance.primaryKey, entityManagers);
+            entityManagerRegistry.addEntityManagers((String) beanContext.getDeploymentID(), instance.primaryKey, entityManagers);
         } catch (EntityManagerAlreadyRegisteredException e) {
             throw new EJBException(e);
         }
@@ -797,10 +788,10 @@ public class ManagedContainer implements RpcContainer {
         if (entityManagerRegistry == null) return;
         if (instance == null) return;
 
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+        BeanContext beanContext = callContext.getBeanContext();
 
         // register them
-        entityManagerRegistry.removeEntityManagers((String) deploymentInfo.getDeploymentID(), instance.primaryKey);
+        entityManagerRegistry.removeEntityManagers((String) beanContext.getDeploymentID(), instance.primaryKey);
     }
 
 
@@ -819,10 +810,10 @@ public class ManagedContainer implements RpcContainer {
 
         // SessionSynchronization are only enabled for beans after CREATE that are not bean-managed and implement the SessionSynchronization interface
         boolean synchronize = callContext.getCurrentOperation() != Operation.CREATE &&
-                callContext.getDeploymentInfo().isSessionSynchronized() &&
+                callContext.getBeanContext().isSessionSynchronized() &&
                 txPolicy.isTransactionActive();
 
-        coordinator.registerSessionSynchronization(instance, callContext.getDeploymentInfo(), callContext.getPrimaryKey(), synchronize);
+        coordinator.registerSessionSynchronization(instance, callContext.getBeanContext(), callContext.getPrimaryKey(), synchronize);
     }
 
     /**
@@ -859,7 +850,7 @@ public class ManagedContainer implements RpcContainer {
 
         }
 
-        private void registerSessionSynchronization(Instance instance, CoreDeploymentInfo deploymentInfo, Object primaryKey, boolean synchronize) {
+        private void registerSessionSynchronization(Instance instance, BeanContext beanContext, Object primaryKey, boolean synchronize) {
 
             Synchronization synchronization = registry.get(primaryKey);
 
@@ -876,12 +867,12 @@ public class ManagedContainer implements RpcContainer {
             }
 
             // Invoke afterBegin
-            ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_BEGIN);
+            ThreadContext callContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.AFTER_BEGIN);
             callContext.setCurrentAllowedStates(null);
             ThreadContext oldCallContext = ThreadContext.enter(callContext);
             try {
 
-                List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                List<InterceptorData> interceptors = beanContext.getCallbackInterceptors();
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_BEGIN, interceptors, instance.interceptors);
                 interceptorStack.invoke();
 
@@ -912,14 +903,14 @@ public class ManagedContainer implements RpcContainer {
                 if (!synchronization.isCallSessionSynchronization()) continue;
 
                 // Invoke beforeCompletion
-                ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.BEFORE_COMPLETION);
+                ThreadContext callContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.BEFORE_COMPLETION);
                 callContext.setCurrentAllowedStates(null);
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
                 try {
                     instance.setInUse(true);
 
-                    CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
-                    List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                    BeanContext beanContext = instance.beanContext;
+                    List<InterceptorData> interceptors = beanContext.getCallbackInterceptors();
                     InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.BEFORE_COMPLETION, interceptors, instance.interceptors);
                     interceptorStack.invoke();
 
@@ -952,15 +943,15 @@ public class ManagedContainer implements RpcContainer {
 
                 Instance instance = synchronization.instance;
 
-                ThreadContext callContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.AFTER_COMPLETION);
+                ThreadContext callContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.AFTER_COMPLETION);
                 callContext.setCurrentAllowedStates(null);
                 ThreadContext oldCallContext = ThreadContext.enter(callContext);
                 try {
                     instance.setInUse(true);
                     if (synchronization.isCallSessionSynchronization()) {
 
-                        CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
-                        List<InterceptorData> interceptors = deploymentInfo.getCallbackInterceptors();
+                        BeanContext beanContext = instance.beanContext;
+                        List<InterceptorData> interceptors = beanContext.getCallbackInterceptors();
                         InterceptorStack interceptorStack = new InterceptorStack(instance.bean, null, Operation.AFTER_COMPLETION, interceptors, instance.interceptors);
                         interceptorStack.invoke(status == Status.COMMITTED);
                     }
@@ -994,14 +985,14 @@ public class ManagedContainer implements RpcContainer {
 
     public class StatefulCacheListener implements CacheListener<Instance> {
         public void afterLoad(Instance instance) throws SystemException, ApplicationException {
-            CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+            BeanContext beanContext = instance.beanContext;
 
-            ThreadContext threadContext = new ThreadContext(instance.deploymentInfo, instance.primaryKey, Operation.ACTIVATE);
+            ThreadContext threadContext = new ThreadContext(instance.beanContext, instance.primaryKey, Operation.ACTIVATE);
             ThreadContext oldContext = ThreadContext.enter(threadContext);
             try {
                 Method remove = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbActivate") : null;
 
-                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.ACTIVATE, callbackInterceptors, instance.interceptors);
 
                 interceptorStack.invoke();
@@ -1014,14 +1005,14 @@ public class ManagedContainer implements RpcContainer {
         }
 
         public void beforeStore(Instance instance) {
-            CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+            BeanContext beanContext = instance.beanContext;
 
-            ThreadContext threadContext = new ThreadContext(deploymentInfo, instance.primaryKey, Operation.PASSIVATE);
+            ThreadContext threadContext = new ThreadContext(beanContext, instance.primaryKey, Operation.PASSIVATE);
             ThreadContext oldContext = ThreadContext.enter(threadContext);
             try {
                 Method passivate = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbPassivate") : null;
 
-                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, passivate, Operation.PASSIVATE, callbackInterceptors, instance.interceptors);
 
                 interceptorStack.invoke();
@@ -1034,15 +1025,15 @@ public class ManagedContainer implements RpcContainer {
         }
 
         public void timedOut(Instance instance) {
-            CoreDeploymentInfo deploymentInfo = instance.deploymentInfo;
+            BeanContext beanContext = instance.beanContext;
 
-            ThreadContext threadContext = new ThreadContext(deploymentInfo, instance.primaryKey, Operation.PRE_DESTROY);
+            ThreadContext threadContext = new ThreadContext(beanContext, instance.primaryKey, Operation.PRE_DESTROY);
             threadContext.setCurrentAllowedStates(null);
             ThreadContext oldContext = ThreadContext.enter(threadContext);
             try {
                 Method remove = instance.bean instanceof SessionBean ? SessionBean.class.getMethod("ejbRemove") : null;
 
-                List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+                List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
                 InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
                 interceptorStack.invoke();

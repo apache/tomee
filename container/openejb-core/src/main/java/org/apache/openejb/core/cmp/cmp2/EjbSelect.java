@@ -18,13 +18,12 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import java.lang.reflect.Method;
-import java.util.HashMap; 
-import java.util.Map; 
+import java.util.HashMap;
 
 import javax.ejb.FinderException;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.cmp.CmpContainer;
 
 /**
@@ -89,7 +88,7 @@ public class EjbSelect {
      * update() rather than a select() because there's 
      * no value to return. 
      * 
-     * @param di     The ejb object we're executing on behalf of.
+     * @param obj     The ejb object we're executing on behalf of.
      * @param methodSignature
      *               The signature of the selectxxxx method being invoked.
      * @param args   The arguments to the select.  These need to match
@@ -97,15 +96,15 @@ public class EjbSelect {
      * 
      * @exception FinderException
      */
-    public static void execute_void(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static void execute_void(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        cmpContainer.update(deploymentInfo, methodSignature, args);
+        cmpContainer.update(beanContext, methodSignature, args);
     }
     
     
@@ -115,7 +114,7 @@ public class EjbSelect {
      * returnType parameter used to instantiate the return 
      * value. 
      * 
-     * @param di         The EJB object we're operating against.
+     * @param obj         The EJB object we're operating against.
      * @param methodSignature
      *                   The signature of the ejbSelectxxxx method.
      * @param returnType The return type signature of the method.
@@ -125,118 +124,118 @@ public class EjbSelect {
      *         one of the collection types.
      * @exception FinderException
      */
-    public static Object execute_Object(Object di, String methodSignature, String returnType, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static Object execute_Object(Object obj, String methodSignature, String returnType, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        return cmpContainer.select(deploymentInfo, methodSignature, returnType, args);
+        return cmpContainer.select(beanContext, methodSignature, returnType, args);
     }
     
     
-    public static char execute_char(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static char execute_char(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Character result = (Character)cmpContainer.select(deploymentInfo, methodSignature, "char", args);
+        Character result = (Character)cmpContainer.select(beanContext, methodSignature, "char", args);
         return result.charValue(); 
     }
     
     
-    public static byte execute_byte(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static byte execute_byte(Object  obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "byte", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "byte", args);
         return result.byteValue(); 
     }
     
     
-    public static boolean execute_boolean(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static boolean execute_boolean(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Boolean result = (Boolean)cmpContainer.select(deploymentInfo, methodSignature, "byte", args);
+        Boolean result = (Boolean)cmpContainer.select(beanContext, methodSignature, "byte", args);
         return result.booleanValue(); 
     }
     
     
-    public static short execute_short(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static short execute_short(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "short", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "short", args);
         return result.shortValue(); 
     }
     
     
-    public static int execute_int(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static int execute_int(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "int", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "int", args);
         return result.intValue(); 
     }
     
     
-    public static long execute_long(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static long execute_long(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "long", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "long", args);
         return result.longValue(); 
     }
     
     
-    public static float execute_float(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static float execute_float(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "float", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "float", args);
         return result.floatValue(); 
     }
     
     
-    public static double execute_double(Object di, String methodSignature, Object... args) throws FinderException {
-        DeploymentInfo deploymentInfo = (DeploymentInfo) di;
-        Container container = deploymentInfo.getContainer();
+    public static double execute_double(Object obj, String methodSignature, Object... args) throws FinderException {
+        BeanContext beanContext = (BeanContext) obj;
+        Container container = beanContext.getContainer();
         if (!(container instanceof CmpContainer)) {
-            throw new FinderException("Deployment is not connected to a CmpContainer " + deploymentInfo.getDeploymentID());
+            throw new FinderException("Deployment is not connected to a CmpContainer " + beanContext.getDeploymentID());
         }
         CmpContainer cmpContainer = (CmpContainer) container;
         
-        Number result = (Number)cmpContainer.select(deploymentInfo, methodSignature, "double", args);
+        Number result = (Number)cmpContainer.select(beanContext, methodSignature, "double", args);
         return result.doubleValue(); 
     }
 }

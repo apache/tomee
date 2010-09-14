@@ -41,6 +41,7 @@ import javax.naming.NamingException;
 import javax.management.ObjectName;
 import javax.management.MBeanServer;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
@@ -48,7 +49,6 @@ import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.InstanceContext;
@@ -98,14 +98,14 @@ public class StatelessInstanceManager {
     }
 
     private class StatelessSupplier implements Pool.Supplier<Instance> {
-        private final CoreDeploymentInfo deploymentInfo;
+        private final BeanContext beanContext;
 
-        private StatelessSupplier(CoreDeploymentInfo deploymentInfo) {
-            this.deploymentInfo = deploymentInfo;
+        private StatelessSupplier(BeanContext beanContext) {
+            this.beanContext = beanContext;
         }
 
         public void discard(Instance instance, Pool.Event reason) {
-            ThreadContext ctx = new ThreadContext(deploymentInfo, null);
+            ThreadContext ctx = new ThreadContext(beanContext, null);
             ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
                 freeInstance(ctx, instance);
@@ -115,12 +115,12 @@ public class StatelessInstanceManager {
         }
 
         public Instance create() {
-            ThreadContext ctx = new ThreadContext(deploymentInfo, null);
+            ThreadContext ctx = new ThreadContext(beanContext, null);
             ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
-                return ceateInstance(ctx, ctx.getDeploymentInfo());
+                return ceateInstance(ctx, ctx.getBeanContext());
             } catch (OpenEJBException e) {
-                logger.error("Unable to fill pool: for deployment '" + deploymentInfo.getDeploymentID() + "'", e);
+                logger.error("Unable to fill pool: for deployment '" + beanContext.getDeploymentID() + "'", e);
             } finally {
                  ThreadContext.exit(oldCallContext);
             }
@@ -144,8 +144,8 @@ public class StatelessInstanceManager {
      * @throws OpenEJBException
      */
     public Object getInstance(ThreadContext callContext) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Data data = (Data) deploymentInfo.getContainerData();
+        BeanContext beanContext = callContext.getBeanContext();
+        Data data = (Data) beanContext.getContainerData();
 
         Instance instance = null;
         try {
@@ -167,21 +167,21 @@ public class StatelessInstanceManager {
 
         if (instance != null) return instance;
 
-        return ceateInstance(callContext, deploymentInfo);
+        return ceateInstance(callContext, beanContext);
     }
 
-    private Instance ceateInstance(ThreadContext callContext, CoreDeploymentInfo deploymentInfo) throws org.apache.openejb.ApplicationException {
+    private Instance ceateInstance(ThreadContext callContext, BeanContext beanContext) throws org.apache.openejb.ApplicationException {
 
         try {
 
-            final InstanceContext context = deploymentInfo.newInstance();
+            final InstanceContext context = beanContext.newInstance();
 
             if (context.getBean() instanceof SessionBean){
 
                 final Operation originalOperation = callContext.getCurrentOperation();
                 try {
                     callContext.setCurrentOperation(Operation.CREATE);
-                    final Method create = deploymentInfo.getCreateMethod();
+                    final Method create = beanContext.getCreateMethod();
                     final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
                     ejbCreate.invoke();
                 } finally {
@@ -194,7 +194,7 @@ public class StatelessInstanceManager {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
-            String t = "The bean instance " + deploymentInfo.getDeploymentID() + " threw a system exception:" + e;
+            String t = "The bean instance " + beanContext.getDeploymentID() + " threw a system exception:" + e;
             logger.error(t, e);
             throw new org.apache.openejb.ApplicationException(new RemoteException("Cannot obtain a free instance.", e));
         }
@@ -218,8 +218,8 @@ public class StatelessInstanceManager {
         if (bean == null) throw new SystemException("Invalid arguments");
         Instance instance = Instance.class.cast(bean);
 
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Data data = (Data) deploymentInfo.getContainerData();
+        BeanContext beanContext = callContext.getBeanContext();
+        Data data = (Data) beanContext.getContainerData();
 
         Pool<Instance> pool = data.getPool();
 
@@ -241,8 +241,8 @@ public class StatelessInstanceManager {
         if (bean == null) throw new SystemException("Invalid arguments");
         Instance instance = Instance.class.cast(bean);
 
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        Data data = (Data) deploymentInfo.getContainerData();
+        BeanContext beanContext = callContext.getBeanContext();
+        Data data = (Data) beanContext.getContainerData();
 
         Pool<Instance> pool = data.getPool();
 
@@ -252,11 +252,11 @@ public class StatelessInstanceManager {
     private void freeInstance(ThreadContext callContext, Instance instance) {
         try {
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
-            CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
+            BeanContext beanContext = callContext.getBeanContext();
 
-            Method remove = instance.bean instanceof SessionBean? deploymentInfo.getCreateMethod(): null;
+            Method remove = instance.bean instanceof SessionBean? beanContext.getCreateMethod(): null;
 
-            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
 
             interceptorStack.invoke();
@@ -266,8 +266,8 @@ public class StatelessInstanceManager {
 
     }
 
-    public void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException {
-        Options options = new Options(deploymentInfo.getProperties());
+    public void deploy(BeanContext beanContext) throws OpenEJBException {
+        Options options = new Options(beanContext.getProperties());
 
         Duration accessTimeout = getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS);
         accessTimeout = getDuration(options, "AccessTimeout", accessTimeout, TimeUnit.MILLISECONDS);
@@ -277,25 +277,25 @@ public class StatelessInstanceManager {
         recipe.allow(Option.CASE_INSENSITIVE_FACTORY);
         recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
         recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-        recipe.setAllProperties(deploymentInfo.getProperties());
+        recipe.setAllProperties(beanContext.getProperties());
         final Pool.Builder builder = (Pool.Builder) recipe.create();
 
         setDefault(builder.getMaxAge(), TimeUnit.HOURS);
         setDefault(builder.getIdleTimeout(), TimeUnit.MINUTES);
         setDefault(builder.getInterval(), TimeUnit.MINUTES);
 
-        final StatelessSupplier supplier = new StatelessSupplier(deploymentInfo);
+        final StatelessSupplier supplier = new StatelessSupplier(beanContext);
         builder.setSupplier(supplier);
         builder.setExecutor(executor);
 
 
         Data data = new Data(builder.build(), accessTimeout, closeTimeout);
-        deploymentInfo.setContainerData(data);
+        beanContext.setContainerData(data);
 
-        deploymentInfo.set(EJBContext.class, data.sessionContext);
+        beanContext.set(EJBContext.class, data.sessionContext);
 
         try {
-            final Context context = deploymentInfo.getJndiEnc();
+            final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", data.sessionContext);
             context.bind("comp/WebServiceContext", new EjbWsContext(data.sessionContext));
         } catch (NamingException e) {
@@ -307,18 +307,18 @@ public class StatelessInstanceManager {
         double maxAgeOffset = builder.getMaxAgeOffset();
 
         // Create stats interceptor
-        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
-        deploymentInfo.addSystemInterceptor(stats);
+        StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+        beanContext.addSystemInterceptor(stats);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
         jmxName.set("J2EEApplication", null);
-        jmxName.set("EJBModule", deploymentInfo.getModuleID());
-        jmxName.set("StatelessSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("EJBModule", beanContext.getModuleID());
+        jmxName.set("StatelessSessionBean", beanContext.getEjbName());
         jmxName.set("j2eeType", "");
-        jmxName.set("name", deploymentInfo.getEjbName());
+        jmxName.set("name", beanContext.getEjbName());
 
         // register the invocation stats interceptor
         try {
@@ -363,8 +363,8 @@ public class StatelessInstanceManager {
         return duration;
     }
 
-    public void undeploy(CoreDeploymentInfo deploymentInfo) {
-        Data data = (Data) deploymentInfo.getContainerData();
+    public void undeploy(BeanContext beanContext) {
+        Data data = (Data) beanContext.getContainerData();
         if (data == null) return;
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
@@ -378,13 +378,13 @@ public class StatelessInstanceManager {
 
         try {
             if (!data.closePool()) {
-                logger.error("Timed-out waiting for stateless pool to close: for deployment '" + deploymentInfo.getDeploymentID() + "'");
+                logger.error("Timed-out waiting for stateless pool to close: for deployment '" + beanContext.getDeploymentID() + "'");
             }
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
 
-        deploymentInfo.setContainerData(null);
+        beanContext.setContainerData(null);
     }
 
     private final class Data {

@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.ArrayList;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 
 //
@@ -36,7 +36,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
     private final EntityBean source;
     private final String sourceProperty;
     private final String relatedProperty;
-    private final CoreDeploymentInfo relatedInfo;
+    private final BeanContext relatedInfo;
     private final TransactionSynchronizationRegistry transactionRegistry;
 
     public SetValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
@@ -47,7 +47,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         this.sourceProperty = sourceProperty;
         this.relatedProperty = relatedProperty;
 
-        this.relatedInfo = Cmp2Util.getDeploymentInfo(relatedType);
+        this.relatedInfo = Cmp2Util.getBeanContext(relatedType);
 
         transactionRegistry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
     }

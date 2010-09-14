@@ -38,10 +38,9 @@ import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.ApplicationServer;
@@ -62,8 +61,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         dispatchTable.put("getEJBLocalHome", Integer.valueOf(6));
     }
 
-    public EjbObjectProxyHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
+    public EjbObjectProxyHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
     public abstract Object getRegistryId();
@@ -169,12 +168,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
 
     protected Object getEJBHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return getDeploymentInfo().getEJBHome();
+        return getBeanContext().getEJBHome();
     }
 
     protected Object getEJBLocalHome(Method method, Object[] args, Object proxy) throws Throwable {
         checkAuthorization(method);
-        return getDeploymentInfo().getEJBLocalHome();
+        return getBeanContext().getEJBLocalHome();
     }
 
     protected Object getHandle(Method method, Object[] args, Object proxy) throws Throwable {
@@ -183,7 +182,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     public org.apache.openejb.ProxyInfo getProxyInfo() {
-        return new org.apache.openejb.ProxyInfo(getDeploymentInfo(), primaryKey, getInterfaces(), interfaceType, getMainInterface());
+        return new org.apache.openejb.ProxyInfo(getBeanContext(), primaryKey, getInterfaces(), interfaceType, getMainInterface());
     }
 
     protected Object _writeReplace(Object proxy) throws ObjectStreamException {
@@ -226,8 +225,8 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     protected abstract Object remove(Class interfce, Method method, Object[] args, Object proxy) throws Throwable;
 
     protected Object businessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) getDeploymentInfo();
-        if (coreDeploymentInfo.isAsynchronous(method)) {
+        BeanContext beanContext = getBeanContext();
+        if (beanContext.isAsynchronous(method)) {
             return asynchronizedBusinessMethod(interfce, method, args, proxy);
         } else {
             return synchronizedBusinessMethod(interfce, method, args, proxy);
@@ -235,12 +234,12 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     }
 
     protected Object asynchronizedBusinessMethod(Class<?> interfce, Method method, Object[] args, Object proxy) throws Throwable {
-        CoreDeploymentInfo coreDeploymentInfo = (CoreDeploymentInfo) getDeploymentInfo();
+        BeanContext beanContext = getBeanContext();
         AtomicBoolean asynchronousCancelled = new AtomicBoolean(false);
         AsynchronousCall asynchronousCall = new AsynchronousCall(interfce, method, args, asynchronousCancelled);
         try {
-            Future<Object> retValue = coreDeploymentInfo.getModuleContext().getAppContext().submitTask(asynchronousCall);
-            return new FutureAdapter<Object>(retValue, asynchronousCancelled, coreDeploymentInfo.getModuleContext().getAppContext());
+            Future<Object> retValue = beanContext.getModuleContext().getAppContext().submitTask(asynchronousCall);
+            return new FutureAdapter<Object>(retValue, asynchronousCancelled, beanContext.getModuleContext().getAppContext());
         } catch (RejectedExecutionException e) {
             throw new EJBException("fail to allocate internal resource to execute the target task", e);
         }
@@ -250,15 +249,15 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         return container.invoke(deploymentID, interfaceType, interfce, method, args, primaryKey);
     }
 
-    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, Class mainInterface) {
-        return createProxy(deploymentInfo, primaryKey, interfaceType, null, mainInterface);
+    public static Object createProxy(BeanContext beanContext, Object primaryKey, InterfaceType interfaceType, Class mainInterface) {
+        return createProxy(beanContext, primaryKey, interfaceType, null, mainInterface);
     }
 
-    public static Object createProxy(DeploymentInfo deploymentInfo, Object primaryKey, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+    public static Object createProxy(BeanContext beanContext, Object primaryKey, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
         if (!interfaceType.isHome()){
             interfaceType = interfaceType.getCounterpart();
         }
-        EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(deploymentInfo, interfaceType, interfaces, mainInterface);
+        EjbHomeProxyHandler homeHandler = EjbHomeProxyHandler.createHomeHandler(beanContext, interfaceType, interfaces, mainInterface);
         return homeHandler.createProxy(primaryKey, mainInterface);
     }
 

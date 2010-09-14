@@ -86,7 +86,7 @@ public class InterceptorStack {
                 StringBuilder sb = new StringBuilder();
                 ThreadContext threadContext = ThreadContext.getThreadContext();
                 String txPolicy = threadContext.getTransactionPolicy().getClass().getSimpleName();
-                String ejbName = threadContext.getDeploymentInfo().getEjbName();
+                String ejbName = threadContext.getBeanContext().getEjbName();
                 String methodName = targetMethod.getName() + "(" + join(", ", Classes.getSimpleNames(targetMethod.getParameterTypes())) + ")";
                 sb.append(join("", stack()));
                 sb.append(ejbName).append(".");

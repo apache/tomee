@@ -17,8 +17,8 @@
 package org.apache.openejb.server.ejbd;
 
 import junit.framework.TestCase;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJB;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.client.proxy.ProxyManager;
 import org.apache.openejb.client.proxy.InvocationHandler;
@@ -85,7 +85,7 @@ public class PropertiesPropogationTest extends TestCase {
         assembler.createApplication(ejbJarInfo);
 
         ContainerSystem cs = SystemInstance.get().getComponent(ContainerSystem.class);
-        DeploymentInfo info = cs.getDeploymentInfo("WidgetBean");
+        BeanContext info = cs.getBeanContext("WidgetBean");
         assertNotNull(info);
 
         assertTrue(info.getProperties().containsKey("color"));

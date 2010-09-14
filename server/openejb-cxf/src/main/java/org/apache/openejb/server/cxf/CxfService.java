@@ -18,7 +18,7 @@
 package org.apache.openejb.server.cxf;
 
 import org.apache.cxf.Bus;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
@@ -42,14 +42,14 @@ public class CxfService extends WsService {
         return "cxf";
     }
 
-    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) {
+    protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext) {
         Bus bus = CxfWsContainer.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
-        EjbWsContainer container = new EjbWsContainer(bus, port, deploymentInfo);
+        EjbWsContainer container = new EjbWsContainer(bus, port, beanContext);
         container.start();
-        wsContainers.put(deploymentInfo.getDeploymentID().toString(), container);
+        wsContainers.put(beanContext.getDeploymentID().toString(), container);
         return container;
     }
 

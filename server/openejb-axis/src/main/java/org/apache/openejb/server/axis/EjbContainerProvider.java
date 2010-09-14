@@ -34,7 +34,7 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
@@ -57,15 +57,15 @@ import java.util.Vector;
 
 public class EjbContainerProvider extends RPCProvider {
 
-    private final DeploymentInfo ejbDeployment;
+    private final BeanContext ejbDeployment;
     private final List<HandlerInfo> handlerInfos;
 
-    public EjbContainerProvider(DeploymentInfo ejbDeployment) {
+    public EjbContainerProvider(BeanContext ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = new ArrayList<HandlerInfo>();
     }
 
-    public EjbContainerProvider(DeploymentInfo ejbDeployment, List<HandlerInfo> handlerInfos) {
+    public EjbContainerProvider(BeanContext ejbDeployment, List<HandlerInfo> handlerInfos) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = handlerInfos;
     }

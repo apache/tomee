@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.junit;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.AppContext;
-import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.core.transaction.TransactionPolicy;
@@ -44,7 +44,7 @@ import java.lang.reflect.Method;
  */
 public class LocalClientRunner extends BlockJUnit4ClassRunner {
 
-    private final CoreDeploymentInfo deployment;
+    private final BeanContext deployment;
     private final Class<?> clazz;
 
     public LocalClientRunner(Class<?> clazz) throws InitializationError {
@@ -105,9 +105,9 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private CoreDeploymentInfo createDeployment(Class<?> testClass) {
+    private BeanContext createDeployment(Class<?> testClass) {
         try {
-            return new CoreDeploymentInfo(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()), testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED, false);
+            return new BeanContext(null, new IvmContext(), new ModuleContext("", new AppContext("", SystemInstance.get(), testClass.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()), testClass, null, null, null, null, null, null, null, null, BeanType.MANAGED, false);
         } catch (SystemException e) {
             throw new IllegalStateException(e);
         }
@@ -118,7 +118,7 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         protected final A annotation;
         protected final Statement next;
         protected final Test test;
-        protected final CoreDeploymentInfo info;
+        protected final BeanContext info;
 
         protected AnnotationStatement(A annotation, Statement next, Test test) {
             this.annotation = annotation;
@@ -133,9 +133,9 @@ public class LocalClientRunner extends BlockJUnit4ClassRunner {
         public final Class clazz;
         public final Method method;
         public final Object instance;
-        public final CoreDeploymentInfo info;
+        public final BeanContext info;
 
-        private Test(Class clazz, Method method, Object instance, CoreDeploymentInfo info) {
+        private Test(Class clazz, Method method, Object instance, BeanContext info) {
             this.clazz = clazz;
             this.method = method;
             this.instance = instance;

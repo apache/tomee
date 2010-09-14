@@ -32,11 +32,11 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
-import org.apache.openejb.core.ModuleContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -79,7 +79,7 @@ class EnterpriseBeanBuilder {
         }
     }
 
-    public Object build() throws OpenEJBException {
+    public BeanContext build() throws OpenEJBException {
         Class ejbClass = loadClass(bean.ejbClass, "classNotFound.ejbClass");
 
         Class home = null;
@@ -144,13 +144,13 @@ class EnterpriseBeanBuilder {
         bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
         bind(compJndiContext, "global", moduleContext.getAppContext().getGlobalJndiContext());
 
-        CoreDeploymentInfo deployment;
+        BeanContext deployment;
         if (BeanType.MESSAGE_DRIVEN != ejbType) {
-            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
+            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, home, remote, localhome, local, serviceEndpoint, businessLocals, businessRemotes, primaryKey, ejbType, bean.localbean && ejbType.isSession());
         } else {
             MessageDrivenBeanInfo messageDrivenBeanInfo = (MessageDrivenBeanInfo) bean;
             Class mdbInterface = loadClass(messageDrivenBeanInfo.mdbInterface, "classNotFound.mdbInterface");
-            deployment = new CoreDeploymentInfo(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
+            deployment = new BeanContext(bean.ejbDeploymentId, compJndiContext, moduleContext, ejbClass, mdbInterface, messageDrivenBeanInfo.activationProperties);
             deployment.setDestinationId(messageDrivenBeanInfo.destinationId);
         }
 

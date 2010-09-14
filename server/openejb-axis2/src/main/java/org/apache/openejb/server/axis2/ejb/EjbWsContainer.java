@@ -17,7 +17,7 @@
 
 package org.apache.openejb.server.axis2.ejb;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.axis2.Axis2WsContainer;
 import org.apache.openejb.server.axis2.AxisServiceGenerator;
@@ -25,11 +25,11 @@ import org.apache.openejb.server.axis2.AxisServiceGenerator;
 import javax.xml.ws.WebServiceException;
 
 public class EjbWsContainer extends Axis2WsContainer {
-    private DeploymentInfo deploymnetInfo;
+    private BeanContext deploymnetInfo;
 
-    public EjbWsContainer(PortData portData, DeploymentInfo deploymentInfo) {
-        super(portData, deploymentInfo.getBeanClass(), deploymentInfo.getJndiEnc());
-        this.deploymnetInfo = deploymentInfo;
+    public EjbWsContainer(PortData portData, BeanContext beanContext) {
+        super(portData, beanContext.getBeanClass(), beanContext.getJndiEnc());
+        this.deploymnetInfo = beanContext;
     }
 
     public void start() throws Exception {

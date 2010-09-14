@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ContainerType;
@@ -52,27 +52,27 @@ public class RpcContainerWrapper implements RpcContainer {
         return container.getContainerID();
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
-        return container.getDeploymentInfo(deploymentID);
+    public BeanContext getBeanContext(Object deploymentID) {
+        return container.getBeanContext(deploymentID);
     }
 
-    public DeploymentInfo [] deployments() {
-        return container.deployments();
+    public BeanContext[] getBeanContexts() {
+        return container.getBeanContexts();
     }
 
-    public void deploy(DeploymentInfo info) throws OpenEJBException {
+    public void deploy(BeanContext info) throws OpenEJBException {
         container.deploy(info);
     }
 
-    public void start(DeploymentInfo info) throws OpenEJBException {    
+    public void start(BeanContext info) throws OpenEJBException {
         container.start(info);
     }
     
-    public void stop(DeploymentInfo info) throws OpenEJBException {   
+    public void stop(BeanContext info) throws OpenEJBException {
         container.stop(info);
     }
     
-    public void undeploy(DeploymentInfo info) throws OpenEJBException {
+    public void undeploy(BeanContext info) throws OpenEJBException {
         container.undeploy(info);
     }
 

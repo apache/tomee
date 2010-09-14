@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.core.cmp;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.ThreadContext;
 
 import javax.ejb.CreateException;
@@ -39,11 +39,11 @@ public interface CmpEngine {
 
     List<Object> queryBeans(ThreadContext callContext, Method queryMethod, Object[] args) throws FinderException;
 
-    List<Object> queryBeans(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException;
+    List<Object> queryBeans(BeanContext beanContext, String signature, Object[] args) throws FinderException;
 
-    int executeUpdateQuery(CoreDeploymentInfo deploymentInfo, String signature, Object[] args) throws FinderException;
+    int executeUpdateQuery(BeanContext beanContext, String signature, Object[] args) throws FinderException;
 
-    void deploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
+    void deploy(BeanContext beanContext) throws OpenEJBException;
 
-    void undeploy(CoreDeploymentInfo deploymentInfo) throws OpenEJBException;
+    void undeploy(BeanContext beanContext) throws OpenEJBException;
 }

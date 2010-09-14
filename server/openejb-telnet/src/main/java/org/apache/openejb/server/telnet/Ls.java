@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
@@ -48,7 +48,7 @@ public class Ls extends Command {
         out.println("Deployments:");
 
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        DeploymentInfo[] d = containerSystem.deployments();
+        BeanContext[] d = containerSystem.deployments();
         for (int i = 0; i < d.length; i++) {
             out.print(" " + d[i].getDeploymentID());
             out.println("");

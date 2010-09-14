@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 
@@ -29,15 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
-    private final DeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
 
-    public CdiEjbBean(DeploymentInfo deploymentInfo) {
-        super(deploymentInfo.getBeanClass(), toSessionType(deploymentInfo.getComponentType()));
-        this.deploymentInfo = deploymentInfo;
+    public CdiEjbBean(BeanContext beanContext) {
+        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()));
+        this.beanContext = beanContext;
     }
 
-    public DeploymentInfo getDeploymentInfo() {
-        return this.deploymentInfo;
+    public BeanContext getBeanContext() {
+        return this.beanContext;
     }
 
     private static SessionBeanType toSessionType(BeanType beanType) {
@@ -56,31 +56,31 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     public String getId() {
-        return (String) deploymentInfo.getDeploymentID();
+        return (String) beanContext.getDeploymentID();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected T getInstance(CreationalContext<T> creationalContext) {
 
-        final List<Class> classes = deploymentInfo.getBusinessLocalInterfaces();
+        final List<Class> classes = beanContext.getBusinessLocalInterfaces();
         final Class mainInterface = classes.get(0);
 
-        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(deploymentInfo.getBeanClass(), mainInterface, classes);
-        DeploymentInfo.BusinessLocalHome home = deploymentInfo.getBusinessLocalHome(interfaces, mainInterface);
+        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
+        BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
 
         return (T) home.create();
     }
 
     public String getEjbName() {
-        return this.deploymentInfo.getEjbName();
+        return this.beanContext.getEjbName();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Class<?>> getBusinessLocalInterfaces() {
         List<Class<?>> clazzes = new ArrayList<Class<?>>();
-        List<Class> cl = this.deploymentInfo.getBusinessLocalInterfaces();
+        List<Class> cl = this.beanContext.getBusinessLocalInterfaces();
 
         if (cl != null && !cl.isEmpty()) {
             for (Class<?> c : cl) {
@@ -94,7 +94,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     @Override
     public List<Method> getRemoveMethods() {
         // Should we delegate to super and merge both?
-        return findRemove(deploymentInfo.getBeanClass(), deploymentInfo.getBusinessLocalInterface());
+        return findRemove(beanContext.getBeanClass(), beanContext.getBusinessLocalInterface());
     }
 
     @SuppressWarnings("unchecked")
@@ -129,6 +129,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     public String getName() {
-        return deploymentInfo.getEjbName();
+        return beanContext.getEjbName();
     }
 }

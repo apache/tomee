@@ -26,7 +26,7 @@ import javax.ejb.SessionContext;
 import javax.transaction.UserTransaction;
 import javax.xml.rpc.handler.MessageContext;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.InternalErrorException;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
@@ -53,7 +53,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
 
     public boolean wasCancelCalled() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        CoreDeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
         Method runningMethod = threadContext.get(Method.class);
         if (di.isAsynchronous(runningMethod)) {
             if(runningMethod.getReturnType() == void.class) {
@@ -67,7 +67,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
         check(Call.getEJBLocalObject);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         if (di.getLocalHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBLocalObject interface: "+di.getDeploymentID());
 
@@ -77,7 +77,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
     public EJBObject getEJBObject() throws IllegalStateException {
         check(Call.getEJBObject);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
         if (di.getHomeInterface() == null) throw new IllegalStateException("Bean does not have an EJBObject interface: "+di.getDeploymentID());
 
         return (EJBObject) EjbObjectProxyHandler.createProxy(di, threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, di.getRemoteInterface());
@@ -96,7 +96,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         if (interfce == null) throw new IllegalStateException("Interface argument cannot me null.");
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         InterfaceType interfaceType = di.getInterfaceType(interfce);
 
@@ -147,7 +147,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
         check(Call.getInvokedBusinessInterface);
         ThreadContext threadContext = ThreadContext.getThreadContext();
         Class invokedInterface = threadContext.getInvokedInterface();
-        InterfaceType type = threadContext.getDeploymentInfo().getInterfaceType(invokedInterface);
+        InterfaceType type = threadContext.getBeanContext().getInterfaceType(invokedInterface);
         if (!type.isBusiness()) throw new IllegalStateException("The EJB spec requires us to cripple the use of this method for anything but business interface proxy.  But FYI, your invoked interface is: "+invokedInterface.getName());
 
         if (invokedInterface == null){

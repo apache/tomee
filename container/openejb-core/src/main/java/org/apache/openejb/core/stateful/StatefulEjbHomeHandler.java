@@ -23,15 +23,15 @@ import java.util.List;
 import javax.ejb.RemoveException;
 
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
 public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public StatefulEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, interfaceType, interfaces, mainInterface);
+    public StatefulEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
     public Object createProxy(Object primaryKey, Class mainInterface) {
@@ -62,8 +62,8 @@ public class StatefulEjbHomeHandler extends EjbHomeProxyHandler {
         throw new RemoveException("Session objects are private resources and do not have primary keys");
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        return new StatefulEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
+    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new StatefulEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

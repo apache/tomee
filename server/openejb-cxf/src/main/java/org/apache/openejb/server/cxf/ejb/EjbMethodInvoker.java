@@ -33,7 +33,7 @@ import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.invoker.Factory;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.util.LogCategory;
@@ -45,13 +45,13 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
 
     private static final String HANDLER_PROPERTIES = "HandlerProperties";
 
-    private DeploymentInfo deploymentInfo;
+    private BeanContext beanContext;
     private Bus bus;
 
-    public EjbMethodInvoker(Bus bus, DeploymentInfo deploymentInfo) {
+    public EjbMethodInvoker(Bus bus, BeanContext beanContext) {
         super((Factory) null);
         this.bus = bus;
-        this.deploymentInfo = deploymentInfo;
+        this.beanContext = beanContext;
     }
 
     public Object getServiceObject(Exchange context) {
@@ -110,14 +110,14 @@ public class EjbMethodInvoker extends AbstractJAXWSMethodInvoker {
                     this.bus, exchange);
             Object[] arguments = { ctx, interceptor };
 
-            RpcContainer container = (RpcContainer) this.deploymentInfo
+            RpcContainer container = (RpcContainer) this.beanContext
                     .getContainer();
 
-            Class callInterface = this.deploymentInfo
+            Class callInterface = this.beanContext
                     .getServiceEndpointInterface();
             method = getMostSpecificMethod(method, callInterface);
             Object res = container.invoke(
-                    this.deploymentInfo.getDeploymentID(),
+                    this.beanContext.getDeploymentID(),
                     InterfaceType.SERVICE_ENDPOINT, callInterface, method,
                     arguments, null);
 

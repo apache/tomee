@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.core;
+package org.apache.openejb;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -41,14 +41,10 @@ import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
-import org.apache.openejb.BeanType;
-import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
-import org.apache.openejb.Injection;
-import org.apache.openejb.InjectionProcessor;
-import org.apache.openejb.InterfaceType;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.SystemException;
+import org.apache.openejb.core.ExceptionType;
+import org.apache.openejb.core.InstanceContext;
+import org.apache.openejb.core.Operation;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.cmp.KeyGenerator;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
@@ -67,8 +63,26 @@ import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.recipe.ConstructionException;
 
 
-public class CoreDeploymentInfo extends DeploymentContext implements org.apache.openejb.DeploymentInfo {
+public class BeanContext extends DeploymentContext {
 
+    public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
+        Object create();
+    }
+
+    public interface BusinessLocalBeanHome extends javax.ejb.EJBLocalHome {
+        Object create();
+    }
+
+    public interface BusinessRemoteHome extends javax.ejb.EJBHome {
+        Object create();
+    }
+
+    public interface ServiceEndpoint {
+    }
+
+    public interface Timeout {
+    }
+    
     private final ModuleContext moduleContext;
     private final Context jndiContext;
     private Object containerData;
@@ -140,12 +154,12 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
             case EJB_LOCAL: return getLocalInterface();
             case BUSINESS_LOCAL: return getBusinessLocalInterface();
             case BUSINESS_REMOTE: return getBusinessRemoteInterface();
-            case TIMEOUT : return DeploymentInfo.Timeout.class;
-            case BUSINESS_REMOTE_HOME: return DeploymentInfo.BusinessRemoteHome.class;
-            case BUSINESS_LOCAL_HOME: return DeploymentInfo.BusinessLocalHome.class;
+            case TIMEOUT : return BeanContext.Timeout.class;
+            case BUSINESS_REMOTE_HOME: return BeanContext.BusinessRemoteHome.class;
+            case BUSINESS_LOCAL_HOME: return BeanContext.BusinessLocalHome.class;
             case SERVICE_ENDPOINT: return getServiceEndpointInterface();
             case LOCALBEAN: return getBeanClass();
-            case BUSINESS_LOCALBEAN_HOME: return DeploymentInfo.BusinessLocalBeanHome.class;
+            case BUSINESS_LOCALBEAN_HOME: return BeanContext.BusinessLocalBeanHome.class;
             default: throw new IllegalStateException("Unexpected enum constant: " + interfaceType);
         }
     }
@@ -173,7 +187,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         return null;
     }
 
-    public CoreDeploymentInfo(String id, Context jndiContext, ModuleContext moduleContext,
+    public BeanContext(String id, Context jndiContext, ModuleContext moduleContext,
                               Class beanClass, Class homeInterface,
                               Class remoteInterface,
                               Class localHomeInterface,
@@ -238,12 +252,12 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         addInterface(getLocalHomeInterface(), InterfaceType.EJB_LOCAL_HOME);
         addInterface(getLocalInterface(), InterfaceType.EJB_LOCAL);
 
-        addInterface(DeploymentInfo.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
+        addInterface(BeanContext.BusinessRemoteHome.class, InterfaceType.BUSINESS_REMOTE_HOME);
         for (Class businessRemote : this.businessRemotes) {
             addInterface(businessRemote, InterfaceType.BUSINESS_REMOTE);
         }
 
-        addInterface(DeploymentInfo.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
+        addInterface(BeanContext.BusinessLocalHome.class, InterfaceType.BUSINESS_LOCAL_HOME);
         for (Class businessLocal : this.businessLocals) {
             addInterface(businessLocal, InterfaceType.BUSINESS_LOCAL);
         }
@@ -319,7 +333,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
         }
     }
 
-    public CoreDeploymentInfo(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
+    public BeanContext(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
         super(id, moduleContext.getOptions());
         this.jndiContext = jndiContext;
         this.moduleContext = moduleContext;
@@ -1037,7 +1051,7 @@ public class CoreDeploymentInfo extends DeploymentContext implements org.apache.
     }
 
     public String toString() {
-        return "DeploymentInfo(id="+getDeploymentID()+")";
+        return "BeanContext(id="+getDeploymentID()+")";
     }
 
     public boolean isLoadOnStartup() {

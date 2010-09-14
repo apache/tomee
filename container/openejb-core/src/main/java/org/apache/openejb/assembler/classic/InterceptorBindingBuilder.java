@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -92,8 +92,8 @@ public class InterceptorBindingBuilder {
         }
     }
 
-    public void build(CoreDeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
-        Class clazz = deploymentInfo.getBeanClass();
+    public void build(BeanContext beanContext, EnterpriseBeanInfo beanInfo) {
+        Class clazz = beanContext.getBeanClass();
 
         InterceptorData beanAsInterceptor = new InterceptorData(clazz);
 
@@ -113,13 +113,13 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, beanInfo.aroundTimeout, beanAsInterceptor.getAroundTimeout());
         }
 
-        for (Method method : deploymentInfo.getBeanClass().getMethods()) {
+        for (Method method : beanContext.getBeanClass().getMethods()) {
             List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
 
             // The bean itself gets to intercept too and is always last.
             methodInterceptors.add(beanAsInterceptor);
 
-            deploymentInfo.setMethodInterceptors(method, methodInterceptors);
+            beanContext.setMethodInterceptors(method, methodInterceptors);
         }
 
         List<InterceptorData> callbackInterceptorDatas = createInterceptorDatas(null, beanInfo.ejbName, this.packageAndClassBindings);
@@ -127,7 +127,7 @@ public class InterceptorBindingBuilder {
         // The bean itself gets to intercept too and is always last.
         callbackInterceptorDatas.add(beanAsInterceptor);
 
-        deploymentInfo.setCallbackInterceptors(callbackInterceptorDatas);
+        beanContext.setCallbackInterceptors(callbackInterceptorDatas);
     }
 
     private List<InterceptorData> createInterceptorDatas(Method method, String ejbName, List<InterceptorBindingInfo> bindings) {

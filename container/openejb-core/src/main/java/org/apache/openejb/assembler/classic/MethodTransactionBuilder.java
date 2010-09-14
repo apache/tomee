@@ -17,10 +17,10 @@
 package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
-import org.apache.openejb.core.CoreDeploymentInfo;
+
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 
@@ -38,19 +38,19 @@ public class MethodTransactionBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodTransactionBuilder.class);
 
-    public void build(HashMap<String, DeploymentInfo> deployments, List<MethodTransactionInfo> methodTransactions) throws OpenEJBException {
-        for (DeploymentInfo deploymentInfo : deployments.values()) {
-            applyTransactionAttributes((CoreDeploymentInfo) deploymentInfo, methodTransactions);
+    public void build(HashMap<String, BeanContext> deployments, List<MethodTransactionInfo> methodTransactions) throws OpenEJBException {
+        for (BeanContext beanContext : deployments.values()) {
+            applyTransactionAttributes(beanContext, methodTransactions);
         }
     }
 
-    public static void applyTransactionAttributes(CoreDeploymentInfo deploymentInfo, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
+    public static void applyTransactionAttributes(BeanContext beanContext, List<MethodTransactionInfo> methodTransactionInfos) throws OpenEJBException {
 
-        if (deploymentInfo.isBeanManagedTransaction()) return;
+        if (beanContext.isBeanManagedTransaction()) return;
 
         methodTransactionInfos = normalize(methodTransactionInfos);
 
-        Map<Method, MethodAttributeInfo> attributes = resolveAttributes(methodTransactionInfos, deploymentInfo);
+        Map<Method, MethodAttributeInfo> attributes = resolveAttributes(methodTransactionInfos, beanContext);
 
         Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodTransactionBuilder.class);
         if (log.isDebugEnabled()) {
@@ -65,7 +65,7 @@ public class MethodTransactionBuilder {
             MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
 
 //            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
-            deploymentInfo.setMethodTransactionAttribute(entry.getKey(), TransactionType.get(value.transAttribute));
+            beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.get(value.transAttribute));
         }
     }
 

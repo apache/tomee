@@ -16,12 +16,10 @@
  */
 package org.apache.openejb.cdi;
 
-import javassist.util.proxy.ProxyFactory;
-import javassist.util.proxy.ProxyObject;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
-import org.apache.openejb.core.AppContext;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -31,8 +29,6 @@ import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.context.ContextFactory;
 import org.apache.webbeans.ee.event.TransactionalEventNotifier;
-import org.apache.webbeans.ejb.common.component.BaseEjbBean;
-import org.apache.webbeans.exception.WebBeansException;
 import org.apache.webbeans.jms.JMSManager;
 import org.apache.webbeans.plugins.PluginLoader;
 import org.apache.webbeans.portable.AnnotatedElementFactory;
@@ -44,7 +40,6 @@ import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
-import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -81,9 +76,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         this.appContext = appContext;
     }
 
-    public void configureDeployments(List<DeploymentInfo> ejbDeployments) {
+    public void configureDeployments(List<BeanContext> ejbDeployments) {
         WeakHashMap<Class<?>, Object> beans = new WeakHashMap<Class<?>, Object>();
-        for (DeploymentInfo deployment : ejbDeployments) {
+        for (BeanContext deployment : ejbDeployments) {
             if (deployment.getComponentType().isSession()) {
                 beans.put(deployment.getBeanClass(), null);
             }
@@ -165,13 +160,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     @Override
     public Object getSessionBeanProxy(Bean<?> bean, Class<?> interfce, CreationalContext<?> creationalContext) {
         final CdiEjbBean ejbBean = (CdiEjbBean) bean;
-        final DeploymentInfo deployment = ejbBean.getDeploymentInfo();
+        final BeanContext deployment = ejbBean.getBeanContext();
 
         final Class beanClass = deployment.getBeanClass();
         final List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
 
         List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
-        DeploymentInfo.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
+        BeanContext.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
         return home.create();
 
 //        try {

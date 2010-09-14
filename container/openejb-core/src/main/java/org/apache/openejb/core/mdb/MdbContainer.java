@@ -17,8 +17,8 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.ContainerType;
@@ -30,8 +30,6 @@ import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ExceptionType;
@@ -79,7 +77,7 @@ public class MdbContainer implements RpcContainer {
     private final Class activationSpecClass;
     private final int instanceLimit;
 
-    private final ConcurrentMap<Object, CoreDeploymentInfo> deployments = new ConcurrentHashMap<Object, CoreDeploymentInfo>();
+    private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
@@ -94,11 +92,11 @@ public class MdbContainer implements RpcContainer {
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
     }
 
-    public DeploymentInfo [] deployments() {
-        return deployments.values().toArray(new DeploymentInfo[deployments.size()]);
+    public BeanContext[] getBeanContexts() {
+        return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
-    public DeploymentInfo getDeploymentInfo(Object deploymentID) {
+    public BeanContext getBeanContext(Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
@@ -122,47 +120,46 @@ public class MdbContainer implements RpcContainer {
         return activationSpecClass;
     }
 
-    public void deploy(DeploymentInfo info) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
-        Object deploymentId = deploymentInfo.getDeploymentID();
-        if (!deploymentInfo.getMdbInterface().equals(messageListenerInterface)) {
+    public void deploy(BeanContext beanContext) throws OpenEJBException {
+        Object deploymentId = beanContext.getDeploymentID();
+        if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
-                    deploymentInfo.getMdbInterface().getName() + " but this MDB container only supports " +
+                    beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
                     messageListenerInterface);
         }
 
         // create the activation spec
-        ActivationSpec activationSpec = createActivationSpec(deploymentInfo);
+        ActivationSpec activationSpec = createActivationSpec(beanContext);
 
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
         }
         
-        Options options = new Options(deploymentInfo.getProperties());
+        Options options = new Options(beanContext.getProperties());
         int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
-        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(deploymentInfo, securityService, instanceLimit);
-        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, deploymentInfo, instanceFactory, xaResourceWrapper);
+        MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
+        EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
-        deploymentInfo.setContainer(this);
-        deploymentInfo.setContainerData(endpointFactory);
-        deployments.put(deploymentId, deploymentInfo);
+        beanContext.setContainer(this);
+        beanContext.setContainerData(endpointFactory);
+        deployments.put(deploymentId, beanContext);
 
         // Create stats interceptor
-        StatsInterceptor stats = new StatsInterceptor(deploymentInfo.getBeanClass());
-        deploymentInfo.addSystemInterceptor(stats);
+        StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
+        beanContext.addSystemInterceptor(stats);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
         ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
         jmxName.set("J2EEApplication", null);
-        jmxName.set("EJBModule", deploymentInfo.getModuleID());
-        jmxName.set("StatelessSessionBean", deploymentInfo.getEjbName());
+        jmxName.set("EJBModule", beanContext.getModuleID());
+        jmxName.set("StatelessSessionBean", beanContext.getEjbName());
         jmxName.set("j2eeType", "");
-        jmxName.set("name", deploymentInfo.getEjbName());
+        jmxName.set("name", beanContext.getEjbName());
 
         // register the invocation stats interceptor
         try {
@@ -178,28 +175,28 @@ public class MdbContainer implements RpcContainer {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
         } catch (ResourceException e) {
             // activation failed... clean up
-            deploymentInfo.setContainer(null);
-            deploymentInfo.setContainerData(null);
+            beanContext.setContainer(null);
+            beanContext.setContainerData(null);
             deployments.remove(deploymentId);
 
             throw new OpenEJBException(e);
         }
 
         // start the timer service
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService != null) {
             timerService.start();
         }
     }
 
-    private ActivationSpec createActivationSpec(DeploymentInfo deploymentInfo)throws OpenEJBException {
+    private ActivationSpec createActivationSpec(BeanContext beanContext)throws OpenEJBException {
         try {
             // initialize the object recipe
             ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-            Map<String, String> activationProperties = deploymentInfo.getActivationProperties();
+            Map<String, String> activationProperties = beanContext.getActivationProperties();
             for (Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
@@ -233,20 +230,19 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public void start(DeploymentInfo info) throws OpenEJBException {        
+    public void start(BeanContext info) throws OpenEJBException {
     }
     
-    public void stop(DeploymentInfo info) throws OpenEJBException {        
+    public void stop(BeanContext info) throws OpenEJBException {
     }
     
-    public void undeploy(DeploymentInfo info) throws OpenEJBException {
-        if (!(info instanceof CoreDeploymentInfo)) {
+    public void undeploy(BeanContext beanContext) throws OpenEJBException {
+        if (!(beanContext instanceof BeanContext)) {
             return;
         }
 
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) info;
         try {
-            EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
+            EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
             if (endpointFactory != null) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
 
@@ -260,9 +256,9 @@ public class MdbContainer implements RpcContainer {
                 }
             }
         } finally {
-            deploymentInfo.setContainer(null);
-            deploymentInfo.setContainerData(null);
-            deployments.remove(deploymentInfo.getDeploymentID());
+            beanContext.setContainer(null);
+            beanContext.setContainerData(null);
+            deployments.remove(beanContext.getDeploymentID());
         }
     }
 
@@ -278,9 +274,9 @@ public class MdbContainer implements RpcContainer {
     }
 
     public Object invoke(Object deploymentId, InterfaceType type, Class callInterface, Method method, Object[] args, Object primKey) throws OpenEJBException {
-        CoreDeploymentInfo deploymentInfo = (CoreDeploymentInfo) getDeploymentInfo(deploymentId);
+        BeanContext beanContext = getBeanContext(deploymentId);
 
-        EndpointFactory endpointFactory = (EndpointFactory) deploymentInfo.getContainerData();
+        EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
         MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
         Instance instance;
         try {
@@ -290,7 +286,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         try {
-            beforeDelivery(deploymentInfo, instance, method, null);
+            beforeDelivery(beanContext, instance, method, null);
             Object value = invoke(instance, method, type, args);
             afterDelivery(instance);
             return value;
@@ -299,7 +295,7 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public void beforeDelivery(CoreDeploymentInfo deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
+    public void beforeDelivery(BeanContext deployInfo, Object instance, Method method, XAResource xaResource) throws SystemException {
         // intialize call context
         ThreadContext callContext = new ThreadContext(deployInfo, null);
         ThreadContext oldContext = ThreadContext.enter(callContext);
@@ -337,7 +333,7 @@ public class MdbContainer implements RpcContainer {
 
         // get the context data
         ThreadContext callContext = ThreadContext.getThreadContext();
-        CoreDeploymentInfo deployInfo = callContext.getDeploymentInfo();
+        BeanContext deployInfo = callContext.getBeanContext();
         MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
 
         if (mdbCallContext == null) {
@@ -389,11 +385,11 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    private Object _invoke(Object instance, Method runMethod, Object[] args, DeploymentInfo deploymentInfo, InterfaceType interfaceType, MdbCallContext mdbCallContext) throws SystemException,
+    private Object _invoke(Object instance, Method runMethod, Object[] args, BeanContext beanContext, InterfaceType interfaceType, MdbCallContext mdbCallContext) throws SystemException,
             ApplicationException {
         Object returnValue;
         try {
-            List<InterceptorData> interceptors = deploymentInfo.getMethodInterceptors(runMethod);
+            List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
             InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
                     interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
@@ -410,7 +406,7 @@ public class MdbContainer implements RpcContainer {
             //    IllegalArgumentException - if the number of actual and formal parameters differ, or if an unwrapping conversion fails.
             //    NullPointerException - if the specified object is null and the method is an instance method.
             //    ExceptionInInitializerError - if the initialization provoked by this method fails.
-            ExceptionType type = deploymentInfo.getExceptionType(e);
+            ExceptionType type = beanContext.getExceptionType(e);
             if (type == ExceptionType.SYSTEM) {
                 //
                 /// System Exception ****************************
@@ -439,7 +435,7 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    public void release(CoreDeploymentInfo deployInfo, Object instance) {
+    public void release(BeanContext deployInfo, Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
         if (callContext == null) {

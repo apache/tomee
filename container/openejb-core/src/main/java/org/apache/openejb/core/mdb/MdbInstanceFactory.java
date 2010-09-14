@@ -17,9 +17,9 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -53,7 +53,7 @@ import java.util.List;
 public class MdbInstanceFactory {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
-    private final CoreDeploymentInfo deploymentInfo;
+    private final BeanContext beanContext;
     private final SecurityService securityService;
     private final int instanceLimit;
     private int instanceCount;
@@ -62,24 +62,24 @@ public class MdbInstanceFactory {
     /**
      * Creates a MdbInstanceFactory for a single specific deployment.
      *
-     * @param deploymentInfo  the deployment for which instances will be created
+     * @param beanContext  the deployment for which instances will be created
      * @param securityService the transaction manager for this container system
      * @param instanceLimit   the maximal number of instances or <= 0 if unlimited
      */
-    public MdbInstanceFactory(CoreDeploymentInfo deploymentInfo, SecurityService securityService, int instanceLimit) throws OpenEJBException {
-        this.deploymentInfo = deploymentInfo;
+    public MdbInstanceFactory(BeanContext beanContext, SecurityService securityService, int instanceLimit) throws OpenEJBException {
+        this.beanContext = beanContext;
         this.securityService = securityService;
         this.instanceLimit = instanceLimit;
         mdbContext = new MdbContext(securityService);
 
         try {
-            final Context context = deploymentInfo.getJndiEnc();
+            final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", mdbContext);
         } catch (NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
 
-        deploymentInfo.set(EJBContext.class, this.mdbContext);
+        beanContext.set(EJBContext.class, this.mdbContext);
     }
 
     /**
@@ -160,7 +160,7 @@ public class MdbInstanceFactory {
             // call post destroy method
             callContext.setCurrentOperation(Operation.PRE_DESTROY);
             Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove") : null;
-            List<InterceptorData> callbackInterceptors = deploymentInfo.getCallbackInterceptors();
+            List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
             interceptorStack.invoke();
         } catch (Throwable re) {
@@ -185,17 +185,17 @@ public class MdbInstanceFactory {
     }
 
     private Object constructBean() throws UnavailableException {
-        CoreDeploymentInfo deploymentInfo = this.deploymentInfo;
+        BeanContext beanContext = this.beanContext;
 
-        ThreadContext callContext = new ThreadContext(deploymentInfo, null, Operation.INJECTION);
+        ThreadContext callContext = new ThreadContext(beanContext, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
         try {
-            final InstanceContext context = deploymentInfo.newInstance();
+            final InstanceContext context = beanContext.newInstance();
 
             if (context.getBean() instanceof MessageDrivenBean) {
                 callContext.setCurrentOperation(Operation.CREATE);
-                Method create = deploymentInfo.getCreateMethod();
+                Method create = beanContext.getCreateMethod();
                 final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList(), new HashMap());
                 ejbCreate.invoke();
             }

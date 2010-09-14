@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.core.managed;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Container;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -29,8 +29,8 @@ import java.io.Serializable;
 
 public class ManagedObjectHandler extends EjbObjectProxyHandler {
 
-    public ManagedObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
+    public ManagedObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
     public Object getRegistryId() {

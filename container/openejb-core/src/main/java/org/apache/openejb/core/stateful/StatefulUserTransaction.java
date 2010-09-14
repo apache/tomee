@@ -26,7 +26,7 @@ import javax.transaction.RollbackException;
 
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 
 public class StatefulUserTransaction implements UserTransaction {
@@ -49,8 +49,8 @@ public class StatefulUserTransaction implements UserTransaction {
         }
 
         // get the deployment info
-        CoreDeploymentInfo deploymentInfo = callContext.getDeploymentInfo();
-        if (deploymentInfo.getComponentType() != BeanType.STATEFUL) {
+        BeanContext beanContext = callContext.getBeanContext();
+        if (beanContext.getComponentType() != BeanType.STATEFUL) {
             // some other non-stateful ejb is using our user transaction
             return;
         }
@@ -61,7 +61,7 @@ public class StatefulUserTransaction implements UserTransaction {
             // is is not a bean method
             return;
         }
-        jtaEntityManagerRegistry.transactionStarted((String)deploymentInfo.getDeploymentID(), primaryKey);
+        jtaEntityManagerRegistry.transactionStarted((String)beanContext.getDeploymentID(), primaryKey);
     }
 
     public void commit() throws HeuristicMixedException, HeuristicRollbackException, IllegalStateException, RollbackException, SecurityException, SystemException {

@@ -29,7 +29,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.util.LogCategory;
@@ -43,14 +43,14 @@ import java.lang.reflect.Type;
 public class EjbMessageReceiver implements MessageReceiver {
     private static final Logger logger = Logger.getInstance(LogCategory.AXIS2, EjbMessageReceiver.class);
 
-    private DeploymentInfo deploymentInfo;
+    private BeanContext beanContext;
     private Class serviceImplClass;
     private EjbWsContainer container;
 
-    public EjbMessageReceiver(EjbWsContainer container, Class serviceImplClass, DeploymentInfo deploymentInfo) {
+    public EjbMessageReceiver(EjbWsContainer container, Class serviceImplClass, BeanContext beanContext) {
         this.container = container;
         this.serviceImplClass = serviceImplClass;
-        this.deploymentInfo = deploymentInfo;
+        this.beanContext = beanContext;
     }
 
     public void receive(org.apache.axis2.context.MessageContext axisMsgCtx) throws AxisFault {
@@ -77,14 +77,14 @@ public class EjbMessageReceiver implements MessageReceiver {
         SoapMessageContext jaxwsContext = new SoapMessageContext(requestMsgCtx);
         Object[] arguments = {jaxwsContext, interceptor};
 
-        RpcContainer container = (RpcContainer) this.deploymentInfo.getContainer();
+        RpcContainer container = (RpcContainer) this.beanContext.getContainer();
 
-        Class callInterface = this.deploymentInfo.getServiceEndpointInterface();
+        Class callInterface = this.beanContext.getServiceEndpointInterface();
 
         method = getMostSpecificMethod(method, callInterface);
 
         try {
-            Object res = container.invoke(this.deploymentInfo.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, method, arguments, null);
+            Object res = container.invoke(this.beanContext.getDeploymentID(), InterfaceType.SERVICE_ENDPOINT, callInterface, method, arguments, null);
             // TODO: update response message with new response value?
         } catch (ApplicationException e) {
             if (e.getCause() instanceof AxisFault) {

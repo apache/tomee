@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.server.webservices;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServiceException;
@@ -38,9 +39,8 @@ import org.apache.openejb.core.webservices.PortAddressRegistryImpl;
 import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.core.CoreContainerSystem;
-import org.apache.openejb.core.WebDeploymentInfo;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.Injection;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -185,7 +185,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
         }
     }
 
-    protected abstract HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, DeploymentInfo deploymentInfo) throws Exception;
+    protected abstract HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext) throws Exception;
 
     protected abstract void destroyEjbWsContainer(String deploymentId);
 
@@ -221,16 +221,16 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                     if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
 
-                        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(bean.ejbDeploymentId);
-                        if (deploymentInfo == null) continue;
+                        BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                        if (beanContext == null) continue;
 
                         PortInfo portInfo = ports.get(bean.ejbName);
                         if (portInfo == null) continue;
 
                         try {
-                            PortData port = WsBuilder.toPortData(portInfo, deploymentInfo.getInjections(), moduleBaseUrl, deploymentInfo.getClassLoader());
+                            PortData port = WsBuilder.toPortData(portInfo, beanContext.getInjections(), moduleBaseUrl, beanContext.getClassLoader());
 
-                            HttpListener container = createEjbWsContainer(moduleBaseUrl, port, deploymentInfo);
+                            HttpListener container = createEjbWsContainer(moduleBaseUrl, port, beanContext);
 
                             // generate a location if one was not assigned
                             String location = port.getLocation();
@@ -240,7 +240,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                             if (!location.startsWith("/")) location = "/" + location;
                             ejbLocations.put(bean.ejbDeploymentId, location);
 
-                            ClassLoader classLoader = deploymentInfo.getClassLoader();
+                            ClassLoader classLoader = beanContext.getClassLoader();
                             if (wsRegistry != null) {
                                 String auth = authMethod;
                                 String realm = realmName;
@@ -265,7 +265,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 }
                             }
                         } catch (Throwable e) {
-                            logger.error("Error deploying CXF webservice for ejb " + deploymentInfo.getDeploymentID(), e);
+                            logger.error("Error deploying CXF webservice for ejb " + beanContext.getDeploymentID(), e);
                         }
                     }
                 }
@@ -277,8 +277,8 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     }
 
     public void afterApplicationCreated(WebAppInfo webApp) {
-        WebDeploymentInfo deploymentInfo = containerSystem.getWebDeploymentInfo(webApp.moduleId);
-        if (deploymentInfo == null) return;
+        WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
+        if (webContext == null) return;
 
         // if already deployed skip this webapp
         if (!deployedWebApps.add(webApp)) return;
@@ -300,9 +300,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
             if (portInfo == null) continue;
 
             try {
-                ClassLoader classLoader = deploymentInfo.getClassLoader();
-                Collection<Injection> injections = deploymentInfo.getInjections();
-                Context context = deploymentInfo.getJndiEnc();
+                ClassLoader classLoader = webContext.getClassLoader();
+                Collection<Injection> injections = webContext.getInjections();
+                Context context = webContext.getJndiEnc();
                 Class target = classLoader.loadClass(servlet.servletClass);
 
                 PortData port = WsBuilder.toPortData(portInfo, injections, moduleBaseUrl, classLoader);

@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.ejb.EJBException;
@@ -36,13 +36,13 @@ import java.util.ConcurrentModificationException;
 public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> extends AbstractSet {
     private final EntityBean source;
     private final String sourceProperty;
-    private final CoreDeploymentInfo relatedInfo;
+    private final BeanContext relatedInfo;
     private final String relatedProperty;
     private final Class relatedLocal;
     private boolean mutable = true;
     private Collection<Bean> relatedBeans;
 
-    public CmrSet(EntityBean source, String sourceProperty, CoreDeploymentInfo relatedInfo, String relatedProperty, Collection<Bean> relatedBeans) {
+    public CmrSet(EntityBean source, String sourceProperty, BeanContext relatedInfo, String relatedProperty, Collection<Bean> relatedBeans) {
         this.source = source;
         this.sourceProperty = sourceProperty;
         this.relatedInfo = relatedInfo;

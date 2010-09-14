@@ -26,7 +26,7 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 
 public class TimerServiceWrapper implements TimerService {
@@ -80,13 +80,13 @@ public class TimerServiceWrapper implements TimerService {
 
     private TimerService getTimerService() throws IllegalStateException {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        CoreDeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        BeanContext beanContext = threadContext.getBeanContext();
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
-            throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
-        } else if(deploymentInfo.getEjbTimeout() == null) {
-            throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID() + " due to no timeout method is configured");
+            throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
+        } else if(beanContext.getEjbTimeout() == null) {
+            throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID() + " due to no timeout method is configured");
         }
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), deploymentInfo.getEjbTimeout());
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
     }
 }

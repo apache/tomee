@@ -18,20 +18,20 @@ package org.apache.openejb.server.ejbd;
 
 import java.net.URI;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.ClusteredRPCContainer;
 import org.apache.openejb.Container;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.client.ClusterableRequest;
 import org.apache.openejb.client.ClusterableResponse;
 import org.apache.openejb.client.ServerMetaData;
 
 public class BasicClusterableRequestHandler implements ClusterableRequestHandler {
 
-    public void updateServer(DeploymentInfo deploymentInfo, ClusterableRequest req, ClusterableResponse res) {
-        Container container = deploymentInfo.getContainer();
+    public void updateServer(BeanContext beanContext, ClusterableRequest req, ClusterableResponse res) {
+        Container container = beanContext.getContainer();
         if (container instanceof ClusteredRPCContainer) {
             ClusteredRPCContainer clusteredContainer = (ClusteredRPCContainer) container;
-            URI[] locations = clusteredContainer.getLocations(deploymentInfo);
+            URI[] locations = clusteredContainer.getLocations(beanContext);
             if (null != locations) {
                 ServerMetaData server = new ServerMetaData(locations);
                 if (req.getServerHash() != server.buildHash()) {

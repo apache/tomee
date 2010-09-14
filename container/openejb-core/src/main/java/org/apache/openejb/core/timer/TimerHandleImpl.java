@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.core.timer;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.DeploymentInfo;
 
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Timer;
@@ -40,11 +40,11 @@ public class TimerHandleImpl implements TimerHandle, Serializable {
         if (containerSystem == null) {
             throw new NoSuchObjectLocalException("OpenEJb container system is not running");
         }
-        DeploymentInfo deploymentInfo = containerSystem.getDeploymentInfo(deploymentId);
-        if (deploymentInfo == null) {
+        BeanContext beanContext = containerSystem.getBeanContext(deploymentId);
+        if (beanContext == null) {
             throw new NoSuchObjectLocalException("Deployment info not found " + deploymentId);
         }
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
             throw new NoSuchObjectLocalException("Deployment no longer supports ejbTimout " + deploymentId + ". Has this ejb been redeployed?");
         }

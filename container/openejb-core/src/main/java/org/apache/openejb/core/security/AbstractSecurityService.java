@@ -21,11 +21,10 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.loader.SystemInstance;
 
 import javax.security.auth.Subject;
@@ -135,13 +134,13 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
     }
 
     public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {
-        String moduleID = newContext.getDeploymentInfo().getModuleID();
+        String moduleID = newContext.getBeanContext().getModuleID();
         PolicyContext.setContextID(moduleID);
 
         SecurityContext securityContext = (oldContext != null) ? oldContext.get(SecurityContext.class) : null;
 
-        DeploymentInfo callingDeploymentInfo = (oldContext != null)? oldContext.getDeploymentInfo(): null;
-        Subject runAsSubject = getRunAsSubject(callingDeploymentInfo);
+        BeanContext callingBeanContext = (oldContext != null)? oldContext.getBeanContext(): null;
+        Subject runAsSubject = getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) {
 
             securityContext = new SecurityContext(runAsSubject);
@@ -159,10 +158,10 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         newContext.set(SecurityContext.class, securityContext);
     }
 
-    protected Subject getRunAsSubject(DeploymentInfo callingDeploymentInfo) {
-        if (callingDeploymentInfo == null) return null;
+    protected Subject getRunAsSubject(BeanContext callingBeanContext) {
+        if (callingBeanContext == null) return null;
 
-        String runAsRole = callingDeploymentInfo.getRunAs();
+        String runAsRole = callingBeanContext.getRunAs();
         Subject runAs = createRunAsSubject(runAsRole);
         return runAs;
     }
@@ -175,7 +174,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         if (reenteredContext == null) {
             PolicyContext.setContextID(null);
         } else {
-            PolicyContext.setContextID(reenteredContext.getDeploymentInfo().getModuleID());
+            PolicyContext.setContextID(reenteredContext.getBeanContext().getModuleID());
         }
     }
 
@@ -223,7 +222,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
         try {
-            DeploymentInfo deployment = threadContext.getDeploymentInfo();
+            BeanContext deployment = threadContext.getBeanContext();
 
             securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
         } catch (AccessControlException e) {
@@ -254,9 +253,9 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
 
         try {
 
-            DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
+            BeanContext beanContext = threadContext.getBeanContext();
 
-            String ejbName = deploymentInfo.getEjbName();
+            String ejbName = beanContext.getEjbName();
 
             String name = (type == null)? null: type.getSpecName();
             if ("LocalBean".equals(name) || "LocalBeanHome".equals(name)) {

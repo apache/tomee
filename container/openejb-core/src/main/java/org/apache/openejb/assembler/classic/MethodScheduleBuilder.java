@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.SetAccessible;
-import org.apache.openejb.core.CoreDeploymentInfo;
 import org.apache.openejb.core.timer.ScheduleData;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.TimerConfig;
@@ -31,8 +31,8 @@ public class MethodScheduleBuilder {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, MethodScheduleBuilder.class.getPackage().getName());
 
-    public void build(CoreDeploymentInfo deploymentInfo, EnterpriseBeanInfo beanInfo) {
-        Class<?> clazz = deploymentInfo.getBeanClass();
+    public void build(BeanContext beanContext, EnterpriseBeanInfo beanInfo) {
+        Class<?> clazz = beanContext.getBeanClass();
 
         for (MethodScheduleInfo info : beanInfo.methodScheduleInfos) {
             Method method;
@@ -67,7 +67,7 @@ public class MethodScheduleBuilder {
                     config.setInfo(scheduleInfo.info);
                     config.setPersistent(scheduleInfo.persistent);
 
-                    deploymentInfo.getMethodContext(method).getSchedules().add(new ScheduleData(config, expr));
+                    beanContext.getMethodContext(method).getSchedules().add(new ScheduleData(config, expr));
                 }
             }
         }

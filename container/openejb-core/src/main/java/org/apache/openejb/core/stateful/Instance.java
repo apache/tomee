@@ -28,7 +28,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.transaction.Transaction;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -38,7 +38,7 @@ import org.apache.openejb.util.PojoSerialization;
 
 public class Instance implements Serializable, Cache.TimeOut {
     private static final long serialVersionUID = 2862563626506556542L;
-    public final CoreDeploymentInfo deploymentInfo;
+    public final BeanContext beanContext;
     public final Object primaryKey;
     public final Object bean;
     public final Map<String, Object> interceptors;
@@ -54,8 +54,8 @@ public class Instance implements Serializable, Cache.TimeOut {
     private Map<EntityManagerFactory, EntityManager> entityManagers;
     private final EntityManager[] entityManagerArray;
 
-    public Instance(CoreDeploymentInfo deploymentInfo, Object primaryKey, Object bean, Map<String, Object> interceptors, Map<EntityManagerFactory, EntityManager> entityManagers) {
-        this.deploymentInfo = deploymentInfo;
+    public Instance(BeanContext beanContext, Object primaryKey, Object bean, Map<String, Object> interceptors, Map<EntityManagerFactory, EntityManager> entityManagers) {
+        this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.bean = bean;
         this.interceptors = interceptors;
@@ -64,8 +64,8 @@ public class Instance implements Serializable, Cache.TimeOut {
     }
 
     public Instance(Object deploymentId, Object primaryKey, Object bean, Map<String, Object> interceptors, EntityManager[] entityManagerArray) {
-        this.deploymentInfo = (CoreDeploymentInfo) SystemInstance.get().getComponent(ContainerSystem.class).getDeploymentInfo(deploymentId);
-        if (deploymentInfo == null) {
+        this.beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
+        if (beanContext == null) {
             throw new IllegalArgumentException("Unknown deployment " + deploymentId);
         }
         this.primaryKey = primaryKey;
@@ -75,7 +75,7 @@ public class Instance implements Serializable, Cache.TimeOut {
     }
 
     public Duration getTimeOut() {
-        return deploymentInfo.getStatefulTimeout();
+        return beanContext.getStatefulTimeout();
     }
     
     public synchronized boolean isInUse() {
@@ -151,7 +151,7 @@ public class Instance implements Serializable, Cache.TimeOut {
         public final EntityManager[] entityManagerArray;
 
         public Serialization(Instance i) {
-            deploymentId = i.deploymentInfo.getDeploymentID();
+            deploymentId = i.beanContext.getDeploymentID();
             primaryKey = i.primaryKey;
             bean = toSerializable(i.bean);
 

@@ -17,7 +17,7 @@
  */
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.openejb.core.CoreDeploymentInfo;
+import org.apache.openejb.BeanContext;
 
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
@@ -30,7 +30,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
     private final EntityBean source;
     private final String sourceProperty;
     private final String relatedProperty;
-    private final CoreDeploymentInfo relatedInfo;
+    private final BeanContext relatedInfo;
 
     public SingleValuedCmr(EntityBean source, String sourceProperty, Class<Bean> relatedType, String relatedProperty) {
         if (source == null) throw new NullPointerException("source is null");
@@ -39,7 +39,7 @@ public class SingleValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObje
         this.sourceProperty = sourceProperty;
         this.relatedProperty = relatedProperty;
 
-        this.relatedInfo = Cmp2Util.getDeploymentInfo(relatedType);
+        this.relatedInfo = Cmp2Util.getBeanContext(relatedType);
     }
 
     public Proxy get(Bean entity) throws EJBException {

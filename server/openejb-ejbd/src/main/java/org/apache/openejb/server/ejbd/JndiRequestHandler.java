@@ -36,7 +36,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
@@ -64,7 +64,6 @@ import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
@@ -356,24 +355,24 @@ class JndiRequestHandler {
         }
 
         ProxyInfo proxyInfo = handler.getProxyInfo();
-        DeploymentInfo deployment = proxyInfo.getDeploymentInfo();
-        String deploymentID = deployment.getDeploymentID().toString();
+        BeanContext beanContext = proxyInfo.getBeanContext();
+        String deploymentID = beanContext.getDeploymentID().toString();
 
         updateServer(req, res, proxyInfo);
 
         switch(proxyInfo.getInterfaceType()){
             case EJB_HOME: {
                 res.setResponseCode(ResponseCodes.JNDI_EJBHOME);
-                EJBMetaDataImpl metaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                        deployment.getRemoteInterface(),
-                        deployment.getPrimaryKeyClass(),
-                        deployment.getComponentType().toString(),
+                EJBMetaDataImpl metaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
+                        beanContext.getRemoteInterface(),
+                        beanContext.getPrimaryKeyClass(),
+                        beanContext.getComponentType().toString(),
                         deploymentID,
                         -1,
                         convert(proxyInfo.getInterfaceType()),
                         null,
                         proxyInfo.getInterface());
-                metaData.loadProperties(deployment.getProperties());
+                metaData.loadProperties(beanContext.getProperties());
 
                 res.setResult(metaData);
                 break;
@@ -388,15 +387,15 @@ class JndiRequestHandler {
                 res.setResponseCode(ResponseCodes.JNDI_BUSINESS_OBJECT);
                 EJBMetaDataImpl metaData = new EJBMetaDataImpl(null,
                         null,
-                        deployment.getPrimaryKeyClass(),
-                        deployment.getComponentType().toString(),
+                        beanContext.getPrimaryKeyClass(),
+                        beanContext.getComponentType().toString(),
                         deploymentID,
                         -1,
                         convert(proxyInfo.getInterfaceType()),
                         proxyInfo.getInterfaces(),
                         proxyInfo.getInterface());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
-                metaData.loadProperties(deployment.getProperties());
+                metaData.loadProperties(beanContext.getProperties());
 
                 res.setResult(metaData);
                 break;
@@ -423,7 +422,7 @@ class JndiRequestHandler {
     }
 
     protected void updateServer(JNDIRequest req, JNDIResponse res, ProxyInfo proxyInfo) {
-        clusterableRequestHandler.updateServer(proxyInfo.getDeploymentInfo(), req, res);
+        clusterableRequestHandler.updateServer(proxyInfo.getBeanContext(), req, res);
     }
 
     private void doList(JNDIRequest req, JNDIResponse res, Context context) {

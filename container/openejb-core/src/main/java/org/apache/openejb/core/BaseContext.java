@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.core;
 
-import org.apache.openejb.DeploymentInfo;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ivm.IntraVmArtifact;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.timer.TimerServiceImpl;
@@ -81,14 +81,14 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public EJBHome getEJBHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         return di.getEJBHome();
     }
 
     public EJBLocalHome getEJBLocalHome() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         return di.getEJBLocalHome();
     }
@@ -124,7 +124,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public UserTransaction getUserTransaction(UserTransaction userTransaction) throws IllegalStateException {
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             return userTransaction;
@@ -136,7 +136,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public void setRollbackOnly() throws IllegalStateException {
         check(Call.setRollbackOnly);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the setRollbackOnly() method");
@@ -157,7 +157,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
     public boolean getRollbackOnly() throws IllegalStateException {
         check(Call.getRollbackOnly);
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         if (di.isBeanManagedTransaction()) {
             throw new IllegalStateException("bean-managed transaction beans can not access the getRollbackOnly() method: deploymentId=" + di.getDeploymentID());
@@ -179,12 +179,12 @@ public abstract class BaseContext implements EJBContext, Serializable {
         check(Call.getTimerService);
 
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-        EjbTimerService timerService = deploymentInfo.getEjbTimerService();
+        BeanContext beanContext = threadContext.getBeanContext();
+        EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
-            throw new IllegalStateException("This ejb does not support timers " + deploymentInfo.getDeploymentID());
+            throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
         }
-        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), deploymentInfo.getEjbTimeout());
+        return new TimerServiceImpl(timerService, threadContext.getPrimaryKey(), beanContext.getEjbTimeout());
     }
 
     public boolean isTimerMethodAllowed() {
@@ -193,7 +193,7 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public boolean isUserTransactionAccessAllowed() {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo di = threadContext.getDeploymentInfo();
+        BeanContext di = threadContext.getBeanContext();
 
         check(Call.UserTransactionMethod);
         return di.isBeanManagedTransaction();
@@ -214,8 +214,8 @@ public abstract class BaseContext implements EJBContext, Serializable {
 
     public Object lookup(String name) {
         ThreadContext threadContext = ThreadContext.getThreadContext();
-        DeploymentInfo deploymentInfo = threadContext.getDeploymentInfo();
-        Context jndiEnc = deploymentInfo.getJndiEnc();
+        BeanContext beanContext = threadContext.getBeanContext();
+        Context jndiEnc = beanContext.getJndiEnc();
         try {
             jndiEnc = (Context) jndiEnc.lookup("comp/env");
             return jndiEnc.lookup(name);

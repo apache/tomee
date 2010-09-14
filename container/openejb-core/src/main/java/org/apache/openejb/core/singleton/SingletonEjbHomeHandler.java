@@ -21,15 +21,15 @@ import java.util.List;
 
 import javax.ejb.RemoveException;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbHomeProxyHandler;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 
 public class SingletonEjbHomeHandler extends EjbHomeProxyHandler {
 
-    public SingletonEjbHomeHandler(DeploymentInfo deploymentInfo, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, interfaceType, interfaces, mainInterface);
+    public SingletonEjbHomeHandler(BeanContext beanContext, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, interfaceType, interfaces, mainInterface);
     }
 
     protected Object findX(Class interfce, Method method, Object[] args, Object proxy) throws Throwable {
@@ -45,8 +45,8 @@ public class SingletonEjbHomeHandler extends EjbHomeProxyHandler {
         return null;
     }
 
-    protected EjbObjectProxyHandler newEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        return new SingletonEjbObjectHandler(getDeploymentInfo(), pk, interfaceType, interfaces, mainInterface);
+    protected EjbObjectProxyHandler newEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        return new SingletonEjbObjectHandler(getBeanContext(), pk, interfaceType, interfaces, mainInterface);
     }
 
 }

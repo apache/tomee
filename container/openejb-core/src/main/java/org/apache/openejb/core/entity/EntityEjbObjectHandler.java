@@ -20,9 +20,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.io.Serializable;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.DeploymentInfo;
 import org.apache.openejb.core.ivm.EjbObjectProxyHandler;
 import org.apache.openejb.util.proxy.ProxyManager;
 
@@ -39,8 +39,8 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
     */
     private Object registryId;
 
-    public EntityEjbObjectHandler(DeploymentInfo deploymentInfo, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
-        super(deploymentInfo, pk, interfaceType, interfaces, mainInterface);
+    public EntityEjbObjectHandler(BeanContext beanContext, Object pk, InterfaceType interfaceType, List<Class> interfaces, Class mainInterface) {
+        super(beanContext, pk, interfaceType, interfaces, mainInterface);
     }
 
     /*
