@@ -17,6 +17,7 @@
 package org.apache.openejb.util;
 
 import static org.apache.openejb.util.References.sort;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -34,6 +35,11 @@ public class ReferencesTest extends TestCase {
     private BeanVisitor visitor = new BeanVisitor();
     private List<Bean> beans;
 
+    public void testEmptyList() {
+        beans = new ArrayList<Bean>();
+        assertEquals(0, sort(beans, visitor).size());
+    }
+
     public void test() {
 
         beans = new ArrayList<Bean>();
@@ -43,7 +49,6 @@ public class ReferencesTest extends TestCase {
         Bean c = bean("c", "b");
 
         List<Bean> actual = sort(beans, visitor);
-
         assertEquals(expected(a, b, c), actual);
     }
 
