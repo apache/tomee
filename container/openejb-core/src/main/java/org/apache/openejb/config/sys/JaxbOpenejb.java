@@ -124,12 +124,16 @@ public abstract class JaxbOpenejb {
         URL url = null;
         try {
             ResourceFinder finder = new ResourceFinder("META-INF/", Thread.currentThread().getContextClassLoader());
-            url = finder.find(providerName + "/service-jar.xml");
+            String resourceName = providerName + "/service-jar.xml";
+            try {
+                url = finder.find(resourceName);
+            } catch (IOException e) {
+                //Make sure the default service-jar shipped with openejb-core could be read
+                finder = new ResourceFinder("META-INF/", JaxbOpenejb.class.getClassLoader());
+                url = finder.find(resourceName);
+            }
             in = url.openStream();
-
             ServicesJar servicesJar = parseServicesJar(in);
-
-//            ServicesJar servicesJar = unmarshal(ServicesJar.class, in);
             return servicesJar;
         } catch (MalformedURLException e) {
             throw new OpenEJBException("Unable to resolve service provider " + providerName, e);
