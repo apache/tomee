@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +38,10 @@ public class References {
     }
 
     public static <T> List<T> sort(List<T> objects, Visitor<T> visitor) {
+
+        if (objects.size() <= 1) {
+            return objects;
+        }
 
         final Map<String, Node> nodes = new LinkedHashMap<String, Node>();
 
@@ -57,9 +60,7 @@ public class References {
                 node.references.add(ref);
                 node.initialReferences.add(ref);
             }
-
         }
-
         boolean circuitFounded = false;
         for (Node node : nodes.values()) {
             Set<Node> visitedNodes = new HashSet<Node>();
@@ -89,16 +90,31 @@ public class References {
             throw new CircularReferencesException(all);
         }
 
-        LinkedList<Node> sortedNodes = new LinkedList<Node>();
-        sortedNodes.addAll(nodes.values());
+        //Build Double Link Node List
+        Node rootNode = new Node(null, null);
+        rootNode.previous = rootNode;
+        rootNode.next = nodes.values().iterator().next();
+
+        for (Node node : nodes.values()) {
+            node.previous = rootNode.previous;
+            rootNode.previous.next = node;
+            node.next = rootNode;
+            rootNode.previous = node;
+        }
 
         for (Node node : nodes.values()) {
             for (Node reference : node.references) {
-                final int i = sortedNodes.indexOf(node);
-                swap(node.name, reference.name, sortedNodes);
+                swap(node, reference, rootNode);
             }
         }
-        return unwrap(sortedNodes);
+
+        List  sortedList= new ArrayList(nodes.size());
+        Node currentNode = rootNode.next;
+        while(currentNode != rootNode) {
+            sortedList.add(currentNode.object);
+            currentNode = currentNode.next;
+        }
+        return sortedList;
     }
 
     private static boolean normalizeNodeReferences(Node rootNode, Node node, Set<Node> referenceNodes) {
@@ -117,27 +133,22 @@ public class References {
         return true;
     }
 
-    private static void swap(String shouldAfterNodeName, String shouldBeforeNodeName, LinkedList<Node> nodes) {
-        int shouldAfterIndex = -1;
-        int shouldBeforeIndex = -1;
-        int index = 0;
-        for (Node node : nodes) {
-            if (shouldAfterIndex == -1 || shouldBeforeIndex == -1) {
-                if (shouldAfterNodeName.equals(node.name)) {
-                    shouldAfterIndex = index;
-                } else if (shouldBeforeNodeName.equals(node.name)) {
-                    shouldBeforeIndex = index;
-                }
-                index++;
-            } else {
-                break;
+    private static void swap(Node shouldAfterNode, Node shouldBeforeNode, Node rootNode) {
+        Node currentNode = shouldBeforeNode;
+        while(currentNode.next != rootNode) {
+            if(currentNode.next == shouldAfterNode) {
+                return;
             }
+            currentNode = currentNode.next;
         }
-        System.out.println(shouldAfterNodeName + "=" + shouldAfterIndex + "\t" + shouldBeforeNodeName + "=" + shouldBeforeIndex);
-        if (shouldAfterIndex < shouldBeforeIndex) {
-            Node node = nodes.remove(shouldAfterIndex);
-            nodes.add(shouldBeforeIndex, node);
-        }
+        //Remove the shouldAfterNode from list
+        shouldAfterNode.previous.next = shouldAfterNode.next;
+        shouldAfterNode.next.previous = shouldAfterNode.previous;
+        //Insert the node immediately after the shouldBeforeNode
+        shouldAfterNode.previous = shouldBeforeNode;
+        shouldAfterNode.next = shouldBeforeNode.next;
+        shouldBeforeNode.next = shouldAfterNode;
+        shouldAfterNode.next.previous = shouldAfterNode;
     }
 
     private static <T> List<T> unwrap(List<Node> nodes) {
@@ -178,7 +189,8 @@ public class References {
         private Object object;
         private final List<Node> initialReferences = new ArrayList<Node>();
         private final Set<Node> references = new HashSet<Node>();
-        //private int refernceCount;
+        private Node next;
+        private Node previous;
 
         public Node(String name, Object object) {
             this.name = name;
