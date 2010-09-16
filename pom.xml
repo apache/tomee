@@ -288,12 +288,11 @@
     </build>
 
     <modules>
-        <module>assembly</module>
         <module>deps</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
-        <module>examples</module>
+        <module>examples</module>		
     </modules>
 
     <profiles>
