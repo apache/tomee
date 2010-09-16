@@ -283,6 +283,7 @@ public class EntityManagerPropogationTest extends TestCase {
         unit.getClazz().add(Color.class.getName());
         unit.setProperties(new org.apache.openejb.jee.jpa.unit.Properties());
         unit.getProperties().setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
+        unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
 
         // Add the persistence.xml to the "ear"
         appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit)));
