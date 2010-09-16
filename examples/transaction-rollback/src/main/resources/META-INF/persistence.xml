@@ -18,13 +18,14 @@
 -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   
-  <persistence-unit name="movie-unit">
-    <jta-data-source>movieDatabase</jta-data-source>
-    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-    <class>org.superbiz.testinjection.MoviesTest.Movie</class>
+    <persistence-unit name="movie-unit">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <class>org.superbiz.testinjection.MoviesTest.Movie</class>
 
-    <properties>
-      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-    </properties>
-  </persistence-unit>
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+        </properties>
+    </persistence-unit>
 </persistence>
