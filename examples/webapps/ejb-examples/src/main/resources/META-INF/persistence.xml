@@ -17,13 +17,14 @@
     limitations under the License.
 -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
-  <persistence-unit transaction-type="RESOURCE_LOCAL" name="jpa-example">
-    <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
-    <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
-    <class>org.superbiz.servlet.JpaBean</class>
+    <persistence-unit transaction-type="RESOURCE_LOCAL" name="jpa-example">
+        <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
+        <non-jta-data-source>java:openejb/Connector/Default Unmanaged JDBC Database</non-jta-data-source>
+        <class>org.superbiz.servlet.JpaBean</class>
 
-    <properties>
-      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-    </properties>
-  </persistence-unit>
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+        </properties>
+    </persistence-unit>
 </persistence>

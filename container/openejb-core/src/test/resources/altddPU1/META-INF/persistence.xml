@@ -19,11 +19,12 @@
 <!-- START SNIPPET: code -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
-  <persistence-unit name="unit">
-    <jta-data-source>movieDatabase</jta-data-source>
-    <properties>
-      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="unit">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+        </properties>
+    </persistence-unit>
 </persistence>
 <!-- END SNIPPET: code -->

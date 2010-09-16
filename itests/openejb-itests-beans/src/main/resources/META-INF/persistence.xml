@@ -26,6 +26,7 @@
         <properties>
             <!--<property name="openjpa.Log" value="DefaultLevel=TRACE"/>-->
             <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="openjpa-test-unit">
