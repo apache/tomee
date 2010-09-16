@@ -292,7 +292,7 @@
         <module>itests</module>
         <module>container</module>
         <module>server</module>
-        <module>examples</module>		
+        <module>examples</module>
     </modules>
 
     <profiles>
@@ -459,6 +459,16 @@
         </profile>
     </profiles>
     <repositories>
+        <repository>
+            <id>mirrors.ibiblio.org</id>
+            <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     <!--<repository>-->
       <!--<id>codehaus-snapshot</id>-->
       <!--<name>CodeHaus SNAPSHOT repository</name>-->
