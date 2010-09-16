@@ -18,18 +18,35 @@
 
 -->
 <beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-    <bean name="broker" class="org.apache.activemq.xbean.XBeanBrokerService">
-        <property name="persistent" value="false"/>
-        <property name="brokerName" value="localhost"/>
-        <property name="transportConnectors">
-            <list>
-                <bean name="openwire" class="org.apache.activemq.broker.TransportConnector">
-                    <property name="uri" value="tcp://localhost:61616"/>
-                </bean>
-            </list>
-        </property>
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:amq="http://activemq.apache.org/schema/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.4.0.xsd">
+
+
+    <!-- Allows us to use system properties as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="store" class="org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter">
+        <property name="checkpointInterval" value="60000"/>
+        <property name="directory" value="data/activemq"/>
     </bean>
+
+    <broker xmlns="http://activemq.apache.org/schema/core"
+            useJmx="false"
+            brokerName="openejb"
+            dataDirectory="data/activemq"
+            useShutdownHook="true"
+            persistent="true"
+            start="false"
+            persistenceAdapter="#store">
+
+        <!-- The transport connectors ActiveMQ will listen to -->
+        <transportConnectors>
+            <transportConnector uri="tcp://localhost:61616?daemon=true&amp;keepAlive=true&amp;wireFormat.maxInactivityDuration=0"/>
+        </transportConnectors>
+
+    </broker>
+
 </beans>

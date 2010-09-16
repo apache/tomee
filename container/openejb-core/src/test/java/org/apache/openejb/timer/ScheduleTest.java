@@ -14,7 +14,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.openejb.timer;
 
 import java.util.ArrayList;
@@ -54,7 +53,6 @@ import org.junit.Assert;
 public class ScheduleTest extends TestCase {
 
     private static final List<Call> result = new ArrayList<Call>();
-
     private static final CountDownLatch countDownLatch = new CountDownLatch(3);
 
     public void testSchedule() throws Exception {
@@ -110,23 +108,31 @@ public class ScheduleTest extends TestCase {
         int beforeAroundInvocationCount = 0;
         int afterAroundInvocationCount = 0;
         int timeoutInvocationCount = 0;
-        for (Call call : result) {
-            switch (call) {
-            case BEAN_BEFORE_AROUNDTIMEOUT:
-                beforeAroundInvocationCount++;
-                break;
-            case BEAN_AFTER_AROUNDTIMEOUT:
-                afterAroundInvocationCount++;
-                break;
-            case TIMEOUT:
-                timeoutInvocationCount++;
-                break;
+        int size = 0;
+
+        synchronized (result) {
+
+            size = result.size();
+
+            for (Call call : result) {
+                switch (call) {
+                    case BEAN_BEFORE_AROUNDTIMEOUT:
+                        beforeAroundInvocationCount++;
+                        break;
+                    case BEAN_AFTER_AROUNDTIMEOUT:
+                        afterAroundInvocationCount++;
+                        break;
+                    case TIMEOUT:
+                        timeoutInvocationCount++;
+                        break;
+                }
             }
         }
+
         assertEquals(3, beforeAroundInvocationCount);
         assertEquals(3, afterAroundInvocationCount);
         assertEquals(3, timeoutInvocationCount);
-        assertEquals(9, result.size());
+        assertEquals(9, size);
     }
 
     public static interface BeanInterface {
@@ -137,52 +143,62 @@ public class ScheduleTest extends TestCase {
     public static class BaseBean implements BeanInterface {
 
         public void simpleMethod() {
-
         }
 
         @AroundTimeout
         public Object beanTimeoutAround(InvocationContext context) throws Exception {
-            assertNotNull(context.getTimer());
-            result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
-            Object ret = context.proceed();
-            result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
-            countDownLatch.countDown();
-            return ret;
+            synchronized (result) {
+                assertNotNull(context.getTimer());
+                result.add(Call.BEAN_BEFORE_AROUNDTIMEOUT);
+
+                Object ret = null;
+                try {
+                    ret = context.proceed();
+                } catch (Throwable t) {
+                    throw new Exception(t);
+                } finally {
+                    result.add(Call.BEAN_AFTER_AROUNDTIMEOUT);
+                    countDownLatch.countDown();
+                }
+
+                return ret;
+            }
         }
     }
 
     @Stateless
     @Local(BeanInterface.class)
-    public static class SubBeanA extends BaseBean implements TimedObject{
-
+    public static class SubBeanA extends BaseBean implements TimedObject {
 
         public void subBeanA(javax.ejb.Timer timer) {
-            assertEquals("SubBeanAInfo", timer.getInfo());
-            result.add(Call.TIMEOUT);
+            synchronized (result) {
+                assertEquals("SubBeanAInfo", timer.getInfo());
+                result.add(Call.TIMEOUT);
+            }
         }
 
         @Override
         public void ejbTimeout(javax.ejb.Timer arg0) {
             Assert.fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
-
     }
 
     @Stateful
     @Local(BeanInterface.class)
-    public static class SubBeanM extends BaseBean implements TimedObject{
+    public static class SubBeanM extends BaseBean implements TimedObject {
 
         @Schedule(second = "2", minute = "*", hour = "*", info = "SubBeanBInfo")
         public void subBeanA(javax.ejb.Timer timer) {
-            assertEquals("SubBeanAInfo", timer.getInfo());
-            result.add(Call.TIMEOUT);
+            synchronized (result) {
+                assertEquals("SubBeanAInfo", timer.getInfo());
+                result.add(Call.TIMEOUT);
+            }
         }
 
         @Override
         public void ejbTimeout(javax.ejb.Timer arg0) {
             fail("This method should not be invoked, we might confuse the auto-created timers and timeout timer");
         }
-
     }
 
     @Stateless
@@ -191,8 +207,10 @@ public class ScheduleTest extends TestCase {
 
         @Schedule(second = "2", minute = "*", hour = "*", info = "SubBeanBInfo")
         public void subBeanB(javax.ejb.Timer timer) {
-            assertEquals("SubBeanBInfo", timer.getInfo());
-            result.add(Call.TIMEOUT);
+            synchronized (result) {
+                assertEquals("SubBeanBInfo", timer.getInfo());
+                result.add(Call.TIMEOUT);
+            }
         }
 
         @Timeout
@@ -207,8 +225,10 @@ public class ScheduleTest extends TestCase {
 
         @Schedule(info = "badValue")
         public void subBeanC(javax.ejb.Timer timer) {
-            assertEquals("SubBeanCInfo", timer.getInfo());
-            result.add(Call.TIMEOUT);
+            synchronized (result) {
+                assertEquals("SubBeanCInfo", timer.getInfo());
+                result.add(Call.TIMEOUT);
+            }
         }
 
         @Timeout
@@ -218,6 +238,7 @@ public class ScheduleTest extends TestCase {
     }
 
     public static enum Call {
+
         BEAN_TIMEOUT, BEAN_BEFORE_AROUNDTIMEOUT, BEAN_AFTER_AROUNDTIMEOUT, BAD_VALUE, TIMEOUT
     }
 }

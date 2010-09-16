@@ -104,7 +104,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 try {
                     //Start before returning - this is known to be safe.
                     broker.start();
-                    broker.waitUntilStarted();
+
+                    try{
+                        broker.waitUntilStarted();
+                    }catch(Throwable t){
+                        //Ignore
+                    }
 
                     //Force a checkpoint to initialize pools
                     broker.getPersistenceAdapter().checkpoint(true);

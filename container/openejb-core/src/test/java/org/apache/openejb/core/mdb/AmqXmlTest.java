@@ -18,6 +18,13 @@
 package org.apache.openejb.core.mdb;
 
 public class AmqXmlTest extends JmsProxyTest {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
+    
+    @Override
     protected String getBrokerXmlConfig() {
         // note activemq uses classpath xml loader
         return "xbean:org/apache/openejb/core/mdb/activemq.xml";

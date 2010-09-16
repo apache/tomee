@@ -30,8 +30,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import org.custommonkey.xmlunit.XMLUnit;
 
 /**
  * @version $Rev$ $Date$
@@ -46,8 +50,8 @@ public class OpenEjb2ConversionTest extends TestCase {
         // compare the results to the expected results
         EjbModule ejbModule = appModule.getEjbModules().get(0);
 
-        assertJaxb(prefix + "geronimo-openejb.xml", ejbModule.getAltDDs().get("geronimo-openejb.xml"), GeronimoEjbJarType.class);
         assertJaxb(prefix + "openejb-jar-expected.xml", ejbModule.getOpenejbJar(), OpenejbJar.class);
+        assertJaxb(prefix + "geronimo-openejb.xml", ejbModule.getAltDDs().get("geronimo-openejb.xml"), GeronimoEjbJarType.class);
     }
 
     public void testItests22() throws Exception {
@@ -97,29 +101,34 @@ public class OpenEjb2ConversionTest extends TestCase {
         assertJaxb(prefix + "orm.xml", appModule.getCmpMappings(), EntityMappings.class);
     }
 
-    private  void assertJaxb(String expectedFile, Object object, Class<?> type) throws IOException, JAXBException, SAXException {
-        assertSame(type, object.getClass());
-        String expected = read(expectedFile);
-
-        String actual = toString(object, type);
-
-//        System.out.println("expected = " + expected);
-//        System.out.println("actual = " + actual);
+    private void assertJaxb(String expectedFile, Object object, Class<?> type) throws IOException, JAXBException, SAXException {
         
-        Diff myDiff = new Diff(expected.trim(), actual.trim());
-        assertTrue("Files are similar " + myDiff, myDiff.similar());
-    }
+        assertSame(type, object.getClass());
 
-    private String read(String name) throws IOException {
-        InputStream in = getClass().getClassLoader().getResource(name).openStream();
-        StringBuffer sb = new StringBuffer();
-        in = new BufferedInputStream(in);
-        int i = in.read();
-        while (i != -1) {
-            sb.append((char) i);
-            i = in.read();
+        final String actual = toString(object, type);
+        final boolean nw = XMLUnit.getNormalizeWhitespace();
+        final boolean n = XMLUnit.getNormalize();
+        InputStreamReader isr = null;
+
+        try {
+
+            XMLUnit.setNormalizeWhitespace(true);
+            XMLUnit.setNormalize(true);
+
+            isr = new InputStreamReader(getClass().getClassLoader().getResource(expectedFile).openStream());
+            final org.w3c.dom.Document actualDoc = XMLUnit.buildDocument(XMLUnit.newTestParser(), new StringReader(actual));
+            final org.w3c.dom.Document expectedDoc = XMLUnit.buildDocument(XMLUnit.newControlParser(), isr);
+
+            Diff myDiff = new Diff(expectedDoc, actualDoc);
+            assertTrue("Files are similar " + myDiff, myDiff.similar());
+        } finally {
+            XMLUnit.setNormalizeWhitespace(nw);
+            XMLUnit.setNormalize(n);
+
+            if(null != isr){
+                isr.close();
+            }
         }
-        return sb.toString().trim();
     }
 
     private AppModule deploy(String prefix) throws OpenEJBException {
@@ -144,7 +153,6 @@ public class OpenEjb2ConversionTest extends TestCase {
         return appModule;
     }
 
-
     private String toString(Object object, Class<?> type) throws JAXBException {
         JAXBContext jaxbContext = JAXBContextFactory.newInstance(type);
 
@@ -157,6 +165,4 @@ public class OpenEjb2ConversionTest extends TestCase {
         String actual = new String(baos.toByteArray());
         return actual.trim();
     }
-
-
 }
