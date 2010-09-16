@@ -18,14 +18,16 @@ package org.superbiz.spring;
 
 import junit.framework.TestCase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.Map;
 import java.util.List;
 
 //START SNIPPET: code
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
+
+        //Uncomment for debug logging
+        //org.apache.log4j.BasicConfigurator.configure();
+
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("movies.xml");
 
         // Can I lookup the Cineplex EJB via the Spring ApplicationContext
