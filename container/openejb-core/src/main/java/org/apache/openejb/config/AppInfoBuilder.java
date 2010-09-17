@@ -569,7 +569,7 @@ class AppInfoBuilder {
                     info.properties.setProperty(lookupProperty, openejbLookupClass);
                     logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                 }
-                } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)){
+            } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)){
 
                 String lookupProperty = "eclipselink.target-server";
                 String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
@@ -579,6 +579,17 @@ class AppInfoBuilder {
                 if (className == null || className.startsWith("org.eclipse.persistence.transaction")){
                     info.properties.setProperty(lookupProperty, openejbLookupClass);
                     logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
+                }
+            }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
+
+                String property = "openjpa.RuntimeUnenhancedClasses";
+                String value = "supported";
+
+                String existing = info.properties.getProperty(property);
+
+                if (existing == null){
+                    info.properties.setProperty(property, value);
+                    logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+property+"="+value);
                 }
             }
         }
