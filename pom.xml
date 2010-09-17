@@ -114,6 +114,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <org.apache.activemq.version>5.4.0</org.apache.activemq.version>
+        <quartz.version>1.8.4</quartz.version>
     </properties>
 
     <build>
@@ -909,7 +910,7 @@
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.8.4</version>
+                <version>${quartz.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.transaction</groupId>
