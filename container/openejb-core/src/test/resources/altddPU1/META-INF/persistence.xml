@@ -22,8 +22,7 @@
     <persistence-unit name="unit">
         <jta-data-source>movieDatabase</jta-data-source>
         <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>            
         </properties>
     </persistence-unit>
 </persistence>

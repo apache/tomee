@@ -27,8 +27,7 @@
         <non-jta-data-source>java:openejb/Resource/My Unmanaged DataSource</non-jta-data-source>
         <class>org.superbiz.struts.User</class>
         <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
-            <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />            
         </properties>
     </persistence-unit>
 	
