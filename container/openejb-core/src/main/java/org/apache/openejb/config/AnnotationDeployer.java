@@ -200,7 +200,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             "javax.jms.Queue",
             "javax.jms.Topic",
             "javax.xml.ws.WebServiceContext",
-            "javax.ejb.TimerService"
+            "javax.ejb.TimerService",
+            "javax.validation.Validator",
+            "javax.validation.ValidatorFactory"
     ));
 
     public static final Set<String> knownEnvironmentEntries = new TreeSet<String>(asList(
