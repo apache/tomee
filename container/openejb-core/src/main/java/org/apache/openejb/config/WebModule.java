@@ -80,6 +80,9 @@ public class WebModule implements WsModule {
                 if (moduleId.endsWith(".unpacked")) {
                     moduleId = moduleId.substring(0, moduleId.length() - ".unpacked".length());
                 }
+                if (moduleId.endsWith(".war")) {
+                    moduleId = moduleId.substring(0, moduleId.length() - ".war".length());
+                }
             }
         }
 
