@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -165,11 +166,9 @@ public class DeploymentLoader {
                 return new AppModule(connectorModule);
             } else if (WebModule.class.equals(moduleClass)) {
                 final File file = toFile(baseUrl);
-                String moduleId = file.getName();
-                String warPath = URLs.toFilePath(baseUrl);
 
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath());
-                addWebModule(appModule, warPath, OpenEJB.class.getClassLoader(), null, moduleId);
+                addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), null, null);
                 return appModule;
             } else if (PersistenceModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
@@ -397,7 +396,7 @@ public class DeploymentLoader {
             for (String moduleName : webModules.keySet()) {
                 try {
                     URL warUrl = webModules.get(moduleName);
-                    addWebModule(appModule, URLs.toFilePath(warUrl), appClassLoader, webContextRoots.get(moduleName), moduleName);
+                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), moduleName);
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
@@ -483,55 +482,61 @@ public class DeploymentLoader {
         addWebservices(ejbModule);
         return ejbModule;
     }
-
-    protected void addWebModule(AppModule appModule, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+    
+    protected void addWebModule(AppModule appModule, URL warUrl, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+        String warPath = URLs.toFilePath(warUrl);
         WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
         appModule.getWebModules().add(webModule);
 
         ClassLoader webClassLoader = webModule.getClassLoader();
 
-        // get urls in web application
-        List<URL> urls = null;
-        try {
-            UrlSet urlSet = new UrlSet(webClassLoader);
-            urlSet = urlSet.exclude(webClassLoader.getParent());
-            urls = urlSet.getUrls();
-        } catch (IOException e) {
-            logger.warning("Unable to determine URLs in classloader", e);
-        }
-
-        // clean jar URLs
-        for (int i = 0; i < urls.size(); i++) {
-            URL url = urls.get(i);
-            if (url.getProtocol().equals("jar")) {
+        boolean addEjbModule = false;
+        EjbJar ejbJar = null;
+        URL ejbJarXmlUrl = (URL) webModule.getAltDDs().get("ejb-jar.xml");
+        if (ejbJarXmlUrl == null) {
+            if (webModule.getWebApp() != null && webModule.getWebApp().isMetadataComplete()) {
+                addEjbModule = false;
+            } else {                
+                // get urls in web application
+                List<URL> urls = null;
                 try {
-                    url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                    urls.set(i, url);
-                } catch (MalformedURLException ignored) {
+                    UrlSet urlSet = new UrlSet(webClassLoader);
+                    urlSet = urlSet.exclude(webClassLoader.getParent().getParent());
+                    urls = urlSet.getUrls();
+                } catch (IOException e) {
+                    logger.warning("Unable to determine URLs in classloader", e);
                 }
+
+                // clean jar URLs
+                for (int i = 0; i < urls.size(); i++) {
+                    URL url = urls.get(i);
+                    if (url.getProtocol().equals("jar")) {
+                        try {
+                            url = new URL(url.getFile().replaceFirst("!.*$", ""));
+                            urls.set(i, url);
+                        } catch (MalformedURLException ignored) {
+                        }
+                    }
+                }
+                
+                addEjbModule = checkAnnotations(urls, webClassLoader, true, false) != null;
             }
+        } else {
+            addEjbModule = true;
+            ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
         }
         
-        // check each url to determine if it is an ejb jar
-        for (URL ejbUrl : urls) {
-            try {
-                Class moduleType = discoverModuleType(ejbUrl, webClassLoader, true);
-                if (EjbModule.class.isAssignableFrom(moduleType)) {
-                    File ejbFile = toFile(ejbUrl);
-                    String absolutePath = ejbFile.getAbsolutePath();
-
-                    EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, webClassLoader, null);
-
-                    appModule.getEjbModules().add(ejbModule);
-                }
-            } catch (IOException e) {
-            } catch (UnknownModuleTypeException ignore) {
-            }
+        if (addEjbModule) {
+            EjbModule ejbModule = new EjbModule(webClassLoader, webModule.getModuleId(), warPath, ejbJar, null);
+            ejbModule.getAltDDs().putAll(webModule.getAltDDs());
+            
+            addWebservices(ejbModule);
+            
+            appModule.getEjbModules().add(ejbModule);
         }
-
+                       
         // Persistence Units
         addPersistenceUnits(appModule);
-
     }
 
     protected static WebModule createWebModule(String appId, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
@@ -550,11 +555,6 @@ public class DeploymentLoader {
         URL webXmlUrl = descriptors.get("web.xml");
         if (webXmlUrl != null){
             webApp = ReadDescriptors.readWebApp(webXmlUrl);
-        }
-
-        // if this is a standalone module (no-context root), and webApp.getId is set then that is the module name
-        if (contextRoot == null && webApp != null && webApp.getId() != null) {
-            moduleName = webApp.getId();
         }
 
         // determine war class path
@@ -1164,14 +1164,6 @@ public class DeploymentLoader {
             return AppModule.class;
         }
 
-        if (descriptors.containsKey("ejb-jar.xml")) {
-            return EjbModule.class;
-        }
-        if (preferEjb) {
-            Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
-            if (cls != null) return cls;
-        }
-
         if (descriptors.containsKey("application-client.xml")) {
             return ClientModule.class;
         }
@@ -1185,6 +1177,10 @@ public class DeploymentLoader {
             return WebModule.class;
         }
 
+        if (descriptors.containsKey("ejb-jar.xml")) {
+            return EjbModule.class;
+        }
+        
         URL manifestUrl = descriptors.get("MANIFEST.MF");
         if (scanPotentialClientModules && manifestUrl != null) {
             // In this case scanPotentialClientModules really means "require application-client.xml"
@@ -1196,10 +1192,8 @@ public class DeploymentLoader {
             }
         }
 
-        if (!preferEjb) {
-            Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
-            if (cls != null) return cls;
-        }
+        Class<? extends DeploymentModule> cls = checkAnnotations(Arrays.asList(baseUrl), classLoader, scanPotentialEjbModules, scanPotentialClientModules);
+        if (cls != null) return cls;
 
         if (descriptors.containsKey("persistence.xml")) {
             return PersistenceModule.class;
@@ -1208,10 +1202,10 @@ public class DeploymentLoader {
         throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
     }
 
-    private Class<? extends DeploymentModule> checkAnnotations(URL baseUrl, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {
+    private Class<? extends DeploymentModule> checkAnnotations(Collection<URL> urls, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {
         Class<? extends DeploymentModule> cls = null;
         if (scanPotentialEjbModules || scanPotentialClientModules) {
-            AnnotationFinder classFinder = new AnnotationFinder(classLoader, baseUrl);
+            AnnotationFinder classFinder = new AnnotationFinder(classLoader, urls);
 
             final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet();
 
