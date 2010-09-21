@@ -20,10 +20,13 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.ClusteredRPCContainer;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.client.ClusterableRequest;
 import org.apache.openejb.client.ClusterableResponse;
 import org.apache.openejb.client.ServerMetaData;
+import org.apache.openejb.AppContext;
 
 import com.agical.rmock.core.describe.ExpressionDescriber;
 import com.agical.rmock.core.match.operator.AbstractExpression;
@@ -43,8 +46,8 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
         requestHandler = new BasicClusterableRequestHandler();
         request = (ClusterableRequest) mock(ClusterableRequest.class);
         response = (ClusterableResponse) mock(ClusterableResponse.class);
-        beanContext = (BeanContext) mock(BeanContext.class);
         clusteredContainer = (ClusteredRPCContainer) mock(ClusteredRPCContainer.class);
+        beanContext = new BeanContext("aDeploymentId", null, new ModuleContext("", new AppContext("", SystemInstance.get(), null, null, null, false), null), BasicClusterableRequestHandlerTest.class, null, null, null, null, null, null, null, null, null, false);
     }
     
     public void testNoOpWhenNotAClusteredContainer() throws Exception {
@@ -59,8 +62,7 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
         final URI[] locations = new URI[] {new URI("ejbd://localhost:4201")};
         ServerMetaData server = new ServerMetaData(locations);
 
-        beanContext.getContainer();
-        modify().returnValue(clusteredContainer);
+        beanContext.setContainer(clusteredContainer);
 
         request.getServerHash();
         modify().returnValue(server.buildHash() + 1);
@@ -89,8 +91,7 @@ public class BasicClusterableRequestHandlerTest extends RMockTestCase {
         URI[] locations = new URI[] {new URI("ejbd://localhost:4201")};
         ServerMetaData server = new ServerMetaData(locations);
 
-        beanContext.getContainer();
-        modify().returnValue(clusteredContainer);
+        beanContext.setContainer(clusteredContainer);
 
         request.getServerHash();
         modify().returnValue(server.buildHash());
