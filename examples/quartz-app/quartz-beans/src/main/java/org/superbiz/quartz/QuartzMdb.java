@@ -19,16 +19,15 @@ package org.superbiz.quartz;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.apache.log4j.Logger;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 
-@MessageDriven(activationConfig = {@ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")})
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")})
 public class QuartzMdb implements Job {
 
-    private Logger logger = Logger.getLogger(getClass());
-
+    @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         System.out.println("Executing Job");
     }

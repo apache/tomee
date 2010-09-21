@@ -16,26 +16,49 @@
  */
 package org.superbiz.quartz;
 
-import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.util.Date;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class QuartzMdbTest extends TestCase {
+public class QuartzMdbTest {
 
-    public void test() throws Exception {
+    private static InitialContext initialContext = null;
 
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+    @BeforeClass
+    public static void beforeClass() throws Exception {
 
-        InitialContext initialContext = new InitialContext(properties);
+        if (null == initialContext) {
+            Properties properties = new Properties();
+            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
-        // Sleep five seconds and give quartz a chance to execute our MDB
-        Thread.sleep(5000);
+            initialContext = new InitialContext(properties);
+        }
     }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
+        if (null != initialContext) {
+            initialContext.close();
+            initialContext = null;
+        }
+    }
 
+    @Test
+    public void testLookup() throws Exception {
+
+        final JobScheduler jbi = (JobScheduler) initialContext.lookup("JobBeanLocal");
+        final Date d = jbi.createJob();
+        Thread.sleep(500);
+        System.out.println("Scheduled test job should have run at: " + d.toString());
+    }
+
+    @Test
+    public void testMdb() throws Exception {
+        // Sleep 3 seconds and give quartz a chance to execute our MDB
+        Thread.sleep(3000);
+    }
 }
