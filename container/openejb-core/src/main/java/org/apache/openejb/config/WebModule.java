@@ -23,14 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
 import org.apache.xbean.finder.AbstractFinder;
-import org.apache.xbean.finder.ClassFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -71,8 +69,10 @@ public class WebModule implements WsModule {
 
         if (webApp != null) webApp.setContextRoot(contextRoot);
 
-        if (moduleId == null){
-            if (webApp != null && webApp.getId() != null){
+        if (moduleId == null) {
+            if (webApp != null && webApp.getModuleName() != null) {
+                moduleId = webApp.getModuleName();
+            } else if (webApp != null && webApp.getId() != null) {
                 moduleId = webApp.getId();
             } else {
                 File file = new File(jarLocation);

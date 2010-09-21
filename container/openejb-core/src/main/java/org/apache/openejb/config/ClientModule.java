@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.xbean.finder.AbstractFinder;
-import org.apache.xbean.finder.ClassFinder;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -51,8 +50,10 @@ public class ClientModule implements DeploymentModule {
         this.jarLocation = jarLocation;
         this.mainClass = mainClass;
 
-        if (moduleId == null){
-            if (applicationClient != null && applicationClient.getId() != null){
+        if (moduleId == null) {
+            if (applicationClient != null && applicationClient.getModuleName() != null) {
+                moduleId = applicationClient.getModuleName();
+            } else if (applicationClient != null && applicationClient.getId() != null) {
                 moduleId = applicationClient.getId();
             } else {
                 File file = new File(jarLocation);
