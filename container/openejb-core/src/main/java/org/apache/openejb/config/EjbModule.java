@@ -22,7 +22,6 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.xbean.finder.AbstractFinder;
-import org.apache.xbean.finder.ClassFinder;
 
 import java.io.File;
 import java.util.Map;
@@ -53,11 +52,11 @@ public class EjbModule implements WsModule {
 
     private ClientModule clientModule;
 
-    public EjbModule(EjbJar ejbJar){
+    public EjbModule(EjbJar ejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
     }
 
-    public EjbModule(EjbJar ejbJar, OpenejbJar openejbJar){
+    public EjbModule(EjbJar ejbJar, OpenejbJar openejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, openejbJar);
     }
 
@@ -80,13 +79,15 @@ public class EjbModule implements WsModule {
         }
         this.jarLocation = jarURI;
 
-        if (moduleId == null){
-            if (ejbJar != null && ejbJar.getId() != null && !ejbJar.getId().equals("")){
+        if (moduleId == null) {
+            if (ejbJar != null && ejbJar.getModuleName() != null) {
+                moduleId = ejbJar.getModuleName();
+            } else if (ejbJar != null && ejbJar.getId() != null) {
                 moduleId = ejbJar.getId();
             } else {
                 File file = new File(jarURI);
                 moduleId = file.getName();
-                if (moduleId == null){
+                if (moduleId == null) {
                     moduleId = jarURI;
                 } else if (moduleId.endsWith(".jar")) {
                     moduleId = moduleId.substring(0, moduleId.length() - ".jar".length() );

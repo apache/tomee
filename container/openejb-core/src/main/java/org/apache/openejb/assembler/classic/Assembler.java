@@ -501,7 +501,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
         appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
         Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, classLoader).build(JndiEncBuilder.JndiScope.global);
-        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, null, classLoader).build(JndiEncBuilder.JndiScope.app);
+        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses

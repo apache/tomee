@@ -50,8 +50,10 @@ public class ConnectorModule implements DeploymentModule {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
 
-        if (moduleId == null){
-            if (connector != null && connector.getId() != null){
+        if (moduleId == null) {
+            if (connector != null && connector.getModuleName() != null) {
+                moduleId = connector.getModuleName();
+            } else if (connector != null && connector.getId() != null) { 
                 moduleId = connector.getId();
             } else {
                 File file = new File(jarLocation);
