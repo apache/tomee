@@ -26,12 +26,14 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.ManagedBean;
 import org.apache.openejb.loader.SystemInstance;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.TransactionAttribute;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
 import javax.naming.InitialContext;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This test case serves as a nice tiny template for other test cases
@@ -59,10 +61,17 @@ public class ManagedBeanTest extends TestCase {
     }
 
     public void test() throws Exception {
+        MyBean.instances.set(0);
+        
         InitialContext context = new InitialContext();
         MyBean myBean = (MyBean) context.lookup("MyBeanLocalBean");
 
         assertEquals("pan", myBean.echo("nap"));
+        assertEquals(1, MyBean.instances.get());
+
+        context.lookup("MyBeanLocalBean");
+        assertEquals(2, MyBean.instances.get());
+
 
         //TODO -- implement this
 //        assertTrue(myBean.noTransaction());
@@ -86,6 +95,16 @@ public class ManagedBeanTest extends TestCase {
     }
 
     public static class MyBean {
+
+        public static AtomicInteger instances = new AtomicInteger();
+
+        public MyBean() {
+        }
+
+        @PostConstruct
+        private void construct() {
+            instances.incrementAndGet();
+        }
 
         /**
          * This should not remove the bean
