@@ -450,7 +450,9 @@ public class JndiBuilder {
         }
 
         try {
-            bindJava(bean, null, simpleNameRef);
+            if (simpleNameRef != null) {
+                bindJava(bean, null, simpleNameRef);
+            }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind simple java:global name in jndi", e);
         }
