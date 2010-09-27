@@ -18,6 +18,7 @@
 package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.util.Classes;
 
 import javax.interceptor.InvocationContext;
 import java.util.Iterator;
@@ -78,7 +79,7 @@ public class ReflectionInvocationContext implements InvocationContext {
         if (operation.isCallback() && !operation.equals(Operation.AFTER_COMPLETION)) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
-        return parameters.clone();
+        return this.parameters;
     }
 
     private String getIllegalParameterAccessMessage() {
@@ -97,24 +98,30 @@ public class ReflectionInvocationContext implements InvocationContext {
         if (operation.isCallback()) {
             throw new IllegalStateException(getIllegalParameterAccessMessage());
         }
-        if (parameters == null) throw new NullPointerException("parameters is null");
+        if (parameters == null) throw new IllegalArgumentException("parameters is null");
         if (parameters.length != this.parameters.length) {
             throw new IllegalArgumentException("Expected " + this.parameters.length + " parameters, but only got " + parameters.length + " parameters");
         }
-//        for (int i = 0; i < parameters.length; i++) {
-//            Object parameter = parameters[i];
-//            Class<?> parameterType = parameterTypes[i];
-//
-//            if (parameter == null) {
-//                if (parameterType.isPrimitive()) {
-//                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
-//                        ", but got a parameter that is null");
-//                }
-//            } else if (!parameterType.isInstance(parameter)) {
-//                throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
-//                    ", but got a parameter of type " + parameter.getClass().getName());
-//            }
-//        }
+        for (int i = 0; i < parameters.length; i++) {
+            Object parameter = parameters[i];
+            Class<?> parameterType = parameterTypes[i];
+
+            if (parameter == null) {
+                if (parameterType.isPrimitive()) {
+                    throw new IllegalArgumentException("Expected parameter " + i + " to be primitive type " + parameterType.getName() +
+                        ", but got a parameter that is null");
+                }
+            } else {            
+            	//check that types are applicable
+            	Class<?> actual = Classes.deprimitivize(parameterType);
+            	Class<?> given  = Classes.deprimitivize(parameter.getClass());
+            	
+            	if (!actual.isAssignableFrom(given)) {
+                    throw new IllegalArgumentException("Expected parameter " + i + " to be of type " + parameterType.getName() +
+                            ", but got a parameter of type " + parameter.getClass().getName());            		
+            	}
+            }
+        }
         System.arraycopy(parameters, 0, this.parameters, 0, parameters.length);
     }
 
