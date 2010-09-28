@@ -81,17 +81,24 @@ public class DeploymentLoader {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
     private final String ddDir;
-    private final boolean preferEjb;
+    private boolean scanManagedBeans = true;
 
     public DeploymentLoader() {
-        this("META-INF/", false);
+        this("META-INF/");
     }
 
-    public DeploymentLoader(String ddDir, boolean preferEjb) {
+    public DeploymentLoader(String ddDir) {
         this.ddDir = ddDir;
-        this.preferEjb = preferEjb;
     }
 
+    public void setScanManagedBeans(boolean scan) {
+        scanManagedBeans = scan;
+    }
+    
+    public boolean getScanManagedBeans() {
+        return scanManagedBeans;
+    }
+    
     public AppModule load(File jarFile) throws OpenEJBException {
         // verify we have a valid file
         String jarPath;
@@ -1212,12 +1219,16 @@ public class DeploymentLoader {
             AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
                 final String packageName = LocalClient.class.getName().replace("LocalClient", "");
                 public boolean accept(String annotationName) {
-                    if (scanPotentialEjbModules && annotationName.startsWith("javax.ejb.")) {
-                        if ("javax.ejb.Stateful".equals(annotationName)) return true;
-                        if ("javax.ejb.Stateless".equals(annotationName)) return true;
-                        if ("javax.ejb.Singleton".equals(annotationName)) return true;
-                        if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
-                    } else if (scanPotentialClientModules && annotationName.startsWith(packageName)){
+                    if (scanPotentialEjbModules) {
+                        if (annotationName.startsWith("javax.ejb.")) {
+                            if ("javax.ejb.Stateful".equals(annotationName)) return true;
+                            if ("javax.ejb.Stateless".equals(annotationName)) return true;
+                            if ("javax.ejb.Singleton".equals(annotationName)) return true;
+                            if ("javax.ejb.MessageDriven".equals(annotationName)) return true;
+                        } else if (scanManagedBeans && "javax.annotation.ManagedBean".equals(annotationName)) {
+                            return true;
+                        }
+                    } else if (scanPotentialClientModules && annotationName.startsWith(packageName)) {
                         if (LocalClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                         if (RemoteClient.class.getName().equals(annotationName)) otherTypes.add(ClientModule.class);
                     }
