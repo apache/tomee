@@ -226,7 +226,7 @@ public class UnenhancedTest extends TestCase {
         Properties properties = new Properties();
         properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents',ForeignKeys=true)");
         properties.setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
-        properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+        properties.setProperty("openjpa.Log", "DefaultLevel=INFO");
         unitInfo.setProperties(properties);
 
         unitInfo.setTransactionType(transactionType);

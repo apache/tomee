@@ -57,7 +57,7 @@
             <ejbModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-interceptor-beans</artifactId>
-            </ejbModule>            
+            </ejbModule>
             <javaModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-client</artifactId>
@@ -88,7 +88,7 @@
       <type>ejb</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>      
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-itests-client</artifactId>
       <version>${project.version}</version>
     </dependency>

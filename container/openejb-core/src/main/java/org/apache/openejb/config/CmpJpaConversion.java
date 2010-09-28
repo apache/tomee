@@ -164,7 +164,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             Properties properties = new Properties();
             properties.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)");
             // properties.setProperty("openjpa.DataCache", "false");
-            // properties.setProperty("openjpa.Log", "DefaultLevel=TRACE");
+            properties.setProperty("openjpa.Log", "DefaultLevel=INFO");
             persistenceUnit.setProperties(properties);
 
             Persistence persistence = new Persistence();

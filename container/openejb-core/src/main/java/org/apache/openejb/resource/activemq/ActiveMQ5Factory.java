@@ -43,6 +43,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         threadProperties.set(value);
     }
 
+    @Override
     public BrokerService createBroker(final URI brokerURI) throws Exception {
 
         final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
@@ -93,6 +94,12 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         //We must close the broker
         broker.setUseShutdownHook(false);
         broker.setSystemExitOnShutdown(false);
+        
+        try {
+            broker.setSchedulerSupport(false);
+        } catch (Throwable t) {
+            //Ignore
+        }
 
         //Notify when an error occurs on shutdown.
         broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").isErrorEnabled());
@@ -106,9 +113,10 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     broker.start();
 
                     try{
+                        //This is no longer available from AMQ5.4
                         broker.waitUntilStarted();
                     }catch(Throwable t){
-                        //Ignore
+                        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("ActiveMQ waitUntilStarted failed", t);
                     }
 
                     //Force a checkpoint to initialize pools

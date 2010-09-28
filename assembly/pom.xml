@@ -31,12 +31,12 @@
 
   <modules>
     <module>openejb-webapp-common</module>
-    <module>openejb-itests-standalone-client</module>
-    <module>openejb-standalone</module>
+    <module>openejb-itests-standalone-client</module>    
     <module>openejb-tomcat</module>
     <module>openejb-jetty</module>
     <module>openejb-webapp</module>
     <module>javaee-api-libs</module>
+    <module>openejb-standalone</module>
     <!-- don't run this just yet, its in progress -->
     <!-- <module>itest-runner</module> -->
   </modules>

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.server.axis2;
 
 import org.apache.axiom.om.util.UUIDGenerator;
@@ -48,7 +47,6 @@ import org.apache.openejb.server.axis2.client.Axis2Config;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.webservices.WsConstants;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -64,11 +62,10 @@ import java.net.URL;
 import java.util.List;
 
 public abstract class Axis2WsContainer implements HttpListener {
-    private static final Logger logger = Logger.getInstance(LogCategory.AXIS2, Axis2WsContainer.class);
 
+    private static final Logger logger = Logger.getInstance(LogCategory.AXIS2, Axis2WsContainer.class);
     public static final String REQUEST = Axis2WsContainer.class.getName() + "@Request";
     public static final String RESPONSE = Axis2WsContainer.class.getName() + "@Response";
-
     protected String endpointClassName;
     protected PortData port;
     protected ConfigurationContext configurationContext;
@@ -104,11 +101,11 @@ public abstract class Axis2WsContainer implements HttpListener {
         wsdlQueryHandler = new WsdlQueryHandler(service);
 
         /*
-        * This replaces HandlerLifecycleManagerFactory for all web services.
-        * This should be ok as we do our own handler instance managment and injection.
-        * Also, this does not affect service-ref clients, as we install our own
-        * HandlerResolver.
-        */
+         * This replaces HandlerLifecycleManagerFactory for all web services.
+         * This should be ok as we do our own handler instance managment and injection.
+         * Also, this does not affect service-ref clients, as we install our own
+         * HandlerResolver.
+         */
         FactoryRegistry.setFactory(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactoryImpl());
     }
 
@@ -120,6 +117,7 @@ public abstract class Axis2WsContainer implements HttpListener {
         doService(request, response);
     }
 
+    @Override
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
         SaajUniverse universe = new SaajUniverse();
         universe.set(SaajUniverse.AXIS2);
@@ -141,10 +139,8 @@ public abstract class Axis2WsContainer implements HttpListener {
         msgContext.setProperty(MessageContext.REMOTE_ADDR, request.getRemoteAddr());
 
         try {
-            TransportOutDescription transportOut = this.configurationContext.getAxisConfiguration()
-                    .getTransportOut(Constants.TRANSPORT_HTTP);
-            TransportInDescription transportIn = this.configurationContext.getAxisConfiguration()
-                    .getTransportIn(Constants.TRANSPORT_HTTP);
+            TransportOutDescription transportOut = this.configurationContext.getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
+            TransportInDescription transportIn = this.configurationContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_HTTP);
 
             msgContext.setConfigurationContext(this.configurationContext);
 
@@ -246,12 +242,14 @@ public abstract class Axis2WsContainer implements HttpListener {
     }
 
     public static class Axis2TransportInfo implements OutTransportInfo {
+
         private HttpResponse response;
 
         public Axis2TransportInfo(HttpResponse response) {
             this.response = response;
         }
 
+        @Override
         public void setContentType(String contentType) {
             response.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentType);
         }
@@ -325,8 +323,8 @@ public abstract class Axis2WsContainer implements HttpListener {
             soapAction = "\"\"";
         }
 
-        ConfigurationContext configurationContext = msgContext.getConfigurationContext();
-        configurationContext.fillServiceContextAndServiceGroupContext(msgContext);
+        ConfigurationContext cc = msgContext.getConfigurationContext();
+        cc.fillServiceContextAndServiceGroupContext(msgContext);
 
         setMsgContextProperties(request, response, service, msgContext);
 
@@ -334,8 +332,8 @@ public abstract class Axis2WsContainer implements HttpListener {
     }
 
     /*
-    * Gets the right handlers for the port/service/bindings and performs injection.
-    */
+     * Gets the right handlers for the port/service/bindings and performs injection.
+     */
     protected void configureHandlers() throws Exception {
         EndpointDescription desc = AxisServiceGenerator.getEndpointDescription(this.service);
         if (desc != null) {
