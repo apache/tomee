@@ -47,11 +47,11 @@
         </configuration>
       </plugin>
       <plugin>
-	<groupId>org.apache.felix</groupId>
-	<artifactId>maven-bundle-plugin</artifactId>
-	<configuration>
-	  <instructions>
-	    <Bundle-Activator>org.apache.openejb.server.osgi.Activator</Bundle-Activator>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-Activator>org.apache.openejb.server.osgi.Activator</Bundle-Activator>
           </instructions>
         </configuration>
       </plugin>
@@ -81,6 +81,10 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm-shaded</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>

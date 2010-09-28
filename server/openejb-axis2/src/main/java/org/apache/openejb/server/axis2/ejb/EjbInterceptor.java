@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.openejb.server.axis2.ejb;
 
 import org.apache.axis2.AxisFault;
@@ -24,7 +23,6 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
@@ -34,8 +32,10 @@ import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 
 import javax.interceptor.AroundInvoke;
 import javax.xml.ws.Binding;
+import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 
 public class EjbInterceptor {
+
     private MessageContext requestMsgCtx;
 
     public EjbInterceptor(MessageContext requestCtx) {
@@ -50,7 +50,7 @@ public class EjbInterceptor {
         EjbEndpointController controller = new EjbEndpointController(invContext);
 
         Binding binding = (Binding) this.requestMsgCtx.getAxisMessageContext().getProperty(JAXWSMessageReceiver.PARAM_BINDING);
-        InvocationContext ic = InvocationContextFactory.createInvocationContext(binding);
+        EndpointInvocationContext ic = InvocationContextFactory.createEndpointInvocationContext(binding);
         ic.setRequestMessageContext(this.requestMsgCtx);
 
         controller.invoke(ic);
@@ -91,13 +91,12 @@ public class EjbInterceptor {
     }
 
     private boolean isMepInOnly(String mep) {
-        boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
-                mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||
-                mep.equals(WSDL2Constants.MEP_URI_IN_ONLY) ||
-                mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) ||
-                mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY);
+        boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY)
+            || mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)
+            || mep.equals(WSDL2Constants.MEP_URI_IN_ONLY)
+            || mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY)
+            || mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY)
+            || mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY);
         return inOnly;
     }
-
 }

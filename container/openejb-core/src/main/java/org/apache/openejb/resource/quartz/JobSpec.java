@@ -33,7 +33,7 @@ import java.util.Date;
 /**
  * @version $Rev$ $Date$
 */
-public class JobSpec implements ActivationSpec {
+public final class JobSpec implements ActivationSpec {
 
     private MessageEndpoint endpoint;
     private ResourceAdapter resourceAdapter;

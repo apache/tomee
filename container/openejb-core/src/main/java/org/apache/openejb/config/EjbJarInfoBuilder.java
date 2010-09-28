@@ -118,22 +118,24 @@ public class EjbJarInfoBuilder {
     public EjbJarInfo buildInfo(EjbModule jar) throws OpenEJBException {
         deploymentIds.clear();
         securityRoles.clear();
+
+        final Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
         int beansDeployed = jar.getOpenejbJar().getEjbDeploymentCount();
         int beansInEjbJar = jar.getEjbJar().getEnterpriseBeans().length;
-
+        
         if (beansInEjbJar != beansDeployed) {
-            Map<String, EjbDeployment> deployed = jar.getOpenejbJar().getDeploymentsByEjbName();
+ 
             for (EnterpriseBean bean : jar.getEjbJar().getEnterpriseBeans()) {
-                if (!deployed.containsKey(bean.getEjbName())){
+                if (!ejbds.containsKey(bean.getEjbName())){
                     ConfigUtils.logger.warning("conf.0018", bean.getEjbName(), jar.getJarLocation());
                 }
             }
+
             String message = messages.format("conf.0008", jar.getJarLocation(), "" + beansInEjbJar, "" + beansDeployed);
             logger.warning(message);
             throw new OpenEJBException(message);
         }
-
-        Map<String, EjbDeployment> ejbds = jar.getOpenejbJar().getDeploymentsByEjbName();
+        
         Map<String, EnterpriseBeanInfo> infos = new HashMap<String, EnterpriseBeanInfo>();
         Map<String, EnterpriseBean> items = new HashMap<String, EnterpriseBean>();
 

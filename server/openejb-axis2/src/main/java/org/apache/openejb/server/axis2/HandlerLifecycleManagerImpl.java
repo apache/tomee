@@ -24,10 +24,16 @@ import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 
 import javax.xml.ws.handler.Handler;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
+import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescriptionFactory;
 
-public class HandlerLifecycleManagerImpl implements HandlerLifecycleManager {
+public class HandlerLifecycleManagerImpl extends BaseLifecycleManager implements HandlerLifecycleManager {
+
+    @Override
     public Handler createHandlerInstance(MessageContext context, Class handlerClass) throws LifecycleException, ResourceInjectionException {
-        Handler instance = null;
+        instance = null;
 
         try {
             instance = (Handler) handlerClass.newInstance();
@@ -35,12 +41,22 @@ public class HandlerLifecycleManagerImpl implements HandlerLifecycleManager {
             throw new LifecycleException("Failed to create handler", e);
         }
 
-        return instance;
+        return (Handler) instance;
     }
 
-    public void invokePostConstruct() throws LifecycleException {
-    }
+    @Override
+    public void destroyHandlerInstance(MessageContext mc, Handler handler) throws LifecycleException, ResourceInjectionException {
+        this.instance = handler;
 
-    public void invokePreDestroy() throws LifecycleException {
+        ServiceDescription serviceDesc = mc.getEndpointDescription().getServiceDescription();
+        ResourceInjectionServiceRuntimeDescription injectionDesc = null;
+        if (serviceDesc != null) {
+            injectionDesc = ResourceInjectionServiceRuntimeDescriptionFactory.get(serviceDesc, handler.getClass());
+        }
+
+        if (injectionDesc != null && injectionDesc.getPreDestroyMethod() != null) {
+            invokePreDestroy(injectionDesc.getPreDestroyMethod());
+        }
+
     }
 }

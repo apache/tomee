@@ -40,7 +40,7 @@ public class Axis2ClientConfigurationFactory extends ClientConfigurationFactory 
     }
 
     public ConfigurationContext getClientConfigurationContext() {
-        ClassLoader cl = ClassLoaderUtils.getContextClassLoader();
+        ClassLoader cl = ClassLoaderUtils.getContextClassLoader(null);
         if (cl == null) {
             if (this.reuseConfigurationContext) {
                 cl = ClientConfigurationFactory.class.getClassLoader();

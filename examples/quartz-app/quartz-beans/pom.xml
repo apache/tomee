@@ -6,25 +6,10 @@
     <artifactId>quartz-app</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-
   <modelVersion>4.0.0</modelVersion>
   <artifactId>quartz-beans</artifactId>
   <packaging>jar</packaging>
   <name>Quartz Beans</name>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.6</version>
-
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.superbiz.quartz</groupId>
@@ -65,8 +50,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-	
+    </dependency>	
     <!--
     Note that <scope>test</scope> is NOT specified here because some OpenEJB specific classes
     are used in the JobBean example.
@@ -76,5 +60,20 @@
       <artifactId>openejb-core</artifactId>
     </dependency>
   </dependencies>
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
+  It is not required and may be deleted.  For more information see:
+  http://maven.apache.org/plugins/maven-deploy-plugin/
+  -->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>

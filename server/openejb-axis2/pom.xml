@@ -29,115 +29,112 @@
   <artifactId>openejb-axis2</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Axis2</name>
+
+  <!--repositories>
+    <repository>
+      <id>svn.apache.org</id>
+      <name>svn.apache.org</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories-->
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <!-- maven is dropping this dep for some strange reason, so include it explicitly -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-jaxws</artifactId>
-      <version>1.3</version>
+      <version>${org.apache.axis2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-java2wsdl</artifactId>
-      <version>1.3</version>
+      <version>${org.apache.axis2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-kernel</artifactId>
-      <version>1.3</version>
+      <version>${org.apache.axis2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-adb</artifactId>
-      <version>1.3</version>
+      <version>${org.apache.axis2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-metadata</artifactId>
-      <version>1.3</version>
+      <version>${org.apache.axis2.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>1.2.5</version>
+      <version>1.2.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
-      <version>1.2.5</version>
+      <version>1.2.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.schema</groupId>
       <artifactId>XmlSchema</artifactId>
-      <version>1.3.1</version>
+      <version>1.4.6</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.neethi</groupId>
-        <artifactId>neethi</artifactId>
-        <version>2.0</version>
-        <exclusions>
-            <exclusion>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-impl</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-api</artifactId>
-            </exclusion>
-        </exclusions>
+      <groupId>org.apache.neethi</groupId>
+      <artifactId>neethi</artifactId>
+      <version>2.0.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.ws.commons.axiom</groupId>
+          <artifactId>axiom-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ws.commons.axiom</groupId>
+          <artifactId>axiom-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>3.0.1</version>
-        <exclusions>
-            <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-            </exclusion>
-        </exclusions>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
     </dependency>
     <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.3</version>
-        <exclusions>
-            <exclusion>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-            </exclusion>
-        </exclusions>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.4</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.xmlbeans</groupId>
-        <artifactId>xmlbeans</artifactId>
-        <version>2.3.0</version>
+      <groupId>org.apache.xmlbeans</groupId>
+      <artifactId>xmlbeans</artifactId>
+      <version>2.4.0</version>
     </dependency>
     <dependency>
-        <groupId>jaxen</groupId>
-        <artifactId>jaxen</artifactId>
-        <version>1.1-beta-10</version>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1.1</version>
     </dependency>
-
     <dependency>
-        <groupId>annogen</groupId>
-        <artifactId>annogen</artifactId>
-        <version>0.1.0</version>
+      <groupId>annogen</groupId>
+      <artifactId>annogen</artifactId>
+      <version>0.1.0</version>
     </dependency>
-
-
   </dependencies>
 
 </project>

@@ -21,8 +21,9 @@ package org.apache.openejb.server.axis2.pojo;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleException;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 
-public class PojoEndpointLifecycleManagerFactory extends EndpointLifecycleManagerFactory {
+public class PojoEndpointLifecycleManagerFactory implements EndpointLifecycleManagerFactory {
 
     private EndpointLifecycleManager lifecycleManager;
 
@@ -30,10 +31,16 @@ public class PojoEndpointLifecycleManagerFactory extends EndpointLifecycleManage
         this.lifecycleManager = new PojoEndpointLifecycleManager();
     }
 
+    @Override
     public EndpointLifecycleManager createEndpointLifecycleManager(Object endpointInstance) throws EndpointLifecycleException {
-        throw new UnsupportedOperationException();
+        if (endpointInstance == null) {
+            throw new EndpointLifecycleException("PojoEndpointLifecycleManagerFactory.createEndpointLifecycleManager");
+        }
+        return new EndpointLifecycleManagerImpl(endpointInstance);
+
     }
 
+    @Override
     public EndpointLifecycleManager createEndpointLifecycleManager() {
         return this.lifecycleManager;
     }

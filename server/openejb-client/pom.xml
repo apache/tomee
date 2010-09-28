@@ -21,11 +21,11 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-<parent>
+  <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.2-SNAPSHOT</version>
-    </parent>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-client</artifactId>
   <packaging>jar</packaging>

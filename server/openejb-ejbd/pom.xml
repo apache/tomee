@@ -24,7 +24,7 @@
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.2-SNAPSHOT</version>
-    </parent>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-ejbd</artifactId>
   <packaging>jar</packaging>
