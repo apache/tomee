@@ -1895,11 +1895,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && all.remote.isEmpty()
                         ) {
 
-                    if (interfaces.size() == 0) {
+                    if (interfaces.size() == 0 || beanClass.isAnnotationPresent(ManagedBean.class)) {
                         // No interfaces?  Then @LocalBean
 
                         sessionBean.setLocalBean(new Empty());
-
 
                     } else if (interfaces.size() == 1) {
                         // One interface?  Then @Local

@@ -511,7 +511,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 classLoader = ClassLoaderUtil.createClassLoader(appInfo.path, new URL []{generatedJar.toURI().toURL()}, classLoader);
             }
 
-            AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, false);
+            AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
 
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded

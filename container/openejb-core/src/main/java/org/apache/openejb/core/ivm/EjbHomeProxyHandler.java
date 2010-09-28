@@ -31,6 +31,7 @@ import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
@@ -130,7 +131,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, this.getInterfaces(), mainInterface);
 
-            if (InterfaceType.LOCALBEAN.equals(objectInterfaceType)) {
+            // TODO Is it correct for ManagedBean injection via managed bean class?
+            if (InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED)) {
                 return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler.getBeanContext().getBeanClass(), handler);
             } else {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
