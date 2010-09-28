@@ -47,6 +47,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.omg.CORBA.ORB;
 
+import javax.annotation.ManagedBean;
 import javax.ejb.EJBContext;
 import javax.ejb.TimerService;
 import javax.ejb.spi.HandleDelegate;
@@ -244,16 +245,22 @@ public class JndiEncBuilder {
         }
 
         for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
-            Reference reference = null;
-
-            if ("java.net.URL".equals(referenceInfo.referenceType)) {
-                if (referenceInfo.location != null) {
-                    reference = buildReferenceLocation(referenceInfo.location);
-                } else {
-                    reference = new URLReference(referenceInfo.resourceID);
-                }
-            } else if (referenceInfo.location != null) {
-                reference = buildReferenceLocation(referenceInfo.location);
+            
+            if (referenceInfo.location != null) {
+                Reference reference = buildReferenceLocation(referenceInfo.location);
+                bindings.put(normalize(referenceInfo.referenceName), reference);
+                continue;
+            }
+            
+            Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
+            
+            Object reference = null;
+            if (URL.class.equals(type)) {
+                reference = new URLReference(referenceInfo.resourceID);       
+            } else if (type.isAnnotationPresent(ManagedBean.class)) {
+                ManagedBean managed = type.getAnnotation(ManagedBean.class);
+                String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
+                reference = new LinkRef("module/" + name);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);

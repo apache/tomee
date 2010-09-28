@@ -57,6 +57,7 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.UniqueDefaultLinkResolver;
 
+import javax.annotation.ManagedBean;
 import javax.jms.Queue;
 import javax.jms.Topic;
 import java.net.URI;
@@ -644,7 +645,7 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void deploy(ClientModule clientModule, AppResources appResources) throws OpenEJBException {
-        processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient(), appResources);
+        processJndiRefs(clientModule.getModuleId(), clientModule.getApplicationClient(), appResources, clientModule.getClassLoader());
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -653,62 +654,93 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void deploy(WebModule webModule, AppResources appResources) throws OpenEJBException {
-        processJndiRefs(webModule.getModuleId(), webModule.getWebApp(), appResources);
+        processJndiRefs(webModule.getModuleId(), webModule.getWebApp(), appResources, webModule.getClassLoader());
     }
 
-    private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer, AppResources appResources) throws OpenEJBException {
+    private void processJndiRefs(String moduleId, JndiConsumer jndiConsumer, AppResources appResources, ClassLoader classLoader) throws OpenEJBException {
         // Resource reference
         for (ResourceRef ref : jndiConsumer.getResourceRef()) {
-            // skip references such as URLs which are automatically handled by the server
-            if (ignoredReferenceTypes.contains(ref.getType())) {
+            // skip destinations with lookup name
+            if (ref.getLookupName() != null) {
                 continue;
             }
-
+            
             // skip destinations with a global jndi name
-            String mappedName = ref.getMappedName();
-            if (mappedName == null) mappedName = "";
-            if (mappedName.startsWith("jndi:")){
+            String mappedName = (ref.getMappedName() == null) ? "": ref.getMappedName();
+            if (mappedName.startsWith("jndi:")) {
+                continue;
+            }
+            
+            String refType = getType(ref, classLoader); 
+            
+            // skip references such as URLs which are automatically handled by the server
+            if (isIgnoredReferenceType(refType, classLoader)) {
                 continue;
             }
 
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceId(moduleId, destinationId, ref.getType(), appResources);
+            destinationId = getResourceId(moduleId, destinationId, refType, appResources);
             ref.setMappedName(destinationId);
         }
 
         // Resource env reference
         for (JndiReference ref : jndiConsumer.getResourceEnvRef()) {
-            // skip references such as URLs which are automatically handled by the server
-            if (ignoredReferenceTypes.contains(ref.getType())) {
+            // skip destinations with lookup name
+            if (ref.getLookupName() != null) {
                 continue;
             }
-
+            
             // skip destinations with a global jndi name
-            String mappedName = ref.getMappedName();
-            if (mappedName == null) mappedName = "";
-            if (mappedName.startsWith("jndi:")){
+            String mappedName = (ref.getMappedName() == null) ? "": ref.getMappedName();
+            if (mappedName.startsWith("jndi:")) {
                 continue;
             }
-
+            
+            String refType = getType(ref, classLoader); 
+            
+            // skip references such as URLs which are automatically handled by the server
+            if (isIgnoredReferenceType(refType, classLoader)) {
+                continue;
+            }
+            
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
-            destinationId = getResourceEnvId(moduleId, destinationId, ref.getType(), appResources);
+            destinationId = getResourceEnvId(moduleId, destinationId, refType, appResources);
             ref.setMappedName(destinationId);
         }
 
         // Message destination reference
         for (MessageDestinationRef ref : jndiConsumer.getMessageDestinationRef()) {
-            // skip destinations with a global jndi name
-            String mappedName = ref.getMappedName() + "";
-            if (mappedName.startsWith("jndi:")){
+            // skip destinations with lookup name
+            if (ref.getLookupName() != null) {
                 continue;
             }
-
+            
+            // skip destinations with a global jndi name
+            String mappedName = (ref.getMappedName() == null) ? "": ref.getMappedName();
+            if (mappedName.startsWith("jndi:")) {
+                continue;
+            }
+            
             String destinationId = (mappedName.length() == 0) ? ref.getName() : mappedName;
             destinationId = getResourceEnvId(moduleId, destinationId, ref.getType(), appResources);
             ref.setMappedName(destinationId);
         }
     }
 
+    private boolean isIgnoredReferenceType(String typeName, ClassLoader loader) {
+        if (ignoredReferenceTypes.contains(typeName)) {
+            return true;
+        } else if (loader != null) {
+            try {
+                Class<?> type = loader.loadClass(typeName);
+                return type.isAnnotationPresent(ManagedBean.class);
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }            
+        }
+        return false;        
+    }
+    
     private void deploy(EjbModule ejbModule, AppResources appResources) throws OpenEJBException {
         OpenejbJar openejbJar;
         if (ejbModule.getOpenejbJar() != null) {
@@ -857,7 +889,7 @@ public class AutoConfig implements DynamicDeployer {
         String refType = getType(ref, classLoader); 
 
         // skip references such as SessionContext which are automatically handled by the server
-        if (ignoredReferenceTypes.contains(refType)) {
+        if (isIgnoredReferenceType(refType, classLoader)) {
             return;
         }
 
