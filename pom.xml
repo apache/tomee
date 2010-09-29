@@ -976,7 +976,6 @@
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
         <version>2.0.4</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>xerces</groupId>
