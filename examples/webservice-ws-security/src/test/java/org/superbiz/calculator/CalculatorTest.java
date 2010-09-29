@@ -34,8 +34,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Binding;
-import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -44,6 +42,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.log4j.BasicConfigurator;
 
 public class CalculatorTest extends TestCase {
 
@@ -51,6 +50,7 @@ public class CalculatorTest extends TestCase {
     private InitialContext initialContext;
 
     protected void setUp() throws Exception {
+        BasicConfigurator.configure();
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
