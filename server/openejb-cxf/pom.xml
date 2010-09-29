@@ -80,7 +80,7 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>wss4j</groupId>
+      <groupId>org.apache.ws.security</groupId>
       <artifactId>wss4j</artifactId>
     </dependency>
     <dependency>
@@ -89,7 +89,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-finder</artifactId>
+      <artifactId>xbean-finder-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -102,6 +102,7 @@
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

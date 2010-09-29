@@ -54,7 +54,6 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-bundle</artifactId>
       <version>2.2.10</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

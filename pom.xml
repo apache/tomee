@@ -869,11 +869,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-finder</artifactId>
-        <version>${xbeanVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-finder-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
@@ -919,9 +914,9 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>wss4j</groupId>
+        <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.8</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -952,6 +947,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>javax.transaction</groupId>
+        <artifactId>jta</artifactId>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
         <version>4.2.0</version>
@@ -964,7 +964,7 @@
       <dependency>
         <groupId>javassist</groupId>
         <artifactId>javassist</artifactId>
-        <version>3.8.0.GA</version>
+        <version>3.12.0.GA</version>
       </dependency>
       <dependency>
         <groupId>xml-apis</groupId>
