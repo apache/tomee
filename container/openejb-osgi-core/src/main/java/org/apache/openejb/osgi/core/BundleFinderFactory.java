@@ -45,7 +45,8 @@ public class BundleFinderFactory extends FinderFactory {
             final String location = module.getModuleId();
             boolean useLocation = location != null
                     && !location.isEmpty()
-                    && !module.getJarLocation().endsWith(".war");
+                    && !module.getJarLocation().endsWith(".war")
+                    && !module.getJarLocation().endsWith(".jar");
             if (useLocation) {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
