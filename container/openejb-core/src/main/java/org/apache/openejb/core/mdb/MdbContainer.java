@@ -352,14 +352,12 @@ public class MdbContainer implements RpcContainer {
         Operation oldOperation = callContext.getCurrentOperation();
         callContext.setCurrentOperation(type == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS);
         try {
-            if (logger.isInfoEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.info("invoking method " + method.getName() + " on " + deployInfo.getDeploymentID());
             }
 
             // determine the target method on the bean instance class
-            Method targetMethod = deployInfo.getMatchingBeanMethod(method);
-
-
+            final Method targetMethod = deployInfo.getMatchingBeanMethod(method);
             callContext.set(Method.class, targetMethod);
 
             // invoke the target method

@@ -52,7 +52,7 @@
     <repository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
-      <url>https://repository.jboss.org/nexus</url>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
       <layout>default</layout>
       <releases>
         <enabled>true</enabled>
@@ -94,6 +94,7 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
       <version>3.6.0.CR1</version>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.hibernate.javax.persistence</groupId>
@@ -107,8 +108,7 @@
           <groupId>javax.transaction</groupId>
           <artifactId>jta</artifactId>
         </exclusion>
-      </exclusions>
-      <scope>test</scope>
+      </exclusions>      
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
