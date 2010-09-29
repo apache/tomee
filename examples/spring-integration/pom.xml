@@ -49,6 +49,20 @@
       <name>Apache Snapshot Repository</name>
       <url>http://repository.apache.org/snapshots</url>
     </repository>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Maven Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -85,7 +99,7 @@
           <artifactId>spring</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>        
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -105,7 +119,7 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
       <version>3.0.4.RELEASE</version>
-    </dependency>        
+    </dependency>
     <!-- END SNIPPET: required -->
     <!-- START SNIPPET: optional -->
     <dependency>

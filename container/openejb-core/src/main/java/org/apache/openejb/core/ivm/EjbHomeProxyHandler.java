@@ -150,8 +150,8 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     protected Object _invoke(Object proxy, Class interfce, Method method, Object[] args) throws Throwable {
 
-        if (logger.isInfoEnabled()) {
-            logger.info("invoking method " + method.getName() + " on " + deploymentID);
+        if (logger.isDebugEnabled()) {
+            logger.debug("invoking method " + method.getName() + " on " + deploymentID);
         }
 
         String methodName = method.getName();
@@ -199,8 +199,6 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
             if (logger.isDebugEnabled()) {
                 logger.debug("finished invoking method " + method.getName() + ". Return value:" + retValue);
-            } else if (logger.isInfoEnabled()) {
-                logger.info("finished invoking method " + method.getName());
             }
 
             return retValue;

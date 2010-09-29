@@ -481,8 +481,9 @@
     <!--</snapshots>-->
     <!--</repository>-->
     <repository>
-      <id>jboss snapshot</id>
-      <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+      <id>JBoss Repository</id>
+      <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+      <layout>default</layout>
       <releases>
         <enabled>true</enabled>
       </releases>
