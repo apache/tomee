@@ -64,7 +64,7 @@ import java.util.List;
 public class SessionConfig {
 
     @XmlElement(name = "session-timeout")
-    protected BigInteger sessionTimeout;
+    protected Integer sessionTimeout;
     @XmlElement(name = "cookie-config")
     protected CookieConfig cookieConfig;
     @XmlElement(name = "tracking-mode")
@@ -75,11 +75,11 @@ public class SessionConfig {
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
 
-    public BigInteger getSessionTimeout() {
+    public Integer getSessionTimeout() {
         return sessionTimeout;
     }
 
-    public void setSessionTimeout(BigInteger value) {
+    public void setSessionTimeout(Integer value) {
         this.sessionTimeout = value;
     }
 
