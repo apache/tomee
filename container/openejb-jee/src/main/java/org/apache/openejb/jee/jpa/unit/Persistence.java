@@ -104,6 +104,7 @@ public class Persistence {
 
     @XmlElement(name = "persistence-unit", required = true)
     protected List<PersistenceUnit> persistenceUnit;
+
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "1.0";
@@ -146,6 +147,15 @@ public class Persistence {
         return this.persistenceUnit;
     }
 
+    public PersistenceUnit addPersistenceUnit(PersistenceUnit unit) {
+        getPersistenceUnit().add(unit);
+        return unit;
+    }
+
+    public PersistenceUnit addPersistenceUnit(String unitName) {
+        return addPersistenceUnit(new PersistenceUnit(unitName));
+    }
+    
     /**
      * Gets the value of the version property.
      * 
