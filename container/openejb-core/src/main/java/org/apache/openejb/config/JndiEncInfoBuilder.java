@@ -406,7 +406,8 @@ public class JndiEncInfoBuilder {
     private EnterpriseBeanInfo getInterfaceBeanInfo(String moduleId, String interfaceClassName) {
         List<EjbJarInfo> ejbJars = appInfo.ejbJars;
         for (EjbJarInfo ejbJar : ejbJars) {
-            if (!ejbJar.moduleId.equals(moduleId) && !(moduleId == null && appInfo.ejbJars.size() == 1)) continue;
+            // DMB Not sure why we don't allow @LocalBean references in other modules in the EAR
+//            if (!ejbJar.moduleId.equals(moduleId) && !(moduleId == null && appInfo.ejbJars.size() == 1)) continue;
 
             List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
             for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {

@@ -18,42 +18,47 @@
 package org.apache.openejb.core.stateless;
 
 import junit.framework.TestCase;
-import org.apache.openejb.assembler.classic.*;
-import org.apache.openejb.assembler.classic.cmd.Info2Properties;
-import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.Empty;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.junit.Configuration;
+import org.apache.openejb.junit.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
-import javax.naming.InitialContext;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Stack;
 
 /**
  * @version $Revision$ $Date$
  */
+@RunWith(ApplicationComposer.class)
 public class StatelessContainerTest extends TestCase {
 
+    @EJB
+    private WidgetBean localBean;
+
+    @EJB
+    private Widget local;
+
+    @EJB
+    private RemoteWidget remote;
+
+    @Test
     public void testPojoStyleBean() throws Exception {
         List expected = Arrays.asList(Lifecycle.values());
-        InitialContext ctx = new InitialContext();
 
         {
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanLocal");
-
-            assertTrue("instanceof widget", object instanceof Widget);
-
-            Widget widget = (Widget) object;
-
             // Do a business method...
-            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            Stack<Lifecycle> lifecycle = local.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
@@ -63,20 +68,13 @@ public class StatelessContainerTest extends TestCase {
         {
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanLocalBean");
-
-            assertTrue("instanceof widgetbean", object instanceof WidgetBean);
-
-            WidgetBean widget = (WidgetBean) object;
-
             // Do a business method...
-            Stack<Lifecycle> lifecycle = widget.getLifecycle();
+            Stack<Lifecycle> lifecycle = localBean.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
             List localBeanExpected = new ArrayList();
-            localBeanExpected.add(0, Lifecycle.CONSTRUCTOR);
             localBeanExpected.addAll(expected);
             assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
         }
@@ -84,57 +82,38 @@ public class StatelessContainerTest extends TestCase {
 
             WidgetBean.lifecycle.clear();
 
-            Object object = ctx.lookup("WidgetBeanRemote");
-
-            assertTrue("instanceof widget", object instanceof RemoteWidget);
-
-            RemoteWidget remoteWidget = (RemoteWidget) object;
-
             // Do a business method...
-            Stack<Lifecycle> lifecycle = remoteWidget.getLifecycle();
+            Stack<Lifecycle> lifecycle = remote.getLifecycle();
             assertNotNull("lifecycle", lifecycle);
             assertNotSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
             assertEquals(join("\n", expected), join("\n", lifecycle));
         }
-
-        Info2Properties.printLocalConfig();
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Configuration
+    public Properties config() {
+        final Properties properties = new Properties();
+        properties.put("statelessContainer", "new://Container?type=STATELESS");
+        properties.put("statelessContainer.TimeOut", "10");
+        properties.put("statelessContainer.MaxSize", "0");
+        properties.put("statelessContainer.StrictPooling", "false");
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        return properties;
+    }
 
-        ConfigurationFactory config = new ConfigurationFactory();
-        Assembler assembler = new Assembler();
+    @Module
+    public StatelessBean app() throws Exception {
 
-        assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
-        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
-        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
-
-        // containers
-        StatelessSessionContainerInfo statelessContainerInfo = config.configureService(StatelessSessionContainerInfo.class);
-        statelessContainerInfo.properties.setProperty("TimeOut", "10");
-        statelessContainerInfo.properties.setProperty("MaxSize", "0");
-        statelessContainerInfo.properties.setProperty("StrictPooling", "false");
-        assembler.createContainer(statelessContainerInfo);
-
-        // Setup the descriptor information
-
-        StatelessBean bean = new StatelessBean(WidgetBean.class);
+        final StatelessBean bean = new StatelessBean(WidgetBean.class);
         bean.addBusinessLocal(Widget.class.getName());
         bean.addBusinessRemote(RemoteWidget.class.getName());
         bean.addPostConstruct("init");
         bean.addPreDestroy("destroy");
         bean.setLocalBean(new Empty());
 
-        EjbJar ejbJar = new EjbJar();
-        ejbJar.addEnterpriseBean(bean);
-
-        assembler.createApplication(config.configureApplication(ejbJar));
-
+        return bean;
     }
 
     private static String join(String delimeter, List items) {

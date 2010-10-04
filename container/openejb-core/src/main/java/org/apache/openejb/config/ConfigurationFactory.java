@@ -396,7 +396,10 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         }
 
 
-        return sys;
+        final OpenEjbConfiguration finished = sys;
+        sys = null;
+        openejb = null;
+        return finished;
     }
 
     private List<String> getDeclaredApps() {

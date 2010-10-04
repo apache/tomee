@@ -2652,24 +2652,34 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private boolean isKnownLocalBean(Class clazz) {
-            DeploymentModule module = getModule();
-            if (module instanceof EjbModule) {
-                Set<String> localbeans = new HashSet<String>();
-                EjbModule ejbModule = (EjbModule) module;
-                for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-                    if (bean instanceof SessionBean) {
-                        if (((SessionBean) bean).getLocalBean() != null) {
-                            localbeans.add(bean.getEjbClass());
-                        }
-                    }
-                }
+            if (clazz.isAnnotation()) return false;
+            if (clazz.isArray()) return false;
+            if (clazz.isEnum()) return false;
+            if (clazz.isInterface()) return false;
+            if (clazz.isPrimitive()) return false;
+            if (Modifier.isAbstract(clazz.getModifiers())) return false;
+            if (Modifier.isFinal(clazz.getModifiers())) return false;
 
-                if (localbeans.contains(clazz.getName())) {
-                    return true;
-                }
-            }
-
-            return false;
+            return true;
+//            // This limits @LocalBean references to things in the same module
+//            DeploymentModule module = getModule();
+//            if (module instanceof EjbModule) {
+//                Set<String> localbeans = new HashSet<String>();
+//                EjbModule ejbModule = (EjbModule) module;
+//                for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
+//                    if (bean instanceof SessionBean) {
+//                        if (((SessionBean) bean).getLocalBean() != null) {
+//                            localbeans.add(bean.getEjbClass());
+//                        }
+//                    }
+//                }
+//
+//                if (localbeans.contains(clazz.getName())) {
+//                    return true;
+//                }
+//            }
+//
+//            return false;
         }
 
         private boolean isValidEjbInterface(String b, Class clazz, String refName) {
