@@ -25,8 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.List;
-import java.util.ArrayList;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.*;
+import java.util.Properties;
 
 /**
  *
@@ -117,7 +118,9 @@ public class PersistenceUnit {
     protected SharedCacheMode sharedCacheMode;
     @XmlElement(name = "validation-mode")
     protected ValidationMode validationMode;
-    protected Properties properties;
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(PropertiesAdapter.class)
+    protected java.util.Properties properties;
     @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute(name = "transaction-type")
@@ -159,6 +162,10 @@ public class PersistenceUnit {
         this.provider = value;
     }
 
+    public void setProvider(Class value) {
+        setProvider(value == null ? null : value.getName());
+    }
+
     public String getJtaDataSource() {
         return jtaDataSource;
     }
@@ -196,6 +203,14 @@ public class PersistenceUnit {
         return this.clazz;
     }
 
+    public boolean addClass(String s) {
+        return getClazz().add(s);
+    }
+
+    public boolean addClass(Class clazz) {
+        return addClass(clazz.getName());
+    }
+
     public Boolean isExcludeUnlistedClasses() {
         return excludeUnlistedClasses;
     }
@@ -204,12 +219,27 @@ public class PersistenceUnit {
         this.excludeUnlistedClasses = value;
     }
 
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
     public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+        }
         return properties;
     }
 
-    public void setProperties(Properties value) {
-        this.properties = value;
+    public String getProperty(String key) {
+        return getProperties().getProperty(key);
+    }
+
+    public String getProperty(String key, String defaultValue) {
+        return getProperties().getProperty(key, defaultValue);
+    }
+
+    public Object setProperty(String key, String value) {
+        return getProperties().setProperty(key, value);
     }
 
     public String getName() {
@@ -237,5 +267,5 @@ public class PersistenceUnit {
     public ValidationMode getValidationMode() {
         return (validationMode == null) ? ValidationMode.AUTO : validationMode;
     }
-    
+
 }

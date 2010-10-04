@@ -33,9 +33,9 @@
         <class>org.acme.Animal</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
-            <property value="oof" name="foo"/>
             <property value="rab" name="bar"/>
             <property value="zab" name="baz"/>
+            <property value="oof" name="foo"/>
         </properties>
     </persistence-unit>
     <persistence-unit transaction-type="RESOURCE_LOCAL" name="bar">
@@ -51,8 +51,8 @@
         <class>org.acme.Animal2</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
-            <property value="oof2" name="foo2"/>
             <property value="rab2" name="bar2"/>
+            <property value="oof2" name="foo2"/>
             <property value="zab2" name="baz2"/>
         </properties>
     </persistence-unit>

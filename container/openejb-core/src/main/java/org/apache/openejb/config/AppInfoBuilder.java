@@ -504,13 +504,7 @@ class AppInfoBuilder {
                 info.validationMode = persistenceUnit.getValidationMode().toString();
 
                 // Handle Properties
-                org.apache.openejb.jee.jpa.unit.Properties puiProperties = persistenceUnit.getProperties();
-
-                if (puiProperties != null) {
-                    for (Property property : puiProperties.getProperty()) {
-                        info.properties.put(property.getName(), property.getValue());
-                    }
-                }
+                info.properties.putAll(persistenceUnit.getProperties());
 
                 Properties overrides = ConfigurationFactory.getSystemProperties(info.name, "PersistenceUnit");
                 for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
