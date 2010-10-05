@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.jar.JarFile;
@@ -48,14 +49,16 @@ import org.apache.openejb.util.UrlCache;
  * @version $Revision$ $Date$
  */
 public class ClassLoaderUtil {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ClassLoaderUtil.class);
-    private static final Map<String,List<ClassLoader>> classLoadersByApp = new HashMap<String,List<ClassLoader>>();
-    private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader,Set<String>>();
 
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ClassLoaderUtil.class);
+    private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
+    private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
     private static final UrlCache urlCache = new UrlCache();
 
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+            @Override
             public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
             }
@@ -113,7 +116,9 @@ public class ClassLoaderUtil {
             for (ClassLoader classLoader : classLoaders) {
                 // get the apps using the class loader
                 Set<String> apps = appsByClassLoader.get(classLoader);
-                if (apps == null) apps = Collections.emptySet();
+                if (apps == null) {
+                    apps = Collections.emptySet();
+                }
 
                 // this app is no longer using the class loader
                 apps.remove(appId);
@@ -154,50 +159,65 @@ public class ClassLoaderUtil {
         Introspector.flushCaches();
     }
 
-    public static void clearSunJarFileFactoryCache(String jarLocation) {
+    public static void clearSunJarFileFactoryCache(final String jarLocation) {
+        clearSunJarFileFactoryCacheImpl(jarLocation, 5);
+    }
+
+    private static void clearSunJarFileFactoryCacheImpl(final String jarLocation, final int attempt) {
         logger.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
 
         try {
             Class jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
 
-            Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
+            synchronized (jarFileFactory) {
 
-            fileCacheField.setAccessible(true);
-            Map fileCache = (Map) fileCacheField.get(null);
+                Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
 
-            Field urlCacheField = jarFileFactory.getDeclaredField("urlCache");
-            urlCacheField.setAccessible(true);
-            Map urlCache = (Map) urlCacheField.get(null);
+                fileCacheField.setAccessible(true);
+                Map fileCache = (Map) fileCacheField.get(null);
 
-            List<URL> urls = new ArrayList<URL>();
-            for (Object item : fileCache.keySet()) {
-                URL url = null;
-                if (item instanceof URL) {
-                    url = (URL) item;
-                } else if (item instanceof String) {
-                    url = new URI((String) item).toURL();
-                } else {
-                    logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
+                Field urlCacheField = jarFileFactory.getDeclaredField("urlCache");
+                urlCacheField.setAccessible(true);
+                Map ucf = (Map) urlCacheField.get(null);
+
+                List<URL> urls = new ArrayList<URL>();
+                for (Object item : fileCache.keySet()) {
+                    URL url = null;
+                    if (item instanceof URL) {
+                        url = (URL) item;
+                    } else if (item instanceof String) {
+                        url = new URI((String) item).toURL();
+                    } else {
+                        logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
+                    }
+
+                    File file = null;
+                    try {
+                        file = URLs.toFile(url);
+                    } catch (IllegalArgumentException e) {
+                        //unknown kind of url
+                        return;
+                    }
+                    if (url != null && isParent(jarLocation, file)) {
+                        urls.add(url);
+                    }
                 }
 
-                File file = null;
-                try {
-                    file = URLs.toFile(url);
-                } catch (IllegalArgumentException e) {
-                    //unknown kind of url
-                    return;
-                }
-                if (url != null && isParent(jarLocation, file)) {
-                    urls.add(url);
+                for (URL url : urls) {
+                    JarFile jarFile = (JarFile) fileCache.remove(url);
+                    if (jarFile == null) {
+                        continue;
+                    }
+
+                    ucf.remove(jarFile);
+                    jarFile.close();
                 }
             }
-
-            for (URL url : urls) {
-                JarFile jarFile = (JarFile) fileCache.remove(url);
-                if (jarFile == null) continue;
-
-                urlCache.remove(jarFile);
-                jarFile.close();
+        } catch (ConcurrentModificationException e) {
+            if (attempt > 0) {
+                clearSunJarFileFactoryCacheImpl(jarLocation, (attempt - 1));
+            } else {
+                logger.error("Unable to clear Sun JarFileFactory cache after 5 attempts", e);
             }
         } catch (ClassNotFoundException e) {
             // not a sun vm
@@ -220,25 +240,22 @@ public class ClassLoaderUtil {
     }
 
     /**
-     * Clears the caches maintained by the SunVM object stream implementation.  This method uses reflection and
-     * setAccessable to obtain access to the Sun cache.  The cache is locked with a synchronize monitor and cleared.
+     * Clears the caches maintained by the SunVM object stream implementation.
+     * This method uses reflection and setAccessable to obtain access to the Sun cache.
+     * The cache Class synchronizes upon itself for access to the cache Map.
      * This method completely clears the class loader cache which will impact preformance of object serialization.
      * @param clazz the name of the class containing the cache field
      * @param fieldName the name of the cache field
      */
     public static void clearSunSoftCache(Class clazz, String fieldName) {
-        Map cache = null;
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            cache = (Map) field.get(null);
-        } catch (Throwable ignored) {
-            // there is nothing a user could do about this anyway
-        }
-
-        if (cache != null) {
-            synchronized (cache) {
+        synchronized (clazz) {
+            try {
+                Field field = clazz.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                final Map cache = (Map) field.get(null);
                 cache.clear();
+            } catch (Throwable ignored) {
+                // there is nothing a user could do about this anyway
             }
         }
     }
