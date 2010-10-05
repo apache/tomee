@@ -58,9 +58,9 @@ public class MultipartConfig {
 
     protected String location;
     @XmlElement(name = "max-file-size")
-    protected long maxFileSize;
+    protected long maxFileSize = -1L;
     @XmlElement(name = "max-request-size")
-    protected long maxRequestSize;
+    protected long maxRequestSize = -1L;
     @XmlElement(name = "file-size-threshold")
     protected int fileSizeThreshold;
 
