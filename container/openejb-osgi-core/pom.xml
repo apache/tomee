@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-osgi-core</artifactId>
   <packaging>bundle</packaging>
-  <name>OpenEJB :: Container :: Core :: OSGi</name>
+  <name>OpenEJB :: Container :: OSGi :: Core</name>
   <properties>
     <openejb.osgi.export>
         org.apache.openejb.osgi.core;version=${openejb.osgi.export.version}
