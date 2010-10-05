@@ -83,32 +83,18 @@
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>1.2.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
-      <version>1.2.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.schema</groupId>
       <artifactId>XmlSchema</artifactId>
-      <version>1.4.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.neethi</groupId>
       <artifactId>neethi</artifactId>
-      <version>2.0.4</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.ws.commons.axiom</groupId>
-          <artifactId>axiom-impl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.commons.axiom</groupId>
-          <artifactId>axiom-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-httpclient</groupId>
@@ -118,7 +104,6 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xmlbeans</groupId>

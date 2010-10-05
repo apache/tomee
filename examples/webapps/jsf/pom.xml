@@ -89,6 +89,10 @@
           <groupId>javax.servlet</groupId>
           <artifactId>jstl</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>xmlParserAPIs</artifactId>
+          <groupId>xml-apis</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
