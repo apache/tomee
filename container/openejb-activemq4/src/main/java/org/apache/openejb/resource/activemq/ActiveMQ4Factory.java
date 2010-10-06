@@ -28,59 +28,106 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.openejb.util.LogCategory;
 
 public class ActiveMQ4Factory implements BrokerFactory.BrokerFactoryHandler {
+
     private static final ThreadLocal<Properties> threadProperties = new ThreadLocal<Properties>();
+    private static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
+    private static Throwable throwable = null;
 
     public static void setThreadProperties(Properties value) {
         threadProperties.set(value);
     }
 
-    public BrokerService createBroker(URI brokerURI) throws Exception {
-        URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
-        BrokerService broker = BrokerFactory.createBroker(uri);
+    @Override
+    public synchronized BrokerService createBroker(URI brokerURI) throws Exception {
 
-        Properties properties = getLowerCaseProperties();
+        BrokerService broker = brokers.get(brokerURI);
 
-        Object value = properties.get("datasource");
-        if (value instanceof String && value.toString().length() == 0) {
-            value = null;
-        }
+        if (null == broker) {
 
-        if (value != null) {
-            DataSource dataSource;
-            if (value instanceof DataSource) {
-                dataSource = (DataSource) value;
-            } else {
-                String resouceId = (String) value;
+            URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
+            broker = BrokerFactory.createBroker(uri);
+            brokers.put(brokerURI, broker);
 
-                try {
-                    ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                    Context context = containerSystem.getJNDIContext();
-                    Object obj = context.lookup("openejb/Resource/" + resouceId);
-                    if (!(obj instanceof DataSource)) {
-                        throw new IllegalArgumentException("Resource with id " + resouceId +
-                            " is not a DataSource, but is " + obj.getClass().getName());
+            if (!uri.getScheme().toLowerCase().startsWith("xbean")) {
+
+                Properties properties = getLowerCaseProperties();
+
+                Object value = properties.get("datasource");
+                if (value instanceof String && value.toString().length() == 0) {
+                    value = null;
+                }
+
+                if (value != null) {
+                    DataSource dataSource;
+                    if (value instanceof DataSource) {
+                        dataSource = (DataSource) value;
+                    } else {
+                        String resouceId = (String) value;
+
+                        try {
+                            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                            Context context = containerSystem.getJNDIContext();
+                            Object obj = context.lookup("openejb/Resource/" + resouceId);
+                            if (!(obj instanceof DataSource)) {
+                                throw new IllegalArgumentException("Resource with id " + resouceId
+                                    + " is not a DataSource, but is " + obj.getClass().getName());
+                            }
+                            dataSource = (DataSource) obj;
+                        } catch (NamingException e) {
+                            throw new IllegalArgumentException("Unknown datasource " + resouceId);
+                        }
                     }
-                    dataSource = (DataSource) obj;
-                } catch (NamingException e) {
-                    throw new IllegalArgumentException("Unknown datasource " + resouceId);
+
+                    JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
+                    persistenceAdapter.setDataSource(dataSource);
+                    broker.setPersistenceAdapter(persistenceAdapter);
+                } else {
+                    MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
+                    broker.setPersistenceAdapter(persistenceAdapter);
                 }
             }
 
-            JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
-            persistenceAdapter.setDataSource(dataSource);
-            broker.setPersistenceAdapter(persistenceAdapter);
-        } else {
-            MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
-            broker.setPersistenceAdapter(persistenceAdapter);
+            if (!broker.isStarted()) {
+
+                final BrokerService bs = broker;
+
+                final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
+
+                    @Override
+                    public void run() {
+                        try {
+                            //Start before returning - this is known to be safe.
+                            bs.start();
+                        } catch (Throwable t) {
+                            throwable = t;
+                        }
+                    }
+                };
+
+                start.setDaemon(true);
+                start.start();
+
+                try {
+                    start.join(5000);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+
+                if (null != throwable) {
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ failed to start within 5 seconds - It may not be usable", throwable);
+                }
+            }
         }
 
         return broker;
     }
-
 
     private Properties getLowerCaseProperties() {
         Properties properties = threadProperties.get();
@@ -95,5 +142,9 @@ public class ActiveMQ4Factory implements BrokerFactory.BrokerFactoryHandler {
             }
         }
         return newProperties;
+    }
+
+    public Collection<BrokerService> getBrokers() {
+        return brokers.values();
     }
 }
