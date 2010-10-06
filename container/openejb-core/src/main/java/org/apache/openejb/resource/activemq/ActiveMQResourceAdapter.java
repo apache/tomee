@@ -111,7 +111,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 //    public void setTopicPrefetch(Integer integer) {
 //        super.setTopicPrefetch(integer);
 //    }
-    
     @Override
     public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         final Properties properties = new Properties();
@@ -125,13 +124,21 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             properties.put("UseDatabaseLock", this.useDatabaseLock);
         }
 
-        // prefix server uri with openejb: so our broker factory is used
+        // prefix server uri with 'broker:' so our broker factory is used
         final String brokerXmlConfig = getBrokerXmlConfig();
-        if (brokerXmlConfig != null && brokerXmlConfig.startsWith("broker:")) {
+        if (brokerXmlConfig != null) {
+
             try {
-                final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
-                compositeData.getParameters().put("persistent", "false");
-                setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
+
+                if (brokerXmlConfig.startsWith("broker:")) {
+
+                    final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
+                    compositeData.getParameters().put("persistent", "false");
+                    setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
+                } else if (brokerXmlConfig.toLowerCase().startsWith("xbean:")) {
+                    setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + brokerXmlConfig);
+                }
+
             } catch (URISyntaxException e) {
                 throw new ResourceAdapterInternalException("Invalid BrokerXmlConfig", e);
             }
@@ -154,13 +161,19 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     @Override
     public void stop() {
 
+        org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopping ActiveMQ");
+
         final ActiveMQResourceAdapter ra = this;
 
         final Thread stopThread = new Thread("ActiveMQResourceAdapter stop") {
 
             @Override
             public void run() {
-                ra.stopImpl();
+                try {
+                    ra.stopImpl();
+                } catch (Throwable t) {
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ shutdown failed", t);
+                }
             }
         };
 
@@ -177,7 +190,18 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     }
 
     private void stopImpl() {
+
         super.stop();
+        final org.apache.activemq.broker.BrokerService br = ActiveMQFactory.getBroker();
+
+        if (null != br) {
+            try {
+                br.waitUntilStopped();
+            } catch (Throwable t) {
+                //Ignore
+            }
+        }
+
         org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped ActiveMQ");
     }
 }

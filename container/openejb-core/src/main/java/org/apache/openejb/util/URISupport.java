@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -118,7 +117,7 @@ public class URISupport {
         }
 
         public URI toURI() throws URISyntaxException {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if( scheme!=null ) {
                 sb.append(scheme);
                 sb.append(':');
@@ -294,7 +293,7 @@ public class URISupport {
     public static String createQueryString(Map options) throws URISyntaxException {
         try {
             if(options.size()>0) {
-                StringBuffer rc = new StringBuffer();
+                StringBuilder rc = new StringBuilder();
                 boolean first=true;
                 for (Iterator iter = options.keySet().iterator(); iter.hasNext();) {
                     if( first )
