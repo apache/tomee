@@ -844,10 +844,26 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 ResourceAdapter resourceAdapter = (ResourceAdapter) object;
                 try {
                     logger.info("Stopping ResourceAdapter: " + binding.getName());
+
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Stopping ResourceAdapter: " + binding.getClassName());
+                    }
+
                     resourceAdapter.stop();
-                } catch (Exception e) {
-                    logger.fatal("ResourceAdapter Shutdown Failed: " + binding.getName(), e);
+                } catch (Throwable t) {
+                    logger.fatal("ResourceAdapter Shutdown Failed: " + binding.getName(), t);
                 }
+            } else if (object instanceof org.apache.commons.dbcp.BasicDataSource) {
+                logger.info("Closing DataSource: " + binding.getName());
+
+                try {
+                    ((org.apache.commons.dbcp.BasicDataSource) object).close();
+                } catch (Throwable t) {
+                    //Ignore
+                }
+
+            } else if (logger.isDebugEnabled()) {
+                logger.debug("Not processing resource on destroy: " + binding.getClassName());
             }
         }
 

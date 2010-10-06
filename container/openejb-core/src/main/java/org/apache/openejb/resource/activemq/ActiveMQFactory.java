@@ -29,42 +29,46 @@ public class ActiveMQFactory {
     private static final Method setThreadProperties;
     private static final Method createBroker;
     private static final Object instance;
-
-    private static Class clazz;
+    private static final Class clazz;
     private static String brokerPrefix;
+    private static BrokerService broker;
 
     static {
 
+        Class tmp = null;
+
         try {
-            clazz = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
+            tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
             brokerPrefix = "amq5factory:";
         } catch (java.lang.Throwable t1) {
             try {
-                clazz = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
+                tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
                 brokerPrefix = "amq4factory:";
             } catch (java.lang.Throwable t2) {
-                    throw new RuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
+                throw new RuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
             }
         }
+
+        clazz = tmp;
 
         try {
             instance = clazz.newInstance();
         } catch (InstantiationException e) {
-                throw new RuntimeException("Unable to create ActiveMQFactory instance", e);
+            throw new RuntimeException("Unable to create ActiveMQFactory instance", e);
         } catch (IllegalAccessException e) {
-                throw new RuntimeException("Unable to access ActiveMQFactory instance", e);
+            throw new RuntimeException("Unable to access ActiveMQFactory instance", e);
         }
 
         try {
             setThreadProperties = clazz.getDeclaredMethod("setThreadProperties", new Class[]{Properties.class});
         } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
+            throw new RuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
         }
 
         try {
             createBroker = clazz.getDeclaredMethod("createBroker", new Class[]{URI.class});
         } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
+            throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
         }
     }
 
@@ -92,7 +96,8 @@ public class ActiveMQFactory {
 
     public BrokerService createBroker(final URI brokerURI) throws Exception {
         try {
-            return (BrokerService) createBroker.invoke(instance, brokerURI);
+            broker = (BrokerService) createBroker.invoke(instance, brokerURI);
+            return broker;
         } catch (IllegalAccessException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
         } catch (IllegalArgumentException e) {
@@ -100,5 +105,14 @@ public class ActiveMQFactory {
         } catch (InvocationTargetException e) {
             throw new Exception("ActiveMQFactory.createBroker.InvocationTargetException", e);
         }
+    }
+
+    /**
+     * Returns either the configured broker, or null if it has not yet been created.
+     * This intended for access upon RA shutdown in order to wait for the broker to finish.
+     * @return BrokerService or null
+     */
+    public static BrokerService getBroker() {
+        return broker;
     }
 }
