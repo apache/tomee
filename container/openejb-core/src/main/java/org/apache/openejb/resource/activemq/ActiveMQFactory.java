@@ -22,16 +22,17 @@ import org.apache.activemq.broker.BrokerService;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Properties;
 
 public class ActiveMQFactory {
 
     private static final Method setThreadProperties;
     private static final Method createBroker;
+    private static final Method getBrokers;
     private static final Object instance;
     private static final Class clazz;
     private static String brokerPrefix;
-    private static BrokerService broker;
 
     static {
 
@@ -70,6 +71,12 @@ public class ActiveMQFactory {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
         }
+
+        try {
+            getBrokers = clazz.getDeclaredMethod("getBrokers", (Class[]) null);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
+        }
     }
 
     /**
@@ -96,8 +103,7 @@ public class ActiveMQFactory {
 
     public BrokerService createBroker(final URI brokerURI) throws Exception {
         try {
-            broker = (BrokerService) createBroker.invoke(instance, brokerURI);
-            return broker;
+            return (BrokerService) createBroker.invoke(instance, brokerURI);
         } catch (IllegalAccessException e) {
             throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
         } catch (IllegalArgumentException e) {
@@ -108,11 +114,19 @@ public class ActiveMQFactory {
     }
 
     /**
-     * Returns either the configured broker, or null if it has not yet been created.
-     * This intended for access upon RA shutdown in order to wait for the broker to finish.
-     * @return BrokerService or null
+     * Returns a map of configured brokers.
+     * This intended for access upon RA shutdown in order to wait for the brokers to finish.
+     * @return Map<URI, BrokerService>
      */
-    public static BrokerService getBroker() {
-        return broker;
+    public static Collection<BrokerService> getBrokers() throws Exception {
+        try {
+            return (Collection<BrokerService>) getBrokers.invoke(instance, (Object[]) null);
+        } catch (IllegalAccessException e) {
+            throw new Exception("ActiveMQFactory.createBroker.IllegalAccessException", e);
+        } catch (IllegalArgumentException e) {
+            throw new Exception("ActiveMQFactory.createBroker.IllegalArgumentException", e);
+        } catch (InvocationTargetException e) {
+            throw new Exception("ActiveMQFactory.createBroker.InvocationTargetException", e);
+        }
     }
 }

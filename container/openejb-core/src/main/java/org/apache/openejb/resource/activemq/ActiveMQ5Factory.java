@@ -30,14 +30,15 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
-    public static final String XBEAN = "xbean";
     private static final ThreadLocal<Properties> threadProperties = new ThreadLocal<Properties>();
-    private static BrokerService broker = null;
+    private static final Map<URI,BrokerService> brokers = new HashMap<URI, BrokerService>();
     private static Throwable throwable = null;
 
     public static void setThreadProperties(Properties value) {
@@ -45,106 +46,108 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     }
 
     @Override
-    public BrokerService createBroker(final URI brokerURI) throws Exception {
+    public synchronized BrokerService createBroker(final URI brokerURI) throws Exception {
 
-        final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
-        broker = BrokerFactory.createBroker(uri);
+        BrokerService broker = brokers.get(brokerURI);
 
-        if (!uri.getScheme().toLowerCase().startsWith(XBEAN)) {
-      
-            Properties properties = getLowerCaseProperties();
+        if (null == broker) {
 
-            Object value = properties.get("datasource");
-            if (value instanceof String && value.toString().length() == 0) {
-                value = null;
-            }
+            final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
+            broker = BrokerFactory.createBroker(uri);
+            brokers.put(brokerURI, broker);
 
-            if (value != null) {
-                DataSource dataSource;
-                if (value instanceof DataSource) {
-                    dataSource = (DataSource) value;
-                } else {
-                    String resouceId = (String) value;
+            if (!uri.getScheme().toLowerCase().startsWith("xbean")) {
 
-                    try {
-                        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                        Context context = containerSystem.getJNDIContext();
-                        Object obj = context.lookup("openejb/Resource/" + resouceId);
-                        if (!(obj instanceof DataSource)) {
-                            throw new IllegalArgumentException("Resource with id " + resouceId
-                                                               + " is not a DataSource, but is " + obj.getClass().getName());
-                        }
-                        dataSource = (DataSource) obj;
-                    } catch (NamingException e) {
-                        throw new IllegalArgumentException("Unknown datasource " + resouceId);
-                    }
+                Properties properties = getLowerCaseProperties();
+
+                Object value = properties.get("datasource");
+                if (value instanceof String && value.toString().length() == 0) {
+                    value = null;
                 }
 
-                JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
-
-                if (properties.containsKey("usedatabaselock")) {
-                    //This must be false for hsqldb
-                    persistenceAdapter.setUseDatabaseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
-                }
-
-                persistenceAdapter.setDataSource(dataSource);
-                broker.setPersistenceAdapter(persistenceAdapter);
-            } else {
-                MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
-                broker.setPersistenceAdapter(persistenceAdapter);
-            }            
-
-            try {
-                //TODO - New in 5.4.x
-                broker.setSchedulerSupport(false);
-            } catch (Throwable t) {
-                //Ignore
-            }
-
-            //Notify when an error occurs on shutdown.
-            broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").isErrorEnabled());
-        }
-
-        //We must close the broker
-        broker.setUseShutdownHook(false);
-        broker.setSystemExitOnShutdown(false);
-
-        if (!broker.isStarted()) {
-
-            final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
-
-                @Override
-                public void run() {
-                    try {
-                        //Start before returning - this is known to be safe.
-                        broker.start();
+                if (value != null) {
+                    DataSource dataSource;
+                    if (value instanceof DataSource) {
+                        dataSource = (DataSource) value;
+                    } else {
+                        String resouceId = (String) value;
 
                         try {
-                            //This is no longer available from AMQ5.4
-                            broker.waitUntilStarted();
-                        } catch (Throwable t) {
-                            org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("ActiveMQ waitUntilStarted failed", t);
+                            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+                            Context context = containerSystem.getJNDIContext();
+                            Object obj = context.lookup("openejb/Resource/" + resouceId);
+                            if (!(obj instanceof DataSource)) {
+                                throw new IllegalArgumentException("Resource with id " + resouceId
+                                                                   + " is not a DataSource, but is " + obj.getClass().getName());
+                            }
+                            dataSource = (DataSource) obj;
+                        } catch (NamingException e) {
+                            throw new IllegalArgumentException("Unknown datasource " + resouceId);
                         }
-
-                        //Force a checkpoint to initialize pools
-                        broker.getPersistenceAdapter().checkpoint(true);
-                    } catch (Throwable t) {
-                        throwable = t;
                     }
+
+                    JDBCPersistenceAdapter persistenceAdapter = new JDBCPersistenceAdapter();
+
+                    if (properties.containsKey("usedatabaselock")) {
+                        //This must be false for hsqldb
+                        persistenceAdapter.setUseDatabaseLock(Boolean.parseBoolean(properties.getProperty("usedatabaselock", "true")));
+                    }
+
+                    persistenceAdapter.setDataSource(dataSource);
+                    broker.setPersistenceAdapter(persistenceAdapter);
+                } else {
+                    MemoryPersistenceAdapter persistenceAdapter = new MemoryPersistenceAdapter();
+                    broker.setPersistenceAdapter(persistenceAdapter);
                 }
-            };
 
-            start.setDaemon(true);
-            start.start();
+                try {
+                    //TODO - New in 5.4.x
+                    broker.setSchedulerSupport(false);
+                } catch (Throwable t) {
+                    //Ignore
+                }
 
-            try {
-                start.join(5000);
-            } catch (InterruptedException e) {
-                //Ignore
+                //Notify when an error occurs on shutdown.
+                broker.setUseLoggingForShutdownErrors(org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").isErrorEnabled());
             }
 
-            if (null != throwable) {
-                org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ failed to start within 5 seconds - It may not be usable", throwable);
+            //We must close the broker
+            broker.setUseShutdownHook(false);
+            broker.setSystemExitOnShutdown(false);
+
+            if (!broker.isStarted()) {
+
+                final BrokerService bs = broker;
+
+                final Thread start = new Thread("ActiveMQFactory start and checkpoint") {
+
+                    @Override
+                    public void run() {
+                        try {
+                            //Start before returning - this is known to be safe.
+                            bs.start();
+                            bs.waitUntilStarted();
+
+                            //Force a checkpoint to initialize pools
+                            bs.getPersistenceAdapter().checkpoint(true);
+                        } catch (Throwable t) {
+                            throwable = t;
+                        }
+                    }
+                };
+
+                start.setDaemon(true);
+                start.start();
+
+                try {
+                    start.join(5000);
+                } catch (InterruptedException e) {
+                    //Ignore
+                }
+
+                if (null != throwable) {
+                    org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").error("ActiveMQ failed to start within 5 seconds - It may not be usable", throwable);
+                }
             }
         }
 
@@ -165,5 +168,9 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             }
         }
         return newProperties;
+    }
+
+    public Collection<BrokerService> getBrokers() {
+        return brokers.values();
     }
 }
