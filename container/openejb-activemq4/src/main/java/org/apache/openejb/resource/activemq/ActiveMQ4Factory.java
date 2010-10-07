@@ -49,7 +49,7 @@ public class ActiveMQ4Factory implements BrokerFactory.BrokerFactoryHandler {
 
         BrokerService broker = brokers.get(brokerURI);
 
-        if (null == broker) {
+        if (null == broker || !broker.isStarted()) {
 
             URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
             broker = BrokerFactory.createBroker(uri);

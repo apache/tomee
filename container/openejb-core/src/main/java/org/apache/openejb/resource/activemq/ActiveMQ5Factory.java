@@ -50,7 +50,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
 
         BrokerService broker = brokers.get(brokerURI);
 
-        if (null == broker) {
+        if (null == broker || !broker.isStarted()) {
 
             final URI uri = new URI(brokerURI.getRawSchemeSpecificPart());
             broker = BrokerFactory.createBroker(uri);
