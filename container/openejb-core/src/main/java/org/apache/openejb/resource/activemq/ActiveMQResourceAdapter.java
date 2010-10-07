@@ -24,6 +24,7 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Properties;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.openejb.util.LogCategory;
@@ -197,12 +198,16 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         final Collection<BrokerService> brokers = ActiveMQFactory.getBrokers();
 
-        for(final BrokerService bs : brokers){
+        final Iterator<BrokerService> it = brokers.iterator();
+
+        while(it.hasNext()){
             try {
-                bs.waitUntilStopped();
+                it.next().waitUntilStopped();
             } catch (Throwable t) {
                 //Ignore
             }
+
+            it.remove();
         }
 
         org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped ActiveMQ");
