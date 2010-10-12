@@ -55,6 +55,10 @@ import javax.resource.spi.UnavailableException;
 import javax.resource.ResourceException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.naming.NamingException;
+import javax.validation.ConstraintViolation; 
+import javax.validation.ConstraintViolationException; 
+import javax.validation.Validator; 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.management.ManagementFactory;
@@ -218,6 +222,17 @@ public class MdbContainer implements RpcContainer {
                 activationSpec.validate();
             } catch (UnsupportedOperationException uoe) {
                 logger.info("ActivationSpec does not support validate. Implementation of validate is optional");
+            }
+            // also try validating using Bean Validation if there is a Validator available in the context.
+            try {
+                Validator validator = (Validator)beanContext.getJndiContext().lookup("comp/Validator");
+
+                Set generalSet = validator.validate(activationSpec);
+                if (!generalSet.isEmpty()) {
+                    throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet); 
+                }
+            } catch (NamingException e) {
+                logger.debug("No Validator bound to JNDI context");
             }
 
 
