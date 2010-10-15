@@ -378,32 +378,14 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static boolean isEmptyEjbJar(URL url) throws IOException, ParserConfigurationException, SAXException {
-        final LengthInputStream in = new LengthInputStream(url.openStream());
-        InputSource inputSource = new InputSource(in);
-
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
-
-        try {
-            parser.parse(inputSource, new DefaultHandler(){
-                public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
-                    if (!localName.equals("ejb-jar")) throw new SAXException(localName);
-                }
-
-                public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
-                    return new InputSource(new ByteArrayInputStream(new byte[0]));
-                }
-            });
-            return true;
-        } catch (SAXException e) {
-            return in.getLength() == 0;
-        }
+        return isEmpty(url, "ejb-jar");
     }
 
     private static boolean isEmptyBeansXml(URL url) throws IOException, ParserConfigurationException, SAXException {
+        return isEmpty(url, "beans");
+    }
 
+    private static boolean isEmpty(URL url, final String rootElement) throws IOException, ParserConfigurationException, SAXException {
         final LengthInputStream in = new LengthInputStream(url.openStream());
         InputSource inputSource = new InputSource(in);
 
@@ -415,7 +397,7 @@ public class ReadDescriptors implements DynamicDeployer {
         try {
             parser.parse(inputSource, new DefaultHandler(){
                 public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
-                    if (!localName.equals("beans")) throw new SAXException(localName);
+                    if (!localName.equals(rootElement)) throw new SAXException(localName);
                 }
 
                 public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {

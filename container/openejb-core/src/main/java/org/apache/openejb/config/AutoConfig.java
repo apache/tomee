@@ -236,6 +236,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         if (unit != null){
+            ref.setPersistenceUnitName(unit.getName());
             ref.setMappedName(unit.getId());
         } else {
 
