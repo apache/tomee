@@ -34,7 +34,9 @@ import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
@@ -85,7 +87,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, Connector.class, Beans.class, Application.class};
+        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class};
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -158,7 +160,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 final EjbJar ejbJar = new EjbJar();
                 final OpenejbJar openejbJar = new OpenejbJar();
                 final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(javaClass));
-
+                bean.setTransactionType(TransactionType.BEAN);
                 final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
                 ejbDeployment.setDeploymentId(javaClass.getName());
 
@@ -197,6 +199,11 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                     final Persistence persistence = (Persistence) obj;
                     appModule.getPersistenceModules().add(new PersistenceModule("", persistence));
+
+                } else if (obj instanceof PersistenceUnit) {
+
+                    final PersistenceUnit unit = (PersistenceUnit) obj;
+                    appModule.getPersistenceModules().add(new PersistenceModule("", new Persistence(unit)));
 
                 } else if (obj instanceof Beans) {
 
