@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.monitoring;
 
-import org.apache.commons.math.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.api.Monitor;
 import org.apache.openejb.core.interceptor.InterceptorData;
