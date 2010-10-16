@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.openejb.server.ServiceException;
@@ -77,6 +78,7 @@ public class MulticastDiscoveryAgentTest extends TestCase {
 
     private MulticastDiscoveryAgent agent(String id) throws IOException, URISyntaxException, ServiceException {
         MulticastDiscoveryAgent agent = new MulticastDiscoveryAgent();
+        agent.init(new Properties());
         agent.setDiscoveryListener(new MyDiscoveryListener(id));
         agent.registerService(new URI("ejbd://"+id+":4201"));
         agent.start();
