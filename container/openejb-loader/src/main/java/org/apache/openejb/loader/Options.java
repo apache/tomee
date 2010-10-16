@@ -20,11 +20,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Collections;
+import java.lang.reflect.Constructor;
 
 /**
  * The purpose of this class is to provide a more strongly typed version of a
@@ -65,7 +65,7 @@ import java.util.Collections;
  * Additionally TRUE is an alias for ALL and FALSE an alias for NONE.  This allows options
  * that used to support only true/false values to be further defined in the future without
  * breaking compatibility.
- * 
+ *
  * @version $Rev$ $Date$
  */
 public class Options {
@@ -80,6 +80,10 @@ public class Options {
     public Options(Properties properties, Options parent) {
         this.parent = parent;
         this.properties = properties;
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public void setLogger(Log logger) {
@@ -100,10 +104,29 @@ public class Options {
         return value != null ? log(property, value) : parent.get(property, defaultValue);
     }
 
+    public <T> T get(String property, T defaultValue) {
+        if (defaultValue == null) throw new NullPointerException("defaultValue");
+
+        String value = properties.getProperty(property);
+
+        if (value == null || value.equals("")) return parent.get(property, defaultValue);
+
+        try {
+            Class<?> type = defaultValue.getClass();
+            Constructor<?> constructor = type.getConstructor(String.class);
+            T t = (T) constructor.newInstance(value);
+            return log(property, t);
+        } catch (Exception e) {
+            e.printStackTrace();
+            warn(property, value, e);
+            return parent.get(property, defaultValue);
+        }
+    }
+
     public int get(String property, int defaultValue) {
         String value = properties.getProperty(property);
 
-        if (value == null) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) return parent.get(property, defaultValue);
 
         try {
             return log(property, Integer.parseInt(value));
@@ -116,7 +139,7 @@ public class Options {
     public long get(String property, long defaultValue) {
         String value = properties.getProperty(property);
 
-        if (value == null) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) return parent.get(property, defaultValue);
 
         try {
             return log(property, Long.parseLong(value));
@@ -129,7 +152,7 @@ public class Options {
     public boolean get(String property, boolean defaultValue) {
         String value = properties.getProperty(property);
 
-        if (value == null) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) return parent.get(property, defaultValue);
 
         try {
             return log(property, Boolean.parseBoolean(value));
@@ -156,7 +179,7 @@ public class Options {
     public <T extends Enum<T>> T get(String property, T defaultValue) {
         String value = properties.getProperty(property);
 
-        if (value == null) return parent.get(property, defaultValue);
+        if (value == null || value.equals("")) return parent.get(property, defaultValue);
 
         if (defaultValue == null) throw new IllegalArgumentException("Must supply a default for property " + property);
 
@@ -194,7 +217,7 @@ public class Options {
     protected <T extends Enum<T>> Set<T> getAll(String property, Set<T> defaultValue, Class<T> enumType) {
         String value = properties.getProperty(property);
 
-        if (value == null) return parent.getAll(property, defaultValue, enumType);
+        if (value == null || value.equals("")) return parent.getAll(property, defaultValue, enumType);
 
         // Shorthand for specifying ALL or NONE for any option
         // that allows for multiple values of the enum
@@ -239,7 +262,7 @@ public class Options {
         T value = map.get(name.toUpperCase());
 
         // Call Enum.valueOf for the clean exception
-        if (value == null) Enum.valueOf(enumType, name);
+        if (value == null || value.equals("")) Enum.valueOf(enumType, name);
 
         return value;
     }
@@ -331,6 +354,11 @@ public class Options {
         @Override
         public boolean has(String property) {
             return false;
+        }
+
+        @Override
+        public <T> T get(String property, T defaultValue) {
+            return log(property, defaultValue);
         }
 
         @Override
