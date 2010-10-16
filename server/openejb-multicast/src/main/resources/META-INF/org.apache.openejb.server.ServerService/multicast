@@ -2,3 +2,8 @@ server      = org.apache.openejb.server.discovery.MulticastDiscoveryAgent
 bind        = 239.255.2.3
 port        = 6142
 disabled    = true
+
+group                  = default
+heart_rate             = 500
+loopback_mode          = false
+max_missed_heartbeats  = 10
