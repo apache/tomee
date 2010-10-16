@@ -41,7 +41,7 @@ import org.apache.xbean.recipe.Option;
  */
 public abstract class ServiceManager {
 
-    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER, "org.apache.openejb.server.util.resources");
 
     private static ServiceManager manager;
 
@@ -111,7 +111,14 @@ public abstract class ServiceManager {
 
             Class serviceClass = (Class) serviceProperties.get(ServerService.class);
 
-            logger.debug("Creating ServerService(id=" + serviceName + ")");
+            logger.info("Creating ServerService(id=" + serviceName + ")");
+
+            // log all properties on debug
+            if (logger.isDebugEnabled()){
+                for (Map.Entry<Object, Object> entry : serviceProperties.entrySet()) {
+                    logger.debug(entry.getKey() +" = "+ entry.getValue());
+                }
+            }
 
             try {
                 // Create Service
