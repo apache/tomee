@@ -658,6 +658,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         Container container = deployment.getContainer();
                         container.deploy(deployment);
                         logger.info("createApplication.createdEjb", deployment.getDeploymentID(), deployment.getEjbName(), container.getContainerID());
+                        if (logger.isDebugEnabled()) {
+                            for (Map.Entry<Object, Object> entry : deployment.getProperties().entrySet()) {
+                                logger.info("createApplication.createdEjb.property", deployment.getEjbName(), entry.getKey(), entry.getValue());
+                            }
+                        }
                     } catch (Throwable t) {
                         throw new OpenEJBException("Error deploying '"+deployment.getEjbName()+"'.  Exception: "+t.getClass()+": "+t.getMessage(), t);
                     }

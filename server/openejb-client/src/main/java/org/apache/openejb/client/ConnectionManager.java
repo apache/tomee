@@ -19,9 +19,12 @@ package org.apache.openejb.client;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class ConnectionManager {
 
+    private static final Logger logger = Logger.getLogger("OpenEJB.client");
+    
     private static Registry<ConnectionFactory> factories = Registry.create(ConnectionFactory.class);
     private static Registry<ConnectionStrategy> strategies = Registry.create(ConnectionStrategy.class);
 
@@ -61,7 +64,7 @@ public class ConnectionManager {
 
         if (strategy == null) throw new IOException("Unsupported ConnectionStrategy  \"" + name + "\"");
 
-
+        logger.fine("connect: strategy=" + name + ", uri=" + server.getLocation() + ", strategy-impl=" + strategy.getClass().getName());
         return strategy.connect(cluster, server);
     }
 
@@ -72,6 +75,7 @@ public class ConnectionManager {
 
         if (factory == null) throw new IOException("Unsupported ConnectionFactory URI scheme  \"" + scheme + "\"");
 
+        logger.fine("connect: scheme=" + scheme + ", uri=" + uri + ", factory-impl=" + factory.getClass().getName());
         return factory.getConnection(uri);
     }
 
