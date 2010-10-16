@@ -50,6 +50,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -175,7 +176,31 @@ public class StatelessPoolStatsTest extends TestCase {
         List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
         actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));
         assertEquals(expectedOperations, actualOperations);
+    }
 
+    public static void assertEquals(List<?> expectedList, List<?> actualList) {
+        final Iterator<?> expected = expectedList.iterator();
+        final Iterator<?> actual = actualList.iterator();
+
+        while(expected.hasNext() && actual.hasNext()) {
+            assertEquals(expected.next(), actual.next());
+        }
+
+        assertEquals(expected.hasNext(), actual.hasNext());
+    }
+
+    public static void assertEquals(Map<?,?> expectedMap, Map<?,?> actualMap) {
+        final Iterator<? extends Map.Entry<?, ?>> expectedIt = expectedMap.entrySet().iterator();
+        final Iterator<? extends Map.Entry<?, ?>> actualIt = actualMap.entrySet().iterator();
+
+        while (expectedIt.hasNext() && actualIt.hasNext()) {
+            final Map.Entry<?, ?> expected = expectedIt.next();
+            final Map.Entry<?, ?> actual = actualIt.next();
+            assertEquals("key", expected.getKey(), actual.getKey());
+            assertEquals(expected.getKey().toString(), expected.getValue(), actual.getValue());
+        }
+
+        assertEquals(expectedIt.hasNext(), actualIt.hasNext());
     }
 
     /**
