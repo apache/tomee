@@ -1053,12 +1053,21 @@ public class AnnotationDeployer implements DynamicDeployer {
             EnterpriseBean[] enterpriseBeans = ejbModule.getEjbJar().getEnterpriseBeans();
             for (EnterpriseBean bean : enterpriseBeans) {
                 final String ejbName = bean.getEjbName();
+                final String ejbClassName = bean.getEjbClass();
 
+                if (ejbClassName == null) {
+                    List<String> others = new ArrayList<String>();
+                    for (EnterpriseBean otherBean : enterpriseBeans) {
+                        others.add(otherBean.getEjbName());
+                    }
+                    fail(ejbName, "xml.noEjbClass", ejbName, join(", ", others));
+                }
+                
                 Class<?> clazz;
                 try {
-                    clazz = classLoader.loadClass(bean.getEjbClass());
+                    clazz = classLoader.loadClass(ejbClassName);
                 } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Unable to load bean class: " + bean.getEjbClass(), e);
+                    throw new OpenEJBException("Unable to load bean class: " + ejbClassName, e);
                 }
                 ClassFinder classFinder = new ClassFinder(clazz);
 

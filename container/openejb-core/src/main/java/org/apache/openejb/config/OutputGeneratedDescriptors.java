@@ -38,7 +38,7 @@ import java.io.IOException;
 
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
-    private static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
+    public static final String OUTPUT_DESCRIPTORS = "openejb.descriptors.output";
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         boolean output = SystemInstance.get().getOptions().get(OUTPUT_DESCRIPTORS, false);
@@ -51,7 +51,12 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             Options options = new Options(ejbModule.getOpenejbJar().getProperties(), SystemInstance.get().getOptions());
 
-            output = options.get(OUTPUT_DESCRIPTORS, false);
+            final ValidationContext context = ejbModule.getValidation();
+
+            // output descriptors by default if there are validation errors
+            final boolean invalid = context.hasErrors() || context.hasFailures();
+
+            output = options.get(OUTPUT_DESCRIPTORS, invalid);
 
             if (output){
                 if (ejbModule.getEjbJar() != null) {
