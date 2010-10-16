@@ -270,8 +270,19 @@
     # machine as per the rules of java.lang.ref.SoftReference and can be
     # claimed by the JVM to free memory.  Instances garbage collected
     # will have their @PreDestroy methods called during finalization.
-
-    GarbageCollection = true
+    #
+    # In the OpenJDK VM the -XX:SoftRefLRUPolicyMSPerMB flag can adjust
+    # how aggressively SoftReferences are collected.  The default
+    # OpenJDK setting is 1000, resulting in inactive pooled instances
+    # living one second of lifetime per free megabyte in the heap, which
+    # is very aggressive.  The setting should be increased to get the
+    # most out of the GarbageCollection feature of the pool.  Much
+    # higher settings are safe.  Even a setting as high as 3600000 (1
+    # hour per free MB in the heap) does not affect the ability for the
+    # VM to garbage collect SoftReferences in the event that memory is
+    # needed to avoid an OutOfMemoryException.
+    
+    GarbageCollection = false
 
     # The frequency in which the container will sweep the pool and
     # evict expired instances.  Eviction is how the IdleTimeout,
