@@ -70,6 +70,7 @@ public class ServiceDaemon implements ServerService {
     private boolean secure;
     private StringTemplate discoveryUriFormat;
     private URI uri;
+    private Properties props;
 
     public ServiceDaemon(ServerService next) {
         this.next = next;
@@ -112,6 +113,8 @@ public class ServiceDaemon implements ServerService {
 
     public void init(Properties props) throws Exception {
 
+        this.props = props;
+        
         String formatString = props.getProperty("discovery");
         if (formatString != null){
             discoveryUriFormat = new StringTemplate(formatString);
@@ -171,9 +174,26 @@ public class ServiceDaemon implements ServerService {
             DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
             if (agent != null && discoveryUriFormat != null) {
                 Map<String,String> map = new HashMap<String,String>();
+
+                // add all the properties that were used to construct this service
+                for (Map.Entry<Object, Object> entry : props.entrySet()) {
+                    map.put(entry.getKey().toString(), entry.getValue().toString());
+                }
+
                 map.put("port", Integer.toString(port));
-                map.put("host", ip);
-                map.put("bind", ip);
+
+                String address = ip;
+
+                if ("0.0.0.0".equals(address)) {
+                    try {
+                        address = InetAddress.getLocalHost().getHostAddress();
+                    } catch (UnknownHostException e) {
+                        log.error("Failed to resolve 0.0.0.0 to a routable address", e);
+                    }
+                }
+
+                map.put("host", address);
+                map.put("bind", address);
                 String uriString = discoveryUriFormat.apply(map);
                 try {
                     uri = new URI(uriString);
