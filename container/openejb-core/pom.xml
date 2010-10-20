@@ -407,7 +407,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-ejb-common</artifactId>
+      <artifactId>openwebbeans-ejb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
