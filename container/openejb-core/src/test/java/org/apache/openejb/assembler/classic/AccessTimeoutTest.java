@@ -17,6 +17,8 @@
 package org.apache.openejb.assembler.classic;
 
 import junit.framework.TestCase;
+import org.apache.openejb.cdi.ThreadSingletonService;
+import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.jee.EjbJar;
@@ -46,6 +48,8 @@ public class AccessTimeoutTest extends TestCase {
         assembler.createProxyFactory(config.configureService(ProxyFactoryInfo.class));
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
         assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+        //TODO alternative to hack in CidBuilder to initialize if missing
+//        SystemInstance.get().setComponent(ThreadSingletonService.class, new ThreadSingletonServiceImpl(getClass().getClassLoader()));
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new SingletonBean(Color.class));
