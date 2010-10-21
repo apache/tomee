@@ -196,7 +196,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     @Override
     public boolean isSessionBean(Class<?> clazz) {
-        return beans.contains(clazz);
+        //this may be called from a web app without ejbs in which case beans will not have been initialized by openejb.
+        return beans != null && beans.contains(clazz);
     }
 
     @Override

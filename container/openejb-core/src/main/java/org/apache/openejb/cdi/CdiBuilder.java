@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -64,6 +65,17 @@ public class CdiBuilder {
         this.appInfo = appInfo;
         this.appContext = appContext;
         classLoader = appContext.getClassLoader();
+        //initialize owb context, cf geronimo's OpenWebBeansGBean
+        OWBContext owbContext = new OWBContext();
+        appContext.set(OWBContext.class, owbContext);
+        ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
+        //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would 
+        //presumably have to be replicated in about 70 other tests.
+        if (singletonService == null) {
+            singletonService = new ThreadSingletonServiceImpl(getClass().getClassLoader());
+            SystemInstance.get().setComponent(ThreadSingletonService.class, singletonService);
+        }
+        singletonService.initialize(owbContext);
     }
 
     private static void deployManagedBeans(Set<Class<?>> beanClasses) {
@@ -86,9 +98,10 @@ public class CdiBuilder {
     }
 
     public void build(List<BeanContext> ejbDeployments) throws OpenEJBException {
-
         long startTime = System.currentTimeMillis();
         final ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+        ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
+        Object oldOWBContext = singletonService.contextEntered(appContext.get(OWBContext.class));
         try {
             //Set classloader
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -219,6 +232,7 @@ public class CdiBuilder {
             throw new OpenEJBException(errorMessage, e);
         } finally {
             Thread.currentThread().setContextClassLoader(oldCL);
+            singletonService.contextExited(oldOWBContext);
         }
     }
 

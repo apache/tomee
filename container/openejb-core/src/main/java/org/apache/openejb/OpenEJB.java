@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import javax.transaction.*;
 
+import org.apache.openejb.cdi.ThreadSingletonService;
+import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.Assembler;
@@ -84,6 +86,8 @@ public final class OpenEJB {
             SystemInstance system = SystemInstance.get();
 
             system.setComponent(ApplicationServer.class, appServer);
+            //OWB support.  The classloader has to be able to load all OWB components including the ones supplied by OpenEjb.
+            system.setComponent(ThreadSingletonService.class, new ThreadSingletonServiceImpl(getClass().getClassLoader()));
 
             OpenEjbVersion versionInfo = OpenEjbVersion.get();
             if (system.getOptions().get("openejb.nobanner", true)) {
