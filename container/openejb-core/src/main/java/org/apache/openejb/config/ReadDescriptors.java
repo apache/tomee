@@ -38,6 +38,7 @@ import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.URLs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -97,17 +98,16 @@ public class ReadDescriptors implements DynamicDeployer {
         List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
         if (persistenceUrls != null) {
             for (URL persistenceUrl : persistenceUrls) {
-                String moduleName = persistenceUrl.toExternalForm().replaceFirst("!/?META-INF/.*persistence.xml$", "");
-                moduleName = moduleName.replaceFirst("/?META-INF/.*persistence.xml$", "/");
-                if (moduleName.startsWith("jar:")) moduleName = moduleName.substring("jar:".length());
-                if (moduleName.startsWith("file:")) moduleName = moduleName.substring("file:".length());
-//                if (moduleName1.endsWith("/")) moduleName1 = moduleName1.substring(0, moduleName1.length() - 1);
+
+                final String path = URLs.toFilePath(persistenceUrl);
+                String moduleName = path.replaceFirst("/?META-INF/.*persistence.xml$", "/");
+
                 try {
                     Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
                     PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if ("file".equals(persistenceUrl.getProtocol())) {
-                        persistenceModule.getWatchedResources().add(toFilePath(persistenceUrl));
+                        persistenceModule.getWatchedResources().add(path);
                     }
                     appModule.getPersistenceModules().add(persistenceModule);
                 } catch (Exception e1) {
