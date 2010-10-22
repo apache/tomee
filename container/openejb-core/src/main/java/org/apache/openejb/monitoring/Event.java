@@ -52,4 +52,9 @@ public class Event {
         DateFormat format = SimpleDateFormat.getDateTimeInstance();
         return format.format(new Date(last));
     }
+
+    @Managed
+    public long getLatestTime() {
+        return this.last.get();
+    }
 }

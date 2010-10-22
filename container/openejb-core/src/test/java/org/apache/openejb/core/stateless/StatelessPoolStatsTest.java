@@ -31,7 +31,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
 import javax.ejb.SessionContext;
-import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.ConcurrentAccessException;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -87,19 +86,25 @@ public class StatelessPoolStatsTest extends TestCase {
         List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Aged", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Aged.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Aged.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AvailablePermits", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Flushed", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Flushed.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushed.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Flushes", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Flushes.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Flushes.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("GarbageCollected", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("GarbageCollected.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("GarbageCollected.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("GarbageCollection", "boolean", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("IdleTimeout", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("IdleTimeouts.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesActive", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesIdle", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InstancesInitializing", "int", "", true, false, false));
@@ -111,15 +116,18 @@ public class StatelessPoolStatsTest extends TestCase {
         expectedAttributes.add(new MBeanAttributeInfo("MinimumInstances", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Overdrafts", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Overdrafts.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Overdrafts.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("PoolVersion", "int", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("ReplaceAged", "boolean", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("ReplaceFlushed", "boolean", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Replaced", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Replaced.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Replaced.LatestTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("StrictPooling", "boolean", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("SweepInterval", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Sweeps", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("Sweeps.Latest", "java.lang.String", "", true, false, false));
+        expectedAttributes.add(new MBeanAttributeInfo("Sweeps.LatestTime", "long", "", true, false, false));
 
 
         // The hardest part, check the values of each, PoolVersion is AtomicaInteger, *.Latest are time-sensitive, so not verified.
@@ -130,7 +138,7 @@ public class StatelessPoolStatsTest extends TestCase {
         expectedAttributesValue.put("Flushed", (long) 0);
         expectedAttributesValue.put("Flushes", (long) 0);
         expectedAttributesValue.put("GarbageCollected", (long) 0);
-        expectedAttributesValue.put("GarbageCollection", true);
+        expectedAttributesValue.put("GarbageCollection", false);
         expectedAttributesValue.put("IdleTimeout", (long) 0);
         expectedAttributesValue.put("IdleTimeouts", (long) 0);
         expectedAttributesValue.put("InstancesPooled", (int) 3);
@@ -155,7 +163,7 @@ public class StatelessPoolStatsTest extends TestCase {
         Map<String, Object> actualAttributesValue = new HashMap<String, Object>();
         for (MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
             actualAttributes.add(info);
-            if (!info.getName().endsWith(".Latest")) {
+            if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")) {
                 actualAttributesValue.put(info.getName(), server.getAttribute(objectName, info.getName()));
             }
         }
@@ -479,19 +487,26 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
     	Properties properties = new Properties();
-    	properties.setProperty("SweepInterval", "1");
+    	properties.setProperty("SweepInterval", "100");
+
+        Date expectedDate = new Date(); // now
 
         deploy("testSweeps", properties);
 
-        assertTrue((Long)(server.getAttribute(objectName, "Sweeps")) >= 1L);
+        Thread.sleep(200);
 
-        //Get current time
-        DateFormat dateFormatter = SimpleDateFormat.getDateTimeInstance();
+        final Long sweeps = (Long) (server.getAttribute(objectName, "Sweeps"));
+        assertTrue("sweeps=" + sweeps, sweeps >= 1L);
 
-        Date expected = new Date(System.currentTimeMillis() - 1 * 60 * 1000L);
+        final Object attribute = server.getAttribute(objectName, "Sweeps.LatestTime");
+        final Date actualDate = new Date((Long)attribute);
 
-        final String latest = (String) (server.getAttribute(objectName, "Sweeps.Latest"));
-        assertTrue(dateFormatter.parse(latest).after(expected));
+        final String message = display("actual", actualDate) + " after " + display("expected", expectedDate);
+        assertTrue(message, actualDate.after(expectedDate));
+    }
+
+    private String display(String name, Date date) {
+        return name + "=" + date.getTime();
     }
 
     /**
