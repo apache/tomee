@@ -220,24 +220,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     }
 
     private URL toUrl(File root) throws MalformedURLException {
-        URL url = root.toURI().toURL();
-
-        try {
-            url.toURI();
-        } catch (URISyntaxException e) {
-            // Likely has spaces in it.
-            try {
-                String s = url.toExternalForm();
-                URL fixed = new URL(s.replaceAll(" ", "%20"));
-                fixed.toURI();
-                url = fixed;
-            } catch (MalformedURLException e1) {
-            } catch (URISyntaxException e1) {
-                // oh well, we tried.
-            }
-        }
-
-        return url;
+        return root.toURI().toURL();
     }
 
     public List<String> getManagedClassNames() {
