@@ -75,6 +75,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "exceptionHandlerFactory",
         "externalContextFactory",
     "facesContextFactory",
+    "partialViewContextFactory",
     "lifecycleFactory",
         "viewDeclarationLanguageFactory",
         "tagHandlerDelegateFactory",
@@ -92,6 +93,8 @@ public class FacesFactory {
     protected List<java.lang.String> externalContextFactory;
     @XmlElement(name = "faces-context-factory")
     protected List<java.lang.String> facesContextFactory;
+    @XmlElement(name = "partial-view-context-factory")
+    protected List<java.lang.String> partialViewContextFactory;    
     @XmlElement(name = "lifecycle-factory")
     protected List<java.lang.String> lifecycleFactory;
     @XmlElement(name = "view-declaration-language-factory")
@@ -218,6 +221,13 @@ public class FacesFactory {
         return viewDeclarationLanguageFactory;
     }
 
+    public List<String> getPartialViewContextFactory() {
+        if (partialViewContextFactory == null) {
+            partialViewContextFactory = new ArrayList<String>();
+        }
+        return partialViewContextFactory;
+    }
+    
     public List<String> getTagHandlerDelegateFactory() {
         if (tagHandlerDelegateFactory == null) {
             tagHandlerDelegateFactory = new ArrayList<String>();
