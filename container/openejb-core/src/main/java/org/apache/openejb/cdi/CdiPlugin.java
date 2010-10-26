@@ -69,7 +69,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     @Override
     public void shutDown() throws Exception {
         super.shutDown();
-        this.beans.clear();
+        //this plugin may have been installed in a non-ejb lifecycle???
+        if (beans != null) {
+            this.beans.clear();
+        }
     }
 
     public void setAppContext(AppContext appContext) {
