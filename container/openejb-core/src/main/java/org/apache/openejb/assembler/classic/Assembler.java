@@ -56,7 +56,6 @@ import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
-
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.AppContext;
@@ -647,8 +646,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             allDeployments = sort(allDeployments);
 
-            CdiBuilder cdiBuilder = new CdiBuilder(appInfo, appContext);
-            cdiBuilder.build(allDeployments);
+            new CdiBuilder().build(appInfo, appContext, allDeployments);
 
             // now that everything is configured, deploy to the container
             if (start) {

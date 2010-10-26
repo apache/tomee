@@ -20,17 +20,35 @@
 
 package org.apache.openejb.cdi;
 
-import java.util.Map;
+import java.util.List;
 
 import org.apache.openejb.AppContext;
-import org.apache.webbeans.spi.SingletonService;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.assembler.classic.AppInfo;
 
 /**
  * @version $Rev:$ $Date:$
  */
-public interface ThreadSingletonService extends SingletonService {
-    void initialize(StartupObject startupObject);
-    Object contextEntered(OWBContext newOWBContext);
-    void contextExited(Object oldOWBContext);
-    
+public class StartupObject {
+    private final AppInfo appInfo;
+    private final AppContext appContext;
+    private final List<BeanContext> beanContexts;
+
+    public StartupObject(AppContext appContext, AppInfo appInfo, List<BeanContext> beanContexts) {
+        this.appContext = appContext;
+        this.appInfo = appInfo;
+        this.beanContexts = beanContexts;
+    }
+
+    public AppContext getAppContext() {
+        return appContext;
+    }
+
+    public AppInfo getAppInfo() {
+        return appInfo;
+    }
+
+    public List<BeanContext> getBeanContexts() {
+        return beanContexts;
+    }
 }

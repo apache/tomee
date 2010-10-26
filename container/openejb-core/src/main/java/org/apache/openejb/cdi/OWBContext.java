@@ -28,9 +28,14 @@ import java.util.Map;
  */
 public class OWBContext {
 
-    private final Map<String, Object> singletons = new HashMap<String, Object>();
+    private final Map<String, Object> singletons;
 
     public OWBContext() {
+        singletons = new HashMap<String, Object>();
+    }
+
+    public OWBContext(Map<String, Object> singletons) {
+        this.singletons = singletons;
     }
 
     public Map<String, Object> getSingletons() {

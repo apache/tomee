@@ -23,7 +23,6 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ModuleContext;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.loader.SystemInstance;
