@@ -22,6 +22,7 @@ package org.apache.openejb.cdi;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -90,7 +91,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         this.beanManager = (BeanManagerImpl) WebBeansFinder.getSingletonInstance(BeanManagerImpl.class.getName());
         this.xmlDeployer = new WebBeansXMLConfigurator();
-        this.deployer = new BeansDeployer();
+        this.deployer = new BeansDeployer(this.xmlDeployer);
         this.jndiService = ServiceLoader.getService(JNDIService.class);
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = ServiceLoader.getService(ScannerService.class);
@@ -144,7 +145,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             this.contextsService.init(startupObject);
 
             //Fire Event
-            BeansDeployer.fireBeforeBeanDiscoveryEvent(beanManager);
+            deployer.fireBeforeBeanDiscoveryEvent();
 
             //Scanning process
             logger.debug("Scanning classpaths for beans artifacts.");
@@ -160,14 +161,17 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             // TODO Maybe we should build injections after the bean discovery
             injectionService.buildInjections(scannerService.getBeanClasses());
 
+            //Deploy bean from XML. Also configures deployments, interceptors, decorators.
+            deployer.deployFromXML(scannerService);
+
             //Checking stereotype conditions
-            BeansDeployer.checkStereoTypes(scannerService);
+            deployer.checkStereoTypes(scannerService);
 
             //Configure Default Beans
-            BeansDeployer.configureDefaultBeans();
+            deployer.configureDefaultBeans();
 
             //Discover classpath classes
-            deployManagedBeans(scannerService.getBeanClasses());
+            deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
             for (BeanContext beanContext : stuff.getBeanContexts()) {
                 if (!beanContext.getComponentType().isSession()) continue;
@@ -198,13 +202,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
 
             //Check Specialization
-            BeansDeployer.checkSpecializations(scannerService);
+            deployer.checkSpecializations(scannerService);
 
             //Fire Event
-            BeansDeployer.fireAfterBeanDiscoveryEvent(beanManager);
+            deployer.fireAfterBeanDiscoveryEvent();
 
             //Validate injection Points
-            BeansDeployer.validateInjectionPoints(beanManager);
+            deployer.validateInjectionPoints();
 
             for (BeanContext beanContext : stuff.getBeanContexts()) {
                 if (!beanContext.getComponentType().isSession()) continue;
@@ -223,7 +227,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             }
 
             //Fire Event
-            BeansDeployer.fireAfterDeploymentValidationEvent(beanManager);
+            deployer.fireAfterDeploymentValidationEvent();
         } catch (Exception e1) {
             Assembler.logger.error("CDI Beans module deployment failed", e1);
             throw new RuntimeException(e1);
@@ -234,10 +238,15 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
     }
 
-    private static void deployManagedBeans(Set<Class<?>> beanClasses) {
-
+    private void deployManagedBeans(Set<Class<?>> beanClasses, List<BeanContext> ejbs) {
+        Set<Class<?>> managedBeans = new HashSet<Class<?>>(beanClasses);
+        for (BeanContext beanContext: ejbs) {
+            if (beanContext.getComponentType().isSession()) {
+                managedBeans.remove(beanContext.getBeanClass());
+            }
+        }
         // Start from the class
-        for (Class<?> implClass : beanClasses) {
+        for (Class<?> implClass : managedBeans) {
             //Define annotation type
             AnnotatedType<?> annotatedType = AnnotatedElementFactory.getInstance().newAnnotatedType(implClass);
 
@@ -249,7 +258,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 continue;
             }
 
-            BeansDeployer.defineManagedBean((Class<Object>) implClass, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
+            deployer.defineManagedBean((Class<Object>) implClass, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
         }
     }
 
