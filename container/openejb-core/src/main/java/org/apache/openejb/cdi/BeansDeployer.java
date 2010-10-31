@@ -27,6 +27,7 @@ import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.component.creation.BeanCreator;
+import org.apache.webbeans.component.creation.BeanCreator.MetaDataProvider;
 import org.apache.webbeans.component.creation.ManagedBeanCreatorImpl;
 import org.apache.webbeans.config.DefinitionUtil;
 import org.apache.webbeans.config.ManagedBeanConfigurator;
@@ -69,7 +70,11 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.interceptor.Interceptor;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -90,10 +95,18 @@ public class BeansDeployer {
     //Logger instance
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(BeansDeployer.class);
 
+    /**XML Configurator*/
+    protected final WebBeansXMLConfigurator xmlConfigurator;
+
+    public BeansDeployer(WebBeansXMLConfigurator xmlConfigurator) {
+        this.xmlConfigurator = xmlConfigurator;
+    }
+
     /**
      * Configure Default Beans.
      */
-    public static void configureDefaultBeans() {
+    void configureDefaultBeans()
+    {
         BeanManagerImpl beanManager = BeanManagerImpl.getManager();
 
         // Register Conversation built-in component
@@ -122,8 +135,9 @@ public class BeansDeployer {
         }
 
     }
-
-    public static void addDefaultBean(BeanManagerImpl manager, String className) {
+    
+    private void addDefaultBean(BeanManagerImpl manager,String className)
+    {
         Bean<?> bean = null;
 
         Class<?> beanClass = ClassUtil.getClassFromName(className);
@@ -138,42 +152,46 @@ public class BeansDeployer {
 
     /**
      * Fires event before bean discovery.
-     * @param manager
      */
-    public static void fireBeforeBeanDiscoveryEvent(BeanManager manager) {
-        manager.fireEvent(new BeforeBeanDiscoveryImpl(), new Annotation[0]);
+    void fireBeforeBeanDiscoveryEvent()
+    {
+        BeanManager manager = BeanManagerImpl.getManager();
+        manager.fireEvent(new BeforeBeanDiscoveryImpl(),new Annotation[0]);
     }
 
     /**
      * Fires event after bean discovery.
-     * @param manager
      */
-    public static void fireAfterBeanDiscoveryEvent(BeanManagerImpl manager) {
-        manager.fireEvent(new AfterBeanDiscoveryImpl(), new Annotation[0]);
-
+    void fireAfterBeanDiscoveryEvent()
+    {
+        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        manager.fireEvent(new AfterBeanDiscoveryImpl(),new Annotation[0]);
+        
         WebBeansUtil.inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
     }
 
     /**
      * Fires event after deployment valdiation.
-     * @param manager
      */
-    public static void fireAfterDeploymentValidationEvent(BeanManagerImpl manager) {
-        manager.fireEvent(new AfterDeploymentValidationImpl(), new Annotation[0]);
-
+    void fireAfterDeploymentValidationEvent()
+    {
+        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        manager.fireEvent(new AfterDeploymentValidationImpl(),new Annotation[0]);
+        
         WebBeansUtil.inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
     }
 
     /**
      * Validate all injection points.
-     * @param manager
      */
-    public static void validateInjectionPoints(BeanManagerImpl manager) {
+    void validateInjectionPoints()
+    {
         logger.debug("Validation of injection points has started.");
 
         DecoratorsManager.getInstance().validateDecoratorClasses();
         InterceptorsManager.getInstance().validateInterceptorClasses();
 
+        BeanManagerImpl manager = BeanManagerImpl.getManager();        
         Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
         //Adding decorators to validate
@@ -218,7 +236,8 @@ public class BeansDeployer {
      *
      * @param beans deployed beans
      */
-    public static void validate(Set<Bean<?>> beans) {
+    private void validate(Set<Bean<?>> beans)
+    {
         BeanManagerImpl manager = BeanManagerImpl.getManager();
 
         if (beans != null && beans.size() > 0) {
@@ -275,11 +294,15 @@ public class BeansDeployer {
         }
 
     }
-
-    public static void validateBeanNames(Stack<String> beanNames) {
-        if (beanNames.size() > 0) {
-            for (String beanName : beanNames) {
-                for (String other : beanNames) {
+    
+    private void validateBeanNames(Stack<String> beanNames)
+    {
+        if(beanNames.size() > 0)
+        {   
+            for(String beanName : beanNames)
+            {
+                for(String other : beanNames)
+                {
                     String part = null;
                     int i = beanName.lastIndexOf('.');
                     if (i != -1) {
@@ -309,11 +332,59 @@ public class BeansDeployer {
     }
 
     /**
-     * Checks specialization.
+     * Discovers and deploys classes from XML.
      *
+     * NOTE : Currently XML file is just used for configuring.
+     *
+     * @param scanner discovery scanner
+     * @throws WebBeansDeploymentException if exception
+     */
+    protected void deployFromXML(ScannerService scanner) throws WebBeansDeploymentException
+    {
+        logger.debug("Deploying configurations from XML files has started.");
+
+        Set<URL> xmlLocations = scanner.getBeanXmls();
+        Iterator<URL> it = xmlLocations.iterator();
+
+        while (it.hasNext())
+        {
+            URL fileURL = it.next();
+            String fileName = fileURL.getFile();
+            InputStream fis = null;
+            try
+            {
+                fis = fileURL.openStream();
+
+                this.xmlConfigurator.configure(fis, fileName);
+            }
+            catch (IOException e)
+            {
+                throw new WebBeansDeploymentException(e);
+            }
+            finally
+            {
+                if (fis != null)
+                {
+                    try
+                    {
+                        fis.close();
+                    }
+                    catch (IOException e)
+                    {
+                        // all ok, ignore this!
+                    }
+                }
+            }
+        }
+
+        logger.debug("Deploying configurations from XML has ended successfully.");
+    }
+    /**
+     * Checks specialization.
      * @param scanner scanner instance
      */
-    protected static void checkSpecializations(ScannerService scanner) {
+    protected void checkSpecializations(ScannerService scanner)
+    {
         logger.debug("Checking Specialization constraints has started.");
 
         try {
@@ -361,7 +432,8 @@ public class BeansDeployer {
      * Check xml specializations.
      * NOTE : Currently XML is not used in configuration.
      */
-    protected static void checkXMLSpecializations() {
+    protected void checkXMLSpecializations()
+    {
         // Check XML specializations
         Set<Class<?>> clazzes = XMLSpecializesManager.getInstance().getXMLSpecializationClasses();
         Iterator<Class<?>> it = clazzes.iterator();
@@ -388,7 +460,8 @@ public class BeansDeployer {
     /**
      * Check passivations.
      */
-    protected static void checkPassivationScope(Bean<?> beanObj) {
+    protected void checkPassivationScope(Bean<?> beanObj)
+    {
         boolean validate = false;
 
         if (EnterpriseBeanMarker.class.isAssignableFrom(beanObj.getClass())) {
@@ -416,10 +489,10 @@ public class BeansDeployer {
 
     /**
      * Check steretypes.
-     *
      * @param scanner scanner instance
      */
-    protected static void checkStereoTypes(ScannerService scanner) {
+    protected void checkStereoTypes(ScannerService scanner)
+    {
         logger.debug("Checking StereoType constraints has started.");
 
         addDefaultStereoTypes();
@@ -447,7 +520,8 @@ public class BeansDeployer {
     /**
      * Adds default stereotypes.
      */
-    protected static void addDefaultStereoTypes() {
+    protected void addDefaultStereoTypes()
+    {
         StereoTypeModel model = new StereoTypeModel(Model.class);
         StereoTypeManager.getInstance().addStereoTypeModel(model);
 
@@ -460,12 +534,12 @@ public class BeansDeployer {
 
     /**
      * Defines and configures managed bean.
-     *
-     * @param <T>   type info
+     * @param <T> type info
      * @param clazz bean class
      * @return true if given class is configured as a managed bean
      */
-    protected static <T> boolean defineManagedBean(Class<T> clazz, ProcessAnnotatedTypeImpl<T> processAnnotatedEvent) {
+    protected <T> boolean defineManagedBean(Class<T> clazz, ProcessAnnotatedTypeImpl<T> processAnnotatedEvent)
+    {   
         //Bean manager
         BeanManagerImpl manager = BeanManagerImpl.getManager();
 
@@ -505,9 +579,9 @@ public class BeansDeployer {
                 managedBean.setAnnotatedType(annotatedType);
                 annotatedType = processAnnotatedEvent.getAnnotatedType();
                 managedBeanCreator.setAnnotatedType(annotatedType);
-                managedBeanCreator.setMetaDataProvider(BeanCreator.MetaDataProvider.THIRDPARTY);
-            }
-
+                managedBeanCreator.setMetaDataProvider(MetaDataProvider.THIRDPARTY);
+            }            
+            
             //If ProcessInjectionTargetEvent is not set, set it
             if (processInjectionTargetEvent == null) {
                 processInjectionTargetEvent = WebBeansUtil.fireProcessInjectionTargetEvent(managedBean);
