@@ -162,7 +162,7 @@ public class Options {
         }
     }
 
-    public Class get(String property, Class defaultValue) {
+    public Class<?> get(String property, Class<?> defaultValue) {
         String className = properties.getProperty(property);
 
         if (className == null) return parent.get(property, defaultValue);
@@ -415,7 +415,7 @@ public class Options {
         }
 
         @Override
-        public Class get(String property, Class defaultValue) {
+        public Class<?> get(String property, Class<?> defaultValue) {
             return log(property, defaultValue);
         }
 
