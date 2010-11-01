@@ -41,6 +41,7 @@
       <outputDirectory>bin/</outputDirectory>
       <includes>
         <include>*.bat</include>
+        <include>service.readme.txt</include>
       </includes>
       <lineEnding>dos</lineEnding>
       <fileMode>0755</fileMode>
@@ -53,6 +54,13 @@
       </includes>
       <lineEnding>unix</lineEnding>
       <fileMode>0755</fileMode>
+    </fileSet>
+	<fileSet>
+      <directory>${basedir}/src/main/resources</directory>
+      <outputDirectory>bin/</outputDirectory>
+      <includes>
+        <include>*.exe</include>
+      </includes>
     </fileSet>
     <fileSet>
       <directory>${basedir}/src/main/conf</directory>

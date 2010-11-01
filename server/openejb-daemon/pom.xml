@@ -18,32 +18,25 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>openejb</artifactId>
+    <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>3.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>server</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: Server</name>
-  <modules>
-    <module>openejb-ejbd</module>
-    <module>openejb-admin</module>
-    <module>openejb-webadmin</module>
-    <module>openejb-server</module>
-    <module>openejb-client</module>
-    <module>openejb-http</module>
-    <module>openejb-telnet</module>
-    <module>openejb-activemq</module>
-    <module>openejb-corba</module>
-    <module>openejb-derbynet</module>
-    <module>openejb-hsql</module>
-    <module>openejb-webservices</module>
-    <module>openejb-axis</module>
-    <module>openejb-axis2</module>
-    <module>openejb-cxf</module>
-    <module>openejb-multicast</module>
-    <module>openejb-daemon</module>
-  </modules>
+  <artifactId>openejb-daemon</artifactId>
+  <packaging>jar</packaging>
+  <name>OpenEJB :: Server :: Daemon</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-server</artifactId>
+      <version>${project.version}</version>
+    </dependency> 
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
 
