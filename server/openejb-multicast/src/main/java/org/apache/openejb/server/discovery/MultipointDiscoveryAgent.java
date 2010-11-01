@@ -28,17 +28,10 @@ import org.apache.openejb.loader.Options;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -126,6 +119,8 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
                 multipointServer = new MultipointServer(host, port, tracker).start();
 
+                this.port = multipointServer.getPort();
+                
                 // Connect the initial set of peer servers
                 StringTokenizer st = new StringTokenizer(initialServers, ",");
                 while (st.hasMoreTokens()) {
@@ -134,7 +129,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
 
             }
         } catch (Exception e) {
-            throw new ServiceException(e);
+            throw new ServiceException(port+"", e);
         }
     }
 

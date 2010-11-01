@@ -17,6 +17,7 @@
 package org.apache.openejb.server;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.Managed;
 
 import java.net.URI;
 import java.util.List;
@@ -43,6 +44,9 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     private final List<DiscoveryListener> listeners = new CopyOnWriteArrayList<DiscoveryListener>();
     private final Map<String, URI> services = new ConcurrentHashMap<String, URI>();
     private final Map<String, URI> registered = new ConcurrentHashMap<String, URI>();
+
+    @Managed
+    private final Monitor monitor = new Monitor();
 
     private final Executor executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
         public Thread newThread(Runnable runable) {
@@ -125,7 +129,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     }
 
     public void serviceRemoved(URI service) {
-
+        services.remove(service.toString());
         for (final DiscoveryListener discoveryListener : getListeners()) {
             executor.execute(new ServiceRemovedTask(discoveryListener, service));
         }
@@ -167,5 +171,31 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
                 discoveryListener.serviceAdded(service);
             }
         }
+    }
+
+    @Managed
+    private class Monitor {
+
+        @Managed
+        public String[] getDiscovered() {
+            final Set<String> set = DiscoveryRegistry.this.services.keySet();
+            return set.toArray(new String[set.size()]);
+        }
+
+        @Managed
+        public String[] getRegistered() {
+            final Set<String> set = DiscoveryRegistry.this.registered.keySet();
+            return set.toArray(new String[set.size()]);
+        }
+
+        @Managed
+        public String[] getAgents() {
+            List<String> list = new ArrayList<String>();
+            for (DiscoveryAgent agent : DiscoveryRegistry.this.agents) {
+                list.add(agent.getClass().getName());
+            }
+            return list.toArray(new String[list.size()]);
+        }
+
     }
 }

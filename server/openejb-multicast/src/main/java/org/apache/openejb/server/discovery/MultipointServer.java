@@ -27,6 +27,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.channels.CancelledKeyException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -50,6 +51,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MultipointServer {
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery"), MultipointServer.class);
 
+    private static final URI END_LIST = URI.create("end:list");
+    
     private final String host;
     private final int port;
     private final Selector selector;
@@ -67,9 +70,7 @@ public class MultipointServer {
     public MultipointServer(String host, int port, Tracker tracker) throws IOException {
         if (tracker == null) throw new NullPointerException("tracker cannot be null");
         this.host = host;
-        this.port = port;
         this.tracker = tracker;
-        me = URI.create("conn://" + host + ":" + port);
 
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
 
@@ -78,11 +79,18 @@ public class MultipointServer {
         serverSocket.bind(address);
         serverChannel.configureBlocking(false);
 
+        this.port = serverSocket.getLocalPort();
+        me = URI.create("conn://" + this.host + ":" + this.port);
+
         selector = Selector.open();
 
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
         println("Listening");
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public MultipointServer start() {
@@ -130,6 +138,7 @@ public class MultipointServer {
         }
 
         public void state(int ops, State state) {
+//            trace("transition "+state +"  "+ops);
             this.state = state;
             if (ops > 0) key.interestOps(ops);
         }
@@ -143,6 +152,14 @@ public class MultipointServer {
 
             if (log.isDebugEnabled()) {
                 log.debug(message(str));
+            }
+        }
+
+        private void info(String str) {
+//            println(message(str));
+
+            if (log.isInfoEnabled()) {
+                log.info(message(str));
             }
         }
 
@@ -242,7 +259,12 @@ public class MultipointServer {
         }
 
         private void heartbeat() throws IOException {
-            write(tracker.getRegisteredServices());
+
+            final Set<String> strings = tracker.getRegisteredServices();
+            for (String string : strings) {
+                trace(string);
+            }
+            write(strings);
             state(SelectionKey.OP_READ | SelectionKey.OP_WRITE, State.HEARTBEAT);
 
             tracker.checkServices();
@@ -280,7 +302,7 @@ public class MultipointServer {
                         // address of the client before sending data.
 
                         // once they send us their address, we will send our
-                        // full list of known addresses, followed by our own
+                        // full list of known addresses, followed by the "end"
                         // address to signal that we are done.
 
                         // Afterward we will only pulls our heartbeat
@@ -308,14 +330,18 @@ public class MultipointServer {
                         // before accepting data
 
                         // once a server reads our address, it will send it's
-                        // full list of known addresses, followed by it's own
+                        // full list of known addresses, followed by the "end"
                         // address to signal that it is done.
 
-                        // we will initiate connections to everyone in the list
-                        // who we have not yet seen.
+                        // we will then send our full list of known addresses,
+                        // followed by the "end" address to signal we are done.
 
                         // Afterward the server will only pulls its heartbeat
 
+                        // separately, we will initiate connections to everyone
+                        // in the list who we have not yet seen.
+
+                        // WRITE our GREETING
                         session.write(me);
 
                         session.state(java.nio.channels.SelectionKey.OP_WRITE, State.GREETING);
@@ -329,6 +355,20 @@ public class MultipointServer {
                         switch (session.state) {
                             case GREETING: { // read
 
+                                // This state is only reachable as a SERVER
+                                // The client connected and said hello by sending
+                                // its URI to let us know who they are
+
+                                // Once this is read, the client will expect us
+                                // to send our full list of URIs followed by the
+                                // "end" address.
+
+                                // So we switch to WRITE LISTING and they switch
+                                // to READ LISTING
+
+                                // Then we will switch to READ LISTING and they
+                                // will switch to WRITE LISTING
+                                
                                 String message = session.read();
 
                                 if (message == null) break; // need to read more
@@ -345,8 +385,7 @@ public class MultipointServer {
                                 // they'll know it's time to list their URIs
 
                                 list.remove(me); // yank
-                                list.remove(session.uri); // yank
-                                list.add(session.uri); // add to the end
+                                list.add(END_LIST); // add to the end
 
                                 session.write(list);
 
@@ -364,42 +403,58 @@ public class MultipointServer {
 
                                 while ((message = session.read()) != null) {
 
-                                    URI uri = URI.create(message);
-
-                                    session.listed.add(uri);
-
                                     session.trace(message);
 
-                                    // they listed me, means they want my list
-                                    if (uri.equals(me)) {
-                                        ArrayList<URI> list = connections();
+                                    URI uri = URI.create(message);
 
-                                        for (URI reported : session.listed) {
-                                            list.remove(reported);
-                                        }
+                                    if (END_LIST.equals(uri)) {
 
-                                        // When they read us on the list
-                                        // they'll know it's time to switch to heartbeat
+                                        if (session.client) {
 
-                                        list.remove(session.uri);
-                                        list.remove(me); // yank if in the middle
-                                        list.add(me); // add to the end
+                                            ArrayList<URI> list = connections();
 
-                                        session.write(list);
+                                            for (URI reported : session.listed) {
+                                                list.remove(reported);
+                                            }
 
-                                        session.state(java.nio.channels.SelectionKey.OP_WRITE, State.LISTING);
+                                            // When they read us on the list
+                                            // they'll know it's time to switch to heartbeat
 
-                                    } else if (uri.equals(session.uri)) {
+                                            list.remove(session.uri);
+                                            list.add(END_LIST);
+                                            
+                                            session.write(list);
 
-                                        if (session.hangup) {
-                                            session.state(0, State.CLOSED);
-                                            session.trace("hangup");
-                                            hangup(key);
+                                            session.state(java.nio.channels.SelectionKey.OP_WRITE, State.LISTING);
+
                                         } else {
-                                            session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
+
+                                            // We are a SERVER in this relationship, so we will have already
+                                            // listed our known peers by this point.  From here we switch to
+                                            // heartbeating
+                                            
+                                            // heartbeat time
+                                            if (session.hangup) {
+                                                session.state(0, State.CLOSED);
+                                                session.trace("hangup");
+                                                hangup(key);
+
+                                            } else {
+
+                                                session.trace("DONE READING");
+
+                                                session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
+
+                                            }
+
                                         }
+
+                                        break;
 
                                     } else {
+
+                                        session.listed.add(uri);
+
                                         try {
                                             connect(uri);
                                         } catch (Exception e) {
@@ -431,6 +486,10 @@ public class MultipointServer {
                         switch (session.state) {
                             case GREETING: { // write
 
+                                // Only CLIENTs write a GREETING message
+                                // As we are a client, the first thing we do
+                                // is READ the server's LIST
+                                
                                 if (session.drain()) {
                                     session.state(java.nio.channels.SelectionKey.OP_READ, State.LISTING);
                                 }
@@ -442,16 +501,20 @@ public class MultipointServer {
 
                                 if (session.drain()) {
 
-                                    // we haven't ready any URIs yet
-                                    if (session.listed.size() == 0) {
+                                    if (session.client) {
+                                        // CLIENTs list last, so at this point we've read
+                                        // the server's list and have written ours
+                                       
+                                        session.trace("DONE WRITING");
 
-                                        session.state(java.nio.channels.SelectionKey.OP_READ, State.LISTING);
-
+                                        session.state(SelectionKey.OP_READ, State.HEARTBEAT);
+                                        
                                     } else {
+                                        // SERVERs always write their list first, so at this
+                                        // point we switch to LIST READ mode
 
-                                        session.trace("DONE");
+                                        session.state(SelectionKey.OP_READ, State.LISTING);
 
-                                        session.state(java.nio.channels.SelectionKey.OP_READ, State.HEARTBEAT);
                                     }
                                 }
                             }
@@ -474,6 +537,13 @@ public class MultipointServer {
                         }
                     }
 
+                } catch (CancelledKeyException ex) {
+                    synchronized (connect) {
+                        Session session = (Session) key.attachment();
+                        if (session.state != State.CLOSED) {
+                            close(key);
+                        }
+                    }
                 } catch (ClosedChannelException ex) {
                     synchronized (connect) {
                         Session session = (Session) key.attachment();
@@ -493,7 +563,7 @@ public class MultipointServer {
                 Session session = (Session) key.attachment();
 
                 try {
-                    if (session != null) session.tick();
+                    if (session != null && session.state == State.HEARTBEAT) session.tick();
                 } catch (IOException ex) {
                     close(key);
                 }
@@ -570,7 +640,6 @@ public class MultipointServer {
             key.channel().close();
         } catch (IOException cex) {
         }
-
     }
 
 
@@ -644,8 +713,8 @@ public class MultipointServer {
                 session = sessions[0];
                 duplicate = sessions[1];
 
-                session.trace(session + "@" + session.hashCode() + " KEEP");
-                duplicate.trace(duplicate + "@" + duplicate.hashCode() + " KILL");
+                session.info(session + "@" + session.hashCode() + " KEEP");
+                duplicate.info(duplicate + "@" + duplicate.hashCode() + " KILL");
 
                 duplicate.hangup = true;
             }
