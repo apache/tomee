@@ -70,6 +70,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -584,6 +585,14 @@ class AppInfoBuilder {
                 if (existing == null){
                     info.properties.setProperty(property, value);
                     logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+property+"="+value);
+                }
+
+                final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
+                for (String key : keys) {
+                    if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
+                        info.properties.remove(key);
+                        logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + property + "=" + value + "  [not valid in a container environment]");
+                    }
                 }
             }
         }
