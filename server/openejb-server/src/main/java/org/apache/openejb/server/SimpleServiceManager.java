@@ -17,6 +17,7 @@
 package org.apache.openejb.server;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,12 @@ import java.util.Properties;
 
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.xbean.finder.ResourceFinder;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 /**
  * @version $Rev$ $Date$
@@ -107,6 +113,22 @@ public class SimpleServiceManager extends ServiceManager {
         }
 
         DiscoveryRegistry registry = new DiscoveryRegistry();
+
+        // register the mbean
+        try {
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+            ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb");
+            jmxName.set("type", "Server");
+            jmxName.set("name", "DiscoveryRegistry");
+
+            ObjectName objectName = jmxName.build();
+            server.registerMBean(new ManagedMBean(registry), objectName);
+        } catch (Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
+
+
         SystemInstance.get().setComponent(DiscoveryRegistry.class, registry);
 
         ServiceFinder serviceFinder = new ServiceFinder("META-INF/");
