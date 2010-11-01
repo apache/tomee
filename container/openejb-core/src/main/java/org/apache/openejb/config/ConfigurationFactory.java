@@ -466,15 +466,25 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             String value = (String) entry.getValue();
 
             try {
-                URI uri = new URI(value);
+                final Object service = toConfigDeclaration(name, value);
 
-                openejb.add(toConfigDeclaration(name, uri));
+                openejb.add(service);
             } catch (URISyntaxException e) {
                 logger.error("Error declaring service '" + name + "'. Invalid Service URI '" + value + "'.  java.net.URISyntaxException: " + e.getMessage());
             } catch (OpenEJBException e) {
                 logger.error(e.getMessage());
             }
         }
+    }
+
+    protected Object toConfigDeclaration(String name, String value) throws URISyntaxException, OpenEJBException {
+//        value = value.replaceFirst("(.)#", "$1%23");
+            value = value.replaceFirst("(provider=[^#=&]+)#", "$1%23");
+
+        URI uri = new URI(value);
+
+        final Object service = toConfigDeclaration(name, uri);
+        return service;
     }
 
     public Object toConfigDeclaration(String id, URI uri) throws OpenEJBException {
