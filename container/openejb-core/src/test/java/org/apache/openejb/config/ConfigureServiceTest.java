@@ -137,6 +137,25 @@ public class ConfigureServiceTest extends TestCase {
         assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
     }
 
+    public void testConfigureServiceAddedPropertyViaURI_Unencoded() throws Exception {
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        Container container = (Container) factory.toConfigDeclaration("MyContainer", "new://Container?type=STATELESS&provider=org.acme#CheddarContainer");
+
+        container.getProperties().setProperty("anotherProperty", "Cheese is good");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+
+        assertNotNull(myStatelessContainer);
+        assertEquals("MyContainer", myStatelessContainer.id);
+        assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
+        assertNotNull(myStatelessContainer.constructorArgs);
+        assertNotNull(myStatelessContainer.properties);
+        assertNotNull(myStatelessContainer.properties.getProperty("myProperty"));
+        assertEquals("Yummy Cheese", myStatelessContainer.properties.getProperty("myProperty"));
+        assertNotNull(myStatelessContainer.properties.getProperty("anotherProperty"));
+        assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
+    }
+
     public void testQueue() throws Exception {
         ConfigurationFactory factory = new ConfigurationFactory();
 
