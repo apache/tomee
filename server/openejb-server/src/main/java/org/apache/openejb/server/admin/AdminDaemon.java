@@ -51,7 +51,9 @@ public class AdminDaemon implements ServerService {
                 case RequestMethodConstants.STOP_REQUEST_Stop:
                 case RequestMethodConstants.STOP_REQUEST_stop:
                     Server server = SystemInstance.get().getComponent(Server.class);
-                    server.stop();
+                    if (null != server) {
+						server.stop();
+					}
                     break;
                 default:
                     //If this turns up in the logs then it is time to take action
