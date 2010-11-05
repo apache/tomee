@@ -136,7 +136,12 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                 if (brokerXmlConfig.startsWith("broker:")) {
 
                     final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerXmlConfig));
-                    compositeData.getParameters().put("persistent", "false");
+
+                    if (!compositeData.getParameters().containsKey("persistent")) {
+                        //Override default - Which is 'true'
+                        compositeData.getParameters().put("persistent", "false");
+                    }
+
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + compositeData.toURI());
                 } else if (brokerXmlConfig.toLowerCase().startsWith("xbean:")) {
                     setBrokerXmlConfig(ActiveMQFactory.getBrokerMetaFile() + brokerXmlConfig);
@@ -200,7 +205,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
         final Iterator<BrokerService> it = brokers.iterator();
 
-        while(it.hasNext()){
+        while (it.hasNext()) {
             try {
                 it.next().waitUntilStopped();
             } catch (Throwable t) {
