@@ -590,8 +590,8 @@ class AppInfoBuilder {
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
                 for (String key : keys) {
                     if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
-                        info.properties.remove(key);
-                        logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + property + "=" + value + "  [not valid in a container environment]");
+                        final Object o = info.properties.remove(key);
+                        logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + key + "=" + o + "  [not valid in a container environment]");
                     }
                 }
             }
