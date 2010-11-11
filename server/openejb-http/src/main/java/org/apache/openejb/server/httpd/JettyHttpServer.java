@@ -33,9 +33,13 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.SessionManager;
 import org.mortbay.jetty.handler.AbstractHandler;
 import org.mortbay.jetty.handler.ContextHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.servlet.HashSessionIdManager;
+import org.mortbay.jetty.servlet.HashSessionManager;
+import org.mortbay.jetty.servlet.SessionHandler;
 
 /**
  * Jetty based http server implementation
@@ -81,7 +85,7 @@ public class JettyHttpServer implements HttpServer {
         Options options = new Options(props);
 
         port = options.get("port", 8080);
-        
+
         // Create all the Jetty objects but dont' start them
         server = new Server();
         Connector connector = new SelectChannelConnector();
@@ -110,7 +114,13 @@ public class JettyHttpServer implements HttpServer {
             }
         };
 
-        context.setHandler(handler);
+        SessionHandler sessionHandler = new SessionHandler();
+        SessionManager sessionManager = new HashSessionManager();
+        sessionManager.setIdManager(new HashSessionIdManager());
+        sessionHandler.setSessionManager(sessionManager);
+        sessionHandler.setHandler(handler);
+
+        context.setHandler(sessionHandler);
     }
 
     public void start() throws ServiceException {
