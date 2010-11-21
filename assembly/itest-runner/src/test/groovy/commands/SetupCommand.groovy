@@ -76,10 +76,12 @@ class SetupCommand
 		return value
 	}
 	
-    def execute() {
+	def execute() {
 		def tomcatVersion = require('tomcat.version');
 		def localRepo = require('localRepository');
 		def openejbHome = require('openejb.home');
+		
+		ant.echo("OPENEJB_HOME=${openejbHome}")
 		
 		if (getBoolean('skipTests', false)) {
 			log.info('Skipping itests.')
