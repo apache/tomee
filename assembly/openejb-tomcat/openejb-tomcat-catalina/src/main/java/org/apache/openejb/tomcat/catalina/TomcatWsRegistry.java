@@ -24,7 +24,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -40,6 +39,8 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.tomcat.loader.TomcatHelper;
+
 import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 import java.net.URI;
@@ -55,7 +56,7 @@ public class TomcatWsRegistry implements WsRegistry {
     private List<Connector> connectors;
 
     public TomcatWsRegistry() {
-        StandardServer standardServer = (StandardServer) ServerFactory.getServer();
+        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
         for (Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 connectors = Arrays.asList(service.findConnectors());

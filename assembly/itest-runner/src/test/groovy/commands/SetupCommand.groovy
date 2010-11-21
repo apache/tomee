@@ -20,17 +20,20 @@
 package commands
 
 import org.apache.commons.lang.SystemUtils
+import org.apache.openejb.webapp.common.Installers
+import org.apache.openejb.webapp.common.Alerts
+import java.io.File
 
 class SetupCommand
 {
-	def log;
-	def ant;
-	def project;
+	def log
+	def ant
+	def project
 	
     def SetupCommand(source) {
-		this.log = source.log;
+		this.log = source.log
 		this.project = source.project
-		this.ant = new AntBuilder();
+		this.ant = new AntBuilder()
     }
 	
 	def get(name) {
@@ -76,12 +79,23 @@ class SetupCommand
 		return value
 	}
 	
-	def execute() {
-		def tomcatVersion = require('tomcat.version');
-		def localRepo = require('localRepository');
-		def openejbHome = require('openejb.home');
+	def isWindows() {
+		def os = System.getProperty("os.name").toLowerCase()
+	    return (os.indexOf("win") >= 0)
+	}
+	
+    def execute() {
+		def tomcatVersion = require('tomcat.version')
+		def localRepo = require('localRepository')
+		def openejbHome = require('openejb.home')
+		def extension = ".sh"
+		def stopPort = get('tomcat.port.stop', '18005')
+		def httpPort = get('tomcat.port.http', '18080')
+		def ajpPort = get('tomcat.port.ajp', '18009')		
 		
-		ant.echo("OPENEJB_HOME=${openejbHome}")
+		if (isWindows()) {
+			extension = ".bat"
+		}
 		
 		if (getBoolean('skipTests', false)) {
 			log.info('Skipping itests.')
@@ -98,31 +112,45 @@ class SetupCommand
 		ant.unzip(src: "${localRepo}/org/apache/openejb/openejb-itests-web/${project.version}/openejb-itests-web-${project.version}.war",
 					dest: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/itests")
 		
+		def alerts = new Alerts()
+		def file = new File("${project.build.directory}/apache-tomcat-${tomcatVersion}/conf/server.xml")
+		def fileContent = Installers.readAll(file, alerts)
+		fileContent = fileContent.replaceAll("Server port=\"8005\"", "Server port=\"" + stopPort + "\"");
+		fileContent = fileContent.replaceAll("Connector port=\"8080\"", "Connector port=\"" + httpPort + "\"");
+		fileContent = fileContent.replaceAll("Connector port=\"8009\"", "Connector port=\"" + ajpPort + "\"");
+		Installers.writeAll(file, fileContent, alerts)
+		
 		ant.echo("Starting Tomcat...")
-		ant.exec(executable: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin/startup.sh")
+		ant.exec(executable: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin/startup${extension}") {
+			//arg(line: "jpda start")
+		}
 		
 		ant.waitfor(maxwait: 1, maxwaitunit: "minute") {
 			ant.and() {
-				ant.socket(server: "localhost", port: "8080")
-				ant.socket(server: "localhost", port: "8005")
-				ant.socket(server: "localhost", port: "8009")
+				ant.socket(server: "localhost", port: httpPort)
+				ant.socket(server: "localhost", port: stopPort)
+				ant.socket(server: "localhost", port: ajpPort)
 			}
 		}
 		
 		ant.echo("Tomcat started. Running itests...")
 		ant.java(jar: "${localRepo}/org/apache/openejb/openejb-itests-standalone-client/${project.version}/openejb-itests-standalone-client-${project.version}.jar", fork: "yes") {
 			sysproperty(key: "openejb.home", value: "${openejbHome}")
+			sysproperty(key: "openejb.server.uri", value: "http://127.0.0.1:" + httpPort + "/openejb/ejb")
+			
+			//sysproperty(key:"DEBUG", value:"true")
+			//jvmarg(value:"-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8888")
 			arg(value: "tomcat")
 		}
 
 		ant.echo("Tomcat itests complete, stopping Tomcat")
-		ant.exec(executable: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin/shutdown.sh")
+		ant.exec(executable: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin/shutdown${extension}")
 		ant.waitfor(maxwait: 1, maxwaitunit: "minute") {
 			ant.not() {
 				ant.or() {
-					ant.socket(server: "localhost", port: "8080")
-					ant.socket(server: "localhost", port: "8005")
-					ant.socket(server: "localhost", port: "8009")
+					ant.socket(server: "localhost", port: httpPort)
+					ant.socket(server: "localhost", port: stopPort)
+					ant.socket(server: "localhost", port: ajpPort)
 					ant.socket(server: "localhost", port: "61616")
 				}
 			}
@@ -131,3 +159,4 @@ class SetupCommand
 		ant.echo("Tomcat stopped, itest run complete")
     }
 }
+

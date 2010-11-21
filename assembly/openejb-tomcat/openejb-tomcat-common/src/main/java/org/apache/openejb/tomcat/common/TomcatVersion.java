@@ -23,7 +23,7 @@ import java.util.Properties;
  */
 public enum TomcatVersion {
 
-    v3, v40, v41, v50, v55, v6, UNKNOWN;
+    v3, v40, v41, v50, v55, v6, v7, UNKNOWN;
 
     private String serverNumber;
     private String serverBuilt;
@@ -90,6 +90,7 @@ public enum TomcatVersion {
             else if (serverNumber.startsWith("5.0")) version = v50;
             else if (serverNumber.startsWith("5.5")) version = v55;
             else if (serverNumber.startsWith("6.")) version = v6;
+            else if (serverNumber.startsWith("7.")) version = v7;
             else version = UNKNOWN;
 
             version.serverNumber = serverNumber;

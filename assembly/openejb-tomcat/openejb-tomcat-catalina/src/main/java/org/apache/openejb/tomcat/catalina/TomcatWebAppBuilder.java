@@ -20,7 +20,6 @@ package org.apache.openejb.tomcat.catalina;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
@@ -70,6 +69,7 @@ import static org.apache.openejb.tomcat.catalina.BackportUtil.getNamingContextLi
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
+import org.apache.openejb.tomcat.loader.TomcatHelper;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -151,9 +151,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * instance.
      */
     public TomcatWebAppBuilder() {
-        StandardServer standardServer = (StandardServer) ServerFactory.getServer();
+    	
+    	// TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
+    	
+        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
+        // could search mbeans
+        
         //Getting host config listeners
         for (Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
@@ -221,6 +226,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 if (host == null) {
                     host = "localhost";
                 }
+                
+                // TODO: instead of storing deployers, we could just lookup the right hostconfig for the server.
                 HostConfig deployer = deployers.get(host);
                 if (deployer != null) {
                     // host isn't set until we call deployer.manageApp, so pass it
