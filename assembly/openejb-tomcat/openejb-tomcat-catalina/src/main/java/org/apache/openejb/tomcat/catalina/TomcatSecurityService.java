@@ -20,11 +20,11 @@ package org.apache.openejb.tomcat.catalina;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
+import org.apache.openejb.tomcat.loader.TomcatHelper;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -45,7 +45,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     private Realm defaultRealm;
 
     public TomcatSecurityService() {
-        Server server = ServerFactory.getServer();
+        Server server = TomcatHelper.getServer();
         for (Service service : server.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 Engine engine = (Engine) service.getContainer();

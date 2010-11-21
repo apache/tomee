@@ -18,7 +18,6 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-
         <executions>
           <execution>
             <id>setup-environment</id>
@@ -28,7 +27,7 @@
             </goals>
             <configuration>
               <source>
-								new commands.SetupCommand(this).execute()
+					new commands.SetupCommand(this).execute()
               </source>
               <skip>${maven.test.skip}</skip>
             </configuration>
@@ -38,7 +37,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-
         <executions>
           <execution>
             <id>unpack</id>
@@ -114,6 +112,13 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-webapp-common</artifactId>
+      <version>${version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <properties>

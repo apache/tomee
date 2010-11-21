@@ -23,7 +23,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
@@ -40,6 +39,7 @@ import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.tomcat.installer.Paths;
+import org.apache.openejb.tomcat.loader.TomcatHelper;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
@@ -195,7 +195,7 @@ public class TomcatLoader implements Loader {
         ejbServer.init(ejbServerProps);
 
         // Add our naming context listener to the server which registers all Tomcat resources with OpenEJB
-        StandardServer standardServer = (StandardServer) ServerFactory.getServer();
+        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
         OpenEJBNamingContextListener namingContextListener = new OpenEJBNamingContextListener(standardServer);
         // Standard server has no state property, so we check global naming context to determine if server is started yet
         if (standardServer.getGlobalNamingContext() != null) {
@@ -274,7 +274,7 @@ public class TomcatLoader implements Loader {
                         for (Container hostChild : host.findChildren()) {
                             if (hostChild instanceof StandardContext) {
                                 StandardContext standardContext = (StandardContext) hostChild;
-                                int state = standardContext.getState();
+                                int state = TomcatHelper.getContextState(standardContext);
                                 if (state == 0) {
                                     // context only initialized
                                     tomcatWebAppBuilder.init(standardContext);

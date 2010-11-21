@@ -145,7 +145,7 @@ java.io.File
             out.print("<tr><td><font size='2'>has lib directory</font></td> ");
 
             File openejbHomeLib;
-            if (TomcatVersion.v6.isTheVersion()) {
+            if (TomcatVersion.v6.isTheVersion() || TomcatVersion.v7.isTheVersion()) {
                 openejbHomeLib = new File(openejbHome, "lib");
             } else {
                 File common = new File(openejbHome, "common");
