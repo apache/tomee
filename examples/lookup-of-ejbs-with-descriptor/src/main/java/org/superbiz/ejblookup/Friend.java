@@ -26,7 +26,6 @@ import javax.ejb.Local;
  * if the bean does not implement any other interfaces
  */
 //START SNIPPET: code
-@Local
 public interface Friend {
 	
     public String sayHello();

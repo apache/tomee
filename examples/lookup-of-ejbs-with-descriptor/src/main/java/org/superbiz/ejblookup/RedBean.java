@@ -16,21 +16,26 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.Local;
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
-/**
- * This is an EJB 3 local business interface
- * A local business interface may be annotated with the @Local
- * annotation, but it's optional. A business interface which is 
- * not annotated with @Local or @Remote is assumed to be Local
- * if the bean does not implement any other interfaces
- */
 //START SNIPPET: code
-@Local
-public interface Friend {
-	
-    public String sayHello();
-    public String helloFromFriend();
-	
+public class RedBean implements Friend {
+
+    public String sayHello() {
+        return "Red says, Hello!";
+    }
+
+    public String helloFromFriend() {
+        try {
+            Friend friend = (Friend) new InitialContext().lookup("java:comp/env/myFriend");
+            return "My friend " + friend.sayHello();
+        } catch (NamingException e) {
+            throw new EJBException(e);
+        }
+    }
 }
 //END SNIPPET: code
