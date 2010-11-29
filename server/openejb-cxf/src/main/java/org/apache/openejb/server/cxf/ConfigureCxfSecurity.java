@@ -29,7 +29,7 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 
 /**
  * Helper class to extract WSS4J properties from a set of properties. More over,
- * it configures In and Out interceptor to manage WS6Security.
+ * it configures In and Out interceptor to manage WS-Security.
  *
  */
 public class ConfigureCxfSecurity {
@@ -65,6 +65,10 @@ public class ConfigureCxfSecurity {
 	if (null != inProps && !inProps.isEmpty()) {
 	    endpoint.getInInterceptors().add(new SAAJInInterceptor());
 	    endpoint.getInInterceptors().add(new WSS4JInInterceptor(inProps));
+
+        // if WS Security is used with a JAX-WS handler (See EjbInterceptor), we have to deal with mustUnderstand flag
+        // in WS Security headers. So, let's add an interceptor
+        endpoint.getInInterceptors().add(new WSSPassThroughInterceptor());
 	}
 
 	if (null != outProps && !outProps.isEmpty()) {
