@@ -31,7 +31,7 @@ public class RedBean implements Friend {
         return "Red says, Hello!";
     }
 
-    public String helloToFriend() {
+    public String helloFromFriend() {
         try {
             Friend friend = (Friend) new InitialContext().lookup("java:comp/env/myFriend");
             return "My friend " + friend.sayHello();

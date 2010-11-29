@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
+    <enterprise-beans>
+        <session>
+            <ejb-name>BlueBean</ejb-name>
+            <business-local>org.superbiz.ejblookup.Friend</business-local>
+            <ejb-class>org.superbiz.ejblookup.BlueBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <ejb-local-ref>
+                <ejb-ref-name>myFriend</ejb-ref-name>
+                <local>org.superbiz.ejblookup.Friend</local>
+                <ejb-link>RedBean</ejb-link>
+            </ejb-local-ref>
+        </session>
+        <session>
+            <ejb-name>RedBean</ejb-name>
+            <business-local>org.superbiz.ejblookup.Friend</business-local>
+            <ejb-class>org.superbiz.ejblookup.RedBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <ejb-local-ref>
+                <ejb-ref-name>myFriend</ejb-ref-name>
+                <local>org.superbiz.ejblookup.Friend</local>
+                <ejb-link>BlueBean</ejb-link>
+            </ejb-local-ref>
+        </session>
+    </enterprise-beans>
+</ejb-jar>
