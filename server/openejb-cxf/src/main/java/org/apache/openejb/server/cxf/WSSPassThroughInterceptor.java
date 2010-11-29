@@ -30,36 +30,37 @@ import java.util.Set;
  * adds the {@link org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor}. OpenEJB now supports
  * WS Security out of the box, so it must indicates WS Security headers have been treated. That is simply done
  * using that fake interceptor.
- *
+ * <p/>
  * $Id$
  */
 public class WSSPassThroughInterceptor extends AbstractSoapInterceptor {
     private static final Set<QName> HEADERS = new HashSet<QName>();
-       static {
-           HEADERS.add(new QName(WSConstants.WSSE_NS, WSConstants.WSSE_LN));
-           HEADERS.add(new QName(WSConstants.WSSE11_NS, WSConstants.WSSE_LN));
-           HEADERS.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_DATA_LN));
-       }
 
-       public WSSPassThroughInterceptor() {
-           super(Phase.PRE_PROTOCOL);
-       }
+    static {
+        HEADERS.add(new QName(WSConstants.WSSE_NS, WSConstants.WSSE_LN));
+        HEADERS.add(new QName(WSConstants.WSSE11_NS, WSConstants.WSSE_LN));
+        HEADERS.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_DATA_LN));
+    }
 
-       public WSSPassThroughInterceptor(String phase) {
-           super(phase);
-       }
+    public WSSPassThroughInterceptor() {
+        super(Phase.PRE_PROTOCOL);
+    }
 
-       @Override
-       public Set<QName> getUnderstoodHeaders() {
-           return HEADERS;
-       }
+    public WSSPassThroughInterceptor(String phase) {
+        super(phase);
+    }
 
-       public void handleMessage(SoapMessage soapMessage) {
-           // do nothing
-           
-           // this interceptor simply returns all WS-Security headers in its getUnderstoodHeaders()
-           // method, so that CXF does not complain that they have not been "processed"
-           // this is useful if you only need to look at the non-encrypted XML
-       }
+    @Override
+    public Set<QName> getUnderstoodHeaders() {
+        return HEADERS;
+    }
+
+    public void handleMessage(SoapMessage soapMessage) {
+        // do nothing
+
+        // this interceptor simply returns all WS-Security headers in its getUnderstoodHeaders()
+        // method, so that CXF does not complain that they have not been "processed"
+        // this is useful if you only need to look at the non-encrypted XML
+    }
 
 }

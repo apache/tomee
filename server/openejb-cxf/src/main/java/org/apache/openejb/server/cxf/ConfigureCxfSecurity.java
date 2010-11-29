@@ -30,56 +30,55 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 /**
  * Helper class to extract WSS4J properties from a set of properties. More over,
  * it configures In and Out interceptor to manage WS-Security.
- *
  */
 public class ConfigureCxfSecurity {
-    
+
     public static final void setupWSS4JChain(Endpoint endpoint, Properties inProps) {
 
-	Map<String, Object> in = getPropsFromProperties(inProps, "wss4j.in.");
-	Map<String, Object> out = getPropsFromProperties(inProps, "wss4j.out.");
-	setupWSS4JChain(endpoint, in, out);
+        Map<String, Object> in = getPropsFromProperties(inProps, "wss4j.in.");
+        Map<String, Object> out = getPropsFromProperties(inProps, "wss4j.out.");
+        setupWSS4JChain(endpoint, in, out);
     }
 
     public static Map<String, Object> getPropsFromProperties(Properties inProps, String pattern) {
-	String key, val;
+        String key, val;
 
-	Map<String, Object> props = new HashMap<String, Object>();
-	for (Map.Entry<Object, Object> entry : inProps.entrySet()) {
-	    key = String.valueOf(entry.getKey());
-	    val = String.valueOf(entry.getValue()).trim();
-	    if (key.startsWith(pattern)) {
-		props.put(key.substring(pattern.length()), val);
-	    }
-	}
-	if (!props.isEmpty()) {
-	    // WSHandler first look for a property PW_CALLBACK_CLASS
-	    // if not found, it gets the PW_CALLBACK_REF
-	    props.put(WSHandlerConstants.PW_CALLBACK_REF, new ServerPasswordHandler());
-	}
-	return props;
+        Map<String, Object> props = new HashMap<String, Object>();
+        for (Map.Entry<Object, Object> entry : inProps.entrySet()) {
+            key = String.valueOf(entry.getKey());
+            val = String.valueOf(entry.getValue()).trim();
+            if (key.startsWith(pattern)) {
+                props.put(key.substring(pattern.length()), val);
+            }
+        }
+        if (!props.isEmpty()) {
+            // WSHandler first look for a property PW_CALLBACK_CLASS
+            // if not found, it gets the PW_CALLBACK_REF
+            props.put(WSHandlerConstants.PW_CALLBACK_REF, new ServerPasswordHandler());
+        }
+        return props;
     }
 
     public static final void setupWSS4JChain(Endpoint endpoint, Map<String, Object> inProps, Map<String, Object> outProps) {
 
-	if (null != inProps && !inProps.isEmpty()) {
-	    endpoint.getInInterceptors().add(new SAAJInInterceptor());
-	    endpoint.getInInterceptors().add(new WSS4JInInterceptor(inProps));
+        if (null != inProps && !inProps.isEmpty()) {
+            endpoint.getInInterceptors().add(new SAAJInInterceptor());
+            endpoint.getInInterceptors().add(new WSS4JInInterceptor(inProps));
 
-        // if WS Security is used with a JAX-WS handler (See EjbInterceptor), we have to deal with mustUnderstand flag
-        // in WS Security headers. So, let's add an interceptor
-        endpoint.getInInterceptors().add(new WSSPassThroughInterceptor());
-	}
+            // if WS Security is used with a JAX-WS handler (See EjbInterceptor), we have to deal with mustUnderstand flag
+            // in WS Security headers. So, let's add an interceptor
+            endpoint.getInInterceptors().add(new WSSPassThroughInterceptor());
+        }
 
-	if (null != outProps && !outProps.isEmpty()) {
-	    endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
-	    endpoint.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
-	}
+        if (null != outProps && !outProps.isEmpty()) {
+            endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
+            endpoint.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
+        }
 
     }
 
     public static final void configure(Endpoint endpoint, Properties p) {
-	setupWSS4JChain(endpoint, p);
+        setupWSS4JChain(endpoint, p);
     }
 
 }
