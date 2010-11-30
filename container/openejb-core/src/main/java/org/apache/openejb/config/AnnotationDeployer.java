@@ -1625,7 +1625,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ValidationContext validation = ejbModule.getValidation();
             String ejbName = sessionBean.getEjbName();
 
-            boolean strict = getProperty(ejbModule, STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
+            boolean strict = getProperty(STRICT_INTERFACE_DECLARATION, false + "").equalsIgnoreCase("true");
 
             /*
              * Collect all interfaces explicitly declared via xml.
@@ -1971,11 +1971,17 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
         }
 
-        private String getProperty(EjbModule ejbModule, String key, String defaultValue) {
-            OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+        private String getProperty(String key, String defaultValue) {
             String value = SystemInstance.get().getProperty(key, defaultValue);
-            if (openejbJar != null && openejbJar.getProperties() != null){
-                value = openejbJar.getProperties().getProperty(key, value);
+            final DeploymentModule module = getModule();
+
+            if (module instanceof EjbModule) {
+                EjbModule ejbModule = (EjbModule) module;
+
+                OpenejbJar openejbJar = ejbModule.getOpenejbJar();
+                if (openejbJar != null && openejbJar.getProperties() != null){
+                    value = openejbJar.getProperties().getProperty(key, value);
+                }
             }
             return value;
         }
@@ -2184,11 +2190,13 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
         
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
+
+            final boolean override = "true".equalsIgnoreCase(getProperty("openejb.callbacks.override", "false"));
+
             /*
              * @PostConstruct
              */
-            LifecycleCallback postConstruct = getFirst(bean.getPostConstruct());
-            if (postConstruct == null) {
+            if (apply(override, bean.getPostConstruct())) {
                 for (Method method : classFinder.findAnnotatedMethods(PostConstruct.class)) {
                     bean.getPostConstruct().add(new LifecycleCallback(method));
                 }
@@ -2197,8 +2205,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * @PreDestroy
              */
-            LifecycleCallback preDestroy = getFirst(bean.getPreDestroy());
-            if (preDestroy == null) {
+            if (apply(override, bean.getPreDestroy())) {
                 for (Method method : classFinder.findAnnotatedMethods(PreDestroy.class)) {
                     bean.getPreDestroy().add(new LifecycleCallback(method));
                 }
@@ -2210,8 +2217,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @AroundInvoke
                  */
-                AroundInvoke aroundInvoke = getFirst(invokable.getAroundInvoke());
-                if (aroundInvoke == null) {
+                if (apply(override, invokable.getAroundInvoke())) {
                     for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
                         invokable.getAroundInvoke().add(new AroundInvoke(method));
                     }
@@ -2220,8 +2226,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  *  @AroundTimeout
                  */
-                AroundTimeout aroundTimeout = getFirst(invokable.getAroundTimeout());
-                if (aroundTimeout == null) {
+                if (apply(override, invokable.getAroundInvoke())) {
                     for (Method method : classFinder.findAnnotatedMethods(javax.interceptor.AroundTimeout.class)) {
                         invokable.getAroundTimeout().add(new AroundTimeout(method));
                     }
@@ -2235,7 +2240,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
                     List<Method> timeoutMethods = classFinder.findAnnotatedMethods(javax.ejb.Timeout.class);
-                  //Validation Logic is moved to CheckCallback class.
+                    //Validation Logic is moved to CheckCallback class.
                     if(timeoutMethods.size() == 1){
                         timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0)));
                     }
@@ -2278,8 +2283,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @PostActivate
                  */
-                LifecycleCallback postActivate = getFirst(session.getPostActivate());
-                if (postActivate == null) {
+                if (apply(override, session.getPostActivate())) {
                     for (Method method : classFinder.findAnnotatedMethods(PostActivate.class)) {
                         session.getPostActivate().add(new LifecycleCallback(method));
                     }
@@ -2288,13 +2292,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @PrePassivate
                  */
-                LifecycleCallback prePassivate = getFirst(session.getPrePassivate());
-                if (prePassivate == null) {
+                if (apply(override, session.getPrePassivate())) {
                     for (Method method : classFinder.findAnnotatedMethods(PrePassivate.class)) {
                         session.getPrePassivate().add(new LifecycleCallback(method));
                     }
                 }
-
                 /*
                  * @Init
                  */
@@ -2331,6 +2333,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+        }
+
+        private boolean apply(boolean override, List<?> list) {
+            // Compliant behavior is to always add the annotated callbacks
+            // into the list of xml configured callbacks
+
+            // Legacy behavior was to not apply the annotations to the list
+            // if there were any of the related elements specified in the xml
+
+            // if we are *not* using the legacy logic, always return true
+            if (!override) return true;
+
+            // if we are using that logic, then only return true if the list is empty
+            // i.e. we will not augment the list if callbacks have been specified in xml
+            return list.size() == 0;
         }
 
         public void buildAnnotatedRefs(JndiConsumer consumer, ClassFinder classFinder, ClassLoader classLoader) throws OpenEJBException {
@@ -3626,6 +3643,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return list.get(0);
             }
             return null;
+        }
+
+        private boolean getFirstt(List<?> list) {
+            return list.size() > 0;
         }
 
 
