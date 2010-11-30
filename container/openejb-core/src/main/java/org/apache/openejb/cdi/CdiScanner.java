@@ -35,6 +35,7 @@ import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.inject.AlternativesManager;
 import org.apache.webbeans.intercept.InterceptorsManager;
+import org.apache.webbeans.spi.BDABeansXmlScanner;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.AnnotationUtil;
 
@@ -102,13 +103,13 @@ public class CdiScanner implements ScannerService {
 
             for (String className : beans.alternativeStereotypes) {
                 Class<?> clazz = load(className, "alternative-stereotype", classLoader);
-                alternativesManager.addStereoTypeAlternative(clazz);
+                alternativesManager.addStereoTypeAlternative(clazz, null, null);
                 classes.add(clazz);
             }
 
             for (String className : beans.alternativeClasses) {
                 Class<?> clazz = load(className, "alternative-class", classLoader);
-                alternativesManager.addClazzAlternative(clazz);
+                alternativesManager.addClazzAlternative(clazz, null, null);
                 classes.add(clazz);
             }
 
@@ -119,6 +120,14 @@ public class CdiScanner implements ScannerService {
             }
         }
 
+    }
+
+    public boolean isBDABeansXmlScanningEnabled() {
+        return false;
+    }
+
+    public BDABeansXmlScanner getBDABeansXmlScanner() {
+        return null;
     }
 
     private Class load(String className, String type, ClassLoader classLoader) {

@@ -132,9 +132,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) WebBeansFinder.getSingletonInstance("org.apache.openejb.cdi.CdiResourceInjectionService", appContext.getClassLoader());
             injectionServices.clear();
 
-            //ContextFactory cleanup
-            ContextFactory.cleanUpContextFactory();
-
             //Clear singleton list
             WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
