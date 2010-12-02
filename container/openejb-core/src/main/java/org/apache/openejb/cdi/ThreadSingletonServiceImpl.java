@@ -84,13 +84,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     private void contextMessage(OWBContext newOWBContext, String prefix) {
-        if (logger.isDebugEnabled()) {
-            StringBuilder b = new StringBuilder(" owbContext: " + newOWBContext + "\n");
-            for (Object service : newOWBContext.getSingletons().values()) {
-                b.append("  " + service + "\n");
-            }
-            logger.debug(b.toString());
-        }
     }
 
     @Override
@@ -102,24 +95,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     @Override
     public Object get(Object key, String singletonClassName) {
         OWBContext context = getContext();
-        contextMessage(context, "ThreadSingletonService looking for " + singletonClassName);
-        Object service = context.getSingletons().get(singletonClassName);
-        if (service == null) {
-            try {
-                Class clazz = classLoader.loadClass(singletonClassName);
-                service = clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                throw new WebBeansException("Could not locate requested class " + singletonClassName + " in classloader " + classLoader, e);
-            } catch (InstantiationException e) {
-                throw new WebBeansException("Could not create instance of class " + singletonClassName, e);
-            } catch (IllegalAccessException e) {
-                throw new WebBeansException("Could not create instance of class " + singletonClassName, e);
-            } catch (NoClassDefFoundError e) {
-                throw new WebBeansException("Could not locate requested class " + singletonClassName + " in classloader " + classLoader, e);
-            }
-            context.getSingletons().put(singletonClassName, service);
-        }
-        return service;
+        return context.getSingletons().get(singletonClassName);
     }
 
     private OWBContext getContext() {
@@ -138,7 +114,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public boolean isExist(Object key, String singletonClassName) {
-        return getContext().getSingletons().containsKey(singletonClassName);
+        throw new UnsupportedOperationException("isExist is never called");
     }
 
     @Override
