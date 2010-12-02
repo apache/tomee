@@ -20,6 +20,8 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.webbeans.config.WebBeansContext;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,17 +30,17 @@ import java.util.Map;
  */
 public class OWBContext {
 
-    private final Map<String, Object> singletons;
+    private WebBeansContext webBeansContext;
 
     public OWBContext() {
-        singletons = new HashMap<String, Object>();
+        webBeansContext = new WebBeansContext();
     }
 
-    public OWBContext(Map<String, Object> singletons) {
-        this.singletons = singletons;
+    public OWBContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
     }
 
-    public Map<String, Object> getSingletons() {
-        return singletons;
+    public WebBeansContext getSingletons() {
+        return webBeansContext;
     }
 }
