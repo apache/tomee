@@ -17,6 +17,12 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.core.TempClassLoader;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.URLs;
+import org.apache.openejb.util.UrlCache;
+
 import java.beans.Introspector;
 import java.io.File;
 import java.io.ObjectInputStream;
@@ -30,20 +36,15 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
 import java.util.Set;
-import java.util.LinkedHashSet;
+import java.util.Vector;
 import java.util.jar.JarFile;
-
-import org.apache.openejb.core.TempClassLoader;
-import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.UrlCache;
 
 /**
  * @version $Revision$ $Date$
@@ -86,52 +87,184 @@ public class ClassLoaderUtil {
         return classLoader;
     }
 
+    /**
+     * Destroy a classloader as forcefully as possible.
+     *
+     * @param classLoader ClassLoader to destroy.
+     */
     public static void destroyClassLoader(ClassLoader classLoader) {
         logger.debug("Destroying classLoader " + toString(classLoader));
 
         // remove from the indexes
         Set<String> apps = appsByClassLoader.remove(classLoader);
+
         if (apps != null) {
+
+            List<ClassLoader> classLoaders;
+
             for (String appId : apps) {
-                List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
+
+                classLoaders = classLoadersByApp.get(appId);
+
                 if (classLoaders != null) {
                     classLoaders.remove(classLoader);
-                    // if this is the last class loader in the app, clean up the app
-                    if (classLoaders.isEmpty()) {
-                        destroyClassLoader(appId);
-                    }
+                }
+
+                //If this is the last class loader in the app, clean up the app
+                if (null == classLoaders || classLoaders.isEmpty()) {
+                    destroyClassLoader(appId);
                 }
             }
         }
 
-        // clear the lame openjpa caches
+        // Clear OpenJPA caches
         cleanOpenJPACache(classLoader);
+
+        //Clear open jar files belonging to this ClassLoader
+        for (final String jar : getClosedJarFiles(classLoader)) {
+            clearSunJarFileFactoryCache(jar);
+        }
+
+        classLoader = null;
+    }
+
+    /**
+     * Dirty hack to force closure of file handles in the Oracle VM URLClassLoader
+     * Any URLClassLoader passed into this method will be unusable after the method completes.
+     *
+     * @param cl ClassLoader of expected type URLClassLoader (Silent failure)
+     */
+    private static List<String> getClosedJarFiles(final ClassLoader cl) {
+
+        final List<String> files = new ArrayList<String>();
+
+        if (null != cl && cl instanceof URLClassLoader) {
+
+            final URLClassLoader ucl = (URLClassLoader) cl;
+            Class clazz = java.net.URLClassLoader.class;
+
+            try {
+
+                java.lang.reflect.Field ucp = clazz.getDeclaredField("ucp");
+                ucp.setAccessible(true);
+                Object cp = ucp.get(ucl);
+                java.lang.reflect.Field loaders = cp.getClass().getDeclaredField("loaders");
+                loaders.setAccessible(true);
+                java.util.Collection c = (java.util.Collection) loaders.get(cp);
+                java.lang.reflect.Field loader;
+                java.util.jar.JarFile jf;
+
+                for (final Object jl : c.toArray()) {
+                    try {
+                        loader = jl.getClass().getDeclaredField("jar");
+                        loader.setAccessible(true);
+                        jf = (java.util.jar.JarFile) loader.get(jl);
+                        files.add(jf.getName());
+                        jf.close();
+                    } catch (Throwable t) {
+                        //If we got this far, this is probably not a JAR loader so skip it
+                    }
+                }
+            } catch (Throwable t) {
+                //Not an Oracle VM
+            }
+        }
+
+        return files;
+    }
+
+    public boolean finalizeNativeLibs(ClassLoader cl) {
+
+        boolean res = false;
+        Class classClassLoader = ClassLoader.class;
+        java.lang.reflect.Field nativeLibraries = null;
+
+        try {
+            nativeLibraries = classClassLoader.getDeclaredField("nativeLibraries");
+        } catch (NoSuchFieldException e1) {
+            //Ignore
+        }
+
+        if (nativeLibraries == null) {
+            return res;
+        }
+
+        nativeLibraries.setAccessible(true);
+        Object obj = null;
+
+        try {
+            obj = nativeLibraries.get(cl);
+        } catch (IllegalAccessException e1) {
+            //Ignore
+        }
+
+        if (!(obj instanceof Vector)) {
+            return res;
+        }
+
+        res = true;
+        Vector java_lang_ClassLoader_NativeLibrary = (Vector) obj;
+        java.lang.reflect.Method finalize;
+
+        for (final Object lib : java_lang_ClassLoader_NativeLibrary) {
+
+            finalize = null;
+
+            try {
+                finalize = lib.getClass().getDeclaredMethod("finalize", new Class[0]);
+
+                if (finalize != null) {
+
+                    finalize.setAccessible(true);
+
+                    try {
+                        finalize.invoke(lib, new Object[0]);
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
+                }
+            } catch (Throwable e) {
+                //Ignore
+            }
+        }
+        return res;
     }
 
     public static void destroyClassLoader(String appId) {
-        logger.debug("Destroying classLoaders for application " + appId);
 
+        logger.debug("Destroying classLoaders for application " + appId);
         List<ClassLoader> classLoaders = classLoadersByApp.remove(appId);
+
         if (classLoaders != null) {
-            for (ClassLoader classLoader : classLoaders) {
-                // get the apps using the class loader
-                Set<String> apps = appsByClassLoader.get(classLoader);
-                if (apps == null) {
-                    apps = Collections.emptySet();
+
+            final Iterator<ClassLoader> it = classLoaders.iterator();
+            Set<String> apps;
+            ClassLoader cl;
+
+            while (it.hasNext()) {
+
+                cl = it.next();
+                apps = appsByClassLoader.get(cl);
+
+                if (null != apps) {
+                    //This app is no longer using the class loader
+                    apps.remove(appId);
                 }
 
-                // this app is no longer using the class loader
-                apps.remove(appId);
+                //If no apps are using the class loader, destroy it
+                if (null == apps || apps.isEmpty()) {
+                    it.remove();
+                    appsByClassLoader.remove(cl);
+                    destroyClassLoader(cl);
+                    cl = null;
 
-                // if no apps are using the class loader, destroy it
-                if (apps.isEmpty()) {
-                    appsByClassLoader.remove(classLoader);
-                    destroyClassLoader(classLoader);
+                    System.gc();
                 } else {
-                    logger.debug("ClassLoader " + toString(classLoader) + " held open by the applications" + apps);
+                    logger.debug("ClassLoader " + toString(cl) + " held open by the applications: " + apps);
                 }
             }
         }
+
         urlCache.releaseUrls(appId);
         clearSunJarFileFactoryCache(appId);
     }
@@ -181,17 +314,23 @@ public class ClassLoaderUtil {
                 Map ucf = (Map) urlCacheField.get(null);
 
                 List<URL> urls = new ArrayList<URL>();
-                for (Object item : fileCache.keySet()) {
-                    URL url = null;
+                File file;
+                URL url;
+
+                for (final Object item : fileCache.keySet()) {
+
+                    url = null;
+
                     if (item instanceof URL) {
                         url = (URL) item;
                     } else if (item instanceof String) {
                         url = new URI((String) item).toURL();
                     } else {
                         logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
+                        continue;
                     }
 
-                    File file = null;
+                    file = null;
                     try {
                         file = URLs.toFile(url);
                     } catch (IllegalArgumentException e) {
@@ -203,14 +342,31 @@ public class ClassLoaderUtil {
                     }
                 }
 
-                for (URL url : urls) {
-                    JarFile jarFile = (JarFile) fileCache.remove(url);
+                JarFile jarFile;
+                String key;
+                for (final URL jar : urls) {
+
+                    //Fudge together a sun.net.www.protocol.jar.JarFileFactory compatible key
+                    key = ("file:///" + new File(URI.create(jar.toString())).getAbsolutePath().replace('\\', '/'));
+                    jarFile = (JarFile) fileCache.remove(key);
+
                     if (jarFile == null) {
-                        continue;
+
+                        key = jar.toExternalForm();
+                        jarFile = (JarFile) fileCache.remove(key);
+
+                        if (jarFile == null) {
+                            continue;
+                        }
                     }
 
                     ucf.remove(jarFile);
-                    jarFile.close();
+
+                    try {
+                        jarFile.close();
+                    } catch (Throwable e) {
+                        //Ignore
+                    }
                 }
             }
         } catch (ConcurrentModificationException e) {
@@ -244,7 +400,8 @@ public class ClassLoaderUtil {
      * This method uses reflection and setAccessable to obtain access to the Sun cache.
      * The cache Class synchronizes upon itself for access to the cache Map.
      * This method completely clears the class loader cache which will impact preformance of object serialization.
-     * @param clazz the name of the class containing the cache field
+     *
+     * @param clazz     the name of the class containing the cache field
      * @param fieldName the name of the cache field
      */
     public static void clearSunSoftCache(Class clazz, String fieldName) {
