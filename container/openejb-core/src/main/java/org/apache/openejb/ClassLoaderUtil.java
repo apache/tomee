@@ -356,7 +356,12 @@ public class ClassLoaderUtil {
                         jarFile = (JarFile) fileCache.remove(key);
 
                         if (jarFile == null) {
-                            continue;
+
+							jarFile = (JarFile) fileCache.remove(jar);
+
+                            if (jarFile == null) {
+	                            continue;
+	                        }
                         }
                     }
 
