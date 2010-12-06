@@ -1,4 +1,5 @@
 @echo off
+CLS
 REM================================================
 REM Licensed to the Apache Software Foundation (ASF) under one or more
 REM contributor license agreements.  See the NOTICE file distributed with
@@ -18,21 +19,55 @@ REM _______________________________________________
 REM $Rev$ $Date$
 REM================================================
 
-SETLOCAL
+@echo off
+rem -------------------------------------------------------------------------
+rem Manager Bootstrap Script for Windows
+rem -------------------------------------------------------------------------
 
-set OPENEJB_CORE_JAR=%OPENEJB_HOME%/lib/openejb-core-${version}.jar
-set OPENEJB_JAVAAGENT_JAR=%OPENEJB_HOME%/lib/openejb-javaagent-${version}.jar
+@if not "%ECHO%" == ""  echo %ECHO%
+@if "%OS%" == "Windows_NT" setlocal
 
-rem find OPENEJB_HOME if it does not exist due to either an invalid value passed
-rem by the user or the %0 problem on Windows 9x
-if exist "%OPENEJB_CORE_JAR%" goto openejbHomeSet
+if "%OS%" == "Windows_NT" (
+  set "DIRNAME=%~dp0%"
+) else (
+  set "DIRNAME=.\"
+)
+
+pushd "%DIRNAME%
+
+REM echo Path is: "%DIRNAME%"
+set OPENEJB_HOME=.
+
+cd ..
+
+set "OPENEJB_HOME=%CD%"
+
+REM echo OPENEJB_HOME is: %OPENEJB_HOME%
+
+set OPENEJB_CORE_JAR="%OPENEJB_HOME%\lib\openejb-core-*.jar"
+set OPENEJB_JAVAAGENT_JAR="%OPENEJB_HOME%\lib\openejb-javaagent-*.jar"
+
+for %%a in (%OPENEJB_CORE_JAR%) do (
+  set OPENEJB_CORE_JAR="%%a"
+)
+
+for %%a in (%OPENEJB_JAVAAGENT_JAR%) do (
+  set OPENEJB_JAVAAGENT_JAR="%%a"
+)
+
+REM echo OPENEJB_CORE_JAR is: %OPENEJB_CORE_JAR%
+REM echo OPENEJB_JAVAAGENT_JAR is: %OPENEJB_JAVAAGENT_JAR%
+
+if exist %OPENEJB_CORE_JAR% goto openejbHomeSet
 
 :noOpenEJBHome
-echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located. Please set OPENEJB_HOME.
+echo OPENEJB_HOME is set incorrectly or OpenEJB could not be located. Please set "%OPENEJB_HOME%".
 goto EOF
 
 :openejbHomeSet
 set OPTIONS=-Dopenejb.home=%OPENEJB_HOME%
+
+REM echo %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
 java %OPENEJB_OPTS% -javaagent:%OPENEJB_JAVAAGENT_JAR% -jar %OPENEJB_CORE_JAR% %*
 
