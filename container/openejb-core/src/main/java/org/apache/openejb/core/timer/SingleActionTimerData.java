@@ -49,11 +49,8 @@ public class SingleActionTimerData extends TimerData {
 
     @Override
     public Trigger initializeTrigger() {
-        SimpleTrigger simpleTrigger = new SimpleTrigger();
-        Date startTime = new Date();
-        simpleTrigger.setStartTime(startTime);
-        simpleTrigger.setRepeatInterval(expiration.getTime() - startTime.getTime());
-        simpleTrigger.setRepeatCount(1);
+    	final SimpleTrigger simpleTrigger = new SimpleTrigger();
+    	simpleTrigger.setStartTime(expiration);
         return simpleTrigger;
     }
 
