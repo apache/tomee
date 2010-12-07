@@ -153,14 +153,14 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
     private void configureEmbedded() {
         URL resource = ConfUtils.getResource(EMBEDDED_PROPERTIES_FILE);
-        Properties properties = asProperies(resource);
+        if (resource == null) {
+        	System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
 
-        applyOverrides(properties);
-
-        if (resource != null) {
-            PropertyConfigurator.configure(properties);
         } else {
-            System.out.println("FATAL ERROR WHILE CONFIGURING LOGGING!!!. MISSING embedded.logging.properties FILE ");
+            Properties properties = asProperies(resource);
+            applyOverrides(properties);
+            PropertyConfigurator.configure(properties);
+
         }
     }
 
