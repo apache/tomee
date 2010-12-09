@@ -284,6 +284,8 @@ public class JaxbJavaee {
                 localName = "body-content";
             } else if (localName.equals("jspversion")) {
                 localName = "jsp-version";
+            } else if (localName.equals("info")) {
+                localName = "description";
             }
             return localName;
         }
