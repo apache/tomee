@@ -21,7 +21,7 @@
 	-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>openejb-tomcat</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -31,10 +31,7 @@
   <artifactId>openejb-tomcat-bundle</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Assembly :: Tomcat :: Bundle</name>
-  <properties>
-    <tomcat.version>6.0.29</tomcat.version>
-    <examples.version>1.1-SNAPSHOT</examples.version>
-  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -67,6 +64,8 @@
                 <property name="tomcat.version" value="${tomcat.version}" />
                 <property name="openejb.version" value="${project.version}" />
                 <property name="examples.version" value="${examples.version}" />
+                <property name="http.proxyHost" value="${http.proxyHost}" />
+                <property name="http.proxyPort" value="${http.proxyPort}" />
 
                 <ant antfile="${basedir}/build.xml">
                   <target name="downloadtomcat" />
@@ -78,6 +77,18 @@
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-commons-net</artifactId>
+            <version>${ant.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>${ant.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -91,20 +102,20 @@
               <mainClass>org.apache.openejb.tomcat.TomcatBundleInstaller</mainClass>
               <arguments>
                 <argument>
-									${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/openejb
+                  ${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/openejb
                 </argument>
               </arguments>
               <systemProperties>
                 <systemProperty>
                   <key>catalina.home</key>
                   <value>
-										${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}
+                    ${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}
                   </value>
                 </systemProperty>
                 <systemProperty>
                   <key>catalina.base</key>
                   <value>
-										${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}
+                    ${basedir}/target/bundle/extracted/apache-tomcat-${tomcat.version}
                   </value>
                 </systemProperty>
               </systemProperties>
@@ -138,5 +149,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <properties>
+    <tomcat.version>6.0.29</tomcat.version>
+    <examples.version>1.1-SNAPSHOT</examples.version>
+    <ant.version>1.8.1</ant.version>
+  </properties>
+
 </project>
 
