@@ -1158,11 +1158,11 @@ public class BeanContext extends DeploymentContext {
             TransactionType transactionType;
 
             if (getComponentType() == BeanType.SINGLETON) {
-                List<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPostConstruct();
+                Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPostConstruct();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
-                    transactionType = getTransactionType(callbacks.get(0));
+                    transactionType = getTransactionType(callbacks.iterator().next());
                     if (transactionType == TransactionType.Required) {
                         transactionType = TransactionType.RequiresNew;
                     }

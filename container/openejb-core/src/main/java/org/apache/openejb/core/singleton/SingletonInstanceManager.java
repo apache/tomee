@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.Lock;
@@ -238,11 +239,11 @@ public class SingletonInstanceManager {
             TransactionType transactionType;
 
             if (beanContext.getComponentType() == BeanType.SINGLETON) {
-                List<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
+                Set<Method> callbacks = callbackInterceptors.get(callbackInterceptors.size() -1).getPreDestroy();
                 if (callbacks.isEmpty()) {
                     transactionType = TransactionType.RequiresNew;
                 } else {
-                    transactionType = beanContext.getTransactionType(callbacks.get(0));
+                    transactionType = beanContext.getTransactionType(callbacks.iterator().next());
                     if (transactionType == TransactionType.Required) {
                         transactionType = TransactionType.RequiresNew;
                     }
