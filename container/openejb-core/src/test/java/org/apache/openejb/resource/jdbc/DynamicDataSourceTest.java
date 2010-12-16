@@ -1,11 +1,25 @@
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.openejb.resource.jdbc;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -41,12 +57,11 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.resource.jdbc.Router;
 import org.apache.openejb.spi.ContainerSystem;
-import org.hsqldb.jdbcDriver;
 import org.junit.Test;
 
 public class DynamicDataSourceTest {
+
     @Test
     public void route() throws Exception {
         System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, LocalInitialContextFactory.class.getName());
@@ -70,7 +85,7 @@ public class DynamicDataSourceTest {
             p.put("JtaManaged", "true");
             assembler.createResource(config.configureService(resourceDs, ResourceInfo.class));
         }
-        Resource resourceRouter = new Resource("My Router", "org.apache.openejb.resource.jdbc.DynamicDataSourceTest$DeterminedRouter", "org.router:DeterminedRouter");
+        Resource resourceRouter = new Resource("My Router", "org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter", "org.router:DeterminedRouter");
         resourceRouter.getProperties().setProperty("DatasourceNames", "database1 database2 database3");
         resourceRouter.getProperties().setProperty("DefaultDataSourceName", "database1");
         assembler.createResource(config.configureService(resourceRouter, ResourceInfo.class));
@@ -89,40 +104,39 @@ public class DynamicDataSourceTest {
         EjbModule ejbModule = new EjbModule(ejbJar);
 
         // Create an "ear"
-        AppModule appModule = new AppModule(ejbModule.getClassLoader(), ejbModule.getJarLocation());
+        AppModule appModule = new AppModule(ejbModule.getClassLoader(), "test-dynamic-data-source");
         appModule.getEjbModules().add(ejbModule);
 
         // Create a persistence-units
         PersistenceUnit unit = new PersistenceUnit("router");
         unit.addClass(Person.class);
+        unit.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
         unit.setTransactionType(TransactionType.JTA);
         unit.setJtaDataSource("Routed Datasource");
         appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(unit)));
+        for (int i = 1; i <= 3; i++) {
+            PersistenceUnit u = new PersistenceUnit("db" + i);
+            u.addClass(Person.class);
+            u.getProperties().put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+            u.setTransactionType(TransactionType.JTA);
+            u.setJtaDataSource("database" + i);
+            appModule.getPersistenceModules().add(new PersistenceModule("root", new Persistence(u)));
+        }
 
         assembler.createApplication(config.configureApplication(appModule));
 
         // context
         Context ctx = new InitialContext();
 
-        // creating database
-        // openjpa creates it when the entity manager (em) is invoked the first
-        // time but we need to create tables before the first use of the em
-        // so it is done using jdbc
-        Class.forName(jdbcDriver.class.getName());
-        for (int i = 1; i <= 3; i++) {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:hsqldb:mem:db" + i, "sa", "");
-            Statement st = connection.createStatement();
-            st.executeUpdate("CREATE TABLE \"DynamicDataSourceTest$Person\" (id BIGINT NOT NULL, name VARCHAR(255), PRIMARY KEY (id))");
-            st.close();
-            connection.close();
-        }
-
         // running persist on all "routed" databases
         final List<String> databases = new ArrayList<String>();
         databases.add("database1");
         databases.add("database2");
         databases.add("database3");
+
+        // convinient bean to create tables for each persistence unit
+        Utility utility = (Utility) ctx.lookup("UtilityBeanLocal");
+        utility.initDatabase();
 
         RoutedEJB ejb = (RoutedEJB) ctx.lookup("RoutedEJBBeanLocal");
         for (int i = 0; i < 18; i++) {
@@ -131,10 +145,9 @@ public class DynamicDataSourceTest {
             ejb.persist(i, name, db);
         }
 
-        // assert database record number using jdbc
+        // assert database records number using jdbc
         for (int i = 1; i <= 3; i++) {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:hsqldb:mem:db" + i, "sa", "");
+            Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:db" + i, "sa", "");
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("select count(*) from \"DynamicDataSourceTest$Person\"");
             rs.next();
@@ -154,13 +167,37 @@ public class DynamicDataSourceTest {
         private DeterminedRouter router;
 
         public void persist(int id, String name, String ds) {
-            router.setDatasource(ds);
+            router.setDataSource(ds);
             em.persist(new Person(id, name));
+        }
+
+    }
+
+    @Stateless
+    @Local(Utility.class)
+    public static class UtilityBean implements Utility {
+
+        @PersistenceContext(unitName = "db1")
+        private EntityManager em1;
+        @PersistenceContext(unitName = "db2")
+        private EntityManager em2;
+        @PersistenceContext(unitName = "db3")
+        private EntityManager em3;
+
+        @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+        public void initDatabase() {
+            em1.find(Person.class, 0);
+            em2.find(Person.class, 0);
+            em3.find(Person.class, 0);
         }
     }
 
     public static interface RoutedEJB {
         void persist(int id, String name, String ds);
+    }
+
+    public static interface Utility {
+        void initDatabase();
     }
 
     @Entity
@@ -214,8 +251,7 @@ public class DynamicDataSourceTest {
         private void init() {
             dataSources = new ConcurrentHashMap<String, DataSource>();
             for (String ds : dataSourceNames.split(" ")) {
-                ContainerSystem containerSystem = SystemInstance.get()
-                        .getComponent(ContainerSystem.class);
+                ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
                 Object o = null;
                 Context ctx = containerSystem.getJNDIContext();
@@ -223,7 +259,6 @@ public class DynamicDataSourceTest {
                     o = ctx.lookup("openejb:Resource/" + ds);
                     if (o instanceof DataSource) {
                         dataSources.put(ds, (DataSource) o);
-                    } else {
                     }
                 } catch (NamingException e) {
                 }
@@ -245,6 +280,7 @@ public class DynamicDataSourceTest {
             if (currentDataSource.get() == null) {
                 if (dataSources.containsKey(defaultDataSourceName)) {
                     return dataSources.get(defaultDataSourceName);
+
                 } else {
                     throw new IllegalArgumentException("you have to specify at least one datasource");
                 }
@@ -256,15 +292,14 @@ public class DynamicDataSourceTest {
 
         /**
          *
-         * @param ds data source name
+         * @param datasourceName data source name
          */
-        public void setDatasource(String datasourceName) {
+        public void setDataSource(String datasourceName) {
             if (dataSources == null) {
                 init();
             }
             if (!dataSources.containsKey(datasourceName)) {
-                throw new IllegalArgumentException("data source called "
-                        + datasourceName + " can't be found.");
+                throw new IllegalArgumentException("data source called " + datasourceName + " can't be found.");
             }
             DataSource ds = dataSources.get(datasourceName);
             currentDataSource.set(ds);
