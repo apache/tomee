@@ -367,6 +367,9 @@ public class OpenEJB implements ApplicationContextAware {
                         case STATELESS:
                             entry += "STATELESS   ";
                             break;
+                        case SINGLETON:
+                            entry += "SINGLETON   ";
+                            break;
                         case MESSAGE_DRIVEN:
                             entry += "MESSAGE     ";
                             break;
