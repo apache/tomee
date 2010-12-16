@@ -31,8 +31,10 @@ import javax.ejb.BeforeCompletion;
 import javax.ejb.AfterCompletion;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -41,19 +43,19 @@ public class InterceptorData {
 
     private Class clazz;
 
-    private final List<Method> aroundInvoke = new ArrayList<Method>();
+    private final Set<Method> aroundInvoke = new LinkedHashSet<Method>();
 
-    private final List<Method> postConstruct = new ArrayList<Method>();
-    private final List<Method> preDestroy = new ArrayList<Method>();
+    private final Set<Method> postConstruct = new LinkedHashSet<Method>();
+    private final Set<Method> preDestroy = new LinkedHashSet<Method>();
 
-    private final List<Method> postActivate = new ArrayList<Method>();
-    private final List<Method> prePassivate = new ArrayList<Method>();
+    private final Set<Method> postActivate = new LinkedHashSet<Method>();
+    private final Set<Method> prePassivate = new LinkedHashSet<Method>();
 
-    private final List<Method> afterBegin = new ArrayList<Method>();
-    private final List<Method> beforeCompletion = new ArrayList<Method>();
-    private final List<Method> afterCompletion = new ArrayList<Method>();
+    private final Set<Method> afterBegin = new LinkedHashSet<Method>();
+    private final Set<Method> beforeCompletion = new LinkedHashSet<Method>();
+    private final Set<Method> afterCompletion = new LinkedHashSet<Method>();
 
-    private final List<Method> aroundTimeout = new ArrayList<Method>();
+    private final Set<Method> aroundTimeout = new LinkedHashSet<Method>();
 
     public InterceptorData(Class clazz) {
         this.clazz = clazz;
@@ -63,43 +65,43 @@ public class InterceptorData {
         return clazz;
     }
 
-    public List<Method> getAroundInvoke() {
+    public Set<Method> getAroundInvoke() {
         return aroundInvoke;
     }
 
-    public List<Method> getPostConstruct() {
+    public Set<Method> getPostConstruct() {
         return postConstruct;
     }
 
-    public List<Method> getPreDestroy() {
+    public Set<Method> getPreDestroy() {
         return preDestroy;
     }
 
-    public List<Method> getPostActivate() {
+    public Set<Method> getPostActivate() {
         return postActivate;
     }
 
-    public List<Method> getPrePassivate() {
+    public Set<Method> getPrePassivate() {
         return prePassivate;
     }
 
-    public List<Method> getAfterBegin() {
+    public Set<Method> getAfterBegin() {
         return afterBegin;
     }
 
-    public List<Method> getBeforeCompletion() {
+    public Set<Method> getBeforeCompletion() {
         return beforeCompletion;
     }
 
-    public List<Method> getAfterCompletion() {
+    public Set<Method> getAfterCompletion() {
         return afterCompletion;
     }
 
-    public List<Method> getAroundTimeout(){
+    public Set<Method> getAroundTimeout(){
         return aroundTimeout;
     }
 
-    public List<Method> getMethods(Operation operation) {
+    public Set<Method> getMethods(Operation operation) {
         switch(operation) {
             case BUSINESS: return getAroundInvoke();
             case BUSINESS_WS: return getAroundInvoke();
@@ -113,7 +115,7 @@ public class InterceptorData {
             case BEFORE_COMPLETION: return getBeforeCompletion();
             case TIMEOUT: return getAroundTimeout();
         }
-        return Collections.EMPTY_LIST;
+        return Collections.EMPTY_SET;
     }
 
     public boolean equals(Object o) {

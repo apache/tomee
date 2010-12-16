@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.interceptor.InvocationContext;
@@ -60,7 +61,7 @@ public class InterceptorStack {
                 throw new IllegalArgumentException("No interceptor of type " + interceptorClass.getName());
             }
 
-            List<Method> methods = interceptorData.getMethods(operation);
+            Set<Method> methods = interceptorData.getMethods(operation);
             for (Method method : methods) {
                 Interceptor interceptor = new Interceptor(interceptorInstance, method);
                 interceptors.add(interceptor);

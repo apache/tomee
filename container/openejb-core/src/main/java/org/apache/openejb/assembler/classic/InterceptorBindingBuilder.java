@@ -261,9 +261,11 @@ public class InterceptorBindingBuilder {
      *
      * @param clazz
      * @param callbackInfos the raw CallbackInfo objects
-     * @param methods the collection where the created methods will be placed
+     * @param callbacks the collection where the created methods will be placed
      */
-    private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods) {
+    private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks) {
+        List<Method> methods = new ArrayList<Method>();
+
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
@@ -297,6 +299,8 @@ public class InterceptorBindingBuilder {
             }
         }
         Collections.sort(methods, new MethodCallbackComparator());
+
+        callbacks.addAll(methods);
     }
 
     /**
@@ -315,9 +319,11 @@ public class InterceptorBindingBuilder {
      *
      * @param clazz
      * @param callbackInfos
-     * @param methods
+     * @param callbacks
      */
-    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, List<Method> methods, Class... parameterTypes) {
+    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks, Class... parameterTypes) {
+        List<Method> methods = new ArrayList<Method>();
+
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, parameterTypes);
@@ -352,6 +358,7 @@ public class InterceptorBindingBuilder {
             }
         }
         Collections.sort(methods, new MethodCallbackComparator());
+        callbacks.addAll(methods);
     }
 
     /**
