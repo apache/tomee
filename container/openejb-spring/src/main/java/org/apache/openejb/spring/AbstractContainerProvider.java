@@ -49,15 +49,17 @@ public abstract class AbstractContainerProvider implements ContainerProvider, Be
     }
 
     public Container getContainerDefinition() throws OpenEJBException {
+        String containerType = getContainerType();
+
         Container container = new Container();
-        container.setCtype(getContainerType());
+        container.setCtype(containerType);
 
         if (id != null) {
             container.setId(id);
         } else if (beanName != null) {
             container.setId(beanName);
         } else {
-            throw new OpenEJBException("No id defined for SingletonContainer");
+            throw new OpenEJBException("No id defined for Container type " + containerType);
         }
 
         if (provider != null) {
