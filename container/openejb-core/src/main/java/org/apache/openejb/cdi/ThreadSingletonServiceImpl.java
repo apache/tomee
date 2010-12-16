@@ -23,8 +23,8 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.corespi.ServiceLoader;
-import org.apache.webbeans.exception.WebBeansException;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ResourceInjectionService;
 
@@ -50,7 +50,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         startupObject.getAppContext().set(OWBContext.class, owbContext);
         Object old = contextEntered(owbContext);
         try {
-            setConfiguration(OpenWebBeansConfiguration.getInstance());
+            setConfiguration(WebBeansContext.getInstance().getOpenWebBeansConfiguration());
             try {
                 ServiceLoader.getService(ContainerLifecycle.class).startApplication(startupObject);
             } catch (Exception e) {

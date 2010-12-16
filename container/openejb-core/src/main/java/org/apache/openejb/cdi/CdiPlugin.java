@@ -25,16 +25,11 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.InjectionResolver;
-import org.apache.webbeans.context.ContextFactory;
 import org.apache.webbeans.ee.event.TransactionalEventNotifier;
-import org.apache.webbeans.jms.JMSManager;
-import org.apache.webbeans.plugins.PluginLoader;
-import org.apache.webbeans.portable.AnnotatedElementFactory;
-import org.apache.webbeans.portable.events.ExtensionLoader;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
-import org.apache.webbeans.proxy.JavassistProxyFactory;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
@@ -111,22 +106,22 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             this.contexsServices.destroy(null);
 
             //Free all plugin resources
-            PluginLoader.getInstance().shutDown();
+            WebBeansContext.getInstance().getPluginLoader().shutDown();
 
             //Clear extensions
-            ExtensionLoader.getInstance().clear();
+            WebBeansContext.getInstance().getExtensionLoader().clear();
 
             //Delete Resolutions Cache
             InjectionResolver.getInstance().clearCaches();
 
             //Delte proxies
-            JavassistProxyFactory.getInstance().clear();
+            WebBeansContext.getInstance().getJavassistProxyFactory().clear();
 
             //Delete AnnotateTypeCache
-            AnnotatedElementFactory.getInstance().clear();
+            WebBeansContext.getInstance().getAnnotatedElementFactory().clear();
 
             //JMs Manager clear
-            JMSManager.getInstance().clear();
+            WebBeansContext.getInstance().getjMSManager().clear();
 
             //Clear the resource injection service
             CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) WebBeansFinder.getSingletonInstance("org.apache.openejb.cdi.CdiResourceInjectionService", appContext.getClassLoader());

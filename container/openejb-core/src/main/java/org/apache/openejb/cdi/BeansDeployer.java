@@ -26,26 +26,22 @@ import org.apache.webbeans.component.ManagedBean;
 import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.component.WebBeansType;
-import org.apache.webbeans.component.creation.BeanCreator;
 import org.apache.webbeans.component.creation.BeanCreator.MetaDataProvider;
 import org.apache.webbeans.component.creation.ManagedBeanCreatorImpl;
 import org.apache.webbeans.config.DefinitionUtil;
 import org.apache.webbeans.config.ManagedBeanConfigurator;
 import org.apache.webbeans.config.OWBLogConst;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectionResolver;
-import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.decorator.WebBeansDecorator;
-import org.apache.webbeans.deployment.StereoTypeManager;
 import org.apache.webbeans.deployment.StereoTypeModel;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.exception.WebBeansDeploymentException;
 import org.apache.webbeans.exception.inject.InconsistentSpecializationException;
 import org.apache.webbeans.inject.OWBInjector;
-import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.intercept.webbeans.WebBeansInterceptor;
 import org.apache.webbeans.logger.WebBeansLogger;
-import org.apache.webbeans.plugins.PluginLoader;
 import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
 import org.apache.webbeans.portable.events.ProcessInjectionTargetImpl;
 import org.apache.webbeans.portable.events.discovery.AfterBeanDiscoveryImpl;
@@ -59,8 +55,6 @@ import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansAnnotatedTypeUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.xml.WebBeansXMLConfigurator;
-import org.apache.webbeans.xml.XMLAnnotationTypeManager;
-import org.apache.webbeans.xml.XMLSpecializesManager;
 
 import javax.enterprise.inject.Model;
 import javax.enterprise.inject.Specializes;
@@ -107,7 +101,7 @@ public class BeansDeployer {
      */
     void configureDefaultBeans()
     {
-        BeanManagerImpl beanManager = BeanManagerImpl.getManager();
+        BeanManagerImpl beanManager = WebBeansContext.getInstance().getBeanManagerImpl();
 
         // Register Conversation built-in component
         beanManager.addBean(WebBeansUtil.getConversationBean());
@@ -122,8 +116,8 @@ public class BeansDeployer {
         beanManager.addBean(WebBeansUtil.getEventBean());
 
         //REgister Provider Beans
-        OpenWebBeansJavaEEPlugin beanEeProvider = PluginLoader.getInstance().getJavaEEPlugin();
-        OpenWebBeansWebPlugin beanWebProvider = PluginLoader.getInstance().getWebPlugin();
+        OpenWebBeansJavaEEPlugin beanEeProvider = WebBeansContext.getInstance().getPluginLoader().getJavaEEPlugin();
+        OpenWebBeansWebPlugin beanWebProvider = WebBeansContext.getInstance().getPluginLoader().getWebPlugin();
 
         if (beanEeProvider != null) {
             addDefaultBean(beanManager, "org.apache.webbeans.ee.common.beans.PrinicipalBean");
@@ -155,7 +149,7 @@ public class BeansDeployer {
      */
     void fireBeforeBeanDiscoveryEvent()
     {
-        BeanManager manager = BeanManagerImpl.getManager();
+        BeanManager manager = WebBeansContext.getInstance().getBeanManagerImpl();
         manager.fireEvent(new BeforeBeanDiscoveryImpl(),new Annotation[0]);
     }
 
@@ -164,7 +158,7 @@ public class BeansDeployer {
      */
     void fireAfterBeanDiscoveryEvent()
     {
-        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
         manager.fireEvent(new AfterBeanDiscoveryImpl(),new Annotation[0]);
         
         WebBeansUtil.inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
@@ -175,7 +169,7 @@ public class BeansDeployer {
      */
     void fireAfterDeploymentValidationEvent()
     {
-        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
         manager.fireEvent(new AfterDeploymentValidationImpl(),new Annotation[0]);
         
         WebBeansUtil.inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
@@ -188,10 +182,10 @@ public class BeansDeployer {
     {
         logger.debug("Validation of injection points has started.");
 
-        DecoratorsManager.getInstance().validateDecoratorClasses();
-        InterceptorsManager.getInstance().validateInterceptorClasses();
+        WebBeansContext.getInstance().getDecoratorsManager().validateDecoratorClasses();
+        WebBeansContext.getInstance().getInterceptorsManager().validateInterceptorClasses();
 
-        BeanManagerImpl manager = BeanManagerImpl.getManager();        
+        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
         Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
         //Adding decorators to validate
@@ -238,7 +232,7 @@ public class BeansDeployer {
      */
     private void validate(Set<Bean<?>> beans)
     {
-        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
 
         if (beans != null && beans.size() > 0) {
             Stack<String> beanNames = new Stack<String>();
@@ -276,7 +270,7 @@ public class BeansDeployer {
                             manager.validate(injectionPoint);
                         } else {
                             if (!bean.getBeanClass().isAnnotationPresent(javax.decorator.Decorator.class)
-                                    && !BeanManagerImpl.getManager().containsCustomDecoratorClass(bean.getBeanClass())) {
+                                    && !WebBeansContext.getInstance().getBeanManagerImpl().containsCustomDecoratorClass(bean.getBeanClass())) {
                                 throw new WebBeansConfigurationException(
                                         "Delegate injection points can not defined by beans that are not decorator. Injection point : "
                                                 + injectionPoint);
@@ -435,7 +429,7 @@ public class BeansDeployer {
     protected void checkXMLSpecializations()
     {
         // Check XML specializations
-        Set<Class<?>> clazzes = XMLSpecializesManager.getInstance().getXMLSpecializationClasses();
+        Set<Class<?>> clazzes = WebBeansContext.getInstance().getxMLSpecializesManager().getXMLSpecializationClasses();
         Iterator<Class<?>> it = clazzes.iterator();
         Class<?> superClass = null;
         Class<?> specialClass = null;
@@ -469,7 +463,7 @@ public class BeansDeployer {
             if (marker.isPassivationCapable()) {
                 validate = true;
             }
-        } else if (BeanManagerImpl.getManager().isPassivatingScope(beanObj.getScope())) {
+        } else if (WebBeansContext.getInstance().getBeanManagerImpl().isPassivatingScope(beanObj.getScope())) {
             if (WebBeansUtil.isPassivationCapable(beanObj) == null) {
                 if (!(beanObj instanceof AbstractProducerBean)) {
                     throw new WebBeansConfigurationException("Passivation scoped defined bean must be passivation capable, " +
@@ -504,10 +498,10 @@ public class BeansDeployer {
                 if (beanClass.isAnnotation()) {
                     Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
                     if (AnnotationUtil.isStereoTypeAnnotation(stereoClass)) {
-                        if (!XMLAnnotationTypeManager.getInstance().hasStereoType(stereoClass)) {
+                        if (!WebBeansContext.getInstance().getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
                             WebBeansUtil.checkStereoTypeClass(stereoClass);
                             StereoTypeModel model = new StereoTypeModel(stereoClass);
-                            StereoTypeManager.getInstance().addStereoTypeModel(model);
+                            WebBeansContext.getInstance().getStereoTypeManager().addStereoTypeModel(model);
                         }
                     }
                 }
@@ -523,13 +517,13 @@ public class BeansDeployer {
     protected void addDefaultStereoTypes()
     {
         StereoTypeModel model = new StereoTypeModel(Model.class);
-        StereoTypeManager.getInstance().addStereoTypeModel(model);
+        WebBeansContext.getInstance().getStereoTypeManager().addStereoTypeModel(model);
 
         model = new StereoTypeModel(javax.decorator.Decorator.class);
-        StereoTypeManager.getInstance().addStereoTypeModel(model);
+        WebBeansContext.getInstance().getStereoTypeManager().addStereoTypeModel(model);
 
         model = new StereoTypeModel(Interceptor.class);
-        StereoTypeManager.getInstance().addStereoTypeModel(model);
+        WebBeansContext.getInstance().getStereoTypeManager().addStereoTypeModel(model);
     }
 
     /**
@@ -541,7 +535,7 @@ public class BeansDeployer {
     protected <T> boolean defineManagedBean(Class<T> clazz, ProcessAnnotatedTypeImpl<T> processAnnotatedEvent)
     {   
         //Bean manager
-        BeanManagerImpl manager = BeanManagerImpl.getManager();
+        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
 
         //Create an annotated type
         AnnotatedType<T> annotatedType = processAnnotatedEvent.getAnnotatedType();
@@ -609,8 +603,8 @@ public class BeansDeployer {
                     WebBeansUtil.defineInterceptor(managedBeanCreator, processInjectionTargetEvent);
                 }
             } else {
-                if (BeanManagerImpl.getManager().containsCustomDecoratorClass(annotatedType.getJavaClass()) ||
-                        BeanManagerImpl.getManager().containsCustomInterceptorClass(annotatedType.getJavaClass())) {
+                if (WebBeansContext.getInstance().getBeanManagerImpl().containsCustomDecoratorClass(annotatedType.getJavaClass()) ||
+                        WebBeansContext.getInstance().getBeanManagerImpl().containsCustomInterceptorClass(annotatedType.getJavaClass())) {
                     return false;
                 }
 

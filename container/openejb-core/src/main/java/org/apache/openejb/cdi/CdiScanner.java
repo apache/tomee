@@ -26,11 +26,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.interceptor.Interceptor;
-import org.apache.openejb.OpenEJBException;
+
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
 import org.apache.webbeans.inject.AlternativesManager;
@@ -56,9 +57,9 @@ public class CdiScanner implements ScannerService {
         AppInfo appInfo = startupObject.getAppInfo();
         ClassLoader classLoader = startupObject.getAppContext().getClassLoader();
 
-        final AlternativesManager alternativesManager = AlternativesManager.getInstance();
-        final DecoratorsManager decoratorsManager = DecoratorsManager.getInstance();
-        final InterceptorsManager interceptorsManager = InterceptorsManager.getInstance();
+        final AlternativesManager alternativesManager = WebBeansContext.getInstance().getAlternativesManager();
+        final DecoratorsManager decoratorsManager = WebBeansContext.getInstance().getDecoratorsManager();
+        final InterceptorsManager interceptorsManager = WebBeansContext.getInstance().getInterceptorsManager();
 
         final HashSet<String> ejbClasses = new HashSet<String>();
 
