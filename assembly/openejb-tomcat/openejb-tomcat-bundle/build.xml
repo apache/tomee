@@ -17,20 +17,36 @@
   -->
 
 <project name="TomcatBundle">
-    <target name="downloadtomcat">
-    	<!-- create a directory to extract Tomcat to -->
-        <mkdir dir="${OUTPUT_DIR}/bundle/extracted"/>
 
-        <!-- download Tomcat -->
-        <get src="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip" dest="${LOCAL_M2_REPO}/org/apache/openejb/apache-tomcat-${tomcat.version}.zip" verbose="true" usetimestamp="true"/>
+	<target name="probe-proxy">
+		<condition property="proxy.set">
+			<or>
+				<isset property="http.proxyHost" />
+				<isset property="http.proxyPort" />
+			</or>
+		</condition>
+	</target>
 
-        <!-- unzip Tomcat -->
-        <unzip src="${LOCAL_M2_REPO}/org/apache/openejb/apache-tomcat-${tomcat.version}.zip" dest="${OUTPUT_DIR}/bundle/extracted"/>
+	<target name="set-proxy" depends="probe-proxy" if="proxy.set">
+		<echo message="Setting proxy host=${http.proxyHost} and proxy port=${http.proxyPort}" />
+		<setproxy proxyhost="${http.proxyHost}" proxyport="${http.proxyPort}" />
+	</target>
 
-        <!-- unzip openejb.war -->
-        <unzip src="${LOCAL_M2_REPO}/org/apache/openejb/openejb-tomcat-webapp/${openejb.version}/openejb-tomcat-webapp-${openejb.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/openejb"/>
-        
-        <!-- unzip examples.war -->
-        <unzip src="${LOCAL_M2_REPO}/org/superbiz/ejb-examples/${examples.version}/ejb-examples-${examples.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/ejb-examples"/>
-    </target>
+	<target name="downloadtomcat">
+
+		<!-- create a directory to extract Tomcat to -->
+		<mkdir dir="${OUTPUT_DIR}/bundle/extracted"/>
+
+		<!-- download Tomcat -->
+		<get src="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip" dest="${LOCAL_M2_REPO}/org/apache/openejb/apache-tomcat-${tomcat.version}.zip" verbose="true" usetimestamp="true"/>
+
+		<!-- unzip Tomcat -->
+		<unzip src="${LOCAL_M2_REPO}/org/apache/openejb/apache-tomcat-${tomcat.version}.zip" dest="${OUTPUT_DIR}/bundle/extracted"/>
+
+		<!-- unzip openejb.war -->
+		<unzip src="${LOCAL_M2_REPO}/org/apache/openejb/openejb-tomcat-webapp/${openejb.version}/openejb-tomcat-webapp-${openejb.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/openejb"/>
+
+		<!-- unzip examples.war -->
+		<unzip src="${LOCAL_M2_REPO}/org/superbiz/ejb-examples/${examples.version}/ejb-examples-${examples.version}.war" dest="${OUTPUT_DIR}/bundle/extracted/apache-tomcat-${tomcat.version}/webapps/ejb-examples"/>
+	</target>
 </project>
