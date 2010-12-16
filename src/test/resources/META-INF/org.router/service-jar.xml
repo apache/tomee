@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceJar>
+  <ServiceProvider id="DeterminedRouter" service="Resource"
+    type="org.apache.openejb.resource.jdbc.Router"
+    class-name="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter">
+    DataSourceNames
+    DefaultDataSourceName
+  </ServiceProvider>
+</ServiceJar>
