@@ -155,7 +155,7 @@ public class DeploymentsResolver {
      * Then load this resource
      * <p/>
      * The previous steps are based on the following points:
-     * 1- Include class-path pattern has the highst priority
+     * 1- Include class-path pattern has the highest priority
      * This helps in case both patterns are defined using the same values.
      * This appears in step 1 and 2 of the above algorithm.
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
@@ -228,7 +228,8 @@ public class DeploymentsResolver {
             }
 
             if (logger.isDebugEnabled()) {
-                logger.debug("URLs after filtering: "+urlSet.getUrls().size() + unchecked.getUrls().size());
+                int urlCount = urlSet.getUrls().size() + unchecked.getUrls().size();
+                logger.debug("URLs after filtering: "+ urlCount);
                 for (URL url : urlSet.getUrls()) {
                     logger.debug("Annotations path: " + url);
                 }
