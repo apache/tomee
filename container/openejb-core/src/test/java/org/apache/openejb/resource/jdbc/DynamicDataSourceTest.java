@@ -90,7 +90,7 @@ public class DynamicDataSourceTest {
         resourceRouter.getProperties().setProperty("DefaultDataSourceName", "database1");
         assembler.createResource(config.configureService(resourceRouter, ResourceInfo.class));
 
-        Resource resourceRoutedDs = new Resource("Routed Datasource", "org.apache.openejb.resource.jdbc.Router", "org.apache.openejb.dynamicdatasource:RoutedDataSource");
+        Resource resourceRoutedDs = new Resource("Routed Datasource", "org.apache.openejb.resource.jdbc.Router", "RoutedDataSource");
         resourceRoutedDs.getProperties().setProperty("Router", "My Router");
         assembler.createResource(config.configureService(resourceRoutedDs, ResourceInfo.class));
 
