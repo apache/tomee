@@ -1004,5 +1004,15 @@
 
   </ServiceProvider>
 
+  <!--
+  # dynamic routing datasource
+  -->
+  <ServiceProvider
+          id="RoutedDataSource"
+          service="Resource" types="DataSource"
+          class-name="org.apache.openejb.resource.jdbc.RoutedDataSource">
+    Router
+  </ServiceProvider>
+
 
 </ServiceJar>
