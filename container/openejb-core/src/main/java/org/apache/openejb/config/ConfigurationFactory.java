@@ -736,7 +736,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
 
     /**
-     * This is the major piece of code that configures servics
+     * This is the major piece of code that configures services.
      * It merges the data from the <ServiceProvider> declaration
      * with the data from the openejb.xml file (say <Resource>)
      *
