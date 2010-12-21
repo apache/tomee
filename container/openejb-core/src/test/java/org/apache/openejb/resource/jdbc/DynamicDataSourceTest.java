@@ -100,6 +100,7 @@ public class DynamicDataSourceTest {
 
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(RoutedEJBBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(UtilityBean.class));
 
         EjbModule ejbModule = new EjbModule(ejbJar);
 
