@@ -190,7 +190,8 @@ public class DeploymentLoader {
                 }
             }
 
-            if (AppModule.class.equals(moduleClass) && loadingRequiredModuleTypes.contains(AppModule.class)) {
+            //We always load AppModule, as it somewhat likes a wrapper module
+            if (AppModule.class.equals(moduleClass)) {
 
                 return createAppModule(jarFile, jarPath);
 
@@ -330,13 +331,15 @@ public class DeploymentLoader {
                         ClassLoader moduleClassLoader = ClassLoaderUtil.createTempClassLoader(appId, new URL[]{entry.getValue()}, tmpClassLoader);
 
                         Class<? extends DeploymentModule> moduleType = discoverModuleType(entry.getValue(), moduleClassLoader, true);
-                        if (EjbModule.class.equals(moduleType) && loadingRequiredModuleTypes.contains(EjbModule.class)) {
+                        if (EjbModule.class.equals(moduleType) && (loadingRequiredModuleTypes.contains(EjbModule.class) || loadingRequiredModuleTypes.contains(PersistenceModule.class))) {
                             ejbModules.put(entry.getKey(), entry.getValue());
                         } else if (ClientModule.class.equals(moduleType) && loadingRequiredModuleTypes.contains(ClientModule.class)) {
                             clientModules.put(entry.getKey(), entry.getValue());
                         } else if (ConnectorModule.class.equals(moduleType) && loadingRequiredModuleTypes.contains(ConnectorModule.class)) {
                             resouceModules.put(entry.getKey(), entry.getValue());
-                        } else if (WebModule.class.equals(moduleType) && (loadingRequiredModuleTypes.contains(WebModule.class) || loadingRequiredModuleTypes.contains(EjbModule.class))) {
+                        } else if (WebModule.class.equals(moduleType)
+                                && (loadingRequiredModuleTypes.contains(WebModule.class) || loadingRequiredModuleTypes.contains(EjbModule.class) || loadingRequiredModuleTypes
+                                        .contains(PersistenceModule.class))) {
                             webModules.put(entry.getKey(), entry.getValue());
                         }
                     } catch (UnsupportedOperationException e) {
@@ -431,8 +434,9 @@ public class DeploymentLoader {
                     String absolutePath = ejbFile.getAbsolutePath();
 
                     EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader, moduleName);
-
-                    appModule.getEjbModules().add(ejbModule);
+                    if (loadingRequiredModuleTypes.contains(EjbModule.class)) {
+                        appModule.getEjbModules().add(ejbModule);
+                    }
                 } catch (OpenEJBException e) {
                     logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
                 }
