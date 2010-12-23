@@ -42,41 +42,40 @@ import org.custommonkey.xmlunit.Diff;
 public class PersistenceXmlTest extends TestCase {
 
     /**
-     * TODO: What does the test test out? The comparision using assertEquals doesn't seem to work well with xml files.
-     *
      * @throws Exception
      */
-    public void testAll() throws Exception {
-//        Persistence persistence = new Persistence();
-//        persistence.setVersion("1.0");
-//        Persistence.PersistenceUnit persistenceUnit = new Persistence.PersistenceUnit();
-//        persistenceUnit.setDescription("description");
-//        persistenceUnit.setExcludeUnlistedClasses(true);
-//        persistenceUnit.setJtaDataSource("jtadatasource");
-//        persistenceUnit.setName("name");
-//        persistenceUnit.setNonJtaDataSource("nonjtadatasource");
-//        persistenceUnit.setProvider("org.acme.Provider");
-//        persistenceUnit.setTransactionType(TransactionType.JTA);
-//        persistenceUnit.getClazz().add("org.acme.Person");
-//        persistenceUnit.getClazz().add("org.acme.Animal");
-//        persistenceUnit.getJarFile().add("jarfile1");
-//        persistenceUnit.getJarFile().add("jarfile2");
-//        persistenceUnit.getMappingFile().add("mappingfile1");
-//        persistenceUnit.getMappingFile().add("mappingfile2");
-//
-//        Persistence.PersistenceUnit.Properties properties = new Persistence.PersistenceUnit.Properties();
-//        properties.setProperty("foo","oof");
-//        properties.setProperty("bar","rab");
-//        properties.setProperty("baz","zab");
-//        persistenceUnit.setProperties(properties);
-//
-//        persistenceUnit.setProperties(properties);
-//        persistence.getPersistenceUnit().add(persistenceUnit);
-
+    public void testPersistenceVersion1() throws Exception {
         JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
         URL resource = this.getClass().getClassLoader().getResource("persistence-example.xml");
+        InputStream in = resource.openStream();
+        java.lang.String expected = readContent(in);
+
+        Persistence element =  (Persistence) unmarshaller.unmarshal(new ByteArrayInputStream(expected.getBytes()));
+        unmarshaller.setEventHandler(new TestValidationEventHandler());
+        System.out.println("unmarshalled");
+
+        Marshaller marshaller = ctx.createMarshaller();
+        marshaller.setProperty("jaxb.formatted.output", true);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        marshaller.marshal(element, baos);
+
+        String actual = new String(baos.toByteArray());
+
+        Diff myDiff = new Diff(expected, actual);
+        assertTrue("Files are similar " + myDiff, myDiff.similar());
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public void testPersistenceVersion2() throws Exception {
+        JAXBContext ctx = JAXBContextFactory.newInstance(Persistence.class);
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+        URL resource = this.getClass().getClassLoader().getResource("persistence_2.0-example.xml");
         InputStream in = resource.openStream();
         java.lang.String expected = readContent(in);
 

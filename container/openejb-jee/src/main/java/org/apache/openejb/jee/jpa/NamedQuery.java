@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *         public @interface NamedQuery {
  *           String name();
  *           String query();
+ *           LockModeType lockMode() default NONE;
  *           QueryHint[] hints() default {};
  *         }
  * 
@@ -47,7 +48,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="query" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="lock-mode" type="{http://java.sun.com/xml/ns/persistence/orm}lock-mode-type" minOccurs="0"/>
  *         &lt;element name="hint" type="{http://java.sun.com/xml/ns/persistence/orm}query-hint" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -60,16 +63,45 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-query", propOrder = {
+    "description",
     "query",
+    "lockMode",
     "hint"
 })
 public class NamedQuery {
 
+    protected String description;
     @XmlElement(required = true)
     protected String query;
+    @XmlElement(name = "lock-mode")
+    protected LockModeType lockMode;
     protected List<QueryHint> hint;
     @XmlAttribute(required = true)
     protected String name;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the query property.
@@ -93,6 +125,30 @@ public class NamedQuery {
      */
     public void setQuery(String value) {
         this.query = value;
+    }
+
+    /**
+     * Gets the value of the lockMode property.
+     *
+     * @return
+     *     possible object is
+     *     {@link LockModeType }
+     *
+     */
+    public LockModeType getLockMode() {
+        return lockMode;
+    }
+
+    /**
+     * Sets the value of the lockMode property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link LockModeType }
+     *
+     */
+    public void setLockMode(LockModeType value) {
+        this.lockMode = value;
     }
 
     /**

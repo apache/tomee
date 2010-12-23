@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * 
  * 
- *         public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH};
+ *         public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
  * 
  *       
  * 
@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="cascade-merge" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *         &lt;element name="cascade-remove" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *         &lt;element name="cascade-refresh" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
+ *         &lt;element name="cascade-detach" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -58,7 +59,8 @@ import javax.xml.bind.annotation.XmlType;
     "cascadePersist",
     "cascadeMerge",
     "cascadeRemove",
-    "cascadeRefresh"
+    "cascadeRefresh",
+    "cascadeDetach"
 })
 public class CascadeType {
 
@@ -72,6 +74,8 @@ public class CascadeType {
     protected EmptyType cascadeRemove;
     @XmlElement(name = "cascade-refresh")
     protected EmptyType cascadeRefresh;
+    @XmlElement(name = "cascade-detach")
+    protected EmptyType cascadeDetach;
 
     /**
      * Gets the value of the cascadeAll property.
@@ -193,4 +197,27 @@ public class CascadeType {
         this.cascadeRefresh = value ? new EmptyType() : null;
     }
 
+    /**
+     * Gets the value of the cascadeDetach property.
+     *
+     * @return
+     *     possible object is
+     *     {@link boolean }
+     *
+     */
+    public boolean isCascadeDetach() {
+        return cascadeDetach != null;
+    }
+
+    /**
+     * Sets the value of the cascadeDetach property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link boolean }
+     *
+     */
+    public void setCascadeDetach(boolean value) {
+        this.cascadeDetach = value ? new EmptyType() : null;
+    }
 }

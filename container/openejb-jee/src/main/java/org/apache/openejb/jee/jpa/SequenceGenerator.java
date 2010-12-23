@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlType;
  *         public @interface SequenceGenerator {
  *           String name();
  *           String sequenceName() default "";
+ *           String catalog() default "";
+ *           String schema() default "";
  *           int initialValue() default 1;
  *           int allocationSize() default 50;
  *         }
@@ -44,10 +46,15 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="sequence-generator">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="sequence-name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -56,9 +63,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sequence-generator")
+@XmlType(name = "sequence-generator", propOrder = {
+    "description"
+})
 public class SequenceGenerator {
 
+    protected String description;
     @XmlAttribute(name = "allocation-size")
     protected Integer allocationSize;
     @XmlAttribute(name = "initial-value")
@@ -67,6 +77,34 @@ public class SequenceGenerator {
     protected String name;
     @XmlAttribute(name = "sequence-name")
     protected String sequenceName;
+    @XmlAttribute
+    protected String catalog;
+    @XmlAttribute
+    protected String schema;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the allocationSize property.
@@ -162,6 +200,54 @@ public class SequenceGenerator {
      */
     public void setSequenceName(String value) {
         this.sequenceName = value;
+    }
+
+    /**
+     * Gets the value of the catalog property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getCatalog() {
+        return catalog;
+    }
+
+    /**
+     * Sets the value of the catalog property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setCatalog(String value) {
+        this.catalog = value;
+    }
+
+    /**
+     * Gets the value of the schema property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * Sets the value of the schema property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setSchema(String value) {
+        this.schema = value;
     }
 
 }

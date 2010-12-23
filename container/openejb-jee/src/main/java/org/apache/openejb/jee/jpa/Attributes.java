@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;choice>
  *           &lt;element name="id" type="{http://java.sun.com/xml/ns/persistence/orm}id" maxOccurs="unbounded" minOccurs="0"/>
  *           &lt;element name="embedded-id" type="{http://java.sun.com/xml/ns/persistence/orm}embedded-id" minOccurs="0"/>
@@ -58,6 +59,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="one-to-many" type="{http://java.sun.com/xml/ns/persistence/orm}one-to-many" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="one-to-one" type="{http://java.sun.com/xml/ns/persistence/orm}one-to-one" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="many-to-many" type="{http://java.sun.com/xml/ns/persistence/orm}many-to-many" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="element-collection" type="{http://java.sun.com/xml/ns/persistence/orm}element-collection" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="embedded" type="{http://java.sun.com/xml/ns/persistence/orm}embedded" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="transient" type="{http://java.sun.com/xml/ns/persistence/orm}transient" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
@@ -70,6 +72,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "attributes", propOrder = {
+    "description",
     "id",
     "embeddedId",
     "basic",
@@ -78,11 +81,13 @@ import javax.xml.bind.annotation.XmlType;
     "oneToMany",
     "oneToOne",
     "manyToMany",
+    "elementCollection",
     "embedded",
     "_transient"
 })
 public class Attributes {
 
+    protected String description;
     protected List<Id> id;
     @XmlElement(name = "embedded-id")
     protected EmbeddedId embeddedId;
@@ -96,9 +101,35 @@ public class Attributes {
     protected List<OneToOne> oneToOne;
     @XmlElement(name = "many-to-many")
     protected List<ManyToMany> manyToMany;
+    @XmlElement(name = "element-collection")
+    protected List<ElementCollection> elementCollection;
     protected List<Embedded> embedded;
     @XmlElement(name = "transient")
     protected List<Transient> _transient;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the id property.
@@ -334,6 +365,35 @@ public class Attributes {
         if (manyToMany != null) fields.addAll(manyToMany);
         if (manyToOne != null) fields.addAll(manyToOne);
         return fields.toMap();
+    }
+
+    /**
+     * Gets the value of the elementCollection property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the elementCollection property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getElementCollection().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link ElementCollection }
+     *
+     *
+     */
+    public List<ElementCollection> getElementCollection() {
+        if (elementCollection == null) {
+            elementCollection = new ArrayList<ElementCollection>();
+        }
+        return this.elementCollection;
     }
 
     /**

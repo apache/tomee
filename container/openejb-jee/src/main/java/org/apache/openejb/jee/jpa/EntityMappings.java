@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * 
  * 
- *         The entity-mappings element is the root element of an mapping
+ *         The entity-mappings element is the root element of a mapping
  *         file. It contains the following four types of elements:
  * 
  *         1. The persistence-unit-metadata element contains metadata
@@ -51,9 +51,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         to the persistence unit. It is undefined to have more than one
  *         sequence-generator or table-generator of the same name in the same
  *         or different mapping files in a persistence unit. It is also 
- *         undefined to have more than one named-query or named-native-query
- *         of the same name in the same or different mapping files in a 
- *         persistence unit.
+ *         undefined to have more than one named-query, named-native-query, or
+ *         result-set-mapping of the same name in the same or different mapping
+ *         files in a persistence unit.
  * 
  *         4. The entity, mapped-superclass and embeddable elements each define
  *         the mapping information for a managed persistent class. The mapping
@@ -86,7 +86,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         &lt;element name="entity" type="{http://java.sun.com/xml/ns/persistence/orm}entity" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="embeddable" type="{http://java.sun.com/xml/ns/persistence/orm}embeddable" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/persistence/orm}versionType" fixed="1.0" />
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/persistence/orm}versionType" fixed="2.0" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -138,7 +138,7 @@ public class EntityMappings {
     protected List<Embeddable> embeddable;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String version = "1.0";
+    protected String version = "2.0";
 
     /**
      * Gets the value of the description property.
@@ -534,7 +534,7 @@ public class EntityMappings {
      */
     public String getVersion() {
         if (version == null) {
-            return "1.0";
+            return "2.0";
         } else {
             return version;
         }

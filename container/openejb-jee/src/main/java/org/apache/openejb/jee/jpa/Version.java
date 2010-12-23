@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="temporal" type="{http://java.sun.com/xml/ns/persistence/orm}temporal" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -62,6 +63,8 @@ public class Version {
     protected TemporalType temporal;
     @XmlAttribute(required = true)
     protected String name;
+    @XmlAttribute
+    protected AccessType access;
 
     /**
      * Gets the value of the column property.
@@ -133,6 +136,30 @@ public class Version {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
     }
 
 }

@@ -18,6 +18,7 @@
 package org.apache.openejb.jee.jpa;
 
 import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlEnum;
  * </pre>
  * 
  */
+@XmlType(name = "generation-type")
 @XmlEnum
 public enum GenerationType {
 

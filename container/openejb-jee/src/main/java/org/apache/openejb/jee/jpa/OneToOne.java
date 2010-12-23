@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *           FetchType fetch() default EAGER;
  *           boolean optional() default true;
  *           String mappedBy() default "";
+ *           boolean orphanRemoval() default false;
  *         }
  *
  *
@@ -62,6 +63,10 @@ import javax.xml.bind.annotation.XmlTransient;
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="target-entity" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="orphan-removal" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="maps-id" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -87,8 +92,16 @@ public class OneToOne implements RelationField {
     protected CascadeType cascade;
     @XmlAttribute
     protected FetchType fetch;
+    @XmlAttribute
+    protected AccessType access;
     @XmlAttribute(name = "mapped-by")
     protected String mappedBy;
+    @XmlAttribute(name = "orphan-removal")
+    protected Boolean orphanRemoval;
+    @XmlAttribute(name = "maps-id")
+    protected String mapsId;
+    @XmlAttribute
+    protected Boolean id;
     @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute
@@ -231,6 +244,30 @@ public class OneToOne implements RelationField {
     }
 
     /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
+    }
+
+    /**
      * Gets the value of the mappedBy property.
      *
      * @return
@@ -252,6 +289,78 @@ public class OneToOne implements RelationField {
      */
     public void setMappedBy(String value) {
         this.mappedBy = value;
+    }
+
+    /**
+     * Gets the value of the orphanRemoval property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
+     */
+    public Boolean isOrphanRemoval() {
+        return orphanRemoval;
+    }
+
+    /**
+     * Sets the value of the orphanRemoval property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
+     */
+    public void setOrphanRemoval(Boolean value) {
+        this.orphanRemoval = value;
+    }
+
+    /**
+     * Gets the value of the mapsId property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getMapsId() {
+        return mapsId;
+    }
+
+    /**
+     * Sets the value of the mapsId property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setMapsId(String value) {
+        this.mapsId = value;
+    }
+
+    /**
+     * Gets the value of the id property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
+     */
+    public Boolean isId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
+     */
+    public void setId(Boolean value) {
+        this.id = value;
     }
 
     /**

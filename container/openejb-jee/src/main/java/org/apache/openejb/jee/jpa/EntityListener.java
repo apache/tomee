@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="pre-persist" type="{http://java.sun.com/xml/ns/persistence/orm}pre-persist" minOccurs="0"/>
  *         &lt;element name="post-persist" type="{http://java.sun.com/xml/ns/persistence/orm}post-persist" minOccurs="0"/>
  *         &lt;element name="pre-remove" type="{http://java.sun.com/xml/ns/persistence/orm}pre-remove" minOccurs="0"/>
@@ -59,6 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-listener", propOrder = {
+    "description",
     "prePersist",
     "postPersist",
     "preRemove",
@@ -69,6 +71,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class EntityListener {
 
+    protected String description;
     @XmlElement(name = "pre-persist")
     protected PrePersist prePersist;
     @XmlElement(name = "post-persist")
@@ -85,6 +88,30 @@ public class EntityListener {
     protected PostLoad postLoad;
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the prePersist property.

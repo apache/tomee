@@ -54,17 +54,18 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="unique-constraint" type="{http://java.sun.com/xml/ns/persistence/orm}unique-constraint" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" />
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="pk-column-name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="pk-column-value" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="table" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="pk-column-name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="value-column-name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="pk-column-value" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -74,10 +75,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "table-generator", propOrder = {
+    "description",
     "uniqueConstraint"
 })
 public class TableGenerator {
 
+    protected String description;
     @XmlElement(name = "unique-constraint")
     protected List<UniqueConstraint> uniqueConstraint;
     @XmlAttribute(name = "allocation-size")
@@ -98,6 +101,30 @@ public class TableGenerator {
     protected String table;
     @XmlAttribute(name = "value-column-name")
     protected String valueColumnName;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the uniqueConstraint property.

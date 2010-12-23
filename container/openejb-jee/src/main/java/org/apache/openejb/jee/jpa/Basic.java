@@ -50,9 +50,10 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;element name="enumerated" type="{http://java.sun.com/xml/ns/persistence/orm}enumerated" minOccurs="0"/>
  *         &lt;/choice>
  *       &lt;/sequence>
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
  *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -73,12 +74,14 @@ public class Basic implements Field {
     protected Lob lob;
     protected TemporalType temporal;
     protected EnumType enumerated;
-    @XmlAttribute
-    protected FetchType fetch;
     @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute
+    protected FetchType fetch;
+    @XmlAttribute
     protected Boolean optional;
+    @XmlAttribute
+    protected AccessType access;
 
     public Basic() {
     }
@@ -189,36 +192,12 @@ public class Basic implements Field {
     }
 
     /**
-     * Gets the value of the fetch property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FetchType }
-     *     
-     */
-    public FetchType getFetch() {
-        return fetch;
-    }
-
-    /**
-     * Sets the value of the fetch property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FetchType }
-     *     
-     */
-    public void setFetch(FetchType value) {
-        this.fetch = value;
-    }
-
-    /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -226,14 +205,38 @@ public class Basic implements Field {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the fetch property.
+     *
+     * @return
+     *     possible object is
+     *     {@link FetchType }
+     *
+     */
+    public FetchType getFetch() {
+        return fetch;
+    }
+
+    /**
+     * Sets the value of the fetch property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link FetchType }
+     *
+     */
+    public void setFetch(FetchType value) {
+        this.fetch = value;
     }
 
     /**
@@ -258,6 +261,30 @@ public class Basic implements Field {
      */
     public void setOptional(Boolean value) {
         this.optional = value;
+    }
+
+    /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
     }
 
     public Object getKey() {

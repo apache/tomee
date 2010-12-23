@@ -17,12 +17,12 @@
     limitations under the License.
 -->
 
-<!-- $Rev$ $Date$ -->
+<!-- $Rev$ -->
 
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-            version="1.0">
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
     <persistence-unit transaction-type="JTA" name="foo">
         <description>description</description>
         <provider>org.acme.Provider</provider>
@@ -35,6 +35,8 @@
         <class>org.acme.Person</class>
         <class>org.acme.Animal</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>ALL</shared-cache-mode>
+        <validation-mode>AUTO</validation-mode>
         <properties>
             <property value="rab" name="bar"/>
             <property value="zab" name="baz"/>
