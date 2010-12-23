@@ -82,10 +82,11 @@ import javax.xml.bind.annotation.XmlTransient;
  *         &lt;element name="association-override" type="{http://java.sun.com/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributes" type="{http://java.sun.com/xml/ns/persistence/orm}attributes" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
- *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="cacheable" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -176,6 +177,8 @@ public class Entity implements Mapping, Keyable<String> {
     protected AccessType access;
     @XmlAttribute(name = "class", required = true)
     protected String clazz;
+    @XmlAttribute
+    protected Boolean cacheable;
     @XmlAttribute(name = "metadata-complete")
     protected Boolean metadataComplete;
     @XmlAttribute
@@ -899,6 +902,30 @@ public class Entity implements Mapping, Keyable<String> {
      */
     public void setClazz(String value) {
         this.clazz = value;
+    }
+
+    /**
+     * Gets the value of the cacheable property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
+     */
+    public Boolean isCacheable() {
+        return cacheable;
+    }
+
+    /**
+     * Sets the value of the cacheable property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
+     */
+    public void setCacheable(Boolean value) {
+        this.cacheable = value;
     }
 
     /**

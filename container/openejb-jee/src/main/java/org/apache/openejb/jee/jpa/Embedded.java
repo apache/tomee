@@ -44,8 +44,10 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="association-override" type="{http://java.sun.com/xml/ns/persistence/orm}association-override" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -55,14 +57,19 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "embedded", propOrder = {
-    "attributeOverride"
+    "attributeOverride",
+    "associationOverride"
 })
 public class Embedded {
 
     @XmlElement(name = "attribute-override")
     protected List<AttributeOverride> attributeOverride;
+    @XmlElement(name = "association-override")
+    protected List<AssociationOverride> associationOverride;
     @XmlAttribute(required = true)
     protected String name;
+    @XmlAttribute
+    protected AccessType access;
 
     /**
      * Gets the value of the attributeOverride property.
@@ -94,6 +101,35 @@ public class Embedded {
     }
 
     /**
+     * Gets the value of the associationOverride property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the associationOverride property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAssociationOverride().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link AssociationOverride }
+     *
+     *
+     */
+    public List<AssociationOverride> getAssociationOverride() {
+        if (associationOverride == null) {
+            associationOverride = new ArrayList<AssociationOverride>();
+        }
+        return this.associationOverride;
+    }
+
+    /**
      * Gets the value of the name property.
      * 
      * @return
@@ -116,5 +152,29 @@ public class Embedded {
     public void setName(String value) {
         this.name = value;
     }
+
+    /**
+         * Gets the value of the access property.
+         *
+         * @return
+         *     possible object is
+         *     {@link AccessType }
+         *
+         */
+        public AccessType getAccess() {
+            return access;
+        }
+
+        /**
+         * Sets the value of the access property.
+         *
+         * @param value
+         *     allowed object is
+         *     {@link AccessType }
+         *
+         */
+        public void setAccess(AccessType value) {
+            this.access = value;
+        }
 
 }

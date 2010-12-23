@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attribute-override" type="{http://java.sun.com/xml/ns/persistence/orm}attribute-override" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -63,6 +64,8 @@ public class EmbeddedId {
     protected List<AttributeOverride> attributeOverride;
     @XmlAttribute(required = true)
     protected String name;
+    @XmlAttribute
+    protected AccessType access;
 
     /**
      * Gets the value of the attributeOverride property.
@@ -115,6 +118,30 @@ public class EmbeddedId {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
     }
 
 }

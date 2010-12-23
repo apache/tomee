@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 
+import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 
 /**
@@ -31,6 +32,7 @@ public class JaxbTest extends TestCase {
 
     public void testEntityMappings() throws Exception {
         unmarshalAndMarshal(EntityMappings.class, "jpa-mapping-full.xml");
+        unmarshalAndMarshal(EntityMappings.class, "jpa-mapping-full_2.0.xml");
     }
 
     private <T> void unmarshalAndMarshal(Class<T> type, java.lang.String xmlFileName) throws Exception {

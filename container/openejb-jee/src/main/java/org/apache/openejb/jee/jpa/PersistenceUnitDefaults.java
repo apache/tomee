@@ -30,14 +30,18 @@ import javax.xml.bind.annotation.XmlType;
  *         unless they are overridden by local annotation or XML 
  *         element settings. 
  *         
- *         schema - Used as the schema for all tables or secondary tables
- *             that apply to the persistence unit
- *         catalog - Used as the catalog for all tables or secondary tables
- *             that apply to the persistence unit
+ *         schema - Used as the schema for all tables, secondary tables, join
+ *             tables, collection tables, sequence generators, and table
+ *             generators that apply to the persistence unit
+ *         catalog - Used as the catalog for all tables, secondary tables, join
+ *             tables, collection tables, sequence generators, and table
+ *             generators that apply to the persistence unit
+ *         delimited-identifiers - Used to treat database identifiers as
+ *             delimited identifiers.
  *         access - Used as the access type for all managed classes in
  *             the persistence unit
  *         cascade-persist - Adds cascade-persist to the set of cascade options
- *             in entity relationships of the persistence unit
+ *             in all entity relationships of the persistence unit
  *         entity-listeners - List of default entity listeners to be invoked 
  *             on each entity in the persistence unit. 
  * 
@@ -52,8 +56,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="schema" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="delimited-identifiers" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *         &lt;element name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" minOccurs="0"/>
  *         &lt;element name="cascade-persist" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *         &lt;element name="entity-listeners" type="{http://java.sun.com/xml/ns/persistence/orm}entity-listeners" minOccurs="0"/>
@@ -67,21 +73,50 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-defaults", propOrder = {
+    "description",
     "schema",
     "catalog",
+    "delimitedIdentifiers",
     "access",
     "cascadePersist",
     "entityListeners"
 })
 public class PersistenceUnitDefaults {
 
+    protected String description;
     protected String schema;
     protected String catalog;
+    @XmlElement(name = "delimited-identifiers")
+    protected EmptyType delimitedIdentifiers;
     protected AccessType access;
     @XmlElement(name = "cascade-persist")
     protected EmptyType cascadePersist;
     @XmlElement(name = "entity-listeners")
     protected EntityListeners entityListeners;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the schema property.
@@ -129,6 +164,30 @@ public class PersistenceUnitDefaults {
      */
     public void setCatalog(String value) {
         this.catalog = value;
+    }
+
+    /**
+     * Gets the value of the delimitedIdentifiers property.
+     *
+     * @return
+     *     possible object is
+     *     {@link EmptyType }
+     *
+     */
+    public EmptyType getDelimitedIdentifiers() {
+        return delimitedIdentifiers;
+    }
+
+    /**
+     * Sets the value of the delimitedIdentifiers property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link EmptyType }
+     *
+     */
+    public void setDelimitedIdentifiers(EmptyType value) {
+        this.delimitedIdentifiers = value;
     }
 
     /**

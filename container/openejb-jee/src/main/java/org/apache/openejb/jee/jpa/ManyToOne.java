@@ -55,10 +55,13 @@ import javax.xml.bind.annotation.XmlTransient;
  *         &lt;/choice>
  *         &lt;element name="cascade" type="{http://java.sun.com/xml/ns/persistence/orm}cascade-type" minOccurs="0"/>
  *       &lt;/sequence>
- *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="target-entity" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="fetch" type="{http://java.sun.com/xml/ns/persistence/orm}fetch-type" />
+ *       &lt;attribute name="optional" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
+ *       &lt;attribute name="maps-id" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -91,6 +94,12 @@ public class ManyToOne implements RelationField {
     protected RelationField relatedField;
     @XmlTransient
     protected boolean syntheticField;
+    @XmlAttribute
+    protected AccessType access;
+    @XmlAttribute(name = "maps-id")
+    protected String mapsId;
+    @XmlAttribute
+    protected Boolean id;
    
     /**
      * Gets the value of the joinColumn property.
@@ -310,5 +319,77 @@ public class ManyToOne implements RelationField {
 
     public Object getKey() {
         return name;
+    }
+
+    /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
+    }
+
+    /**
+     * Gets the value of the mapsId property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getMapsId() {
+        return mapsId;
+    }
+
+    /**
+     * Sets the value of the mapsId property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setMapsId(String value) {
+        this.mapsId = value;
+    }
+
+    /**
+     * Gets the value of the id property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *
+     */
+    public Boolean isId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *
+     */
+    public void setId(Boolean value) {
+        this.id = value;
     }
 }

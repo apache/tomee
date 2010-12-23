@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *         Metadata that applies to the persistence unit and not just to 
  *         the mapping file in which it is contained. 
  * 
- *         If the xml-mapping-metadata-complete element is specified then 
+ *         If the xml-mapping-metadata-complete element is specified,
  *         the complete set of mapping metadata for the persistence unit 
  *         is contained in the XML mapping files for the persistence unit.
  * 
@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="xml-mapping-metadata-complete" type="{http://java.sun.com/xml/ns/persistence/orm}emptyType" minOccurs="0"/>
  *         &lt;element name="persistence-unit-defaults" type="{http://java.sun.com/xml/ns/persistence/orm}persistence-unit-defaults" minOccurs="0"/>
  *       &lt;/sequence>
@@ -56,15 +57,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-metadata", propOrder = {
+    "description",
     "xmlMappingMetadataComplete",
     "persistenceUnitDefaults"
 })
 public class PersistenceUnitMetadata {
 
+    protected String description;
     @XmlElement(name = "xml-mapping-metadata-complete")
     protected EmptyType xmlMappingMetadataComplete;
     @XmlElement(name = "persistence-unit-defaults")
     protected PersistenceUnitDefaults persistenceUnitDefaults;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the xmlMappingMetadataComplete property.

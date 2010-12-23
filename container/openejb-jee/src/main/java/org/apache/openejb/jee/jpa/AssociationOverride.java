@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlType;
  *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
  *         public @interface AssociationOverride {
  *           String name();
- *           JoinColumn[] joinColumns();
+ *           JoinColumn[] joinColumns() default{};
+ *           JoinTable joinTable() default @JoinTable;
  *         }
  * 
  *       
@@ -46,7 +47,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded"/>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;choice>
+ *           &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="join-table" type="{http://java.sun.com/xml/ns/persistence/orm}join-table" minOccurs="0"/>
+ *         &lt;/choice>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -58,14 +63,43 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "association-override", propOrder = {
-    "joinColumn"
+    "description",
+    "joinColumn",
+    "joinTable"
 })
 public class AssociationOverride {
 
-    @XmlElement(name = "join-column", required = true)
+    protected String description;
+    @XmlElement(name = "join-column")
     protected List<JoinColumn> joinColumn;
+    @XmlElement(name = "join-table")
+    protected JoinTable joinTable;
     @XmlAttribute(required = true)
     protected String name;
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the joinColumn property.
@@ -94,6 +128,30 @@ public class AssociationOverride {
             joinColumn = new ArrayList<JoinColumn>();
         }
         return this.joinColumn;
+    }
+
+    /**
+     * Gets the value of the joinTable property.
+     *
+     * @return
+     *     possible object is
+     *     {@link JoinTable }
+     *
+     */
+    public JoinTable getJoinTable() {
+        return joinTable;
+    }
+
+    /**
+     * Sets the value of the joinTable property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link JoinTable }
+     *
+     */
+    public void setJoinTable(JoinTable value) {
+        this.joinTable = value;
     }
 
     /**

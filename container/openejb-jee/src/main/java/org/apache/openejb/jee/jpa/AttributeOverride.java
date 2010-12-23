@@ -44,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="column" type="{http://java.sun.com/xml/ns/persistence/orm}column"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -56,10 +57,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "attribute-override", propOrder = {
+    "description",
     "column"
 })
 public class AttributeOverride implements Field {
 
+    protected String description;
     @XmlElement(required = true)
     protected Column column;
     @XmlAttribute(required = true)
@@ -77,6 +80,30 @@ public class AttributeOverride implements Field {
     public AttributeOverride(String name, String columnName) {
         this.name = name;
         this.column = new Column(columnName);
+    }
+
+    /**
+     * Gets the value of the description property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setDescription(String value) {
+        this.description = value;
     }
 
     /**

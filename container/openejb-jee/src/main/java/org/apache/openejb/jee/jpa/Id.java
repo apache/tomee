@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="sequence-generator" type="{http://java.sun.com/xml/ns/persistence/orm}sequence-generator" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -75,6 +76,8 @@ public class Id implements Field {
     protected SequenceGenerator sequenceGenerator;
     @XmlAttribute(required = true)
     protected String name;
+    @XmlAttribute
+    protected AccessType access;
 
     public Id() {
     }
@@ -234,5 +237,29 @@ public class Id implements Field {
 
     public Object getKey() {
         return name;
+    }
+
+    /**
+     * Gets the value of the access property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AccessType }
+     *
+     */
+    public AccessType getAccess() {
+        return access;
+    }
+
+    /**
+     * Sets the value of the access property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link AccessType }
+     *
+     */
+    public void setAccess(AccessType value) {
+        this.access = value;
     }
 }
