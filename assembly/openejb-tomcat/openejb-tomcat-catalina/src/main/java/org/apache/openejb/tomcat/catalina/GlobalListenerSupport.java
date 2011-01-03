@@ -71,16 +71,26 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     public void lifecycleEvent(LifecycleEvent event) {
         Object source = event.getSource();
         if (source instanceof StandardContext) {
+        	String tomcatVersion = System.getProperty("tomcat.version");
             StandardContext standardContext = (StandardContext) source;
             String type = event.getType();
+            
             if (Lifecycle.INIT_EVENT.equals(type)) {
-                contextListener.init(standardContext);
+            	contextListener.init(standardContext);
             } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
                 contextListener.beforeStart(standardContext);
             } else if (Lifecycle.START_EVENT.equals(type)) {
+            	if (tomcatVersion.startsWith("7.")) {
+            		standardContext.addParameter("openejb.start.late", "true");
+            	}
+            	
                 contextListener.start(standardContext);
             } else if (Lifecycle.AFTER_START_EVENT.equals(type)) {
                 contextListener.afterStart(standardContext);
+                
+                if (tomcatVersion.startsWith("7.")) {
+            		standardContext.removeParameter("openejb.start.late");
+            	}
             } else if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
                 contextListener.beforeStop(standardContext);
             } else if (Lifecycle.STOP_EVENT.equals(type)) {
