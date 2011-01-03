@@ -84,7 +84,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             for (Principal principal : principals) {
                 if (principal instanceof TomcatUser) {
                     TomcatUser user = (TomcatUser) principal;
-                    if (user.getRealm().hasRole(user.getTomcatPrincipal(), logicalRole)) {
+                    if (TomcatHelper.hasRole(user.getRealm(), user.getTomcatPrincipal(), logicalRole)) {
                         roles.add(logicalRole);
                         break;
                     }

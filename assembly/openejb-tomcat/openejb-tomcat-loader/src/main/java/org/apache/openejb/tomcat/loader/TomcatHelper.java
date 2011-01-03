@@ -19,10 +19,13 @@ package org.apache.openejb.tomcat.loader;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
+import java.security.Principal;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.catalina.Realm;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 
@@ -87,5 +90,34 @@ public class TomcatHelper {
 		
 		// return STOPPED by default
 		return 3;
+	}
+
+	/**
+	 * Helper method to call the correct org.apache.catalina.Realm.hasRole method based on the Tomcat version
+	 * @param realm
+	 * @param tomcatPrincipal
+	 * @param logicalRole
+	 * @return true the the principle has the specified role
+	 */
+	public static boolean hasRole(Realm realm, Principal tomcatPrincipal, String logicalRole) {
+		Method method = null;
+		try {
+
+			if (isTomcat7()) {
+				method = realm.getClass().getMethod("hasRole", new Class<?>[] { Wrapper.class, Principal.class, String.class });
+				return (Boolean) method.invoke(realm, new Object[] { null, tomcatPrincipal, logicalRole});
+			} else {
+				method = realm.getClass().getMethod("hasRole", new Class<?>[] { Principal.class, String.class });
+				return (Boolean) method.invoke(realm, new Object[] { tomcatPrincipal, logicalRole});
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	private static boolean isTomcat7() {
+		return System.getProperty("tomcat.version").startsWith("7.");
 	}
 }
