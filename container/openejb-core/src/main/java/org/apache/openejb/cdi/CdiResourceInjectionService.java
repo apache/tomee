@@ -75,14 +75,14 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
             JndiEncInfoBuilder infoBuilder = new JndiEncInfoBuilder(appModule);
             JndiEncInfo moduleJndiEnc = new JndiEncInfo();
             JndiEncInfo jndiEnc = new JndiEncInfo();
-            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.path, moduleJndiEnc, jndiEnc);
+            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.appId, moduleJndiEnc, jndiEnc);
 
             InjectionBuilder builder = new InjectionBuilder(classLoader);
             List<Injection> injections = builder.buildInjections(jndiEnc);
 
             cdiInfo.setInjections(injections);
             // TODO: handle app/global/module namespaces?
-            JndiEncBuilder encBuilder = new JndiEncBuilder(jndiEnc, injections, appModule.path, classLoader);
+            JndiEncBuilder encBuilder = new JndiEncBuilder(jndiEnc, injections, appModule.appId, classLoader);
             this.contexts.put(cdiInfo, encBuilder.build(JndiEncBuilder.JndiScope.comp));
         }
     }
@@ -168,6 +168,5 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     public void clear() {
         this.contexts.clear();
     }
-
 
 }
