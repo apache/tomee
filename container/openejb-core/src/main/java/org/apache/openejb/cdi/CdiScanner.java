@@ -31,6 +31,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.decorator.DecoratorsManager;
 import org.apache.webbeans.exception.WebBeansConfigurationException;
@@ -69,6 +70,8 @@ public class CdiScanner implements ScannerService {
             }
         }
 
+        final AnnotationManager annotationManager = WebBeansContext.getInstance().getAnnotationManager();
+        
         for (EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
@@ -78,7 +81,8 @@ public class CdiScanner implements ScannerService {
                 Class<?> clazz = load(className, "interceptor", classLoader);
 
                 // TODO: Move check to validation phase
-                if (AnnotationUtil.hasAnnotation(clazz.getDeclaredAnnotations(), Interceptor.class) && !AnnotationUtil.hasInterceptorBindingMetaAnnotation(clazz.getDeclaredAnnotations())) {
+                if (AnnotationUtil.hasAnnotation(clazz.getDeclaredAnnotations(), Interceptor.class) && !annotationManager.hasInterceptorBindingMetaAnnotation(
+                    clazz.getDeclaredAnnotations())) {
                     throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
                 }
 
