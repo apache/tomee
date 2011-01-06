@@ -16,6 +16,15 @@
  */
 package org.apache.openejb.cdi;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.annotation.Annotation;
+
+
+import javax.enterprise.inject.spi.Bean;
+
+
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.OpenEJBException;
@@ -167,6 +176,19 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     @Override
     public void clear() {
         this.contexts.clear();
+    }
+
+    /**
+     * delegation of serialization behavior
+     */
+    public <T> void writeExternal(Bean<T> bean, T actualResource, ObjectOutput out) throws IOException{}
+
+    /**
+     * delegation of serialization behavior
+     */
+    public <T> T readExternal(Bean<T> bean, ObjectInput out) throws IOException,
+								    ClassNotFoundException {
+        return null;
     }
 
 }

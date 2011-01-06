@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.AbstractProducerBean;
 import org.apache.webbeans.component.EnterpriseBeanMarker;
@@ -491,13 +492,15 @@ public class BeansDeployer {
 
         addDefaultStereoTypes();
 
+        final AnnotationManager annotationManager = WebBeansContext.getInstance().getAnnotationManager();
+
         Set<Class<?>> beanClasses = scanner.getBeanClasses();
         if (beanClasses != null && beanClasses.size() > 0) {
 
             for (Class<?> beanClass : beanClasses) {
                 if (beanClass.isAnnotation()) {
                     Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
-                    if (AnnotationUtil.isStereoTypeAnnotation(stereoClass)) {
+                    if (annotationManager.isStereoTypeAnnotation(stereoClass)) {
                         if (!WebBeansContext.getInstance().getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
                             WebBeansUtil.checkStereoTypeClass(stereoClass);
                             StereoTypeModel model = new StereoTypeModel(stereoClass);
