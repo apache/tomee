@@ -36,7 +36,6 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectionResolver;
-import org.apache.webbeans.corespi.ServiceLoader;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.intercept.InterceptorData;
 import org.apache.webbeans.logger.WebBeansLogger;
@@ -75,6 +74,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     /**Root container.*/
     private final BeanManagerImpl beanManager;
+    private final WebBeansContext webBeansContext;
 
     public OpenEJBLifecycle()
     {
@@ -85,13 +85,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     {
         beforeInitApplication(properties);
 
-        this.beanManager = (BeanManagerImpl) WebBeansFinder.getSingletonInstance(BeanManagerImpl.class.getName());
+        webBeansContext = WebBeansContext.getInstance();
+        this.beanManager = webBeansContext.getBeanManagerImpl();
         this.xmlDeployer = new WebBeansXMLConfigurator();
         this.deployer = new BeansDeployer(this.xmlDeployer);
-        this.jndiService = ServiceLoader.getService(JNDIService.class);
+        this.jndiService = webBeansContext.getService(JNDIService.class);
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
-        this.scannerService = ServiceLoader.getService(ScannerService.class);
-        this.contextsService = ServiceLoader.getService(ContextsService.class);
+        this.scannerService = webBeansContext.getScannerService();
+        this.contextsService = webBeansContext.getContextsService();
 
         initApplication(properties);
     }
