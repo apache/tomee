@@ -24,6 +24,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -116,6 +117,16 @@ public class TomcatThreadContextListener implements ThreadContextListener {
         try {
             Object threadName = method.invoke(null);
             return threadName;
+
+        } catch (InvocationTargetException e) {
+            // if it's a naming exception, it should be treated by the caller
+            if (e.getCause() != null && e.getCause() instanceof NamingException) {
+                throw (NamingException) e.getCause();
+            }
+
+            logger.error("Exception in method getThreadName", e);
+            return null;
+
         } catch (Exception e) {
             logger.error("Exception in method getThreadName", e);
             return null;
