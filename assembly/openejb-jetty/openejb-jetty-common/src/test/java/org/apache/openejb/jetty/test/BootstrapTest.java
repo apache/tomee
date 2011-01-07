@@ -30,6 +30,8 @@ import javax.naming.InitialContext;
 import java.io.IOException;
 
 public class BootstrapTest {
+    private static final int SERVER_PORT = 8091;
+    private static final String SERVER_BASE_URL = "http://localhost:" + SERVER_PORT;
     private Server server;
 
     @Before
@@ -37,7 +39,7 @@ public class BootstrapTest {
         OpenEJBLifecycle ejbLifecycle = new OpenEJBLifecycle();
         ejbLifecycle.addApplication("target/test/ejb-examples-1.1-SNAPSHOT.war");
 
-        server = new Server(9091);
+        server = new Server(SERVER_PORT);
         server.addBean(ejbLifecycle);
         ejbLifecycle.setServer(server);
         server.start();
@@ -53,7 +55,7 @@ public class BootstrapTest {
 
     @Test
     public void testShouldInjectEjbsIntoServlet() throws Exception {
-        String url = "http://localhost:9091/annotated";
+        String url = SERVER_BASE_URL + "/annotated";
 
         String[] stringsToCheck = new String[] { "@EJB=proxy=org.superbiz.servlet.AnnotatedEJBLocal;deployment=AnnotatedEJB;pk=null",
             "@EJB.getName()=foo",
@@ -78,7 +80,7 @@ public class BootstrapTest {
 
     @Test
     public void testShouldLoadPersistenceContext() throws Exception {
-        String url = "http://localhost:9091/jpa";
+        String url = SERVER_BASE_URL + "/jpa";
 
         String[] stringsToCheck = new String[] { "@PersistenceUnit=org.apache.openjpa.persistence.EntityManagerFactoryImpl",
             "Loaded [JpaBean id=",
@@ -89,7 +91,7 @@ public class BootstrapTest {
 
     @Test
     public void testShouldJndiTree() throws Exception {
-        String url = "http://localhost:9091/jndi";
+        String url = SERVER_BASE_URL + "/jndi";
 
         String[] stringsToCheck = new String[] { "env=",
             "env/__=",

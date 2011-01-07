@@ -18,6 +18,7 @@
 package org.apache.openejb.spring;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.URLs;
 
 @Exported
 public class ClassPathApplication extends AbstractApplication {
@@ -50,18 +52,18 @@ public class ClassPathApplication extends AbstractApplication {
     protected List<AppInfo> loadApplications() throws OpenEJBException {
         Set<String> declaredApplications = getDeployedApplications();
 
-        List<String> classpathApps = new ArrayList<String>();
+        List<URL> classpathApps = new ArrayList<URL>();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         DeploymentsResolver.loadFromClasspath(SystemInstance.get().getBase(), classpathApps, classLoader);
 
         ArrayList<File> jarFiles = new ArrayList<File>();
-        for (String path : classpathApps) {
-            if (declaredApplications.contains(path)) continue;
+        for (URL path : classpathApps) {
+            if (declaredApplications.contains(URLs.toFilePath(path))) continue;
             // todo hack to avoid picking up application.xml in openejb-core module
-            if (path.indexOf("openejb-core/target/test-classes") > 0) continue;
+            if (URLs.toFilePath(path).indexOf("openejb-core/target/test-classes") > 0) continue;
 
-            jarFiles.add(new File(path));
+            jarFiles.add(URLs.toFile(path));
         }
 
         List<AppInfo> appInfos = new ArrayList<AppInfo>();

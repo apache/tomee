@@ -66,6 +66,14 @@ public class ClassLoaderUtil {
         });
     }
 
+    public static File getUrlCachedName(String appId, URL url) {
+        return urlCache.getUrlCachedName(appId, url);
+    }
+
+    public static boolean isUrlCached(String appId, URL url) {
+        return urlCache.isUrlCached(appId, url);
+    }
+
     public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
         urls = urlCache.cacheUrls(appId, urls);
         URLClassLoader classLoader = new URLClassLoader(urls, parent);

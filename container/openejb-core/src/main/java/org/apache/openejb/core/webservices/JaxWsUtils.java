@@ -247,16 +247,21 @@ public class JaxWsUtils {
 
     public static String getServiceInterface(Class<?> clazz) {
         WebService webService = clazz.getAnnotation(WebService.class);
+        String endpointInterface = null;
         if (webService != null && webService.endpointInterface() != null) {
-            String endpointInterface = webService.endpointInterface().trim();
-            if (endpointInterface.length() == 0) endpointInterface = null;
-            return endpointInterface;
+            endpointInterface = webService.endpointInterface().trim();
+            if (endpointInterface.length() == 0) {
+                endpointInterface = null;
+
+            } else {
+                return endpointInterface;
+            }
         }
 
         // if the bean implements only one WebService class, that is the SEI
-        String endpointInterface = null;
-        for (Class intf : clazz.getInterfaces()) {
-            webService = clazz.getAnnotation(WebService.class);
+        for (Class<?> intf : clazz.getInterfaces()) {
+            // interface MUST also have a @WebService
+            webService = intf.getAnnotation(WebService.class);
             if (webService != null) {
                 if (endpointInterface == null) {
                     endpointInterface = intf.getName();
@@ -268,11 +273,7 @@ public class JaxWsUtils {
             }
         }
 
-        if (endpointInterface != null) {
-            return endpointInterface;
-        }
-
-        return null;
+        return endpointInterface;
     }
 
     public static String getServiceWsdlLocation(Class<?> clazz, ClassLoader loader) {

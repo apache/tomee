@@ -128,9 +128,10 @@ public class WsDeployer implements DynamicDeployer {
             servletMappings.put(servletMapping.getServletName(), servletMapping);
         }
 
-        // add port declarations for webservices
+        // add port declarations for Pojo webservices
         WebserviceDescription webserviceDescription;
         for (Servlet servlet : webApp.getServlet()) {
+            // the implementation class will be replaced by the WsServlet in the WsRegistry
             String className = servlet.getServletClass();
 
             // Skip JSPs

@@ -44,10 +44,13 @@ public class FinderFactory {
     public AbstractFinder create(DeploymentModule module) throws Exception {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
-            File file = new File(webModule.getJarLocation());
-            URL[] urls = DeploymentLoader.getWebappUrls(file);
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            return new ClassFinder(webClassLoader, asList(urls));
+            if (webModule.getFilteredUrls() == null) {
+                return new ClassFinder(webClassLoader);
+
+            } else {
+                return new ClassFinder(webClassLoader, webModule.getFilteredUrls());
+            }
         }
 
         if (module.getJarLocation() != null) {

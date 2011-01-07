@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,8 @@ public class WebModule implements WsModule {
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
     private AbstractFinder finder;
 
+    // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
+    private List<URL> filteredUrls;
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -88,6 +91,14 @@ public class WebModule implements WsModule {
 
         this.moduleId = moduleId;
         validation = new ValidationContext(WebModule.class, jarLocation);
+    }
+
+    public List<URL> getFilteredUrls() {
+        return filteredUrls;
+    }
+
+    public void setFilteredUrls(List<URL> filteredUrls) {
+        this.filteredUrls = filteredUrls;
     }
 
     public AbstractFinder getFinder() {

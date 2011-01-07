@@ -40,18 +40,11 @@ import java.util.EnumSet;
 /**
  * @version $Rev$ $Date$
  */
-public class DeploymentsResolver {
+public class DeploymentsResolver implements DeploymentFilterable {
 
-    public static final String DEPLOYMENTS_CLASSPATH_PROPERTY = "openejb.deployments.classpath";
-    static final String SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY = DEPLOYMENTS_CLASSPATH_PROPERTY;
-    public static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
-    private static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
-    private static final String CLASSPATH_REQUIRE_DESCRIPTOR = RequireDescriptors.PROPERTY;
-    private static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
-    private static final String CLASSPATH_FILTER_SYSTEMAPPS = "openejb.deployments.classpath.filter.systemapps";
     private static final Logger logger = DeploymentLoader.logger;
 
-    public static void loadFrom(Deployments dep, FileUtils path, List<String> jarList) {
+    public static void loadFrom(Deployments dep, FileUtils path, List<URL> jarList) {
 
         ////////////////////////////////
         //
@@ -62,7 +55,7 @@ public class DeploymentsResolver {
             try {
                 File jar = path.getFile(dep.getJar(), false);
                 if (!jarList.contains(jar.getAbsolutePath())) {
-                    jarList.add(jar.getAbsolutePath());
+                    jarList.add(jar.toURI().toURL());
                 }
             } catch (Exception ignored) {
             }
@@ -84,26 +77,35 @@ public class DeploymentsResolver {
         ////////////////////////////////
         File ejbJarXml = new File(dir, "META-INF" + File.separator + "ejb-jar.xml");
         if (ejbJarXml.exists()) {
-            if (!jarList.contains(dir.getAbsolutePath())) {
-                jarList.add(dir.getAbsolutePath());
+            try {
+                if (!jarList.contains(dir.getAbsolutePath())) {
+                    jarList.add(dir.toURI().toURL());
+                }
+            } catch (MalformedURLException ignore) {
             }
             return;
         }
 
         File appXml = new File(dir, "META-INF" + File.separator + "application.xml");
         if (appXml.exists()) {
-            if (!jarList.contains(dir.getAbsolutePath())) {
-                jarList.add(dir.getAbsolutePath());
+            try {
+                if (!jarList.contains(dir.getAbsolutePath())) {
+                    jarList.add(dir.toURI().toURL());
+                }
+            } catch (MalformedURLException ignore) {
             }
             return;
         }
         
         File raXml = new File(dir, "META-INF" + File.separator + "ra.xml"); 
-        if (raXml.exists()) { 
-        	if (!jarList.contains(dir.getAbsolutePath())) { 
-        		jarList.add(dir.getAbsolutePath()); 
-        	} 
-        	return;
+        if (raXml.exists()) {
+            try {
+                if (!jarList.contains(dir.getAbsolutePath())) {
+                    jarList.add(dir.toURI().toURL());
+                }
+            } catch (MalformedURLException ignore) {
+            }
+            return;
         } 
 
         ////////////////////////////////
@@ -113,16 +115,19 @@ public class DeploymentsResolver {
         ////////////////////////////////
         boolean hasNestedArchives = false;
         for (File file : dir.listFiles()) {
-            if (file.getName().endsWith(".jar") || file.getName().endsWith(".war")|| file.getName().endsWith(".rar")|| file.getName().endsWith(".ear")) {
-                if (jarList.contains(file.getAbsolutePath())) continue;
-                jarList.add(file.getAbsolutePath());
-                hasNestedArchives = true;
-            } else if (new File(file, "META-INF").exists()){ // Unpacked ear or jar
-                jarList.add(file.getAbsolutePath());
-                hasNestedArchives = true;
-            } else if (new File(file, "WEB-INF").exists()){  // Unpacked webapp
-                jarList.add(file.getAbsolutePath());
-                hasNestedArchives = true;
+            try {
+                if (file.getName().endsWith(".jar") || file.getName().endsWith(".war")|| file.getName().endsWith(".rar")|| file.getName().endsWith(".ear")) {
+                    if (jarList.contains(file.getAbsolutePath())) continue;
+                    jarList.add(file.toURI().toURL());
+                    hasNestedArchives = true;
+                } else if (new File(file, "META-INF").exists()){ // Unpacked ear or jar
+                    jarList.add(file.toURI().toURL());
+                    hasNestedArchives = true;
+                } else if (new File(file, "WEB-INF").exists()){  // Unpacked webapp
+                    jarList.add(file.toURI().toURL());
+                    hasNestedArchives = true;
+                }
+            } catch (Exception ignore) {
             }
         }
 
@@ -136,8 +141,11 @@ public class DeploymentsResolver {
             DeploymentLoader.scanDir(dir, files, "");
             for (String fileName : files.keySet()) {
                 if (fileName.endsWith(".class")) {
-                    if (!jarList.contains(dir.getAbsolutePath())) {
-                        jarList.add(dir.getAbsolutePath());
+                    try {
+                        if (!jarList.contains(dir.getAbsolutePath())) {
+                            jarList.add(dir.toURI().toURL());
+                        }
+                    } catch (MalformedURLException ignore) {
                     }
                     return;
                 }
@@ -161,14 +169,21 @@ public class DeploymentsResolver {
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      * This appears in step 3 of the above algorithm.
      */
-    public static void loadFromClasspath(FileUtils base, List<String> jarList, ClassLoader classLoader) {
-
+    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
         Options options = SystemInstance.get().getOptions();
         String include = options.get(CLASSPATH_INCLUDE, "");
         String exclude = options.get(CLASSPATH_EXCLUDE, ".*");
         Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
         boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
         boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
+
+        loadFromClasspath(base, jarList, classLoader,
+                include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
+    }
+
+    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader,
+                                         String include, String exclude, Set<RequireDescriptors> requireDescriptors,
+                                         boolean filterDescriptors, boolean filterSystemApps) {
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
@@ -358,7 +373,7 @@ public class DeploymentsResolver {
         return urlSet;
     }
 
-    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<String> jarList) {
+    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
         for (URL url : urls) {
             Deployments deployment;
             String path;
@@ -385,7 +400,7 @@ public class DeploymentsResolver {
                         loadFrom(deployment, base, jarList);
                     } else {
                         if (!jarList.contains(path)){
-                            jarList.add(path);
+                            jarList.add(url);
                         }
                     }
 
