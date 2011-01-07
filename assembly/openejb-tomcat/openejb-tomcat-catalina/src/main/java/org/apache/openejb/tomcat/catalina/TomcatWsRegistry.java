@@ -148,8 +148,14 @@ public class TomcatWsRegistry implements WsRegistry {
         // configured true, or it will treat it as a failed deployment
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
-                if (event.getType().equals(Lifecycle.START_EVENT)) {
-                    Context context = (Context) event.getLifecycle();
+            	Context context = (Context) event.getLifecycle();
+            	
+            	if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
+            		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");	
+            	}
+            	
+            	
+            	if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
                     context.setConfigured(true);
                 }
             }
@@ -205,22 +211,26 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         // Mark this as a dynamic context that should not be inspected by the TomcatWebAppBuilder
-        context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
 
         // build the servlet
         Wrapper wrapper = context.createWrapper();
         wrapper.setName("webservice");
         wrapper.setServletClass(WsServlet.class.getName());
-        setWsContainer(context, wrapper, httpListener);
-        wrapper.addMapping("/*");
-
 
         // add add servlet to context
         context.addChild(wrapper);
+        wrapper.addMapping("/*");
         context.addServletMapping("/*", "webservice");
 
+        String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
+        wrapper.addInitParameter(WsServlet.WEBSERVICE_CONTAINER, webServicecontainerID);
+        
         // add context to host
         host.addChild(context);
+
+		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
+		setWsContainer(context, wrapper, httpListener);
+		
         webserviceContexts.put(path, context);
 
         // register wsdl locations for service-ref resolution
