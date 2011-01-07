@@ -117,7 +117,7 @@ public class TomcatHelper {
 		return false;
 	}
 
-	private static boolean isTomcat7() {
+	public static boolean isTomcat7() {
 		return System.getProperty("tomcat.version").startsWith("7.");
 	}
 }

@@ -27,6 +27,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.openejb.tomcat.loader.TomcatHelper;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -71,7 +72,6 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     public void lifecycleEvent(LifecycleEvent event) {
         Object source = event.getSource();
         if (source instanceof StandardContext) {
-        	String tomcatVersion = System.getProperty("tomcat.version");
             StandardContext standardContext = (StandardContext) source;
             String type = event.getType();
             
@@ -80,7 +80,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
                 contextListener.beforeStart(standardContext);
             } else if (Lifecycle.START_EVENT.equals(type)) {
-            	if (tomcatVersion.startsWith("7.")) {
+            	if (TomcatHelper.isTomcat7()) {
             		standardContext.addParameter("openejb.start.late", "true");
             	}
             	
@@ -88,7 +88,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.AFTER_START_EVENT.equals(type)) {
                 contextListener.afterStart(standardContext);
                 
-                if (tomcatVersion.startsWith("7.")) {
+                if (TomcatHelper.isTomcat7()) {
             		standardContext.removeParameter("openejb.start.late");
             	}
             } else if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
