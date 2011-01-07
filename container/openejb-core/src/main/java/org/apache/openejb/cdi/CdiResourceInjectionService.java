@@ -37,13 +37,21 @@ import org.apache.openejb.config.JndiEncInfoBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PassthroughFactory;
+import org.apache.webbeans.component.ResourceBean;
+import org.apache.webbeans.exception.WebBeansException;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.api.ResourceReference;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
@@ -99,25 +107,30 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
     @Override
     public <X, T extends Annotation> X getResourceReference(ResourceReference<X, T> resourceReference) {
-        for (Entry<CdiBeanInfo, Context> entry : this.contexts.entrySet()) {
-            if (entry.getKey().getBeanClass() == resourceReference.getOwnerClass()) {
-                List<Injection> injections = entry.getKey().getInjections();
-                for (Injection injection : injections) {
-                    if (injection.getTarget() == resourceReference.getOwnerClass() &&
-                            injection.getName().equals(resourceReference.getName())) {
-                        Context context = InjectionProcessor.unwrap(entry.getValue());
-                        try {
-                            return resourceReference.getResourceType().cast(context.lookup(injection.getJndiName()));
-                        } catch (NamingException e) {
-                            logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName());
-                            return null;
-                        }
+        try {
+            return resourceReference.getResourceType().cast(new InitialContext().lookup(resourceReference.getJndiName()));
+        } catch (NamingException e) {
+            for (Entry<CdiBeanInfo, Context> entry : this.contexts.entrySet()) {
+                if (entry.getKey().getBeanClass() == resourceReference.getOwnerClass()) {
+                    List<Injection> injections = entry.getKey().getInjections();
+                    for (Injection injection : injections) {
+                        if (injection.getTarget() == resourceReference.getOwnerClass() &&
+                                injection.getName().equals(resourceReference.getName())) {
+                            Context context = InjectionProcessor.unwrap(entry.getValue());
+                            try {
+                                return resourceReference.getResourceType().cast(context.lookup(injection.getJndiName()));
+                            } catch (NamingException e2) {
+                                logger.warning("Injection data not found in JNDI context: jndiName='" + injection.getJndiName() + "', target=" + injection.getTarget().getName() + "/" + injection.getName(), e2);
+                                return null;
+                            }
 
+                        }
                     }
                 }
             }
-        }
-        return null;
+            return null;
+//            throw new WebBeansException("Could not look up resource at " + resourceReference.getJndiName(), e);
+       }
     }
 
     @Override
@@ -179,16 +192,19 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     }
 
     /**
-     * delegation of serialization behavior
-     */
-    public <T> void writeExternal(Bean<T> bean, T actualResource, ObjectOutput out) throws IOException{}
+      * delegation of serialization behavior
+      */
+     public <T> void writeExternal(Bean<T> bean, T actualResource, ObjectOutput out) throws IOException {
+         //do nothing
+     }
 
-    /**
-     * delegation of serialization behavior
-     */
-    public <T> T readExternal(Bean<T> bean, ObjectInput out) throws IOException,
-								    ClassNotFoundException {
-        return null;
-    }
+     /**
+      * delegation of serialization behavior
+      */
+     public <T> T readExternal(Bean<T> bean, ObjectInput out) throws IOException,
+             ClassNotFoundException {
+         return (T) ((ResourceBean)bean).getActualInstance();
+     }
+    
 
 }
