@@ -138,6 +138,19 @@ public class UrlCache {
         }
     }
 
+    public File getUrlCachedName(String appId, URL url) {
+        Map<URL, File> appCache = getAppCache(appId);
+        if (appCache.containsKey(url)) {
+            return appCache.get(url);
+        }
+        return null;
+    }
+
+    public boolean isUrlCached(String appId, URL url) {
+        Map<URL, File> appCache = getAppCache(appId);
+        return appCache.containsKey(url);
+    }
+
     private synchronized File cacheUrl(String appId, URL url) {
         File sourceFile;
         if (!"file".equals(url.getProtocol())) {

@@ -17,34 +17,6 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.URLs.toFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-
-import javax.xml.bind.JAXBException;
-
 import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
@@ -65,6 +37,8 @@ import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.loader.FileUtils;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
@@ -76,10 +50,38 @@ import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
+import static org.apache.openejb.util.URLs.toFile;
+
 /**
  * @version $Revision$ $Date$
  */
-public class DeploymentLoader {
+public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final Set<Class<? extends DeploymentModule>> ALL_SUPPORTED_MODULE_TYPES;
     private static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
@@ -111,7 +113,7 @@ public class DeploymentLoader {
     public DeploymentLoader(String ddDir, Set<Class<? extends DeploymentModule>> loadingRequiredModuleTypes) {
         this.ddDir = ddDir;
         //Might always need AppModule, as without it, we might ignore the EAR type application
-        if(loadingRequiredModuleTypes ==  ALL_SUPPORTED_MODULE_TYPES) {
+        if (loadingRequiredModuleTypes == ALL_SUPPORTED_MODULE_TYPES) {
             this.loadingRequiredModuleTypes = loadingRequiredModuleTypes;
         } else {
             this.loadingRequiredModuleTypes = new HashSet<Class<? extends DeploymentModule>>(loadingRequiredModuleTypes);
@@ -163,9 +165,9 @@ public class DeploymentLoader {
                 // when we have a possible ejb-jar file (only ejb-jars result in a ClassFinder being used)
                 URL tempURL = baseUrl;
                 if (jarFile.isFile() && UrlCache.cacheDir != null &&
-                    !jarFile.getName().endsWith(".ear") &&
-                    !jarFile.getName().endsWith(".war") &&
-                    !jarFile.getName().endsWith(".rar")) {
+                        !jarFile.getName().endsWith(".ear") &&
+                        !jarFile.getName().endsWith(".war") &&
+                        !jarFile.getName().endsWith(".rar")) {
                     try {
                         tmpFile = File.createTempFile("AppModule-", "", UrlCache.cacheDir);
                         JarExtractor.copy(URLs.toFile(baseUrl), tmpFile);
@@ -231,7 +233,7 @@ public class DeploymentLoader {
                 final File file = toFile(baseUrl);
 
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath());
-                addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), null, null);
+                addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
                 return appModule;
             } else if (PersistenceModule.class.equals(moduleClass) && loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
@@ -323,6 +325,9 @@ public class DeploymentLoader {
                 HashMap<String, URL> files = new HashMap<String, URL>();
                 scanDir(appDir, files, "");
                 files.remove("META-INF/MANIFEST.MF");
+
+                // todo we should also filter URLs here using DeploymentsResolver.loadFromClasspath
+
                 for (Map.Entry<String, URL> entry : files.entrySet()) {
                     if (entry.getKey().startsWith("lib/")) continue;
                     if (!entry.getKey().matches(".*\\.(jar|war|rar|ear)")) continue;
@@ -339,7 +344,7 @@ public class DeploymentLoader {
                             resouceModules.put(entry.getKey(), entry.getValue());
                         } else if (WebModule.class.equals(moduleType)
                                 && (loadingRequiredModuleTypes.contains(WebModule.class) || loadingRequiredModuleTypes.contains(EjbModule.class) || loadingRequiredModuleTypes
-                                        .contains(PersistenceModule.class))) {
+                                .contains(PersistenceModule.class))) {
                             webModules.put(entry.getKey(), entry.getValue());
                         }
                     } catch (UnsupportedOperationException e) {
@@ -430,6 +435,13 @@ public class DeploymentLoader {
             for (String moduleName : ejbModules.keySet()) {
                 try {
                     URL ejbUrl = ejbModules.get(moduleName);
+                    // we should try to use a reference to the temp classloader
+                    if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), ejbUrl)) {
+                        try {
+                            ejbUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), ejbUrl).toURI().toURL();
+
+                        } catch (MalformedURLException ignore) { }
+                    }
                     File ejbFile = toFile(ejbUrl);
                     String absolutePath = ejbFile.getAbsolutePath();
 
@@ -446,6 +458,13 @@ public class DeploymentLoader {
             for (String moduleName : clientModules.keySet()) {
                 try {
                     URL clientUrl = clientModules.get(moduleName);
+                    // we should try to use a reference to the temp classloader
+                    if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), clientUrl)) {
+                        try {
+                            clientUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), clientUrl).toURI().toURL();
+
+                        } catch (MalformedURLException ignore) { }
+                    }
                     File clientFile = toFile(clientUrl);
                     String absolutePath = clientFile.getAbsolutePath();
 
@@ -461,6 +480,13 @@ public class DeploymentLoader {
             for (String moduleName : resouceModules.keySet()) {
                 try {
                     URL rarUrl = resouceModules.get(moduleName);
+                    // we should try to use a reference to the temp classloader
+                    if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), rarUrl)) {
+                        try {
+                            rarUrl = ClassLoaderUtil.getUrlCachedName(appModule.getJarLocation(), rarUrl).toURI().toURL();
+
+                        } catch (MalformedURLException ignore) { }
+                    }
                     ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
 
                     appModule.getConnectorModules().add(connectorModule);
@@ -479,9 +505,16 @@ public class DeploymentLoader {
                 }
             }
 
+            // Persistence Units
             if (loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
-                // Persistence Units
-                addPersistenceUnits(appModule, urls);
+                // we don't need all URLs here but only a filtered list
+                // moreover, we should use cached (tempclassloader) instead
+                Properties p = new Properties();
+                p.put(appModule.getModuleId(), appModule.getJarLocation());
+                FileUtils base = new FileUtils(appModule.getModuleId(), appModule.getModuleId(), p);
+                List<URL> filteredUrls = new ArrayList<URL>();
+                DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
+                addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
             }
 
             return appModule;
@@ -565,66 +598,84 @@ public class DeploymentLoader {
     }
 
     protected void addWebModule(AppModule appModule, URL warUrl, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
+
+        // create and add the WebModule
         String warPath = URLs.toFilePath(warUrl);
         WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
         if (loadingRequiredModuleTypes.contains(WebModule.class)) {
             appModule.getWebModules().add(webModule);
         }
 
+        // get urls in web application
+        List<URL> urls = new ArrayList<URL>();
         ClassLoader webClassLoader = webModule.getClassLoader();
 
-        if (loadingRequiredModuleTypes.contains(EjbModule.class)) {
-            boolean addEjbModule = false;
-            EjbJar ejbJar = null;
-            URL ejbJarXmlUrl = (URL) webModule.getAltDDs().get("ejb-jar.xml");
-            if (ejbJarXmlUrl == null) {
-                if (webModule.getWebApp() != null && webModule.getWebApp().isMetadataComplete()) {
-                    addEjbModule = false;
-                } else {
-                    // get urls in web application
-                    List<URL> urls = null;
-                    try {
-                        UrlSet urlSet = new UrlSet(webClassLoader);
-                        urlSet = urlSet.exclude(webClassLoader.getParent().getParent());
-                        urls = urlSet.getUrls();
-                    } catch (IOException e) {
-                        logger.warning("Unable to determine URLs in classloader", e);
-                    }
+        // get include/exclude properties from context-param
+        Options contextParams = new Options(getContextParams(webModule.getWebApp().getContextParam()));
+        String include = contextParams.get(CLASSPATH_INCLUDE, "");
+        String exclude = contextParams.get(CLASSPATH_EXCLUDE, ".*");
+        Set<RequireDescriptors> requireDescriptors = contextParams.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
+        boolean filterDescriptors = contextParams.get(CLASSPATH_FILTER_DESCRIPTORS, false);
+        boolean filterSystemApps = contextParams.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
-                    // clean jar URLs
-                    for (int i = 0; i < urls.size(); i++) {
-                        URL url = urls.get(i);
-                        if (url.getProtocol().equals("jar")) {
-                            try {
-                                url = new URL(url.getFile().replaceFirst("!.*$", ""));
-                                urls.set(i, url);
-                            } catch (MalformedURLException ignored) {
-                            }
-                        }
-                    }
+        contextParams.getProperties().put(moduleName, warPath);
+        FileUtils base = new FileUtils(moduleName, moduleName, contextParams.getProperties());
+        DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
 
-                    addEjbModule = checkAnnotations(urls, webClassLoader, true, false) != null;
+        // we need to exclude previously deployed modules
+        UrlSet urlSet = new UrlSet(urls);
+        urlSet = urlSet.exclude(new UrlSet(appModule.getAdditionalLibraries())); // there should not be modules in /lib
+        for (EjbModule ejbModule : appModule.getEjbModules()) {
+            try {
+                urlSet = urlSet.exclude(new File(ejbModule.getJarLocation()));
+
+            } catch (MalformedURLException ignore) { }
+        }
+        for (ClientModule clientModule : appModule.getClientModules()) {
+            try {
+                urlSet = urlSet.exclude(new File(clientModule.getJarLocation()));
+            } catch (MalformedURLException ignore) { }
+        }
+        // for persistence.xml, there is already a check in addPersistenceUnit to remove duplicates
+        urls = urlSet.getUrls();
+
+        // save the filtered list so that it can be used elsewhere
+        webModule.setFilteredUrls(urls);
+
+        // Check each URL to determine if it is an EJB jar
+        for (URL url : urls) {
+            try {
+                Class moduleType = discoverModuleType(url, webClassLoader, true);
+
+                File file = toFile(url);
+                String absolutePath = file.getAbsolutePath();
+
+                if (EjbModule.class.isAssignableFrom(moduleType) && loadingRequiredModuleTypes.contains(EjbModule.class)) {
+                    logger.info("Found ejb module " + moduleType.getSimpleName() + " in war " + contextRoot);
+
+                    EjbModule ejbModule = createEjbModule(url, absolutePath, webClassLoader, getModuleName());
+                    appModule.getEjbModules().add(ejbModule);
+
                 }
-            } else {
-                addEjbModule = true;
-                ejbJar = ReadDescriptors.readEjbJar(ejbJarXmlUrl);
-            }
 
-            if (addEjbModule) {
-                EjbModule ejbModule = new EjbModule(webClassLoader, webModule.getModuleId(), warPath, ejbJar, null);
-                ejbModule.getAltDDs().putAll(webModule.getAltDDs());
-                if (loadingRequiredModuleTypes.contains(WsModule.class)) {
-                    addWebservices(ejbModule);
-                }
-
-                appModule.getEjbModules().add(ejbModule);
+            } catch (IOException e) {
+                logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
+            } catch (UnknownModuleTypeException ignore) {
             }
         }
 
         if (loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
             // Persistence Units
-            addPersistenceUnits(appModule);
+            addPersistenceUnits(appModule, urls.toArray(new URL[urls.size()]));
         }
+    }
+
+    private Properties getContextParams(List<ParamValue> contextParam) {
+        Properties properties = new Properties();
+        for (ParamValue paramValue : contextParam) {
+            properties.put(paramValue.getParamName(), paramValue.getParamValue());
+        }
+        return properties;
     }
 
     protected WebModule createWebModule(String appId, String warPath, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
@@ -672,6 +723,14 @@ public class DeploymentLoader {
             addFacesConfigs(webModule);
         }
         return webModule;
+    }
+
+    protected String getContextRoot() {
+        return null;
+    }
+
+    protected String getModuleName() {
+        return null;
     }
 
     public static URL[] getWebappUrls(File warFile) {
@@ -817,9 +876,6 @@ public class DeploymentLoader {
      * @throws OpenEJBException
      */
     private void addFacesConfigs(WebModule webModule) throws OpenEJBException {
-        //*************************IMPORTANT*******************************************
-        // This method is an exact copy of org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.addFacesConfigs(WebModule webModule)
-        // Any changes to this method here would most probably need to also be reflected in the TomcatWebAppBuilder.addFacesConfigs method.
         //*************************IMPORTANT*******************************************
         // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
         // look at section 10.4.2 of the JSF v1.2 spec, bullet 1 for details

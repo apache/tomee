@@ -36,11 +36,14 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.openejb.ClassLoaderUtil;
+import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
 
+import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
 import java.net.URI;
@@ -82,6 +85,14 @@ public class TomcatWsRegistry implements WsRegistry {
         Wrapper wrapper = (Wrapper) context.findChild(servletName);
         if (wrapper == null) {
             throw new IllegalArgumentException("Could not find servlet " + contextRoot + " in web application context " + context.getName());
+        }
+
+        // for Pojo web services, we need to change the servlet class which is the service implementation
+        // by the WsServler class
+        wrapper.setServletClass(WsServlet.class.getName());
+        if (getServlet(wrapper) != null) {
+            wrapper.load();
+            wrapper.unload();
         }
 
         setWsContainer(context, wrapper, wsContainer);
@@ -217,7 +228,7 @@ public class TomcatWsRegistry implements WsRegistry {
         wrapper.setName("webservice");
         wrapper.setServletClass(WsServlet.class.getName());
 
-        // add add servlet to context
+        // add servlet to context
         context.addChild(wrapper);
         wrapper.addMapping("/*");
         context.addServletMapping("/*", "webservice");
