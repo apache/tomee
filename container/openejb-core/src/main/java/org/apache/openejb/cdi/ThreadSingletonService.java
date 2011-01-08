@@ -23,12 +23,13 @@ package org.apache.openejb.cdi;
 import java.util.Map;
 
 import org.apache.openejb.AppContext;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.SingletonService;
 
 /**
  * @version $Rev:$ $Date:$
  */
-public interface ThreadSingletonService extends SingletonService {
+public interface ThreadSingletonService extends SingletonService<WebBeansContext> {
     void initialize(StartupObject startupObject);
     Object contextEntered(OWBContext newOWBContext);
     void contextExited(Object oldOWBContext);

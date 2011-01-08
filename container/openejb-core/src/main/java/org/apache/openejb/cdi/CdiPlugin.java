@@ -30,6 +30,7 @@ import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.ee.event.TransactionalEventNotifier;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
+import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.TransactionService;
 import org.apache.webbeans.spi.plugins.AbstractOwbPlugin;
@@ -59,6 +60,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     private AppContext appContext;
     private Set<Class<?>> beans;
 
+    private WebBeansContext webBeansContext;
     private CdiAppContextsService contexsServices;
 
     @Override
@@ -89,7 +91,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
     }
 
     public void startup() {
-        this.contexsServices = (CdiAppContextsService) WebBeansFinder.getSingletonInstance("org.apache.openejb.cdi.CdiAppContextsService", appContext.getClassLoader());
+        webBeansContext = WebBeansContext.getInstance();
+        this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
         this.contexsServices.init(null);
     }
 
@@ -124,7 +127,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             WebBeansContext.getInstance().getjMSManager().clear();
 
             //Clear the resource injection service
-            CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) WebBeansFinder.getSingletonInstance("org.apache.openejb.cdi.CdiResourceInjectionService", appContext.getClassLoader());
+            CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
             injectionServices.clear();
 
             //Clear singleton list

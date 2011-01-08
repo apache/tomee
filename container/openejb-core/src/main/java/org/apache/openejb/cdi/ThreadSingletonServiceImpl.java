@@ -92,11 +92,11 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         contexts.set((OWBContext) oldOWBContext);
     }
 
-    @Override
-    public Object get(Object key, String singletonClassName) {
-        OWBContext context = getContext();
-        return context.getSingletons().get(singletonClassName);
-    }
+//    @Override
+//    public Object get(Object key, String singletonClassName) {
+//        OWBContext context = getContext();
+//        return context.getWebBeansContext().get(singletonClassName);
+//    }
 
     private OWBContext getContext() {
         OWBContext context = contexts.get();
@@ -107,23 +107,29 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     @Override
+    public WebBeansContext get(Object key) {
+        OWBContext context = getContext();
+        return context.getWebBeansContext();
+    }
+
+    @Override
     public void clear(Object key) {
         contextMessage(getContext(), "clearing ");
-        getContext().getSingletons().clear();
+        getContext().getWebBeansContext().clear();
     }
 
-    @Override
-    public boolean isExist(Object key, String singletonClassName) {
-        throw new UnsupportedOperationException("isExist is never called");
-    }
-
-    @Override
-    public Object getExist(Object key, String singletonClassName) {
-        return getContext().getSingletons().get(singletonClassName);
-    }
-
-    @Override
-    public Object getKey(Object singleton) {
-        return null;
-    }
+//    @Override
+//    public boolean isExist(Object key, String singletonClassName) {
+//        throw new UnsupportedOperationException("isExist is never called");
+//    }
+//
+//    @Override
+//    public Object getExist(Object key, String singletonClassName) {
+//        return getContext().getWebBeansContext().get(singletonClassName);
+//    }
+//
+//    @Override
+//    public Object getKey(Object singleton) {
+//        return null;
+//    }
 }

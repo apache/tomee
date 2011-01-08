@@ -38,6 +38,7 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.AbstractContext;
 import org.apache.webbeans.context.ContextFactory;
 import org.apache.webbeans.context.RequestContext;
@@ -71,13 +72,14 @@ public class ServiceProviders {
     public static class ContextsProvider implements org.jboss.jsr299.tck.spi.Contexts<AbstractContext> {
 
         public AbstractContext getRequestContext() {
-            RequestContext ctx = (RequestContext) ContextFactory.getStandardContext(RequestScoped.class);
+            ContextFactory contextFactory = WebBeansContext.getInstance().getContextFactory();
+            RequestContext ctx = (RequestContext) contextFactory.getStandardContext(RequestScoped.class);
 
             if (ctx == null) {
-                ContextFactory.initRequestContext(null);
+                contextFactory.initRequestContext(null);
             }
 
-            return (AbstractContext) ContextFactory.getStandardContext(ContextTypes.REQUEST);
+            return (AbstractContext) contextFactory.getStandardContext(ContextTypes.REQUEST);
         }
 
         public void setActive(AbstractContext context) {
@@ -90,7 +92,8 @@ public class ServiceProviders {
         }
 
         public AbstractContext getDependentContext() {
-            return (AbstractContext) ContextFactory.getStandardContext(ContextTypes.DEPENDENT);
+            ContextFactory contextFactory = WebBeansContext.getInstance().getContextFactory();
+            return (AbstractContext) contextFactory.getStandardContext(ContextTypes.DEPENDENT);
         }
 
         public void destroyContext(AbstractContext context) {
