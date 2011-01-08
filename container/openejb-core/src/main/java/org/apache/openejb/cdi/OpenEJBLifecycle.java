@@ -44,6 +44,7 @@ import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.JNDIService;
+import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
@@ -116,10 +117,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         beforeStartApplication(startupObject);
 
         //Load all plugins
-        WebBeansContext.getInstance().getPluginLoader().startUp();
+        webBeansContext.getPluginLoader().startUp();
 
         //Get Plugin
-        CdiPlugin cdiPlugin = (CdiPlugin) WebBeansContext.getInstance().getPluginLoader().getEjbPlugin();
+        CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
         cdiPlugin.setAppContext(stuff.getAppContext());
 
@@ -129,14 +130,14 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         cdiPlugin.configureDeployments(stuff.getBeanContexts());
 
         //Resournce Injection Service
-        CdiResourceInjectionService injectionService = (CdiResourceInjectionService) WebBeansFinder.getSingletonInstance(CdiResourceInjectionService.class.getName(), stuff.getAppContext().getClassLoader());
+        CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
         injectionService.setAppModule(stuff.getAppInfo());
         injectionService.setClassLoader(stuff.getAppContext().getClassLoader());
 
         //Deploy the beans
         try {
             //Load Extensions
-            WebBeansContext.getInstance().getExtensionLoader().loadExtensionServices();
+            webBeansContext.getExtensionLoader().loadExtensionServices();
 
             //Initialize contexts
             this.contextsService.init(startupObject);
@@ -176,7 +177,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 final Class implClass = beanContext.getBeanClass();
 
                 //Define annotation type
-                AnnotatedType<?> annotatedType = WebBeansContext.getInstance().getAnnotatedElementFactory().newAnnotatedType(implClass);
+                AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
                 //Fires ProcessAnnotatedType
                 ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = WebBeansUtil.fireProcessAnnotatedTypeEvent(annotatedType);
@@ -245,7 +246,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         // Start from the class
         for (Class<?> implClass : managedBeans) {
             //Define annotation type
-            AnnotatedType<?> annotatedType = WebBeansContext.getInstance().getAnnotatedElementFactory().newAnnotatedType(implClass);
+            AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
             //Fires ProcessAnnotatedType
             ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = WebBeansUtil.fireProcessAnnotatedTypeEvent(annotatedType);
@@ -279,22 +280,22 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             jndiService.unbind(WebBeansConstants.WEB_BEANS_MANAGER_JNDI_NAME);
 
             //Free all plugin resources
-            WebBeansContext.getInstance().getPluginLoader().shutDown();
+            webBeansContext.getPluginLoader().shutDown();
 
             //Clear extensions
-            WebBeansContext.getInstance().getExtensionLoader().clear();
+            webBeansContext.getExtensionLoader().clear();
 
             //Delete Resolutions Cache
             InjectionResolver.getInstance().clearCaches();
 
             //Delte proxies
-            WebBeansContext.getInstance().getJavassistProxyFactory().clear();
+            webBeansContext.getJavassistProxyFactory().clear();
 
             //Delete AnnotateTypeCache
-            WebBeansContext.getInstance().getAnnotatedElementFactory().clear();
+            webBeansContext.getAnnotatedElementFactory().clear();
 
             //Delete JMS Model Cache
-            WebBeansContext.getInstance().getjMSManager().clear();
+            webBeansContext.getjMSManager().clear();
 
             //After Stop
             afterStopApplication(endObject);

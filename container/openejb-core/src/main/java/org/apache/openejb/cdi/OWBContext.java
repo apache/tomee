@@ -40,7 +40,7 @@ public class OWBContext {
         this.webBeansContext = webBeansContext;
     }
 
-    public WebBeansContext getSingletons() {
+    public WebBeansContext getWebBeansContext() {
         return webBeansContext;
     }
 }
