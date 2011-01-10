@@ -611,6 +611,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         ClassLoader webClassLoader = webModule.getClassLoader();
 
         // get include/exclude properties from context-param
+        // using a Set instead of a list would be easier ...
         Options contextParams = new Options(getContextParams(webModule.getWebApp().getContextParam()));
         String include = contextParams.get(CLASSPATH_INCLUDE, "");
         String exclude = contextParams.get(CLASSPATH_EXCLUDE, ".*");
@@ -618,8 +619,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         boolean filterDescriptors = contextParams.get(CLASSPATH_FILTER_DESCRIPTORS, false);
         boolean filterSystemApps = contextParams.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
-        contextParams.getProperties().put(moduleName, warPath);
-        FileUtils base = new FileUtils(moduleName, moduleName, contextParams.getProperties());
+        contextParams.getProperties().put(webModule.getModuleId(), warPath);
+        FileUtils base = new FileUtils(webModule.getModuleId(), webModule.getModuleId(), contextParams.getProperties());
         DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
 
         // we need to exclude previously deployed modules
