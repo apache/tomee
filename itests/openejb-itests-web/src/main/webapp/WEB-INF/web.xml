@@ -27,6 +27,11 @@
 
   <display-name>OpenEJB Servlet Examples</display-name>
 
+  <context-param>
+    <param-name>openejb.deployments.classpath.include</param-name>
+    <param-value>.*openejb-itests-.*</param-value>
+  </context-param>
+
   <!-- =============== -->
   <!-- Injection Tests -->
   <!-- =============== -->
