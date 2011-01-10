@@ -198,14 +198,16 @@ public class DeploymentsResolver implements DeploymentFilterable {
             if (shouldFilter(include, exclude, requireDescriptors)) {
                 urlSet = applyBuiltinExcludes(urlSet);
             }
-            
-            UrlSet prefiltered = urlSet;
-            urlSet = urlSet.exclude(exclude);
-            urlSet = urlSet.include(includes);
 
+            // we should exclude system apps before and apply user properties after
             if (filterSystemApps){
                 urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
             }
+
+            // filter using user parameters
+            UrlSet prefiltered = urlSet;
+            urlSet = urlSet.exclude(exclude);
+            urlSet = urlSet.include(includes);
 
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();

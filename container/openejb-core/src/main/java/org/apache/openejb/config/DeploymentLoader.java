@@ -611,7 +611,6 @@ public class DeploymentLoader implements DeploymentFilterable {
         ClassLoader webClassLoader = webModule.getClassLoader();
 
         // get include/exclude properties from context-param
-        // using a Set instead of a list would be easier ...
         Options contextParams = new Options(getContextParams(webModule.getWebApp().getContextParam()));
         String include = contextParams.get(CLASSPATH_INCLUDE, "");
         String exclude = contextParams.get(CLASSPATH_EXCLUDE, ".*");
@@ -624,6 +623,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
 
         // we need to exclude previously deployed modules
+        // using a Set instead of a list would be easier ...
         UrlSet urlSet = new UrlSet(urls);
         urlSet = urlSet.exclude(new UrlSet(appModule.getAdditionalLibraries())); // there should not be modules in /lib
         for (EjbModule ejbModule : appModule.getEjbModules()) {
