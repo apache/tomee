@@ -84,7 +84,7 @@ public class TomcatWsRegistry implements WsRegistry {
 
         Wrapper wrapper = (Wrapper) context.findChild(servletName);
         if (wrapper == null) {
-            throw new IllegalArgumentException("Could not find servlet " + contextRoot + " in web application context " + context.getName());
+            throw new IllegalArgumentException("Could not find servlet " + servletName + " in web application context " + context.getName());
         }
 
         // for Pojo web services, we need to change the servlet class which is the service implementation
@@ -123,7 +123,7 @@ public class TomcatWsRegistry implements WsRegistry {
 
         Wrapper wrapper = (Wrapper) context.findChild(servletName);
         if (wrapper == null) {
-            throw new IllegalArgumentException("Could not find servlet " + contextRoot + " in web application context " + context.getName());
+            throw new IllegalArgumentException("Could not find servlet " + servletName + " in web application context " + context.getName());
         }
 
         // clear the webservice ref in the servlet context
