@@ -34,7 +34,6 @@ import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
-import org.apache.openejb.ClassLoaderUtil;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -44,7 +43,6 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -52,13 +50,10 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
-import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.webservices.WsService;
-import org.apache.openejb.server.webservices.WsServlet;
-import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
@@ -83,7 +78,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getNamingContextListener;
-import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 
 /**
  * Web application builder.
@@ -128,12 +122,19 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     private final DeploymentLoader deploymentLoader;
     /**
      * OpenEJB assembler instance
+     * TODO can we use the SPI interface instead?
      */
     private Assembler assembler;
     /**
      * OpenEJB container system
+     * TODO can we use the SPI interface instead?
      */
     private CoreContainerSystem containerSystem;
+
+    /**
+     * WsService
+     */
+    private WsService wsService;
 
     /**
      * Creates a new web application builder
@@ -143,7 +144,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     	
     	// TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
     	
-        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
+        StandardServer standardServer = TomcatHelper.getServer();
         globalListenerSupport = new GlobalListenerSupport(standardServer, this);
 
         // could search mbeans
@@ -168,8 +169,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         configurationFactory = new ConfigurationFactory();
         deploymentLoader = new DeploymentLoader();
-        assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
-        containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
     }
 
     /**
@@ -364,13 +363,24 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return;
         }
 
+        // required for Pojo Web Services because when Assembler creates the application
+        // the CoreContainerSystem does not contain the WebContext
+        // see also the start method getContainerSystem().addWebDeployment(webContext);
+        WsService wsService = getWsService();
+        if (wsService != null) {
+            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
+            for (WebAppInfo webApp : webApps) {
+                wsService.afterApplicationCreated(webApp);
+            }
+        }
+
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
         String listenerName = getNamingContextListener(standardContext).getName();
         ContextAccessController.setWritable(listenerName, standardContext);
         try {
 
-            Context openejbContext = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+            Context openejbContext = getContainerSystem().getJNDIContext();
             openejbContext = (Context) openejbContext.lookup("openejb");
 
             Context root = (Context) ContextBindings.getClassLoader().lookup("");
@@ -381,7 +391,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                 if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
-                    WebContext webContext = (WebContext) getContainerSystem().getWebContext(webAppInfo.moduleId);
+                    WebContext webContext = getContainerSystem().getWebContext(webAppInfo.moduleId);
                     if (webContext != null) {
                         webContext.setJndiEnc(comp);
                     }
@@ -460,7 +470,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo != null && contextInfo.appInfo != null && contextInfo.deployer == null) {
             try {
-                assembler.destroyApplication(contextInfo.appInfo.path);
+                getAssembler().destroyApplication(contextInfo.appInfo.path);
             } catch (Exception e) {
                 logger.error("Unable to stop web application " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
@@ -507,7 +517,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 DeployedApplication deployedApplication = entry.getValue();
                 if (deployedApplication.isModified()) {
                     try {
-                        assembler.destroyApplication(deployedApplication.appInfo.path);
+                        getAssembler().destroyApplication(deployedApplication.appInfo.path);
                     } catch (Exception e) {
                         logger.error("Unable to application " + deployedApplication.appInfo.path + ": Exception: " + e.getMessage(), e);
                     }
@@ -576,7 +586,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     }
 
                     appInfo = configurationFactory.configureApplication(appModule);
-                    assembler.createApplication(appInfo);
+                    getAssembler().createApplication(appInfo);
                 } catch (Throwable e) {
                     logger.warning("Error deploying application " + file.getAbsolutePath(), e);
                 }
@@ -762,9 +772,21 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     private CoreContainerSystem getContainerSystem() {
         if (containerSystem == null) {
-            containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
+            containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(org.apache.openejb.spi.ContainerSystem.class);
         }
         return containerSystem;
+    }
+
+    /**
+     * Gets WsService implementation.
+     *
+     * @return wsService
+     */
+    private WsService getWsService() {
+        if (wsService == null) {
+            wsService = SystemInstance.get().getComponent(WsService.class);
+        }
+        return wsService;
     }
 
     /**
