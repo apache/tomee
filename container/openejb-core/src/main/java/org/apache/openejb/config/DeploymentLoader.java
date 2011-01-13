@@ -611,9 +611,11 @@ public class DeploymentLoader implements DeploymentFilterable {
         ClassLoader webClassLoader = webModule.getClassLoader();
 
         // get include/exclude properties from context-param
-        Options contextParams = new Options(getContextParams(webModule.getWebApp().getContextParam()));
+        List<ParamValue> webAppContextParam = webModule.getWebApp() != null ? webModule.getWebApp().getContextParam() : Collections.<ParamValue> emptyList();
+        Options contextParams = new Options(getContextParams(webAppContextParam));
+
         String include = contextParams.get(CLASSPATH_INCLUDE, "");
-        String exclude = contextParams.get(CLASSPATH_EXCLUDE, ".*");
+        String exclude = contextParams.get(CLASSPATH_EXCLUDE, "");
         Set<RequireDescriptors> requireDescriptors = contextParams.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
         boolean filterDescriptors = contextParams.get(CLASSPATH_FILTER_DESCRIPTORS, false);
         boolean filterSystemApps = contextParams.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
@@ -653,6 +655,12 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 if (EjbModule.class.isAssignableFrom(moduleType) && loadingRequiredModuleTypes.contains(EjbModule.class)) {
                     logger.info("Found ejb module " + moduleType.getSimpleName() + " in war " + contextRoot);
+
+                    if (url.getProtocol().equals("file") && url.toString().endsWith("WEB-INF/classes/")) {
+                        //EJB found in /WEB-INF/classes, define the war as EJB module
+                        absolutePath = warPath;
+                        url = warUrl;
+                    }
 
                     EjbModule ejbModule = createEjbModule(url, absolutePath, webClassLoader, getModuleName());
                     appModule.getEjbModules().add(ejbModule);
