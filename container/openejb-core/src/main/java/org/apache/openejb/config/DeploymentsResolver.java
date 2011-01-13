@@ -96,8 +96,8 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
             return;
         }
-        
-        File raXml = new File(dir, "META-INF" + File.separator + "ra.xml"); 
+
+        File raXml = new File(dir, "META-INF" + File.separator + "ra.xml");
         if (raXml.exists()) {
             try {
                 if (!jarList.contains(dir.getAbsolutePath())) {
@@ -106,7 +106,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } catch (MalformedURLException ignore) {
             }
             return;
-        } 
+        }
 
         ////////////////////////////////
         //
@@ -222,7 +222,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             } else if (size < 20) {
                 logger.debug("Inspecting classpath for applications: " + urls.size() + " urls.");
             } else {
-                // Has the user allowed some module types to be discoverable via scraping?                                                                  
+                // Has the user allowed some module types to be discoverable via scraping?
                 boolean willScrape = requireDescriptors.size() < RequireDescriptors.values().length;
 
                 if (size < 50 && willScrape) {
@@ -290,7 +290,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * The regular expressions involved in filtering can be costly
      * In the normal case we will not scan anyway, so if not
      * no point in optimizing the list of urls in the classpath
-     * 
+     *
      * @param include
      * @param exclude
      * @param requireDescriptors
@@ -380,24 +380,30 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
         for (URL url : urls) {
+
+            String urlProtocol = url.getProtocol();
+            //Currently, we only support jar and file protocol
+            boolean isValidURL = urlProtocol.equals("jar") || urlProtocol.equals("file");
+            if (!isValidURL) {
+                logger.warning("Unknown protocol " + urlProtocol);
+                continue;
+            }
+
             Deployments deployment;
-            String path;
+            String path = "";
             try {
                 Class<? extends DeploymentModule> moduleType = new DeploymentLoader().discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
-                    if (url.getProtocol().equals("jar")) {
+                    if (urlProtocol.equals("jar")) {
                         url = new URL(url.getFile().replaceFirst("!.*$", ""));
                         File file = toFile(url);
                         path = file.getAbsolutePath();
                         deployment.setJar(path);
-                    } else if (url.getProtocol().equals("file")) {
+                    } else if (urlProtocol.equals("file")) {
                         File file = toFile(url);
                         path = file.getAbsolutePath();
                         deployment.setDir(path);
-                    } else {
-                        logger.warning("Not loading " + moduleType.getSimpleName() + ".  Unknown protocol " + url.getProtocol());
-                        continue;
                     }
                     logger.info("Found " + moduleType.getSimpleName() + " in classpath: " + path);
 
