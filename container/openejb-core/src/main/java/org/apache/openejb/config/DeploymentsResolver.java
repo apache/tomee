@@ -393,7 +393,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             String path = "";
             try {
                 
-                DeploymentLoader deploymentLoader = (ddDir == null) ? new DeploymentLoader(ddDir) : new DeploymentLoader(ddDir);
+                DeploymentLoader deploymentLoader = (ddDir == null) ? new DeploymentLoader() : new DeploymentLoader(ddDir);
                 
                 Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
