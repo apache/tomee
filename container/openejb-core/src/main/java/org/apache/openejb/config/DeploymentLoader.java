@@ -513,7 +513,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 p.put(appModule.getModuleId(), appModule.getJarLocation());
                 FileUtils base = new FileUtils(appModule.getModuleId(), appModule.getModuleId(), p);
                 List<URL> filteredUrls = new ArrayList<URL>();
-                DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader());
+                DeploymentsResolver.loadFromClasspath(base, filteredUrls, appModule.getClassLoader(),null);
                 addPersistenceUnits(appModule, filteredUrls.toArray(new URL[filteredUrls.size()]));
             }
 
@@ -622,7 +622,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         contextParams.getProperties().put(webModule.getModuleId(), warPath);
         FileUtils base = new FileUtils(webModule.getModuleId(), webModule.getModuleId(), contextParams.getProperties());
-        DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
+        DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps, ddDir);
 
         // we need to exclude previously deployed modules
         // using a Set instead of a list would be easier ...
@@ -1315,7 +1315,18 @@ public class DeploymentLoader implements DeploymentFilterable {
         final boolean scanPotentialEjbModules = !requireDescriptor.contains(RequireDescriptors.EJB);
         final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
 
-        ResourceFinder finder = new ResourceFinder("", classLoader, baseUrl);
+        
+        URL pathToScanDescriptors=baseUrl;
+        String baseURLString=baseUrl.toString();
+        
+        if (baseUrl.getProtocol().equals("file") && baseURLString.endsWith("WEB-INF/classes/")) {
+            //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
+            
+            pathToScanDescriptors=new URL(baseURLString.substring(0,baseURLString.lastIndexOf("WEB-INF/classes/")));
+
+        }
+        ResourceFinder finder = new ResourceFinder("", classLoader, pathToScanDescriptors);
+        
         Map<String, URL> descriptors = altDDSources(finder.getResourcesMap(ddDir), false);
 
         String path = baseUrl.getPath();

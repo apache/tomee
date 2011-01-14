@@ -404,7 +404,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             declaredApps = getDeclaredApps();
         }
         List<URL> classpathAppsUrls = new ArrayList<URL>();
-        DeploymentsResolver.loadFromClasspath(base, classpathAppsUrls, classLoader);
+        DeploymentsResolver.loadFromClasspath(base, classpathAppsUrls, classLoader, null);
 
         ArrayList<File> jarFiles = new ArrayList<File>();
         for (URL path : classpathAppsUrls) {

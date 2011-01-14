@@ -169,7 +169,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * 2- Loading the resource is the default behaviour in case of not defining a value for any class-path pattern
      * This appears in step 3 of the above algorithm.
      */
-    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
+    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader, String ddDir) {
         Options options = SystemInstance.get().getOptions();
         String include = options.get(CLASSPATH_INCLUDE, "");
         String exclude = options.get(CLASSPATH_EXCLUDE, ".*");
@@ -178,12 +178,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
         boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
 
         loadFromClasspath(base, jarList, classLoader,
-                include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
+                include, exclude, requireDescriptors, filterDescriptors, filterSystemApps, ddDir);
     }
 
     public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader,
                                          String include, String exclude, Set<RequireDescriptors> requireDescriptors,
-                                         boolean filterDescriptors, boolean filterSystemApps) {
+                                         boolean filterDescriptors, boolean filterSystemApps, String ddDir) {
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
@@ -234,7 +234,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
             }
 
             long begin = System.currentTimeMillis();
-            processUrls(urls, classLoader, requireDescriptors, base, jarList);
+            processUrls(urls, classLoader, requireDescriptors, base, jarList,ddDir);
             long end = System.currentTimeMillis();
             long time = end - begin;
 
@@ -244,7 +244,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 if (filterSystemApps){
                     unchecked = unchecked.exclude(".*/openejb-[^/]+(.(jar|ear|war)(./)?|/target/classes/?)");
                 }
-                processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList);
+                processUrls(unchecked.getUrls(), classLoader, EnumSet.allOf(RequireDescriptors.class), base, jarList, ddDir);
             }
 
             if (logger.isDebugEnabled()) {
@@ -378,7 +378,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         return urlSet;
     }
 
-    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
+    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList, String ddDir) {
         for (URL url : urls) {
 
             String urlProtocol = url.getProtocol();
@@ -392,7 +392,10 @@ public class DeploymentsResolver implements DeploymentFilterable {
             Deployments deployment;
             String path = "";
             try {
-                Class<? extends DeploymentModule> moduleType = new DeploymentLoader().discoverModuleType(url, classLoader, requireDescriptors);
+                
+                DeploymentLoader deploymentLoader = (ddDir == null) ? new DeploymentLoader(ddDir) : new DeploymentLoader(ddDir);
+                
+                Class<? extends DeploymentModule> moduleType = deploymentLoader.discoverModuleType(url, classLoader, requireDescriptors);
                 if (AppModule.class.isAssignableFrom(moduleType) || EjbModule.class.isAssignableFrom(moduleType) || PersistenceModule.class.isAssignableFrom(moduleType) || ConnectorModule.class.isAssignableFrom(moduleType) || ClientModule.class.isAssignableFrom(moduleType)) {
                     deployment = JaxbOpenejb.createDeployments();
                     if (urlProtocol.equals("jar")) {
