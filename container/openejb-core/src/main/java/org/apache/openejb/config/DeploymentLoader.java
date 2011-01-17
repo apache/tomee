@@ -118,16 +118,6 @@ public class DeploymentLoader implements DeploymentFilterable {
         } else {
             this.loadingRequiredModuleTypes = new HashSet<Class<? extends DeploymentModule>>(loadingRequiredModuleTypes);
             this.loadingRequiredModuleTypes.add(AppModule.class);
-            if (this.loadingRequiredModuleTypes.contains(WsModule.class)
-                    && !this.loadingRequiredModuleTypes.contains(EjbModule.class)) {
-                logger.warning("Could not load web service module without loading ejb module");
-                this.loadingRequiredModuleTypes.add(EjbModule.class);
-            }
-            if (this.loadingRequiredModuleTypes.contains(WsModule.class)
-                    && !this.loadingRequiredModuleTypes.contains(WebModule.class)) {
-                logger.warning("Could not load web service module without loading web module");
-                this.loadingRequiredModuleTypes.add(WebModule.class);
-            }
         }
     }
 
@@ -1315,18 +1305,18 @@ public class DeploymentLoader implements DeploymentFilterable {
         final boolean scanPotentialEjbModules = !requireDescriptor.contains(RequireDescriptors.EJB);
         final boolean scanPotentialClientModules = !requireDescriptor.contains(RequireDescriptors.CLIENT);
 
-        
+
         URL pathToScanDescriptors=baseUrl;
         String baseURLString=baseUrl.toString();
-        
+
         if (baseUrl.getProtocol().equals("file") && baseURLString.endsWith("WEB-INF/classes/")) {
             //EJB found in WAR/WEB-INF/classes, scan WAR for ejb-jar.xml
-            
+
             pathToScanDescriptors=new URL(baseURLString.substring(0,baseURLString.lastIndexOf("WEB-INF/classes/")));
 
         }
         ResourceFinder finder = new ResourceFinder("", classLoader, pathToScanDescriptors);
-        
+
         Map<String, URL> descriptors = altDDSources(finder.getResourcesMap(ddDir), false);
 
         String path = baseUrl.getPath();
