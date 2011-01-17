@@ -92,9 +92,12 @@ public class BeansDeployer {
 
     /**XML Configurator*/
     protected final WebBeansXMLConfigurator xmlConfigurator;
+    
+    private final WebBeansContext webBeansContext;
 
-    public BeansDeployer(WebBeansXMLConfigurator xmlConfigurator) {
+    public BeansDeployer(WebBeansXMLConfigurator xmlConfigurator, WebBeansContext webBeansContext) {
         this.xmlConfigurator = xmlConfigurator;
+        this.webBeansContext = webBeansContext;
     }
 
     /**
@@ -162,7 +165,7 @@ public class BeansDeployer {
         BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
         manager.fireEvent(new AfterBeanDiscoveryImpl(),new Annotation[0]);
         
-        WebBeansUtil.inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
+        webBeansContext.getWebBeansUtil()._inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
     }
 
     /**
@@ -173,7 +176,7 @@ public class BeansDeployer {
         BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
         manager.fireEvent(new AfterDeploymentValidationImpl(),new Annotation[0]);
         
-        WebBeansUtil.inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
+        webBeansContext.getWebBeansUtil()._inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
     }
 
     /**
@@ -405,14 +408,14 @@ public class BeansDeployer {
                         specialClassList.add(specialClass);
                     }
                 }
-                WebBeansUtil.configureSpecializations(specialClassList);
+                webBeansContext.getWebBeansUtil()._configureSpecializations(specialClassList);
             }
 
             // XML Defined Specializations
             checkXMLSpecializations();
 
             //configure specialized producer beans.
-            WebBeansUtil.configureProducerMethodSpecializations();
+            webBeansContext.getWebBeansUtil()._configureProducerMethodSpecializations();
         }
         catch (Exception e) {
             throw new WebBeansDeploymentException(e);
@@ -449,7 +452,7 @@ public class BeansDeployer {
             }
             specialClassList.add(specialClass);
         }
-        WebBeansUtil.configureSpecializations(specialClassList);
+        webBeansContext.getWebBeansUtil()._configureSpecializations(specialClassList);
     }
 
     /**
@@ -546,10 +549,10 @@ public class BeansDeployer {
         //Fires ProcessInjectionTarget event for Java EE components instances
         //That supports injections but not managed beans
         ProcessInjectionTargetImpl<T> processInjectionTargetEvent = null;
-        if (WebBeansUtil.supportsJavaEeComponentInjections(clazz)) {
+        if (webBeansContext.getWebBeansUtil()._supportsJavaEeComponentInjections(clazz)) {
             //Fires ProcessInjectionTarget
-            processInjectionTargetEvent = WebBeansUtil.fireProcessInjectionTargetEventForJavaEeComponents(clazz);
-            WebBeansUtil.inspectErrorStack("There are errors that are added by ProcessInjectionTarget event observers. Look at logs for further details");
+            processInjectionTargetEvent = webBeansContext.getWebBeansUtil()._fireProcessInjectionTargetEventForJavaEeComponents(clazz);
+            webBeansContext.getWebBeansUtil()._inspectErrorStack("There are errors that are added by ProcessInjectionTarget event observers. Look at logs for further details");
 
             //Sets custom InjectionTarget instance
             if (processInjectionTargetEvent.isSet()) {
@@ -581,7 +584,7 @@ public class BeansDeployer {
             
             //If ProcessInjectionTargetEvent is not set, set it
             if (processInjectionTargetEvent == null) {
-                processInjectionTargetEvent = WebBeansUtil.fireProcessInjectionTargetEvent(managedBean);
+                processInjectionTargetEvent = webBeansContext.getWebBeansUtil()._fireProcessInjectionTargetEvent(managedBean);
             }
 
             //Decorator
@@ -592,7 +595,7 @@ public class BeansDeployer {
                 if (annotationTypeSet) {
                     WebBeansAnnotatedTypeUtil.defineDecorator(annotatedType);
                 } else {
-                    WebBeansUtil.defineDecorator(managedBeanCreator, processInjectionTargetEvent);
+                    webBeansContext.getWebBeansUtil()._defineDecorator(managedBeanCreator, processInjectionTargetEvent);
                 }
             }
             //Interceptor
@@ -603,7 +606,7 @@ public class BeansDeployer {
                 if (annotationTypeSet) {
                     WebBeansAnnotatedTypeUtil.defineInterceptor(annotatedType);
                 } else {
-                    WebBeansUtil.defineInterceptor(managedBeanCreator, processInjectionTargetEvent);
+                    webBeansContext.getWebBeansUtil()._defineInterceptor(managedBeanCreator, processInjectionTargetEvent);
                 }
             } else {
                 if (WebBeansContext.getInstance().getBeanManagerImpl().containsCustomDecoratorClass(annotatedType.getJavaClass()) ||
@@ -614,7 +617,7 @@ public class BeansDeployer {
                 if (logger.wblWillLogDebug()) {
                     logger.debug("Found Managed Bean with class name : [{0}]", annotatedType.getJavaClass().getName());
                 }
-                WebBeansUtil.defineManagedBean(managedBeanCreator, processInjectionTargetEvent);
+                webBeansContext.getWebBeansUtil()._defineManagedBean(managedBeanCreator, processInjectionTargetEvent);
             }
 
             return true;
