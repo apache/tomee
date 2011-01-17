@@ -89,7 +89,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         webBeansContext = WebBeansContext.getInstance();
         this.beanManager = webBeansContext.getBeanManagerImpl();
         this.xmlDeployer = new WebBeansXMLConfigurator();
-        this.deployer = new BeansDeployer(this.xmlDeployer);
+        this.deployer = new BeansDeployer(this.xmlDeployer, webBeansContext);
         this.jndiService = webBeansContext.getService(JNDIService.class);
         this.beanManager.setXMLConfigurator(this.xmlDeployer);
         this.scannerService = webBeansContext.getScannerService();
@@ -180,7 +180,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
                 //Fires ProcessAnnotatedType
-                ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = WebBeansUtil.fireProcessAnnotatedTypeEvent(annotatedType);
+                ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil()._fireProcessAnnotatedTypeEvent(annotatedType);
 
                 // TODO Can you really veto an EJB?
                 //if veto() is called
@@ -196,7 +196,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
                 EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
-                WebBeansUtil.setInjectionTargetBeanEnableFlag(bean);
+                webBeansContext.getWebBeansUtil()._setInjectionTargetBeanEnableFlag(bean);
             }
 
             //Check Specialization
@@ -249,7 +249,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
             //Fires ProcessAnnotatedType
-            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = WebBeansUtil.fireProcessAnnotatedTypeEvent(annotatedType);
+            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil()._fireProcessAnnotatedTypeEvent(annotatedType);
 
             //if veto() is called
             if (processAnnotatedEvent.isVeto()) {
