@@ -180,7 +180,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
                 //Fires ProcessAnnotatedType
-                ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil()._fireProcessAnnotatedTypeEvent(annotatedType);
+                ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
 
                 // TODO Can you really veto an EJB?
                 //if veto() is called
@@ -196,7 +196,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
                 EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
-                webBeansContext.getWebBeansUtil()._setInjectionTargetBeanEnableFlag(bean);
+                webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
             }
 
             //Check Specialization
@@ -249,7 +249,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             AnnotatedType<?> annotatedType = webBeansContext.getAnnotatedElementFactory().newAnnotatedType(implClass);
 
             //Fires ProcessAnnotatedType
-            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil()._fireProcessAnnotatedTypeEvent(annotatedType);
+            ProcessAnnotatedTypeImpl<?> processAnnotatedEvent = webBeansContext.getWebBeansUtil().fireProcessAnnotatedTypeEvent(annotatedType);
 
             //if veto() is called
             if (processAnnotatedEvent.isVeto()) {

@@ -19,6 +19,7 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 
 import javax.ejb.Remove;
@@ -32,7 +33,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
 
     public CdiEjbBean(BeanContext beanContext) {
-        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()));
+        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), WebBeansContext.getInstance());
         this.beanContext = beanContext;
     }
 
