@@ -135,7 +135,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         try {
             jarPath = jarFile.getCanonicalPath();
         } catch (IOException e) {
-            throw new OpenEJBException("Invalid application file path " + jarFile);
+            throw new OpenEJBException("Invalid application file path " + jarFile, e);
         }
 
         URL baseUrl = getFileUrl(jarFile);
