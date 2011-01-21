@@ -334,11 +334,20 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         for (String pathname : declaredApps) {
             try {
-                File jarFile = new File(pathname);
+                try {
+					final File jarFile;
+					if(pathname.startsWith("file:/")) {
+						jarFile = new File(new URI(pathname));
+					} else {
+						jarFile = new File(pathname); 
+					}
 
-                AppInfo appInfo = configureApplication(jarFile);
+					AppInfo appInfo = configureApplication(jarFile);
 
-                sys.containerSystem.applications.add(appInfo);
+					sys.containerSystem.applications.add(appInfo);
+				} catch (URISyntaxException e) {
+					logger.error("Invalid declaredApp URI '" + pathname + "'", e);
+				}
             } catch (OpenEJBException alreadyHandled) {
             }
         }
