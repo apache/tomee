@@ -109,6 +109,11 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
         } else if (source instanceof StandardServer) {
             StandardServer standardServer = (StandardServer) source;
             String type = event.getType();
+
+            if (Lifecycle.BEFORE_STOP_EVENT.equals(type)) {
+            	TomcatHelper.setStopping(true);
+            }
+            
             if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
                 contextListener.afterStop(standardServer);
             }

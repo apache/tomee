@@ -87,7 +87,7 @@ class SetupCommand {
 
   def execute() {
     execute("6.0.29")
-    execute("7.0.5")
+    execute("7.0.6")
   }
 
   def execute(tomcatVersion) {
@@ -113,7 +113,7 @@ class SetupCommand {
 
     if (tomcatVersion != "testonly") {
       if (tomcatVersion =~ /^7\./) {
-        source = "http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcatVersion}-beta/bin/apache-tomcat-${tomcatVersion}.zip"
+        source = "http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
       }
 
       if (tomcatVersion =~ /^6\./) {

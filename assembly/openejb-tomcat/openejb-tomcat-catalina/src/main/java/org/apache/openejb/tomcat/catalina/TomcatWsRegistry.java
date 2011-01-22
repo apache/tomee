@@ -259,6 +259,10 @@ public class TomcatWsRegistry implements WsRegistry {
         // assure context root with a leading slash
         if (!path.startsWith("/")) path = "/" + path;
 
+        if (TomcatHelper.isTomcat7() && TomcatHelper.isStopping()) {
+        	return;
+        }
+        
         StandardContext context = webserviceContexts.remove(path);
         try {
             context.stop();

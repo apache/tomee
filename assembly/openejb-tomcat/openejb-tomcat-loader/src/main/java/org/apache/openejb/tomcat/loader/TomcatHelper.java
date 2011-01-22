@@ -31,6 +31,16 @@ import org.apache.catalina.core.StandardServer;
 
 public class TomcatHelper {
 
+	private static boolean stopping = false;
+	
+	public static boolean isStopping() {
+		return stopping;
+	}
+
+	public static void setStopping(boolean stopping) {
+		TomcatHelper.stopping = stopping;
+	}
+
 	public static StandardServer getServer() {
 		StandardServer server = null;
 		
