@@ -60,6 +60,11 @@ public class FinderFactory {
             URL url;
             if (file.exists()) {
                 url = file.toURI().toURL();
+                
+                File webInfClassesFolder = new File(file, "WEB-INF/classes");
+				if (webInfClassesFolder.exists() && webInfClassesFolder.isDirectory()) {
+                	url = webInfClassesFolder.toURI().toURL();
+                }
             } else {
                 url = new URL(location);
             }
