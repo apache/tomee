@@ -15,16 +15,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>openejb-tomcat</artifactId>
+		<artifactId>openejb-tomee</artifactId>
 		<groupId>org.apache.openejb</groupId>
 		<version>3.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>openejb-tomee</artifactId>
-	<packaging>pom</packaging>
-	<name>OpenEJB :: Assembly :: TomEE</name>
+	<artifactId>openejb-tomee-utils</artifactId>
+	<packaging>jar</packaging>
+	<name>OpenEJB :: Assembly :: TomEE :: Utils</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.gmaven.runtime</groupId>
+			<artifactId>gmaven-runtime-1.6</artifactId>
+			<version>1.3</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -65,80 +70,25 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant-nodeps</artifactId>
-			<version>1.7.1</version>
-			<type>jar</type>
-		</dependency>
 	</dependencies>
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.gmaven</groupId>
-					<artifactId>gmaven-plugin</artifactId>
-					<version>1.3</version>
-					<configuration>
-						<scriptpath>
-							<element>${project.basedir}/src/main/groovy</element>
-						</scriptpath>
-						<classpath>
-							<element>
-								<groupId>jline</groupId>
-								<artifactId>jline</artifactId>
-								<version>0.9.94</version>
-							</element>
-							<element>
-								<groupId>org.apache.openejb</groupId>
-								<artifactId>openejb-tomee-utils</artifactId>
-								<version>${project.version}</version>
-							</element>
-							<element>
-								<groupId>org.apache.ant</groupId>
-								<artifactId>ant-nodeps</artifactId>
-								<version>1.7.1</version>
-								<type>jar</type>
-							</element>
-						</classpath>
-						<defaults>
-							<testSectionsFile>${project.basedir}/sections.properties</testSectionsFile>
-							<logOutputDirectory>${project.build.directory}/logs</logOutputDirectory>
-							<backupLogs>true</backupLogs>
-						</defaults>
-					</configuration>
-			</plugin>
+		<plugins>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.codehaus.gmaven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
+				<version>1.3</version>
 				<executions>
 					<execution>
-						<id>tomee6</id>
-						<phase>package</phase>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/tomee.xml</descriptor>
-							</descriptors>
-						</configuration>
 						<goals>
-							<goal>single</goal>
+							<goal>generateStubs</goal>
+							<goal>compile</goal>
+							<goal>generateTestStubs</goal>
+							<goal>testCompile</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			</plugins>
-		</pluginManagement>
+		</plugins>
 	</build>
-
-	<properties>
-		<localRepository>${settings.localRepository}</localRepository>
-		<examples.version>1.1-SNAPSHOT</examples.version>
-	</properties>
-
-	<modules>
-		<module>utils</module>
-		<module>tomee6</module>
-		<module>tomee7</module>
-	</modules>
 </project>
 
