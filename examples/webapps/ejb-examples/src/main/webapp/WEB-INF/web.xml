@@ -26,7 +26,7 @@
          version="2.5">
 
   <display-name>OpenEJB Servlet Examples</display-name>
-
+  
   <servlet>
     <servlet-name>AnnotatedServlet</servlet-name>
     <servlet-class>org.superbiz.servlet.AnnotatedServlet</servlet-class>

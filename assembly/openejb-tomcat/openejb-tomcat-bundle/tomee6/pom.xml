@@ -15,14 +15,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>openejb-tomcat</artifactId>
+		<artifactId>openejb-tomee</artifactId>
 		<groupId>org.apache.openejb</groupId>
 		<version>3.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>openejb-tomee</artifactId>
-	<packaging>pom</packaging>
-	<name>OpenEJB :: Assembly :: TomEE</name>
+	<artifactId>openejb-tomee-tomcat6</artifactId>
+	<packaging>jar</packaging>
+	<name>OpenEJB :: Assembly :: TomEE :: Tomcat 6</name>
 
 	<dependencies>
 		<dependency>
@@ -66,79 +66,73 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>openejb-tomee-utils</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant-nodeps</artifactId>
 			<version>1.7.1</version>
 			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.gmaven</groupId>
-					<artifactId>gmaven-plugin</artifactId>
-					<version>1.3</version>
-					<configuration>
-						<scriptpath>
-							<element>${project.basedir}/src/main/groovy</element>
-						</scriptpath>
-						<classpath>
-							<element>
-								<groupId>jline</groupId>
-								<artifactId>jline</artifactId>
-								<version>0.9.94</version>
-							</element>
-							<element>
-								<groupId>org.apache.openejb</groupId>
-								<artifactId>openejb-tomee-utils</artifactId>
-								<version>${project.version}</version>
-							</element>
-							<element>
-								<groupId>org.apache.ant</groupId>
-								<artifactId>ant-nodeps</artifactId>
-								<version>1.7.1</version>
-								<type>jar</type>
-							</element>
-						</classpath>
-						<defaults>
-							<testSectionsFile>${project.basedir}/sections.properties</testSectionsFile>
-							<logOutputDirectory>${project.build.directory}/logs</logOutputDirectory>
-							<backupLogs>true</backupLogs>
-						</defaults>
-					</configuration>
-			</plugin>
+		<plugins>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.codehaus.gmaven</groupId>
+				<artifactId>gmaven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>tomee6</id>
-						<phase>package</phase>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/tomee.xml</descriptor>
-							</descriptors>
-						</configuration>
+						<id>execute-installer</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>execute</goal>
 						</goals>
+						<configuration>
+							<source>new commands.SetupCommand(this).execute()</source>
+							<classpath>
+								<element>
+									<groupId>jline</groupId>
+									<artifactId>jline</artifactId>
+									<version>0.9.94</version>
+								</element>
+								<element>
+									<groupId>org.apache.ant</groupId>
+									<artifactId>ant-nodeps</artifactId>
+									<version>1.7.1</version>
+									<type>jar</type>
+								</element>
+								<element>
+									<groupId>org.apache.openejb</groupId>
+									<artifactId>openejb-tomee-utils</artifactId>
+									<version>${project.version}</version>
+								</element>
+							</classpath>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			</plugins>
-		</pluginManagement>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
 
 	<properties>
 		<localRepository>${settings.localRepository}</localRepository>
 		<examples.version>1.1-SNAPSHOT</examples.version>
+		<tomcat.version>6.0.29</tomcat.version>
+		<http.proxy.host>${settings.activeProxy.host}</http.proxy.host>
+        <http.proxy.port>${settings.activeProxy.port}</http.proxy.port>
+        <http.proxy.username>${settings.activeProxy.username}</http.proxy.username>
+        <http.proxy.password>${settings.activeProxy.password}</http.proxy.password>
+        <http.proxy.nonProxyHosts>${settings.activeProxy.nonProxyHosts}</http.proxy.nonProxyHosts>
 	</properties>
 
-	<modules>
-		<module>utils</module>
-		<module>tomee6</module>
-		<module>tomee7</module>
-	</modules>
+
 </project>
 
