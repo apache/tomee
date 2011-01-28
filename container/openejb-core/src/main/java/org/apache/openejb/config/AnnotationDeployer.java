@@ -554,7 +554,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            List<Class> classes = finder.findAnnotatedClasses(MessageDriven.class);
+            List<Class<?>> classes = finder.findAnnotatedClasses(MessageDriven.class);
             for (Class<?> beanClass : classes) {
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = getEjbName(mdb, beanClass);
@@ -580,7 +580,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             startupLogger.debug("Searching for annotated application exceptions (see OPENEJB-980)");
-            List<Class> appExceptions = finder.findAnnotatedClasses(ApplicationException.class);
+            List<Class<?>> appExceptions = finder.findAnnotatedClasses(ApplicationException.class);
             for (Class<?> exceptionClass : appExceptions) {
                 startupLogger.debug("...handling " + exceptionClass);
                 ApplicationException annotation = exceptionClass.getAnnotation(ApplicationException.class);
@@ -1020,7 +1020,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 for (Class<? extends Annotation> annotation : annotations) {
                     logger.debug("Scanning for @" + annotation.getName());
-                    List<Class> list = finder.findAnnotatedClasses(annotation);
+                    List<Class<?>> list = finder.findAnnotatedClasses(annotation);
                     if (logger.isDebugEnabled()) for (Class clazz : list) {
                         logger.debug("Found " + clazz.getName());
                     }
@@ -1578,7 +1578,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 sessionBean.getAsyncMethod().add(new AsyncMethod(method));
             }
             
-            List<Class> clses = classFinder.findAnnotatedClasses(Asynchronous.class);
+            List<Class<?>> clses = classFinder.findAnnotatedClasses(Asynchronous.class);
 
             //Spec 4.5.1 @Asynchronous could be used at the class level of a bean-class ( or superclass ).
             //Seems that it should not be used on the any interface view
@@ -3600,7 +3600,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @return
          */
         private ClassFinder createInheritedClassFinder(Class<?>... classes) {
-            List<Class> parents = new ArrayList<Class>();
+            List<Class<?>> parents = new ArrayList<Class<?>>();
             for (Class<?> clazz : classes) {
                 parents.addAll(ancestors(clazz));
             }

@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import java.sql.SQLException;
 import java.util.Map;
-import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -107,7 +106,7 @@ public class Cipher {
     private static void availableCiphers() {
         try {
             ResourceFinder finder = new ResourceFinder("META-INF/");
-            Map<String, Class> impls = finder.mapAllImplementations(PasswordCipher.class);
+            Map<String, Class<? extends PasswordCipher>> impls = finder.mapAllImplementations(PasswordCipher.class);
             System.out.println("Available ciphers are: "+ Join.join(", ", impls.keySet()));
         } catch (Exception dontCare) {
         }

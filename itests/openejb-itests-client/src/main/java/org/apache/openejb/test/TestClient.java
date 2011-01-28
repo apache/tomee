@@ -107,9 +107,9 @@ public abstract class TestClient extends NamedTestCase {
     	}
     }
     
-    private List<Class> getClassPath() {
-    	Class superClass = null;
-    	List<Class> classPath = new ArrayList<Class>();
+    private List<Class<?>> getClassPath() {
+    	Class<?> superClass = null;
+    	List<Class<?>> classPath = new ArrayList<Class<?>>();
     	
     	classPath.add(getClass());
     	superClass = getClass().getSuperclass();

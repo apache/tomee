@@ -85,21 +85,21 @@ public final class BasicDataSourceUtil {
     
     /**
      * Create a {@link PasswordCipher} instance from the
-     * {@link #passwordCipherClass}.
+     *  passwordCipher class name.
      * 
      * @param passwordCipherClass the password cipher to look for
-     * @return the password cipher from the {@link #passwordCipherClass}
+     * @return the password cipher from the passwordCipher class name
      *         optionally set.
      * @throws SQLException
      *             if the driver can not be found.
      */
     public static PasswordCipher getPasswordCipher(String passwordCipherClass) throws SQLException {
         // Load the password cipher class
-        Class pwdCipher = null;
+        Class<? extends PasswordCipher> pwdCipher = null;
 
         // try looking for implementation in /META-INF/org.apache.openejb.resource.jdbc.PasswordCipher
         ResourceFinder finder = new ResourceFinder("META-INF/");
-        Map<String, Class> impls;
+        Map<String, Class<? extends PasswordCipher>> impls;
         try {
             impls = finder.mapAllImplementations(PasswordCipher.class);
             
@@ -116,10 +116,10 @@ public final class BasicDataSourceUtil {
         if (null == pwdCipher) {
             try {
                 try {
-                    pwdCipher = Class.forName(passwordCipherClass);
+                    pwdCipher = Class.forName(passwordCipherClass).asSubclass(PasswordCipher.class);
                     
                 } catch (ClassNotFoundException cnfe) {
-                    pwdCipher = Thread.currentThread().getContextClassLoader().loadClass(passwordCipherClass);
+                    pwdCipher = Thread.currentThread().getContextClassLoader().loadClass(passwordCipherClass).asSubclass(PasswordCipher.class);
                 }
             } catch (Throwable t) {
                 String message = "Cannot load password cipher class '" + passwordCipherClass + "'";
@@ -130,7 +130,7 @@ public final class BasicDataSourceUtil {
         // Create an instance
         PasswordCipher cipher = null;
         try {
-            cipher = (PasswordCipher) pwdCipher.newInstance();
+            cipher = pwdCipher.newInstance();
 
         } catch (Throwable t) {
             String message = "Cannot create password cipher instance";
