@@ -34,22 +34,19 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ThreadSingletonServiceImpl.class);
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
-    private static final ThreadLocal<OWBContext> contexts = new ThreadLocal<OWBContext>();
-    private final ClassLoader classLoader;
+    private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
 
-    public ThreadSingletonServiceImpl(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public ThreadSingletonServiceImpl() {
 
     }
 
     @Override
     public void initialize(StartupObject startupObject) {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
-        OWBContext owbContext = new OWBContext();
-        startupObject.getAppContext().set(OWBContext.class, owbContext);
-        Object old = contextEntered(owbContext);
+        WebBeansContext webBeansContext = new WebBeansContext();
+        startupObject.getAppContext().set(WebBeansContext.class, webBeansContext);
+        Object old = contextEntered(webBeansContext);
         try {
-            WebBeansContext webBeansContext = WebBeansContext.getInstance();
             setConfiguration(webBeansContext.getOpenWebBeansConfiguration());
             try {
                 webBeansContext.getService(ContainerLifecycle.class).startApplication(startupObject);
@@ -76,30 +73,24 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     @Override
-    public Object contextEntered(OWBContext newOWBContext) {
-        OWBContext oldContext = contexts.get();
+    public Object contextEntered(WebBeansContext newOWBContext) {
+        WebBeansContext oldContext = contexts.get();
         contexts.set(newOWBContext);
         contextMessage(newOWBContext, "Enter:");
         return oldContext;
     }
 
-    private void contextMessage(OWBContext newOWBContext, String prefix) {
+    private void contextMessage(WebBeansContext newOWBContext, String prefix) {
     }
 
     @Override
-    public void contextExited(Object oldOWBContext) {
-        if (oldOWBContext != null && !(oldOWBContext instanceof OWBContext)) throw new IllegalArgumentException("ThreadSingletonServiceImpl can only be used with OWBContext, not " + oldOWBContext.getClass().getName());
-        contexts.set((OWBContext) oldOWBContext);
+    public void contextExited(Object oldContext) {
+        if (oldContext != null && !(oldContext instanceof WebBeansContext)) throw new IllegalArgumentException("ThreadSingletonServiceImpl can only be used with WebBeansContext, not " + oldContext.getClass().getName());
+        contexts.set((WebBeansContext) oldContext);
     }
 
-//    @Override
-//    public Object get(Object key, String singletonClassName) {
-//        OWBContext context = getContext();
-//        return context.getWebBeansContext().get(singletonClassName);
-//    }
-
-    private OWBContext getContext() {
-        OWBContext context = contexts.get();
+    private WebBeansContext getContext() {
+        WebBeansContext context = contexts.get();
         if (context == null) {
             throw new IllegalStateException("On a thread without an initialized context");
         }
@@ -108,28 +99,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public WebBeansContext get(Object key) {
-        OWBContext context = getContext();
-        return context.getWebBeansContext();
+        return getContext();
     }
 
     @Override
     public void clear(Object key) {
         contextMessage(getContext(), "clearing ");
-        getContext().getWebBeansContext().clear();
+        getContext().clear();
     }
 
-//    @Override
-//    public boolean isExist(Object key, String singletonClassName) {
-//        throw new UnsupportedOperationException("isExist is never called");
-//    }
-//
-//    @Override
-//    public Object getExist(Object key, String singletonClassName) {
-//        return getContext().getWebBeansContext().get(singletonClassName);
-//    }
-//
-//    @Override
-//    public Object getKey(Object singleton) {
-//        return null;
-//    }
 }

@@ -47,7 +47,7 @@ public class CdiBuilder {
     }
 
     public static ThreadSingletonService initializeOWB(ClassLoader classLoader) {
-        ThreadSingletonService singletonService = new ThreadSingletonServiceImpl(classLoader);
+        ThreadSingletonService singletonService = new ThreadSingletonServiceImpl();
         logger.info("Created new singletonService " + singletonService);
         SystemInstance.get().setComponent(ThreadSingletonService.class, singletonService);
         try {
