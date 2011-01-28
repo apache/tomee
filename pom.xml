@@ -895,6 +895,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-bundleutils</artifactId>
+        <version>${xbeanVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
