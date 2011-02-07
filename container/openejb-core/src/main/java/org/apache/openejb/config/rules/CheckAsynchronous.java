@@ -122,18 +122,6 @@ public class CheckAsynchronous extends ValidationBase {
         return buffer == null ? null : buffer.toString();
     }
 
-    private String generateThrowCauses(Class<?>[] exceptionTypes) {
-        StringBuilder buffer = null;
-        for (Class<?> exceptionType : exceptionTypes) {
-            if (buffer == null) {
-                buffer = new StringBuilder(exceptionType.getName());
-            } else {
-                buffer.append(",").append(exceptionType.getName());
-            }
-        }
-        return buffer.toString();
-    }
-
     private Method getMethod(Class<?> clazz, AsyncMethod asyncMethod) {
         try {
             MethodParams methodParams = asyncMethod.getMethodParams();
@@ -142,7 +130,7 @@ public class CheckAsynchronous extends ValidationBase {
                 parameterTypes = new Class[methodParams.getMethodParam().size()];
                 int arrayIndex = 0;
                 for (String parameterType : methodParams.getMethodParam()) {
-                    parameterTypes[arrayIndex] = loadClass(parameterType);
+                    parameterTypes[arrayIndex++] = loadClass(parameterType);
                 }
             } else {
                 parameterTypes = new Class[0];
