@@ -21,6 +21,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.security.jaas.GroupPrincipal;
 import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.InterfaceType;
@@ -30,7 +31,6 @@ import org.apache.openejb.loader.SystemInstance;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.PolicyContext;
-import javax.security.jacc.EJBRoleRefPermission;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
 import java.security.AccessControlContext;
@@ -221,14 +221,19 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         ThreadContext threadContext = ThreadContext.getThreadContext();
         SecurityContext securityContext = threadContext.get(SecurityContext.class);
 
-        try {
-            BeanContext deployment = threadContext.getBeanContext();
-
-            securityContext.acc.checkPermission(new EJBRoleRefPermission(deployment.getEjbName(), role));
-        } catch (AccessControlException e) {
-            return false;
-        }
-        return true;
+    	final Set<Group> grps = securityContext.subject.getPrincipals(Group.class);
+    	for (Group grp : grps) {
+			if(grp.getName().equals(role)) {
+				return true;
+			}
+		}
+        final Set<GroupPrincipal> grpsp = securityContext.subject.getPrincipals(GroupPrincipal.class);
+        for (GroupPrincipal grp : grpsp) {
+        	if(grp.getName().equals(role)) {
+        		return true;
+        	}			
+		}
+        return false;
     }
 
     public Principal getCallerPrincipal() {
