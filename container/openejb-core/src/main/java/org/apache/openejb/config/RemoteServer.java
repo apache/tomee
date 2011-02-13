@@ -136,6 +136,7 @@ public class RemoteServer {
                 } else {
                     File bin = new File(home, "bin");
                     File bootstrapJar = new File(bin, "bootstrap.jar");
+                    File juliJar = new File(bin, "tomcat-juli.jar");
                     File commonsLoggingJar = new File(bin, "commons-logging-api.jar");
 
                     File conf = new File(home, "conf");
@@ -165,7 +166,7 @@ public class RemoteServer {
                                 "-Dcatalina.home=" + home.getAbsolutePath(),
                                 "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
 
-                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
+                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":"+ commonsLoggingJar.getAbsolutePath(),
 
                                 "org.apache.catalina.startup.Bootstrap", "start"
                         };
@@ -185,7 +186,7 @@ public class RemoteServer {
                                 "-Dcatalina.home=" + home.getAbsolutePath(),
                                 "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
 
-                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
+                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
 
                                 "org.apache.catalina.startup.Bootstrap", "start"
                         };
