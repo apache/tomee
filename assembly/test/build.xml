@@ -318,6 +318,9 @@
         <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/${openejb.version}/openejb-itests-standalone-client-${openejb.version}.jar"/>
         <property name="itests.client.file" value="${repo}/openejb/distributions/${openejb.version}/openejb-itests-standalone-client.jar"/>
 
+        <condition property="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip">
+            <matches pattern="^7\." string="${tomcat.version}"/>
+        </condition>
         <condition property="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-6/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip">
             <matches pattern="^6\." string="${tomcat.version}"/>
         </condition>
