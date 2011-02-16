@@ -3605,6 +3605,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 parents.addAll(ancestors(clazz));
             }
 
+            Collections.reverse(parents);
+
             return new ClassFinder(parents);
         }
 
