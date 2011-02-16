@@ -52,7 +52,7 @@ public class WebModule implements WsModule {
     private AbstractFinder finder;
 
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
-    private List<URL> filteredUrls;
+    private List<URL> urls;
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
@@ -93,12 +93,12 @@ public class WebModule implements WsModule {
         validation = new ValidationContext(WebModule.class, jarLocation);
     }
 
-    public List<URL> getFilteredUrls() {
-        return filteredUrls;
+    public List<URL> getUrls() {
+        return urls;
     }
 
-    public void setFilteredUrls(List<URL> filteredUrls) {
-        this.filteredUrls = filteredUrls;
+    public void setUrls(List<URL> urls) {
+        this.urls = urls;
     }
 
     public AbstractFinder getFinder() {

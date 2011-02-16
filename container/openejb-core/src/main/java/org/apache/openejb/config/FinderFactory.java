@@ -24,7 +24,6 @@ import org.apache.openejb.loader.SystemInstance;
 
 import java.io.File;
 import java.net.URL;
-import static java.util.Arrays.asList;
 
 public class FinderFactory {
 
@@ -45,12 +44,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            if (webModule.getFilteredUrls() == null) {
-                return new ClassFinder(webClassLoader);
-
-            } else {
-                return new ClassFinder(webClassLoader, webModule.getFilteredUrls());
-            }
+            return new ClassFinder(webClassLoader, webModule.getUrls());
         }
 
         if (module.getJarLocation() != null) {

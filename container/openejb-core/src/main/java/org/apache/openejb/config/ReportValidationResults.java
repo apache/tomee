@@ -32,7 +32,7 @@ public class ReportValidationResults implements DynamicDeployer {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_VALIDATION, "org.apache.openejb.config.rules");
 
-    private static final String VALIDATION_LEVEL = "openejb.validation.output.level";
+    public static final String VALIDATION_LEVEL = "openejb.validation.output.level";
 
     private enum Level {
         TERSE,
