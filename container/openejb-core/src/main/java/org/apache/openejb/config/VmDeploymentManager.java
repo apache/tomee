@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.config;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -330,10 +332,38 @@ public class VmDeploymentManager implements DeploymentManager {
             TargetModuleID targetModuleId = toTargetModuleId(appInfo, null);
 
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, Collections.singleton(targetModuleId));
+        } catch (ValidationFailedException e) {
+            String s = System.getProperty(ReportValidationResults.VALIDATION_LEVEL, "3");
+            int level = Integer.parseInt(s);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(baos);
+            out.println(e.getMessage());
+            print(e.getErrors(), out, level);
+            print(e.getFailures(), out, level);
+            print(e.getWarnings(), out, level);
+            out.close();
+            e = new ValidationFailedException(new String(baos.toByteArray()), e);
+            return new ProgressObjectImpl(CommandType.DISTRIBUTE, e);
         } catch (OpenEJBException e) {
             return new ProgressObjectImpl(CommandType.DISTRIBUTE, e);
         }
     }
+
+    protected void print(ValidationException[] exceptions, PrintStream out, int level) {
+
+        for (int i = 0; i < exceptions.length; i++) {
+            out.print(" ");
+            out.print(exceptions[i].getPrefix());
+            out.print(" ... ");
+            if (!(exceptions[i] instanceof ValidationError)) {
+                out.print(exceptions[i].getComponentName());
+                out.print(": ");
+            }
+            out.println(exceptions[i].getMessage(level));
+        }
+    }
+
 
     private boolean containsDefaultTarget(Target[] targetList) {
         for (Target target : targetList) {

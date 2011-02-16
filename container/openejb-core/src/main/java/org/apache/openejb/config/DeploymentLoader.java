@@ -37,6 +37,7 @@ import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
@@ -46,6 +47,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UrlCache;
+import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.SAXException;
@@ -596,76 +598,29 @@ public class DeploymentLoader implements DeploymentFilterable {
             appModule.getWebModules().add(webModule);
         }
 
-        // get urls in web application
-        List<URL> urls = new ArrayList<URL>();
-        ClassLoader webClassLoader = webModule.getClassLoader();
+        // Per the Spec version of the Collapsed EAR there
+        // aren't individual EjbModules inside a war.
+        // The war itself is one big EjbModule if certain
+        // conditions are met.  These conditions are different
+        // than an ear file, so the ear-style code we were previously
+        // using doesn't exactly work anymore.
+        //
 
-        // get include/exclude properties from context-param
-        List<ParamValue> webAppContextParam = webModule.getWebApp() != null ? webModule.getWebApp().getContextParam() : Collections.<ParamValue> emptyList();
-        Options contextParams = new Options(getContextParams(webAppContextParam));
+        EjbModule webEjbModule = new EjbModule(webModule.getClassLoader(), webModule.getModuleId(), webModule.getJarLocation(), null, null);
+        webEjbModule.getAltDDs().putAll(webModule.getAltDDs());
+        appModule.getEjbModules().add(webEjbModule);
 
-        String include = contextParams.get(CLASSPATH_INCLUDE, "");
-        String exclude = contextParams.get(CLASSPATH_EXCLUDE, "");
-        Set<RequireDescriptors> requireDescriptors = contextParams.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
-        boolean filterDescriptors = contextParams.get(CLASSPATH_FILTER_DESCRIPTORS, false);
-        boolean filterSystemApps = contextParams.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
-
-        contextParams.getProperties().put(webModule.getModuleId(), warPath);
-        FileUtils base = new FileUtils(webModule.getModuleId(), webModule.getModuleId(), contextParams.getProperties());
-        DeploymentsResolver.loadFromClasspath(base, urls, webClassLoader, include, exclude, requireDescriptors, filterDescriptors, filterSystemApps, ddDir);
-
-        // we need to exclude previously deployed modules
-        // using a Set instead of a list would be easier ...
-        UrlSet urlSet = new UrlSet(urls);
-        urlSet = urlSet.exclude(new UrlSet(appModule.getAdditionalLibraries())); // there should not be modules in /lib
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-            try {
-                urlSet = urlSet.exclude(new File(ejbModule.getJarLocation()));
-
-            } catch (MalformedURLException ignore) { }
-        }
-        for (ClientModule clientModule : appModule.getClientModules()) {
-            try {
-                urlSet = urlSet.exclude(new File(clientModule.getJarLocation()));
-            } catch (MalformedURLException ignore) { }
-        }
-        // for persistence.xml, there is already a check in addPersistenceUnit to remove duplicates
-        urls = urlSet.getUrls();
-
-        // save the filtered list so that it can be used elsewhere
-        webModule.setFilteredUrls(urls);
-
-        // Check each URL to determine if it is an EJB jar
-        for (URL url : urls) {
-            try {
-                Class moduleType = discoverModuleType(url, webClassLoader, true);
-
-                File file = toFile(url);
-                String absolutePath = file.getAbsolutePath();
-
-                if (EjbModule.class.isAssignableFrom(moduleType) && loadingRequiredModuleTypes.contains(EjbModule.class)) {
-                    logger.info("Found ejb module " + moduleType.getSimpleName() + " in war " + contextRoot);
-
-                    if (url.getProtocol().equals("file") && url.toString().endsWith("WEB-INF/classes/")) {
-                        //EJB found in /WEB-INF/classes, define the war as EJB module
-                        absolutePath = warPath;
-                        url = warUrl;
-                    }
-
-                    EjbModule ejbModule = createEjbModule(url, absolutePath, webClassLoader, getModuleName());
-                    appModule.getEjbModules().add(ejbModule);
-
-                }
-
-            } catch (IOException e) {
-                logger.warning("Unable to determine the module type of " + url.toExternalForm() + ": Exception: " + e.getMessage(), e);
-            } catch (UnknownModuleTypeException ignore) {
-            }
+        try {
+            // TODO:  Put our scanning ehnancements back, here 
+            AbstractFinder finder = FinderFactory.createFinder(webModule);
+            webModule.setFinder(finder);
+            webEjbModule.setFinder(finder);
+        } catch (Exception e) {
+            throw new OpenEJBException("Unable to create annotation scanner for web module " + webModule.getModuleId(), e);
         }
 
-        if (loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
-            // Persistence Units
-            addPersistenceUnits(appModule, urls.toArray(new URL[urls.size()]));
+        if (loadingRequiredModuleTypes.contains(WsModule.class)) {
+            addWebservices(webEjbModule);
         }
     }
 
@@ -701,6 +656,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // create web module
         WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
+        webModule.setUrls(Arrays.asList(webUrls));
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());
