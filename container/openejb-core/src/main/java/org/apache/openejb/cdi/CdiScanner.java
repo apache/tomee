@@ -58,9 +58,10 @@ public class CdiScanner implements ScannerService {
         AppInfo appInfo = startupObject.getAppInfo();
         ClassLoader classLoader = startupObject.getAppContext().getClassLoader();
 
-        final AlternativesManager alternativesManager = WebBeansContext.getInstance().getAlternativesManager();
-        final DecoratorsManager decoratorsManager = WebBeansContext.getInstance().getDecoratorsManager();
-        final InterceptorsManager interceptorsManager = WebBeansContext.getInstance().getInterceptorsManager();
+        WebBeansContext webBeansContext = WebBeansContext.getInstance();
+        final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
+        final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
+        final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();
 
         final HashSet<String> ejbClasses = new HashSet<String>();
 
@@ -70,7 +71,7 @@ public class CdiScanner implements ScannerService {
             }
         }
 
-        final AnnotationManager annotationManager = WebBeansContext.getInstance().getAnnotationManager();
+        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
         
         for (EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;

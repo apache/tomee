@@ -48,11 +48,13 @@ public class CdiInterceptor implements Serializable {
     private final CdiEjbBean<Object> bean;
     private final BeanManagerImpl manager;
     private final CdiAppContextsService contextService;
+    private final WebBeansContext webBeansContext;
 
     public CdiInterceptor(CdiEjbBean<Object> bean, BeanManagerImpl manager, CdiAppContextsService contextService) {
         this.bean = bean;
         this.manager = manager;
         this.contextService = contextService;
+        this.webBeansContext = bean.getWebBeansContext();
     }
 
     @AroundInvoke
@@ -112,11 +114,11 @@ public class CdiInterceptor implements Serializable {
 
         if (bean.getDecoratorStack().size() > 0) {
 
-            Class<?> proxyClass = WebBeansContext.getInstance().getJavassistProxyFactory().getInterceptorProxyClasses().get((InjectionTargetBean<?>) bean);
+            Class<?> proxyClass = webBeansContext.getJavassistProxyFactory().getInterceptorProxyClasses().get((InjectionTargetBean<?>) bean);
             if (proxyClass == null) {
-                ProxyFactory delegateFactory = WebBeansContext.getInstance().getJavassistProxyFactory().createProxyFactory(bean);
-                proxyClass = WebBeansContext.getInstance().getJavassistProxyFactory().getProxyClass(delegateFactory);
-                WebBeansContext.getInstance().getJavassistProxyFactory().getInterceptorProxyClasses().put((InjectionTargetBean<?>) bean, proxyClass);
+                ProxyFactory delegateFactory = webBeansContext.getJavassistProxyFactory().createProxyFactory(bean);
+                proxyClass = webBeansContext.getJavassistProxyFactory().getProxyClass(delegateFactory);
+                webBeansContext.getJavassistProxyFactory().getInterceptorProxyClasses().put((InjectionTargetBean<?>) bean, proxyClass);
             }
             Object delegate = proxyClass.newInstance();
             DelegateHandler delegateHandler = new DelegateHandler(bean, ejbContext);
