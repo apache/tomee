@@ -184,10 +184,10 @@ public class BeansDeployer {
     {
         logger.debug("Validation of injection points has started.");
 
-        WebBeansContext.getInstance().getDecoratorsManager().validateDecoratorClasses();
-        WebBeansContext.getInstance().getInterceptorsManager().validateInterceptorClasses();
+        webBeansContext.getDecoratorsManager().validateDecoratorClasses();
+        webBeansContext.getInterceptorsManager().validateInterceptorClasses();
 
-        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
+        BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
         Set<Bean<?>> beans = new HashSet<Bean<?>>();
 
         //Adding decorators to validate
@@ -234,7 +234,7 @@ public class BeansDeployer {
      */
     private void validate(Set<Bean<?>> beans)
     {
-        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
+        BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
 
         if (beans != null && beans.size() > 0) {
             Stack<String> beanNames = new Stack<String>();
@@ -272,7 +272,7 @@ public class BeansDeployer {
                             manager.validate(injectionPoint);
                         } else {
                             if (!bean.getBeanClass().isAnnotationPresent(javax.decorator.Decorator.class)
-                                    && !WebBeansContext.getInstance().getBeanManagerImpl().containsCustomDecoratorClass(bean.getBeanClass())) {
+                                    && !webBeansContext.getBeanManagerImpl().containsCustomDecoratorClass(bean.getBeanClass())) {
                                 throw new WebBeansConfigurationException(
                                         "Delegate injection points can not defined by beans that are not decorator. Injection point : "
                                                 + injectionPoint);
@@ -431,7 +431,7 @@ public class BeansDeployer {
     protected void checkXMLSpecializations()
     {
         // Check XML specializations
-        Set<Class<?>> clazzes = WebBeansContext.getInstance().getxMLSpecializesManager().getXMLSpecializationClasses();
+        Set<Class<?>> clazzes = webBeansContext.getxMLSpecializesManager().getXMLSpecializationClasses();
         Iterator<Class<?>> it = clazzes.iterator();
         Class<?> superClass = null;
         Class<?> specialClass = null;
@@ -465,7 +465,7 @@ public class BeansDeployer {
             if (marker.isPassivationCapable()) {
                 validate = true;
             }
-        } else if (WebBeansContext.getInstance().getBeanManagerImpl().isPassivatingScope(beanObj.getScope())) {
+        } else if (webBeansContext.getBeanManagerImpl().isPassivatingScope(beanObj.getScope())) {
             if (WebBeansUtil.isPassivationCapable(beanObj) == null) {
                 if (!(beanObj instanceof AbstractProducerBean)) {
                     throw new WebBeansConfigurationException("Passivation scoped defined bean must be passivation capable, " +
@@ -502,10 +502,10 @@ public class BeansDeployer {
                 if (beanClass.isAnnotation()) {
                     Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
                     if (annotationManager.isStereoTypeAnnotation(stereoClass)) {
-                        if (!WebBeansContext.getInstance().getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
+                        if (!webBeansContext.getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
                             WebBeansUtil.checkStereoTypeClass(stereoClass);
                             StereoTypeModel model = new StereoTypeModel(webBeansContext, stereoClass);
-                            WebBeansContext.getInstance().getStereoTypeManager().addStereoTypeModel(model);
+                            webBeansContext.getStereoTypeManager().addStereoTypeModel(model);
                         }
                     }
                 }
@@ -539,7 +539,7 @@ public class BeansDeployer {
     protected <T> boolean defineManagedBean(Class<T> clazz, ProcessAnnotatedTypeImpl<T> processAnnotatedEvent)
     {   
         //Bean manager
-        BeanManagerImpl manager = WebBeansContext.getInstance().getBeanManagerImpl();
+        BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
 
         //Create an annotated type
         AnnotatedType<T> annotatedType = processAnnotatedEvent.getAnnotatedType();
@@ -607,8 +607,8 @@ public class BeansDeployer {
                     webBeansContext.getWebBeansUtil().defineInterceptor(managedBeanCreator, processInjectionTargetEvent);
                 }
             } else {
-                if (WebBeansContext.getInstance().getBeanManagerImpl().containsCustomDecoratorClass(annotatedType.getJavaClass()) ||
-                        WebBeansContext.getInstance().getBeanManagerImpl().containsCustomInterceptorClass(annotatedType.getJavaClass())) {
+                if (webBeansContext.getBeanManagerImpl().containsCustomDecoratorClass(annotatedType.getJavaClass()) ||
+                        webBeansContext.getBeanManagerImpl().containsCustomInterceptorClass(annotatedType.getJavaClass())) {
                     return false;
                 }
 

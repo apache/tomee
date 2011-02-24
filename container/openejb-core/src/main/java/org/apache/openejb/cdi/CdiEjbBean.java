@@ -32,8 +32,8 @@ import java.util.List;
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
 
-    public CdiEjbBean(BeanContext beanContext) {
-        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), WebBeansContext.getInstance());
+    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
+        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
     }
 

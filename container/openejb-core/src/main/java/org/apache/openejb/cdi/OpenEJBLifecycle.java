@@ -188,7 +188,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                     continue;
                 }
 
-                CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext);
+                CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
 
                 beanContext.set(CdiEjbBean.class, bean);
 
