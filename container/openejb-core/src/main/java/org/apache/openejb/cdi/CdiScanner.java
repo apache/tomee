@@ -151,7 +151,7 @@ public class CdiScanner implements ScannerService {
     }
 
     @Override
-    public Set<URL> getBeanXmls() {
+    public Set<String> getBeanXmls() {
         return Collections.EMPTY_SET; // Unused
     }
 

@@ -337,43 +337,6 @@ public class BeansDeployer {
      */
     protected void deployFromXML(ScannerService scanner) throws WebBeansDeploymentException
     {
-        logger.debug("Deploying configurations from XML files has started.");
-
-        Set<URL> xmlLocations = scanner.getBeanXmls();
-        Iterator<URL> it = xmlLocations.iterator();
-
-        while (it.hasNext())
-        {
-            URL fileURL = it.next();
-            String fileName = fileURL.getFile();
-            InputStream fis = null;
-            try
-            {
-                fis = fileURL.openStream();
-
-                this.xmlConfigurator.configure(fis, fileName);
-            }
-            catch (IOException e)
-            {
-                throw new WebBeansDeploymentException(e);
-            }
-            finally
-            {
-                if (fis != null)
-                {
-                    try
-                    {
-                        fis.close();
-                    }
-                    catch (IOException e)
-                    {
-                        // all ok, ignore this!
-                    }
-                }
-            }
-        }
-
-        logger.debug("Deploying configurations from XML has ended successfully.");
     }
     /**
      * Checks specialization.
@@ -430,27 +393,28 @@ public class BeansDeployer {
      */
     protected void checkXMLSpecializations()
     {
+        //TODO Update
         // Check XML specializations
-        Set<Class<?>> clazzes = webBeansContext.getxMLSpecializesManager().getXMLSpecializationClasses();
-        Iterator<Class<?>> it = clazzes.iterator();
-        Class<?> superClass = null;
-        Class<?> specialClass = null;
-        ArrayList<Class<?>> specialClassList = new ArrayList<Class<?>>();
-        while (it.hasNext()) {
-            specialClass = it.next();
-
-            if (superClass == null) {
-                superClass = specialClass.getSuperclass();
-            } else {
-                if (superClass.equals(specialClass.getSuperclass())) {
-                    throw new InconsistentSpecializationException(logger.getTokenString(OWBLogConst.EXCEPT_XML)
-                            + logger.getTokenString(OWBLogConst.EXCEPT_0005)
-                            + superClass.getName());
-                }
-            }
-            specialClassList.add(specialClass);
-        }
-        webBeansContext.getWebBeansUtil().configureSpecializations(specialClassList);
+//        Set<Class<?>> clazzes = webBeansContext.getxMLSpecializesManager().getXMLSpecializationClasses();
+//        Iterator<Class<?>> it = clazzes.iterator();
+//        Class<?> superClass = null;
+//        Class<?> specialClass = null;
+//        ArrayList<Class<?>> specialClassList = new ArrayList<Class<?>>();
+//        while (it.hasNext()) {
+//            specialClass = it.next();
+//
+//            if (superClass == null) {
+//                superClass = specialClass.getSuperclass();
+//            } else {
+//                if (superClass.equals(specialClass.getSuperclass())) {
+//                    throw new InconsistentSpecializationException(logger.getTokenString(OWBLogConst.EXCEPT_XML)
+//                            + logger.getTokenString(OWBLogConst.EXCEPT_0005)
+//                            + superClass.getName());
+//                }
+//            }
+//            specialClassList.add(specialClass);
+//        }
+//        webBeansContext.getWebBeansUtil().configureSpecializations(specialClassList);
     }
 
     /**
@@ -489,30 +453,31 @@ public class BeansDeployer {
      */
     protected void checkStereoTypes(ScannerService scanner)
     {
-        logger.debug("Checking StereoType constraints has started.");
-
-        addDefaultStereoTypes();
-
-        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
-
-        Set<Class<?>> beanClasses = scanner.getBeanClasses();
-        if (beanClasses != null && beanClasses.size() > 0) {
-
-            for (Class<?> beanClass : beanClasses) {
-                if (beanClass.isAnnotation()) {
-                    Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
-                    if (annotationManager.isStereoTypeAnnotation(stereoClass)) {
-                        if (!webBeansContext.getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
-                            WebBeansUtil.checkStereoTypeClass(stereoClass);
-                            StereoTypeModel model = new StereoTypeModel(webBeansContext, stereoClass);
-                            webBeansContext.getStereoTypeManager().addStereoTypeModel(model);
-                        }
-                    }
-                }
-            }
-        }
-
-        logger.debug("Checking StereoType constraints has ended.");
+        //TODO Update
+//        logger.debug("Checking StereoType constraints has started.");
+//
+//        addDefaultStereoTypes();
+//
+//        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
+//
+//        Set<Class<?>> beanClasses = scanner.getBeanClasses();
+//        if (beanClasses != null && beanClasses.size() > 0) {
+//
+//            for (Class<?> beanClass : beanClasses) {
+//                if (beanClass.isAnnotation()) {
+//                    Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
+//                    if (annotationManager.isStereoTypeAnnotation(stereoClass)) {
+//                        if (!webBeansContext.getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
+//                            WebBeansUtil.checkStereoTypeClass(stereoClass);
+//                            StereoTypeModel model = new StereoTypeModel(webBeansContext, stereoClass);
+//                            webBeansContext.getStereoTypeManager().addStereoTypeModel(model);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        logger.debug("Checking StereoType constraints has ended.");
     }
 
     /**
