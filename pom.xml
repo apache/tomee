@@ -100,10 +100,12 @@
     <!-- OSGi bundles properties -->
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
+    <openejb.osgi.dynamic.import.pkg>!*</openejb.osgi.dynamic.import.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
     <openejb.osgi.export.pkg>org.apache.openejb</openejb.osgi.export.pkg>
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
+    <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- Used in assembly/openejb-tomcat* projects  -->
@@ -195,6 +197,7 @@
             <Bundle-Name>Apache ${project.name}</Bundle-Name>
             <Export-Package>${openejb.osgi.export}</Export-Package>
             <Import-Package>${openejb.osgi.import}</Import-Package>
+            <DynamicImport-Package>${openejb.osgi.dynamic.import}</DynamicImport-Package>
             <Private-Package>${openejb.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache OpenEJB</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
