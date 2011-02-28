@@ -29,6 +29,22 @@
   <artifactId>openejb-axis</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Axis</name>
+
+  <properties>
+    <openejb.osgi.import.pkg>
+     !org.apache.openejb.server.httpd,
+     !org.apache.openejb.server.webservices,
+     !org.apache.openejb.server.webservices.saaj,
+     *
+    </openejb.osgi.import.pkg>
+    <openejb.osgi.dynamic.import.pkg>
+      org.apache.openejb.server.httpd,org.apache.openejb.server.webservices,org.apache.openejb.server.webservices.saaj
+    </openejb.osgi.dynamic.import.pkg>
+    <openejb.osgi.export>
+      org.apache.openejb*;version=${openejb.osgi.export.version}
+    </openejb.osgi.export>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
