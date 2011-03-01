@@ -20,7 +20,6 @@
 
 package org.apache.openejb.cdi;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,7 +71,7 @@ public class CdiScanner implements ScannerService {
         }
 
         final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
-        
+
         for (EjbJarInfo ejbJar : appInfo.ejbJars) {
             final BeansInfo beans = ejbJar.beans;
 
@@ -158,5 +157,10 @@ public class CdiScanner implements ScannerService {
     @Override
     public Set<Class<?>> getBeanClasses() {
         return classes;
+    }
+
+    @Override
+    public void release() {
+           classes.clear();
     }
 }
