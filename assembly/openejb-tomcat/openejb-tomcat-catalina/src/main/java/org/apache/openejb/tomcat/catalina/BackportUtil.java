@@ -25,7 +25,11 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 
 import javax.servlet.Servlet;
+import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -37,14 +41,27 @@ public class BackportUtil {
     private static API api;
 
     static {
-        if (TomcatVersion.v6.isTheVersion()) {
-            api = new Tomcat6();
-        } else {
-            api = new Tomcat55();
+        switch (TomcatVersion.get()) {
+            case v7: {
+                api = new Tomcat7();
+                break;
+            }
+            case v6: {
+                api = new Tomcat6();
+                break;
+            }
+            case v55: {
+                api = new Tomcat55();
+                break;
+            }
+            default: {
+                // TODO Perhaps fail or log
+                api = new Tomcat55();
+            }
         }
     }
 
-    private static API getAPI() {
+    public static API getAPI() {
         return api;
     }
 
@@ -72,8 +89,20 @@ public class BackportUtil {
         NamingContextListener getNamingContextListener(StandardContext standardContext);
 
         void removeService(NamingContextListener namingContextListener, String serviceName);
+
+        void setConfigFile(StandardContext standardContext, File contextXmlFile);
     }
 
+    public static class Tomcat7 extends Tomcat6 implements API {
+        @Override
+        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+            try {
+                standardContext.setConfigFile(contextXmlFile.toURI().toURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public static class Tomcat6 implements API {
         public Servlet getServlet(Wrapper wrapper) {
@@ -91,6 +120,16 @@ public class BackportUtil {
 
         public void removeService(NamingContextListener namingContextListener, String serviceName) {
             namingContextListener.removeService(serviceName);
+        }
+
+        @Override
+        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+            try {
+                Method method = StandardContext.class.getMethod("setConfigFile", String.class);
+                method.invoke(standardContext, contextXmlFile.getAbsolutePath());
+            } catch (Exception e) {
+                throw new IllegalStateException("Cannot setConfigFile", e);
+            }
         }
     }
 
@@ -125,6 +164,16 @@ public class BackportUtil {
         }
 
         public void removeService(NamingContextListener namingContextListener, String serviceName) {
+        }
+
+        @Override
+        public void setConfigFile(StandardContext standardContext, File contextXmlFile) {
+            try {
+                Method method = StandardContext.class.getMethod("setConfigFile", String.class);
+                method.invoke(standardContext, contextXmlFile.getAbsolutePath());
+            } catch (Exception e) {
+                throw new IllegalStateException("Cannot setConfigFile", e);
+            }
         }
 
         private Field getField(final Class clazz, final String name) {

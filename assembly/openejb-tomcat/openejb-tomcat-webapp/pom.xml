@@ -216,7 +216,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
-      <artifactId>catalina</artifactId>
+      <artifactId>tomcat-catalina</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>

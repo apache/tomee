@@ -109,7 +109,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- Used in assembly/openejb-tomcat* projects  -->
-    <tomcatVersion>6.0.29</tomcatVersion>
+    <tomcatVersion>7.0.8</tomcatVersion>
 
     <!--
        - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
@@ -950,7 +950,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
-        <artifactId>catalina</artifactId>
+        <artifactId>tomcat-catalina</artifactId>
         <version>${tomcatVersion}</version>
         <optional>true</optional>
       </dependency>
