@@ -35,9 +35,19 @@ public class BundleFinderFactory extends FinderFactory {
 
     @Override
     public AbstractFinder create(DeploymentModule module) throws Exception {
+        
         ClassLoader moduleCL = module.getClassLoader();
+        
+        while (!(moduleCL instanceof BundleReference)) {
 
-        if (moduleCL instanceof BundleReference) {
+            moduleCL = moduleCL.getParent();
+            
+            if (moduleCL == null)
+                break;
+
+        }
+        
+        if (moduleCL != null && moduleCL instanceof BundleReference) {
             Bundle bundle = ((BundleReference) moduleCL).getBundle();
             BundleContext bundleContext = bundle.getBundleContext();
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
