@@ -44,6 +44,20 @@ import java.util.Map;
 public class GlobalListenerSupport implements PropertyChangeListener, LifecycleListener {
 
     /**
+     * The LifecycleEvent type for the "component init" event.
+     * Tomcat 6.0.x only
+     * Removed in Tomcat 7
+     */
+    public static final String INIT_EVENT = "init";
+
+    /**
+     * The LifecycleEvent type for the "component destroy" event.
+     * Tomcat 6.0.x only
+     * Removed in Tomcat 7
+     */
+    public static final String DESTROY_EVENT = "destroy";
+
+    /**
      * Tomcat server instance
      */
     private final StandardServer standardServer;
@@ -75,7 +89,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             StandardContext standardContext = (StandardContext) source;
             String type = event.getType();
             
-            if (Lifecycle.INIT_EVENT.equals(type)) {
+            if (INIT_EVENT.equals(type) || Lifecycle.BEFORE_INIT_EVENT.equals(type)) {
             	contextListener.init(standardContext);
             } else if (Lifecycle.BEFORE_START_EVENT.equals(type)) {
                 contextListener.beforeStart(standardContext);
@@ -97,7 +111,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.stop(standardContext);
             } else if (Lifecycle.AFTER_STOP_EVENT.equals(type)) {
                 contextListener.afterStop(standardContext);
-            } else if (Lifecycle.DESTROY_EVENT.equals(type)) {
+            } else if (DESTROY_EVENT.equals(type) || Lifecycle.AFTER_DESTROY_EVENT.equals(type)) {
                 contextListener.destroy(standardContext);
             }
         } else if (source instanceof StandardHost) {

@@ -197,9 +197,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
-                String contextXmlFile = webApp.path + "/META-INF/context.xml";
-                if (new File(contextXmlFile).exists()) {
-                    standardContext.setConfigFile(contextXmlFile);
+                String s = File.pathSeparator;
+                File contextXmlFile = new File(webApp.path + s + "META-INF" + s + "context.xml");
+                if (contextXmlFile.exists()) {
+                    BackportUtil.getAPI().setConfigFile(standardContext, contextXmlFile);
                     standardContext.setOverride(true);
                 }
                 ContextConfig contextConfig = new ContextConfig();
