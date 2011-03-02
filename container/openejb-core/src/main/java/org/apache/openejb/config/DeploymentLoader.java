@@ -224,7 +224,9 @@ public class DeploymentLoader implements DeploymentFilterable {
                     && (loadingRequiredModuleTypes.contains(WebModule.class) || loadingRequiredModuleTypes.contains(EjbModule.class) || loadingRequiredModuleTypes.contains(PersistenceModule.class))) {
                 final File file = toFile(baseUrl);
 
-                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath());
+                // Standalone Web Module
+                
+                AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
                 return appModule;
             } else if (PersistenceModule.class.equals(moduleClass) && loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
@@ -590,12 +592,14 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     protected void addWebModule(AppModule appModule, URL warUrl, ClassLoader parentClassLoader, String contextRoot, String moduleName) throws OpenEJBException {
-
         // create and add the WebModule
         String warPath = URLs.toFilePath(warUrl);
         WebModule webModule = createWebModule(appModule.getJarLocation(), warPath, parentClassLoader, contextRoot, moduleName);
         if (loadingRequiredModuleTypes.contains(WebModule.class)) {
             appModule.getWebModules().add(webModule);
+            if (appModule.isStandaloneModule()) {
+                appModule.getAdditionalLibraries().addAll(webModule.getUrls());
+            }
         }
 
         // Per the Spec version of the Collapsed EAR there
