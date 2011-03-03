@@ -286,9 +286,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
      */
     private void checkState() throws IllegalStateException {
         final BaseContext context = (BaseContext) deployment.get(EJBContext.class);
-        if (!context.isTimerMethodAllowed()) {
-            throw new IllegalStateException("TimerService method not permitted for current operation " + ThreadContext.getThreadContext().getCurrentOperation().name());
-        }
+        context.check(BaseContext.Call.timerMethod);
     }
 
     /**
