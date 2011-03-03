@@ -228,7 +228,23 @@ public class DeploymentLoader implements DeploymentFilterable {
                 
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
-                return appModule;
+                
+				File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
+				if (persistenceXml.exists() && persistenceXml.isFile()) {
+					List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+			        if (persistenceUrls == null) {
+			            persistenceUrls = new ArrayList<URL>();
+			            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+			        }
+
+			        try {
+						persistenceUrls.add(persistenceXml.toURI().toURL());
+					} catch (Exception e) {
+					}
+				}
+				
+				addPersistenceUnits(appModule, baseUrl);
+				return appModule;
             } else if (PersistenceModule.class.equals(moduleClass) && loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
                 ClassLoader classLoader = ClassLoaderUtil.createTempClassLoader(jarPath, new URL[]{baseUrl}, OpenEJB.class.getClassLoader());
