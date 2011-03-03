@@ -89,6 +89,7 @@ import org.apache.openejb.core.transaction.SimpleWorkManager;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
+import org.apache.openejb.jee.sun.Default;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -823,6 +824,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void destroy() {
+
+        try {
+            EjbTimerServiceImpl.shutdown();
+        } catch (Exception e) {
+            logger.warning("Unable to shutdown scheduler", e);
+        }
+
         logger.debug("Undeploying Applications");
         Assembler assembler = this;
         for (AppInfo appInfo : assembler.getDeployedApplications()) {

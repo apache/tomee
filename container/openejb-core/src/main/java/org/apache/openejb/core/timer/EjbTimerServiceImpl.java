@@ -103,6 +103,16 @@ public class EjbTimerServiceImpl implements EjbTimerService {
         return scheduler;
     }
 
+    public static void shutdown() {
+
+        Scheduler scheduler = SystemInstance.get().getComponent(Scheduler.class);
+        if (scheduler != null) try {
+            scheduler.shutdown();
+        } catch (SchedulerException e) {
+            throw new RuntimeException("Unable to shutdown scheduler", e);
+        }
+
+    }
     public void start() throws TimerStoreException {
          // load saved timers
         Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String)deployment.getDeploymentID());
