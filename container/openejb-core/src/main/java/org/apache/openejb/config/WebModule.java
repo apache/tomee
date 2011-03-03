@@ -184,4 +184,12 @@ public class WebModule implements WsModule {
     public List<FacesConfig> getFacesConfigs() {
 		return facesConfigs;
 	}
+
+    @Override
+    public String toString() {
+        return "WebModule{" +
+                "moduleId='" + moduleId + '\'' +
+                ", contextRoot='" + contextRoot + '\'' +
+                '}';
+    }
 }

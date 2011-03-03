@@ -140,4 +140,12 @@ public class ClientModule implements DeploymentModule {
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
+
+    @Override
+    public String toString() {
+        return "ClientModule{" +
+                "moduleId='" + moduleId + '\'' +
+                ", mainClass='" + mainClass + '\'' +
+                '}';
+    }
 }
