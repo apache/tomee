@@ -33,6 +33,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Stack;
 
+import javax.ejb.EJBContext;
 import javax.ejb.EntityBean;
 import javax.ejb.NoSuchEntityException;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class EntityInstanceManager {
 
     public void deploy(BeanContext beanContext) {
         poolMap.put(beanContext.getDeploymentID(), new LinkedListStack(poolsize / 2));
+        beanContext.set(EJBContext.class, createEntityContext());
     }
 
     public void undeploy(BeanContext beanContext) {

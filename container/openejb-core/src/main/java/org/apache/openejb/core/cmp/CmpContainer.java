@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
@@ -158,7 +159,7 @@ public class CmpContainer implements RpcContainer {
 
             cmpEngine.deploy(beanContext);
             beanContext.setContainerData(cmpEngine);
-
+            beanContext.set(EJBContext.class, new EntityContext(securityService));
             // try to set deploymentInfo static field on bean implementation class
             try {
                 Field field = beanContext.getCmpImplClass().getField("deploymentInfo");
