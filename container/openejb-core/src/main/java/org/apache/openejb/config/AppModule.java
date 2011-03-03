@@ -240,4 +240,12 @@ public class AppModule implements DeploymentModule {
         modules.addAll(clientModules);
         return modules;
     }
+
+
+    @Override
+    public String toString() {
+        return "AppModule{" +
+                "moduleId='" + moduleId + '\'' +
+                '}';
+    }
 }

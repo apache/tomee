@@ -114,4 +114,11 @@ public class ConnectorModule implements DeploymentModule {
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
+
+    @Override
+    public String toString() {
+        return "ConnectorModule{" +
+                "moduleId='" + moduleId + '\'' +
+                '}';
+    }
 }

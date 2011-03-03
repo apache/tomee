@@ -71,4 +71,11 @@ public class PersistenceModule implements DeploymentModule {
     public ValidationContext getValidation() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "PersistenceModule{" +
+                "rootUrl='" + rootUrl + '\'' +
+                '}';
+    }
 }

@@ -189,4 +189,11 @@ public class EjbModule implements WsModule {
     public Set<String> getWatchedResources() {
         return watchedResources;
     }
+
+    @Override
+    public String toString() {
+        return "EjbModule{" +
+                "moduleId='" + moduleId + '\'' +
+                '}';
+    }
 }

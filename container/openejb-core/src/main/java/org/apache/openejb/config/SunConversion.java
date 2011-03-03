@@ -258,6 +258,7 @@ public class SunConversion implements DynamicDeployer {
         for (EjbRef ref : sunApplicationClient.getEjbRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getEjbRefName();
+                refName = normalize(refName);
                 org.apache.openejb.jee.EjbRef ejbRef = refMap.get(refName);
                 if (ejbRef == null) {
                     ejbRef = new org.apache.openejb.jee.EjbRef();
@@ -277,6 +278,7 @@ public class SunConversion implements DynamicDeployer {
         for (ResourceRef ref : sunApplicationClient.getResourceRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -286,6 +288,7 @@ public class SunConversion implements DynamicDeployer {
         for (ResourceEnvRef ref : sunApplicationClient.getResourceEnvRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResourceEnvRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -295,6 +298,7 @@ public class SunConversion implements DynamicDeployer {
         for (MessageDestinationRef ref : sunApplicationClient.getMessageDestinationRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getMessageDestinationRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -305,6 +309,7 @@ public class SunConversion implements DynamicDeployer {
         Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
         for (org.apache.openejb.jee.sun.ServiceRef ref : sunApplicationClient.getServiceRef()) {
             String refName = ref.getServiceRefName();
+            refName = normalize(refName);
             ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
                 Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
@@ -335,6 +340,11 @@ public class SunConversion implements DynamicDeployer {
                 }
             }
         }
+    }
+
+    private String normalize(String refName) {
+        if (!refName.startsWith("java:")) refName = "java:comp/env/" + refName;
+        return refName;
     }
 
     public void convertModule(WebModule webModule) {
@@ -384,6 +394,7 @@ public class SunConversion implements DynamicDeployer {
         for (ResourceRef ref : sunWebApp.getResourceRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -393,6 +404,7 @@ public class SunConversion implements DynamicDeployer {
         for (ResourceEnvRef ref : sunWebApp.getResourceEnvRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getResourceEnvRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -402,6 +414,7 @@ public class SunConversion implements DynamicDeployer {
         for (MessageDestinationRef ref : sunWebApp.getMessageDestinationRef()) {
             if (ref.getJndiName() != null) {
                 String refName = ref.getMessageDestinationRefName();
+                refName = normalize(refName);
                 JndiReference resEnvRef = resEnvMap.get(refName);
                 if (resEnvRef != null) {
                     resEnvRef.setMappedName(ref.getJndiName());
@@ -412,6 +425,7 @@ public class SunConversion implements DynamicDeployer {
         Map<String, ServiceRef> serviceRefMap = webApp.getServiceRefMap();
         for (org.apache.openejb.jee.sun.ServiceRef ref : sunWebApp.getServiceRef()) {
             String refName = ref.getServiceRefName();
+            refName = normalize(refName);
             ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
                 Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
@@ -533,6 +547,7 @@ public class SunConversion implements DynamicDeployer {
             for (EjbRef ref : ejb.getEjbRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getEjbRefName();
+                    refName = normalize(refName);
                     EjbLink link = linksMap.get(refName);
                     if (link == null) {
                         link = new EjbLink();
@@ -548,6 +563,7 @@ public class SunConversion implements DynamicDeployer {
             for (ResourceRef ref : ejb.getResourceRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getResRefName();
+                    refName = normalize(refName);
                     ResourceLink link = resourceLinksMap.get(refName);
                     if (link == null) {
                         link = new ResourceLink();
@@ -562,6 +578,7 @@ public class SunConversion implements DynamicDeployer {
             for (ResourceEnvRef ref : ejb.getResourceEnvRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getResourceEnvRefName();
+                    refName = normalize(refName);
                     ResourceLink link = resourceLinksMap.get(refName);
                     if (link == null) {
                         link = new ResourceLink();
@@ -576,6 +593,7 @@ public class SunConversion implements DynamicDeployer {
             for (MessageDestinationRef ref : ejb.getMessageDestinationRef()) {
                 if (ref.getJndiName() != null) {
                     String refName = ref.getMessageDestinationRefName();
+                    refName = normalize(refName);
                     ResourceLink link = resourceLinksMap.get(refName);
                     if (link == null) {
                         link = new ResourceLink();
@@ -592,6 +610,7 @@ public class SunConversion implements DynamicDeployer {
                 Map<String, ServiceRef> serviceRefMap = bean.getServiceRefMap();
                 for (org.apache.openejb.jee.sun.ServiceRef ref : ejb.getServiceRef()) {
                     String refName = ref.getServiceRefName();
+                    refName = normalize(refName);
                     ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
                         Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
