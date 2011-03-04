@@ -265,7 +265,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 }
                             }
                         } catch (Throwable e) {
-                            logger.error("Error deploying CXF webservice for ejb " + beanContext.getDeploymentID(), e);
+                            logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
                         }
                     }
                 }
@@ -439,10 +439,10 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
     }
 
     public void service(InputStream in, OutputStream out) throws ServiceException, IOException {
-        throw new UnsupportedOperationException("CxfService can not be invoked directly");
+        throw new UnsupportedOperationException("CxfService cannot be invoked directly");
     }
 
     public void service(Socket socket) throws ServiceException, IOException {
-        throw new UnsupportedOperationException("CxfService can not be invoked directly");
+        throw new UnsupportedOperationException("CxfService cannot be invoked directly");
     }
 }
