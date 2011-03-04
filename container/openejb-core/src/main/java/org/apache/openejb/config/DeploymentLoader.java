@@ -37,9 +37,7 @@ import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.Webservices;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.AnnotationFinder;
 import org.apache.openejb.util.JarExtractor;
@@ -225,25 +223,25 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final File file = toFile(baseUrl);
 
                 // Standalone Web Module
-                
+
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
-                
-				File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
-				if (persistenceXml.exists() && persistenceXml.isFile()) {
-					List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
-			        if (persistenceUrls == null) {
-			            persistenceUrls = new ArrayList<URL>();
-			            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
-			        }
 
-			        try {
-						persistenceUrls.add(persistenceXml.toURI().toURL());
-					} catch (Exception e) {
-					}
-				}
-				
-				addPersistenceUnits(appModule, baseUrl);
+                if (loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
+                    File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
+                    if (persistenceXml.exists() && persistenceXml.isFile()) {
+                        List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
+                        if (persistenceUrls == null) {
+                            persistenceUrls = new ArrayList<URL>();
+                            appModule.getAltDDs().put("persistence.xml", persistenceUrls);
+                        }
+                        try {
+                            persistenceUrls.add(persistenceXml.toURI().toURL());
+                        } catch (Exception e) {
+                        }
+                    }
+                    addPersistenceUnits(appModule, baseUrl);
+                }
 				return appModule;
             } else if (PersistenceModule.class.equals(moduleClass) && loadingRequiredModuleTypes.contains(PersistenceModule.class)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
@@ -631,7 +629,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         appModule.getEjbModules().add(webEjbModule);
 
         try {
-            // TODO:  Put our scanning ehnancements back, here 
+            // TODO:  Put our scanning ehnancements back, here
             AbstractFinder finder = FinderFactory.createFinder(webModule);
             webModule.setFinder(finder);
             webEjbModule.setFinder(finder);
