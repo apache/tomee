@@ -57,7 +57,7 @@ public class OpenEJBHttpWsRegistry implements WsRegistry {
                 }
             }
         } catch (Exception e) {
-            log.error("Webservices Disabled: Unable to build base URIs for WebService registry", e);
+            log.error("Web Services disabled: Unable to build base URIs for Web Service registry", e);
         }
         registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
     }
