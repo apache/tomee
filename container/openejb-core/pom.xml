@@ -42,6 +42,7 @@
       org.quartz.*;resolution:=optional,
       javax.enterprise.deploy*;resolution:=optional,
       javax.jms*;resolution:=optional,
+      javax.mail*;resolution:=optional,
       javax.xml.registry*;resolution:=optional,
       javax.xml.rpc*;resolution:=optional,
       org.apache.activemq*;resolution:=optional,
