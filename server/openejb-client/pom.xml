@@ -32,7 +32,9 @@
   <name>OpenEJB :: Server :: Client</name>
   <properties>
     <openejb.osgi.import.pkg>
-      javax.transaction;version="1.1",*
+      javax.transaction;version="1.1",
+      javax.mail.*;version="1.4";resolution:=optional,
+      *
     </openejb.osgi.import.pkg>
   </properties>
   <build>
