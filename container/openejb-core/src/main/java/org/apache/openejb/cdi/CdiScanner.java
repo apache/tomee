@@ -49,6 +49,11 @@ public class CdiScanner implements ScannerService {
     private final Set<Class<?>> classes = new HashSet<Class<?>>();
 
     @Override
+    public Set<String> getAllAnnotations(String className) {
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
     public void init(Object object) {
         if (!(object instanceof StartupObject)) {
             return;
