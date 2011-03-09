@@ -45,6 +45,11 @@ public class EjbModule implements WsModule {
     private OpenejbJar openejbJar;
     private Webservices webservices;
     private String moduleId;
+    private String modulePackageName;
+
+
+
+
     private final AtomicReference<AbstractFinder> finder = new AtomicReference<AbstractFinder>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
@@ -78,22 +83,34 @@ public class EjbModule implements WsModule {
             }
         }
         this.jarLocation = jarURI;
-
+        
+        if (jarLocation != null) {
+            File file = new File(jarLocation);
+            this.modulePackageName = file.getName();
+        } else {
+            this.modulePackageName = null;
+        }
+        
         if (moduleId == null) {
             if (ejbJar != null && ejbJar.getModuleName() != null) {
                 moduleId = ejbJar.getModuleName();
             } else if (ejbJar != null && ejbJar.getId() != null) {
                 moduleId = ejbJar.getId();
-            } else {
-                File file = new File(jarURI);
-                moduleId = file.getName();
-                if (moduleId == null) {
+            } else if (modulePackageName == null) {
                     moduleId = jarURI;
-                } else if (moduleId.endsWith(".jar")) {
-                    moduleId = moduleId.substring(0, moduleId.length() - ".jar".length() );
+            } else {
+                
+                if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
+                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
+                } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
+
+                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length() );
+                }else {
+                    moduleId = modulePackageName; 
                 }
             }
         }
+        
         this.moduleId = moduleId;
         validation = new ValidationContext(EjbModule.class, jarLocation);
     }
@@ -169,6 +186,14 @@ public class EjbModule implements WsModule {
     public void setModuleId(String moduleId) {
         this.moduleId = moduleId;
     }
+    
+    public String getModulePackageName() {
+        return modulePackageName;
+    }
+    
+    public void setModulePackageName(String modulePackageName) {
+        this.modulePackageName = modulePackageName;
+    }    
 
     public OpenejbJar getOpenejbJar() {
         return openejbJar;

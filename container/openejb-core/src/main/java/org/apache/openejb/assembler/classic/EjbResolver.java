@@ -86,17 +86,17 @@ public class EjbResolver {
 
     private void add(EjbJarInfo ejbJarInfo) {
         for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
-            index(ejbJarInfo.moduleId, bean);
+            index(ejbJarInfo.modulePackageName, bean);
         }
     }
 
-    private void index(String moduleId, EnterpriseBeanInfo bean) {
+    private void index(String modulePackageName, EnterpriseBeanInfo bean) {
         // All deployments: deploymentId -> bean
 
         deployments.put(bean.ejbDeploymentId, bean);
 
         // add to the link resolver
-        resolver.add(moduleId, bean.ejbName, bean.ejbDeploymentId);
+        resolver.add(modulePackageName, bean.ejbName, bean.ejbDeploymentId);
 
         // Remote: Interfaces(home,object) -> deploymentId
         if (bean.remote != null) {

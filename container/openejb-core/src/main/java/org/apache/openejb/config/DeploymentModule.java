@@ -24,6 +24,8 @@ import java.util.Set;
  */
 public interface DeploymentModule {
     String getModuleId();
+    
+    String getModulePackageName();
 
     ClassLoader getClassLoader();
 

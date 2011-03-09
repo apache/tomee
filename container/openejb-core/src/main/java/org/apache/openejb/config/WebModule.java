@@ -45,6 +45,7 @@ public class WebModule implements WsModule {
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
+    private String modulePackageName;    
     private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
@@ -69,27 +70,40 @@ public class WebModule implements WsModule {
         this.contextRoot = contextRoot;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
+        
+        if (jarLocation != null) {
+            File file = new File(jarLocation);
+            this.modulePackageName = file.getName();
+        } else {
+            this.modulePackageName = null;
+        }
 
         if (webApp != null) webApp.setContextRoot(contextRoot);
 
         if (moduleId == null) {
-            if (webApp != null && webApp.getModuleName() != null) {
-                moduleId = webApp.getModuleName();
-            } else if (webApp != null && webApp.getId() != null) {
-                moduleId = webApp.getId();
-            } else {
-                File file = new File(jarLocation);
-                moduleId = file.getName();
-                if (moduleId.endsWith(".unpacked")) {
-                    moduleId = moduleId.substring(0, moduleId.length() - ".unpacked".length());
+            
+                if (webApp != null && webApp.getModuleName() != null) {
+                    moduleId = webApp.getModuleName();
+                } else if (webApp != null && webApp.getId() != null) {
+                    moduleId = webApp.getId();
+                } else {
+    
+                    if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
+                        moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
+                    } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
+                        moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length());
+                    } else {
+                        moduleId = modulePackageName;
+                    }
                 }
-                if (moduleId.endsWith(".war")) {
-                    moduleId = moduleId.substring(0, moduleId.length() - ".war".length());
-                }
-            }
-        }
+            
+        } 
 
+        
+            
         this.moduleId = moduleId;
+       
+        
         validation = new ValidationContext(WebModule.class, jarLocation);
     }
 
@@ -116,6 +130,11 @@ public class WebModule implements WsModule {
     public String getModuleId() {
         return moduleId;
     }
+    
+    @Override
+    public String getModulePackageName() {
+        return modulePackageName;
+    }    
 
     public Map<String, Object> getAltDDs() {
         return altDDs;

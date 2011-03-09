@@ -28,14 +28,14 @@ public class LinkResolver<E> {
     private final Map<String, E> byFullName = new TreeMap<String, E>();
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
 
-    public boolean add(String moduleId, String name, E value) {
-        String fullName = moduleId + "#" + name;
+    public boolean add(String modulePackageName, String name, E value) {
+        String fullName = modulePackageName + "#" + name;
         if (byFullName.containsKey(fullName)) {
             // entry already exists
             return false;
         }
 
-        // Full name: moduleId#name -> value
+        // Full name: modulePackageName#name -> value
         byFullName.put(fullName, value);
 
         // Short name: name -> List(values)
@@ -58,8 +58,8 @@ public class LinkResolver<E> {
         return es != null? es: Collections.EMPTY_LIST;
     }
 
-    public E resolveLink(String link, String moduleId) {
-        URI moduleURI = URI.create(moduleId);
+    public E resolveLink(String link, String modulePackageName) {
+        URI moduleURI = URI.create(modulePackageName);
         return resolveLink(link, moduleURI);
     }
 

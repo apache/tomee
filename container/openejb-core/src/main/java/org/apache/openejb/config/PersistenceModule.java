@@ -68,6 +68,11 @@ public class PersistenceModule implements DeploymentModule {
         return null;
     }
 
+    @Override
+    public String getModulePackageName() {
+        return null;
+    }
+
     public ValidationContext getValidation() {
         return null;
     }

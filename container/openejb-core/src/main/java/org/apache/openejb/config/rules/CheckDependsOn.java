@@ -45,12 +45,12 @@ public class CheckDependsOn extends ValidationBase {
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-            String moduleId = ejbModule.getModuleId();
+            String modulePackageName = ejbModule.getModulePackageName();
 
             URI moduleUri = null;
-            if (moduleId != null) {
+            if (modulePackageName != null) {
                 try {
-                    moduleUri = new URI(moduleId);
+                    moduleUri = new URI(modulePackageName);
                 } catch (URISyntaxException e) {
                     return;
                 }
@@ -61,9 +61,9 @@ public class CheckDependsOn extends ValidationBase {
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 Bean b = new Bean(bean, ejbModule, moduleUri, resolver);
 
-                resolver.module.add(ejbModule.getModuleId(), bean.getEjbName(), b);
+                resolver.module.add(ejbModule.getModulePackageName(), bean.getEjbName(), b);
 
-                resolver.app.add(ejbModule.getModuleId(), bean.getEjbName(), b);
+                resolver.app.add(ejbModule.getModulePackageName(), bean.getEjbName(), b);
 
             }
 
