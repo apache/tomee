@@ -47,6 +47,7 @@ public class AppModule implements DeploymentModule {
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final String moduleId;
+    private final String modulePackageName;        
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
 
@@ -77,21 +78,34 @@ public class AppModule implements DeploymentModule {
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
         this.application = application;
-        if (application == null || application.getApplicationName() == null) {
-            String appId = null;
-            if (jarLocation != null) {
-                File file = new File(jarLocation);
-                appId = file.getName();
-                if (file.isFile() && appId.endsWith(".ear")) {
-                    appId = appId.substring(0, appId.length() - 4);
-                }
-            }
-            this.moduleId = appId;
+        
+        String moduleId=null;
+        
+        if (jarLocation != null) {
+            File file = new File(jarLocation);
+            this.modulePackageName = file.getName();
         } else {
-            this.moduleId = application.getApplicationName();
+            this.modulePackageName = null;
         }
+        
+        if (application == null || application.getApplicationName() == null) {
+            
+            if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
+                moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
+            } else if (modulePackageName != null && modulePackageName.endsWith(".ear")) {
+                moduleId = modulePackageName.substring(0, modulePackageName.length() - 4);
+            } else {
+                moduleId = modulePackageName;
+            }
+
+        } else {
+            moduleId = application.getApplicationName();
+        }
+        
         if (this.jarLocation == null) throw new IllegalArgumentException("jarLocation cannot be null");
-        if (this.moduleId == null) throw new IllegalArgumentException("moduleId cannot be null");
+        if (moduleId == null) throw new IllegalArgumentException("moduleId cannot be null");
+        
+        this.moduleId = moduleId;
 
         this.validation = new ValidationContext(AppModule.class, jarLocation);
         this.standaloneModule = standaloneModule;
@@ -179,6 +193,11 @@ public class AppModule implements DeploymentModule {
     public String getModuleId() {
         return moduleId;
     }
+    
+    @Override
+    public String getModulePackageName() {
+        return  modulePackageName; 
+    }    
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -248,4 +267,6 @@ public class AppModule implements DeploymentModule {
                 "moduleId='" + moduleId + '\'' +
                 '}';
     }
+
+
 }

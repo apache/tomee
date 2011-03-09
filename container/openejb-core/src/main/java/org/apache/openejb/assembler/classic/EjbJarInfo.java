@@ -26,6 +26,7 @@ public class EjbJarInfo extends InfoObject {
     public final Properties properties = new Properties();
 
     public String moduleId;
+    public String modulePackageName;
     public String path;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 

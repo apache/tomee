@@ -38,8 +38,10 @@ public class ConnectorModule implements DeploymentModule {
     private ClassLoader classLoader;
     private String jarLocation;
     private final String moduleId;
+    private String modulePackageName;    
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
+
 
     public ConnectorModule(Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
@@ -49,6 +51,13 @@ public class ConnectorModule implements DeploymentModule {
         this.connector = connector;
         this.classLoader = classLoader;
         this.jarLocation = jarLocation;
+        
+        if (jarLocation != null) {
+            File file = new File(jarLocation);
+            this.modulePackageName = file.getName();
+        } else {
+            this.modulePackageName = null;
+        }
 
         if (moduleId == null) {
             if (connector != null && connector.getModuleName() != null) {
@@ -56,13 +65,13 @@ public class ConnectorModule implements DeploymentModule {
             } else if (connector != null && connector.getId() != null) { 
                 moduleId = connector.getId();
             } else {
-                File file = new File(jarLocation);
-                moduleId = file.getName();
-                if (moduleId.endsWith(".unpacked")) {
-                    moduleId = moduleId.substring(0, moduleId.length() - ".unpacked".length());
-                }
-                if (moduleId.endsWith(".rar")) {
-                    moduleId = moduleId.substring(0, moduleId.length() - ".rar".length());
+
+                if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
+                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
+                } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
+                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length());
+                } else {
+                    moduleId = modulePackageName;
                 }
             }
         }
@@ -78,6 +87,11 @@ public class ConnectorModule implements DeploymentModule {
     public String getModuleId() {
         return moduleId;
     }
+    
+    @Override
+    public String getModulePackageName() {
+        return modulePackageName;
+    }    
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -121,4 +135,6 @@ public class ConnectorModule implements DeploymentModule {
                 "moduleId='" + moduleId + '\'' +
                 '}';
     }
+
+
 }
