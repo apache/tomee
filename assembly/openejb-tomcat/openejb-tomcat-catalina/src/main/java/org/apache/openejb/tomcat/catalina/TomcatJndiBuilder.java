@@ -54,6 +54,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.EXTERNAL;
 import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_NAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.JNDI_PROVIDER_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.LOCAL;
+import static org.apache.openejb.tomcat.common.NamingUtil.LOCALBEAN;
 import static org.apache.openejb.tomcat.common.NamingUtil.NAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.RESOURCE_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.UNIT;
@@ -225,7 +226,7 @@ public class TomcatJndiBuilder {
         ejb.setProperty(NAME, ref.referenceName.replaceAll("^comp/env/", ""));
         ejb.setHome(ref.homeClassName);
         ejb.setRemote(null);
-        ejb.setProperty(LOCAL, ref.interfaceClassName);
+        ejb.setProperty(ref.localbean ? LOCALBEAN : LOCAL, ref.interfaceClassName);
         ejb.setLink(null);
         ejb.setType(ref.interfaceClassName);
 

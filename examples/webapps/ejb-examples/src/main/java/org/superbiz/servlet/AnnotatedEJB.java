@@ -17,11 +17,13 @@
  */
 package org.superbiz.servlet;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
 import javax.annotation.Resource;
 
 @Stateless
+@LocalBean
 public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
     @Resource
     private DataSource ds;

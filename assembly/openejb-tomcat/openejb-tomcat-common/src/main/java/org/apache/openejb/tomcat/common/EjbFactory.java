@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import static org.apache.openejb.tomcat.common.NamingUtil.DEPLOYMENT_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTERNAL;
 import static org.apache.openejb.tomcat.common.NamingUtil.LOCAL;
+import static org.apache.openejb.tomcat.common.NamingUtil.LOCALBEAN;
 import static org.apache.openejb.tomcat.common.NamingUtil.REMOTE;
 import static org.apache.openejb.tomcat.common.NamingUtil.getProperty;
 import static org.apache.openejb.tomcat.common.NamingUtil.isPropertyTrue;
@@ -66,6 +67,12 @@ public class EjbFactory extends AbstractObjectFactory {
         // get and verify interface type
         InterfaceType type = InterfaceType.BUSINESS_REMOTE;
         String interfaceType = getProperty(reference, REMOTE);
+
+        if (interfaceType == null) {
+            type = InterfaceType.LOCALBEAN;
+            interfaceType = getProperty(reference, LOCALBEAN);
+        }
+      
         if (interfaceType == null) {
             type = InterfaceType.BUSINESS_LOCAL;
             interfaceType = getProperty(reference, LOCAL);
