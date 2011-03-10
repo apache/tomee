@@ -18,6 +18,7 @@
 
 package org.apache.openejb.jee.oejb3;
 
+import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.EnterpriseBean;
 
@@ -37,12 +38,15 @@ import java.util.Properties;
 /**
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"properties","ejbDeployment"})
+@XmlType(propOrder = {"moduleName", "properties","ejbDeployment"})
 @XmlRootElement(name = "openejb-jar")
-public class OpenejbJar {
+public class OpenejbJar implements NamedModule {
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(PropertiesAdapter.class)
     protected Properties properties;
+
+    @XmlElement(name = "module-name")
+    protected String moduleName;
 
     @XmlElement(name = "ejb-deployment", required = true)
     protected List<EjbDeployment> ejbDeployment;
@@ -68,6 +72,20 @@ public class OpenejbJar {
             map.put(deployment.getEjbName(), deployment);
         }
         return map;
+    }
+
+    @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public int getEjbDeploymentCount() {

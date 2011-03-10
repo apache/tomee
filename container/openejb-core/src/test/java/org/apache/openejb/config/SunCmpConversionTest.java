@@ -91,7 +91,7 @@ public class SunCmpConversionTest extends TestCase {
         EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, new ByteArrayInputStream(readContent(in).getBytes()));
 
         // create and configure the module
-        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, ejbJar, new OpenejbJar());
+        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", null, ejbJar, new OpenejbJar());
         InitEjbDeployments initEjbDeployments = new InitEjbDeployments();
         initEjbDeployments.deploy(ejbModule);
         AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");

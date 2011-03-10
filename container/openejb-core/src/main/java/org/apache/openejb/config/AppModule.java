@@ -18,8 +18,10 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,21 +44,26 @@ public class AppModule implements DeploymentModule {
     private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
     private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
     private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
-    private final String jarLocation;
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
-    private final String moduleId;
-    private final String modulePackageName;        
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
+
+    private ID id;
 
     public AppModule(ClassLoader classLoader, String jarLocation) {
         this(classLoader, jarLocation, null, false);
     }
 
     public <T extends DeploymentModule> AppModule(T module) {
-        this(module.getClassLoader(), module.getJarLocation(), new Application(module.getModuleId()), true);
+        this.standaloneModule = true;
+        this.classLoader = module.getClassLoader();
+        this.application = new Application(module.getModuleId());
+
+        this.id = new ID(null, application, null, module.getFile(), module.getModuleUri(), this);
+        this.validation = new ValidationContext(this);
+
         final Class<? extends DeploymentModule> type = module.getClass();
 
         if (type == EjbModule.class) {
@@ -76,38 +83,11 @@ public class AppModule implements DeploymentModule {
 
     public AppModule(ClassLoader classLoader, String jarLocation, Application application, boolean standaloneModule) {
         this.classLoader = classLoader;
-        this.jarLocation = jarLocation;
         this.application = application;
         
-        String moduleId=null;
-        
-        if (jarLocation != null) {
-            File file = new File(jarLocation);
-            this.modulePackageName = file.getName();
-        } else {
-            this.modulePackageName = null;
-        }
-        
-        if (application == null || application.getApplicationName() == null) {
-            
-            if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
-                moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
-            } else if (modulePackageName != null && modulePackageName.endsWith(".ear")) {
-                moduleId = modulePackageName.substring(0, modulePackageName.length() - 4);
-            } else {
-                moduleId = modulePackageName;
-            }
-
-        } else {
-            moduleId = application.getApplicationName();
-        }
-        
-        if (this.jarLocation == null) throw new IllegalArgumentException("jarLocation cannot be null");
-        if (moduleId == null) throw new IllegalArgumentException("moduleId cannot be null");
-        
-        this.moduleId = moduleId;
-
-        this.validation = new ValidationContext(AppModule.class, jarLocation);
+        File file = (jarLocation == null) ? null : new File(jarLocation);
+        this.id = new ID(null, application, null, file, null, this);
+        this.validation = new ValidationContext(this);
         this.standaloneModule = standaloneModule;
     }
 
@@ -190,14 +170,21 @@ public class AppModule implements DeploymentModule {
         return contexts;
     }
 
-    public String getModuleId() {
-        return moduleId;
+    public String getJarLocation() {
+        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
-    
-    @Override
-    public String getModulePackageName() {
-        return  modulePackageName; 
-    }    
+
+    public String getModuleId() {
+        return id.getName();
+    }
+
+    public File getFile() {
+        return id.getLocation();
+    }
+
+    public URI getModuleUri() {
+        return id.getUri();
+    }
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -221,10 +208,6 @@ public class AppModule implements DeploymentModule {
 
     public List<PersistenceModule> getPersistenceModules() {
         return persistenceModules;
-    }
-
-    public String getJarLocation() {
-        return jarLocation;
     }
 
     public List<URL> getAdditionalLibraries() {
@@ -264,7 +247,7 @@ public class AppModule implements DeploymentModule {
     @Override
     public String toString() {
         return "AppModule{" +
-                "moduleId='" + moduleId + '\'' +
+                "moduleId='" + id.getName() + '\'' +
                 '}';
     }
 

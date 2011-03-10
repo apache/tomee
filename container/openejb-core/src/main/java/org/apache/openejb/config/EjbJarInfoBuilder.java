@@ -142,17 +142,8 @@ public class EjbJarInfoBuilder {
         EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.path = jar.getJarLocation();
         ejbJar.moduleId = jar.getModuleId();
-        ejbJar.modulePackageName=jar.getModulePackageName();
+        ejbJar.moduleUri =jar.getModuleUri();
 
-        
-        if (ejbJar.modulePackageName == null) {
-            ejbJar.modulePackageName = new File(ejbJar.path).getName();
-        }
-        
-        if (ejbJar.moduleId == null) {
-            ejbJar.moduleId = ejbJar.modulePackageName.replaceFirst(".jar$","");
-        }        
-        
         ejbJar.watchedResources.addAll(jar.getWatchedResources());
 
         ejbJar.properties.putAll(jar.getOpenejbJar().getProperties());

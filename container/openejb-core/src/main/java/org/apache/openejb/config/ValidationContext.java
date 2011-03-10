@@ -16,23 +16,33 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.jee.was.v6.common.QName;
+
 import java.util.List;
 import java.util.ArrayList;
 
 /**
  * @version $Rev$ $Date$
  */
-public class ValidationContext implements ValidationResults{
+public class ValidationContext implements ValidationResults {
     private final List<ValidationFailure> failures = new ArrayList<ValidationFailure>();
     private final List<ValidationWarning> warnings = new ArrayList<ValidationWarning>();
     private final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-    private final String jarPath;
     private final String moduleType;
+    private final String name;
+    private final DeploymentModule module;
 
-    public ValidationContext(Class<? extends DeploymentModule> moduleType, String jarPath) {
+    public ValidationContext(Class<? extends DeploymentModule> moduleType, String name) {
         this.moduleType = moduleType.getSimpleName();
-        this.jarPath = jarPath;
+        this.name = name;
+        this.module = null;
+    }
+
+    public ValidationContext(DeploymentModule module) {
+        this.moduleType = module.getClass().getSimpleName();
+        this.module = module;
+        this.name = null;
     }
 
     public void fail(String component, String key, Object... details) {
@@ -95,8 +105,8 @@ public class ValidationContext implements ValidationResults{
         return errors.size() > 0;
     }
 
-    public String getJarPath() {
-        return jarPath;
+    public String getName() {
+        return (module == null) ? name : module.getModuleId();
     }
 
     public String getModuleType() {

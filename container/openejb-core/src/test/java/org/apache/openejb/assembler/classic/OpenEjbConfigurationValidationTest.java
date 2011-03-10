@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -134,6 +135,10 @@ public class OpenEjbConfigurationValidationTest extends TestCase {
 
             // OK
             if (QName.class.isAssignableFrom(type)) {
+                continue;
+            }
+
+            if (URI.class.isAssignableFrom(type)) {
                 continue;
             }
 

@@ -464,8 +464,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public AppContext createApplication(AppInfo appInfo, ClassLoader classLoader, boolean start) throws OpenEJBException, IOException, NamingException {
         // The path is used in the UrlCache, command line deployer, JNDI name templates, tomcat integration and a few other places
-        if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
+        if (appInfo.path == null) appInfo.path = appInfo.appId;
 
         logger.info("createApplication.start", appInfo.path);
 
@@ -1048,10 +1048,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public ClassLoader createAppClassLoader(AppInfo appInfo) throws OpenEJBException, IOException {
         List<URL> jars = new ArrayList<URL>();
         for (EjbJarInfo info : appInfo.ejbJars) {
-            jars.add(toUrl(info.path));
+            if (info.path != null) jars.add(toUrl(info.path));
         }
         for (ClientInfo info : appInfo.clients) {
-            jars.add(toUrl(info.path));
+            if (info.path != null) jars.add(toUrl(info.path));
         }
         for (ConnectorInfo info : appInfo.connectors) {
             for (String jarPath : info.libs) {

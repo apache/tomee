@@ -103,9 +103,9 @@ class AppInfoBuilder {
         appInfo.standaloneModule = appModule.isStandaloneModule();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
 
-        if (appInfo.path == null) throw new IllegalArgumentException("AppInfo.path cannot be null");
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
-        
+        if (appInfo.path == null) appInfo.path = appInfo.appId;
+
         //
         //  J2EE Connectors
         //
@@ -150,7 +150,7 @@ class AppInfoBuilder {
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-                ejbJarInfos.put(ejbJarInfo.path, ejbJarInfo);
+                ejbJarInfos.put(ejbJarInfo.moduleId, ejbJarInfo);
 
                 appInfo.ejbJars.add(ejbJarInfo);
 
@@ -172,7 +172,7 @@ class AppInfoBuilder {
         // Build the JNDI tree for each ejb
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule.getJarLocation());
+            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule.getModuleId());
 
             Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 

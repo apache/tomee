@@ -51,7 +51,7 @@ public class ConfigurationFactoryTest {
         ejbJar.setMetadataComplete(true);
         EjbJarInfo info = factory.configureApplication(ejbJar);
         // not much to assert
-        assertEquals(id, info.path);
+        assertEquals(id, info.moduleId);
     }
 
     @Test

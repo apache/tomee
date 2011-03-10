@@ -93,7 +93,7 @@ import java.util.Map;
         "dataSource"
 
 })
-public class ApplicationClient implements JndiConsumer, Lifecycle {
+public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
 
     @XmlElement(name = "module-name", required = true)
     protected String moduleName;

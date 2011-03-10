@@ -14,25 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.config;
+package org.apache.openejb.jee;
 
 /**
  * @version $Rev$ $Date$
  */
-public interface ValidationResults {
-    ValidationFailure[] getFailures();
+public interface NamedModule {
 
-    ValidationWarning[] getWarnings();
-
-    ValidationError[] getErrors();
-
-    boolean hasWarnings();
-
-    boolean hasFailures();
-
-    boolean hasErrors();
-
-    String getName();
-
-    String getModuleType();
+    String getId();
+    String getModuleName();
 }

@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,20 +44,25 @@ public class WebModule implements WsModule {
     private String host;
     private String contextRoot;
     private ClassLoader classLoader;
-    private String jarLocation;
-    private final String moduleId;
-    private String modulePackageName;    
     private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
     private AbstractFinder finder;
 
+    private ID id;
+    
     // keep the list of filtered URL we got after applying include/exclude pattern (@See DeploymentsResolver.loadFromClasspath)
     private List<URL> urls;
 
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
+
+
+        File file = (jarLocation == null) ? null : new File(jarLocation);
+        this.id = new ID(null, webApp, moduleId, file, null, this);
+        this.validation = new ValidationContext(this);
+
         if (contextRoot == null) {
             contextRoot = jarLocation.substring(jarLocation.lastIndexOf(System.getProperty("file.separator")));
             if (contextRoot.endsWith(".unpacked")) {
@@ -69,42 +75,24 @@ public class WebModule implements WsModule {
         if (contextRoot.startsWith("/")) contextRoot = contextRoot.substring(1);
         this.contextRoot = contextRoot;
         this.classLoader = classLoader;
-        this.jarLocation = jarLocation;
-        
-        if (jarLocation != null) {
-            File file = new File(jarLocation);
-            this.modulePackageName = file.getName();
-        } else {
-            this.modulePackageName = null;
-        }
 
         if (webApp != null) webApp.setContextRoot(contextRoot);
+    }
 
-        if (moduleId == null) {
-            
-                if (webApp != null && webApp.getModuleName() != null) {
-                    moduleId = webApp.getModuleName();
-                } else if (webApp != null && webApp.getId() != null) {
-                    moduleId = webApp.getId();
-                } else {
-    
-                    if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
-                        moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
-                    } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
-                        moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length());
-                    } else {
-                        moduleId = modulePackageName;
-                    }
-                }
-            
-        } 
+    public String getJarLocation() {
+        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
+    }
 
-        
-            
-        this.moduleId = moduleId;
-       
-        
-        validation = new ValidationContext(WebModule.class, jarLocation);
+    public String getModuleId() {
+        return id.getName();
+    }
+
+    public File getFile() {
+        return id.getLocation();
+    }
+
+    public URI getModuleUri() {
+        return id.getUri();
     }
 
     public List<URL> getUrls() {
@@ -126,15 +114,6 @@ public class WebModule implements WsModule {
     public ValidationContext getValidation() {
         return validation;
     }
-
-    public String getModuleId() {
-        return moduleId;
-    }
-    
-    @Override
-    public String getModulePackageName() {
-        return modulePackageName;
-    }    
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -164,15 +143,6 @@ public class WebModule implements WsModule {
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
-
-    public String getJarLocation() {
-        return jarLocation;
-    }
-
-    public void setJarLocation(String jarLocation) {
-        this.jarLocation = jarLocation;
-    }
-
 
     public String getContextRoot() {
         return contextRoot;
@@ -207,7 +177,7 @@ public class WebModule implements WsModule {
     @Override
     public String toString() {
         return "WebModule{" +
-                "moduleId='" + moduleId + '\'' +
+                "moduleId='" + id.getName() + '\'' +
                 ", contextRoot='" + contextRoot + '\'' +
                 '}';
     }

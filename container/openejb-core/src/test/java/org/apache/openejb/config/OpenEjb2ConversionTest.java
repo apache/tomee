@@ -137,7 +137,7 @@ public class OpenEjb2ConversionTest extends TestCase {
 
     private AppModule deploy(String ejbJarFileName, String openejbJarFileName) throws OpenEJBException {
         // create and configure the module
-        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", ejbJarFileName, null, null);
+        EjbModule ejbModule = new EjbModule(getClass().getClassLoader(), "TestModule", null, null, null);
         AppModule appModule = new AppModule(getClass().getClassLoader(), "TestModule");
         appModule.getEjbModules().add(ejbModule);
 
