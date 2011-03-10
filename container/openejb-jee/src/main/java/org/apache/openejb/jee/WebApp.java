@@ -98,7 +98,7 @@ import java.util.Map;
         "moduleName"
 
 })
-public class WebApp implements WebCommon, Lifecycle {
+public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlTransient
     private String contextRoot;
 

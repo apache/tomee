@@ -64,7 +64,7 @@ public class FinderFactory {
             }
             return new ClassFinder(module.getClassLoader(), url);
         } else {
-            return new ClassFinder(module.getClassLoader());
+            return new ClassFinder();
         }
     }
 }

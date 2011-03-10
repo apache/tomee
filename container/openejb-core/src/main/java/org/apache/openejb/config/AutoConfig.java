@@ -165,7 +165,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         for (EjbModule ejbModule : appModule.getEjbModules()) {
-            URI moduleURI = URI.create(ejbModule.getModulePackageName());
+            URI moduleURI = ejbModule.getModuleUri();
 
             for (JndiConsumer component : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 processPersistenceRefs(component, ejbModule, persistenceUnits, moduleURI);
@@ -408,22 +408,19 @@ public class AutoConfig implements DynamicDeployer {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
             if (assembly != null) {
-                String modulePackageName = ejbModule.getModulePackageName();
                 for (MessageDestination destination : assembly.getMessageDestination()) {
-                    destinationResolver.add(modulePackageName, destination.getMessageDestinationName(), destination);
+                    destinationResolver.add(ejbModule.getModuleUri(), destination.getMessageDestinationName(), destination);
                 }
             }
         }
         for (ClientModule clientModule : appModule.getClientModules()) {
-            String modulePackageName = appModule.getModulePackageName();
             for (MessageDestination destination : clientModule.getApplicationClient().getMessageDestination()) {
-                destinationResolver.add(modulePackageName, destination.getMessageDestinationName(), destination);
+                destinationResolver.add(appModule.getModuleUri(), destination.getMessageDestinationName(), destination);
             }
         }
         for (WebModule webModule : appModule.getWebModules()) {
-            String modulePackageName = appModule.getModulePackageName();
             for (MessageDestination destination : webModule.getWebApp().getMessageDestination()) {
-                destinationResolver.add(modulePackageName, destination.getMessageDestinationName(), destination);
+                destinationResolver.add(appModule.getModuleUri(), destination.getMessageDestinationName(), destination);
             }
         }
 
@@ -438,7 +435,7 @@ public class AutoConfig implements DynamicDeployer {
                 continue;
             }
 
-            URI moduleUri = URI.create(ejbModule.getModulePackageName());
+            URI moduleUri = ejbModule.getModuleUri();
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -495,7 +492,7 @@ public class AutoConfig implements DynamicDeployer {
                 continue;
             }
 
-            URI moduleUri = URI.create(ejbModule.getModulePackageName());
+            URI moduleUri = ejbModule.getModuleUri();
             OpenejbJar openejbJar = ejbModule.getOpenejbJar();
 
             for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -522,7 +519,7 @@ public class AutoConfig implements DynamicDeployer {
         }
 
         for (ClientModule clientModule : appModule.getClientModules()) {
-            URI moduleUri = URI.create(clientModule.getModulePackageName());
+            URI moduleUri = clientModule.getModuleUri();
             for (MessageDestinationRef ref : clientModule.getApplicationClient().getMessageDestinationRef()) {
                 String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {

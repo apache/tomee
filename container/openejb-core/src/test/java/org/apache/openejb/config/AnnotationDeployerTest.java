@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.xbean.finder.ClassFinder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,9 +47,7 @@ public class AnnotationDeployerTest {
      *  For http://issues.apache.org/jira/browse/OPENEJB-980
      */
     public void applicationExceptionInheritanceTest() throws Exception {
-        EjbJar ejbJar = new EjbJar("test-classes");
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        ejbModule.setJarLocation(null); // TODO check why it's necessary now
+        EjbModule ejbModule = testModule();
         AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
         ejbModule = discvrAnnBeans.deploy(ejbModule);
 
@@ -63,7 +62,22 @@ public class AnnotationDeployerTest {
         appEx = assemblyDescriptor.getApplicationException(ValueRequiredException.class);
         assertThat(appEx, nullValue());
     }
-    
+
+    private EjbModule testModule() {
+        EjbJar ejbJar = new EjbJar("test-classes");
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.setFinder(new ClassFinder(AnnotationDeployerTest.class,
+                BusinessException.class,
+                Exception.class,
+                GenericInterface.class,
+                InterceptedSLSBean.class,
+                MyMainClass.class,
+                TestLocalBean.class,
+                ValueRequiredException.class
+        ));
+        return ejbModule;
+    }
+
     @Test
     /**
      *  For https://issues.apache.org/jira/browse/OPENEJB-1063
@@ -96,10 +110,9 @@ public class AnnotationDeployerTest {
      */
     @Test
     public void interceptingGenericBusinessMethodCalls() throws Exception {
-        EjbJar ejbJar = new EjbJar("test-classes");
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        ejbModule.setJarLocation(null);
-
+        EjbModule ejbModule = testModule();
+        EjbJar ejbJar = ejbModule.getEjbJar();
+        
         AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
         ejbModule = discvrAnnBeans.deploy(ejbModule);
 
@@ -113,9 +126,8 @@ public class AnnotationDeployerTest {
      */
     @Test
     public void testLocalBean() throws Exception {
-        EjbJar ejbJar = new EjbJar("test-classes");
-        EjbModule ejbModule = new EjbModule(ejbJar);
-        ejbModule.setJarLocation(null);
+        EjbModule ejbModule = testModule();
+        EjbJar ejbJar = ejbModule.getEjbJar();
 
         AppModule appModule = new AppModule(Thread.currentThread().getContextClassLoader(), "myapp");
         appModule.getEjbModules().add(ejbModule);

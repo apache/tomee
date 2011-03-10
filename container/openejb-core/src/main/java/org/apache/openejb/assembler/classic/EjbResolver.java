@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.util.LinkResolver;
 
 import java.net.URI;
@@ -86,17 +85,17 @@ public class EjbResolver {
 
     private void add(EjbJarInfo ejbJarInfo) {
         for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
-            index(ejbJarInfo.modulePackageName, bean);
+            index(ejbJarInfo.moduleUri, bean);
         }
     }
 
-    private void index(String modulePackageName, EnterpriseBeanInfo bean) {
+    private void index(URI moduleURI, EnterpriseBeanInfo bean) {
         // All deployments: deploymentId -> bean
 
         deployments.put(bean.ejbDeploymentId, bean);
 
         // add to the link resolver
-        resolver.add(modulePackageName, bean.ejbName, bean.ejbDeploymentId);
+        resolver.add(moduleURI, bean.ejbName, bean.ejbDeploymentId);
 
         // Remote: Interfaces(home,object) -> deploymentId
         if (bean.remote != null) {

@@ -96,7 +96,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "messageDestination",
     "dataSource"
 })
-public class Application implements JndiConsumer {
+public class Application implements JndiConsumer, NamedModule {
 
     @XmlElement(name = "application-name")
     protected String applicationName;
@@ -160,6 +160,11 @@ public class Application implements JndiConsumer {
 
     public void setApplicationName(String value) {
         this.applicationName = value;
+    }
+
+    @Override
+    public String getModuleName() {
+        return getApplicationName();
     }
 
     @XmlElement(name = "description", required = true)

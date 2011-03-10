@@ -17,8 +17,10 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.xbean.finder.AbstractFinder;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -33,7 +35,6 @@ import java.io.File;
 public class ClientModule implements DeploymentModule {
     private final ValidationContext validation;
     private ApplicationClient applicationClient;
-    private String jarLocation;
     private ClassLoader classLoader;
     private String mainClass;
     private boolean ejbModuleGenerated;
@@ -41,37 +42,17 @@ public class ClientModule implements DeploymentModule {
     private final Set<String> localClients = new HashSet<String>();
     private final Set<String> remoteClients = new HashSet<String>();
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
-    private final String moduleId;
-    private String modulePackageName;        
+    private ID id;
     private final Set<String> watchedResources = new TreeSet<String>();
 
     public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass, String moduleId) {
         this.applicationClient = applicationClient;
         this.classLoader = classLoader;
-        this.jarLocation = jarLocation;
         this.mainClass = mainClass;
         
-        File file = new File(jarLocation);
-        this.modulePackageName = file.getName();
-
-        if (moduleId == null) {
-            if (applicationClient != null && applicationClient.getModuleName() != null) {
-                moduleId = applicationClient.getModuleName();
-            } else if (applicationClient != null && applicationClient.getId() != null) {
-                moduleId = applicationClient.getId();
-            } else {
-                if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
-                } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length());
-                } else {
-                    moduleId = modulePackageName;
-                }
-            }
-        }
-
-        this.moduleId = moduleId;
-        validation = new ValidationContext(ClientModule.class, jarLocation);
+        File file = (jarLocation == null) ? null : new File(jarLocation);
+        this.id = new ID(null, applicationClient, moduleId, file, null, this);
+        this.validation = new ValidationContext(this);
     }
 
     public boolean isEjbModuleGenerated() {
@@ -98,14 +79,25 @@ public class ClientModule implements DeploymentModule {
         return validation;
     }
 
-    public String getModuleId() {
-        return moduleId;
+    public String getJarLocation() {
+        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
-    
-    @Override
-    public String getModulePackageName() {
-        return modulePackageName;
-    }    
+
+    public void setJarLocation(String jarLocation) {
+        this.id = new ID(null, applicationClient, id.getName(), new File(jarLocation), id.getUri(), this);
+    }
+
+    public String getModuleId() {
+        return id.getName();
+    }
+
+    public File getFile() {
+        return id.getLocation();
+    }
+
+    public URI getModuleUri() {
+        return id.getUri();
+    }
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -135,14 +127,6 @@ public class ClientModule implements DeploymentModule {
         this.classLoader = classLoader;
     }
 
-    public String getJarLocation() {
-        return jarLocation;
-    }
-
-    public void setJarLocation(String jarLocation) {
-        this.jarLocation = jarLocation;
-    }
-
     public String getMainClass() {
         return mainClass;
     }
@@ -158,7 +142,7 @@ public class ClientModule implements DeploymentModule {
     @Override
     public String toString() {
         return "ClientModule{" +
-                "moduleId='" + moduleId + '\'' +
+                "moduleId='" + id.getName() + '\'' +
                 ", mainClass='" + mainClass + '\'' +
                 '}';
     }

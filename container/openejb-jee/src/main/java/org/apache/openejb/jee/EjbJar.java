@@ -78,7 +78,7 @@ import java.util.Collection;
         "assemblyDescriptor",
         "ejbClientJar"
         })
-public class EjbJar {
+public class EjbJar implements NamedModule {
 
     @XmlElement(name = "module-name")
     protected String moduleName;

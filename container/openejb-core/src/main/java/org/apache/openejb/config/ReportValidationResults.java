@@ -57,7 +57,7 @@ public class ReportValidationResults implements DynamicDeployer {
             logResults(context, level);
         }
 
-        ValidationContext uberContext = new ValidationContext(AppModule.class, appModule.getValidation().getJarPath());
+        ValidationContext uberContext = new ValidationContext(appModule);
         for (ValidationContext context : contexts) {
             for (ValidationError error : context.getErrors()) {
                 uberContext.addError(error);
@@ -79,7 +79,7 @@ public class ReportValidationResults implements DynamicDeployer {
             logger.info("Set the '"+VALIDATION_LEVEL+"' system property to "+ join(" or ", levels) +" for increased validation details.");
         }
 
-        validationFailedException = new ValidationFailedException("Module failed validation. "+uberContext.getModuleType()+"(path="+uberContext.getJarPath()+")", uberContext, validationFailedException);
+        validationFailedException = new ValidationFailedException("Module failed validation. " + uberContext.getModuleType() + "(name=" + uberContext.getName() + ")", uberContext, validationFailedException);
 
         if (validationFailedException != null) throw validationFailedException;
 
@@ -102,13 +102,13 @@ public class ReportValidationResults implements DynamicDeployer {
 
         if (context.hasErrors() || context.hasFailures()) {
 
-            logger.error("Invalid "+context.getModuleType()+"(path="+context.getJarPath()+")");
+            logger.error("Invalid "+context.getModuleType()+"(path="+context.getName()+")");
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
         } else if (context.hasWarnings()) {
             if (context.getWarnings().length == 1) {
-                logger.warning(context.getWarnings().length +" warning for "+context.getModuleType()+"(path="+context.getJarPath()+")");
+                logger.warning(context.getWarnings().length +" warning for "+context.getModuleType()+"(path="+context.getName()+")");
             } else {
-                logger.warning(context.getWarnings().length +" warnings for "+context.getModuleType()+"(path="+context.getJarPath()+")");
+                logger.warning(context.getWarnings().length +" warnings for "+context.getModuleType()+"(path="+context.getName()+")");
             }
         }
     }

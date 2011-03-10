@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.net.URI;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -26,7 +27,7 @@ public class EjbJarInfo extends InfoObject {
     public final Properties properties = new Properties();
 
     public String moduleId;
-    public String modulePackageName;
+    public URI moduleUri;
     public String path;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 

@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.Connector;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,13 +37,11 @@ public class ConnectorModule implements DeploymentModule {
 
     private Connector connector;
     private ClassLoader classLoader;
-    private String jarLocation;
-    private final String moduleId;
-    private String modulePackageName;    
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
-
+    private ID id;
+    
     public ConnectorModule(Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
     }
@@ -50,48 +49,31 @@ public class ConnectorModule implements DeploymentModule {
     public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
         this.classLoader = classLoader;
-        this.jarLocation = jarLocation;
-        
-        if (jarLocation != null) {
-            File file = new File(jarLocation);
-            this.modulePackageName = file.getName();
-        } else {
-            this.modulePackageName = null;
-        }
 
-        if (moduleId == null) {
-            if (connector != null && connector.getModuleName() != null) {
-                moduleId = connector.getModuleName();
-            } else if (connector != null && connector.getId() != null) { 
-                moduleId = connector.getId();
-            } else {
-
-                if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
-                } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length());
-                } else {
-                    moduleId = modulePackageName;
-                }
-            }
-        }
-
-        this.moduleId = moduleId;
-        validation = new ValidationContext(ConnectorModule.class, jarLocation);
+        File file = (jarLocation == null) ? null : new File(jarLocation);
+        this.id = new ID(null, connector, null, file, null, this);
+        this.validation = new ValidationContext(this);
     }
 
     public ValidationContext getValidation() {
         return validation;
     }
 
-    public String getModuleId() {
-        return moduleId;
+    public String getJarLocation() {
+        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
-    
-    @Override
-    public String getModulePackageName() {
-        return modulePackageName;
-    }    
+
+    public String getModuleId() {
+        return id.getName();
+    }
+
+    public File getFile() {
+        return id.getLocation();
+    }
+
+    public URI getModuleUri() {
+        return id.getUri();
+    }
 
     public Map<String, Object> getAltDDs() {
         return altDDs;
@@ -113,14 +95,6 @@ public class ConnectorModule implements DeploymentModule {
         this.classLoader = classLoader;
     }
 
-    public String getJarLocation() {
-        return jarLocation;
-    }
-
-    public void setJarLocation(String jarLocation) {
-        this.jarLocation = jarLocation;
-    }
-
     public List<URL> getLibraries() {
         return libraries;
     }
@@ -132,7 +106,7 @@ public class ConnectorModule implements DeploymentModule {
     @Override
     public String toString() {
         return "ConnectorModule{" +
-                "moduleId='" + moduleId + '\'' +
+                "moduleId='" + id.getName() + '\'' +
                 '}';
     }
 

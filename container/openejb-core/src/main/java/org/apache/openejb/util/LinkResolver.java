@@ -17,6 +17,9 @@
  */
 package org.apache.openejb.util;
 
+import org.apache.openejb.loader.JarLocation;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -25,18 +28,23 @@ import java.util.Collections;
 import java.net.URI;
 
 public class LinkResolver<E> {
-    private final Map<String, E> byFullName = new TreeMap<String, E>();
+    private final Map<URI, E> byFullName = new TreeMap<URI, E>();
     private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
 
     public boolean add(String modulePackageName, String name, E value) {
-        String fullName = modulePackageName + "#" + name;
-        if (byFullName.containsKey(fullName)) {
+        return add(URI.create(modulePackageName), name, value);
+    }
+
+    public boolean add(URI moduleURI, String name, E value) {
+        URI uri = resolve(moduleURI, name);
+
+        if (byFullName.containsKey(uri)) {
             // entry already exists
             return false;
         }
 
         // Full name: modulePackageName#name -> value
-        byFullName.put(fullName, value);
+        byFullName.put(uri, value);
 
         // Short name: name -> List(values)
         Collection<E> values = byShortName.get(name);
@@ -47,6 +55,12 @@ public class LinkResolver<E> {
         values.add(value);
 
         return true;
+    }
+
+    private URI resolve(URI moduleURI, String name) {
+        name = name.replaceAll(" ", "%20");
+        URI uri = moduleURI.resolve("#" + name);
+        return uri;
     }
 
     public Collection<E> values() {
@@ -68,7 +82,7 @@ public class LinkResolver<E> {
             // check for a name in the current module
             E value = null;
             if (moduleUri != null) {
-                value = byFullName.get(moduleUri.toString() + "#" + link);
+                value = byFullName.get(resolve(moduleUri, link));
             }
             if (value != null) {
                 return value;
@@ -83,8 +97,8 @@ public class LinkResolver<E> {
             return value;
         } else if (moduleUri != null) {
             // full (absolute) name
-            String fullName = moduleUri.resolve(link).toString();
-            E value = byFullName.get(fullName);
+            URI uri = moduleUri.resolve(link);
+            E value = byFullName.get(uri);
             return value;
         } else {
             // Absolute reference in a standalone module

@@ -19,13 +19,15 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.xbean.finder.AbstractFinder;
 
 import java.io.File;
-import java.util.Map;
+import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Class is to remain "dumb" and should not have deployment logic added to it.
  * Class is intentionally not an interface as that would encourage "smart" implementations
+ *
  * @version $Revision$ $Date$
  */
 public class EjbModule implements WsModule {
@@ -40,22 +43,18 @@ public class EjbModule implements WsModule {
     private final ValidationContext validation;
 
     private ClassLoader classLoader;
-    private String jarLocation;
+
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
     private Webservices webservices;
-    private String moduleId;
-    private String modulePackageName;
-
-
-
 
     private final AtomicReference<AbstractFinder> finder = new AtomicReference<AbstractFinder>();
-    private final Map<String,Object> altDDs = new HashMap<String,Object>();
+    private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private Beans beans;
 
     private ClientModule clientModule;
+    private ID id;
 
     public EjbModule(EjbJar ejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
@@ -73,46 +72,12 @@ public class EjbModule implements WsModule {
         this.ejbJar = ejbJar;
         this.openejbJar = openejbJar;
 
-        if (jarURI == null){
-            if (moduleId != null){
-                jarURI = moduleId;
-            } else if (ejbJar.getId() != null && !ejbJar.getId().equals("")){
-                jarURI = ejbJar.getId();
-            } else {
-                jarURI = ejbJar.toString();
-            }
-        }
-        this.jarLocation = jarURI;
-        
-        if (jarLocation != null) {
-            File file = new File(jarLocation);
-            this.modulePackageName = file.getName();
-        } else {
-            this.modulePackageName = null;
-        }
-        
-        if (moduleId == null) {
-            if (ejbJar != null && ejbJar.getModuleName() != null) {
-                moduleId = ejbJar.getModuleName();
-            } else if (ejbJar != null && ejbJar.getId() != null) {
-                moduleId = ejbJar.getId();
-            } else if (modulePackageName == null) {
-                    moduleId = jarURI;
-            } else {
-                
-                if (modulePackageName != null && modulePackageName.endsWith(".unpacked")) {
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".unpacked".length());
-                } else if (modulePackageName != null && modulePackageName.endsWith(".jar")) {
+        File file = null;
 
-                    moduleId = modulePackageName.substring(0, modulePackageName.length() - ".jar".length() );
-                }else {
-                    moduleId = modulePackageName; 
-                }
-            }
-        }
-        
-        this.moduleId = moduleId;
-        validation = new ValidationContext(EjbModule.class, jarLocation);
+        if (jarURI != null) file = new File(jarURI);
+
+        this.id = new ID(openejbJar, ejbJar, moduleId, file, null, this);
+        this.validation = new ValidationContext(this);
     }
 
     public EjbModule(ClassLoader classLoader, String jarURI, EjbJar ejbJar, OpenejbJar openejbJar) {
@@ -134,7 +99,7 @@ public class EjbModule implements WsModule {
     public void setFinder(AbstractFinder finder) {
         this.finder.set(finder);
     }
-    
+
     public ClientModule getClientModule() {
         return clientModule;
     }
@@ -172,28 +137,35 @@ public class EjbModule implements WsModule {
     }
 
     public String getJarLocation() {
-        return jarLocation;
+        return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
 
     public void setJarLocation(String jarLocation) {
-        this.jarLocation = jarLocation;
+        this.id = new ID(openejbJar, ejbJar, id.getName(), new File(jarLocation), id.getUri(), this);
     }
 
     public String getModuleId() {
-        return moduleId;
+        return id.getName();
     }
 
+    public File getFile() {
+        return id.getLocation();
+    }
+    
     public void setModuleId(String moduleId) {
-        this.moduleId = moduleId;
+        if (openejbJar == null) openejbJar = new OpenejbJar();
+        openejbJar.setModuleName(moduleId);
+        
+        this.id = new ID(openejbJar, ejbJar, id.getName(), id.getLocation(), id.getUri(), this);
     }
-    
-    public String getModulePackageName() {
-        return modulePackageName;
+
+    public URI getModuleUri() {
+        return id.getUri();
     }
-    
-    public void setModulePackageName(String modulePackageName) {
-        this.modulePackageName = modulePackageName;
-    }    
+
+    public void setModuleUri(URI moduleUri) {
+        this.id = new ID(openejbJar, ejbJar, id.getName(), id.getLocation(), moduleUri, this);
+    }
 
     public OpenejbJar getOpenejbJar() {
         return openejbJar;
@@ -218,7 +190,7 @@ public class EjbModule implements WsModule {
     @Override
     public String toString() {
         return "EjbModule{" +
-                "moduleId='" + moduleId + '\'' +
+                "moduleId='" + id.getName() + '\'' +
                 '}';
     }
 }

@@ -76,7 +76,7 @@ import java.util.Map;
         "resourceAdapter",
         "requiredWorkContext"
 })
-public class Connector {
+public class Connector implements NamedModule {
 
     @XmlElement(name = "module-name")
     protected String moduleName;

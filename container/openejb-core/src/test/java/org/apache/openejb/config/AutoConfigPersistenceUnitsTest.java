@@ -260,7 +260,7 @@ public class AutoConfigPersistenceUnitsTest extends TestCase {
         app.getPersistenceModules().add(new PersistenceModule("root", new Persistence(persistenceUnit)));
         WebApp webApp = new WebApp();
         webApp.setMetadataComplete(true);
-        app.getWebModules().add(new WebModule(webApp, "orange-web", cl, "war", "orange-id"));
+        app.getWebModules().add(new WebModule(webApp, "orange-web", cl, null, "orange-id"));
 
         // Create app
         AppInfo appInfo = config.configureApplication(app);

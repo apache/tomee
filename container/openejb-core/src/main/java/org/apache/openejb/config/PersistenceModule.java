@@ -18,6 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.jpa.unit.Persistence;
 
+import java.io.File;
+import java.net.URI;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map;
@@ -26,9 +28,10 @@ public class PersistenceModule implements DeploymentModule {
     private String rootUrl;
     private Persistence persistence;
     private final Set<String> watchedResources = new TreeSet<String>();
+    private URI uri;
 
     public PersistenceModule(String rootUrl, Persistence persistence) {
-        this.rootUrl = rootUrl;
+        setRootUrl(rootUrl);
         this.persistence = persistence;
     }
 
@@ -38,6 +41,7 @@ public class PersistenceModule implements DeploymentModule {
 
     public void setRootUrl(String rootUrl) {
         this.rootUrl = rootUrl;
+        this.uri = URI.create(rootUrl);
     }
 
     public Persistence getPersistence() {
@@ -68,8 +72,11 @@ public class PersistenceModule implements DeploymentModule {
         return null;
     }
 
-    @Override
-    public String getModulePackageName() {
+    public URI getModuleUri() {
+        return uri;
+    }
+
+    public File getFile() {
         return null;
     }
 

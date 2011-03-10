@@ -107,7 +107,7 @@ public class AppValidator {
             return;
         }
         System.out.println("------------------------------------------");
-        System.out.println("JAR " + set.getJarPath());
+        System.out.println("JAR " + set.getName());
         System.out.println("                                          ");
 
         printValidationExceptions(set.getErrors());
@@ -153,7 +153,7 @@ public class AppValidator {
 
         System.out.println("<jar>");
         System.out.print("  <path>");
-        System.out.print(set.getJarPath());
+        System.out.print(set.getName());
         System.out.println("</path>");
 
         printValidationExceptionsXML(set.getErrors());
