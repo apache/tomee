@@ -135,7 +135,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
     @Override
     public void injectJavaEEResources(Object managedBeanInstance)
-            throws Exception {
+            {
 
         for (Entry<CdiBeanInfo, Context> entry : this.contexts.entrySet()) {
             if (entry.getKey().getBeanClass() == managedBeanInstance.getClass()) {

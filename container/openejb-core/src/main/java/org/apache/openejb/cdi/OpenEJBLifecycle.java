@@ -105,7 +105,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     }
 
     @Override
-    public void startApplication(Object startupObject) throws Exception
+    public void startApplication(Object startupObject)
     {
         StartupObject stuff = (StartupObject) startupObject;
         // Initalize Application Context
@@ -115,6 +115,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         //Before Start
         beforeStartApplication(startupObject);
+    	
 
         //Load all plugins
         webBeansContext.getPluginLoader().startUp();
@@ -378,7 +379,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Do nothing as default
     }
 
-    protected void afterStartApplication(Object startupObject) throws Exception
+    protected void afterStartApplication(Object startupObject)
     {
         //Do nothing as default
     }
@@ -388,7 +389,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Do nothing as default
     }
 
-    protected void beforeStartApplication(Object startupObject) throws Exception
+    protected void beforeStartApplication(Object startupObject)
     {
         //Do nothing as default
     }
