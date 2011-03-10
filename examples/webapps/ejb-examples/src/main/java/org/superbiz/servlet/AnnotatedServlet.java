@@ -35,6 +35,9 @@ public class AnnotatedServlet extends HttpServlet {
 
     @EJB
     private AnnotatedEJBRemote remoteEJB;
+    
+    @EJB 
+    private AnnotatedEJB localbeanEJB;
 
     @Resource
     private DataSource ds;
@@ -44,6 +47,15 @@ public class AnnotatedServlet extends HttpServlet {
         response.setContentType("text/plain");
         ServletOutputStream out = response.getOutputStream();
 
+        out.println("LocalBean EJB");
+        out.println("@EJB=" + localbeanEJB);
+        if (localbeanEJB != null) {
+            out.println("@EJB.getName()=" + localbeanEJB.getName());
+            out.println("@EJB.getDs()=" + localbeanEJB.getDs());
+        }
+        out.println("JNDI=" + lookupField("localbeanEJB"));
+        out.println();
+        
         out.println("Local EJB");
         out.println("@EJB=" + localEJB);
         if (localEJB != null) {

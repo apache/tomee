@@ -30,6 +30,7 @@ public class NamingUtil {
     public static final String DEPLOYMENT_ID = "deploymentid";
     public static final String EXTERNAL = "external";
     public static final String LOCAL = "local";
+    public static final String LOCALBEAN = "localbean";
     public static final String REMOTE = EjbRef.REMOTE;
     public static final String JNDI_NAME = "jndiname";
     public static final String JNDI_PROVIDER_ID = "jndiproviderid";
