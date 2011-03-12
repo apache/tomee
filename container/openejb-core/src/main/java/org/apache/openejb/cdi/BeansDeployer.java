@@ -16,7 +16,21 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.webbeans.annotation.AnnotationManager;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
+
+import javax.enterprise.inject.Model;
+import javax.enterprise.inject.Specializes;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Decorator;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.interceptor.Interceptor;
+
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.AbstractProducerBean;
 import org.apache.webbeans.component.EnterpriseBeanMarker;
@@ -54,25 +68,6 @@ import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.xml.WebBeansXMLConfigurator;
 
-import javax.enterprise.inject.Model;
-import javax.enterprise.inject.Specializes;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.Decorator;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.interceptor.Interceptor;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Stack;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -89,7 +84,7 @@ public class BeansDeployer {
 
     /**XML Configurator*/
     protected final WebBeansXMLConfigurator xmlConfigurator;
-    
+
     private final WebBeansContext webBeansContext;
 
     public BeansDeployer(WebBeansXMLConfigurator xmlConfigurator, WebBeansContext webBeansContext) {
@@ -131,7 +126,7 @@ public class BeansDeployer {
         }
 
     }
-    
+
     private void addDefaultBean(BeanManagerImpl manager,String className)
     {
         Bean<?> bean = null;
@@ -162,7 +157,7 @@ public class BeansDeployer {
     {
         BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
         manager.fireEvent(new AfterBeanDiscoveryImpl(webBeansContext),new Annotation[0]);
-        
+
         webBeansContext.getWebBeansUtil().inspectErrorStack("There are errors that are added by AfterBeanDiscovery event observers. Look at logs for further details");
     }
 
@@ -173,7 +168,7 @@ public class BeansDeployer {
     {
         BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
         manager.fireEvent(new AfterDeploymentValidationImpl(manager),new Annotation[0]);
-        
+
         webBeansContext.getWebBeansUtil().inspectErrorStack("There are errors that are added by AfterDeploymentValidation event observers. Look at logs for further details");
     }
 
@@ -206,8 +201,7 @@ public class BeansDeployer {
         beans.clear();
 
         //Adding interceptors to validate
-        Set<javax.enterprise.inject.spi.Interceptor<?>> interceptors = manager.getInterceptors();
-        for (javax.enterprise.inject.spi.Interceptor interceptor : interceptors) {
+        for (javax.enterprise.inject.spi.Interceptor<?> interceptor : manager.getInterceptors()) {
             WebBeansInterceptor wbInt = (WebBeansInterceptor) interceptor;
             beans.add(wbInt);
         }
@@ -290,11 +284,11 @@ public class BeansDeployer {
         }
 
     }
-    
+
     private void validateBeanNames(Stack<String> beanNames)
     {
         if(beanNames.size() > 0)
-        {   
+        {
             for(String beanName : beanNames)
             {
                 for(String other : beanNames)
@@ -502,7 +496,7 @@ public class BeansDeployer {
      * @return true if given class is configured as a managed bean
      */
     protected <T> boolean defineManagedBean(Class<T> clazz, ProcessAnnotatedTypeImpl<T> processAnnotatedEvent)
-    {   
+    {
         //Bean manager
         BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
 
@@ -543,8 +537,8 @@ public class BeansDeployer {
                 annotatedType = processAnnotatedEvent.getAnnotatedType();
                 managedBeanCreator.setAnnotatedType(annotatedType);
                 managedBeanCreator.setMetaDataProvider(MetaDataProvider.THIRDPARTY);
-            }            
-            
+            }
+
             //If ProcessInjectionTargetEvent is not set, set it
             if (processInjectionTargetEvent == null) {
                 processInjectionTargetEvent = webBeansContext.getWebBeansUtil().fireProcessInjectionTargetEvent(managedBean);
