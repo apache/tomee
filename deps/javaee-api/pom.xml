@@ -43,6 +43,7 @@
               javax.*,
               org.apache.geronimo.mail.*
             </Export-Package>
+            <Import-Package>javax.xml.namespace,*</Import-Package>
             <Private-Package>org.apache.geronimo.osgi.locator.*</Private-Package>
           </instructions>
         </configuration>
