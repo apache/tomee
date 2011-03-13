@@ -16,24 +16,21 @@
  */
 package org.superbiz.moviefun;
 
-import javax.ejb.Local;
 import java.util.List;
+
+import javax.ejb.Local;
 
 @Local
 public interface Movies {
-
-    void addMovie(Movie movie) throws Exception;
-
-    void deleteMovie(Movie movie) throws Exception;
-
-    void deleteMovieId(long id) throws Exception;
-
-    List<Movie> getMovies() throws Exception;
-
-    List<Movie> findByTitle(String title) throws Exception;
-
-    List<Movie> findByGenre(String genre) throws Exception;
-
-    List<Movie> findByDirector(String director) throws Exception;
-
+	public  int count();
+	public  List<Movie> findRange(int[] range);
+	public  List<Movie> findByDirector(String director);
+	public  List<Movie> findByGenre(String genre);
+	public  List<Movie> findByTitle(String title);
+	public  List<Movie> getMovies();
+	public  void deleteMovieId(long id);
+	public  void deleteMovie(Movie movie);
+	public  void editMovie(Movie movie);
+	public  void addMovie(Movie movie);
+	public  Movie find(Long id);
 }
