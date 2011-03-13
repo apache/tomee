@@ -16,15 +16,23 @@
  */
 package org.superbiz.moviefun;
 
-import javax.ejb.Stateless;
-import javax.ejb.EJB;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.jws.WebService;
-import javax.annotation.Resource;
 import java.util.List;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jws.WebService;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+
+@LocalBean
 @Stateless(name = "Movies")
 @WebService(portName = "MoviesPort",
         serviceName = "MoviesWebService",
@@ -37,42 +45,87 @@ public class MoviesImpl implements Movies {
     @PersistenceContext(unitName = "movie-unit")
     private EntityManager entityManager;
 
-    public void addMovie(Movie movie) throws Exception {
+    @Override
+	public Movie find(Long id) {
+        return entityManager.find(Movie.class, id);
+    }
+    
+    @Override
+	public void addMovie(Movie movie) {
         entityManager.persist(movie);
     }
+    
+    @Override
+	public void editMovie(Movie movie) {
+        entityManager.merge(movie);
+    }
 
-    public void deleteMovie(Movie movie) throws Exception {
+    @Override
+	public void deleteMovie(Movie movie) {
         entityManager.remove(movie);
     }
 
-    public void deleteMovieId(long id) throws Exception {
+    @Override
+	public void deleteMovieId(long id) {
         Movie movie = entityManager.find(Movie.class, id);
         entityManager.remove(movie);
 
         notifier.notify("Deleted Movie \"" + movie.getTitle() + "\" (" + movie.getYear() + ")");
     }
 
-    public List<Movie> getMovies() throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m");
-        return query.getResultList();
+    @Override
+	public List<Movie> getMovies() {
+    	CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+        cq.select(cq.from(Movie.class));
+        return entityManager.createQuery(cq).getResultList();
     }
 
-    public List<Movie> findByTitle(String title) throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m where m.title = ?1");
-        query.setParameter(1, title);
-        return query.getResultList();
+    @Override
+	public List<Movie> findByTitle(String title) {
+    	return findByStringField("title", title);
     }
 
-    public List<Movie> findByGenre(String genre) throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m where m.genre = ?1");
-        query.setParameter(1, genre);
-        return query.getResultList();
+	@Override
+	public List<Movie> findByGenre(String genre) {
+		return findByStringField("genre", genre);
     }
 
-    public List<Movie> findByDirector(String director) throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m where m.director = ?1");
-        query.setParameter(1, director);
-        return query.getResultList();
+    @Override
+	public List<Movie> findByDirector(String director) {
+    	return findByStringField("director", director);
+    }
+    
+    private List<Movie> findByStringField(String fieldname, String param) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+	    Root<Movie> root = query.from(Movie.class);
+	    EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
+	    
+		Path<String> path = root.get(type.getDeclaredSingularAttribute(fieldname, String.class));
+	    Predicate condition = builder.like(path, "%" + param + "%"); 
+	    
+	    query.where(condition);
+	    
+		return entityManager.createQuery(query).getResultList();
+	}
+
+	@Override
+	public List<Movie> findRange(int[] range) {
+        CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+        cq.select(cq.from(Movie.class));
+        TypedQuery<Movie> q = entityManager.createQuery(cq);
+        q.setMaxResults(range[1] - range[0]);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+    }
+
+    @Override
+	public int count() {
+        CriteriaQuery<Long> cq = entityManager.getCriteriaBuilder().createQuery(Long.class);
+        Root<Movie> rt = cq.from(Movie.class);
+        cq.select(entityManager.getCriteriaBuilder().count(rt));
+        TypedQuery<Long> q = entityManager.createQuery(cq);
+        return (q.getSingleResult()).intValue();
     }
 
 }

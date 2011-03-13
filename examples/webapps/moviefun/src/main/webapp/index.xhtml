@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8' ?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -16,14 +16,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-    <persistence-unit name="movie-unit">
-        <jta-data-source>movieDatabase</jta-data-source>
-        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-        <class>org.superbiz.moviefun.Movie</class>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <title>Moviefun Sample Application :: JSF 2.0</title>
+<h:outputStylesheet name="css/jsfcrud.css"/>
+    </h:head>
+    <h:body>
+      Welcome to the Moviefun sample application!
+       <h:form>
+       <h:commandLink action="/movie/List" value="Show All Movie Items"/>
+   	   </h:form>
+	</h:body>
 
-        <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>            
-        </properties>
-    </persistence-unit>
-</persistence>
+</html>
+

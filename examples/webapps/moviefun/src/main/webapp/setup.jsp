@@ -59,4 +59,4 @@ Done!
 </table>
 
 <h2>Continue</h2>
-<a href="index.jsp">Go to main app</a>
+<a href="moviefun.jsp">Go to main app</a>
