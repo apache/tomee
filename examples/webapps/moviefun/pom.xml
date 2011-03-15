@@ -14,15 +14,32 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-    <groupId>org.superbiz</groupId>
-    <artifactId>moviefun</artifactId>
-    <packaging>pom</packaging>
-    <version>1.1-SNAPSHOT</version>
-    <name>OpenEJB :: Web Examples :: Moviefun</name>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.superbiz</groupId>
+  <artifactId>moviefun</artifactId>
+  <packaging>pom</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>OpenEJB :: Web Examples :: Moviefun</name>
+  
+  <modules>
+    <module>app</module>
+    <module>monitor</module>
+  </modules>
+  
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
+  It is not required and may be deleted.  For more information see:
+  http://maven.apache.org/plugins/maven-deploy-plugin/
+  -->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
-	<modules>
-		<module>app</module>
-		<module>monitor</module>
-	</modules>
 </project>
