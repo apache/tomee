@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * persistence_2_0.xsd
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -86,8 +86,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -104,25 +104,25 @@ public class Persistence {
 
     /**
      * Gets the value of the persistenceUnit property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the persistenceUnit property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPersistenceUnit().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Persistence.PersistenceUnit }
-     * 
-     * 
+     *
+     *
      */
     public List<Persistence.PersistenceUnit> getPersistenceUnit() {
         if (persistenceUnit == null) {
@@ -133,11 +133,11 @@ public class Persistence {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public java.lang.String getVersion() {
         if (version == null) {
@@ -149,11 +149,11 @@ public class Persistence {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.String }
-     *     
+     *
      */
     public void setVersion(java.lang.String value) {
         this.version = value;
@@ -161,14 +161,14 @@ public class Persistence {
 
 
     /**
-     * 
+     *
      *                                 Configuration of a persistence unit.
-     *                             
-     * 
+     *
+     *
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -211,8 +211,8 @@ public class Persistence {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -255,15 +255,15 @@ public class Persistence {
         @XmlAttribute(required = true)
         protected java.lang.String name;
         @XmlAttribute(name = "transaction-type")
-        protected TrackingMode transactionType;
+        protected String transactionType;
 
         /**
          * Gets the value of the description property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public java.lang.String getDescription() {
             return description;
@@ -271,11 +271,11 @@ public class Persistence {
 
         /**
          * Sets the value of the description property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public void setDescription(java.lang.String value) {
             this.description = value;
@@ -283,11 +283,11 @@ public class Persistence {
 
         /**
          * Gets the value of the provider property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public java.lang.String getProvider() {
             return provider;
@@ -295,11 +295,11 @@ public class Persistence {
 
         /**
          * Sets the value of the provider property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public void setProvider(java.lang.String value) {
             this.provider = value;
@@ -307,11 +307,11 @@ public class Persistence {
 
         /**
          * Gets the value of the jtaDataSource property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public java.lang.String getJtaDataSource() {
             return jtaDataSource;
@@ -319,11 +319,11 @@ public class Persistence {
 
         /**
          * Sets the value of the jtaDataSource property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public void setJtaDataSource(java.lang.String value) {
             this.jtaDataSource = value;
@@ -331,11 +331,11 @@ public class Persistence {
 
         /**
          * Gets the value of the nonJtaDataSource property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public java.lang.String getNonJtaDataSource() {
             return nonJtaDataSource;
@@ -343,11 +343,11 @@ public class Persistence {
 
         /**
          * Sets the value of the nonJtaDataSource property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public void setNonJtaDataSource(java.lang.String value) {
             this.nonJtaDataSource = value;
@@ -355,25 +355,25 @@ public class Persistence {
 
         /**
          * Gets the value of the mappingFile property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the mappingFile property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getMappingFile().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
-         * 
-         * 
+         *
+         *
          */
         public List<java.lang.String> getMappingFile() {
             if (mappingFile == null) {
@@ -384,25 +384,25 @@ public class Persistence {
 
         /**
          * Gets the value of the jarFile property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the jarFile property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getJarFile().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
-         * 
-         * 
+         *
+         *
          */
         public List<java.lang.String> getJarFile() {
             if (jarFile == null) {
@@ -413,25 +413,25 @@ public class Persistence {
 
         /**
          * Gets the value of the clazz property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the clazz property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getClazz().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
-         * 
-         * 
+         *
+         *
          */
         public List<java.lang.String> getClazz() {
             if (clazz == null) {
@@ -442,11 +442,11 @@ public class Persistence {
 
         /**
          * Gets the value of the excludeUnlistedClasses property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Boolean }
-         *     
+         *
          */
         public Boolean isExcludeUnlistedClasses() {
             return excludeUnlistedClasses;
@@ -454,11 +454,11 @@ public class Persistence {
 
         /**
          * Sets the value of the excludeUnlistedClasses property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Boolean }
-         *     
+         *
          */
         public void setExcludeUnlistedClasses(Boolean value) {
             this.excludeUnlistedClasses = value;
@@ -466,11 +466,11 @@ public class Persistence {
 
         /**
          * Gets the value of the sharedCacheMode property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PersistenceUnitCaching }
-         *     
+         *
          */
         public PersistenceUnitCaching getSharedCacheMode() {
             return sharedCacheMode;
@@ -478,11 +478,11 @@ public class Persistence {
 
         /**
          * Sets the value of the sharedCacheMode property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PersistenceUnitCaching }
-         *     
+         *
          */
         public void setSharedCacheMode(PersistenceUnitCaching value) {
             this.sharedCacheMode = value;
@@ -490,11 +490,11 @@ public class Persistence {
 
         /**
          * Gets the value of the validationMode property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PersistenceUnitValidationMode }
-         *     
+         *
          */
         public PersistenceUnitValidationMode getValidationMode() {
             return validationMode;
@@ -502,11 +502,11 @@ public class Persistence {
 
         /**
          * Sets the value of the validationMode property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PersistenceUnitValidationMode }
-         *     
+         *
          */
         public void setValidationMode(PersistenceUnitValidationMode value) {
             this.validationMode = value;
@@ -514,11 +514,11 @@ public class Persistence {
 
         /**
          * Gets the value of the properties property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Persistence.PersistenceUnit.Properties }
-         *     
+         *
          */
         public Persistence.PersistenceUnit.Properties getProperties() {
             return properties;
@@ -526,11 +526,11 @@ public class Persistence {
 
         /**
          * Sets the value of the properties property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Persistence.PersistenceUnit.Properties }
-         *     
+         *
          */
         public void setProperties(Persistence.PersistenceUnit.Properties value) {
             this.properties = value;
@@ -538,11 +538,11 @@ public class Persistence {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public java.lang.String getName() {
             return name;
@@ -550,11 +550,11 @@ public class Persistence {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link java.lang.String }
-         *     
+         *
          */
         public void setName(java.lang.String value) {
             this.name = value;
@@ -562,34 +562,34 @@ public class Persistence {
 
         /**
          * Gets the value of the transactionType property.
-         * 
+         *
          * @return
          *     possible object is
-         *     {@link TrackingMode }
-         *     
+         *     {@link java.lang.String }
+         *
          */
-        public TrackingMode getTransactionType() {
+        public String getTransactionType() {
             return transactionType;
         }
 
         /**
          * Sets the value of the transactionType property.
-         * 
+         *
          * @param value
          *     allowed object is
-         *     {@link TrackingMode }
-         *     
+         *     {@link java.lang.String }
+         *
          */
-        public void setTransactionType(TrackingMode value) {
+        public void setTransactionType(String value) {
             this.transactionType = value;
         }
 
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -610,8 +610,8 @@ public class Persistence {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -624,25 +624,25 @@ public class Persistence {
 
             /**
              * Gets the value of the property property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the property property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getProperty().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Persistence.PersistenceUnit.Properties.Property }
-             * 
-             * 
+             *
+             *
              */
             public List<Persistence.PersistenceUnit.Properties.Property> getProperty() {
                 if (property == null) {
@@ -654,9 +654,9 @@ public class Persistence {
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -667,8 +667,8 @@ public class Persistence {
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
@@ -681,11 +681,11 @@ public class Persistence {
 
                 /**
                  * Gets the value of the name property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link java.lang.String }
-                 *     
+                 *
                  */
                 public java.lang.String getName() {
                     return name;
@@ -693,11 +693,11 @@ public class Persistence {
 
                 /**
                  * Sets the value of the name property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link java.lang.String }
-                 *     
+                 *
                  */
                 public void setName(java.lang.String value) {
                     this.name = value;
@@ -705,11 +705,11 @@ public class Persistence {
 
                 /**
                  * Gets the value of the value property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link java.lang.String }
-                 *     
+                 *
                  */
                 public java.lang.String getValue() {
                     return value;
@@ -717,11 +717,11 @@ public class Persistence {
 
                 /**
                  * Sets the value of the value property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link java.lang.String }
-                 *     
+                 *
                  */
                 public void setValue(java.lang.String value) {
                     this.value = value;
