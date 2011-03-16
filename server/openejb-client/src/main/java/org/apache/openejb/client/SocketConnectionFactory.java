@@ -39,6 +39,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SocketConnectionFactory implements ConnectionFactory {
 
     private KeepAliveStyle keepAliveStyle = KeepAliveStyle.PING;
+	
+	public static final String PROPERTY_POOL_TIMEOUT = "openejb.client.connection.pool.timeout";
+	private static final String PROPERTY_POOL_TIMEOUT2 = "openejb.client.connectionpool.timeout";
+	public static final String PROPERTY_POOL_SIZE = "openejb.client.connection.pool.size";
+	private static final String PROPERTY_POOL_SIZE2 = "openejb.client.connectionpool.size";
+	public static final String PROPERTY_KEEPALIVE = "openejb.client.keepalive";
 
     private static Map<URI, Pool> connections = new ConcurrentHashMap<URI, Pool>();
     private int size = 5;
@@ -52,26 +58,28 @@ public class SocketConnectionFactory implements ConnectionFactory {
 
     private long getTimeout() {
         Properties p = System.getProperties();
-        long timeout = getLong(p, "openejb.client.connectionpool.timeout", this.timeout);
-        timeout = getLong(p, "openejb.client.connection.pool.timeout", timeout);
+        long timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT, this.timeout);
+        timeout = getLong(p, SocketConnectionFactory.PROPERTY_POOL_TIMEOUT2, timeout);
         return timeout;
     }
 
     private int getSize() {
         Properties p = System.getProperties();
-        int size = getInt(p, "openejb.client.connectionpool.size", this.size);
-        size = getInt(p, "openejb.client.connection.pool.size", size);
+        int size = getInt(p, SocketConnectionFactory.PROPERTY_POOL_SIZE, this.size);
+        size = getInt(p, SocketConnectionFactory.PROPERTY_POOL_SIZE2, size);
         return size;
     }
 
     public static int getInt(Properties p, String property, int defaultValue) {
-        String value = p.getProperty(property);
+        final String value = p.getProperty(property);
         try {
-            if (value != null) return Integer.parseInt(value);
-            else return defaultValue;
+            if (value != null) {
+				return Integer.parseInt(value);
+			}
         } catch (NumberFormatException e) {
-            return defaultValue;
+            //Ignore
         }
+		return defaultValue;
     }
 
     public static long getLong(Properties p, String property, long defaultValue) {
@@ -146,7 +154,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
     }
 
     public KeepAliveStyle getKeepAliveStyle() {
-        String property = System.getProperty("openejb.client.keepalive");
+        String property = System.getProperty(PROPERTY_KEEPALIVE);
         if (property != null) {
             property = property.toUpperCase();
             return KeepAliveStyle.valueOf(property);
@@ -318,7 +326,7 @@ public class SocketConnectionFactory implements ConnectionFactory {
                 Thread.interrupted();
             }
 
-            throw new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " seconds for a connection.");
+            throw new ConnectionPoolTimeoutException("No connections available in pool (size " + size + ").  Waited for " + timeout + " milliseconds for a connection.");
         }
 
         public void put(SocketConnection connection) {

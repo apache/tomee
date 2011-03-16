@@ -221,7 +221,7 @@ public class FullPoolFailoverTest extends TestCase {
         initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
         OpenEJB.init(initProps, new ServerFederation());
 
-        System.setProperty("openejb.client.connectionpool.size", "" + connectionPoolSize);
+        System.setProperty(org.apache.openejb.client.SocketConnectionFactory.PROPERTY_POOL_SIZE, "" + connectionPoolSize);
 
         EjbServer ejbServer = new EjbServer();
         ejbServer.init(new Properties());
