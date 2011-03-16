@@ -116,12 +116,13 @@
        -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <org.apache.activemq.version>5.4.1</org.apache.activemq.version>
+    <org.apache.activemq.version>5.4.2</org.apache.activemq.version>
     <quartz.version>1.8.4</quartz.version>
     <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
     <junit.version>4.8.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <org.apache.openwebbeans.version>1.1.0-SNAPSHOT</org.apache.openwebbeans.version>
+    <geronimo.connector.version>2.1</geronimo.connector.version>
   </properties>
 
   <build>
@@ -763,7 +764,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
-        <version>2.1</version>
+        <version>${geronimo.connector.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -782,7 +783,7 @@
       <dependency>
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-transaction</artifactId>
-        <version>2.1</version>
+        <version>${geronimo.connector.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1183,7 +1184,7 @@
       <dependency>
         <artifactId>commons-lang</artifactId>
         <groupId>commons-lang</groupId>
-        <version>2.5</version>
+        <version>2.6</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
