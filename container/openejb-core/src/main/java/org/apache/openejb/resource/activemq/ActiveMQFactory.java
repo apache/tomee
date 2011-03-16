@@ -24,58 +24,66 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ActiveMQFactory {
 
-    private static final Method setThreadProperties;
-    private static final Method createBroker;
-    private static final Method getBrokers;
-    private static final Object instance;
-    private static final Class clazz;
+    private static final AtomicBoolean initialized = new AtomicBoolean(false);
+    private static Method setThreadProperties;
+    private static Method createBroker;
+    private static Method getBrokers;
+    private static Object instance;
+    private static Class clazz;
     private static String brokerPrefix;
 
-    static {
+    private static void init() {
 
-        Class tmp = null;
+        synchronized (initialized) {
 
-        try {
-            tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
-            brokerPrefix = "amq5factory:";
-        } catch (java.lang.Throwable t1) {
-            try {
-                tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
-                brokerPrefix = "amq4factory:";
-            } catch (java.lang.Throwable t2) {
-                throw new RuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
+            if (!initialized.getAndSet(true)) {
+
+                Class tmp = null;
+
+                try {
+                    tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ5Factory");
+                    brokerPrefix = "amq5factory:";
+                } catch (java.lang.Throwable t1) {
+                    try {
+                        tmp = Class.forName("org.apache.openejb.resource.activemq.ActiveMQ4Factory");
+                        brokerPrefix = "amq4factory:";
+                    } catch (java.lang.Throwable t2) {
+                        throw new RuntimeException("Unable to load ActiveMQFactory: Check ActiveMQ jar files are on classpath", t1);
+                    }
+                }
+
+                clazz = tmp;
+
+                try {
+                    instance = clazz.newInstance();
+                } catch (InstantiationException e) {
+                    throw new RuntimeException("Unable to create ActiveMQFactory instance", e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Unable to access ActiveMQFactory instance", e);
+                }
+
+                try {
+                    setThreadProperties = clazz.getDeclaredMethod("setThreadProperties", new Class[]{Properties.class});
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
+                }
+
+                try {
+                    createBroker = clazz.getDeclaredMethod("createBroker", new Class[]{URI.class});
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
+                }
+
+                try {
+                    getBrokers = clazz.getDeclaredMethod("getBrokers", (Class[]) null);
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
+                }
             }
-        }
-
-        clazz = tmp;
-
-        try {
-            instance = clazz.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException("Unable to create ActiveMQFactory instance", e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to access ActiveMQFactory instance", e);
-        }
-
-        try {
-            setThreadProperties = clazz.getDeclaredMethod("setThreadProperties", new Class[]{Properties.class});
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Unable to create ActiveMQFactory setThreadProperties method", e);
-        }
-
-        try {
-            createBroker = clazz.getDeclaredMethod("createBroker", new Class[]{URI.class});
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
-        }
-
-        try {
-            getBrokers = clazz.getDeclaredMethod("getBrokers", (Class[]) null);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Unable to create ActiveMQFactory createBroker method", e);
         }
     }
 
@@ -86,10 +94,14 @@ public class ActiveMQFactory {
      * @return String name - will be either 'amq5factory:' or 'amq4factory:' - note the trailing ':'
      */
     public static String getBrokerMetaFile() {
+        ActiveMQFactory.init();
         return brokerPrefix;
     }
 
     public static void setThreadProperties(final Properties p) {
+
+        ActiveMQFactory.init();
+
         try {
             setThreadProperties.invoke(instance, p);
         } catch (IllegalAccessException e) {
@@ -102,6 +114,9 @@ public class ActiveMQFactory {
     }
 
     public BrokerService createBroker(final URI brokerURI) throws Exception {
+
+        ActiveMQFactory.init();
+
         try {
             return (BrokerService) createBroker.invoke(instance, brokerURI);
         } catch (IllegalAccessException e) {
@@ -119,6 +134,9 @@ public class ActiveMQFactory {
      * @return Map<URI, BrokerService>
      */
     public static Collection<BrokerService> getBrokers() throws Exception {
+
+        ActiveMQFactory.init();
+
         try {
             return (Collection<BrokerService>) getBrokers.invoke(instance, (Object[]) null);
         } catch (IllegalAccessException e) {
