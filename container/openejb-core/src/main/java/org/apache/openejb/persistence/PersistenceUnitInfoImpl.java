@@ -20,6 +20,7 @@ package org.apache.openejb.persistence;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.security.ProtectionDomain;
@@ -109,14 +110,14 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
      * Class loader used by JPA to load Entity classes.
      */
     private ClassLoader classLoader;
-    
+
     // JPA 2.0
     /** Schema version of the persistence.xml file */
     private String persistenceXMLSchemaVersion;
-    
+
     /** Second-level cache mode for the persistence unit */
     private SharedCacheMode sharedCacheMode;
-    
+
     /** The validation mode to be used for the persistence unit */
     private ValidationMode validationMode;
 
@@ -204,7 +205,13 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     }
 
     public void setRootUrlAndJarUrls(String persistenceUnitRootUrl, List<String> jarFiles) throws MalformedURLException {
-        File root = new File(persistenceUnitRootUrl);
+        File root;
+        try{
+            final URI rootUri = URI.create(persistenceUnitRootUrl);
+            root = new File(rootUri);
+        } catch (IllegalArgumentException e) {
+            root = new File(persistenceUnitRootUrl);
+        }
 
         this.persistenceUnitRootUrl = toUrl(root);
         try {
@@ -317,7 +324,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     public SharedCacheMode getSharedCacheMode() {
         return this.sharedCacheMode;
     }
-    
+
     /**
      * @param sharedCacheMode the sharedCacheMode to set
      */
@@ -338,5 +345,5 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     public void setValidationMode(ValidationMode validationMode) {
         this.validationMode = validationMode;
     }
-    
+
 }

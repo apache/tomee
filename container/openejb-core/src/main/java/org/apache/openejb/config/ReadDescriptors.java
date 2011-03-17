@@ -105,8 +105,8 @@ public class ReadDescriptors implements DynamicDeployer {
                 if (file.getName().endsWith("persistence.xml")) {
                     file = file.getParentFile().getParentFile();
                 }
-                String moduleName = file.getAbsolutePath();
-                
+                String moduleName = file.toURI().toString();
+
                 try {
                     Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
                     PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
@@ -538,7 +538,7 @@ public class ReadDescriptors implements DynamicDeployer {
         }
         return tldTaglib;
     }
-    
+
     public static FacesConfig readFacesConfig(URL url) throws OpenEJBException {
         FacesConfig facesConfig;
         try {
