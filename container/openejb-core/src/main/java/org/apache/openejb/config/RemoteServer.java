@@ -16,8 +16,10 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.Pipe;
+
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
@@ -40,6 +42,17 @@ public class RemoteServer {
 
     private Properties properties;
     private Process server;
+    private final int tries;
+    private final boolean verbose;
+
+    public RemoteServer() {
+        this(10, false);
+    }
+
+    public RemoteServer(int tries, boolean verbose) {
+        this.tries = tries;
+        this.verbose = verbose;
+    }
 
     public void init(Properties props) {
         properties = props;
@@ -195,31 +208,23 @@ public class RemoteServer {
                         };
                     }
                 }
+                if (verbose) {
+                    System.out.println(Join.join("\n", args));
+                }
                 server = Runtime.getRuntime().exec(args);
 
-                // Pipe the processes STDOUT to ours
-                InputStream out = server.getInputStream();
-                Thread serverOut = new Thread(new Pipe(out, System.out));
+                Pipe.pipe(server);
 
-                serverOut.setDaemon(true);
-                serverOut.start();
-
-                // Pipe the processes STDERR to ours
-                InputStream err = server.getErrorStream();
-                Thread serverErr = new Thread(new Pipe(err, System.err));
-
-                serverErr.setDaemon(true);
-                serverErr.start();
             } catch (Exception e) {
                 throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
             if (DEBUG) {
-                connect(Integer.MAX_VALUE);
+                if (!connect(Integer.MAX_VALUE)) throw new RuntimeException("Could not connect to server");
             } else {
-                connect(10);
+                if (!connect(tries)) throw new RuntimeException("Could not connect to server");
             }
         } else {
-            //System.out.println("[] SERVER STARTED");
+            if (verbose) System.out.println("[] FOUND STARTED SERVER");
         }
     }
 
@@ -267,6 +272,7 @@ public class RemoteServer {
     }
 
     private boolean connect(int tries) {
+        if (verbose) System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
         //System.out.println("CONNECT "+ tries);
         try {
             int port;
@@ -279,9 +285,11 @@ public class RemoteServer {
             Socket socket = new Socket("localhost", port);
             OutputStream out = socket.getOutputStream();
             out.close();
+            if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
         } catch (Exception e) {
             //System.out.println(e.getMessage());
             if (tries < 2) {
+                if (verbose) System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
                 return false;
             } else {
                 try {
@@ -294,31 +302,5 @@ public class RemoteServer {
         }
 
         return true;
-    }
-
-    private static final class Pipe implements Runnable {
-        private final InputStream is;
-        private final OutputStream out;
-
-        private Pipe(InputStream is, OutputStream out) {
-            super();
-            this.is = is;
-            this.out = out;
-        }
-
-        public void run() {
-            try {
-                int i = is.read();
-                out.write(i);
-
-                while (i != -1) {
-                    i = is.read();
-                    out.write(i);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
