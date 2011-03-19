@@ -100,6 +100,13 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
     </dependency>
+    <dependency>
+    	<groupId>org.superbiz</groupId>
+    	<artifactId>moviefun-iface</artifactId>
+    	<version>1.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
   <!--
   This section allows you to configure where to publish libraries for sharing.

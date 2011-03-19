@@ -22,6 +22,7 @@
   <name>OpenEJB :: Web Examples :: Moviefun</name>
   
   <modules>
+    <module>iface</module>
     <module>app</module>
     <module>monitor</module>
   </modules>
