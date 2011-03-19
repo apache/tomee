@@ -37,7 +37,7 @@ import javax.persistence.metamodel.EntityType;
 @WebService(portName = "MoviesPort",
         serviceName = "MoviesWebService",
         targetNamespace = "http://superbiz.org/wsdl")
-public class MoviesImpl implements Movies {
+public class MoviesImpl implements Movies, MoviesRemote {
 
     @EJB
     private Notifier notifier;
