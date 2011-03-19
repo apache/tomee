@@ -14,15 +14,92 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>    
+<%@ page import="org.superbiz.moviefun.Movie,
+                 org.superbiz.moviefun.Movies,
+                 javax.naming.InitialContext,
+                 java.util.List,
+                 java.util.ListIterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+
+    InitialContext initialContext = new InitialContext();
+    Movies moviesBean = (Movies) initialContext.lookup("java:comp/env/movies");
+
+    List movies = null;
+    ListIterator listIterator = null;
+    int display = 5;
+    String action = request.getParameter("action");
+
+    if ("Add".equals(action)) {
+
+        String title = request.getParameter("title");
+        String director = request.getParameter("director");
+        String genre = request.getParameter("genre");
+        int rating = Integer.parseInt(request.getParameter("rating"));
+        int year = Integer.parseInt(request.getParameter("year"));
+
+        Movie movie = new Movie(title, director, genre, rating, year);
+
+        moviesBean.addMovie(movie);
+
+    } else if ("Remove".equals(action)) {
+
+        String[] ids = request.getParameterValues("id");
+        for (String id : ids) {
+            moviesBean.deleteMovieId(new Long(id));
+        }
+
+    } else if (">>".equals(action)) {
+
+        movies = (List) session.getAttribute("movies.collection");
+        listIterator = (ListIterator) session.getAttribute("movies.iterator");
+
+    } else if ("<<".equals(action)) {
+
+        movies = (List) session.getAttribute("movies.collection");
+        listIterator = (ListIterator) session.getAttribute("movies.iterator");
+        for (int i = display * 2; i > 0 && listIterator.hasPrevious(); i--) {
+            listIterator.previous(); // backup
+        }
+
+    } else if ("findByTitle".equals(action)) {
+
+        movies = moviesBean.findByTitle(request.getParameter("key"));
+
+    } else if ("findByDirector".equals(action)) {
+
+        movies = moviesBean.findByDirector(request.getParameter("key"));
+
+    } else if ("findByGenre".equals(action)) {
+
+        movies = moviesBean.findByGenre(request.getParameter("key"));
+    }
+
+    if (movies == null) {
+        try {
+            movies = moviesBean.getMovies();
+        } catch (Throwable e) {
+            // We must not have run setup yet
+            response.sendRedirect("setup.jsp");
+            return;
+        }
+    }
+
+    if (listIterator == null) {
+        listIterator = movies.listIterator();
+    }
+
+    session.setAttribute("movies.collection", movies);
+    session.setAttribute("movies.iterator", listIterator);
+%>
 <html>
 <head><title>Moviefun :: Index</title>
 <link rel="stylesheet" href="default.css" type="text/css" />
+
 </head>
 <body>
 <p/>
 <div id="Content">
-<<<<<<< HEAD:openejb3/examples/webapps/moviefun/app/src/main/webapp/moviefun.jsp
 <table>
 <tr>
 <td>
@@ -122,12 +199,6 @@
 </td>
 </tr>
 </table>
-=======
-	<p>Please select one of the following links:</p>
-	<a href="setup.jsp">Setup</a> - Sets up the application with some sample data<br />
-	<a href="moviefun.jsp">JSP</a> - Use the JSP version of the application<br />
-	<a href="faces/index.xhtml">JSF</a> - Use the JSF 2 version of the application<br />
->>>>>>> 5e093c1e798dab6d0459468205a037f7c0b6d78d:openejb3/examples/webapps/moviefun/src/main/webapp/index.jsp
 
 
     <div class="bottomshadow"></div>
