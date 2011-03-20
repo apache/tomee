@@ -49,226 +49,304 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.Principal;
+import java.security.PrivilegedActionException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin, TransactionService, SecurityService {
 
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiPlugin.class);
-    private AppContext appContext;
-    private Set<Class<?>> beans;
+	private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiPlugin.class);
+	private AppContext appContext;
+	private Set<Class<?>> beans;
 
-    private WebBeansContext webBeansContext;
-    private CdiAppContextsService contexsServices;
+	private WebBeansContext webBeansContext;
+	private CdiAppContextsService contexsServices;
 
-    @Override
-    public void shutDown() {
-        super.shutDown();
-        //this plugin may have been installed in a non-ejb lifecycle???
-        if (beans != null) {
-            this.beans.clear();
-        }
-    }
+	@Override
+	public void shutDown() {
+		super.shutDown();
+		// this plugin may have been installed in a non-ejb lifecycle???
+		if (beans != null) {
+			this.beans.clear();
+		}
+	}
 
-    public void setAppContext(AppContext appContext) {
-        this.appContext = appContext;
-    }
+	public void setAppContext(AppContext appContext) {
+		this.appContext = appContext;
+	}
 
-    public void configureDeployments(List<BeanContext> ejbDeployments) {
-        WeakHashMap<Class<?>, Object> beans = new WeakHashMap<Class<?>, Object>();
-        for (BeanContext deployment : ejbDeployments) {
-            if (deployment.getComponentType().isSession()) {
-                beans.put(deployment.getBeanClass(), null);
-            }
-        }
-        this.beans = beans.keySet();
-    }
+	public void configureDeployments(List<BeanContext> ejbDeployments) {
+		WeakHashMap<Class<?>, Object> beans = new WeakHashMap<Class<?>, Object>();
+		for (BeanContext deployment : ejbDeployments) {
+			if (deployment.getComponentType().isSession()) {
+				beans.put(deployment.getBeanClass(), null);
+			}
+		}
+		this.beans = beans.keySet();
+	}
 
-    public CdiAppContextsService getContexsServices() {
-        return contexsServices;
-    }
+	public CdiAppContextsService getContexsServices() {
+		return contexsServices;
+	}
 
-    public void startup() {
-        webBeansContext = WebBeansContext.getInstance();
-        this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
-        this.contexsServices.init(null);
-    }
+	public void startup() {
+		webBeansContext = WebBeansContext.getInstance();
+		this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
+		this.contexsServices.init(null);
+	}
 
-    public void stop() throws OpenEJBException {
-        ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-        try {
-            //Setting context class loader for cleaning
-            Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
+	public void stop() throws OpenEJBException {
+		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+		try {
+			// Setting context class loader for cleaning
+			Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
 
-            //Fire shut down
-            appContext.getBeanManager().fireEvent(new BeforeShutdownImpl(), new Annotation[0]);
+			// Fire shut down
+			appContext.getBeanManager().fireEvent(new BeforeShutdownImpl(), new Annotation[0]);
 
-            //Destroys context
-            this.contexsServices.destroy(null);
+			// Destroys context
+			this.contexsServices.destroy(null);
 
-            //Free all plugin resources
-            WebBeansContext.getInstance().getPluginLoader().shutDown();
+			// Free all plugin resources
+			WebBeansContext.getInstance().getPluginLoader().shutDown();
 
-            //Clear extensions
-            WebBeansContext.getInstance().getExtensionLoader().clear();
+			// Clear extensions
+			WebBeansContext.getInstance().getExtensionLoader().clear();
 
-            //Delete Resolutions Cache
-            InjectionResolver.getInstance().clearCaches();
+			// Delete Resolutions Cache
+			InjectionResolver.getInstance().clearCaches();
 
-            //Delte proxies
-            WebBeansContext.getInstance().getJavassistProxyFactory().clear();
+			// Delte proxies
+			WebBeansContext.getInstance().getJavassistProxyFactory().clear();
 
-            //Delete AnnotateTypeCache
-            WebBeansContext.getInstance().getAnnotatedElementFactory().clear();
+			// Delete AnnotateTypeCache
+			WebBeansContext.getInstance().getAnnotatedElementFactory().clear();
 
-            //JMs Manager clear
-            WebBeansContext.getInstance().getjMSManager().clear();
+			// JMs Manager clear
+			WebBeansContext.getInstance().getjMSManager().clear();
 
-            //Clear the resource injection service
-            CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
-            injectionServices.clear();
+			// Clear the resource injection service
+			CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
+			injectionServices.clear();
 
-            //Clear singleton list
-            WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
+			// Clear singleton list
+			WebBeansFinder.clearInstances(WebBeansUtil.getCurrentClassLoader());
 
+		} catch (Exception e) {
+			throw new OpenEJBException(e);
+		} finally {
+			Thread.currentThread().setContextClassLoader(oldCl);
+		}
+	}
 
-        } catch (Exception e) {
-            throw new OpenEJBException(e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldCl);
-        }
-    }
+	@Override
+	public <T> T getSupportedService(Class<T> serviceClass) {
+		return supportService(serviceClass) ? serviceClass.cast(this) : null;
+	}
 
-    @Override
-    public <T> T getSupportedService(Class<T> serviceClass) {
-        return supportService(serviceClass) ? serviceClass.cast(this) : null;
-    }
+	@Override
+	public void isManagedBean(Class<?> clazz) {
+	}
 
-    @Override
-    public void isManagedBean(Class<?> clazz) {
-    }
+	@Override
+	public boolean supportService(Class<?> serviceClass) {
+		return serviceClass == TransactionService.class || serviceClass == SecurityService.class;
+	}
 
-    @Override
-    public boolean supportService(Class<?> serviceClass) {
-        return serviceClass == TransactionService.class || serviceClass == SecurityService.class;
-    }
+	@Override
+	public Object getSessionBeanProxy(Bean<?> bean, Class<?> interfce, CreationalContext<?> creationalContext) {
+		final CdiEjbBean ejbBean = (CdiEjbBean) bean;
+		final BeanContext deployment = ejbBean.getBeanContext();
 
-    @Override
-    public Object getSessionBeanProxy(Bean<?> bean, Class<?> interfce, CreationalContext<?> creationalContext) {
-        final CdiEjbBean ejbBean = (CdiEjbBean) bean;
-        final BeanContext deployment = ejbBean.getBeanContext();
+		final Class beanClass = deployment.getBeanClass();
+		final List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
 
-        final Class beanClass = deployment.getBeanClass();
-        final List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
+		List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
+		BeanContext.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
+		return home.create();
 
-        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
-        BeanContext.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
-        return home.create();
+		// try {
+		//
+		// ((CdiEjbBean<Object>) bean).setIface(iface);
+		//
+		// Class<?> clazz = JavassistProxyFactory.getInstance().getEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean);
+		//
+		// if (clazz == null) {
+		// ProxyFactory factory = new ProxyFactory();
+		// factory.setInterfaces(new Class[]{(Class<?>) iface});
+		// clazz = JavassistProxyFactory.getInstance().defineEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean, factory);
+		// }
+		//
+		// Object proxyInstance = (Object) ClassUtil.newInstance(clazz);
+		//
+		// EjbBeanProxyHandler handler = new EjbBeanProxyHandler((CdiEjbBean<Object>) bean, creationalContext);
+		//
+		// ((ProxyObject) proxyInstance).setHandler(handler);
+		//
+		// return proxyInstance;
+		//
+		// } catch (Exception e) {
+		// throw new WebBeansException(e);
+		// }
+	}
 
-//        try {
-//
-//            ((CdiEjbBean<Object>) bean).setIface(iface);
-//
-//            Class<?> clazz = JavassistProxyFactory.getInstance().getEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean);
-//
-//            if (clazz == null) {
-//                ProxyFactory factory = new ProxyFactory();
-//                factory.setInterfaces(new Class[]{(Class<?>) iface});
-//                clazz = JavassistProxyFactory.getInstance().defineEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean, factory);
-//            }
-//
-//            Object proxyInstance = (Object) ClassUtil.newInstance(clazz);
-//
-//            EjbBeanProxyHandler handler = new EjbBeanProxyHandler((CdiEjbBean<Object>) bean, creationalContext);
-//
-//            ((ProxyObject) proxyInstance).setHandler(handler);
-//
-//            return proxyInstance;
-//
-//        } catch (Exception e) {
-//            throw new WebBeansException(e);
-//        }
-    }
+	@Override
+	public boolean isSessionBean(Class<?> clazz) {
+		// this may be called from a web app without ejbs in which case beans will not have been initialized by openejb.
+		return beans != null && beans.contains(clazz);
+	}
 
-    @Override
-    public boolean isSessionBean(Class<?> clazz) {
-        //this may be called from a web app without ejbs in which case beans will not have been initialized by openejb.
-        return beans != null && beans.contains(clazz);
-    }
+	@Override
+	public <T> Bean<T> defineSessionBean(Class<T> clazz, ProcessAnnotatedType<T> processAnnotateTypeEvent) {
+		throw new IllegalStateException("Statement should never be reached");
+	}
 
-    @Override
-    public <T> Bean<T> defineSessionBean(Class<T> clazz, ProcessAnnotatedType<T> processAnnotateTypeEvent) {
-        throw new IllegalStateException("Statement should never be reached");
-    }
+	@Override
+	public boolean isSingletonBean(Class<?> clazz) {
+		throw new IllegalStateException("Statement should never be reached");
+	}
 
-    @Override
-    public boolean isSingletonBean(Class<?> clazz) {
-        throw new IllegalStateException("Statement should never be reached");
-    }
+	@Override
+	public boolean isStatefulBean(Class<?> clazz) {
+		throw new IllegalStateException("Statement should never be reached");
+	}
 
-    @Override
-    public boolean isStatefulBean(Class<?> clazz) {
-        throw new IllegalStateException("Statement should never be reached");
-    }
+	@Override
+	public boolean isStatelessBean(Class<?> clazz) {
+		throw new IllegalStateException("Statement should never be reached");
+	}
 
-    @Override
-    public boolean isStatelessBean(Class<?> clazz) {
-        throw new IllegalStateException("Statement should never be reached");
-    }
+	@Override
+	public Transaction getTransaction() {
+		TransactionManager manager = getTransactionManager();
+		if (manager != null) {
+			try {
+				return manager.getTransaction();
+			} catch (SystemException e) {
+				logger.error("Error is occured while getting transaction instance from system", e);
+			}
+		}
 
-    @Override
-    public Transaction getTransaction() {
-        TransactionManager manager = getTransactionManager();
-        if (manager != null) {
-            try {
-                return manager.getTransaction();
-            } catch (SystemException e) {
-                logger.error("Error is occured while getting transaction instance from system", e);
-            }
-        }
+		return null;
+	}
 
-        return null;
-    }
+	@Override
+	public TransactionManager getTransactionManager() {
+		// TODO Convert to final field
+		return SystemInstance.get().getComponent(TransactionManager.class);
+	}
 
-    @Override
-    public TransactionManager getTransactionManager() {
-        // TODO Convert to final field
-        return SystemInstance.get().getComponent(TransactionManager.class);
-    }
+	@Override
+	public UserTransaction getUserTransaction() {
+		UserTransaction ut = null;
 
-    @Override
-    public UserTransaction getUserTransaction() {
-        UserTransaction ut = null;
+		// TODO Convert to final field
+		ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
-        // TODO Convert to final field
-        ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        
-        try {
-            ut = (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
-        } catch (NamingException e) {
-            logger.debug("User transaction is not bound to context, lets create it");
-            ut = new CoreUserTransaction(getTransactionManager());
+		try {
+			ut = (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
+		} catch (NamingException e) {
+			logger.debug("User transaction is not bound to context, lets create it");
+			ut = new CoreUserTransaction(getTransactionManager());
 
-        }
-        return ut;
-    }
+		}
+		return ut;
+	}
 
-    @Override
-    public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
-        TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
-    }
+	@Override
+	public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
+		TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
+	}
 
-    @Override
-    public Principal getCurrentPrincipal() {
+	@Override
+	public Principal getCurrentPrincipal() {
 
-        // TODO Convert to final field
-        org.apache.openejb.spi.SecurityService<?> service = SystemInstance.get().getComponent(org.apache.openejb.spi.SecurityService.class);
-        if (service != null) {
-            return service.getCallerPrincipal();
-        }
+		// TODO Convert to final field
+		org.apache.openejb.spi.SecurityService<?> service = SystemInstance.get().getComponent(org.apache.openejb.spi.SecurityService.class);
+		if (service != null) {
+			return service.getCallerPrincipal();
+		}
 
-        return null;
-    }
+		return null;
+	}
+
+	@Override
+	public <T> Constructor<T> doPrivilegedGetDeclaredConstructor(Class<T> clazz, Class<?>... parameterTypes) {
+		try {
+			return clazz.getDeclaredConstructor(parameterTypes);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public <T> Constructor<?>[] doPrivilegedGetDeclaredConstructors(Class<T> clazz) {
+		return clazz.getDeclaredConstructors();
+	}
+
+	@Override
+	public <T> Method doPrivilegedGetDeclaredMethod(Class<T> clazz, String name, Class<?>... parameterTypes) {
+		try {
+			return clazz.getDeclaredMethod(name, parameterTypes);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public <T> Method[] doPrivilegedGetDeclaredMethods(Class<T> clazz) {
+		return clazz.getDeclaredMethods();
+	}
+
+	@Override
+	public <T> Field doPrivilegedGetDeclaredField(Class<T> clazz, String name) {
+		try {
+			return clazz.getDeclaredField(name);
+		} catch (NoSuchFieldException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public <T> Field[] doPrivilegedGetDeclaredFields(Class<T> clazz) {
+		return clazz.getDeclaredFields();
+	}
+
+	@Override
+	public void doPrivilegedSetAccessible(AccessibleObject obj, boolean flag) {
+		obj.setAccessible(flag);
+	}
+
+	@Override
+	public boolean doPrivilegedIsAccessible(AccessibleObject obj) {
+		return obj.isAccessible();
+	}
+
+	@Override
+	public <T> T doPrivilegedObjectCreate(Class<T> clazz) throws PrivilegedActionException, IllegalAccessException, InstantiationException {
+		return clazz.newInstance();
+	}
+
+	@Override
+	public void doPrivilegedSetSystemProperty(String propertyName, String value) {
+		System.setProperty(propertyName, value);
+	}
+
+	@Override
+	public String doPrivilegedGetSystemProperty(String propertyName, String defaultValue) {
+		return System.getProperty(propertyName, defaultValue);
+	}
+
+	@Override
+	public Properties doPrivilegedGetSystemProperties() {
+		return System.getProperties();
+	}
+
 }
