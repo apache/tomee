@@ -41,6 +41,7 @@ import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
@@ -60,7 +61,6 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.OWBInjector;
 import org.apache.xbean.recipe.ConstructionException;
 
 
@@ -1118,8 +1118,13 @@ public class BeanContext extends DeploymentContext {
             final Object bean = injectionProcessor.createInstance();
 
             // TODO we likely don't want to create a new one each time -- investigate the destroy() method
-            OWBInjector beanInjector = new OWBInjector(webBeansContext);
-            beanInjector.inject(bean);
+            try {
+                OWBInjector beanInjector = new OWBInjector(webBeansContext);
+                beanInjector.inject(bean);
+            } catch (Throwable t) {
+                // TODO handle this differently
+                // this is temporary till the injector can be rewritten
+            }
 
             // Create interceptors
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
@@ -1141,8 +1146,13 @@ public class BeanContext extends DeploymentContext {
                     final Object interceptorInstance = interceptorInjector.createInstance();
 
                     // TODO we likely don't want to create a new one each time -- investigate the destroy() method
-                    OWBInjector interceptorCdiInjector = new OWBInjector(webBeansContext);
-                    interceptorCdiInjector.inject(interceptorInstance);
+                    try {
+                        OWBInjector interceptorCdiInjector = new OWBInjector(webBeansContext);
+                        interceptorCdiInjector.inject(interceptorInstance);
+                    } catch (Throwable t) {
+                        // TODO handle this differently
+                        // this is temporary till the injector can be rewritten
+                    }
 
                     interceptorInstances.put(clazz.getName(), interceptorInstance);
                 } catch (ConstructionException e) {
