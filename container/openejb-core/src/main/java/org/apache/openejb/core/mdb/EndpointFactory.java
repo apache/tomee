@@ -41,7 +41,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
-    
+
     public EndpointFactory(ActivationSpec activationSpec, MdbContainer container, BeanContext beanContext, MdbInstanceFactory instanceFactory, XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
         this.container = container;
@@ -65,18 +65,29 @@ public class EndpointFactory implements MessageEndpointFactory {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
         EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
-        MessageEndpoint messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
+        MessageEndpoint messageEndpoint = null;
+        try {
+            messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(classLoader, interfaces, endpointHandler);
+        } catch (IllegalArgumentException e) {
+            //try to create the proxy with tccl once again.
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null) {
+                messageEndpoint = (MessageEndpoint) Proxy.newProxyInstance(tccl, interfaces, endpointHandler);
+            } else {
+                throw e;
+            }
+        }
         return messageEndpoint;
     }
-    
+
     public MessageEndpoint createEndpoint(XAResource xaResource, long timeout)  throws UnavailableException {
         if (timeout <= 0) {
             return createEndpoint(xaResource);
         }
-        
+
         long end = System.currentTimeMillis() + timeout;
         MessageEndpoint messageEndpoint = null;
-        
+
         while (System.currentTimeMillis() <= end) {
             try {
                 messageEndpoint = createEndpoint(xaResource);
@@ -85,7 +96,7 @@ public class EndpointFactory implements MessageEndpointFactory {
                 // ignore so we can keep trying
             }
         }
-        
+
         if (messageEndpoint != null) {
             return messageEndpoint;
         } else {
