@@ -16,48 +16,49 @@
  */
 package org.apache.openejb.core.singleton;
 
-import java.lang.reflect.Method;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.ejb.EJBContext;
-import javax.ejb.SessionBean;
 import javax.ejb.NoSuchEJBException;
+import javax.ejb.SessionBean;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.xml.ws.WebServiceContext;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.core.transaction.TransactionType;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
@@ -111,7 +112,7 @@ public class SingletonInstanceManager {
             // We will construct this FutureTask and compete with the
             // other threads for the right to create the singleton
             FutureTask<Instance> task = new FutureTask<Instance>(new Callable<Instance>() {
-                public Instance call() throws Exception {                    
+                public Instance call() throws Exception {
                     return createInstance(callContext, beanContext);
                 }
             });
@@ -166,11 +167,11 @@ public class SingletonInstanceManager {
             }
         }
     }
-    
+
     private Instance createInstance(ThreadContext callContext, BeanContext beanContext) throws ApplicationException {
         try {
             initializeDependencies(beanContext);
-            
+
             final InstanceContext context = beanContext.newInstance();
 
             if (context.getBean() instanceof SessionBean){
@@ -254,7 +255,7 @@ public class SingletonInstanceManager {
             TransactionPolicy transactionPolicy = EjbTransactionUtil.createTransactionPolicy(transactionType, callContext);
             try{
                 //Call the chain
-                interceptorStack.invoke();                
+                interceptorStack.invoke();
             } catch(Throwable e) {
                 //RollBack Transaction
                 EjbTransactionUtil.handleSystemException(transactionPolicy, e, callContext);
@@ -267,7 +268,7 @@ public class SingletonInstanceManager {
             logger.error("Singleton shutdown failed: "+beanContext.getDeploymentID(), re);
         }
     }
-    
+
     /**
      * This method has no work to do as all instances are removed from
      * the pool on getInstance(...) and not returned via poolInstance(...)
@@ -313,8 +314,9 @@ public class SingletonInstanceManager {
             final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", sessionContext);
             context.bind("comp/WebServiceContext", webServiceContext);
+            context.bind("comp/TimerService", new TimerServiceWrapper());
         } catch (NamingException e) {
-            throw new OpenEJBException("Failed to bind EJBContext", e);
+            throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
         }
     }
 
