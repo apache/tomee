@@ -24,6 +24,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.exception.WebBeansException;
 import org.apache.webbeans.util.ClassUtil;
 import org.apache.webbeans.util.WebBeansAnnotatedTypeUtil;
 import org.apache.webbeans.util.WebBeansUtil;
@@ -130,7 +131,13 @@ public final class OWBInjector {
 
                         //Set field
                         Field field = (Field) injectionPoint.getMember();
-                        ClassUtil.setField(javaEeComponentInstance, field, object);
+                        
+                        try {
+                        	field.setAccessible(true);
+                        	field.set(javaEeComponentInstance, object);
+                        } catch (Exception e) {
+                        	throw new WebBeansException(e);
+                        }
                     }
                 }
 
