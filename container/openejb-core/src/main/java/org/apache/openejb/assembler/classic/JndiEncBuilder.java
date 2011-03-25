@@ -44,7 +44,6 @@ import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.omg.CORBA.ORB;
 
 import javax.annotation.ManagedBean;
@@ -86,14 +85,14 @@ public class JndiEncBuilder {
         app,
         global,
     }
-    
+
     private final boolean beanManagedTransactions;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
     private final AppContext appContext;
-    
+
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
@@ -151,15 +150,15 @@ public class JndiEncBuilder {
             break;
         case global:
             addSpecialGlobalBindings(bindings);
-            break;          
+            break;
         }
 
         return jndiFactory.createComponentContext(bindings);
     }
-    
+
     public Map<String, Object> buildMap() throws OpenEJBException {
         Map<String, Object> bindings = new HashMap<String, Object>();
-        
+
         // get JtaEntityManagerRegistry
         JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
 
@@ -203,7 +202,7 @@ public class JndiEncBuilder {
                 bindings.put(normalize(entry.referenceName), reference);
                 continue;
             }
-            
+
             try {
                 Class type = Classes.deprimitivize(getType(entry.type, entry));
                 Object obj = null;
@@ -245,18 +244,18 @@ public class JndiEncBuilder {
         }
 
         for (ResourceReferenceInfo referenceInfo : jndiEnc.resourceRefs) {
-            
+
             if (referenceInfo.location != null) {
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
-            
+
             Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
-            
+
             Object reference = null;
             if (URL.class.equals(type)) {
-                reference = new URLReference(referenceInfo.resourceID);       
+                reference = new URLReference(referenceInfo.resourceID);
             } else if (type.isAnnotationPresent(ManagedBean.class)) {
                 ManagedBean managed = type.getAnnotation(ManagedBean.class);
                 String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
@@ -272,15 +271,15 @@ public class JndiEncBuilder {
         }
 
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
-            
+
             if (referenceInfo.location != null) {
                 Reference reference = buildReferenceLocation(referenceInfo.location);
                 bindings.put(normalize(referenceInfo.referenceName), reference);
                 continue;
             }
-            
+
             Class<?> type = getType(referenceInfo.resourceEnvRefType, referenceInfo);
-            
+
             Object reference = null;
             if (EJBContext.class.isAssignableFrom(type)) {
                 String jndiName = "comp/EJBContext";
@@ -439,11 +438,6 @@ public class JndiEncBuilder {
             userTransaction = new CoreUserTransaction(transactionManager);
             bindings.put("comp/UserTransaction", userTransaction);
         }
-
-        // bind TimerService
-        if (!isClient()) {
-            bindings.put("comp/TimerService", new TimerServiceWrapper());
-        }
     }
 
     private void addSpecialModuleBindings(Map<String, Object> bindings) {
@@ -455,7 +449,7 @@ public class JndiEncBuilder {
             bindings.put("module/dummy", "dummy");
         }
     }
-    
+
     private void addSpecialAppBindings(Map<String, Object> bindings) {
         if (moduleUri != null) {
             bindings.put("app/AppName", moduleUri.toString());
@@ -465,14 +459,14 @@ public class JndiEncBuilder {
             bindings.put("app/dummy", "dummy");
         }
     }
-    
+
     private void addSpecialGlobalBindings(Map<String, Object> bindings) {
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
             bindings.put("global/dummy", "dummy");
         }
     }
-    
+
     public static boolean bindingExists(Context context, Name contextName) {
         try {
             return context.lookup(contextName) != null;
@@ -503,9 +497,9 @@ public class JndiEncBuilder {
                 throw new OpenEJBException("Unable to load type '" + type + "' for " + injectable.referenceName);
             }
         }
-        return inferType(injectable);   
+        return inferType(injectable);
     }
-    
+
     private Class inferType(InjectableInfo injectable) throws OpenEJBException {
         for (InjectionInfo injection : injectable.targets) {
             try {
@@ -520,7 +514,7 @@ public class JndiEncBuilder {
         }
         throw new OpenEJBException("Unable to infer type for " + injectable.referenceName);
     }
-    
+
     private static class Ref implements EjbResolver.Reference, Serializable {
         private final EjbReferenceInfo info;
 

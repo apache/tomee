@@ -16,51 +16,52 @@
  */
 package org.apache.openejb.core.stateless;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+import java.io.Flushable;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Executor;
-import java.io.Flushable;
-import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.EJBContext;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
 
+import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.ApplicationException;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.loader.Options;
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.timer.TimerServiceWrapper;
+import org.apache.openejb.loader.Options;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.SafeToolkit;
-import org.apache.openejb.util.Pool;
 import org.apache.openejb.util.PassthroughFactory;
+import org.apache.openejb.util.Pool;
+import org.apache.openejb.util.SafeToolkit;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -81,7 +82,7 @@ public class StatelessInstanceManager {
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
-        
+
         if (accessTimeout.getUnit() == null) accessTimeout.setUnit(TimeUnit.MILLISECONDS);
 
         executor = new ThreadPoolExecutor(callbackThreads, callbackThreads*2,
@@ -138,7 +139,7 @@ public class StatelessInstanceManager {
      * If StrictPooling is not enabled this method will create a
      * new stateless bean instance performing all required injection
      * and callbacks before returning it in a method ready state.
-     * 
+     *
      * @param callContext
      * @return
      * @throws OpenEJBException
@@ -229,11 +230,11 @@ public class StatelessInstanceManager {
             pool.push(instance);
         }
     }
-    
+
     /**
-     * This method is called to release the semaphore in case of the business method 
+     * This method is called to release the semaphore in case of the business method
      * throwing a system exception
-     * 
+     *
      * @param callContext
      * @param bean
      */
@@ -298,8 +299,9 @@ public class StatelessInstanceManager {
             final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", data.sessionContext);
             context.bind("comp/WebServiceContext", new EjbWsContext(data.sessionContext));
+            context.bind("comp/TimerService", new TimerServiceWrapper());
         } catch (NamingException e) {
-            throw new OpenEJBException("Failed to bind EJBContext", e);
+            throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
         }
 
         final int min = builder.getMin();
