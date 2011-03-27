@@ -63,14 +63,13 @@ public class MoviesImpl implements Movies, MoviesRemote {
     @Override
 	public void deleteMovie(Movie movie) {
         entityManager.remove(movie);
+        notifier.notify("Deleted Movie \"" + movie.getTitle() + "\" (" + movie.getYear() + ")");
     }
 
     @Override
 	public void deleteMovieId(long id) {
         Movie movie = entityManager.find(Movie.class, id);
         entityManager.remove(movie);
-
-        notifier.notify("Deleted Movie \"" + movie.getTitle() + "\" (" + movie.getYear() + ")");
     }
 
     @Override

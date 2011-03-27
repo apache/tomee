@@ -144,7 +144,7 @@ public class MovieController implements Serializable {
 
     private void performDestroy() {
         try {
-            getFacade().deleteMovie(current);
+            getFacade().deleteMovieId(current.getId());
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("MovieDeleted"));
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
