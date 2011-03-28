@@ -55,7 +55,7 @@
       <lineEnding>unix</lineEnding>
       <fileMode>0755</fileMode>
     </fileSet>
-	<fileSet>
+    <fileSet>
       <directory>${basedir}/src/main/resources</directory>
       <outputDirectory>bin/</outputDirectory>
       <includes>
@@ -97,7 +97,7 @@
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-          <exclude>junit:junit</exclude>
+        <exclude>junit:junit</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
