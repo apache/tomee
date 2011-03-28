@@ -26,7 +26,7 @@
     <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>openejb-tomee-tomcat7</artifactId>
+  <artifactId>apache-tomee</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Assembly :: TomEE :: Tomcat 7</name>
 
@@ -124,6 +124,20 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bin</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptor>src/main/assembly/tomee.xml</descriptor>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>apache-tomee-${project.version}</finalName>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
