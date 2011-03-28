@@ -6,7 +6,7 @@
   <parent>
     <artifactId>assembly</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>3.2-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>itest-runner</artifactId>
   <name>OpenEJB :: Assembly :: iTest-Runner</name>
@@ -45,7 +45,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>openejb-tomcat-bundle</artifactId>
-                  <version>3.2-SNAPSHOT</version>
+                  <version>4.0.0-SNAPSHOT</version>
                   <type>zip</type>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
