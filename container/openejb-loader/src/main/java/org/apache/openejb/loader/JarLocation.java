@@ -60,9 +60,7 @@ public class JarLocation {
                 return new File(decode(url.getFile()));
 
             } else if ("file".equals(url.getProtocol())) {
-                String path = url.getFile();
-                path = path.substring(0, path.length() - classFileName.length());
-                return new File(decode(path));
+                return toFile(classFileName, url);
             } else {
                 throw new IllegalArgumentException("Unsupported URL scheme: " + url.toExternalForm());
             }
@@ -71,6 +69,12 @@ public class JarLocation {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private static File toFile(String classFileName, URL url) {
+        String path = url.getFile();
+        path = path.substring(0, path.length() - classFileName.length());
+        return new File(decode(path));
     }
 
 

@@ -45,7 +45,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UrlCache;
-import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
 import org.xml.sax.SAXException;
@@ -630,7 +630,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         try {
             // TODO:  Put our scanning ehnancements back, here
-            AbstractFinder finder = FinderFactory.createFinder(webModule);
+            IAnnotationFinder finder = FinderFactory.createFinder(webModule);
             webModule.setFinder(finder);
             webEjbModule.setFinder(finder);
         } catch (Exception e) {

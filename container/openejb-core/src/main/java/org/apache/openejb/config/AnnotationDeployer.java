@@ -182,6 +182,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.AbstractFinder;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -241,7 +242,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     // TODO Remove this section.  It's called by some code in the assembler.
-    // The scanning portion should be completed prior to this point 
+    // The scanning portion should be completed prior to this point
     public void deploy(CdiBeanInfo beanInfo) throws OpenEJBException{
         this.processAnnotatedBeans.deploy(beanInfo);
     }
@@ -343,7 +344,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (clientModule.getApplicationClient() != null && clientModule.getApplicationClient().isMetadataComplete()) return clientModule;
 
 
-            AbstractFinder finder = clientModule.getFinder();
+            IAnnotationFinder finder = clientModule.getFinder();
 
             if (finder == null) {
                 try {
@@ -403,7 +404,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 existingServlets.add(servlet.getServletClass());
             }
 
-            AbstractFinder finder = webModule.getFinder();
+            IAnnotationFinder finder = webModule.getFinder();
             List<Class> classes = new ArrayList<Class>();
             classes.addAll(finder.findAnnotatedClasses(WebService.class));
             classes.addAll(finder.findAnnotatedClasses(WebServiceProvider.class));
@@ -448,7 +449,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return ejbModule;
             }
 
-            AbstractFinder finder = ejbModule.getFinder();
+            IAnnotationFinder finder = ejbModule.getFinder();
 
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
@@ -680,7 +681,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             processWebServiceClientHandlers(beanInfo, beanInfo.getClassLoader());
 
         }
-        
+
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 setModule(ejbModule);
@@ -997,7 +998,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            AbstractFinder finder = webModule.getFinder();
+            IAnnotationFinder finder = webModule.getFinder();
 
             if (finder != null) {
                 String[] webComponentAnnotations = {
@@ -1062,7 +1063,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     fail(ejbName, "xml.noEjbClass", ejbName, join(", ", others));
                 }
-                
+
                 Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(ejbClassName);
@@ -1345,7 +1346,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             /*
                              * @Lock
                              */
-                            LockHandler lockHandler = new LockHandler(assemblyDescriptor, sessionBean);                            
+                            LockHandler lockHandler = new LockHandler(assemblyDescriptor, sessionBean);
                             if (sessionBean.getConcurrencyManagementType() == ConcurrencyManagementType.CONTAINER) {
                                 processAttributes(lockHandler, clazz, inheritedClassFinder);
                             } else {
@@ -1355,10 +1356,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                             /*
                              * @AccessTimeout
                              */
-                            AccessTimeoutHandler accessTimeoutHandler = 
+                            AccessTimeoutHandler accessTimeoutHandler =
                                 new AccessTimeoutHandler(assemblyDescriptor, sessionBean, lockHandler.getContainerConcurrency());
                             processAttributes(accessTimeoutHandler, clazz, inheritedClassFinder);
-                            
+
                             /*
                              * @Startup
                              */
@@ -1371,7 +1372,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             /*
                              * Annotations specific to @Stateful beans
                              */
-                            
+
                             /*
                              * @StatefulTimeout
                              */
@@ -1384,13 +1385,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                                     sessionBean.setStatefulTimeout(timeout);
                                 }
                             }
-                            
+
                             /*
                              * @AccessTimeout
                              */
                             AccessTimeoutHandler accessTimeoutHandler = new AccessTimeoutHandler(assemblyDescriptor, sessionBean);
                             processAttributes(accessTimeoutHandler, clazz, inheritedClassFinder);
-                            
+
                         }
                     }
                 }
@@ -1572,12 +1573,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             SessionBean sessionBean = (SessionBean) bean;
-            
+
             List<Method> asyncMethods = classFinder.findAnnotatedMethods(Asynchronous.class);
             for (Method method : asyncMethods) {
                 sessionBean.getAsyncMethod().add(new AsyncMethod(method));
             }
-            
+
             List<Class<?>> clses = classFinder.findAnnotatedClasses(Asynchronous.class);
 
             //Spec 4.5.1 @Asynchronous could be used at the class level of a bean-class ( or superclass ).
@@ -1600,7 +1601,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
         }
-        
+
         //TODO why is this necessary, we scan for exceptions with this annotation elsewhere.
         private void processApplicationExceptions(Class<?> clazz, AssemblyDescriptor assemblyDescriptor) {
             /*
@@ -1648,7 +1649,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (beanClass.getAnnotation(LocalBean.class) != null) {
                 sessionBean.setLocalBean(new Empty());
             }
-            
+
             /**
              * Anything declared as both <business-local> and <business-remote> is invalid in strict mode
              */
@@ -1941,7 +1942,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // It goes a little beyond that, but no one has ever complained about having
             // more local interfaces.
 
-            // TODO allow to be re-enabled with a flag  
+            // TODO allow to be re-enabled with a flag
             //for (Class interfce : all.unspecified) sessionBean.addBusinessLocal(interfce);
 
 
@@ -2188,7 +2189,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
         }
-        
+
         private void processCallbacks(Lifecycle bean, ClassFinder classFinder) {
 
             final boolean override = "true".equalsIgnoreCase(getProperty("openejb.callbacks.override", "false"));
@@ -2213,7 +2214,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             if (bean instanceof Invokable) {
                 Invokable invokable = (Invokable) bean;
-                
+
                 /*
                  * @AroundInvoke
                  */
@@ -2232,7 +2233,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
-            
+
             /*
              * @Timeout
              */
@@ -2628,7 +2629,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
-            
+
             // Set lookup name, if any
             String lookupName = getLookupName(ejb);
             if (lookupName.equals("")) {
@@ -2826,22 +2827,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     reference = resourceEnvRef;
                 } else if (isKnownEnvironmentEntryType(type)) {
                     /*
-                     * @Resource <env-entry>    
-                     * 
+                     * @Resource <env-entry>
+                     *
                      * Add an env-entry via @Resource if 'lookup' attribute is set.
-                     */ 
+                     */
                     String lookupName = getLookupName(resource);
                     if (!lookupName.equals("")) {
                         EnvEntry envEntry = new EnvEntry();
                         envEntry.setName(refName);
                         consumer.getEnvEntry().add(envEntry);
-                        
+
                         envEntry.setLookupName(lookupName);
-                        
+
                         reference = envEntry;
                     } else {
                         /*
-                         * Can't add env-entry since @Resource.lookup is not set. 
+                         * Can't add env-entry since @Resource.lookup is not set.
                          */
                         return;
                     }
@@ -2912,7 +2913,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return null;
             }
         }
-        
+
         private static String getLookupName(Resource resource) {
             String value = "";
             Method lookupMethod = getLookupMethod(Resource.class);
@@ -3334,19 +3335,19 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private static class ConcurrentMethodHandler {
-            
+
             protected final AssemblyDescriptor assemblyDescriptor;
             protected final SessionBean bean;
             protected final Map<Object, ContainerConcurrency> methods;
 
-            public ConcurrentMethodHandler(AssemblyDescriptor assemblyDescriptor, 
-                                           SessionBean bean, 
+            public ConcurrentMethodHandler(AssemblyDescriptor assemblyDescriptor,
+                                           SessionBean bean,
                                            Map<Object, ContainerConcurrency> methods) {
                 this.assemblyDescriptor = assemblyDescriptor;
                 this.bean = bean;
                 this.methods = methods;
             }
-            
+
             public Map<String, List<MethodAttribute>> getExistingDeclarations() {
                 Map<String, List<MethodAttribute>> declarations = new HashMap<String, List<MethodAttribute>>();
                 List<ConcurrentMethod> methods = bean.getConcurrentMethod();
@@ -3360,7 +3361,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 return declarations;
             }
-            
+
             public ContainerConcurrency getContainerConcurrency(Method method) {
                 ContainerConcurrency concurrency = methods.get(method);
                 if (concurrency == null) {
@@ -3370,35 +3371,35 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 return concurrency;
             }
-            
+
             public ContainerConcurrency getContainerConcurrency(Class clazz) {
                 ContainerConcurrency concurrency = methods.get(clazz);
                 if (concurrency == null) {
                     concurrency = new ContainerConcurrency(null, clazz.getName(), bean.getEjbName(), "*");
                     methods.put(clazz, concurrency);
-                    assemblyDescriptor.getContainerConcurrency().add(concurrency); 
+                    assemblyDescriptor.getContainerConcurrency().add(concurrency);
                 }
                 return concurrency;
             }
-            
+
             protected Map<Object, ContainerConcurrency> getContainerConcurrency() {
                 return methods;
             }
         }
-        
+
         public static class LockHandler extends ConcurrentMethodHandler implements AnnotationHandler<Lock> {
 
-            public LockHandler(AssemblyDescriptor assemblyDescriptor, 
+            public LockHandler(AssemblyDescriptor assemblyDescriptor,
                                SessionBean bean) {
                 this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
             }
 
-            public LockHandler(AssemblyDescriptor assemblyDescriptor, 
-                               SessionBean bean, 
+            public LockHandler(AssemblyDescriptor assemblyDescriptor,
+                               SessionBean bean,
                                Map<Object, ContainerConcurrency> methods) {
                 super(assemblyDescriptor, bean, methods);
             }
-            
+
             public void addClassLevelDeclaration(Lock attribute, Class type) {
                 ContainerConcurrency concurrency = getContainerConcurrency(type);
                 concurrency.setLock(toLock(attribute));
@@ -3418,22 +3419,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     throw new IllegalArgumentException("Unknown lock annotation: " + annotation.value());
                 }
             }
-            
+
             public Class<Lock> getAnnotationClass() {
                 return Lock.class;
             }
 
         }
-        
+
         public static class AccessTimeoutHandler extends ConcurrentMethodHandler implements AnnotationHandler<AccessTimeout> {
 
-            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor, 
+            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor,
                                         SessionBean bean) {
                 this(assemblyDescriptor, bean, new HashMap<Object, ContainerConcurrency>());
             }
 
-            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor, 
-                                        SessionBean bean, 
+            public AccessTimeoutHandler(AssemblyDescriptor assemblyDescriptor,
+                                        SessionBean bean,
                                         Map<Object, ContainerConcurrency> methods) {
                 super(assemblyDescriptor, bean, methods);
             }
@@ -3454,7 +3455,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 timeout.setUnit(annotation.unit());
                 return timeout;
             }
-            
+
             public Class<AccessTimeout> getAnnotationClass() {
                 return AccessTimeout.class;
             }

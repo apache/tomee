@@ -18,7 +18,7 @@ package org.apache.openejb.osgi.core;
 
 import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.FinderFactory;
-import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.BundleAnnotationFinder;
 import org.apache.xbean.osgi.bundle.util.DiscoveryRange;
 import org.apache.xbean.osgi.bundle.util.ResourceDiscoveryFilter;
@@ -34,7 +34,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 public class BundleFinderFactory extends FinderFactory {
 
     @Override
-    public AbstractFinder create(DeploymentModule module) throws Exception {
+    public IAnnotationFinder create(DeploymentModule module) throws Exception {
         
         ClassLoader moduleCL = module.getClassLoader();
         
