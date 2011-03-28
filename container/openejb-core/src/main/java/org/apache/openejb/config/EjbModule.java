@@ -22,7 +22,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.Webservices;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
 import java.net.URI;
@@ -48,7 +48,7 @@ public class EjbModule implements WsModule {
     private OpenejbJar openejbJar;
     private Webservices webservices;
 
-    private final AtomicReference<AbstractFinder> finder = new AtomicReference<AbstractFinder>();
+    private final AtomicReference<IAnnotationFinder> finder = new AtomicReference<IAnnotationFinder>();
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private Beans beans;
@@ -92,11 +92,11 @@ public class EjbModule implements WsModule {
         this.beans = beans;
     }
 
-    public AbstractFinder getFinder() {
+    public IAnnotationFinder getFinder() {
         return finder.get();
     }
 
-    public void setFinder(AbstractFinder finder) {
+    public void setFinder(IAnnotationFinder finder) {
         this.finder.set(finder);
     }
 

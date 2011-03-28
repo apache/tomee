@@ -30,7 +30,7 @@ import org.apache.openejb.jee.FacesConfig;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
-import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 /**
  * @version $Rev$ $Date$
@@ -48,7 +48,7 @@ public class WebModule implements WsModule {
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
-    private AbstractFinder finder;
+    private IAnnotationFinder finder;
 
     private ID id;
     
@@ -103,11 +103,11 @@ public class WebModule implements WsModule {
         this.urls = urls;
     }
 
-    public AbstractFinder getFinder() {
+    public IAnnotationFinder getFinder() {
         return finder;
     }
 
-    public void setFinder(AbstractFinder finder) {
+    public void setFinder(IAnnotationFinder finder) {
         this.finder = finder;
     }
 

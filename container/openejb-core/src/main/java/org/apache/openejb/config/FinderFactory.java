@@ -16,11 +16,14 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.xbean.finder.AbstractFinder;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.ClasspathArchive;
 
 import java.io.File;
 import java.net.URL;
@@ -36,11 +39,11 @@ public class FinderFactory {
         return (factory != null)? factory: FinderFactory.factory;
     }
 
-    public static AbstractFinder createFinder(DeploymentModule module) throws Exception {
+    public static IAnnotationFinder createFinder(DeploymentModule module) throws Exception {
         return get().create(module);
     }
 
-    public AbstractFinder create(DeploymentModule module) throws Exception {
+    public IAnnotationFinder create(DeploymentModule module) throws Exception {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
@@ -62,9 +65,9 @@ public class FinderFactory {
             } else {
                 url = new URL(location);
             }
-            return new ClassFinder(module.getClassLoader(), url);
+            return new AnnotationFinder(new ClasspathArchive(module.getClassLoader(), url));
         } else {
-            return new ClassFinder();
+            return new AnnotationFinder(new ClassesArchive());
         }
     }
 }
