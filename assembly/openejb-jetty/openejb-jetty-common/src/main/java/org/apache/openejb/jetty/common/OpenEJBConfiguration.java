@@ -41,6 +41,7 @@ import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.lang.reflect.Field;
@@ -235,11 +236,14 @@ public class OpenEJBConfiguration implements Configuration {
         }
 
         // create the web module
-        String basePath = new File(servletContext.getRealPath(".")).getParentFile().getAbsolutePath();
+        File context = new File(servletContext.getRealPath("."));
+        String basePath = context.getParentFile().getAbsolutePath();
         ClassLoader classLoader = application.getClassLoader();//ClassLoaderUtil.createTempClassLoader(application.getClassLoader());
         System.out.println("context path = " + application);
 
         WebModule webModule = new WebModule(webApp, application.getWar(), classLoader, basePath, getId(application));
+        URL[] webappUrls = DeploymentLoader.getWebappUrls(context);
+        webModule.setUrls(Arrays.asList(webappUrls));
 
         // process the annotations
         try {
