@@ -103,24 +103,6 @@
             </defaults>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>tomee6</id>
-              <phase>package</phase>
-              <configuration>
-                <appendAssemblyId>false</appendAssemblyId>
-                <descriptors>
-                  <descriptor>src/main/assembly/tomee.xml</descriptor>
-                </descriptors>
-              </configuration>
-              <goals>
-                <goal>single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -132,7 +114,6 @@
 
   <modules>
     <module>utils</module>
-    <module>tomee6</module>
     <module>tomee7</module>
   </modules>
 </project>
