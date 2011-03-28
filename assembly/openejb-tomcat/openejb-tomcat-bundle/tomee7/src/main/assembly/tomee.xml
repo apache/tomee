@@ -20,31 +20,31 @@
 <!-- $Rev: 576067 $ $Date: 2007-09-16 03:17:08 -0700 (Sun, 16 Sep 2007) $ -->
 
 <assembly>
-    <id>openejb-tomcat6-bundle</id>
-    <formats>
-        <format>tar.gz</format>
-        <format>zip</format>
-    </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <fileSet>
-            <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
-            <outputDirectory>/apache-tomee-tomcat-7.0.11</outputDirectory>
-            <includes>
-                <include>**/*</include>
-            </includes>
-            <excludes>
-                <exclude>**/bin/**/*</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
-            <outputDirectory>/apache-tomee-tomcat-7.0.11</outputDirectory>
-            <includes>
-                <include>**/bin/**/*</include>
-            </includes>
-            <fileMode>0755</fileMode>
-        </fileSet>
-    </fileSets>
+  <id>openejb-tomcat6-bundle</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
+      <outputDirectory>/apache-tomee-tomcat-7.0.11</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <excludes>
+        <exclude>**/bin/**/*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
+      <outputDirectory>/apache-tomee-tomcat-7.0.11</outputDirectory>
+      <includes>
+        <include>**/bin/**/*</include>
+      </includes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+  </fileSets>
 </assembly>
 

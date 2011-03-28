@@ -43,9 +43,7 @@
             </goals>
             <configuration>
               <outputDirectory>target/test</outputDirectory>
-              <overWriteSnapshots>
-                                true
-              </overWriteSnapshots>
+              <overWriteSnapshots>true</overWriteSnapshots>
               <artifactItems>
                 <artifactItem>
                   <groupId>org.superbiz</groupId>
@@ -67,12 +65,12 @@
       <artifactId>openejb-webapp-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-        <!--
-            <dependency>
-              <groupId>org.mortbay.jetty</groupId>
-              <artifactId>jetty</artifactId>
-            </dependency>
-        -->
+    <!--
+        <dependency>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty</artifactId>
+        </dependency>
+    -->
 
     <dependency>
       <groupId>junit</groupId>
