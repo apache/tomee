@@ -58,7 +58,6 @@ public class WebModule implements WsModule {
     public WebModule(WebApp webApp, String contextRoot, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.webApp = webApp;
 
-
         File file = (jarLocation == null) ? null : new File(jarLocation);
         this.id = new ID(null, webApp, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
