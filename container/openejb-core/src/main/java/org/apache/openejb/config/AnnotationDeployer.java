@@ -180,6 +180,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
@@ -360,12 +361,12 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // This method is also called by the deploy(EjbModule) method to see if those
             // modules have any @LocalClient or @RemoteClient classes
-            for (Class<?> clazz : finder.findAnnotatedClasses(LocalClient.class)) {
-                clientModule.getLocalClients().add(clazz.getName());
+            for (Annotated<Class<?>> clazz : finder.findMetaAnnotatedClasses(LocalClient.class)) {
+                clientModule.getLocalClients().add(clazz.get().getName());
             }
 
-            for (Class<?> clazz : finder.findAnnotatedClasses(RemoteClient.class)) {
-                clientModule.getRemoteClients().add(clazz.getName());
+            for (Annotated<Class<?>> clazz : finder.findMetaAnnotatedClasses(RemoteClient.class)) {
+                clientModule.getRemoteClients().add(clazz.get().getName());
             }
 
             if (clientModule.getApplicationClient() == null){
@@ -454,21 +455,21 @@ public class AnnotationDeployer implements DynamicDeployer {
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
-            for (Class<?> beanClass : finder.findAnnotatedClasses(Singleton.class)) {
+            for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Singleton.class)) {
                 Singleton singleton = beanClass.getAnnotation(Singleton.class);
-                String ejbName = getEjbName(singleton, beanClass);
+                String ejbName = getEjbName(singleton, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Singleton.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Singleton.class, beanClass.get(), ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    enterpriseBean = new SingletonBean(ejbName, beanClass.getName());
+                    enterpriseBean = new SingletonBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.getName());
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    enterpriseBean.setEjbClass(beanClass.get());
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -480,21 +481,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            for (Class<?> beanClass : finder.findAnnotatedClasses(Stateless.class)) {
+            for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateless.class)) {
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
-                String ejbName = getEjbName(stateless, beanClass);
+                String ejbName = getEjbName(stateless, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Stateless.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateless.class, beanClass.get(), ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    enterpriseBean = new StatelessBean(ejbName, beanClass.getName());
+                    enterpriseBean = new StatelessBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.getName());
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    enterpriseBean.setEjbClass(beanClass.get());
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -506,21 +507,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            for (Class<?> beanClass : finder.findAnnotatedClasses(Stateful.class)) {
+            for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateful.class)) {
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
-                String ejbName = getEjbName(stateful, beanClass);
+                String ejbName = getEjbName(stateful, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Stateful.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateful.class, beanClass.get(), ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    enterpriseBean = new StatefulBean(ejbName, beanClass.getName());
+                    enterpriseBean = new StatefulBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.getName());
-                    LegacyProcessor.process(beanClass, enterpriseBean);
+                    enterpriseBean.setEjbClass(beanClass.get());
+                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -532,22 +533,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            for (Class<?> beanClass : finder.findAnnotatedClasses(ManagedBean.class)) {
+            for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
                 ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
-                String ejbName = getEjbName(managed, beanClass);
+                String ejbName = getEjbName(managed, beanClass.get());
 
                 // TODO: this is actually against the spec, but the requirement is rather silly
                 // (allowing @Stateful and @ManagedBean on the same class)
                 // If the TCK doesn't complain we should discourage it
-                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass, ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass.get(), ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
-                    enterpriseBean = new org.apache.openejb.jee.ManagedBean(ejbName, beanClass.getName());
+                    enterpriseBean = new org.apache.openejb.jee.ManagedBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
-                    enterpriseBean.setEjbClass(beanClass.getName());
+                    enterpriseBean.setEjbClass(beanClass.get());
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -1164,7 +1165,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @Interceptors
                  */
-                for (Class<?> interceptorsAnnotatedClass : annotationFinder.findAnnotatedClasses(Interceptors.class)) {
+                for (Annotated<Class<?>> interceptorsAnnotatedClass : annotationFinder.findMetaAnnotatedClasses(Interceptors.class)) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
@@ -2357,11 +2358,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             //
 
             List<EJB> ejbList = new ArrayList<EJB>();
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(EJBs.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJBs.class)) {
                 EJBs ejbs = clazz.getAnnotation(EJBs.class);
                 ejbList.addAll(asList(ejbs.value()));
             }
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(EJB.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJB.class)) {
                 EJB e = clazz.getAnnotation(EJB.class);
                 ejbList.add(e);
             }
@@ -2391,11 +2392,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             //
 
             List<Resource> resourceList = new ArrayList<Resource>();
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(Resources.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resources.class)) {
                 Resources resources = clazz.getAnnotation(Resources.class);
                 resourceList.addAll(asList(resources.value()));
             }
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(Resource.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resource.class)) {
                 Resource resource = clazz.getAnnotation(Resource.class);
                 resourceList.add(resource);
             }
@@ -2425,11 +2426,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             //
 
             List<WebServiceRef> webservicerefList = new ArrayList<WebServiceRef>();
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(WebServiceRefs.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRefs.class)) {
                 WebServiceRefs webServiceRefs = clazz.getAnnotation(WebServiceRefs.class);
                 webservicerefList.addAll(asList(webServiceRefs.value()));
             }
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(WebServiceRef.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRef.class)) {
                 WebServiceRef webServiceRef = clazz.getAnnotation(WebServiceRef.class);
                 webservicerefList.add(webServiceRef);
             }
@@ -2462,11 +2463,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             //
 
             List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(PersistenceUnits.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnits.class)) {
                 PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
                 persistenceUnitList.addAll(asList(persistenceUnits.value()));
             }
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(PersistenceUnit.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnit.class)) {
                 PersistenceUnit persistenceUnit = clazz.getAnnotation(PersistenceUnit.class);
                 persistenceUnitList.add(persistenceUnit);
             }
@@ -2490,15 +2491,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             PersistenceContextAnnFactory pcFactory = new PersistenceContextAnnFactory();
             List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(PersistenceContexts.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContexts.class)) {
                 PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
                 persistenceContextList.addAll(asList(persistenceContexts.value()));
-                pcFactory.addAnnotations(clazz);
+                pcFactory.addAnnotations(clazz.get());
             }
-            for (Class<?> clazz : annotationFinder.findAnnotatedClasses(PersistenceContext.class)) {
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContext.class)) {
                 PersistenceContext persistenceContext = clazz.getAnnotation(PersistenceContext.class);
                 persistenceContextList.add(persistenceContext);
-                pcFactory.addAnnotations(clazz);
+                pcFactory.addAnnotations(clazz.get());
             }
             for (PersistenceContext pCtx : persistenceContextList) {
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, null), null);

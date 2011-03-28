@@ -47,7 +47,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            return new AnnotationFinder(new ClasspathArchive(webClassLoader, webModule.getUrls()));
+            return new AnnotationFinder(new ClasspathArchive(webClassLoader, webModule.getUrls())).link();
         }
 
         if (module.getJarLocation() != null) {
@@ -65,9 +65,9 @@ public class FinderFactory {
             } else {
                 url = new URL(location);
             }
-            return new AnnotationFinder(new ClasspathArchive(module.getClassLoader(), url));
+            return new AnnotationFinder(new ClasspathArchive(module.getClassLoader(), url)).link();
         } else {
-            return new AnnotationFinder(new ClassesArchive());
+            return new AnnotationFinder(new ClassesArchive()).link();
         }
     }
 }
