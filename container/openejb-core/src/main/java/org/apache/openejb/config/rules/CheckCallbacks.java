@@ -349,10 +349,10 @@ public class CheckCallbacks extends ValidationBase {
 
             if (possibleMethods.size() == 0) {
                 fail(bean, "callback.missing", type, callback.getMethodName(), callback.getClassName());
-            } else if (possibleMethods.size() != parameterTypes.length) {
-                fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), callback.getClassName());
+            } else if (possibleMethods.size() == 1) {
+                fail(bean, "callback.invalidArguments", type, callback.getMethodName(), getParameters(possibleMethods.get(0)), callback.getClassName(), getParameters(parameterTypes));
             } else {
-                fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), callback.getClassName());
+                fail(bean, "callback.missing.possibleTypo", type, callback.getMethodName(), possibleMethods.size(), callback.getClassName(), getParameters(parameterTypes));
             }
         }
     }
