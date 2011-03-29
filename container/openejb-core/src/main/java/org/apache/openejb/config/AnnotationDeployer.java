@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -459,7 +460,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Singleton singleton = beanClass.getAnnotation(Singleton.class);
                 String ejbName = getEjbName(singleton, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Singleton.class, beanClass.get(), ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Singleton.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -485,7 +486,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = getEjbName(stateless, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Stateless.class, beanClass.get(), ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateless.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -511,7 +512,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 String ejbName = getEjbName(stateful, beanClass.get());
 
-                if (!isValidEjbAnnotationUsage(Stateful.class, beanClass.get(), ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(Stateful.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -540,7 +541,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 // TODO: this is actually against the spec, but the requirement is rather silly
                 // (allowing @Stateful and @ManagedBean on the same class)
                 // If the TCK doesn't complain we should discourage it
-                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass.get(), ejbName, ejbModule)) continue;
+                if (!isValidEjbAnnotationUsage(ManagedBean.class, beanClass, ejbName, ejbModule)) continue;
 
                 EnterpriseBean enterpriseBean = ejbJar.getEnterpriseBean(ejbName);
                 if (enterpriseBean == null) {
@@ -556,10 +557,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            List<Class<?>> classes = finder.findAnnotatedClasses(MessageDriven.class);
-            for (Class<?> beanClass : classes) {
+            for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(MessageDriven.class)) {
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
-                String ejbName = getEjbName(mdb, beanClass);
+                String ejbName = getEjbName(mdb, beanClass.get());
 
                 if (!isValidEjbAnnotationUsage(MessageDriven.class, beanClass, ejbName, ejbModule)) continue;
 
@@ -567,11 +567,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (messageBean == null) {
                     messageBean = new MessageDrivenBean(ejbName);
                     ejbJar.addEnterpriseBean(messageBean);
-                    LegacyProcessor.process(beanClass, messageBean);
+                    LegacyProcessor.process(beanClass.get(), messageBean);
                 }
                 if (messageBean.getEjbClass() == null) {
-                    messageBean.setEjbClass(beanClass.getName());
-                    LegacyProcessor.process(beanClass, messageBean);
+                    messageBean.setEjbClass(beanClass.get());
+                    LegacyProcessor.process(beanClass.get(), messageBean);
                 }
             }
 
@@ -622,7 +622,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return ejbName;
         }
 
-        private boolean isValidEjbAnnotationUsage(Class annotationClass, Class<?> beanClass, String ejbName, EjbModule ejbModule) {
+        private boolean isValidEjbAnnotationUsage(Class annotationClass, Annotated<Class<?>> beanClass, String ejbName, EjbModule ejbModule) {
             List<Class<? extends Annotation>> annotations = new ArrayList(asList(Singleton.class, Stateless.class, Stateful.class, MessageDriven.class));
             annotations.remove(annotationClass);
 
@@ -634,27 +634,27 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 String secondEjbName = null;
                 if (annotation instanceof Stateful) {
-                    secondEjbName = getEjbName((Stateful) annotation, beanClass);
+                    secondEjbName = getEjbName((Stateful) annotation, beanClass.get());
                 } else if (annotation instanceof Stateless) {
-                    secondEjbName = getEjbName((Stateless) annotation, beanClass);
+                    secondEjbName = getEjbName((Stateless) annotation, beanClass.get());
                 } else if (annotation instanceof Singleton) {
-                    secondEjbName = getEjbName((Singleton) annotation, beanClass);
+                    secondEjbName = getEjbName((Singleton) annotation, beanClass.get());
                 } else if (annotation instanceof MessageDriven) {
-                    secondEjbName = getEjbName((MessageDriven) annotation, beanClass);
+                    secondEjbName = getEjbName((MessageDriven) annotation, beanClass.get());
                 }
 
                 if (ejbName.equals(secondEjbName)) {
-                    ejbModule.getValidation().fail(ejbName, "multiplyAnnotatedAsBean", annotationClass.getSimpleName(), secondAnnotation.getSimpleName(), ejbName, beanClass.getName());
+                    ejbModule.getValidation().fail(ejbName, "multiplyAnnotatedAsBean", annotationClass.getSimpleName(), secondAnnotation.getSimpleName(), ejbName, beanClass.get().getName());
                 }
             }
 
-            if (beanClass.isInterface()) {
-                ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.getName());
+            if (beanClass.get().isInterface()) {
+                ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
             }
 
-            if (isAbstract(beanClass.getModifiers())) {
-                ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.getName());
+            if (isAbstract(beanClass.get().getModifiers())) {
+                ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
             }
 
@@ -1165,7 +1165,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @Interceptors
                  */
-                for (Annotated<Class<?>> interceptorsAnnotatedClass : annotationFinder.findMetaAnnotatedClasses(Interceptors.class)) {
+                for (Annotated<Class<?>> interceptorsAnnotatedClass : sortClasses(annotationFinder.findMetaAnnotatedClasses(Interceptors.class))) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
@@ -1182,7 +1182,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(Interceptors.class)) {
+                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(Interceptors.class))) {
                     Interceptors interceptors = method.getAnnotation(Interceptors.class);
                     if (interceptors != null) {
                         EjbJar ejbJar = ejbModule.getEjbJar();
@@ -1224,7 +1224,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setExcludeClassInterceptors(true);
                 }
 
-                for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(ExcludeClassInterceptors.class)) {
+                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(ExcludeClassInterceptors.class))) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeClassInterceptors(true);
                     binding.setMethod(new NamedMethod(method.get()));
@@ -1575,19 +1575,16 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             SessionBean sessionBean = (SessionBean) bean;
 
-            List<Method> asyncMethods = annotationFinder.findAnnotatedMethods(Asynchronous.class);
-            for (Method method : asyncMethods) {
-                sessionBean.getAsyncMethod().add(new AsyncMethod(method));
+            for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(Asynchronous.class)) {
+                sessionBean.getAsyncMethod().add(new AsyncMethod(method.get()));
             }
-
-            List<Class<?>> clses = annotationFinder.findAnnotatedClasses(Asynchronous.class);
 
             //Spec 4.5.1 @Asynchronous could be used at the class level of a bean-class ( or superclass ).
             //Seems that it should not be used on the any interface view
 
-            for (Class<?> cls : clses) {
-                if (!cls.isInterface()) {
-                    sessionBean.getAsynchronousClasses().add(cls.getName());
+            for (Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Asynchronous.class)) {
+                if (!clazz.get().isInterface()) {
+                    sessionBean.getAsynchronousClasses().add(clazz.get().getName());
                 }
             }
         }
@@ -2199,7 +2196,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              * @PostConstruct
              */
             if (apply(override, bean.getPostConstruct())) {
-                for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(PostConstruct.class)) {
+                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(PostConstruct.class))) {
                     bean.getPostConstruct().add(new LifecycleCallback(method.get()));
                 }
             }
@@ -2208,7 +2205,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              * @PreDestroy
              */
             if (apply(override, bean.getPreDestroy())) {
-                for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(PreDestroy.class)) {
+                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(PreDestroy.class))) {
                     bean.getPreDestroy().add(new LifecycleCallback(method.get()));
                 }
             }
@@ -2220,7 +2217,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @AroundInvoke
                  */
                 if (apply(override, invokable.getAroundInvoke())) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundInvoke.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundInvoke.class))) {
                         invokable.getAroundInvoke().add(new AroundInvoke(method.get()));
                     }
                 }
@@ -2229,7 +2226,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  *  @AroundTimeout
                  */
                 if (apply(override, invokable.getAroundInvoke())) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class)) {
+                    for (Annotated<Method> method : sortMethods((annotationFinder.findMetaAnnotatedMethods(javax.interceptor.AroundTimeout.class)))) {
                         invokable.getAroundTimeout().add(new AroundTimeout(method.get()));
                     }
                 }
@@ -2241,10 +2238,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (bean instanceof TimerConsumer) {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
-                    List<Method> timeoutMethods = annotationFinder.findAnnotatedMethods(javax.ejb.Timeout.class);
+                    List<Annotated<Method>> timeoutMethods = annotationFinder.findMetaAnnotatedMethods(javax.ejb.Timeout.class);
                     //Validation Logic is moved to CheckCallback class.
                     if(timeoutMethods.size() == 1){
-                        timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0)));
+                        timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0).get()));
                     }
                 }
             }
@@ -2257,7 +2254,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 LifecycleCallback afterBegin = getFirst(session.getAfterBegin());
                 if (afterBegin == null) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(AfterBegin.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(AfterBegin.class))) {
                         session.getAfterBegin().add(new LifecycleCallback(method.get()));
                     }
                 }
@@ -2267,7 +2264,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 LifecycleCallback beforeCompletion = getFirst(session.getBeforeCompletion());
                 if (beforeCompletion == null) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(BeforeCompletion.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(BeforeCompletion.class))) {
                         session.getBeforeCompletion().add(new LifecycleCallback(method.get()));
                     }
                 }
@@ -2277,7 +2274,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  */
                 LifecycleCallback afterCompletion = getFirst(session.getAfterCompletion());
                 if (afterCompletion == null) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(AfterCompletion.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(AfterCompletion.class))) {
                         session.getAfterCompletion().add(new LifecycleCallback(method.get()));
                     }
                 }
@@ -2286,7 +2283,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @PostActivate
                  */
                 if (apply(override, session.getPostActivate())) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(PostActivate.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(PostActivate.class))) {
                         session.getPostActivate().add(new LifecycleCallback(method.get()));
                     }
                 }
@@ -2295,16 +2292,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @PrePassivate
                  */
                 if (apply(override, session.getPrePassivate())) {
-                    for (Annotated<Method> method : annotationFinder.findMetaAnnotatedMethods(PrePassivate.class)) {
+                    for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(PrePassivate.class))) {
                         session.getPrePassivate().add(new LifecycleCallback(method.get()));
                     }
                 }
                 /*
                  * @Init
                  */
-                List<Method> initMethods = annotationFinder.findAnnotatedMethods(Init.class);
-                for (Method method : initMethods) {
-                    InitMethod initMethod = new InitMethod(method);
+                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(Init.class))) {
+                    InitMethod initMethod = new InitMethod(method.get());
 
                     Init init = method.getAnnotation(Init.class);
                     if (init.value() != null && !init.value().equals("")) {
@@ -2317,14 +2313,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @Remove
                  */
-                List<Method> removeMethods = annotationFinder.findAnnotatedMethods(Remove.class);
+                List<Annotated<Method>> removeMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(Remove.class));
                 Map<NamedMethod, RemoveMethod> declaredRemoveMethods = new HashMap<NamedMethod, RemoveMethod>();
                 for (RemoveMethod removeMethod : session.getRemoveMethod()) {
                     declaredRemoveMethods.put(removeMethod.getBeanMethod(), removeMethod);
                 }
-                for (Method method : removeMethods) {
+                for (Annotated<Method> method : removeMethods) {
                     Remove remove = method.getAnnotation(Remove.class);
-                    RemoveMethod removeMethod = new RemoveMethod(method, remove.retainIfException());
+                    RemoveMethod removeMethod = new RemoveMethod(method.get(), remove.retainIfException());
 
                     RemoveMethod declaredRemoveMethod = declaredRemoveMethods.get(removeMethod.getBeanMethod());
 
@@ -3607,8 +3603,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 parents.addAll(ancestors(clazz));
             }
 
-            Collections.reverse(parents);
-
             return new AnnotationFinder(new ClassesArchive(parents)).link();
         }
 
@@ -3797,4 +3791,31 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
     }
 
+    public static List<Annotated<Class<?>>> sortClasses(List<Annotated<Class<?>>> list) {
+        Collections.sort(list, new Comparator<Annotated<Class<?>>>() {
+            @Override
+            public int compare(Annotated<Class<?>> o1, Annotated<Class<?>> o2) {
+                return compareClasses(o1.get(), o2.get());
+            }
+        });
+        return list;
+    }
+
+    public static List<Annotated<Method>> sortMethods(List<Annotated<Method>> list) {
+        Collections.sort(list, new Comparator<Annotated<Method>>() {
+            @Override
+            public int compare(Annotated<Method> o1, Annotated<Method> o2) {
+                return compareClasses(o1.get().getDeclaringClass(), o2.get().getDeclaringClass());
+            }
+        });
+        return list;
+    }
+
+    private static int compareClasses(Class<?> a, Class<?> b) {
+        if (a == b) return 0;
+        if (a.isAssignableFrom(b)) return 1;
+        if (b.isAssignableFrom(a)) return -1;
+
+        return 0;
+    }
 }
