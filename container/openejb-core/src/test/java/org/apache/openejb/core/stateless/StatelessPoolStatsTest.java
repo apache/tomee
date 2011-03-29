@@ -26,6 +26,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.test.util.Asserts;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -187,28 +188,11 @@ public class StatelessPoolStatsTest extends TestCase {
     }
 
     public static void assertEquals(List<?> expectedList, List<?> actualList) {
-        final Iterator<?> expected = expectedList.iterator();
-        final Iterator<?> actual = actualList.iterator();
-
-        while(expected.hasNext() && actual.hasNext()) {
-            assertEquals(expected.next(), actual.next());
-        }
-
-        assertEquals(expected.hasNext(), actual.hasNext());
+        Asserts.assertEquals(expectedList, actualList);
     }
 
     public static void assertEquals(Map<?,?> expectedMap, Map<?,?> actualMap) {
-        final Iterator<? extends Map.Entry<?, ?>> expectedIt = expectedMap.entrySet().iterator();
-        final Iterator<? extends Map.Entry<?, ?>> actualIt = actualMap.entrySet().iterator();
-
-        while (expectedIt.hasNext() && actualIt.hasNext()) {
-            final Map.Entry<?, ?> expected = expectedIt.next();
-            final Map.Entry<?, ?> actual = actualIt.next();
-            assertEquals("key", expected.getKey(), actual.getKey());
-            assertEquals(expected.getKey().toString(), expected.getValue(), actual.getValue());
-        }
-
-        assertEquals(expectedIt.hasNext(), actualIt.hasNext());
+        Asserts.assertEquals(expectedMap, actualMap);
     }
 
     /**

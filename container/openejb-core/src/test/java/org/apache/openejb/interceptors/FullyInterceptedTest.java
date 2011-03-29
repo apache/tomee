@@ -25,6 +25,7 @@ import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
+import org.apache.openejb.test.util.Asserts;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -77,7 +78,7 @@ public class FullyInterceptedTest extends TestCase {
         expected.add("businessMethod");
 
         List<String> actual = fullyIntercepted.businessMethod();
-        assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
+        Asserts.assertEquals(expected, actual);
     }
 
     @Test
@@ -95,6 +96,6 @@ public class FullyInterceptedTest extends TestCase {
         expected.add("methodWithDefaultInterceptorsExcluded");
 
         List<String> actual = fullyIntercepted.methodWithDefaultInterceptorsExcluded();
-        assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
+        Asserts.assertEquals(expected, actual);
     }
 }

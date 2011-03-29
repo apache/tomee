@@ -24,18 +24,24 @@ import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.EjbJar;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SessionBean;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.annotation.Resource;
 import javax.ejb.ApplicationException;
 import javax.ejb.Local;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -76,6 +82,39 @@ public class AnnotationDeployerTest {
                 ValueRequiredException.class
         ));
         return ejbModule;
+    }
+
+
+    @Test
+    public void testSortClasses() throws Exception {
+        AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(Emerald.class)).link();
+
+        List<Annotated<Class<?>>> classes = finder.findMetaAnnotatedClasses(Resource.class);
+        assertTrue(classes.size() >= 3);
+
+        List<Annotated<Class<?>>> sorted = AnnotationDeployer.sortClasses(classes);
+
+        assertTrue(sorted.size() >= 3);
+
+        assertEquals(Emerald.class, sorted.get(0).get());
+        assertEquals(Green.class, sorted.get(1).get());
+        assertEquals(Color.class, sorted.get(2).get());
+    }
+
+    @Test
+    public void testSortMethods() throws Exception {
+        AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(Emerald.class)).link();
+
+        List<Annotated<Method>> classes = finder.findMetaAnnotatedMethods(Resource.class);
+        assertTrue(classes.size() >= 3);
+
+        List<Annotated<Method>> sorted = AnnotationDeployer.sortMethods(classes);
+
+        assertTrue(sorted.size() >= 3);
+
+        assertEquals(Emerald.class, sorted.get(0).get().getDeclaringClass());
+        assertEquals(Green.class, sorted.get(1).get().getDeclaringClass());
+        assertEquals(Color.class, sorted.get(2).get().getDeclaringClass());
     }
 
     @Test
@@ -174,6 +213,24 @@ public class AnnotationDeployerTest {
         public String echo(String input) {
             return input;
         }
+    }
+
+    @Resource
+    public static class Color {
+        @Resource
+        public void color(){}
+    }
+
+    @Resource
+    public static class Green extends Color {
+        @Resource
+        public void green(){}
+    }
+
+    @Resource
+    public static class Emerald extends Green {
+        @Resource
+        public void emerald(){}
     }
 
 }
