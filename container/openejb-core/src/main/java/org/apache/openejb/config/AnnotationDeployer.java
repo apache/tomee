@@ -1165,7 +1165,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @Interceptors
                  */
-                for (Annotated<Class<?>> interceptorsAnnotatedClass : sortClasses(annotationFinder.findMetaAnnotatedClasses(Interceptors.class))) {
+                List<Annotated<Class<?>>> annotatedClasses = sortClasses(annotationFinder.findMetaAnnotatedClasses(Interceptors.class));
+                for (Annotated<Class<?>> interceptorsAnnotatedClass : annotatedClasses) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
                     for (Class interceptor : interceptors.value()) {
@@ -1182,7 +1183,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(Interceptors.class))) {
+                List<Annotated<Method>> annotatedMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(Interceptors.class));
+                for (Annotated<Method> method : annotatedMethods) {
                     Interceptors interceptors = method.getAnnotation(Interceptors.class);
                     if (interceptors != null) {
                         EjbJar ejbJar = ejbModule.getEjbJar();
@@ -3487,44 +3489,46 @@ public class AnnotationDeployer implements DynamicDeployer {
             // SET THE DEFAULT
             final Class<A> annotationClass = handler.getAnnotationClass();
 
+            List<Annotated<Class<?>>> types = sortClasses(annotationFinder.findMetaAnnotatedClasses(annotationClass));
             if (!hasMethodAttribute("*", null, existingDeclarations)) {
-                for (Class<?> type : ancestors(clazz)) {
-                    if (!hasMethodAttribute("*", type, existingDeclarations)) {
+                for (Annotated<Class<?>> type : types) {
+                    if (!type.get().isAssignableFrom(clazz)) continue;
+                    if (!hasMethodAttribute("*", type.get(), existingDeclarations)) {
                         A attribute = type.getAnnotation(annotationClass);
                         if (attribute != null) {
-                            handler.addClassLevelDeclaration(attribute, type);
+                            handler.addClassLevelDeclaration(attribute, type.get());
                         }
                     }
                 }
             }
 
-            List<Method> methods = annotationFinder.findAnnotatedMethods(annotationClass);
-            for (Method method : methods) {
+            List<Annotated<Method>> methods = annotationFinder.findMetaAnnotatedMethods(annotationClass);
+            for (Annotated<Method> method : methods) {
                 A attribute = method.getAnnotation(annotationClass);
-                if (!existingDeclarations.containsKey(method.getName())) {
+                if (!existingDeclarations.containsKey(method.get().getName())) {
                     // no method with this name in descriptor
-                    handler.addMethodLevelDeclaration(attribute, method);
+                    handler.addMethodLevelDeclaration(attribute, method.get());
                 } else {
                     // method name already declared
-                    List<MethodAttribute> list = existingDeclarations.get(method.getName());
+                    List<MethodAttribute> list = existingDeclarations.get(method.get().getName());
                     for (MethodAttribute mtx : list) {
                         MethodParams methodParams = mtx.getMethodParams();
                         if (methodParams == null) {
                             // params not specified, so this is more specific
-                            handler.addMethodLevelDeclaration(attribute, method);
+                            handler.addMethodLevelDeclaration(attribute, method.get());
                         } else {
                             List<String> params1 = methodParams.getMethodParam();
-                            String[] params2 = asStrings(method.getParameterTypes());
+                            String[] params2 = asStrings(method.get().getParameterTypes());
                             if (params1.size() != params2.length) {
                                 // params not the same
-                                handler.addMethodLevelDeclaration(attribute, method);
+                                handler.addMethodLevelDeclaration(attribute, method.get());
                             } else {
                                 for (int i = 0; i < params1.size(); i++) {
                                     String a = params1.get(i);
                                     String b = params2[i];
                                     if (!a.equals(b)) {
                                         // params not the same
-                                        handler.addMethodLevelDeclaration(attribute, method);
+                                        handler.addMethodLevelDeclaration(attribute, method.get());
                                         break;
                                     }
                                 }
