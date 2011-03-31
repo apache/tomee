@@ -28,6 +28,7 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
+import org.apache.tomcat.JarScanner;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -113,6 +114,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
                 contextListener.afterStop(standardContext);
             } else if (DESTROY_EVENT.equals(type) || Lifecycle.AFTER_DESTROY_EVENT.equals(type)) {
                 contextListener.destroy(standardContext);
+            } else if (Lifecycle.CONFIGURE_START_EVENT.equals(type)) {
+            	if (TomcatHelper.isTomcat7()) {
+            		TomcatHelper.configureJarScanner(standardContext);
+            	}
             }
         } else if (source instanceof StandardHost) {
             StandardHost standardHost = (StandardHost) source;
