@@ -121,7 +121,7 @@
     <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
     <junit.version>4.8.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
-    <org.apache.openwebbeans.version>1.1.0-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.1.0</org.apache.openwebbeans.version>
     <geronimo.connector.version>2.1</geronimo.connector.version>
   </properties>
 
