@@ -293,6 +293,10 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         this.messagingType = value;
     }
 
+    public void setMessagingType(Class value) {
+        this.messagingType = value.getName();
+    }
+
     public NamedMethod getTimeoutMethod() {
         return timeoutMethod;
     }

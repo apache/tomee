@@ -50,6 +50,10 @@ import org.xml.sax.helpers.XMLFilterImpl;
  */
 public class JeeTest extends TestCase {
 
+    /**
+     * TODO Doesn't seem there are any asserts here
+     * @throws Exception
+     */
     public void testEjbJar() throws Exception {
         String fileName = "ejb-jar-example1.xml";
         //        String fileName = "ejb-jar-empty.xml";
