@@ -130,4 +130,14 @@ public class TomcatHelper {
 	public static boolean isTomcat7() {
 		return System.getProperty("tomcat.version").startsWith("7.");
 	}
+
+	public static void configureJarScanner(StandardContext standardContext) {
+		try {
+			Object jarScanner = StandardContext.class.getMethod("getJarScanner").invoke(standardContext);
+			jarScanner.getClass().getMethod("setScanClassPath", Boolean.TYPE).invoke(jarScanner, false);
+		} catch (Exception e) {
+			// ignore
+			e.printStackTrace();
+		}
+	}
 }
