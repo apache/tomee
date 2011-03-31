@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-refType", namespace = "http://geronimo.apache.org/xml/ns/naming-1.2", propOrder = {
     "serviceRefName",
+    "wsdlFile",
     "serviceCompletion",
     "port"
 })
@@ -58,6 +59,8 @@ public class ServiceRefType {
 
     @XmlElement(name = "service-ref-name", required = true)
     protected String serviceRefName;
+    @XmlElement(name = "wsdl-file")
+    protected String wsdlFile;
     @XmlElement(name = "service-completion")
     protected ServiceCompletionType serviceCompletion;
     @XmlElement(name = "port")
@@ -140,4 +143,25 @@ public class ServiceRefType {
         return this.port;
     }
 
+    /**
+     * Gets the value of the wsdlFile property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     */
+    public String getWsdlFile() {
+        return wsdlFile;
+    }
+
+    /**
+     * Sets the value of the wsdlFile property.
+     * 
+     * @param wsdlFile
+     *     allowed object is
+     *     {@link String }
+     */
+    public void setWsdlFile(String wsdlFile) {
+        this.wsdlFile = wsdlFile;
+    }
 }
