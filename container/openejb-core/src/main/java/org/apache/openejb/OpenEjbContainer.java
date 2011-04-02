@@ -71,23 +71,32 @@ public class OpenEjbContainer extends EJBContainer {
 
         @Override
         public EJBContainer createEJBContainer(Map<?, ?> properties) {
-            Object provider = properties.get(EJBContainer.PROVIDER);
-            if (provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())) {
-                return null;
-            }
+            if (isOtherProvider(properties)) return null;
+
+
             String appId = (String) properties.get(EJBContainer.APP_NAME);
+
             try {
                 Properties props = new Properties();
                 props.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
                 //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
                 props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");
                 props.putAll(properties);
+
+
                 OpenEJB.init(props);
+
                 ConfigurationFactory configurationFactory = new ConfigurationFactory();
-                List<File> moduleLocations;
+
+
                 ClassLoader classLoader = getClass().getClassLoader();
+
+                List<File> moduleLocations;
+
                 Object modules = properties.get(EJBContainer.MODULES);
+
                 if (modules instanceof String) {
+
                     moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
                     for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
                         File file = i.next();
@@ -95,9 +104,13 @@ public class OpenEjbContainer extends EJBContainer {
                             i.remove();
                         }
                     }
+
                 } else if (modules instanceof String[]) {
+
                     moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+
                     int matched = 0;
+
                     for (Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
                         File file = i.next();
                         boolean remove = true;
@@ -112,15 +125,19 @@ public class OpenEjbContainer extends EJBContainer {
                             i.remove();
                         }
                     }
+
                     if (matched != ((String[])modules).length) {
                         throw new IllegalStateException("some modules not matched on classpath");
                     }
 
                 } else if (modules instanceof File) {
+
                     URL url = ((File) modules).toURI().toURL();
                     classLoader = new URLClassLoader(new URL[] {url}, classLoader);
                     moduleLocations = Collections.singletonList((File)modules);
+
                 } else if (modules instanceof File[]) {
+
                     File[] files = (File[]) modules;
                     URL[] urls = new URL[files.length];
                     for (int i = 0; i< urls.length; i++) {
@@ -128,11 +145,19 @@ public class OpenEjbContainer extends EJBContainer {
                     }
                     classLoader = new URLClassLoader(urls, classLoader);
                     moduleLocations = Arrays.asList((File[])modules);
+
                 } else if (modules == null) {
+
                     moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
+
                 } else {
+
                     throw new IllegalStateException("Unrecognized modules property");
+
                 }
+
+
+
                 if (moduleLocations.isEmpty()) {
                     throw new IllegalStateException("No modules to deploy found");
                 }
@@ -177,6 +202,17 @@ public class OpenEjbContainer extends EJBContainer {
             } catch (MalformedURLException e) {
                 throw new IllegalStateException(e);
             }
+        }
+
+        private static boolean isOtherProvider(Map<?, ?> properties) {
+            Object provider = properties.get(EJBContainer.PROVIDER);
+
+            if (provider != null && !provider.equals(OpenEjbContainer.class) && !provider.equals(OpenEjbContainer.class.getName())) {
+
+                return true;
+
+            }
+            return false;
         }
 
         private boolean match(String s, File file) {
