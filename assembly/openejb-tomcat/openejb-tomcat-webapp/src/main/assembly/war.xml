@@ -71,10 +71,7 @@
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-          <exclude>org.apache.tomcat:catalina</exclude>
-          <exclude>org.apache.tomcat:annotations-api</exclude>
-          <exclude>org.apache.tomcat:juli</exclude>
-          <exclude>org.apache.tomcat:servlet-api</exclude>
+          <exclude>org.apache.tomcat:tomcat-catalina</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
