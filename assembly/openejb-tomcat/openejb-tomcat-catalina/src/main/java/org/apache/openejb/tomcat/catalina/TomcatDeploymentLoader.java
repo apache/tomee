@@ -34,15 +34,6 @@ public class TomcatDeploymentLoader extends DeploymentLoader {
     private String moduleId = null;
 
     public TomcatDeploymentLoader(StandardContext standardContext, String moduleId) {
-        this("META-INF/", ALL_SUPPORTED_MODULE_TYPES, standardContext, moduleId);
-    }
-
-    public TomcatDeploymentLoader(String ddDir, StandardContext standardContext, String moduleId) {
-         this(ddDir, ALL_SUPPORTED_MODULE_TYPES, standardContext, moduleId);
-    }
-
-    public TomcatDeploymentLoader(String ddDir, Set<Class<? extends DeploymentModule>> loadingRequiredModuleTypes, StandardContext standardContext, String moduleId) {
-        super(ddDir, loadingRequiredModuleTypes);
         this.standardContext = standardContext;
         this.moduleId = moduleId;
     }

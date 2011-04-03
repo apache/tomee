@@ -55,7 +55,7 @@ public class ClassPathApplication extends AbstractApplication {
         List<URL> classpathApps = new ArrayList<URL>();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        DeploymentsResolver.loadFromClasspath(SystemInstance.get().getBase(), classpathApps, classLoader, null);
+        DeploymentsResolver.loadFromClasspath(SystemInstance.get().getBase(), classpathApps, classLoader);
 
         ArrayList<File> jarFiles = new ArrayList<File>();
         for (URL path : classpathApps) {
