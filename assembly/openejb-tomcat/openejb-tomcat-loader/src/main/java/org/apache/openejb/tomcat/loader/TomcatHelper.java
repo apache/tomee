@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.tomcat.loader;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.security.Principal;
@@ -133,11 +134,44 @@ public class TomcatHelper {
 
 	public static void configureJarScanner(StandardContext standardContext) {
 		try {
-			Object jarScanner = StandardContext.class.getMethod("getJarScanner").invoke(standardContext);
-			jarScanner.getClass().getMethod("setScanClassPath", Boolean.TYPE).invoke(jarScanner, false);
+			Class<?> cls = Class.forName("org.apache.openejb.tomcat.loader.TomEEJarScanner");
+			Class<?> jarScannerCls = Class.forName("org.apache.tomcat.JarScanner");
+			Object instance = cls.newInstance();
+			StandardContext.class.getMethod("setJarScanner", jarScannerCls).invoke(standardContext, instance);
 		} catch (Exception e) {
 			// ignore
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Get a comma separated list of all jars under $CATALINA_BASE/webapps/openejb/lib
+	 * The idea is that all of these jars should be excluded from Tomcat's scanning for web fragments
+	 * because these jar don't have any fragments in, and the scanning process is expensive in terms
+	 * of PermGen space.
+	 * 
+	 * @return list of jars as string, comma separated
+	 */
+	private static String getJarsToSkip() {
+		File openejbApp = new File(System.getProperty("openejb.war"));
+		File libFolder = new File(openejbApp, "lib");
+		StringBuilder builder = new StringBuilder();
+		
+		for (File f : libFolder.listFiles()) {
+			if (f.getName().startsWith("javaee-api")) continue;
+			if (f.getName().startsWith("myfaces")) continue;
+			
+			
+			
+			if (f.getName().toLowerCase().endsWith(".jar")) {
+				if (builder.length() > 0) {
+					builder.append(",");
+				}
+				
+				builder.append(f.getName());
+			}
+		}
+		
+		return builder.toString();
 	}
 }

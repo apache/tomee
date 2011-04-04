@@ -83,6 +83,7 @@ class SetupCommand {
 
 	def execute() {
 		def tomcatVersion = require('tomcat.version')
+		System.setProperty('tomcat.version', tomcatVersion)
 		def localRepo = require('localRepository')
 		def openejbHome = "${project.build.directory}/apache-tomcat-${tomcatVersion}"
 		def examplesVersion = require('examples.version')

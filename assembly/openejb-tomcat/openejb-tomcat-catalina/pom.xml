@@ -89,6 +89,7 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <version>${tomcatVersion}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>
