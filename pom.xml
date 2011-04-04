@@ -109,7 +109,7 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
     <!-- Used in assembly/openejb-tomcat* projects  -->
-    <tomcatVersion>7.0.8</tomcatVersion>
+    <tomcatVersion>7.0.11</tomcatVersion>
 
     <!--
        - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
@@ -954,6 +954,7 @@
         <artifactId>tomcat-catalina</artifactId>
         <version>${tomcatVersion}</version>
         <optional>true</optional>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
