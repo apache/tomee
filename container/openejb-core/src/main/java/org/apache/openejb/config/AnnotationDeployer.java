@@ -1065,15 +1065,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                     fail(ejbName, "xml.noEjbClass", ejbName, join(", ", others));
                 }
 
-                Class<?> clazz;
+                final Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(ejbClassName);
                 } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Unable to load bean class: " + ejbClassName, e);
+                    fail(ejbName, "xml.missingEjbClass", ejbClassName);
+                    continue;
                 }
-                AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(clazz));
+                final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(clazz));
 
-                AnnotationFinder annotationFinder = createFinder(clazz);
+                final AnnotationFinder annotationFinder = createFinder(clazz);
 
                 /*
                  * @PostConstruct
@@ -1110,7 +1111,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
+                final AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
 
                 /*
                  * @ApplicationException
@@ -1165,7 +1166,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @Interceptors
                  */
-                List<Annotated<Class<?>>> annotatedClasses = sortClasses(annotationFinder.findMetaAnnotatedClasses(Interceptors.class));
+                final List<Annotated<Class<?>>> annotatedClasses = sortClasses(annotationFinder.findMetaAnnotatedClasses(Interceptors.class));
                 for (Annotated<Class<?>> interceptorsAnnotatedClass : annotatedClasses) {
                     Interceptors interceptors = interceptorsAnnotatedClass.getAnnotation(Interceptors.class);
                     EjbJar ejbJar = ejbModule.getEjbJar();
@@ -1183,7 +1184,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                List<Annotated<Method>> annotatedMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(Interceptors.class));
+                final List<Annotated<Method>> annotatedMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(Interceptors.class));
                 for (Annotated<Method> method : annotatedMethods) {
                     Interceptors interceptors = method.getAnnotation(Interceptors.class);
                     if (interceptors != null) {
@@ -1208,7 +1209,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 /*
                  * @ExcludeDefaultInterceptors
                  */
-                ExcludeDefaultInterceptors excludeDefaultInterceptors = clazz.getAnnotation(ExcludeDefaultInterceptors.class);
+                final ExcludeDefaultInterceptors excludeDefaultInterceptors = clazz.getAnnotation(ExcludeDefaultInterceptors.class);
                 if (excludeDefaultInterceptors != null) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeDefaultInterceptors(true);
@@ -1220,7 +1221,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setMethod(new NamedMethod(method.get()));
                 }
 
-                ExcludeClassInterceptors excludeClassInterceptors = clazz.getAnnotation(ExcludeClassInterceptors.class);
+                final ExcludeClassInterceptors excludeClassInterceptors = clazz.getAnnotation(ExcludeClassInterceptors.class);
                 if (excludeClassInterceptors != null) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeClassInterceptors(true);
@@ -1459,66 +1460,22 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
 
-                // add webservice handler classes to the class finder used in annotation processing
-                Set<Class<?>> classes = new HashSet<Class<?>>();
-                classes.add(clazz);
-                if (ejbModule.getWebservices() != null) {
-                    for (WebserviceDescription webservice : ejbModule.getWebservices().getWebserviceDescription()) {
-                        for (PortComponent port : webservice.getPortComponent()) {
-                            // only process port definitions for this ejb
-                            if (!ejbName.equals(port.getServiceImplBean().getEjbLink())) continue;
-
-                            if (port.getHandlerChains() == null) continue;
-                            for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
-                                for (Handler handler : handlerChain.getHandler()) {
-                                    String handlerClass = handler.getHandlerClass();
-                                    if (handlerClass != null) {
-                                        try {
-                                            Class handlerClazz = classLoader.loadClass(handlerClass);
-                                            classes.add(handlerClazz);
-                                        } catch (ClassNotFoundException e) {
-                                            throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                annotationFinder = createFinder(classes.toArray(new Class<?>[classes.size()]));
-            }
-
-            for (EnterpriseBean bean : enterpriseBeans) {
-                Class<?> clazz;
-                try {
-                    clazz = classLoader.loadClass(bean.getEjbClass());
-                } catch (ClassNotFoundException e) {
-                    throw new OpenEJBException("Unable to load bean class: " + bean.getEjbClass(), e);
-                }
-
-                AnnotationFinder annotationFinder = createFinder(clazz);
-
-                /*
-                 * @EJB
-                 * @Resource
-                 * @WebServiceRef
-                 * @PersistenceUnit
-                 * @PersistenceContext
-                 */
                 buildAnnotatedRefs(bean, annotationFinder, classLoader);
+
+                processWebServiceHandlers(ejbModule, bean);
+
                 processWebServiceClientHandlers(bean, classLoader);
             }
 
-
             for (Interceptor interceptor : ejbModule.getEjbJar().getInterceptors()) {
-                Class<?> clazz;
+                final Class<?> clazz;
                 try {
                     clazz = classLoader.loadClass(interceptor.getInterceptorClass());
                 } catch (ClassNotFoundException e) {
                     throw new OpenEJBException("Unable to load interceptor class: " + interceptor.getInterceptorClass(), e);
                 }
 
-                AnnotationFinder annotationFinder = createFinder(clazz);
+                final AnnotationFinder annotationFinder = createFinder(clazz);
 
                 /*
                  * @PostConstruct
@@ -3218,6 +3175,39 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Scan for @EJB, @Resource, @WebServiceRef, @PersistenceUnit, and @PersistenceContext on WebService HandlerChain classes
+         */
+        private void processWebServiceHandlers(EjbModule ejbModule, EnterpriseBean bean) throws OpenEJBException {
+            // add webservice handler classes to the class finder used in annotation processing
+            Set<Class<?>> classes = new HashSet<Class<?>>();
+            if (ejbModule.getWebservices() != null) {
+                for (WebserviceDescription webservice : ejbModule.getWebservices().getWebserviceDescription()) {
+                    for (PortComponent port : webservice.getPortComponent()) {
+                        // only process port definitions for this ejb
+                        if (!bean.getEjbName().equals(port.getServiceImplBean().getEjbLink())) continue;
+
+                        if (port.getHandlerChains() == null) continue;
+                        for (org.apache.openejb.jee.HandlerChain handlerChain : port.getHandlerChains().getHandlerChain()) {
+                            for (Handler handler : handlerChain.getHandler()) {
+                                String handlerClass = handler.getHandlerClass();
+                                if (handlerClass != null) {
+                                    try {
+                                        Class handlerClazz = ejbModule.getClassLoader().loadClass(handlerClass);
+                                        classes.add(handlerClazz);
+                                    } catch (ClassNotFoundException e) {
+                                        throw new OpenEJBException("Unable to load webservice handler class: " + handlerClass, e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            AnnotationFinder handlersFinder = createFinder(classes.toArray(new Class<?>[classes.size()]));
+            buildAnnotatedRefs(bean, handlersFinder, ejbModule.getClassLoader());
+        }
+
+        /**
+         * Scan for @EJB, @Resource, @WebServiceRef, @PersistenceUnit, and @PersistenceContext on WebService HandlerChain classes
          *
          * @param consumer
          * @param classLoader
@@ -3226,8 +3216,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         private void processWebServiceClientHandlers(JndiConsumer consumer, ClassLoader classLoader) throws OpenEJBException {
             if (SystemInstance.get().hasProperty("openejb.geronimo")) return;
 
-            Set<Class<?>> processedClasses = new HashSet<Class<?>>();
-            Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
+            final Set<Class<?>> processedClasses = new HashSet<Class<?>>();
+            final Set<Class<?>> handlerClasses = new HashSet<Class<?>>();
             do {
                 // get unprocessed handler classes
                 handlerClasses.clear();
@@ -3250,7 +3240,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 handlerClasses.removeAll(processedClasses);
 
                 // process handler classes
-                AnnotationFinder handlerAnnotationFinder = createFinder(handlerClasses.toArray(new Class<?>[handlerClasses.size()]));
+                final AnnotationFinder handlerAnnotationFinder = createFinder(handlerClasses.toArray(new Class<?>[handlerClasses.size()]));
 
                 /*
                  * @EJB
