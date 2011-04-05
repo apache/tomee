@@ -28,7 +28,6 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.util.Debug;
 
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
@@ -39,7 +38,6 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.xml.ws.WebServiceContext;
-import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
