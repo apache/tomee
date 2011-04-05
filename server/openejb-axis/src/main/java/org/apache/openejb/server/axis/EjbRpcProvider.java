@@ -55,17 +55,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class EjbContainerProvider extends RPCProvider {
+public class EjbRpcProvider extends RPCProvider {
 
     private final BeanContext ejbDeployment;
     private final List<HandlerInfo> handlerInfos;
 
-    public EjbContainerProvider(BeanContext ejbDeployment) {
+    public EjbRpcProvider(BeanContext ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = new ArrayList<HandlerInfo>();
     }
 
-    public EjbContainerProvider(BeanContext ejbDeployment, List<HandlerInfo> handlerInfos) {
+    public EjbRpcProvider(BeanContext ejbDeployment, List<HandlerInfo> handlerInfos) {
         this.ejbDeployment = ejbDeployment;
         this.handlerInfos = handlerInfos;
     }
