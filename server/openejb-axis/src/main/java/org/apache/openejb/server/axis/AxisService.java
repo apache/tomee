@@ -78,7 +78,7 @@ public class AxisService extends WsService {
         JavaServiceDesc serviceDesc = javaServiceDescBuilder.createServiceDesc();
 
         // Create service
-        RPCProvider provider = new EjbContainerProvider(beanContext, createHandlerInfos(port.getHandlerChains()));
+        RPCProvider provider = new EjbRpcProvider(beanContext, createHandlerInfos(port.getHandlerChains()));
         SOAPService service = new SOAPService(null, provider, null);
         service.setServiceDescription(serviceDesc);
 
