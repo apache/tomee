@@ -126,6 +126,8 @@ public class JavaLookupScopesTest extends TestCase {
             assertTrue(context.lookup("module/blue") instanceof DataSource);
             assertTrue(context.lookup("module/Bean") instanceof Bean);
             assertTrue(context.lookup("module/Bean!" + Bean.class.getName()) instanceof Bean);
+            assertTrue(context.lookup("module/Other") instanceof Bean);
+            assertTrue(context.lookup("module/Other!" + Bean.class.getName()) instanceof Bean);
 
             assertTrue(context.lookup("app") instanceof Context);
             assertTrue(context.lookup("app/AppName") instanceof String);
@@ -138,6 +140,13 @@ public class JavaLookupScopesTest extends TestCase {
 
             assertTrue(context.lookup("global") instanceof Context);
             assertTrue(context.lookup("global/yellow") instanceof DataSource);
+
+            assertTrue(context.lookup("global/testmodule") instanceof Context);
+            assertTrue(context.lookup("global/testmodule/Bean") instanceof Bean);
+            assertTrue(context.lookup("global/testmodule/Bean!" + Bean.class.getName()) instanceof Bean);
+            assertTrue(context.lookup("global/testmodule/Other") instanceof Bean);
+            assertTrue(context.lookup("global/testmodule/Other!" + Bean.class.getName()) instanceof Bean);
+
 
             assertEquals("testmodule", context.lookup("app/AppName"));
             assertEquals("testmodule", context.lookup("module/ModuleName"));
