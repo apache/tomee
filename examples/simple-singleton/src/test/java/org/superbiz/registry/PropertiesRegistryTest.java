@@ -18,21 +18,18 @@ package org.superbiz.registry;
 
 import junit.framework.TestCase;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
 
-public class PropertiesRegistryBeanTest extends TestCase {
+public class PropertiesRegistryTest extends TestCase {
 
     public void test() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(props);
+        Context context = EJBContainer.createEJBContainer().getContext();
 
-        PropertyRegistry one = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
+        PropertyRegistry one = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
 
-        PropertyRegistry two = (PropertyRegistry) context.lookup("PropertyRegistryBeanLocal");
+        PropertyRegistry two = (PropertyRegistry) context.lookup("java:global/simple-singleton/PropertyRegistry");
 
 
         one.setProperty("url", "http://superbiz.org");
