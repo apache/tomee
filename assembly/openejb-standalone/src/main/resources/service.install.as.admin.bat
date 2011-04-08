@@ -118,6 +118,8 @@ ECHO Installing service using JVM: %jvm%
 	++JvmOptions=-Dopenejb.home="%openejb%";-Xms128M;-Xmx512M;-XX:MaxPermSize=256M
 	rem ++DependsOn= \
 
+NET START OpenEJBServer
+
 GOTO complete
 
 :failed
