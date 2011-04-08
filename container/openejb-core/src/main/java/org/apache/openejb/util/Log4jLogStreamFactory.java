@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.net.URL;
+import java.util.logging.*;
+import java.util.logging.Logger;
 
 public class Log4jLogStreamFactory implements LogStreamFactory {
     private static final String LOGGING_PROPERTIES_FILE = "logging.properties";
@@ -160,6 +162,11 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             Properties properties = asProperies(resource);
             applyOverrides(properties);
             PropertyConfigurator.configure(properties);
+
+            // TODO Has to be a better way to set the log level
+            final Logger logger = Logger.getLogger("org.apache");
+            final Logger parent = logger.getParent();
+            parent.setLevel(java.util.logging.Level.WARNING);
 
         }
     }
