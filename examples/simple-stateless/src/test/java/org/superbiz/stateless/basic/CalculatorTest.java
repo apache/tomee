@@ -16,62 +16,73 @@
  */
 package org.superbiz.stateless.basic;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-
 import junit.framework.TestCase;
-import org.superbiz.stateless.basic.CalculatorLocal;
-import org.superbiz.stateless.basic.CalculatorRemote;
+
+import javax.ejb.embeddable.EJBContainer;
 
 public class CalculatorTest extends TestCase {
 
-	//START SNIPPET: setup	
-	private Context context;
+    private CalculatorBean calculator;
 
+    /**
+     * Bootstrap the Embedded EJB Container
+     *
+     * @throws Exception
+     */
     protected void setUp() throws Exception {
 
-//        Map<Object, Object> map = new HashMap<Object, Object>();
-//        map.put(EJBContainer.APP_NAME, "test");
-//        EJBContainer ejbContainer = EJBContainer.createEJBContainer(map);
         EJBContainer ejbContainer = EJBContainer.createEJBContainer();
 
-        context = ejbContainer.getContext();
+        Object object = ejbContainer.getContext().lookup("java:global/simple-stateless/CalculatorBean");
+
+        assertTrue(object instanceof CalculatorBean);
+
+        calculator = (CalculatorBean) object;
     }
-    
-    //END SNIPPET: setup    
 
     /**
-     * Lookup the Calculator bean via its remote home interface
-     *
-     * @throws Exception
+     * Test Add method
      */
-    //START SNIPPET: remote
-    public void testCalculatorViaRemoteInterface() throws Exception {
-        Object object = context.lookup("java:global/simple-stateless/CalculatorImpl!"+CalculatorRemote.class.getName());
+    public void testAdd() {
 
-		assertNotNull(object);
-		assertTrue(object instanceof CalculatorRemote);
-		CalculatorRemote calc = (CalculatorRemote) object;
-		assertEquals(10, calc.sum(4,6));
-		assertEquals(12, calc.multiply(3,4));
+        assertEquals(10, calculator.add(4, 6));
+
     }
-    //END SNIPPET: remote
-    
+
     /**
-     * Lookup the Calculator bean via its local home interface
-     *
-     * @throws Exception
+     * Test Subtract method
      */
-    //START SNIPPET: local    
-    public void testCalculatorViaLocalInterface() throws Exception {
-        Object object = context.lookup("java:global/simple-stateless/CalculatorImpl");
+    public void testSubtract() {
 
-		assertNotNull(object);
-		assertTrue(object instanceof CalculatorLocal);
-		CalculatorLocal calc = (CalculatorLocal) object;
-		assertEquals(10, calc.sum(4,6));
-		assertEquals(12, calc.multiply(3,4));
+        assertEquals(-2, calculator.subtract(4, 6));
+
     }
-    //END SNIPPET: local
+
+    /**
+     * Test Multiply method
+     */
+    public void testMultiply() {
+
+        assertEquals(24, calculator.multiply(4, 6));
+
+    }
+
+    /**
+     * Test Divide method
+     */
+    public void testDivide() {
+
+        assertEquals(2, calculator.divide(12, 6));
+
+    }
+
+    /**
+     * Test Remainder method
+     */
+    public void testRemainder() {
+
+        assertEquals(4, calculator.remainder(46, 6));
+
+    }
 
 }
