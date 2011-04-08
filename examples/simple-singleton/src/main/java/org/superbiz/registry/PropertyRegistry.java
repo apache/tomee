@@ -16,12 +16,51 @@
  */
 package org.superbiz.registry;
 
-public interface PropertyRegistry {
+//START SNIPPET: code
 
-    public String getProperty(String key);
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.Properties;
 
-    public String setProperty(String key, String value);
+import static javax.ejb.ConcurrencyManagementType.BEAN;
 
-    public String removeProperty(String key);
+@Singleton
+@Startup
+@ConcurrencyManagement(BEAN)
+public class PropertyRegistry {
+
+    // Note the java.util.Properties object is a thread-safe
+    // collections that uses synchronization.  If it didn't
+    // you would have to use some form of synchronization
+    // to ensure the PropertyRegistryBean is thread-safe.
+    private final Properties properties = new Properties();
+
+    // The @Startup method ensures that this method is
+    // called when the application starts up.
+    @PostConstruct
+    public void applicationStartup() {
+        properties.putAll(System.getProperties());
+    }
+
+    @PreDestroy
+    public void applicationShutdown() {
+        properties.clear();
+    }
+
+    public String getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    public String setProperty(String key, String value) {
+        return (String) properties.setProperty(key, value);
+    }
+
+    public String removeProperty(String key) {
+        return (String) properties.remove(key);
+    }
 
 }
+//END SNIPPET: code

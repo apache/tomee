@@ -16,19 +16,39 @@
  */
 package org.superbiz.registry;
 
+//START SNIPPET: code
+import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
+import javax.ejb.Lock;
+import javax.ejb.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Collection;
+import java.util.ArrayList;
 
-/**
- * @version $Revision$ $Date$
- */
-public interface ComponentRegistry {
+@Singleton
+@Lock(READ)
+public class ComponentRegistry {
 
-    public Collection<?> getComponents();
-    
-    public <T> T getComponent(Class<T> type);
+    private final Map<Class, Object> components = new HashMap<Class, Object>();
 
-    public <T> T setComponent(Class<T> type, T value);
+    public <T> T getComponent(Class<T> type) {
+        return (T) components.get(type);
+    }
 
-    public <T> T removeComponent(Class<T> type);
+    public Collection<?> getComponents() {
+        return new ArrayList(components.values());
+    }
+
+    @Lock(WRITE)
+    public <T> T setComponent(Class<T> type, T value) {
+        return (T) components.put(type, value);
+    }
+
+    @Lock(WRITE)
+    public <T> T removeComponent(Class<T> type) {
+        return (T) components.remove(type);
+    }
 
 }
+//END SNIPPET: code

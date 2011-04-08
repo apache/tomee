@@ -18,26 +18,28 @@ package org.superbiz.registry;
 
 import junit.framework.TestCase;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
-import java.util.Date;
 import java.net.URI;
+import java.util.Date;
 
 //START SNIPPET: code
-public class ComponentRegistryBeanTest extends TestCase {
+public class ComponentRegistryTest extends TestCase {
 
     public void test() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
-        InitialContext context = new InitialContext(props);
+        final Context context = EJBContainer.createEJBContainer().getContext();
 
         // Both references below will point to the exact same instance
-        ComponentRegistry one = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
+        ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
 
-        ComponentRegistry two = (ComponentRegistry) context.lookup("ComponentRegistryBeanLocal");
+        ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
 
+
+        // Let's prove both references point to the same instance
+
+
+        // Set a URL into 'one' and retrieve it from 'two'
 
         URI expectedUri = new URI("foo://bar/baz");
 
@@ -47,6 +49,8 @@ public class ComponentRegistryBeanTest extends TestCase {
 
         assertSame(expectedUri, actualUri);
 
+
+        // Set a Date into 'two' and retrieve it from 'one'
 
         Date expectedDate = new Date();
 
