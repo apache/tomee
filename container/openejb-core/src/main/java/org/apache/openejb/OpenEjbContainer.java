@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
@@ -35,9 +36,22 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
-import org.apache.openejb.config.DeploymentsResolver;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.NewLoaderLogic;
+import org.apache.openejb.config.ValidationFailedException;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.oejb3.EjbDeployment;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.OptionsLog;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 /**
@@ -45,10 +59,14 @@ import org.apache.xbean.naming.context.ContextFlyweight;
  */
 public class OpenEjbContainer extends EJBContainer {
 
+    static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, OpenEjbContainer.class);
+
+    private static OpenEjbContainer instance;
+    
     private final Context context;
 
     private OpenEjbContainer(Context context) {
-        this.context = context;
+        this.context = new GlobalContext(context);
     }
 
     @Override
@@ -66,34 +84,96 @@ public class OpenEjbContainer extends EJBContainer {
         return context;
     }
 
+    public <T> T inject(T object) {
+        
+        assert object != null;
+
+        final Class<?> clazz = object.getClass();
+
+        final BeanContext context = resolve(clazz);
+
+        if (context == null) throw new NoInjectionMetaDataException(clazz.getName());
+        
+        final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
+
+        try {
+            return (T) processor.createInstance();
+        } catch (OpenEJBException e) {
+            throw new InjectionException(clazz.getName(), e);
+        }
+    }
+
+    private <T> BeanContext resolve(Class<?> clazz) {
+
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        while (clazz != null && clazz != Object.class) {
+
+            {
+                final BeanContext context = containerSystem.getBeanContext(clazz.getName());
+
+                if (context != null) return context;
+            }
+
+            for (BeanContext context : containerSystem.deployments()) {
+
+                if (clazz == context.getBeanClass()) return context;
+
+            }
+
+            clazz = clazz.getSuperclass();
+        }
+
+        return null;
+    }
+
+    public static class NoInjectionMetaDataException extends IllegalStateException {
+        public NoInjectionMetaDataException(String s) {
+            super(s);
+        }
+    }
+
+    public static class InjectionException extends IllegalStateException {
+        public InjectionException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 
     public static class Provider implements EJBContainerProvider {
 
         @Override
-        public EJBContainer createEJBContainer(Map<?, ?> properties) {
-            if (isOtherProvider(properties)) return null;
+        public EJBContainer createEJBContainer(Map<?, ?> map) {
+            if (isOtherProvider(map)) return null;
 
+            if (instance != null) {
+                logger.warning("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
+                return instance;
+            }
 
-            String appId = (String) properties.get(EJBContainer.APP_NAME);
+            String appId = (String) map.get(EJBContainer.APP_NAME);
 
             try {
-                Properties props = new Properties();
-                props.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
-                //This causes scan of the entire classpath except for default excludes.  This may be quite slow.
-                props.put(DeploymentsResolver.CLASSPATH_INCLUDE, ".*");
-                props.putAll(properties);
+                Properties properties = new Properties();
+                properties.putAll(map);
+
+                SystemInstance.reset();
+                SystemInstance.init(properties);
+                SystemInstance.get().setProperty("openejb.embedded", "true");
+                SystemInstance.get().setProperty(EJBContainer.class.getName(), "true");
+
+                OptionsLog.install();
+
+                OpenEJB.init(properties);
 
 
-                OpenEJB.init(props);
+                final ConfigurationFactory configurationFactory = new ConfigurationFactory();
 
-                ConfigurationFactory configurationFactory = new ConfigurationFactory();
+                final List<File> moduleLocations;
 
+                final Object modules = map.get(EJBContainer.MODULES);
 
+                // will be updated if needed
                 ClassLoader classLoader = getClass().getClassLoader();
-
-                List<File> moduleLocations;
-
-                Object modules = properties.get(EJBContainer.MODULES);
 
                 if (modules instanceof String) {
 
@@ -107,6 +187,7 @@ public class OpenEjbContainer extends EJBContainer {
 
                 } else if (modules instanceof String[]) {
 
+                    // TODO Optimize this so we look specifically for modules by name
                     moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
 
                     int matched = 0;
@@ -127,7 +208,9 @@ public class OpenEjbContainer extends EJBContainer {
                     }
 
                     if (matched != ((String[])modules).length) {
-                        throw new IllegalStateException("some modules not matched on classpath");
+
+                        throw specifiedModulesNotFound();
+                        
                     }
 
                 } else if (modules instanceof File) {
@@ -152,56 +235,102 @@ public class OpenEjbContainer extends EJBContainer {
 
                 } else {
 
-                    throw new IllegalStateException("Unrecognized modules property");
+                    throw invalidModulesValue(modules);
 
                 }
-
 
 
                 if (moduleLocations.isEmpty()) {
-                    throw new IllegalStateException("No modules to deploy found");
+
+                    throw new NoModulesFoundException("No modules to deploy found");
+                    
                 }
 
-                AppInfo appInfo = configurationFactory.configureApplication(classLoader, appId, moduleLocations);
+                // TODO With this load method we can finally do some checking on module ids to really implement EJBContainer.MODULES String/String[]
+                final AppModule appModule = configurationFactory.loadApplication(classLoader, appId, moduleLocations);
 
-                Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
+                final Set<String> callers = NewLoaderLogic.callers();
+                final EjbJar ejbJar = new EjbJar();
+                final OpenejbJar openejbJar = new OpenejbJar();
+
+                for (String caller : callers) {
+
+                    final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller, caller));
+
+                    // set it to bean so it can get UserTransaction injection
+                    bean.setTransactionType(TransactionType.BEAN);
+
+                    final EjbDeployment ejbDeployment = openejbJar.addEjbDeployment(bean);
+                    
+                    // important in case any other deploment id formats are specified
+                    ejbDeployment.setDeploymentId(caller);
+                }
+
+                appModule.getEjbModules().add(new EjbModule(ejbJar, openejbJar));
+
+
+
+                final AppInfo appInfo;
+                try {
+
+                    appInfo = configurationFactory.configureApplication(appModule);
+
+                } catch (ValidationFailedException e) {
+
+                    logger.warning("configureApplication.loadFailed", appModule.getModuleId(), e.getMessage()); // DO not include the stacktrace in the message
+
+                    throw new InvalidApplicationException(e);
+
+                } catch (OpenEJBException e) {
+                    // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+                    // removing this message causes NO messages to be printed when embedded
+                    logger.warning("configureApplication.loadFailed", e, appModule.getModuleId(), e.getMessage());
+
+                    throw new ConfigureApplicationException(e);
+                }
+
+                final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
 
                 final AppContext appContext;
 
                 try {
                     appContext = assembler.createApplication(appInfo, classLoader);
                 } catch (Exception e) {
-                    throw new IllegalStateException("Could not deploy embedded app", e);
+                    throw new AssembleApplicationException(e);
                 }
 
-                final Context globalJndiContext = appContext.getGlobalJndiContext();
-                return new OpenEjbContainer(new ContextFlyweight() {
+                return instance = new OpenEjbContainer(appContext.getGlobalJndiContext());
 
-                    @Override
-                    protected Context getContext() throws NamingException {
-                        return globalJndiContext;
-                    }
-
-                    @Override
-                    protected Name getName(Name name) throws NamingException {
-                        String first = name.get(0);
-                        if (!first.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
-                        first = first.substring("java:".length());
-                        name = name.getSuffix(1);
-                        return name.add(0, first);
-                    }
-
-                    @Override
-                    protected String getName(String name) throws NamingException {
-                        if (!name.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
-                        return name.substring("java:".length());
-                    }
-                });
             } catch (OpenEJBException e) {
-                throw new IllegalStateException(e);
+
+                throw new InitializationException(e);
+
             } catch (MalformedURLException e) {
-                throw new IllegalStateException(e);
+
+                throw new InitializationException(e);
+
+            } catch (Exception e) {
+
+                if (e instanceof IllegalStateException) {
+
+                    throw (IllegalStateException) e;
+                }
+
+                throw new InitializationException(e);
             }
+        }
+
+        // TODO, report some information
+        private IllegalStateException specifiedModulesNotFound() {
+            return new NoSuchModuleException("some modules not matched on classpath");
+        }
+
+        private InvalidModulesPropertyException invalidModulesValue(Object value) {
+            String[] spec = {"java.lang.String","java.lang.String[]", "java.io.File", "java.io.File[]"};
+//            TODO
+//            String[] vendor = {"java.lang.Class","java.lang.Class[]", "java.net.URL", "java.io.URL[]"};
+            String type = (value == null) ? null : value.getClass().getName();
+            return new InvalidModulesPropertyException(String.format("Invalid '%s' value '%s'. Valid values are: %s", EJBContainer.MODULES, type, Join.join(", ", spec)));
         }
 
         private static boolean isOtherProvider(Map<?, ?> properties) {
@@ -227,6 +356,92 @@ public class OpenEjbContainer extends EJBContainer {
                 //TODO look for ejb-jar.xml with matching module name
             }
             return matches;
+        }
+    }
+
+    private class GlobalContext extends ContextFlyweight {
+        private final Context globalJndiContext;
+
+        public GlobalContext(Context globalJndiContext) {
+            this.globalJndiContext = globalJndiContext;
+        }
+
+        @Override
+        protected Context getContext() throws NamingException {
+            return globalJndiContext;
+        }
+
+        @Override
+        protected Name getName(Name name) throws NamingException {
+            String first = name.get(0);
+            if (!first.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+            first = first.substring("java:".length());
+            name = name.getSuffix(1);
+            return name.add(0, first);
+        }
+
+        @Override
+        protected String getName(String name) throws NamingException {
+            if (!name.startsWith("java:")) throw new NameNotFoundException("Name must be in java: namespace");
+            return name.substring("java:".length());
+        }
+
+        @Override
+        public void bind(Name name, Object obj) throws NamingException {
+            if (name.size() == 1 && "bind".equals(name.get(0))) inject(obj);
+            else super.bind(name, obj);
+        }
+
+        @Override
+        public void bind(String name, Object obj) throws NamingException {
+            if (name != null && "bind".equals(name)) inject(obj);
+            else super.bind(name, obj);
+        }
+    }
+
+    public static class InitializationException extends IllegalStateException {
+        public InitializationException(String s) {
+            super(s);
+        }
+
+        public InitializationException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class InvalidModulesPropertyException extends InitializationException {
+        public InvalidModulesPropertyException(String s) {
+            super(s);
+        }
+    }
+
+    public static class NoSuchModuleException extends InitializationException {
+        public NoSuchModuleException(String s) {
+            super(s);
+        }
+    }
+
+    public static class NoModulesFoundException extends InitializationException {
+        public NoModulesFoundException(String s) {
+            super(s);
+        }
+    }
+
+    public static class ConfigureApplicationException extends InitializationException {
+        public ConfigureApplicationException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class AssembleApplicationException extends InitializationException {
+        public AssembleApplicationException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    public static class InvalidApplicationException extends InitializationException {
+        public InvalidApplicationException(Throwable cause) {
+            super(cause);
         }
     }
 }

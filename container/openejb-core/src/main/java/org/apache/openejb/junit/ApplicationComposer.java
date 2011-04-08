@@ -264,7 +264,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                     final BeanContext context = containerSystem.getBeanContext(javaClass.getName());
 
-                    InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
+                    final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                     processor.createInstance();
 

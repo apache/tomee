@@ -556,6 +556,25 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * @throws OpenEJBException on error
      */
     public AppInfo configureApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
+        AppModule collection = loadApplication(classLoader, id, jarFiles);
+
+        AppInfo appInfo;
+        try {
+            appInfo = configureApplication(collection);
+        } catch (ValidationFailedException e) {
+            logger.warning("configureApplication.loadFailed", collection.getModuleId(), e.getMessage()); // DO not include the stacktrace in the message
+            throw e;
+        } catch (OpenEJBException e) {
+            // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
+            // removing this message causes NO messages to be printed when embedded
+            logger.warning("configureApplication.loadFailed", e, collection.getModuleId(), e.getMessage());
+            throw e;
+        }
+
+        return appInfo;
+    }
+
+    public AppModule loadApplication(ClassLoader classLoader, String id, List<File> jarFiles) throws OpenEJBException {
         final boolean standaloneModule = id == null;
         if (standaloneModule) {
             id = "";
@@ -608,21 +627,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 throw e;
             }
         }
-
-        AppInfo appInfo;
-        try {
-            appInfo = configureApplication(collection);
-        } catch (ValidationFailedException e) {
-            logger.warning("configureApplication.loadFailed", id, e.getMessage()); // DO not include the stacktrace in the message
-            throw e;
-        } catch (OpenEJBException e) {
-            // DO NOT REMOVE THE EXCEPTION FROM THIS LOG MESSAGE
-            // removing this message causes NO messages to be printed when embedded
-            logger.warning("configureApplication.loadFailed", e, id, e.getMessage());
-            throw e;
-        }
-
-        return appInfo;
+        return collection;
     }
 
     public EjbJarInfo configureApplication(EjbJar ejbJar) throws OpenEJBException {
