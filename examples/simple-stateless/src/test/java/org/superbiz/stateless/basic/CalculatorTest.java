@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.calculator;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+package org.superbiz.stateless.basic;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
+import org.superbiz.stateless.basic.CalculatorLocal;
+import org.superbiz.stateless.basic.CalculatorRemote;
 
 public class CalculatorTest extends TestCase {
 
