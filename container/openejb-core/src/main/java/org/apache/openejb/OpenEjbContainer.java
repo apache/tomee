@@ -146,7 +146,7 @@ public class OpenEjbContainer extends EJBContainer {
             if (isOtherProvider(map)) return null;
 
             if (instance != null) {
-                logger.warning("EJBContainer already initialized, returning existing instance.  Call ejbContainer.close() to allow reinitialization");
+                logger.info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
                 return instance;
             }
 
