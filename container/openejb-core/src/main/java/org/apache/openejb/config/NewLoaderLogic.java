@@ -244,7 +244,7 @@ public class NewLoaderLogic {
                 "xmlunit-"
         );
 
-        filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
+//        filter = Filters.optimize(filter, new PatternFilter(".*/openejb-.*"));
         List<URL> urls = urlSet.getUrls();
         Iterator<URL> iterator = urls.iterator();
         while (iterator.hasNext()) {

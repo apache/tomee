@@ -23,6 +23,8 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.filter.Filters;
+import org.apache.xbean.finder.filter.IncludeExcludeFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -171,19 +173,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
      */
     public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
         Options options = SystemInstance.get().getOptions();
-        String include = options.get(CLASSPATH_INCLUDE, "");
-        String exclude = options.get(CLASSPATH_EXCLUDE, ".*");
+        String include = options.get(CLASSPATH_INCLUDE, ".*");
+        String exclude = options.get(CLASSPATH_EXCLUDE, "");
         Set<RequireDescriptors> requireDescriptors = options.getAll(CLASSPATH_REQUIRE_DESCRIPTOR, RequireDescriptors.CLIENT);
         boolean filterDescriptors = options.get(CLASSPATH_FILTER_DESCRIPTORS, false);
         boolean filterSystemApps = options.get(CLASSPATH_FILTER_SYSTEMAPPS, true);
-
-        loadFromClasspath(base, jarList, classLoader,
-                include, exclude, requireDescriptors, filterDescriptors, filterSystemApps);
-    }
-
-    public static void loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader,
-                                         String include, String exclude, Set<RequireDescriptors> requireDescriptors,
-                                         boolean filterDescriptors, boolean filterSystemApps) {
 
         try {
             UrlSet urlSet = new UrlSet(classLoader);
@@ -195,22 +189,28 @@ public class DeploymentsResolver implements DeploymentFilterable {
             urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
 
-            if (shouldFilter(include, exclude, requireDescriptors)) {
-                urlSet = applyBuiltinExcludes(urlSet);
-            }
+//            if (shouldFilter(include, exclude, requireDescriptors)) {
+//                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+//            }
 
             // save the prefiltered list of jars before excluding system apps
             // so that we can choose not to filter modules with descriptors on the full list
             UrlSet prefiltered = urlSet;
 
             // we should exclude system apps before and apply user properties after
-            if (filterSystemApps){
-                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
-            }
+//            if (filterSystemApps){
+//                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
+//            }
 
+            final IncludeExcludeFilter filter = new IncludeExcludeFilter(Filters.patterns(include), Filters.patterns(exclude));
             // filter using user parameters
-            urlSet = urlSet.exclude(exclude);
-            urlSet = urlSet.include(includes);
+            urlSet = urlSet.filter(filter);
+
+            if (prefiltered.size() == urlSet.size()) {
+                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+            }
+//            urlSet = urlSet.exclude(exclude);
+//            urlSet = urlSet.include(includes);
 
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();
