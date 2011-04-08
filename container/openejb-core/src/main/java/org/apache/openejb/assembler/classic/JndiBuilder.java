@@ -563,7 +563,9 @@ public class JndiBuilder {
             beanName = beanName + "!" + interfaceName;
         }
         try {
-            globalContext.bind("global/" + appName + moduleName + beanName, ref);
+            String globalName = "global/" + appName + moduleName + beanName;
+            logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
+            globalContext.bind(globalName, ref);
         } catch (NameAlreadyBoundException e) {
             //one interface in more than one role (e.g. both Local and Remote
             return;
