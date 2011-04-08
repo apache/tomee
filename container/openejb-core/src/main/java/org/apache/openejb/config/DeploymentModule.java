@@ -20,6 +20,8 @@ import org.apache.openejb.jee.NamedModule;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,9 +75,24 @@ public interface DeploymentModule {
             if (spec != null && spec.getModuleName() != null) return spec.getModuleName().trim();
             if (spec != null && spec.getId() != null) return spec.getId().trim();
             if (uri != null) return stripExtension(uri.getPath());
-            if (location != null) return stripExtension(location.getName());
+            if (location != null) return moduleName(location);
             if (name != null) return name;
             return "@" + module.getClass().getSimpleName() + module.hashCode();
+        }
+
+        private String moduleName(File location) {
+            List<String> invalid = new ArrayList<String>();
+            invalid.add("classes");
+            invalid.add("test-classes");
+            invalid.add("target");
+            invalid.add("build");
+            invalid.add("dist");
+            invalid.add("bin");
+
+            while (invalid.contains(location.getName())) {
+                location = location.getParentFile();
+            }
+            return stripExtension(location.getName());
         }
 
         private String stripExtension(String name) {
