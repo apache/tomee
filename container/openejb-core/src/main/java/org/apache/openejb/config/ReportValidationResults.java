@@ -102,7 +102,8 @@ public class ReportValidationResults implements DynamicDeployer {
 
         if (context.hasErrors() || context.hasFailures()) {
 
-            logger.error("Invalid "+context.getModuleType()+"(path="+context.getName()+")");
+            DeploymentModule module = context.getModule();
+            logger.error(String.format("Invalid %s(name=%s, path=%s)", context.getModuleType(), module.getModuleId(), module.getFile()));
 //            logger.error("Validation: "+errors.length + " errors, "+failures.length+ " failures, in "+context.getModuleType()+"(path="+context.getJarPath()+")");
         } else if (context.hasWarnings()) {
             if (context.getWarnings().length == 1) {

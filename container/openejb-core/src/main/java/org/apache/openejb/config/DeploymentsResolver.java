@@ -16,26 +16,26 @@
  */
 package org.apache.openejb.config;
 
-import static org.apache.openejb.util.URLs.toFile;
-
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.loader.FileUtils;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.EnumSet;
+
+import static org.apache.openejb.util.URLs.toFile;
 
 /**
  * @version $Rev$ $Date$
@@ -314,6 +314,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
     }
 
     private static UrlSet applyBuiltinExcludes(UrlSet urlSet) throws MalformedURLException {
+        
         urlSet = urlSet.exclude(".*/activation(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/activeio-core(-[\\d.]+)?(-incubator)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/activemq-(core|ra)(-[\\d.]+)?.jar(!/)?");
@@ -378,7 +379,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         return urlSet;
     }
 
-    private static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
+    public static void processUrls(List<URL> urls, ClassLoader classLoader, Set<RequireDescriptors> requireDescriptors, FileUtils base, List<URL> jarList) {
         for (URL url : urls) {
 
             String urlProtocol = url.getProtocol();

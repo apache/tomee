@@ -45,6 +45,10 @@ public class ValidationContext implements ValidationResults {
         this.name = null;
     }
 
+    public DeploymentModule getModule() {
+        return module;
+    }
+
     public void fail(String component, String key, Object... details) {
         ValidationFailure failure = new ValidationFailure(key);
         failure.setDetails(details);

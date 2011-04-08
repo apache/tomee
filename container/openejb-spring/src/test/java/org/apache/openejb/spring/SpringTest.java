@@ -34,7 +34,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringTest extends TestCase {
     public void test() throws Exception {
+        System.setProperty("openejb.deployments.classpath.include",".*/openejb-spring.*");
+
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("org/apache/openejb/spring/spring.xml");
+        
         assertTrue(context.getBeanDefinitionCount() > 0);
 
         //

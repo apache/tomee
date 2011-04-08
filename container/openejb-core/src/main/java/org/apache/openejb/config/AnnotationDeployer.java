@@ -1069,7 +1069,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 try {
                     clazz = classLoader.loadClass(ejbClassName);
                 } catch (ClassNotFoundException e) {
-                    fail(ejbName, "xml.missingEjbClass", ejbClassName);
+                    // Handled in CheckClasses.java along with other missing classes
                     continue;
                 }
                 final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(clazz));

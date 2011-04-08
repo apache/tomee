@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import junit.framework.TestCase;
+import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.server.ejbd.EjbServer;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.core.ServerFederation;
@@ -35,8 +36,7 @@ public class AuthTest extends TestCase {
         EjbServer ejbServer = new EjbServer();
 
         Properties initProps = new Properties();
-        initProps.setProperty("openejb.deployments.classpath.include", "");
-        initProps.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        initProps.put(DeploymentsResolver.DEPLOYMENTS_CLASSPATH_PROPERTY, Boolean.toString(false));
         OpenEJB.init(initProps, new ServerFederation());
         ejbServer.init(new Properties());
 

@@ -1269,7 +1269,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
-        Class<? extends DeploymentModule> cls = checkAnnotations(Arrays.asList(baseUrl), classLoader, scanPotentialEjbModules, scanPotentialClientModules);
+        Class<? extends DeploymentModule> cls = checkAnnotations(baseUrl, classLoader, scanPotentialEjbModules, scanPotentialClientModules);
         if (cls != null) return cls;
 
         if (descriptors.containsKey("persistence.xml")) {
@@ -1279,7 +1279,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
     }
 
-    private Class<? extends DeploymentModule> checkAnnotations(Collection<URL> urls, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {
+    private Class<? extends DeploymentModule> checkAnnotations(URL urls, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {
         Class<? extends DeploymentModule> cls = null;
         if (scanPotentialEjbModules || scanPotentialClientModules) {
             AnnotationFinder classFinder = new AnnotationFinder(classLoader, urls);
