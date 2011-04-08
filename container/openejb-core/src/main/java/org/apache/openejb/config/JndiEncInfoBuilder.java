@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import static java.lang.String.format;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import org.apache.openejb.OpenEJBException;
@@ -111,6 +112,11 @@ public class JndiEncInfoBuilder {
     }
 
     public void build(JndiConsumer jndiConsumer, String ejbName, String moduleId, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {
+        assert ejbName != null;
+        assert moduleJndiEnc != null : format("%s moduleJndiEnc is null", ejbName);
+        assert compJndiEnc != null : format("%s compJndiEnc is null", ejbName);
+        assert jndiConsumer != null : format("%s jndiConsumer is null", ejbName);
+        
         URI moduleUri = null;
         if (moduleId != null) {
             try {

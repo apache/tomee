@@ -70,6 +70,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -97,7 +98,7 @@ class AppInfoBuilder {
     }
 
     public AppInfo build(AppModule appModule) throws OpenEJBException {
-        AppInfo appInfo = new AppInfo();
+        final AppInfo appInfo = new AppInfo();
         appInfo.appId = appModule.getModuleId();
         appInfo.path = appModule.getJarLocation();
         appInfo.standaloneModule = appModule.isStandaloneModule();
@@ -117,7 +118,7 @@ class AppInfoBuilder {
         buildPersistenceModules(appModule, appInfo);
 
 
-        List<String> containerIds = configFactory.getContainerIds();
+        final List<String> containerIds = configFactory.getContainerIds();
         for (ConnectorInfo connectorInfo : appInfo.connectors) {
             for (MdbContainerInfo containerInfo : connectorInfo.inbound) {
                 containerIds.add(containerInfo.id);
@@ -127,7 +128,7 @@ class AppInfoBuilder {
         //
         //  EJB Jars
         //
-        Map<String,EjbJarInfo> ejbJarInfos = new TreeMap<String,EjbJarInfo>();
+        final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<EjbModule, EjbJarInfo>();
         for (EjbModule ejbModule : appModule.getEjbModules()) {
             try {
                 EjbJarInfo ejbJarInfo = ejbJarInfoBuilder.buildInfo(ejbModule);
@@ -150,7 +151,7 @@ class AppInfoBuilder {
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
-                ejbJarInfos.put(ejbJarInfo.moduleId, ejbJarInfo);
+                ejbJarInfos.put(ejbModule, ejbJarInfo);
 
                 appInfo.ejbJars.add(ejbJarInfo);
 
@@ -161,18 +162,18 @@ class AppInfoBuilder {
             }
         }
         // Create the JNDI info builder
-        JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo);
+        final JndiEncInfoBuilder jndiEncInfoBuilder = new JndiEncInfoBuilder(appInfo);
         if (appModule.getApplication() != null) {
             //TODO figure out how to prevent adding stuff to the module and comp contexts from the application
             //or maybe validate the xml so this won't happen.
             jndiEncInfoBuilder.build(appModule.getApplication(), appInfo.appId, null, new JndiEncInfo(), new JndiEncInfo());
         }
 
-        List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
+        final List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
         // Build the JNDI tree for each ejb
         for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule.getModuleId());
+            EjbJarInfo ejbJar = ejbJarInfos.get(ejbModule);
 
             Map<String, EnterpriseBean> beanData = ejbModule.getEjbJar().getEnterpriseBeansByEjbName();
 
@@ -220,7 +221,7 @@ class AppInfoBuilder {
         //
         //  Final AppInfo creation
         //
-        List<URL> additionalLibraries = appModule.getAdditionalLibraries();
+        final List<URL> additionalLibraries = appModule.getAdditionalLibraries();
         for (URL url : additionalLibraries) {
             File file = toFile(url);
             try {
