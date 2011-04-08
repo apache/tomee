@@ -25,6 +25,8 @@ public interface DeploymentFilterable {
     static final String SEARCH_CLASSPATH_FOR_DEPLOYMENTS_PROPERTY = DEPLOYMENTS_CLASSPATH_PROPERTY;
     static final String CLASSPATH_INCLUDE = "openejb.deployments.classpath.include";
     static final String CLASSPATH_EXCLUDE = "openejb.deployments.classpath.exclude";
+    static final String PACKAGE_INCLUDE = "openejb.deployments.package.include";
+    static final String PACKAGE_EXCLUDE = "openejb.deployments.package.exclude";
     static final String CLASSPATH_REQUIRE_DESCRIPTOR = RequireDescriptors.PROPERTY;
     static final String CLASSPATH_FILTER_DESCRIPTORS = "openejb.deployments.classpath.filter.descriptors";
     static final String CLASSPATH_FILTER_SYSTEMAPPS = "openejb.deployments.classpath.filter.systemapps";

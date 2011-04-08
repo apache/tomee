@@ -696,7 +696,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 jndiEncBuilder.setUseCrossClassLoaderRef(false);
                 Context context = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
 
-                Debug.printContext(context);
+//                Debug.printContext(context);
 
                 containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
 

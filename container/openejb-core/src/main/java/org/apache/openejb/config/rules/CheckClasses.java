@@ -74,6 +74,9 @@ public class CheckClasses extends ValidationBase {
             try {
                 Class<?> beanClass = check_hasEjbClass(bean);
 
+                // All the subsequent checks require the bean class
+                if (beanClass == null) continue;
+                
                 if (!(bean instanceof RemoteBean)) continue;
                 RemoteBean b = (RemoteBean) bean;
 
@@ -208,8 +211,10 @@ public class CheckClasses extends ValidationBase {
 
         String ejbName = b.getEjbName();
 
-        Class<?> beanClass = lookForClass(b.getEjbClass(), "<ejb-class>", ejbName);
+        Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
 
+        if (beanClass == null) return null;
+        
         if (beanClass.isInterface()){
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
         }
