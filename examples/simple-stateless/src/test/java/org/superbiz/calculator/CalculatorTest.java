@@ -16,8 +16,11 @@
  */
 package org.superbiz.calculator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -26,14 +29,18 @@ import junit.framework.TestCase;
 public class CalculatorTest extends TestCase {
 
 	//START SNIPPET: setup	
-	private InitialContext initialContext;
+	private Context context;
 
     protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
-        initialContext = new InitialContext(properties);
+//        Map<Object, Object> map = new HashMap<Object, Object>();
+//        map.put(EJBContainer.APP_NAME, "test");
+//        EJBContainer ejbContainer = EJBContainer.createEJBContainer(map);
+        EJBContainer ejbContainer = EJBContainer.createEJBContainer();
+
+        context = ejbContainer.getContext();
     }
+    
     //END SNIPPET: setup    
 
     /**
@@ -43,7 +50,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: remote
     public void testCalculatorViaRemoteInterface() throws Exception {
-        Object object = initialContext.lookup("CalculatorImplRemote");
+        Object object = context.lookup("java:global/simple-stateless/CalculatorImpl!"+CalculatorRemote.class.getName());
 
 		assertNotNull(object);
 		assertTrue(object instanceof CalculatorRemote);
@@ -60,7 +67,7 @@ public class CalculatorTest extends TestCase {
      */
     //START SNIPPET: local    
     public void testCalculatorViaLocalInterface() throws Exception {
-        Object object = initialContext.lookup("CalculatorImplLocal");
+        Object object = context.lookup("java:global/simple-stateless/CalculatorImpl");
 
 		assertNotNull(object);
 		assertTrue(object instanceof CalculatorLocal);

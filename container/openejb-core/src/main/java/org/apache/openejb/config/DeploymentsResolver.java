@@ -189,18 +189,11 @@ public class DeploymentsResolver implements DeploymentFilterable {
             urlSet = urlSet.excludePaths(System.getProperty("sun.boot.class.path", ""));
             urlSet = urlSet.exclude(".*/JavaVM.framework/.*");
 
-//            if (shouldFilter(include, exclude, requireDescriptors)) {
-//                urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
-//            }
-
             // save the prefiltered list of jars before excluding system apps
             // so that we can choose not to filter modules with descriptors on the full list
             UrlSet prefiltered = urlSet;
 
             // we should exclude system apps before and apply user properties after
-//            if (filterSystemApps){
-//                urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
-//            }
 
             final IncludeExcludeFilter filter = new IncludeExcludeFilter(Filters.patterns(include), Filters.patterns(exclude));
             // filter using user parameters
@@ -208,9 +201,12 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
             if (prefiltered.size() == urlSet.size()) {
                 urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
+
+                if (filterSystemApps){
+                    urlSet = urlSet.exclude(".*/openejb-[^/]+(.(jar|ear|war)(!/)?|/target/(test-)?classes/?)");
+                }
             }
-//            urlSet = urlSet.exclude(exclude);
-//            urlSet = urlSet.include(includes);
+
 
             List<URL> urls = urlSet.getUrls();
             int size = urls.size();
