@@ -47,6 +47,7 @@ import org.apache.openejb.util.SuperProperties;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 
+import javax.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -352,7 +353,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             }
         }
 
-        if (SystemInstance.get().getOptions().get(DEPLOYMENTS_CLASSPATH_PROPERTY, true)) {
+        final boolean embedded = SystemInstance.get().hasProperty(EJBContainer.class.getName());
+        if (SystemInstance.get().getOptions().get(DEPLOYMENTS_CLASSPATH_PROPERTY, !embedded)) {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
             ArrayList<File> jarFiles = getModulesFromClassPath(declaredApps, classLoader);
