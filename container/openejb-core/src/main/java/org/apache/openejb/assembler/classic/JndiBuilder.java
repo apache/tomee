@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.util.Classes.packageName;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.NameAlreadyBoundException;
@@ -55,6 +56,9 @@ import java.lang.reflect.Constructor;
  */
 public class JndiBuilder {
 
+
+    final boolean embeddedEjbContainerApi;
+
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiBuilder.class.getPackage().getName());
 
     private final Context openejbContext;
@@ -64,7 +68,11 @@ public class JndiBuilder {
 
     public JndiBuilder(Context openejbContext) {
         this.openejbContext = openejbContext;
-        failOnCollision = SystemInstance.get().getOptions().get(JNDINAME_FAILONCOLLISION, true);
+
+        final Options options = SystemInstance.get().getOptions();
+
+        failOnCollision = options.get(JNDINAME_FAILONCOLLISION, true);
+        embeddedEjbContainerApi = options.get(EJBContainer.class.getName(), false);
     }
 
     public void build(EjbJarInfo ejbJar, HashMap<String, BeanContext> deployments) {
@@ -521,7 +529,9 @@ public class JndiBuilder {
                     nameInfo.name = externalName;
                     beanInfo.jndiNamess.add(nameInfo);
 
-                    logger.info("Jndi(name=" + externalName + ") --> Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ")");
+                    if (!embeddedEjbContainerApi) {
+                        logger.info("Jndi(name=" + externalName + ") --> Ejb(deployment-id=" + beanInfo.ejbDeploymentId + ")");
+                    }
                 }
             } catch (NameAlreadyBoundException e) {
                 BeanContext deployment = findNameOwner(name);
@@ -564,7 +574,10 @@ public class JndiBuilder {
         }
         try {
             String globalName = "global/" + appName + moduleName + beanName;
-            logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
+
+            if (embeddedEjbContainerApi) {
+                logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
+            }
             globalContext.bind(globalName, ref);
         } catch (NameAlreadyBoundException e) {
             //one interface in more than one role (e.g. both Local and Remote
