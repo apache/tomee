@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
 import javax.naming.Context;
@@ -321,7 +322,7 @@ public class OpenEjbContainer extends EJBContainer {
         }
 
         // TODO, report some information
-        private IllegalStateException specifiedModulesNotFound() {
+        private EJBException specifiedModulesNotFound() {
             return new NoSuchModuleException("some modules not matched on classpath");
         }
 
@@ -399,12 +400,13 @@ public class OpenEjbContainer extends EJBContainer {
         }
     }
 
-    public static class InitializationException extends IllegalStateException {
+
+    public static class InitializationException extends EJBException {
         public InitializationException(String s) {
             super(s);
         }
 
-        public InitializationException(Throwable cause) {
+        public InitializationException(Exception cause) {
             super(cause);
         }
     }
@@ -428,19 +430,19 @@ public class OpenEjbContainer extends EJBContainer {
     }
 
     public static class ConfigureApplicationException extends InitializationException {
-        public ConfigureApplicationException(Throwable cause) {
+        public ConfigureApplicationException(Exception cause) {
             super(cause);
         }
     }
 
     public static class AssembleApplicationException extends InitializationException {
-        public AssembleApplicationException(Throwable cause) {
+        public AssembleApplicationException(Exception cause) {
             super(cause);
         }
     }
 
     public static class InvalidApplicationException extends InitializationException {
-        public InvalidApplicationException(Throwable cause) {
+        public InvalidApplicationException(Exception cause) {
             super(cause);
         }
     }
