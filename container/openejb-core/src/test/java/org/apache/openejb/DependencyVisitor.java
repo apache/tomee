@@ -87,19 +87,25 @@ public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, C
             final String signature,
             final String superName,
             final String[] interfaces) {
-        String p = getGroupKey(name);
-        current = groups.get(p);
-        if (current == null) {
+
+        if (name.startsWith("org/apache/openejb/OpenEjbContainer")) {
             current = new HashMap<String, Integer>();
-            groups.put(p, current);
+        } else {
+            String p = getGroupKey(name);
+            current = groups.get(p);
+            if (current == null) {
+                current = new HashMap<String, Integer>();
+                groups.put(p, current);
+            }
+
+            if (signature == null) {
+                addName(superName);
+                addNames(interfaces);
+            } else {
+                addSignature(signature);
+            }
         }
 
-        if (signature == null) {
-            addName(superName);
-            addNames(interfaces);
-        } else {
-            addSignature(signature);
-        }
     }
 
     public AnnotationVisitor visitAnnotation(
