@@ -16,17 +16,34 @@
  */
 package org.superbiz.altdd;
 
-import org.superbiz.altdd.Movie;
-
+import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import static javax.ejb.TransactionAttributeType.MANDATORY;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import java.util.List;
 
-/**
- * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
- */
-public interface Movies {
-    void addMovie(Movie movie) throws Exception ;
+//START SNIPPET: code
+@Stateful
+@TransactionAttribute(MANDATORY)
+public class Movies {
 
-    void deleteMovie(Movie movie) throws Exception ;
+    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.TRANSACTION)
+    private EntityManager entityManager;
 
-    List<Movie> getMovies() throws Exception ;
+    public void addMovie(Movie movie) throws Exception {
+        entityManager.persist(movie);
+    }
+
+    public void deleteMovie(Movie movie) throws Exception {
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        return query.getResultList();
+    }
 }
+//END SNIPPET: code

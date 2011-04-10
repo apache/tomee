@@ -14,20 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.injection;
+package org.superbiz.injection.enventry;
+
+import javax.annotation.Resource;
+import javax.ejb.Singleton;
+import java.util.Date;
 
 /**
+ * This example demostrates the use of the injection of environment entries
+ * using <b>Resource</b> annotation.
+ * <p/>
+ * "EJB Core Contracts and Requirements" specification section 16.4.1.1.
+ *
  * @version $Rev$ $Date$
  */
-public class TooManyItemsException extends Exception {
+//START SNIPPET: code
+@Singleton
+public class Configuration {
 
-    private static final long serialVersionUID = 1L;
+    @Resource
+    private String color;
 
-    public TooManyItemsException() {
-        super();
+    @Resource
+    private Shape shape;
+
+    @Resource
+    private Class strategy;
+
+    @Resource(name = "date")
+    private long date;
+
+    public String getColor() {
+        return color;
     }
 
-    public TooManyItemsException(String message) {
-        super(message);
+    public Shape getShape() {
+        return shape;
+    }
+
+    public Class getStrategy() {
+        return strategy;
+    }
+
+    public Date getDate() {
+        return new Date(date);
     }
 }
+//END SNIPPET: code

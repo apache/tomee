@@ -30,7 +30,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 @Stateless
-public class MessagingBean implements MessagingLocal {
+public class Messages {
 
     @Resource
     private ConnectionFactory connectionFactory;

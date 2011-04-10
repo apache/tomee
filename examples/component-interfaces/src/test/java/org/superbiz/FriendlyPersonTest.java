@@ -18,10 +18,9 @@ package org.superbiz;
 
 import junit.framework.TestCase;
 
-import javax.naming.InitialContext;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import java.util.Locale;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
@@ -29,12 +28,11 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class FriendlyPersonTest extends TestCase {
-    private InitialContext initialContext;
+
+    private Context context;
 
     protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        initialContext = new InitialContext(properties);
+        context = EJBContainer.createEJBContainer().getContext();
     }
 
     /**
@@ -44,7 +42,7 @@ public class FriendlyPersonTest extends TestCase {
      */
     //START SNIPPET: remotehome
     public void testEjbHomeAndEjbObject() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonRemoteHome");
+        Object object = context.lookup("java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbHome");
         FriendlyPersonEjbHome home = (FriendlyPersonEjbHome) object;
         FriendlyPersonEjbObject friendlyPerson = home.create();
 
@@ -81,7 +79,7 @@ public class FriendlyPersonTest extends TestCase {
      * @throws Exception
      */
     public void testEjbLocalHomeAndEjbLocalObject() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonLocalHome");
+        Object object = context.lookup("java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonEjbLocalHome");
         FriendlyPersonEjbLocalHome home = (FriendlyPersonEjbLocalHome) object;
         FriendlyPersonEjbLocalObject friendlyPerson = home.create();
 
@@ -117,7 +115,7 @@ public class FriendlyPersonTest extends TestCase {
      */
     //START SNIPPET: remote
     public void testBusinessRemote() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonRemote");
+        Object object = context.lookup("java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonRemote");
 
         FriendlyPersonRemote friendlyPerson = (FriendlyPersonRemote) object;
 
@@ -153,7 +151,7 @@ public class FriendlyPersonTest extends TestCase {
      * @throws Exception
      */
     public void testBusinessLocal() throws Exception {
-        Object object = initialContext.lookup("FriendlyPersonLocal");
+        Object object = context.lookup("java:global/component-interfaces/FriendlyPerson!org.superbiz.FriendlyPersonLocal");
 
         FriendlyPersonLocal friendlyPerson = (FriendlyPersonLocal) object;
 

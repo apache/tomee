@@ -16,28 +16,65 @@
  */
 package org.superbiz.enventries;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @version $Rev$ $Date$
+ * In addition to the standard env-entry types (String, Integer, Long, Short, Byte, Boolean, Double, Float, Character)
+ * OpenEJB supports many other types.
+ *
  */
 //START SNIPPET: code
-public interface Stratocaster {
-    Date getDateCreated();
+@Stateless
+public class Stratocaster {
 
-    float getStringGuage(String string);
 
-    List<Pickup> getPickups();
+    @Resource(name = "pickups")
+    private List<Pickup> pickups;
 
-    Style getStyle();
+    @Resource(name = "style")
+    private Style style;
 
-    File getCertificateOfAuthenticity();
+    @Resource(name = "dateCreated")
+    private Date dateCreated;
 
+    @Resource(name = "guitarStringGuages")
+    private Map<String, Float> guitarStringGuages;
+
+    @Resource(name = "certificateOfAuthenticity")
+    private File certificateOfAuthenticity;
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    /**
+     * Gets the guage of the electric guitar strings
+     * used in this guitar.
+     * @param string
+     * @return
+     */
+    public float getStringGuage(String string){
+        return guitarStringGuages.get(string);
+    }
+
+    public List<Pickup> getPickups() {
+        return pickups;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public File getCertificateOfAuthenticity() {
+        return certificateOfAuthenticity;
+    }
 }
 //END SNIPPET: code

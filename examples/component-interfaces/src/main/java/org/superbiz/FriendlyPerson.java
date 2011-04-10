@@ -17,6 +17,7 @@
 package org.superbiz;
 
 import javax.ejb.Init;
+import javax.ejb.LocalBean;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.ejb.Remote;
@@ -35,6 +36,7 @@ import java.util.Properties;
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
  */
 //START SNIPPET: code
+
 // EJB 3.0 Style business interfaces
 // Each of these interfaces are already annotated in the classes
 // themselves with @Remote and @Local, so annotating them here
@@ -49,15 +51,15 @@ import java.util.Properties;
 @RemoteHome(FriendlyPersonEjbHome.class)
 @LocalHome(FriendlyPersonEjbLocalHome.class)
 
-@Stateful(name="FriendlyPerson")
-public class FriendlyPersonImpl implements FriendlyPersonLocal, FriendlyPersonRemote {
+@Stateful
+public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote {
 
     private final HashMap<String, MessageFormat> greetings;
     private final Properties languagePreferences;
 
     private String defaultLanguage;
 
-    public FriendlyPersonImpl() {
+    public FriendlyPerson() {
         greetings = new HashMap();
         languagePreferences = new Properties();
         defaultLanguage = Locale.getDefault().getLanguage();

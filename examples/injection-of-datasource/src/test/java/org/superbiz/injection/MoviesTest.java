@@ -18,6 +18,7 @@ package org.superbiz.injection;
 
 import junit.framework.TestCase;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
@@ -27,15 +28,15 @@ import java.util.List;
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
+
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        Context context = new InitialContext(p);
+        Context context = EJBContainer.createEJBContainer(p).getContext();
 
-        Movies movies = (Movies) context.lookup("MoviesLocal");
+        Movies movies = (Movies) context.lookup("java:global/injection-of-datasource/Movies");
 
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
         movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));

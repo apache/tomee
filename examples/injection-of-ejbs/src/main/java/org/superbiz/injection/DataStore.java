@@ -16,37 +16,25 @@
  */
 package org.superbiz.injection;
 
-import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
  * Every stateless session bean implementation must be annotated
  * using the annotation @Stateless
- * This EJB has 2 business interfaces: DataReaderRemote, a remote business
- * interface, and DataReaderLocal, a local business interface
+ * This EJB has 2 business interfaces: DataStoreRemote, a remote business
+ * interface, and DataStoreLocal, a local business interface
  * 
- * The instance variables 'dataStoreRemote' is annotated with the @EJB annotation:
- * this means that the application server, at runtime, will inject in this instance
- * variable a reference to the EJB DataStoreRemote
- * 
- * The instance variables 'dataStoreLocal' is annotated with the @EJB annotation:
- * this means that the application server, at runtime, will inject in this instance
- * variable a reference to the EJB DataStoreLocal
  */
 //START SNIPPET: code
 @Stateless
-public class DataReaderImpl implements DataReaderLocal, DataReaderRemote {
-	
-	@EJB private DataStoreRemote dataStoreRemote;
-	@EJB private DataStoreLocal dataStoreLocal;
-	
-	public String readDataFromLocalStore() {
-		return "LOCAL:"+dataStoreLocal.getData();
+@LocalBean
+public class DataStore implements DataStoreLocal, DataStoreRemote{
+
+	public String getData() {
+		return "42";
 	}
-	
-	public String readDataFromRemoteStore() {
-		return "REMOTE:"+dataStoreRemote.getData();
-	}
+
 }
 //END SNIPPET: code

@@ -18,17 +18,12 @@ package org.superbiz.altdd;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.transaction.UserTransaction;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import javax.annotation.Resource;
-import javax.annotation.PostConstruct;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.interceptor.InvocationContext;
@@ -36,12 +31,7 @@ import javax.interceptor.AroundInvoke;
 import java.util.Properties;
 import java.util.List;
 
-import org.superbiz.altdd.Movie;
-import org.superbiz.altdd.Movies;
-import org.apache.openejb.api.LocalClient;
-
 //START SNIPPET: code
-@LocalClient
 public class MoviesTest extends TestCase {
 
     @EJB
@@ -55,17 +45,13 @@ public class MoviesTest extends TestCase {
 
     public void setUp() throws Exception {
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
         p.put("openejb.altdd.prefix", "test");
 
-        InitialContext initialContext = new InitialContext(p);
-
-        // Here's the fun part
-        initialContext.bind("inject", this);
+        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
     }
 
     public void test() throws Exception {
