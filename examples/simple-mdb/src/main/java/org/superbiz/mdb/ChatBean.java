@@ -41,15 +41,22 @@ public class ChatBean implements MessageListener {
 
     public void onMessage(Message message) {
         try {
-            TextMessage textMessage = (TextMessage) message;
-            String question = textMessage.getText();
 
-            if (question.equals("Hello World!")) {
+            final TextMessage textMessage = (TextMessage) message;
+            final String question = textMessage.getText();
+
+            if ("Hello World!".equals(question)) {
+
                 respond("Hello, Test Case!");
-            } else if (question.equals("How are you?")) {
+
+            } else if ("How are you?".equals(question)) {
+
                 respond("I'm doing well.");
-            } else if (question.equals("Still spinning?")) {
+
+            } else if ("Still spinning?".equals(question)) {
+
                 respond("Once every day, as usual.");
+                
             }
         } catch (JMSException e) {
             throw new IllegalStateException(e);

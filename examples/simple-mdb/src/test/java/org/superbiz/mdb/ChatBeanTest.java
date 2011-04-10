@@ -19,30 +19,70 @@ package org.superbiz.mdb;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 public class ChatBeanTest extends TestCase {
 
+    @Resource
+    private ConnectionFactory connectionFactory;
+
+    @Resource(name = "ChatBean")
+    private Queue questionQueue;
+
+    @Resource(name = "AnswerQueue")
+    private Queue answerQueue;
+
     public void test() throws Exception {
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        InitialContext context = new InitialContext(p);
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
 
-        MessagingClientLocal bean = (MessagingClientLocal) context.lookup("MessagingClientBeanLocal");
 
-        bean.sendMessage("Hello World!");
+        final Connection connection = connectionFactory.createConnection();
 
-        assertEquals(bean.receiveMessage(), "Hello, Test Case!");
+        connection.start();
 
-        bean.sendMessage("How are you?");
+        final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        assertEquals(bean.receiveMessage(), "I'm doing well.");
+        final MessageProducer questions = session.createProducer(questionQueue);
 
-        bean.sendMessage("Still spinning?");
+        final MessageConsumer answers = session.createConsumer(answerQueue);
 
-        assertEquals(bean.receiveMessage(), "Once every day, as usual.");
+
+        sendText("Hello World!", questions, session);
+
+        assertEquals("Hello, Test Case!", receiveText(answers));
+
+
+        sendText("How are you?", questions, session);
+
+        assertEquals("I'm doing well.", receiveText(answers));
+
+
+        sendText("Still spinning?", questions, session);
+
+        assertEquals("Once every day, as usual.", receiveText(answers));
+
     }
+
+    private void sendText(String text, MessageProducer questions, Session session) throws JMSException {
+
+        questions.send(session.createTextMessage(text));
+
+    }
+
+    private String receiveText(MessageConsumer answers) throws JMSException {
+
+        return ((TextMessage) answers.receive(1000)).getText();
+        
+    }
+
 }
 //END SNIPPET: code
