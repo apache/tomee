@@ -19,26 +19,24 @@ package org.superbiz.injection.jms;
 
 import junit.framework.TestCase;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
 
 public class MessagingBeanTest extends TestCase {
 
     public void test() throws Exception {
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        InitialContext context = new InitialContext(p);
 
-        MessagingLocal bean = (MessagingLocal) context.lookup("MessagingBeanLocal");
+        final Context context = EJBContainer.createEJBContainer().getContext();
+        
+        Messages messages = (Messages) context.lookup("java:global/injection-of-connectionfactory/Messages");
 
-        bean.sendMessage("Hello World!");
-        bean.sendMessage("How are you?");
-        bean.sendMessage("Still spinning?");
+        messages.sendMessage("Hello World!");
+        messages.sendMessage("How are you?");
+        messages.sendMessage("Still spinning?");
 
-        assertEquals(bean.receiveMessage(), "Hello World!");
-        assertEquals(bean.receiveMessage(), "How are you?");
-        assertEquals(bean.receiveMessage(), "Still spinning?");
+        assertEquals(messages.receiveMessage(), "Hello World!");
+        assertEquals(messages.receiveMessage(), "How are you?");
+        assertEquals(messages.receiveMessage(), "Still spinning?");
     }
 }
 //END SNIPPET: code

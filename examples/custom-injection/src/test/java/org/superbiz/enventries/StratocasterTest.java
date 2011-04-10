@@ -20,6 +20,8 @@ import static java.util.Arrays.asList;
 
 import junit.framework.TestCase;
 
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.InitialContext;
 import javax.naming.Context;
 
@@ -46,18 +48,11 @@ import java.text.DateFormat;
 //START SNIPPET: code
 public class StratocasterTest extends TestCase {
 
-    private InitialContext initialContext;
-
-    protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-
-        initialContext = new InitialContext(properties);
-    }
+    @EJB
+    private Stratocaster strat;
 
     public void test() throws Exception {
-        Stratocaster strat = (Stratocaster) initialContext.lookup("StratocasterImplLocal");
-
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
 
         Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1962");
         assertEquals("Strat.getDateCreated()", date, strat.getDateCreated());

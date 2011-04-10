@@ -1,3 +1,0 @@
-<!-- this is here so the @LocalClient classes in the test code are discovered and deployed -->
-<!-- an empty ejb-jar.xml file will also work, no need for both -->
-<application-client/>

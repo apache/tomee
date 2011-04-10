@@ -14,15 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-//START SNIPPET: code
-package org.superbiz.injection.jms;
+package org.superbiz.injection.enventry;
 
-import javax.jms.JMSException;
-
-public interface MessagingLocal {
-
-    public void sendMessage(String text) throws JMSException;
-
-    public String receiveMessage() throws JMSException;
+/**
+ * Exists to show that any class object can be injected and does
+ * not need to be loaded directly in app code.
+ * 
+ * @version $Revision$ $Date$
+ */
+public class Widget {
 }
-//END SNIPPET: code

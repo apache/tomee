@@ -14,30 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.injection;
+package org.superbiz.injection.enventry;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 import junit.framework.TestCase;
+import org.superbiz.injection.enventry.Configuration;
+import org.superbiz.injection.enventry.Shape;
+import org.superbiz.injection.enventry.Widget;
 
-/**
- *  A test case for DataReaderImpl ejb, testing both the remote and local interface 
- *
- */
+import java.util.Date;
+
 //START SNIPPET: code
-public class EjbDependencyTest extends TestCase {
+public class ConfigurationTest extends TestCase {
+
 
     public void test() throws Exception {
         final Context context = EJBContainer.createEJBContainer().getContext();
 
-        DataReader dataReader = (DataReader) context.lookup("java:global/injection-of-ejbs/DataReader");
+        final Configuration configuration = (Configuration) context.lookup("java:global/injection-of-env-entry/Configuration");
 
-        assertNotNull(dataReader);
+        assertEquals("orange", configuration.getColor());
 
-        assertEquals("LOCAL:42", dataReader.readDataFromLocalStore());
-    	assertEquals("REMOTE:42", dataReader.readDataFromRemoteStore());
-        assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
+        assertEquals(Shape.TRIANGLE, configuration.getShape());
+
+        assertEquals(Widget.class, configuration.getStrategy());
+        
+        assertEquals(new Date(123456789), configuration.getDate());
     }
 }
 //END SNIPPET: code
+ 
+
+
