@@ -17,7 +17,7 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz.quartz</groupId>
     <artifactId>quartz-app</artifactId>
@@ -28,8 +28,8 @@
   <packaging>jar</packaging>
   <name>Quartz Resource Adapter</name>
   <description>
-  Maven doesn't allow rar files in the test classpath for some reason,
-  so we have to pull this trick to get it in the classpath.
+    Maven doesn't allow rar files in the test classpath for some reason,
+    so we have to pull this trick to get it in the classpath.
   </description>
   <dependencies>
     <dependency>

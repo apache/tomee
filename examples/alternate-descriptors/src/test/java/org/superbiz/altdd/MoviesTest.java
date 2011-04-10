@@ -18,18 +18,18 @@ package org.superbiz.altdd;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
-import javax.transaction.UserTransaction;
-import javax.transaction.RollbackException;
-import javax.annotation.Resource;
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
-import javax.interceptor.InvocationContext;
+import javax.ejb.embeddable.EJBContainer;
 import javax.interceptor.AroundInvoke;
-import java.util.Properties;
+import javax.interceptor.InvocationContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.RollbackException;
+import javax.transaction.UserTransaction;
 import java.util.List;
+import java.util.Properties;
 
 //START SNIPPET: code
 public class MoviesTest extends TestCase {

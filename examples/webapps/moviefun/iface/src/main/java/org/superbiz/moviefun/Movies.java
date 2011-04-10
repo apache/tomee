@@ -16,21 +16,30 @@
  */
 package org.superbiz.moviefun;
 
-import java.util.List;
-
 import javax.ejb.Local;
+import java.util.List;
 
 @Local
 public interface Movies {
-	public  int count();
-	public  List<Movie> findRange(int[] range);
-	public  List<Movie> findByDirector(String director);
-	public  List<Movie> findByGenre(String genre);
-	public  List<Movie> findByTitle(String title);
-	public  List<Movie> getMovies();
-	public  void deleteMovieId(long id);
-	public  void deleteMovie(Movie movie);
-	public  void editMovie(Movie movie);
-	public  void addMovie(Movie movie);
-	public  Movie find(Long id);
+    public int count();
+
+    public List<Movie> findRange(int[] range);
+
+    public List<Movie> findByDirector(String director);
+
+    public List<Movie> findByGenre(String genre);
+
+    public List<Movie> findByTitle(String title);
+
+    public List<Movie> getMovies();
+
+    public void deleteMovieId(long id);
+
+    public void deleteMovie(Movie movie);
+
+    public void editMovie(Movie movie);
+
+    public void addMovie(Movie movie);
+
+    public Movie find(Long id);
 }

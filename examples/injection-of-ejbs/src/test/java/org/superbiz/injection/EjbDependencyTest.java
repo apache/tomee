@@ -16,14 +16,13 @@
  */
 package org.superbiz.injection;
 
+import junit.framework.TestCase;
+
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
-import junit.framework.TestCase;
-
 /**
- *  A test case for DataReaderImpl ejb, testing both the remote and local interface 
- *
+ * A test case for DataReaderImpl ejb, testing both the remote and local interface
  */
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {
@@ -36,7 +35,7 @@ public class EjbDependencyTest extends TestCase {
         assertNotNull(dataReader);
 
         assertEquals("LOCAL:42", dataReader.readDataFromLocalStore());
-    	assertEquals("REMOTE:42", dataReader.readDataFromRemoteStore());
+        assertEquals("REMOTE:42", dataReader.readDataFromRemoteStore());
         assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
     }
 }

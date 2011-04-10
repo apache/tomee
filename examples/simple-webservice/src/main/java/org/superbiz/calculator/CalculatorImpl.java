@@ -16,21 +16,20 @@
  */
 package org.superbiz.calculator;
 
-import java.util.Date;
-
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import java.util.Date;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
  * Every stateless session bean implementation must be annotated
  * using the annotation @Stateless
- * This EJB has a 2 interfaces: 
+ * This EJB has a 2 interfaces:
  * <ul>
- *   <li>CalculatorWs a webservice interface</li>
- *   <li>CalculatorLocal a local interface</li>
+ * <li>CalculatorWs a webservice interface</li>
+ * <li>CalculatorLocal a local interface</li>
  * </ul>
  */
 //START SNIPPET: code
@@ -52,28 +51,29 @@ public class CalculatorImpl implements CalculatorWs, CalculatorLocal {
     }
 
     public int factorial(
-	    int number,
-	    Holder<String> userId, 
-	    Holder<String> returnCode,
-	    Holder<Date> datetime) {
-	
-	if (number == 0) {
-	    returnCode.value = "Can not calculate factorial for zero.";
-	    return -1;
-	}
-	
-	returnCode.value = userId.value;
-	datetime.value = new Date();
-	return (int) factorial(number);
+            int number,
+            Holder<String> userId,
+            Holder<String> returnCode,
+            Holder<Date> datetime) {
+
+        if (number == 0) {
+            returnCode.value = "Can not calculate factorial for zero.";
+            return -1;
+        }
+
+        returnCode.value = userId.value;
+        datetime.value = new Date();
+        return (int) factorial(number);
     }
-    
+
     // return n!
     // precondition: n >= 0 and n <= 20
+
     private static long factorial(long n) {
-        if      (n <  0) throw new RuntimeException("Underflow error in factorial");
+        if (n < 0) throw new RuntimeException("Underflow error in factorial");
         else if (n > 20) throw new RuntimeException("Overflow error in factorial");
         else if (n == 0) return 1;
-        else             return n * factorial(n-1);
+        else return n * factorial(n - 1);
     }
 }
 //END SNIPPET: code

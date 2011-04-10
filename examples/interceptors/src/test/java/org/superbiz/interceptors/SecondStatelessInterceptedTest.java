@@ -16,6 +16,7 @@
  */
 package org.superbiz.interceptors;
 
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,8 +25,6 @@ import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import junit.framework.TestCase;
 
 /**
  * @version $Rev$ $Date$

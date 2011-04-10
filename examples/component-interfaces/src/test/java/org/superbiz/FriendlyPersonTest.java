@@ -24,7 +24,6 @@ import java.util.Locale;
 
 /**
  * @author <a href="mailto:david.blevins@visi.com">David Blevins</a>
- * 
  * @version $Rev$ $Date$
  */
 public class FriendlyPersonTest extends TestCase {

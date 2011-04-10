@@ -17,14 +17,14 @@
  */
 package org.superbiz.servlet;
 
-import javax.jws.WebService;
 import javax.jws.HandlerChain;
+import javax.jws.WebService;
 
 @WebService(
-    portName="HelloPojoPort",
-    serviceName="HelloPojoService",
-    targetNamespace="http://examples.org/wsdl",
-    endpointInterface="org.superbiz.servlet.HelloPojo"
+        portName = "HelloPojoPort",
+        serviceName = "HelloPojoService",
+        targetNamespace = "http://examples.org/wsdl",
+        endpointInterface = "org.superbiz.servlet.HelloPojo"
 )
 @HandlerChain(file = "server-handlers.xml")
 public class HelloPojoService implements HelloPojo {

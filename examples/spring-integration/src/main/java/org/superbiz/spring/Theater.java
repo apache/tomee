@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //START SNIPPET: code
+
 /**
  * Spring bean that references the Movies EJB and the Movie JPA bean.
  * <p/>

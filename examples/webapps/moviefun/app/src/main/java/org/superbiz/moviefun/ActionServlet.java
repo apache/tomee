@@ -16,8 +16,8 @@
  */
 package org.superbiz.moviefun;
 
-import javax.servlet.http.HttpServlet;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServlet;
 
 /**
  * @version $Revision$ $Date$
@@ -27,6 +27,5 @@ public class ActionServlet extends HttpServlet {
     @EJB(name = "movies")
     private Movies movies;
 
-    
 
 }

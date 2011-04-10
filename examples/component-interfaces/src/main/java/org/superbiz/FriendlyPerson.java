@@ -17,13 +17,12 @@
 package org.superbiz;
 
 import javax.ejb.Init;
-import javax.ejb.LocalBean;
+import javax.ejb.Local;
+import javax.ejb.LocalHome;
+import javax.ejb.Remote;
+import javax.ejb.RemoteHome;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
-import javax.ejb.Remote;
-import javax.ejb.Local;
-import javax.ejb.RemoteHome;
-import javax.ejb.LocalHome;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -73,25 +72,27 @@ public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote
     /**
      * This method corresponds to the FriendlyPersonEjbHome.create() method
      * and the FriendlyPersonEjbLocalHome.create()
-     *
+     * <p/>
      * If you do not have an EJBHome or EJBLocalHome interface, this method
      * can be deleted.
      */
     @Init
-    public void create(){}
+    public void create() {
+    }
 
     /**
      * This method corresponds to the following methods:
-     *  - EJBObject.remove()
-     *  - EJBHome.remove(ejbObject)
-     *  - EJBLocalObject.remove()
-     *  - EJBLocalHome.remove(ejbObject)
-     *
+     * - EJBObject.remove()
+     * - EJBHome.remove(ejbObject)
+     * - EJBLocalObject.remove()
+     * - EJBLocalHome.remove(ejbObject)
+     * <p/>
      * If you do not have an EJBHome or EJBLocalHome interface, this method
      * can be deleted.
      */
     @Remove
-    public void remove(){}
+    public void remove() {
+    }
 
     public String greet(String friend) {
         String language = languagePreferences.getProperty(friend, defaultLanguage);

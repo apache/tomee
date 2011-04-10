@@ -24,7 +24,7 @@ import javax.ejb.Stateful;
  * using the annotation @Stateful
  * This EJB has 2 business interfaces: CounterRemote, a remote business
  * interface, and CounterLocal, a local business interface
- *
+ * <p/>
  * Per EJB3 rules when the @Remote or @Local annotation isn't present
  * in the bean class (this class), all interfaces are considered
  * local unless explicitly annotated otherwise.  If you look

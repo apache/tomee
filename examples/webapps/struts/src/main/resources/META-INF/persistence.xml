@@ -16,50 +16,50 @@
     limitations under the License.
  -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-	version="1.0">
-<!-- Uses HSQLDB which comes bundles with OpenEJB -->
-    <persistence-unit name="user">
-        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-        <jta-data-source>java:openejb/Resource/My DataSource</jta-data-source>
-        <non-jta-data-source>java:openejb/Resource/My Unmanaged DataSource</non-jta-data-source>
-        <class>org.superbiz.struts.User</class>
-        <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />            
-        </properties>
-    </persistence-unit>
-	
-<!-- Uncomment the below persistence-unit if you want to use MySql. Make sure to comment out the persistence-unit above first. 
-      You would need to open <<Tomcat-install>>/conf/openejb.xml and add two Resource elements as shown. 
-      You would also need to create a database named userdb
-<Resource id="mysql_managed" type="DataSource">
-    JdbcDriver  com.mysql.jdbc.Driver
-    JdbcUrl     jdbc:mysql://localhost/userdb
-    UserName    root
-    Password    yourpassword
-    JtaManaged true
-</Resource>
-<Resource id="mysql_unmanaged" type="DataSource">
-    JdbcDriver  com.mysql.jdbc.Driver
-    JdbcUrl     jdbc:mysql://localhost/userdb
-    UserName    root
-    Password    yourpassword
-    JtaManaged  false
-</Resource>
+             version="1.0">
+  <!-- Uses HSQLDB which comes bundles with OpenEJB -->
+  <persistence-unit name="user">
+    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+    <jta-data-source>java:openejb/Resource/My DataSource</jta-data-source>
+    <non-jta-data-source>java:openejb/Resource/My Unmanaged DataSource</non-jta-data-source>
+    <class>org.superbiz.struts.User</class>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
 
- -->
-	<!--
-	<persistence-unit name="user">
-		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-		<jta-data-source>java:openejb/Resource/mysql_managed</jta-data-source>
-		<non-jta-data-source>java:openejb/Resource/mysql_unmanaged</non-jta-data-source>
-		<class>org.superbiz.struts.User</class>
-		<properties>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
-		</properties>
-	</persistence-unit>
+  <!-- Uncomment the below persistence-unit if you want to use MySql. Make sure to comment out the persistence-unit above first.
+       You would need to open <<Tomcat-install>>/conf/openejb.xml and add two Resource elements as shown.
+       You would also need to create a database named userdb
+ <Resource id="mysql_managed" type="DataSource">
+     JdbcDriver  com.mysql.jdbc.Driver
+     JdbcUrl     jdbc:mysql://localhost/userdb
+     UserName    root
+     Password    yourpassword
+     JtaManaged true
+ </Resource>
+ <Resource id="mysql_unmanaged" type="DataSource">
+     JdbcDriver  com.mysql.jdbc.Driver
+     JdbcUrl     jdbc:mysql://localhost/userdb
+     UserName    root
+     Password    yourpassword
+     JtaManaged  false
+ </Resource>
 
-    -->
+  -->
+  <!--
+<persistence-unit name="user">
+  <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+  <jta-data-source>java:openejb/Resource/mysql_managed</jta-data-source>
+  <non-jta-data-source>java:openejb/Resource/mysql_unmanaged</non-jta-data-source>
+  <class>org.superbiz.struts.User</class>
+  <properties>
+    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+  </properties>
+</persistence-unit>
+
+  -->
 </persistence>

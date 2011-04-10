@@ -24,8 +24,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 @Stateful
 public class Movies {
@@ -34,10 +34,10 @@ public class Movies {
      * The field name "movieDatabase" matches the DataSource we
      * configure in the TestCase via :
      * p.put("movieDatabase", "new://Resource?type=DataSource");
-     *
+     * <p/>
      * This would also match an equivalent delcaration in an openejb.xml:
      * <Resource id="movieDatabase" type="DataSource"/>
-     *
+     * <p/>
      * If you'd like the freedom to change the field name without
      * impact on your configuration you can set the "name" attribute
      * of the @Resource annotation to "movieDatabase" instead.
@@ -88,12 +88,12 @@ public class Movies {
         try {
             PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
             ResultSet set = sql.executeQuery();
-            while ( set.next() ) {
+            while (set.next()) {
                 Movie movie = new Movie();
                 movie.setDirector(set.getString("director"));
                 movie.setTitle(set.getString("title"));
                 movie.setYear(set.getInt("year"));
-                movies.add( movie );
+                movies.add(movie);
             }
 
         } finally {

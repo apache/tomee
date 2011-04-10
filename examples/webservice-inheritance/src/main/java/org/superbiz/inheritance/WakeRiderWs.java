@@ -16,16 +16,15 @@
  */
 package org.superbiz.inheritance;
 
-import java.util.List;
-
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import java.util.List;
 
 /**
  * This is an EJB 3 webservice interface that uses inheritance.
  */
 @WebService(targetNamespace = "http://superbiz.org/wsdl")
-@XmlSeeAlso( { Wakeboard.class, WakeboardBinding.class, Tower.class })
+@XmlSeeAlso({Wakeboard.class, WakeboardBinding.class, Tower.class})
 public interface WakeRiderWs {
     public void addItem(Item item) throws Exception;
 

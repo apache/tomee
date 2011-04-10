@@ -16,14 +16,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-    <persistence-unit name="movie-unit">
-        <jta-data-source>movieDatabase</jta-data-source>
-        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
-        <class>org.superbiz.moviefun.Movie</class>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.moviefun.Movie</class>
 
-        <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>            
-        </properties>
-    </persistence-unit>
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
 </persistence>

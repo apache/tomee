@@ -18,6 +18,7 @@ package org.superbiz.spring;
 
 import junit.framework.TestCase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.util.List;
 
 //START SNIPPET: code
@@ -28,8 +29,8 @@ public class MoviesTest extends TestCase {
         //Uncomment for debug logging
         //org.apache.log4j.BasicConfigurator.configure();
 
-        System.setProperty("openejb.deployments.classpath.include",".*/spring-integration.*");
-        
+        System.setProperty("openejb.deployments.classpath.include", ".*/spring-integration.*");
+
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("movies.xml");
 
         // Can I lookup the Cineplex EJB via the Spring ApplicationContext

@@ -16,15 +16,14 @@
  */
 package org.superbiz.attachment;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.soap.SOAPBinding;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -40,41 +39,41 @@ import javax.xml.ws.soap.SOAPBinding;
         endpointInterface = "org.superbiz.attachment.AttachmentWs")
 @BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 public class AttachmentImpl implements AttachmentWs {
-	
+
     public String stringFromBytes(byte[] data) {
-		return new String(data);
-		
-	}
+        return new String(data);
 
-	public String stringFromDataSource(DataSource source) {
+    }
 
-		try {
-			InputStream inStr = source.getInputStream();
-			int size = inStr.available();
-			byte[] data = new byte[size];
-			inStr.read(data);
-			inStr.close();
-			return new String(data);
+    public String stringFromDataSource(DataSource source) {
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			
-		}
-		return "";
-		
-	}
+        try {
+            InputStream inStr = source.getInputStream();
+            int size = inStr.available();
+            byte[] data = new byte[size];
+            inStr.read(data);
+            inStr.close();
+            return new String(data);
 
-	public String stringFromDataHandler(DataHandler handler) {
+        } catch (IOException e) {
+            e.printStackTrace();
 
-		try {
-			return (String) handler.getContent();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			
-		}
-		return "";
+        }
+        return "";
 
-	}
-	
+    }
+
+    public String stringFromDataHandler(DataHandler handler) {
+
+        try {
+            return (String) handler.getContent();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return "";
+
+    }
+
 }

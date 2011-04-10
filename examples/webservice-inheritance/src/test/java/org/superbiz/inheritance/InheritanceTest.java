@@ -16,18 +16,16 @@
  */
 package org.superbiz.inheritance;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Properties;
+import junit.framework.TestCase;
+import org.superbiz.inheritance.Tower.Fit;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-
-import org.superbiz.inheritance.Tower.Fit;
-
-import junit.framework.TestCase;
+import java.net.URL;
+import java.util.List;
+import java.util.Properties;
 
 public class InheritanceTest extends TestCase {
 
@@ -61,7 +59,7 @@ public class InheritanceTest extends TestCase {
     //START SNIPPET: webservice
     public void testInheritanceViaWsInterface() throws Exception {
         Service service = Service.create(
-                new URL("http://127.0.0.1:4204/WakeRiderImpl?wsdl"), 
+                new URL("http://127.0.0.1:4204/WakeRiderImpl?wsdl"),
                 new QName("http://superbiz.org/wsdl", "InheritanceWsService"));
         assertNotNull(service);
 
@@ -84,7 +82,7 @@ public class InheritanceTest extends TestCase {
 
         //check tower
         assertEquals("testInheritanceViaWsInterface, first Item", returnedItems.get(0).getClass(), Tower.class);
-        tower = (Tower)returnedItems.get(0);
+        tower = (Tower) returnedItems.get(0);
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getBrand(), "Tower brand");
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getFit().ordinal(), Fit.Custom.ordinal());
         assertEquals("testInheritanceViaWsInterface, first Item", tower.getItemName(), "Tower item name");
@@ -93,14 +91,14 @@ public class InheritanceTest extends TestCase {
 
         //check item
         assertEquals("testInheritanceViaWsInterface, second Item", returnedItems.get(1).getClass(), Item.class);
-        item = (Item)returnedItems.get(1);
+        item = (Item) returnedItems.get(1);
         assertEquals("testInheritanceViaWsInterface, second Item", item.getBrand(), "Item brand");
         assertEquals("testInheritanceViaWsInterface, second Item", item.getItemName(), "Item name");
         assertEquals("testInheritanceViaWsInterface, second Item", item.getPrice(), 2.0d);
 
         //check wakeboard
         assertEquals("testInheritanceViaWsInterface, third Item", returnedItems.get(2).getClass(), Wakeboard.class);
-        wakeBoard = (Wakeboard)returnedItems.get(2);
+        wakeBoard = (Wakeboard) returnedItems.get(2);
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getBrand(), "Wakeboard brand");
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getItemName(), "Wakeboard item name");
         assertEquals("testInheritanceViaWsInterface, third Item", wakeBoard.getPrice(), 3.0d);
@@ -108,7 +106,7 @@ public class InheritanceTest extends TestCase {
 
         //check wakeboardbinding
         assertEquals("testInheritanceViaWsInterface, fourth Item", returnedItems.get(3).getClass(), WakeboardBinding.class);
-        wakeBoardbinding = (WakeboardBinding)returnedItems.get(3);
+        wakeBoardbinding = (WakeboardBinding) returnedItems.get(3);
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getBrand(), "Wakeboardbinding brand");
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getItemName(), "Wakeboardbinding item name");
         assertEquals("testInheritanceViaWsInterface, fourth Item", wakeBoardbinding.getPrice(), 4.0d);

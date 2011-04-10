@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import java.util.List;
 
 //START SNIPPET: code
+
 @Stateless
 public class CineplexImpl implements Cineplex {
 

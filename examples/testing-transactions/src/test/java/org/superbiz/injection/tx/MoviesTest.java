@@ -18,16 +18,18 @@ package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
-import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
-import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
+
 //START SNIPPET: code
+
 public class MoviesTest extends TestCase {
     private Context context;
 
@@ -66,7 +68,7 @@ public class MoviesTest extends TestCase {
     public void testWithTransaction() throws Exception {
         Caller transactionBean = (Caller) context.lookup("TransactionBeanLocal");
 
-        transactionBean.call(new Callable(){
+        transactionBean.call(new Callable() {
             public Object call() throws Exception {
                 doWork();
                 return null;
@@ -91,7 +93,7 @@ public class MoviesTest extends TestCase {
     /**
      * This little bit of magic allows our test code to execute in
      * the scope of a container controlled transaction.
-     *
+     * <p/>
      * The src/test/resource/META-INF/ejb-jar.xml will cause this
      * EJB to be automatically discovered and deployed when
      * OpenEJB boots up.

@@ -16,31 +16,17 @@
  */
 package org.superbiz.enventries;
 
-import static java.util.Arrays.asList;
-
 import junit.framework.TestCase;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
-import javax.naming.InitialContext;
-import javax.naming.Context;
-
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.InetAddress;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static java.util.Arrays.asList;
 
 /**
  * @version $Rev$ $Date$

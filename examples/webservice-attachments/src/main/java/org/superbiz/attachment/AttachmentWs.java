@@ -22,14 +22,14 @@ import javax.jws.WebService;
 /**
  * This is an EJB 3 webservice interface to send attachments throughout SAOP.
  */
-@WebService(targetNamespace="http://superbiz.org/wsdl" )
+@WebService(targetNamespace = "http://superbiz.org/wsdl")
 public interface AttachmentWs {
-	
-	public String stringFromBytes(byte[] data);
 
-	// Not working at the moment with SUN saaj provider and CXF
-	//public String stringFromDataSource(DataSource source);
-    
+    public String stringFromBytes(byte[] data);
+
+    // Not working at the moment with SUN saaj provider and CXF
+    //public String stringFromDataSource(DataSource source);
+
     public String stringFromDataHandler(DataHandler handler);
-	
+
 }

@@ -19,7 +19,7 @@ package org.superbiz.injection.enventry;
 /**
  * Exists to show that any class object can be injected and does
  * not need to be loaded directly in app code.
- * 
+ *
  * @version $Revision$ $Date$
  */
 public class Widget {

@@ -85,9 +85,12 @@
             <configuration>
               <tasks>
                 <jar destfile="${project.build.directory}/${project.build.finalName}/app.jar" basedir="target/classes"/>
-                <signjar jar="${project.build.directory}/${project.build.finalName}/app.jar" alias="mykey" storepass="openejb"/>
-                <signjar jar="${project.build.directory}/${project.build.finalName}/openejb-client.jar" alias="mykey" storepass="openejb"/>
-                <signjar jar="${project.build.directory}/${project.build.finalName}/javaee-api.jar" alias="mykey" storepass="openejb"/>
+                <signjar jar="${project.build.directory}/${project.build.finalName}/app.jar" alias="mykey"
+                         storepass="openejb"/>
+                <signjar jar="${project.build.directory}/${project.build.finalName}/openejb-client.jar" alias="mykey"
+                         storepass="openejb"/>
+                <signjar jar="${project.build.directory}/${project.build.finalName}/javaee-api.jar" alias="mykey"
+                         storepass="openejb"/>
               </tasks>
             </configuration>
           </execution>

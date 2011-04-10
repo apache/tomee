@@ -17,9 +17,13 @@
 package org.superbiz.interceptors;
 
 import javax.ejb.Stateless;
-import javax.interceptor.*;
-import java.util.List;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.ExcludeClassInterceptors;
+import javax.interceptor.ExcludeDefaultInterceptors;
+import javax.interceptor.Interceptors;
+import javax.interceptor.InvocationContext;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -36,7 +40,7 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
         return list;
     }
 
-    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})    
+    @Interceptors({MethodLevelInterceptorOne.class, MethodLevelInterceptorTwo.class})
     @ExcludeClassInterceptors
     public List<String> anotherBusinessMethod() {
         List<String> list = new ArrayList<String>();
@@ -48,5 +52,5 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
     @AroundInvoke
     protected Object beanClassBusinessMethodInterceptor(InvocationContext ic) throws Exception {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
-    }    
+    }
 }

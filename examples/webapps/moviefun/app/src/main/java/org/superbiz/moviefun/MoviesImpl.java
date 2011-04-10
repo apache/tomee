@@ -16,8 +16,6 @@
  */
 package org.superbiz.moviefun;
 
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -31,6 +29,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
+import java.util.List;
 
 @LocalBean
 @Stateless(name = "Movies")
@@ -46,70 +45,70 @@ public class MoviesImpl implements Movies, MoviesRemote {
     private EntityManager entityManager;
 
     @Override
-	public Movie find(Long id) {
+    public Movie find(Long id) {
         return entityManager.find(Movie.class, id);
     }
-    
+
     @Override
-	public void addMovie(Movie movie) {
+    public void addMovie(Movie movie) {
         entityManager.persist(movie);
     }
-    
+
     @Override
-	public void editMovie(Movie movie) {
+    public void editMovie(Movie movie) {
         entityManager.merge(movie);
     }
 
     @Override
-	public void deleteMovie(Movie movie) {
+    public void deleteMovie(Movie movie) {
         entityManager.remove(movie);
         notifier.notify("Deleted Movie \"" + movie.getTitle() + "\" (" + movie.getYear() + ")");
     }
 
     @Override
-	public void deleteMovieId(long id) {
+    public void deleteMovieId(long id) {
         Movie movie = entityManager.find(Movie.class, id);
         entityManager.remove(movie);
     }
 
     @Override
-	public List<Movie> getMovies() {
-    	CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
+    public List<Movie> getMovies() {
+        CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
         cq.select(cq.from(Movie.class));
         return entityManager.createQuery(cq).getResultList();
     }
 
     @Override
-	public List<Movie> findByTitle(String title) {
-    	return findByStringField("title", title);
-    }
-
-	@Override
-	public List<Movie> findByGenre(String genre) {
-		return findByStringField("genre", genre);
+    public List<Movie> findByTitle(String title) {
+        return findByStringField("title", title);
     }
 
     @Override
-	public List<Movie> findByDirector(String director) {
-    	return findByStringField("director", director);
+    public List<Movie> findByGenre(String genre) {
+        return findByStringField("genre", genre);
     }
-    
-    private List<Movie> findByStringField(String fieldname, String param) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
-	    Root<Movie> root = query.from(Movie.class);
-	    EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
-	    
-		Path<String> path = root.get(type.getDeclaredSingularAttribute(fieldname, String.class));
-	    Predicate condition = builder.like(path, "%" + param + "%"); 
-	    
-	    query.where(condition);
-	    
-		return entityManager.createQuery(query).getResultList();
-	}
 
-	@Override
-	public List<Movie> findRange(int[] range) {
+    @Override
+    public List<Movie> findByDirector(String director) {
+        return findByStringField("director", director);
+    }
+
+    private List<Movie> findByStringField(String fieldname, String param) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Movie> query = builder.createQuery(Movie.class);
+        Root<Movie> root = query.from(Movie.class);
+        EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
+
+        Path<String> path = root.get(type.getDeclaredSingularAttribute(fieldname, String.class));
+        Predicate condition = builder.like(path, "%" + param + "%");
+
+        query.where(condition);
+
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    @Override
+    public List<Movie> findRange(int[] range) {
         CriteriaQuery<Movie> cq = entityManager.getCriteriaBuilder().createQuery(Movie.class);
         cq.select(cq.from(Movie.class));
         TypedQuery<Movie> q = entityManager.createQuery(cq);
@@ -119,7 +118,7 @@ public class MoviesImpl implements Movies, MoviesRemote {
     }
 
     @Override
-	public int count() {
+    public int count() {
         CriteriaQuery<Long> cq = entityManager.getCriteriaBuilder().createQuery(Long.class);
         Root<Movie> rt = cq.from(Movie.class);
         cq.select(entityManager.getCriteriaBuilder().count(rt));

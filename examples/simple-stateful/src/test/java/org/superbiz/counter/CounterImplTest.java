@@ -16,17 +16,16 @@
  */
 package org.superbiz.counter;
 
-import java.util.Properties;
+import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
+import java.util.Properties;
 
 public class CounterImplTest extends TestCase {
 
-	//START SNIPPET: setup	
-	private InitialContext initialContext;
+    //START SNIPPET: setup
+    private InitialContext initialContext;
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
@@ -45,16 +44,16 @@ public class CounterImplTest extends TestCase {
     public void testCounterViaRemoteInterface() throws Exception {
         Object object = initialContext.lookup("CounterImplRemote");
 
-		assertNotNull(object);
-		assertTrue(object instanceof CounterRemote);
-		CounterRemote counter = (CounterRemote) object;
-		assertEquals(0, counter.reset());
-		assertEquals(1, counter.increment());
-		assertEquals(2, counter.increment());
-		assertEquals(0, counter.reset());
+        assertNotNull(object);
+        assertTrue(object instanceof CounterRemote);
+        CounterRemote counter = (CounterRemote) object;
+        assertEquals(0, counter.reset());
+        assertEquals(1, counter.increment());
+        assertEquals(2, counter.increment());
+        assertEquals(0, counter.reset());
     }
     //END SNIPPET: remote	
-    
+
     /**
      * Lookup the Counter bean via its local home interface
      *
@@ -64,13 +63,13 @@ public class CounterImplTest extends TestCase {
     public void testCounterViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("CounterImplLocal");
 
-		assertNotNull(object);
-		assertTrue(object instanceof CounterLocal);
-		CounterLocal counter = (CounterLocal) object;
-		assertEquals(0, counter.reset());
-		assertEquals(1, counter.increment());
-		assertEquals(2, counter.increment());
-		assertEquals(0, counter.reset());
+        assertNotNull(object);
+        assertTrue(object instanceof CounterLocal);
+        CounterLocal counter = (CounterLocal) object;
+        assertEquals(0, counter.reset());
+        assertEquals(1, counter.increment());
+        assertEquals(2, counter.increment());
+        assertEquals(0, counter.reset());
     }
     //END SNIPPET: local	
 

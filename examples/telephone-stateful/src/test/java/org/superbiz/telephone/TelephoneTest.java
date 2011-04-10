@@ -18,8 +18,8 @@ package org.superbiz.telephone;
 
 import junit.framework.TestCase;
 
-import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.util.Properties;
 
 /**
@@ -28,6 +28,7 @@ import java.util.Properties;
 public class TelephoneTest extends TestCase {
 
     //START SNIPPET: setup
+
     protected void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");

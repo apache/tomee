@@ -20,7 +20,7 @@ package org.superbiz.enventries;
  * With a java.beans.PropertyEditor, you can go way beyond the built-in
  * types that OpenEJB supports and can extend dependency injection to
  * just about anywhere.
- *
+ * <p/>
  * In the world of electric guitars, two types of pickups are used: humbucking, and single-coil.
  * Guitarists often refer to their guitars as HSS, meaning a guitar with 1 humbucker and
  * 2 single coil pickups, and so on.  This little PropertyEditor supports that shorthand notation.

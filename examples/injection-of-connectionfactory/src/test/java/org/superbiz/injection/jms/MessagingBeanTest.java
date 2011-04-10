@@ -27,7 +27,7 @@ public class MessagingBeanTest extends TestCase {
     public void test() throws Exception {
 
         final Context context = EJBContainer.createEJBContainer().getContext();
-        
+
         Messages messages = (Messages) context.lookup("java:global/injection-of-connectionfactory/Messages");
 
         messages.sendMessage("Hello World!");

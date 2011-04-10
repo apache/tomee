@@ -17,18 +17,17 @@
 package org.superbiz.moviefun;
 
 import junit.framework.TestCase;
+import org.apache.openejb.api.LocalClient;
 
+import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.ejb.EJB;
-import javax.transaction.UserTransaction;
-import javax.annotation.Resource;
-import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
-import java.util.Properties;
+import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
 import java.util.List;
-
-import org.apache.openejb.api.LocalClient;
+import java.util.Properties;
 
 @LocalClient
 public class MoviesTest extends TestCase {

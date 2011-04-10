@@ -16,16 +16,15 @@
  */
 package org.superbiz.interceptors;
 
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.InitialContext;
 import javax.naming.Context;
-import java.util.Properties;
-import java.util.List;
+import javax.naming.InitialContext;
 import java.util.ArrayList;
-
-import junit.framework.TestCase;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$

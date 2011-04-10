@@ -25,9 +25,9 @@ import javax.naming.NamingException;
 //START SNIPPET: code
 public class BlueBean implements Friend {
 
-	public String sayHello() {
-		return "Blue says, Hello!";
-	}
+    public String sayHello() {
+        return "Blue says, Hello!";
+    }
 
     public String helloFromFriend() {
         try {

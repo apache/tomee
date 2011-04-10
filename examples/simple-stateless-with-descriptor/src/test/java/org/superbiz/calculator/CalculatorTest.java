@@ -16,17 +16,16 @@
  */
 package org.superbiz.calculator;
 
-import java.util.Properties;
+import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
+import java.util.Properties;
 
 public class CalculatorTest extends TestCase {
 
-	//START SNIPPET: setup	
-	private InitialContext initialContext;
+    //START SNIPPET: setup
+    private InitialContext initialContext;
 
     protected void setUp() throws Exception {
         Properties properties = new Properties();
@@ -45,14 +44,14 @@ public class CalculatorTest extends TestCase {
     public void testCalculatorViaRemoteInterface() throws Exception {
         Object object = initialContext.lookup("CalculatorImplRemote");
 
-		assertNotNull(object);
-		assertTrue(object instanceof CalculatorRemote);
-		CalculatorRemote calc = (CalculatorRemote) object;
-		assertEquals(10, calc.sum(4,6));
-		assertEquals(12, calc.multiply(3,4));
+        assertNotNull(object);
+        assertTrue(object instanceof CalculatorRemote);
+        CalculatorRemote calc = (CalculatorRemote) object;
+        assertEquals(10, calc.sum(4, 6));
+        assertEquals(12, calc.multiply(3, 4));
     }
     //END SNIPPET: remote
-    
+
     /**
      * Lookup the Calculator bean via its local home interface
      *
@@ -62,11 +61,11 @@ public class CalculatorTest extends TestCase {
     public void testCalculatorViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("CalculatorImplLocal");
 
-		assertNotNull(object);
-		assertTrue(object instanceof CalculatorLocal);
-		CalculatorLocal calc = (CalculatorLocal) object;
-		assertEquals(10, calc.sum(4,6));
-		assertEquals(12, calc.multiply(3,4));
+        assertNotNull(object);
+        assertTrue(object instanceof CalculatorLocal);
+        CalculatorLocal calc = (CalculatorLocal) object;
+        assertEquals(10, calc.sum(4, 6));
+        assertEquals(12, calc.multiply(3, 4));
     }
     //END SNIPPET: local
 

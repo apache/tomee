@@ -19,7 +19,7 @@ package org.superbiz.servlet;
 
 import javax.jws.WebService;
 
-@WebService(targetNamespace="http://examples.org/wsdl")
+@WebService(targetNamespace = "http://examples.org/wsdl")
 public interface HelloPojo {
     String hello(String name);
 }

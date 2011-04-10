@@ -16,20 +16,18 @@
  */
 package org.superbiz.appexception;
 
-import java.util.Properties;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
-import org.junit.Test;
-import org.junit.Assert;
-import org.junit.Before;
+import java.util.Properties;
 
 public class ThrowBusinessExceptionImplTest {
 
-	//START SNIPPET: setup	
-	private InitialContext initialContext;
+    //START SNIPPET: setup
+    private InitialContext initialContext;
 
     @Before
     public void setUp() throws Exception {
@@ -55,6 +53,6 @@ public class ThrowBusinessExceptionImplTest {
         ThrowBusinessException bean = (ThrowBusinessException) object;
         bean.throwValueRequiredException();
     }
-  //END SNIPPET: remote
-    
+    //END SNIPPET: remote
+
 }

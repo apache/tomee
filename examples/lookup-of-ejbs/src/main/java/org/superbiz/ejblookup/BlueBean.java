@@ -27,9 +27,9 @@ import javax.naming.NamingException;
 @EJB(beanInterface = Friend.class, beanName = "RedBean", name = "myFriend")
 public class BlueBean implements Friend {
 
-	public String sayHello() {
-		return "Blue says, Hello!";
-	}
+    public String sayHello() {
+        return "Blue says, Hello!";
+    }
 
     public String helloFromFriend() {
         try {

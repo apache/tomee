@@ -16,14 +16,13 @@
  */
 package org.superbiz.inheritance;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * This is an EJB 3 style pojo stateless session bean Every stateless session
@@ -32,9 +31,9 @@ import javax.persistence.Query;
  */
 @Stateless
 @WebService(
-        portName = "InheritancePort", 
-        serviceName = "InheritanceWsService", 
-        targetNamespace = "http://superbiz.org/wsdl", 
+        portName = "InheritancePort",
+        serviceName = "InheritanceWsService",
+        targetNamespace = "http://superbiz.org/wsdl",
         endpointInterface = "org.superbiz.inheritance.WakeRiderWs")
 public class WakeRiderImpl implements WakeRiderWs {
 

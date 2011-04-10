@@ -16,17 +16,15 @@
  */
 package org.superbiz.calculator;
 
-import javax.ejb.EJBLocalObject;
-
 /**
  * This is an EJB 3 local business interface
  * This interface is specified using the business-local tag in the deployment descriptor
  */
 //START SNIPPET: code
 public interface CalculatorLocal {
-	
-	public int sum(int add1, int add2);
-	
-	public int multiply(int mul1, int mul2);
+
+    public int sum(int add1, int add2);
+
+    public int multiply(int mul1, int mul2);
 }
 //END SNIPPET: code

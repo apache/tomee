@@ -25,11 +25,11 @@ import javax.ejb.Stateless;
  * using the annotation @Stateless
  * This EJB has 2 business interfaces: DataReaderRemote, a remote business
  * interface, and DataReaderLocal, a local business interface
- * 
+ * <p/>
  * The instance variables 'dataStoreRemote' is annotated with the @EJB annotation:
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreRemote
- * 
+ * <p/>
  * The instance variables 'dataStoreLocal' is annotated with the @EJB annotation:
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreLocal
@@ -37,21 +37,24 @@ import javax.ejb.Stateless;
 //START SNIPPET: code
 @Stateless
 public class DataReader {
-	
-	@EJB private DataStoreRemote dataStoreRemote;
-	@EJB private DataStoreLocal dataStoreLocal;
-	@EJB private DataStore dataStore;
 
-	public String readDataFromLocalStore() {
-		return "LOCAL:"+dataStoreLocal.getData();
-	}
-	
-	public String readDataFromLocalBeanStore() {
-		return "LOCALBEAN:"+dataStore.getData();
-	}
+    @EJB
+    private DataStoreRemote dataStoreRemote;
+    @EJB
+    private DataStoreLocal dataStoreLocal;
+    @EJB
+    private DataStore dataStore;
 
-	public String readDataFromRemoteStore() {
-		return "REMOTE:"+dataStoreRemote.getData();
-	}
+    public String readDataFromLocalStore() {
+        return "LOCAL:" + dataStoreLocal.getData();
+    }
+
+    public String readDataFromLocalBeanStore() {
+        return "LOCALBEAN:" + dataStore.getData();
+    }
+
+    public String readDataFromRemoteStore() {
+        return "REMOTE:" + dataStoreRemote.getData();
+    }
 }
 //END SNIPPET: code

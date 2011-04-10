@@ -4,8 +4,8 @@
  */
 package org.superbiz.quartz;
 
-import java.util.Date;
 import javax.ejb.Local;
+import java.util.Date;
 
 @Local
 public interface JobScheduler {

@@ -1,5 +1,7 @@
 package org.superbiz.moviefun;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -11,9 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 public class NotificationMonitor {
     private static TrayIcon trayIcon;
