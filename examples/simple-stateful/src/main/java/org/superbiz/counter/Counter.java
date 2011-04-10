@@ -34,9 +34,13 @@ import javax.ejb.Stateful;
  */
 //START SNIPPET: code
 @Stateful
-public class CounterImpl implements CounterLocal, CounterRemote {
+public class Counter {
 
     private int count = 0;
+
+    public int count() {
+        return count;
+    }
 
     public int increment() {
         return ++count;
