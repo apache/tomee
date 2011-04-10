@@ -17,13 +17,13 @@
  */
 package org.superbiz.servlet;
 
+import javax.jws.HandlerChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceRef;
-import javax.jws.HandlerChain;
 import java.io.IOException;
 
 public class WebserviceServlet extends HttpServlet {
@@ -58,6 +58,7 @@ public class WebserviceServlet extends HttpServlet {
     }
 
     private static ServletOutputStream OUT;
+
     public static void write(String message) {
         try {
             ServletOutputStream out = OUT;

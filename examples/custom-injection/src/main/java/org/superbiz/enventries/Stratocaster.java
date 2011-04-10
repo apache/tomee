@@ -19,9 +19,6 @@ package org.superbiz.enventries;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import java.io.File;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +26,6 @@ import java.util.Map;
 /**
  * In addition to the standard env-entry types (String, Integer, Long, Short, Byte, Boolean, Double, Float, Character)
  * OpenEJB supports many other types.
- *
  */
 //START SNIPPET: code
 @Stateless
@@ -58,10 +54,11 @@ public class Stratocaster {
     /**
      * Gets the guage of the electric guitar strings
      * used in this guitar.
+     *
      * @param string
      * @return
      */
-    public float getStringGuage(String string){
+    public float getStringGuage(String string) {
         return guitarStringGuages.get(string);
     }
 

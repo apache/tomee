@@ -15,30 +15,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
  -->
-<!DOCTYPE struts PUBLIC 
+<!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-	<constant name="struts.devMode"  value="true"></constant>
-	<package name="default" namespace="/" extends="struts-default">
-		<action name="addUserForm" class="org.superbiz.struts.AddUserForm">
-			<result>/addUserForm.jsp</result>
-		</action>
-		<action name="addUser" class="org.superbiz.struts.AddUser">
-			<result name="success">/addedUser.jsp</result>
-			<result name='failure'>/addUserForm.jsp</result>
-		</action>
-		<action name="findUserForm" class="org.superbiz.struts.FindUserForm">
-			<result>/findUserForm.jsp</result>
-		</action>
- 		<action name="findUser" class="org.superbiz.struts.FindUser">
-			<result name='success'>/displayUser.jsp</result>
-			<result name='failure'>/findUserForm.jsp</result>
-		</action>
-		<action name="listAllUsers" class="org.superbiz.struts.ListAllUsers">
-			<result>/displayUsers.jsp</result>
-		</action>
-		
-	</package>
+  <constant name="struts.devMode" value="true"></constant>
+  <package name="default" namespace="/" extends="struts-default">
+    <action name="addUserForm" class="org.superbiz.struts.AddUserForm">
+      <result>/addUserForm.jsp</result>
+    </action>
+    <action name="addUser" class="org.superbiz.struts.AddUser">
+      <result name="success">/addedUser.jsp</result>
+      <result name='failure'>/addUserForm.jsp</result>
+    </action>
+    <action name="findUserForm" class="org.superbiz.struts.FindUserForm">
+      <result>/findUserForm.jsp</result>
+    </action>
+    <action name="findUser" class="org.superbiz.struts.FindUser">
+      <result name='success'>/displayUser.jsp</result>
+      <result name='failure'>/findUserForm.jsp</result>
+    </action>
+    <action name="listAllUsers" class="org.superbiz.struts.ListAllUsers">
+      <result>/displayUsers.jsp</result>
+    </action>
+
+  </package>
 </struts>

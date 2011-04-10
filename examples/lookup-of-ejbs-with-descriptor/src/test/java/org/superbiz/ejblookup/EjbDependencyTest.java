@@ -16,12 +16,11 @@
  */
 package org.superbiz.ejblookup;
 
-import java.util.Properties;
+import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import junit.framework.TestCase;
+import java.util.Properties;
 
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {
@@ -40,7 +39,7 @@ public class EjbDependencyTest extends TestCase {
 
         assertNotNull(red);
         assertEquals("Red says, Hello!", red.sayHello());
-    	assertEquals("My friend Blue says, Hello!", red.helloFromFriend());
+        assertEquals("My friend Blue says, Hello!", red.helloFromFriend());
 
     }
 

@@ -17,6 +17,7 @@
 package org.superbiz.injection.secure;
 
 //START SNIPPET: code
+
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateful;

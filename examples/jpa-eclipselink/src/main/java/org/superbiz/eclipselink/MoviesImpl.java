@@ -16,15 +16,11 @@
  */
 package org.superbiz.eclipselink;
 
-import org.superbiz.eclipselink.Movie;
-import org.superbiz.eclipselink.Movies;
-
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import java.util.List;
 
 @Stateful(name = "Movies")

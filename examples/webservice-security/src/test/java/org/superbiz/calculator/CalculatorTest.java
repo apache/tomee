@@ -20,12 +20,10 @@ import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.xml.ws.Service;
-import javax.xml.ws.BindingProvider;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
 import java.net.URL;
-import java.net.PasswordAuthentication;
-import java.net.Authenticator;
 import java.util.Properties;
 
 public class CalculatorTest extends TestCase {

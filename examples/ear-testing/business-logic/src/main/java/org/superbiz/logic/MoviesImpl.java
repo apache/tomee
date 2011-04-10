@@ -17,6 +17,7 @@
 package org.superbiz.logic;
 
 //START SNIPPET: code
+
 import org.superbiz.model.Movie;
 
 import javax.ejb.Stateful;

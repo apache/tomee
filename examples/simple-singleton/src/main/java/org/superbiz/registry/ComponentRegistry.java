@@ -17,14 +17,16 @@
 package org.superbiz.registry;
 
 //START SNIPPET: code
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
+
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
-import java.util.ArrayList;
+
+import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
 
 @Singleton
 @Lock(READ)

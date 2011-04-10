@@ -16,14 +16,13 @@
  */
 package org.superbiz.txrollback;
 
-import javax.ejb.Stateful;
+import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
-import javax.annotation.Resource;
 import java.util.List;
 
 //START SNIPPET: code
@@ -35,7 +34,7 @@ public class MoviesImpl implements Movies {
 
     @Resource
     private SessionContext sessionContext;
-    
+
     public void addMovie(Movie movie) throws Exception {
         entityManager.persist(movie);
     }

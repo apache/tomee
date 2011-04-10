@@ -20,12 +20,8 @@ import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Properties;
-import java.util.List;
 import java.util.Collection;
-
-import org.superbiz.cmp2.MovieBean;
-import org.superbiz.cmp2.Movies;
+import java.util.Properties;
 
 /**
  * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $

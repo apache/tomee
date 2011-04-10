@@ -17,13 +17,14 @@
 package org.superbiz;
 
 //START SNIPPET: code
+
 import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbObject extends EJBObject {
     String greet(String friend) throws RemoteException;
 
-    String greet(String language, String friend)  throws RemoteException;
+    String greet(String language, String friend) throws RemoteException;
 
     void addGreeting(String language, String message) throws RemoteException;
 

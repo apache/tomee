@@ -19,14 +19,14 @@ package org.superbiz.servlet;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.IOException;
 
 public class AnnotatedServlet extends HttpServlet {
@@ -35,8 +35,8 @@ public class AnnotatedServlet extends HttpServlet {
 
     @EJB
     private AnnotatedEJBRemote remoteEJB;
-    
-    @EJB 
+
+    @EJB
     private AnnotatedEJB localbeanEJB;
 
     @Resource
@@ -55,7 +55,7 @@ public class AnnotatedServlet extends HttpServlet {
         }
         out.println("JNDI=" + lookupField("localbeanEJB"));
         out.println();
-        
+
         out.println("Local EJB");
         out.println("@EJB=" + localEJB);
         if (localEJB != null) {

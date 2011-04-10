@@ -16,6 +16,7 @@
  */
 package org.superbiz.injection.jpa;
 //START SNIPPET: code
+
 import javax.persistence.Entity;
 
 @Entity

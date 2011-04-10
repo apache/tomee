@@ -25,16 +25,15 @@ import javax.ejb.Stateless;
  * using the annotation @Stateless
  * This EJB has 2 business interfaces: DataStoreRemote, a remote business
  * interface, and DataStoreLocal, a local business interface
- * 
  */
 //START SNIPPET: code
 @Stateless
 @LocalBean
-public class DataStore implements DataStoreLocal, DataStoreRemote{
+public class DataStore implements DataStoreLocal, DataStoreRemote {
 
-	public String getData() {
-		return "42";
-	}
+    public String getData() {
+        return "42";
+    }
 
 }
 //END SNIPPET: code

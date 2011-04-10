@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 
 //START SNIPPET: code
+
 public class MovieTest extends TestCase {
     private Context context;
 

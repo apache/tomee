@@ -16,6 +16,7 @@
  */
 package org.superbiz.model;
 //START SNIPPET: code
+
 import javax.persistence.Entity;
 
 @Entity

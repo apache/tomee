@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Properties;
 
 public class ChatBeanTest extends TestCase {
     protected void setUp() throws Exception {

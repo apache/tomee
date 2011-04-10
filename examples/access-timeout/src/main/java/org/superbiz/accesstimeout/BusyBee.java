@@ -30,13 +30,13 @@ import static javax.ejb.LockType.WRITE;
  * @version $Revision$ $Date$
  */
 @Singleton
-@Lock(WRITE) 
+@Lock(WRITE)
 public class BusyBee {
 
     @Asynchronous
     public Future stayBusy(CountDownLatch ready) {
         ready.countDown();
-        
+
         try {
             new CountDownLatch(1).await();
         } catch (InterruptedException e) {

@@ -16,14 +16,10 @@
  */
 package org.superbiz.injection.enventry;
 
+import junit.framework.TestCase;
+
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-
-import junit.framework.TestCase;
-import org.superbiz.injection.enventry.Configuration;
-import org.superbiz.injection.enventry.Shape;
-import org.superbiz.injection.enventry.Widget;
-
 import java.util.Date;
 
 //START SNIPPET: code
@@ -40,7 +36,7 @@ public class ConfigurationTest extends TestCase {
         assertEquals(Shape.TRIANGLE, configuration.getShape());
 
         assertEquals(Widget.class, configuration.getStrategy());
-        
+
         assertEquals(new Date(123456789), configuration.getDate());
     }
 }

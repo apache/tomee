@@ -17,67 +17,66 @@
 */
 package org.superbiz.struts;
 
-import java.util.Properties;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.Properties;
 
 
 public class AddUser {
 
-	private int id;
-	private String firstName;
-	private String lastName;
-	private String errorMessage;
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String errorMessage;
 
-	
-	public String getFirstName() {
-		return firstName;
-	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String execute() {
+    public void setId(int id) {
+        this.id = id;
+    }
 
-		try {
-			UserService service = null;
-			Properties props = new Properties();
-			props.put(Context.INITIAL_CONTEXT_FACTORY,
-					"org.apache.openejb.client.LocalInitialContextFactory");
-			Context ctx = new InitialContext(props);
-			service = (UserService) ctx.lookup("UserServiceImplLocal");
-			service.add(new User(id,firstName,lastName));
-		} catch (Exception e) {
-			this.errorMessage = e.getMessage();
-			return "failure";
-		}
+    public String execute() {
 
-		return "success";
-	}
+        try {
+            UserService service = null;
+            Properties props = new Properties();
+            props.put(Context.INITIAL_CONTEXT_FACTORY,
+                    "org.apache.openejb.client.LocalInitialContextFactory");
+            Context ctx = new InitialContext(props);
+            service = (UserService) ctx.lookup("UserServiceImplLocal");
+            service.add(new User(id, firstName, lastName));
+        } catch (Exception e) {
+            this.errorMessage = e.getMessage();
+            return "failure";
+        }
+
+        return "success";
+    }
 }

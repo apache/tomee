@@ -24,6 +24,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 //START SNIPPET: code
+
 /**
  * A normal Stateful EJB that uses a JPA EntityManager.
  * <p/>

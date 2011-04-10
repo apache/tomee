@@ -19,10 +19,10 @@
 <!-- $Rev$ $Date$ -->
 
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
-    <jws:handler-chain>
-        <jws:handler>
-            <jws:handler-name>ClientHandler</jws:handler-name>
-            <jws:handler-class>org.superbiz.servlet.ClientHandler</jws:handler-class>
-        </jws:handler>
-    </jws:handler-chain>
+  <jws:handler-chain>
+    <jws:handler>
+      <jws:handler-name>ClientHandler</jws:handler-name>
+      <jws:handler-class>org.superbiz.servlet.ClientHandler</jws:handler-class>
+    </jws:handler>
+  </jws:handler-chain>
 </jws:handler-chains>

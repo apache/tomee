@@ -21,18 +21,17 @@ package org.superbiz.calculator;
  * deployment descriptor as opposed to using annotations.
  * This EJB has 2 business interfaces: CalculatorRemote, a remote business
  * interface, and CalculatorLocal, a local business interface
- * 
  */
 //START SNIPPET: code
 public class CalculatorImpl implements CalculatorRemote, CalculatorLocal {
 
-	public int sum(int add1, int add2) {
-		return add1+add2;
-	}
+    public int sum(int add1, int add2) {
+        return add1 + add2;
+    }
 
-	public int multiply(int mul1, int mul2) {
-		return mul1*mul2;
-	}
+    public int multiply(int mul1, int mul2) {
+        return mul1 * mul2;
+    }
 
 }
 //END SNIPPET: code

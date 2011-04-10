@@ -26,8 +26,8 @@ import javax.ejb.Remote;
 //START SNIPPET: code
 @Remote
 public interface DataStoreRemote {
-	
-	public String getData();
-	
+
+    public String getData();
+
 }
 //END SNIPPET: code

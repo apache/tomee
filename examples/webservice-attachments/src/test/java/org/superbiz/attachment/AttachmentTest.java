@@ -16,8 +16,7 @@
  */
 package org.superbiz.attachment;
 
-import java.net.URL;
-import java.util.Properties;
+import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -28,10 +27,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
-
-import junit.framework.TestCase;
-
-import org.superbiz.attachment.AttachmentWs;
+import java.net.URL;
+import java.util.Properties;
 
 public class AttachmentTest extends TestCase {
 
@@ -43,7 +40,7 @@ public class AttachmentTest extends TestCase {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
-        
+
         initialContext = new InitialContext(properties);
     }
     //END SNIPPET: setup    
@@ -56,33 +53,33 @@ public class AttachmentTest extends TestCase {
     //START SNIPPET: webservice
     public void testAttachmentViaWsInterface() throws Exception {
         Service service = Service.create(
-        	new URL("http://127.0.0.1:4204/AttachmentImpl?wsdl"), 
-        	new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
-    	assertNotNull(service);
+                new URL("http://127.0.0.1:4204/AttachmentImpl?wsdl"),
+                new QName("http://superbiz.org/wsdl", "AttachmentWsService"));
+        assertNotNull(service);
 
-    	AttachmentWs ws = service.getPort(AttachmentWs.class);
-    	
-    	// retrieve the SOAPBinding
-        SOAPBinding binding = (SOAPBinding)((BindingProvider)ws).getBinding();
+        AttachmentWs ws = service.getPort(AttachmentWs.class);
+
+        // retrieve the SOAPBinding
+        SOAPBinding binding = (SOAPBinding) ((BindingProvider) ws).getBinding();
         binding.setMTOMEnabled(true);
-        
+
         String request = "tsztelak@gmail.com";
-        
+
         // Byte array
         String response = ws.stringFromBytes(request.getBytes());
         assertEquals(request, response);
-        
+
         // Data Source
         DataSource source = new ByteArrayDataSource(request.getBytes(), "text/plain; charset=UTF-8");
 
         // not yet supported !
 //        response = ws.stringFromDataSource(source);
 //        assertEquals(request, response);
-        
+
         // Data Handler
         response = ws.stringFromDataHandler(new DataHandler(source));
         assertEquals(request, response);
-        
+
     }
     //END SNIPPET: webservice
 

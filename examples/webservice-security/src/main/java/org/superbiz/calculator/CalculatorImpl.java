@@ -16,10 +16,10 @@
  */
 package org.superbiz.calculator;
 
-import javax.ejb.Stateless;
-import javax.jws.WebService;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.jws.WebService;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -28,21 +28,21 @@ import javax.annotation.security.RolesAllowed;
  * This EJB has a single interface: CalculatorWs a webservice interface.
  */
 //START SNIPPET: code
-@DeclareRoles(value={"Administrator"})    
+@DeclareRoles(value = {"Administrator"})
 @Stateless
 @WebService(
         portName = "CalculatorPort",
         serviceName = "CalculatorWsService",
         targetNamespace = "http://superbiz.org/wsdl",
         endpointInterface = "org.superbiz.calculator.CalculatorWs")
-public class CalculatorImpl implements CalculatorWs, CalculatorRemote    {
+public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
 
-    @RolesAllowed(value={"Administrator"})
+    @RolesAllowed(value = {"Administrator"})
     public int sum(int add1, int add2) {
         return add1 + add2;
     }
 
-    @RolesAllowed(value={"Administrator"})
+    @RolesAllowed(value = {"Administrator"})
     public int multiply(int mul1, int mul2) {
         return mul1 * mul2;
     }

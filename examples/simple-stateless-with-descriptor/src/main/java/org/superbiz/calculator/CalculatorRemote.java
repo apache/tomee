@@ -23,10 +23,10 @@ package org.superbiz.calculator;
  */
 //START SNIPPET: code
 public interface CalculatorRemote {
-	
-	public int sum(int add1, int add2);
-	
-	public int multiply(int mul1, int mul2);
+
+    public int sum(int add1, int add2);
+
+    public int multiply(int mul1, int mul2);
 
 }
 //END SNIPPET: code

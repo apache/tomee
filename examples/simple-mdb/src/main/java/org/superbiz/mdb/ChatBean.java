@@ -17,18 +17,18 @@
 //START SNIPPET: code
 package org.superbiz.mdb;
 
-import javax.jms.MessageListener;
-import javax.jms.Message;
-import javax.jms.ConnectionFactory;
-import javax.jms.Connection;
-import javax.jms.Session;
-import javax.jms.MessageProducer;
-import javax.jms.DeliveryMode;
-import javax.jms.TextMessage;
-import javax.jms.Queue;
-import javax.jms.JMSException;
 import javax.annotation.Resource;
 import javax.ejb.MessageDriven;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 @MessageDriven
 public class ChatBean implements MessageListener {
@@ -36,7 +36,7 @@ public class ChatBean implements MessageListener {
     @Resource
     private ConnectionFactory connectionFactory;
 
-    @Resource(name="AnswerQueue")
+    @Resource(name = "AnswerQueue")
     private Queue answerQueue;
 
     public void onMessage(Message message) {
@@ -44,11 +44,11 @@ public class ChatBean implements MessageListener {
             TextMessage textMessage = (TextMessage) message;
             String question = textMessage.getText();
 
-            if (question.equals("Hello World!")){
+            if (question.equals("Hello World!")) {
                 respond("Hello, Test Case!");
-            } else if (question.equals("How are you?")){
+            } else if (question.equals("How are you?")) {
                 respond("I'm doing well.");
-            } else if (question.equals("Still spinning?")){
+            } else if (question.equals("Still spinning?")) {
                 respond("Once every day, as usual.");
             }
         } catch (JMSException e) {

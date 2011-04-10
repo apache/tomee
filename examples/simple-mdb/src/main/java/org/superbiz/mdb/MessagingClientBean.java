@@ -38,7 +38,7 @@ public class MessagingClientBean implements MessagingClientLocal {
     @Resource(name = "ChatBean")
     private Queue questionQueue;
 
-    @Resource(name="AnswerQueue")
+    @Resource(name = "AnswerQueue")
     private Queue answerQueue;
 
 

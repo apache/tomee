@@ -16,7 +16,7 @@
     limitations under the License.
  -->
 <decorators defaultdir="/decorators">
- <decorator name="main" page="layout.jsp">
-  <pattern>/*</pattern>
- </decorator>
+  <decorator name="main" page="layout.jsp">
+    <pattern>/*</pattern>
+  </decorator>
 </decorators>

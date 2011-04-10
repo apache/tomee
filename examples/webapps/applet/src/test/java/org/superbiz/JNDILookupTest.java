@@ -17,34 +17,32 @@
  */
 package org.superbiz;
 
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.superbiz.applet.Calculator;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.rmi.PortableRemoteObject;
+import java.util.Properties;
+
 
 public class JNDILookupTest {
 
-	@Test
-	public void test(){
-		Properties props = new Properties();
-        props.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put(Context.PROVIDER_URL,    "http://127.0.0.1:8080/openejb/ejb");
+    @Test
+    public void test() {
+        Properties props = new Properties();
+        props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+        props.put(Context.PROVIDER_URL, "http://127.0.0.1:8080/openejb/ejb");
         try {
-		Context	ctx = new InitialContext(props);
-			System.out.println("Found context "+ctx);
-			final Object ref =  ctx.lookup("CalculatorImplRemote");
-			Calculator calc = (Calculator) PortableRemoteObject.narrow(ref, Calculator.class);
-			double result = calc.add(10, 30);
-			Assert.assertEquals(40, result,0.5);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            Context ctx = new InitialContext(props);
+            System.out.println("Found context " + ctx);
+            final Object ref = ctx.lookup("CalculatorImplRemote");
+            Calculator calc = (Calculator) PortableRemoteObject.narrow(ref, Calculator.class);
+            double result = calc.add(10, 30);
+            Assert.assertEquals(40, result, 0.5);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

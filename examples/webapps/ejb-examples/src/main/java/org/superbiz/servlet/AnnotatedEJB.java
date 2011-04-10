@@ -17,10 +17,10 @@
  */
 package org.superbiz.servlet;
 
+import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
-import javax.annotation.Resource;
 
 @Stateless
 @LocalBean

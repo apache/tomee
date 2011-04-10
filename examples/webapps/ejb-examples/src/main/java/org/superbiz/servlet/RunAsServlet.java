@@ -17,13 +17,13 @@
  */
 package org.superbiz.servlet;
 
+import javax.ejb.EJB;
+import javax.ejb.EJBAccessException;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -40,7 +40,7 @@ public class RunAsServlet extends HttpServlet {
         if (principal != null) {
             out.println("Servlet.getUserPrincipal()=" + principal + " [" + principal.getName() + "]");
         } else {
-            out.println("Servlet.getUserPrincipal()=<null>" );
+            out.println("Servlet.getUserPrincipal()=<null>");
         }
         out.println("Servlet.isCallerInRole(\"user\")=" + request.isUserInRole("user"));
         out.println("Servlet.isCallerInRole(\"manager\")=" + request.isUserInRole("manager"));
@@ -53,7 +53,7 @@ public class RunAsServlet extends HttpServlet {
             if (principal != null) {
                 out.println("@EJB.getCallerPrincipal()=" + principal + " [" + principal.getName() + "]");
             } else {
-                out.println("@EJB.getCallerPrincipal()=<null>" );
+                out.println("@EJB.getCallerPrincipal()=<null>");
             }
             out.println("@EJB.isCallerInRole(\"user\")=" + secureEJBLocal.isCallerInRole("user"));
             out.println("@EJB.isCallerInRole(\"manager\")=" + secureEJBLocal.isCallerInRole("manager"));
@@ -62,28 +62,28 @@ public class RunAsServlet extends HttpServlet {
             try {
                 secureEJBLocal.allowUserMethod();
                 out.println("@EJB.allowUserMethod() ALLOWED");
-            } catch(EJBAccessException e) {
+            } catch (EJBAccessException e) {
                 out.println("@EJB.allowUserMethod() DENIED");
             }
 
             try {
                 secureEJBLocal.allowManagerMethod();
                 out.println("@EJB.allowManagerMethod() ALLOWED");
-            } catch(EJBAccessException e) {
+            } catch (EJBAccessException e) {
                 out.println("@EJB.allowManagerMethod() DENIED");
             }
 
             try {
                 secureEJBLocal.allowFakeMethod();
                 out.println("@EJB.allowFakeMethod() ALLOWED");
-            } catch(EJBAccessException e) {
+            } catch (EJBAccessException e) {
                 out.println("@EJB.allowFakeMethod() DENIED");
             }
 
             try {
                 secureEJBLocal.denyAllMethod();
                 out.println("@EJB.denyAllMethod() ALLOWED");
-            } catch(EJBAccessException e) {
+            } catch (EJBAccessException e) {
                 out.println("@EJB.denyAllMethod() DENIED");
             }
         }

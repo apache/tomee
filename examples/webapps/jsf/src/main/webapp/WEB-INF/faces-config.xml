@@ -17,32 +17,32 @@
  * specific language governing permissions and limitations
  * under the License.
 -->
-<faces-config version="1.2" 
-    xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:xi="http://www.w3.org/2001/XInclude"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
-	
+<faces-config version="1.2"
+              xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xi="http://www.w3.org/2001/XInclude"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<managed-bean>
-		<managed-bean-name>calculator</managed-bean-name>
-		<managed-bean-class>org.superbiz.jsf.CalculatorBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	
-	<navigation-rule>
-		<from-view-id>/calculator.jsp</from-view-id>
-		<navigation-case>
-			<from-outcome>success</from-outcome>
-			<to-view-id>/result.jsp</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<navigation-rule>
-		<from-view-id>/result.jsp</from-view-id>
-		<navigation-case>
-			<from-outcome>back</from-outcome>
-			<to-view-id>/calculator.jsp</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+
+  <managed-bean>
+    <managed-bean-name>calculator</managed-bean-name>
+    <managed-bean-class>org.superbiz.jsf.CalculatorBean</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <navigation-rule>
+    <from-view-id>/calculator.jsp</from-view-id>
+    <navigation-case>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/result.jsp</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <from-view-id>/result.jsp</from-view-id>
+    <navigation-case>
+      <from-outcome>back</from-outcome>
+      <to-view-id>/calculator.jsp</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 </faces-config>

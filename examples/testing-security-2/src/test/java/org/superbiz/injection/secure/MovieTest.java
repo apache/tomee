@@ -18,14 +18,11 @@ package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
 
-import javax.annotation.security.RunAs;
 import javax.ejb.EJBAccessException;
-import javax.ejb.Stateless;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 
 //START SNIPPET: code
 public class MovieTest extends TestCase {

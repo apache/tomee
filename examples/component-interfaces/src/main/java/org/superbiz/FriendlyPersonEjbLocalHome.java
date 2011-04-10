@@ -17,6 +17,7 @@
 package org.superbiz;
 
 //START SNIPPET: code
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBLocalHome;
 import java.rmi.RemoteException;

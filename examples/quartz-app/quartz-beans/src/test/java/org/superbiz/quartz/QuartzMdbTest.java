@@ -16,13 +16,14 @@
  */
 package org.superbiz.quartz;
 
-import java.util.Date;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.Date;
+import java.util.Properties;
 
 public class QuartzMdbTest {
 

@@ -20,11 +20,8 @@ import junit.framework.TestCase;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Properties;
 import java.util.List;
-
-import org.superbiz.injection.h3jpa.Movie;
-import org.superbiz.injection.h3jpa.Movies;
+import java.util.Properties;
 
 /**
  * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $

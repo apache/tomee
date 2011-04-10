@@ -21,14 +21,14 @@ import javax.ejb.Local;
 /**
  * This is an EJB 3 local business interface
  * A local business interface may be annotated with the @Local
- * annotation, but it's optional. A business interface which is 
+ * annotation, but it's optional. A business interface which is
  * not annotated with @Local or @Remote is assumed to be Local
  */
 //START SNIPPET: code
 @Local
 public interface DataStoreLocal {
-	
-	public String getData();
-	
+
+    public String getData();
+
 }
 //END SNIPPET: code
