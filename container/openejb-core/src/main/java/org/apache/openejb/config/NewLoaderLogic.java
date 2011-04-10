@@ -80,7 +80,7 @@ public class NewLoaderLogic {
         // if we don't find one, so be it, this is only a convenience
         {
             // Entry points are the following:
-            Filter start = Filters.classes("javax.ejb.embedded.EJBContainer", "javax.naming.InitialContext");
+            Filter start = Filters.classes("javax.ejb.embeddable.EJBContainer", "javax.naming.InitialContext");
 
             Iterator<StackTraceElement> iterator = elements.iterator();
             while (iterator.hasNext()) {
