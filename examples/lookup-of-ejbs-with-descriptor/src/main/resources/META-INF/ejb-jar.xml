@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
+
+  <!-- Notice this changes the global jndi name -->
+  <module-name>wombat</module-name>
+
   <enterprise-beans>
+
     <session>
       <ejb-name>BlueBean</ejb-name>
       <business-local>org.superbiz.ejblookup.Friend</business-local>
@@ -13,6 +18,7 @@
         <ejb-link>RedBean</ejb-link>
       </ejb-local-ref>
     </session>
+
     <session>
       <ejb-name>RedBean</ejb-name>
       <business-local>org.superbiz.ejblookup.Friend</business-local>
@@ -25,5 +31,6 @@
         <ejb-link>BlueBean</ejb-link>
       </ejb-local-ref>
     </session>
+
   </enterprise-beans>
 </ejb-jar>

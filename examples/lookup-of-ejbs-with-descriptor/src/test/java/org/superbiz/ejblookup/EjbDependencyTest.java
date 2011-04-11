@@ -18,6 +18,7 @@ package org.superbiz.ejblookup;
 
 import junit.framework.TestCase;
 
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Properties;
@@ -25,17 +26,15 @@ import java.util.Properties;
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {
 
-    private InitialContext initialContext;
+    private Context context;
 
     protected void setUp() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-        initialContext = new InitialContext(properties);
+        context = EJBContainer.createEJBContainer().getContext();
     }
 
     public void testRed() throws Exception {
 
-        Friend red = (Friend) initialContext.lookup("RedBeanLocal");
+        Friend red = (Friend) context.lookup("java:global/wombat/RedBean");
 
         assertNotNull(red);
         assertEquals("Red says, Hello!", red.sayHello());
@@ -45,7 +44,7 @@ public class EjbDependencyTest extends TestCase {
 
     public void testBlue() throws Exception {
 
-        Friend blue = (Friend) initialContext.lookup("BlueBeanLocal");
+        Friend blue = (Friend) context.lookup("java:global/wombat/BlueBean");
 
         assertNotNull(blue);
         assertEquals("Blue says, Hello!", blue.sayHello());
