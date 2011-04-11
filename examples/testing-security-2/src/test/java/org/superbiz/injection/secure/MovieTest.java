@@ -18,7 +18,9 @@ package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
 
+import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.List;
@@ -26,7 +28,9 @@ import java.util.Properties;
 
 //START SNIPPET: code
 public class MovieTest extends TestCase {
-    private Context context;
+
+    @EJB
+    private Movies movies;
 
     protected void setUp() throws Exception {
 
@@ -34,17 +38,11 @@ public class MovieTest extends TestCase {
         //System.setProperty("log4j.category.OpenEJB.security", "debug");
 
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("movieDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
-        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
-
-        context = new InitialContext(p);
+        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
     }
 
     public void testAsManager() throws Exception {
@@ -56,8 +54,6 @@ public class MovieTest extends TestCase {
         InitialContext context = new InitialContext(p);
 
         try {
-            Movies movies = (Movies) context.lookup("MoviesLocal");
-
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
             movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
@@ -84,8 +80,6 @@ public class MovieTest extends TestCase {
         InitialContext context = new InitialContext(p);
 
         try {
-            Movies movies = (Movies) context.lookup("MoviesLocal");
-
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
             movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
             movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
@@ -110,8 +104,6 @@ public class MovieTest extends TestCase {
     }
 
     public void testUnauthenticated() throws Exception {
-        Movies movies = (Movies) context.lookup("MoviesLocal");
-
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
             fail("Unauthenticated users should not be able to add movies");
