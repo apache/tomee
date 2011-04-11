@@ -67,6 +67,11 @@
     <module>webservice-inheritance</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
+    <module>access-timeout</module>
+    <module>async-methods</module>
+    <module>lookup-of-ejbs-with-descriptor</module>
+    <module>lookup-of-ejbs</module>
+    <module>schedule-methods</module>
   </modules>
   <profiles>
     <profile>
