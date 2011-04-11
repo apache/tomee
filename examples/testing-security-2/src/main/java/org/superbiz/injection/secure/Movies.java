@@ -29,8 +29,8 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 import java.util.List;
 
-@Stateful(name = "Movies")
-public class Movies implements Movies {
+@Stateful
+public class Movies  {
 
     @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
