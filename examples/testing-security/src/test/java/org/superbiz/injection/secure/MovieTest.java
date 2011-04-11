@@ -19,10 +19,10 @@ package org.superbiz.injection.secure;
 import junit.framework.TestCase;
 
 import javax.annotation.security.RunAs;
+import javax.ejb.EJB;
 import javax.ejb.EJBAccessException;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -30,29 +30,28 @@ import java.util.concurrent.Callable;
 //START SNIPPET: code
 
 public class MovieTest extends TestCase {
-    private Context context;
+
+    @EJB
+    private Movies movies;
+    
+    @EJB(name = "ManagerBean")
+    private Caller manager;
+
+    @EJB(name = "EmployeeBean")
+    private Caller employee;
 
     protected void setUp() throws Exception {
         Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("movieDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
-        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
-
-        context = new InitialContext(p);
+        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
     }
 
     public void testAsManager() throws Exception {
-        Caller managerBean = (Caller) context.lookup("ManagerBeanLocal");
-        managerBean.call(new Callable() {
+        manager.call(new Callable() {
             public Object call() throws Exception {
-
-                Movies movies = (Movies) context.lookup("MoviesLocal");
 
                 movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
                 movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
@@ -72,10 +71,8 @@ public class MovieTest extends TestCase {
     }
 
     public void testAsEmployee() throws Exception {
-        Caller employeeBean = (Caller) context.lookup("EmployeeBeanLocal");
-        employeeBean.call(new Callable() {
+        employee.call(new Callable() {
             public Object call() throws Exception {
-                Movies movies = (Movies) context.lookup("MoviesLocal");
 
                 movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
                 movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
@@ -101,8 +98,6 @@ public class MovieTest extends TestCase {
     }
 
     public void testUnauthenticated() throws Exception {
-        Movies movies = (Movies) context.lookup("MoviesLocal");
-
         try {
             movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
             fail("Unauthenticated users should not be able to add movies");
@@ -136,10 +131,6 @@ public class MovieTest extends TestCase {
     /**
      * This little bit of magic allows our test code to execute in
      * the desired security scope.
-     * <p/>
-     * The src/test/resource/META-INF/ejb-jar.xml will cause this
-     * EJB to be automatically discovered and deployed when
-     * OpenEJB boots up.
      */
 
     @Stateless
