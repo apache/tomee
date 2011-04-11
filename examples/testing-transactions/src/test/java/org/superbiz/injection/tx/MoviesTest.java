@@ -18,10 +18,10 @@ package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -31,25 +31,23 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 //START SNIPPET: code
 
 public class MoviesTest extends TestCase {
-    private Context context;
+
+    @EJB
+    private Movies movies;
+
+    @EJB
+    private Caller transactionalCaller;
 
     protected void setUp() throws Exception {
-        Properties p = new Properties();
-        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        final Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
         p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
 
-        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
-        p.put("movieDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
-        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
-        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
-
-        context = new InitialContext(p);
+        EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
     }
 
     private void doWork() throws Exception {
-        Movies movies = (Movies) context.lookup("MoviesLocal");
 
         movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
         movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
@@ -66,9 +64,7 @@ public class MoviesTest extends TestCase {
     }
 
     public void testWithTransaction() throws Exception {
-        Caller transactionBean = (Caller) context.lookup("TransactionBeanLocal");
-
-        transactionBean.call(new Callable() {
+        transactionalCaller.call(new Callable() {
             public Object call() throws Exception {
                 doWork();
                 return null;
@@ -93,10 +89,6 @@ public class MoviesTest extends TestCase {
     /**
      * This little bit of magic allows our test code to execute in
      * the scope of a container controlled transaction.
-     * <p/>
-     * The src/test/resource/META-INF/ejb-jar.xml will cause this
-     * EJB to be automatically discovered and deployed when
-     * OpenEJB boots up.
      */
     @Stateless
     @TransactionAttribute(REQUIRES_NEW)
