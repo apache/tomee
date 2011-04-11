@@ -86,6 +86,7 @@ public class OpenEjbContainer extends EJBContainer {
             throw new IllegalStateException(e);
         }
         OpenEJB.destroy();
+        instance = null;
     }
 
     @Override
