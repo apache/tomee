@@ -16,68 +16,49 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
-         version="3.0">
+
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
   <enterprise-beans>
-    <!-- Configure the message driven bean that will listen to the ChatBean queue -->
+
     <message-driven>
+
       <ejb-name>ChatBean</ejb-name>
-      <ejb-class>org.superbiz.mdb.ChatBean</ejb-class>
+      <ejb-class>org.superbiz.mdbdesc.ChatBean</ejb-class>
       <messaging-type>javax.jms.MessageListener</messaging-type>
       <transaction-type>Container</transaction-type>
       <message-destination-type>javax.jms.Queue</message-destination-type>
-      <message-destination-link>ChatBean</message-destination-link>
 
-      <!-- Allow the connection factory to be looked up via java:comp/env/ConnectionFactory -->
+      <activation-config>
+        <activation-config-property>
+          <activation-config-property-name>destination</activation-config-property-name>
+          <activation-config-property-value>ChatBean</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>destinationType</activation-config-property-name>
+          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+        </activation-config-property>
+      </activation-config>
+
       <resource-ref>
-        <res-ref-name>ConnectionFactory</res-ref-name>
+        <res-ref-name>java:comp/env/org.superbiz.mdbdesc.ChatBean/connectionFactory</res-ref-name>
         <res-type>javax.jms.ConnectionFactory</res-type>
+        <mapped-name>Default JMS Connection Factory</mapped-name>
+        <injection-target>
+          <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
+          <injection-target-name>connectionFactory</injection-target-name>
+        </injection-target>
       </resource-ref>
 
-      <!-- Allow the reply queue to looked up via java:comp/env/AnswerQueue -->
-      <resource-ref>
-        <res-ref-name>AnswerQueue</res-ref-name>
-        <res-type>javax.jms.Queue</res-type>
-      </resource-ref>
+      <resource-env-ref>
+        <resource-env-ref-name>java:comp/env/AnswerQueue</resource-env-ref-name>
+        <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+        <mapped-name>AnswerQueue</mapped-name>
+        <injection-target>
+          <injection-target-class>org.superbiz.mdbdesc.ChatBean</injection-target-class>
+          <injection-target-name>answerQueue</injection-target-name>
+        </injection-target>
+      </resource-env-ref>
     </message-driven>
-
-    <!-- Configure the session bean that will be sending message to the ChatBean queue,
-and listening for the answer -->
-    <session>
-      <ejb-name>MessagingClientBean</ejb-name>
-      <business-local>org.superbiz.mdb.MessagingClientLocal</business-local>
-      <ejb-class>org.superbiz.mdb.MessagingClientBean</ejb-class>
-      <transaction-type>Container</transaction-type>
-
-      <!-- Allow the connection factory to looked up via java:comp/env/ConnectionFactory -->
-      <resource-ref>
-        <res-ref-name>ConnectionFactory</res-ref-name>
-        <res-type>javax.jms.ConnectionFactory</res-type>
-      </resource-ref>
-
-      <!-- Allow the reply queue to looked up via java:comp/env/AnswerQueue -->
-      <resource-ref>
-        <res-ref-name>AnswerQueue</res-ref-name>
-        <res-type>javax.jms.Queue</res-type>
-      </resource-ref>
-
-      <!-- Allow the destination queue to looked up via java:comp/env/ChatBean -->
-      <resource-ref>
-        <res-ref-name>ChatBean</res-ref-name>
-        <res-type>javax.jms.Queue</res-type>
-      </resource-ref>
-    </session>
   </enterprise-beans>
-
-  <!-- define the JMS queues that we need -->
-  <assembly-descriptor>
-    <message-destination>
-      <message-destination-name>AnswerQueue</message-destination-name>
-    </message-destination>
-    <message-destination>
-      <message-destination-name>ChatBean</message-destination-name>
-    </message-destination>
-  </assembly-descriptor>
+  <assembly-descriptor/>
 </ejb-jar>
