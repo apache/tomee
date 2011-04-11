@@ -16,15 +16,35 @@
  */
 package org.superbiz.injection.tx;
 
+import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
 import java.util.List;
 
-/**
- * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
- */
-public interface Movies {
-    void addMovie(Movie movie) throws Exception;
+import static javax.ejb.TransactionAttributeType.MANDATORY;
 
-    void deleteMovie(Movie movie) throws Exception;
+//START SNIPPET: code
+@Stateful(name = "Movies")
+@TransactionAttribute(MANDATORY)
+public class Movies {
 
-    List<Movie> getMovies() throws Exception;
+    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.TRANSACTION)
+    private EntityManager entityManager;
+
+    public void addMovie(Movie movie) throws Exception {
+        entityManager.persist(movie);
+    }
+
+    public void deleteMovie(Movie movie) throws Exception {
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        return query.getResultList();
+    }
 }
+//END SNIPPET: code
