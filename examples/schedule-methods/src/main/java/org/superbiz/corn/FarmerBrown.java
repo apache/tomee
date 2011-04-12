@@ -16,6 +16,8 @@
  */
 package org.superbiz.corn;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Schedule;
 import javax.ejb.Schedules;
 import javax.ejb.Singleton;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version $Revision$ $Date$
  */
 @Singleton
+@Lock(LockType.READ) // allows timers to execute in parallel
 public class FarmerBrown {
 
     private final AtomicInteger checks = new AtomicInteger();
