@@ -184,6 +184,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
 /**
@@ -1949,7 +1950,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<String> classPermissions = getDeclaredClassPermissions(assemblyDescriptor, ejbName);
 
-            for (Class<?> clazz : ancestors(beanClass)) {
+            for (Class<?> clazzz : ancestors(beanClass)) {
+                final MetaAnnotatedClass<?> clazz = new MetaAnnotatedClass(clazzz);
                 /*
                  * Process annotations at the class level
                  */
@@ -2090,9 +2092,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return;
             }
             TimerConsumer timerConsumer = (TimerConsumer)bean;
-            Set<Method> scheduleMethods = new HashSet<Method>();
-            scheduleMethods.addAll(annotationFinder.findAnnotatedMethods(javax.ejb.Schedules.class));
-            scheduleMethods.addAll(annotationFinder.findAnnotatedMethods(javax.ejb.Schedule.class));
+            Set<Annotated<Method>> scheduleMethods = new HashSet<Annotated<Method>>();
+            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Schedules.class));
+            scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Schedule.class));
 
             List<Timer> timers = timerConsumer.getTimer();
 
@@ -2103,11 +2105,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 methodsConfiguredInDeploymentXml.add(namedMethod.getMethodName() + (namedMethod.getMethodParams() == null ? "" : Join.join("", namedMethod.getMethodParams().getMethodParam())));
             }
 
-            for (Method method : scheduleMethods) {
+            for (Annotated<Method> method : scheduleMethods) {
 
                 // Don't add the schedules from annotations if the schedules have been
                 // supplied for this method via xml.  The xml is considered an override.
-                if (methodsConfiguredInDeploymentXml.contains(method.getName() + Join.join("", (Object[]) asStrings(method.getParameterTypes())))) {
+                if (methodsConfiguredInDeploymentXml.contains(method.get().getName() + Join.join("", (Object[]) asStrings(method.get().getParameterTypes())))) {
                     continue;
                 }
 
@@ -2140,7 +2142,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     timerSchedule.setYear(schedule.year());
                     timer.setSchedule(timerSchedule);
                     //Copy Method Signature
-                    timer.setTimeoutMethod(new NamedMethod(method));
+                    timer.setTimeoutMethod(new NamedMethod(method.get()));
 
                     timers.add(timer);
                 }

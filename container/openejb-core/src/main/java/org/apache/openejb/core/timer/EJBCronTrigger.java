@@ -44,10 +44,13 @@ import org.quartz.Trigger;
 public class EJBCronTrigger extends Trigger {
 
     private static final Pattern INCREMENTS = Pattern.compile("(\\d+|\\*)/(\\d+)*");
-	private static final Pattern LIST = Pattern.compile("(\\p{Alnum}+)(-\\p{Alnum}+)?(?:,(\\p{Alnum}+)(-\\p{Alnum}+)?)*");
-	private static final Pattern RANGE = Pattern.compile("(\\p{Alnum}+)-(\\p{Alnum}+)");
-	private static final Pattern WEEKDAY = Pattern.compile("(1ST|2ND|3RD|4TH|5TH|LAST)(\\p{Alpha}+)");
-	private static final Pattern DAYS_TO_LAST = Pattern.compile("-([1-7])");
+
+	private static final Pattern LIST = Pattern.compile("(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-9]+))?(LAST)?" +
+			"(?:,(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-9]+))?(LAST)?)*");
+	
+	private static final Pattern RANGE = Pattern.compile("([A-Za-z0-9]+)-([A-Za-z0-9]+)");
+	private static final Pattern WEEKDAY = Pattern.compile("(1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+)");
+	private static final Pattern DAYS_TO_LAST = Pattern.compile("-([0-9]+)");
 
 	private static final String LAST_IDENTIFIER = "LAST";
 
@@ -148,7 +151,7 @@ public class EJBCronTrigger extends Trigger {
 			break;
 
 		case Calendar.DAY_OF_MONTH:
-			if (expr.equals("LAST")) {
+			if (expr.equals(LAST_IDENTIFIER)) {
 				return new DaysFromLastDayExpression();
 			}
 
@@ -663,6 +666,10 @@ public class EJBCronTrigger extends Trigger {
 		private List<Integer> values;
 
 		private RangeExpression rangeExpression;
+		
+		private List<WeekdayExpression> weekDayExpressions = new ArrayList<WeekdayExpression>();
+		
+		private List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<DaysFromLastDayExpression>();;
 
 		public ListExpression(Matcher m, int field) throws ParseException {
 			super(field);
@@ -673,7 +680,16 @@ public class EJBCronTrigger extends Trigger {
             Set<Integer> individualValues = new HashSet<Integer>();
             for (String value : m.group().split("[,]")) {
                 Matcher rangeMatcher = RANGE.matcher(value);
-                if (rangeMatcher.matches()) {
+                Matcher weekDayMatcher = WEEKDAY.matcher(value);
+                Matcher daysToLastMatcher = DAYS_TO_LAST.matcher(value);
+                if (value.equals(LAST_IDENTIFIER)) {
+                    daysFromLastDayExpressions.add(new DaysFromLastDayExpression());
+                }else if(daysToLastMatcher.matches()){
+                    daysFromLastDayExpressions.add(new DaysFromLastDayExpression(daysToLastMatcher));
+                } else if (weekDayMatcher.matches()){
+                    weekDayExpressions.add(new WeekdayExpression(weekDayMatcher));
+                    continue;
+                } else if (rangeMatcher.matches()) {
                     int rangeBeginIndex = -1;
                     int beginValue = convertValue(rangeMatcher.group(1));
                     if (rangeMatcher.group(2).equals(LAST_IDENTIFIER)) {
@@ -724,11 +740,66 @@ public class EJBCronTrigger extends Trigger {
             }
             Collections.sort(values);
         }
+        
+        private List<Integer> getNewValuesFromDynamicExpressions(Calendar calendar){
+            
+            List<Integer> newValues = new ArrayList<Integer>(values.size() + weekDayExpressions.size());
+            
+            if (rangeExpression != null) {
+                for (Integer value : values) {
+                    if (value < rangeExpression.start2) {
+                        newValues.add(value);
+                    }
+                }
+                
+                for (WeekdayExpression weekdayExpression : weekDayExpressions) {
+                    Integer value=weekdayExpression.getNextValue(calendar);
+                    if (value != null && value < rangeExpression.start2) {
+                        newValues.add(value);
+                    }
+                }
+                
+                for (DaysFromLastDayExpression daysFromLastDayExpression : daysFromLastDayExpressions) {
+                    Integer value=daysFromLastDayExpression.getNextValue(calendar);
+                    if (value != null && value < rangeExpression.start2) {
+                        newValues.add(value);
+                    }
+                }
+
+
+            } else {
+                newValues.addAll(values);
+                for (WeekdayExpression weekdayExpression : weekDayExpressions) {
+                    Integer value=weekdayExpression.getNextValue(calendar);
+                    if (value != null) {
+                        newValues.add(value);
+                    }
+                }
+                
+                for (DaysFromLastDayExpression daysFromLastDayExpression : daysFromLastDayExpressions) {
+                    Integer value=daysFromLastDayExpression.getNextValue(calendar);
+                    if (value != null) {
+                        newValues.add(value);
+                    }
+                }
+                
+            }
+
+            if (newValues.size() > 0) {
+                Collections.sort(newValues);
+            }
+
+            return newValues;
+            
+        }
 
 		@Override
 		public Integer getNextValue(Calendar calendar) {
+		    
+		    List<Integer> newValues= getNewValuesFromDynamicExpressions(calendar);
+		    
 			int currValue = calendar.get(field);
-			for (Integer day : values) {
+			for (Integer day : newValues) {
 				if (day >= currValue) {
 					return day;
 				}
@@ -747,8 +818,11 @@ public class EJBCronTrigger extends Trigger {
 		            return previousValue;
 		        }
 		    }
+		    
+		    List<Integer> newValues= getNewValuesFromDynamicExpressions(calendar);
+		    
 			int currValue = calendar.get(field);
-			ListIterator<Integer> iterator = values.listIterator(values.size());
+			ListIterator<Integer> iterator = newValues.listIterator(newValues.size());
 			while (iterator.hasPrevious()) {
 				int day = iterator.previous();
 				if (day <= currValue) {
@@ -824,12 +898,13 @@ public class EJBCronTrigger extends Trigger {
 			// Calculate the first day in the month whose weekday is the same as the
 			// one we're looking for
 			int firstWeekday = (currDay % 7) - (currWeekday - weekday);
+			
 			// Then calculate how many such weekdays there is in this month
 			int numWeekdays = (maxDay - firstWeekday) / 7;
 
 			// Then calculate the Nth of those days, or the last one if ordinal is null
 			int multiplier = ordinal != null ? ordinal : numWeekdays;
-			int nthDay = firstWeekday + multiplier * 7;
+			int nthDay = firstWeekday>0?(firstWeekday + (multiplier-1) * 7):(firstWeekday + multiplier * 7);
 
 			// Return the calculated day, or null if the day is out of range
 			return nthDay <= maxDay ? nthDay : null;

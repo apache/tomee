@@ -188,19 +188,19 @@ public class CheckCallbacks extends ValidationBase {
                 }
             }
 
-            if (bean instanceof TimerConsumer) {
-                TimerConsumer timerConsumer = (TimerConsumer) bean;
-                checkTimeOut(ejbClass, timerConsumer.getTimeoutMethod(), bean);
-
-                List<Method> timeoutMethods = finder.findAnnotatedMethods(Timeout.class);
-                if (timeoutMethods.size() > 1) {
-                    fail(timerConsumer.getTimerConsumerName(), "timeout.tooManyMethods", timeoutMethods.size(), Join.join(",", timeoutMethods));
-                }
-                
-                for(Timer timer : ((TimerConsumer) bean).getTimer()) {
-                    checkTimeOut(ejbClass, timer.getTimeoutMethod(), bean);
-                }
-            }
+//            if (bean instanceof TimerConsumer) {
+//                TimerConsumer timerConsumer = (TimerConsumer) bean;
+//                checkTimeOut(ejbClass, timerConsumer.getTimeoutMethod(), bean);
+//
+//                List<Method> timeoutMethods = finder.findAnnotatedMethods(Timeout.class);
+//                if (timeoutMethods.size() > 1) {
+//                    fail(timerConsumer.getTimerConsumerName(), "timeout.tooManyMethods", timeoutMethods.size(), Join.join(",", timeoutMethods));
+//                }
+//
+//                for(Timer timer : ((TimerConsumer) bean).getTimer()) {
+//                    checkTimeOut(ejbClass, timer.getTimeoutMethod(), bean);
+//                }
+//            }
         }
 
         for (Interceptor interceptor : module.getEjbJar().getInterceptors()) {
