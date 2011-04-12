@@ -122,6 +122,7 @@ public abstract class TimerData {
     public void newTimer() {
         //Initialize the Quartz Trigger
         trigger = initializeTrigger();
+        trigger.computeFirstFireTime(null);
         trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
         trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
         newTimer = true;
