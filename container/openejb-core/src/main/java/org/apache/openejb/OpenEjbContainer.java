@@ -36,12 +36,14 @@ import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
+import org.apache.openejb.util.ServiceManagerProxy;
 import org.apache.xbean.naming.context.ContextFlyweight;
 
 import javax.ejb.EJBException;
@@ -68,18 +70,32 @@ import java.util.Set;
  */
 public class OpenEjbContainer extends EJBContainer {
 
+    public static final String OPENEJB_EMBEDDED_REMOTABLE = "openejb.embedded.remotable";
     static Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, OpenEjbContainer.class);
 
     private static OpenEjbContainer instance;
 
     private final Context context;
 
-    private OpenEjbContainer(Context context) {
+    private ServiceManagerProxy serviceManager;
+    private Options options;
+
+    private OpenEjbContainer(Map<?, ?> map, Context context) {
         this.context = new GlobalContext(context);
+
+        final Properties properties = new Properties();
+        properties.putAll(map);
+
+        options = new Options(properties);
+
+        startNetworkServices();
     }
 
     @Override
     public void close() {
+        if (serviceManager != null) {
+            serviceManager.stop();
+        }
         try {
             context.close();
         } catch (NamingException e) {
@@ -136,6 +152,21 @@ public class OpenEjbContainer extends EJBContainer {
 
         return null;
     }
+
+
+    private void startNetworkServices() {
+        if (!options.get(OPENEJB_EMBEDDED_REMOTABLE, false)) {
+            return;
+        }
+
+        try {
+            serviceManager = new ServiceManagerProxy();
+            serviceManager.start();
+        } catch (ServiceManagerProxy.AlreadyStartedException e) {
+            logger.debug("Network services already started.  Ignoring option " + OPENEJB_EMBEDDED_REMOTABLE);
+        }
+    }
+
 
     public static class NoInjectionMetaDataException extends IllegalStateException {
         public NoInjectionMetaDataException(String s) {
@@ -229,7 +260,8 @@ public class OpenEjbContainer extends EJBContainer {
                     throw new AssembleApplicationException(e);
                 }
 
-                return instance = new OpenEjbContainer(appContext.getGlobalJndiContext());
+
+                return instance = new OpenEjbContainer(map, appContext.getGlobalJndiContext());
 
             } catch (OpenEJBException e) {
 
