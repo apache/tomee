@@ -41,6 +41,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Trigger;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+
 public class EJBCronTrigger extends Trigger {
 
     private static final Pattern INCREMENTS = Pattern.compile("(\\d+|\\*)/(\\d+)*");
@@ -184,7 +187,7 @@ public class EJBCronTrigger extends Trigger {
                 && !calendar.isTimeIncluded(nextFireTime.getTime())) {
             nextFireTime = getFireTimeAfter(nextFireTime);
         }
-        System.out.println("computeFirstFireTime [" + calendar + "] nextFireTime [" + nextFireTime + "]");
+		Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources").debug("computeFirstFireTime [" + calendar + "] nextFireTime [" + nextFireTime + "]");
         return nextFireTime;
 	}
 
