@@ -2199,10 +2199,12 @@ public class AnnotationDeployer implements DynamicDeployer {
             if (bean instanceof TimerConsumer) {
                 TimerConsumer timerConsumer = (TimerConsumer) bean;
                 if (timerConsumer.getTimeoutMethod() == null) {
-                    List<Annotated<Method>> timeoutMethods = annotationFinder.findMetaAnnotatedMethods(javax.ejb.Timeout.class);
+                    List<Annotated<Method>> timeoutMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(javax.ejb.Timeout.class));
                     //Validation Logic is moved to CheckCallback class.
-                    if(timeoutMethods.size() == 1){
-                        timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(0).get()));
+                    if(timeoutMethods.size()  >=  1){
+                        // Use the timeout method most near the child class because
+                        // the timeout method in child class will override the timeout method in super classes
+                        timerConsumer.setTimeoutMethod(new NamedMethod(timeoutMethods.get(timeoutMethods.size() - 1).get()));
                     }
                 }
             }
