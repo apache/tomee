@@ -101,6 +101,10 @@ public class PortComponentRef {
         return enableMtom != null && enableMtom;
     }
 
+    public Boolean getEnableMtom() {
+        return enableMtom;
+    }
+
     public void setEnableMtom(boolean value) {
         this.enableMtom = value;
     }

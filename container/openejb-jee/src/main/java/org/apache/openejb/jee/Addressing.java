@@ -19,12 +19,10 @@ package org.apache.openejb.jee;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * javaee_web_services_client_1_3.xsd
- * 
+ *
  * <p>Java class for addressingType complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
