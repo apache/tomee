@@ -750,13 +750,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                     try {
                         File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
-                        if (location.endsWith(".jar")) {
-                            URL url = file.toURI().toURL();
-                            tldLocations.add(url);
-                        } else {
-                            Set<URL> urls = scanJarForTagLibs(file);
-                            tldLocations.addAll(urls);
-                        }
+                        tldLocations.addAll(scanForTagLibs(file));
                     } catch (IOException e) {
                         logger.warning("JSP tag library location bad: " + location, e);
                     }
@@ -900,7 +894,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 continue;
             }
 
-            urls.addAll(scanJarForTagLibs(file));
+            urls.addAll(scanForTagLibs(file));
         }
         return urls;
     }
@@ -939,6 +933,26 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         return urls;
+    }
+
+    private static Set<URL> scanForTagLibs(File file) {
+        Set<URL> tldLocations = new HashSet<URL>();
+        String location = null;
+        try {
+            location = file.toURI().toURL().toExternalForm();
+
+            if (location.endsWith(".jar")) {
+                Set<URL> urls = scanJarForTagLibs(file);
+                tldLocations.addAll(urls);
+            } else if (file.getName().endsWith(".tld")) {
+                URL url = file.toURI().toURL();
+                tldLocations.add(url);
+            }
+        } catch (IOException e) {
+            logger.warning("Error scanning for JSP tag libraries: " + file.getAbsolutePath(), e);
+        }
+
+        return tldLocations;
     }
 
     private static Set<URL> scanJarForTagLibs(File file) {

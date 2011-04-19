@@ -22,6 +22,8 @@ import org.apache.openejb.util.Pipe;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -64,7 +66,7 @@ public class RemoteServer {
     }
 
     public static void main(String[] args) {
-        assert args.length > 0 : "no arguments supplied: valid arguments are 'start' or 'stop'";
+        assert args.length > 0 : "no arguments supplied: valid argumen -efts are 'start' or 'stop'";
         if (args[0].equalsIgnoreCase("start")){
             new RemoteServer().start();
         } else if (args[0].equalsIgnoreCase("stop")) {
@@ -159,55 +161,43 @@ public class RemoteServer {
                     File endorsed = new File(home, "endorsed");
                     File temp = new File(home, "temp");
 
+                    List<String> argsList = new ArrayList<String>() {};
+                    argsList.add("java");
+                    argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
+
                     if (DEBUG) {
-                        args = new String[] { "java",
-                                "-XX:+HeapDumpOnOutOfMemoryError",
-                                "-Xdebug",
-                                "-Xnoagent",
-                                "-Djava.compiler=NONE",
-                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
-
-                                "-javaagent:" + javaagentJar.getAbsolutePath(),
-
-                                "-Dcom.sun.management.jmxremote",
-
-                                "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
-                                "-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath(),
-
-                                "-Djava.io.tmpdir=" + temp.getAbsolutePath(),
-                                "-Djava.endorsed.dirs=" + endorsed.getAbsolutePath(),
-                                "-Dcatalina.base=" + home.getAbsolutePath(),
-                                "-Dcatalina.home=" + home.getAbsolutePath(),
-                                "-Dcatalina.ext.dirs=" + tlib.getAbsolutePath(),
-                                "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
-
-                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":"+ commonsLoggingJar.getAbsolutePath(),
-
-                                "org.apache.catalina.startup.Bootstrap", "start"
-                        };
-                    } else {
-                        args = new String[] { "java",
-                                "-XX:+HeapDumpOnOutOfMemoryError",
-                                "-javaagent:" + javaagentJar.getAbsolutePath(),
-
-                                "-Dcom.sun.management.jmxremote",
-
-                                "-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager",
-                                "-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath(),
-
-                                "-Djava.io.tmpdir=" + temp.getAbsolutePath(),
-                                "-Djava.endorsed.dirs=" + endorsed.getAbsolutePath(),
-                                "-Dcatalina.base=" + home.getAbsolutePath(),
-                                "-Dcatalina.home=" + home.getAbsolutePath(),
-                                "-Dcatalina.ext.dirs=" + tlib.getAbsolutePath(),
-                                "-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"),
-
-                                "-classpath", bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath(),
-
-                                "org.apache.catalina.startup.Bootstrap", "start"
-                        };
+                        argsList.add("-Xdebug");
+                        argsList.add("-Xnoagent");
+                        argsList.add("-Djava.compiler=NONE");
+                        argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005");
                     }
+
+                    argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
+                    argsList.add("-Dcom.sun.management.jmxremote");
+                    argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");
+                    argsList.add("-Djava.util.logging.config.file=" + loggingProperties.getAbsolutePath());
+                    argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
+                    argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
+                    argsList.add("-Dcatalina.base=" + home.getAbsolutePath());
+                    argsList.add("-Dcatalina.home=" + home.getAbsolutePath());
+                    argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
+                    argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
+                    argsList.add("-classpath");
+
+                    if (commonsLoggingJar.exists()) {
+                        argsList.add(bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath());
+
+                    } else {
+                        argsList.add(bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath());
+                    }
+
+                    argsList.add("org.apache.catalina.startup.Bootstrap");
+                    argsList.add("start");
+
+                    args = argsList.toArray(new String[argsList.size()]);
                 }
+
+
                 if (verbose) {
                     System.out.println(Join.join("\n", args));
                 }
