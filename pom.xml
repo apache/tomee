@@ -46,7 +46,15 @@
     <url>http://openejb.apache.org</url>
   </organization>
 
-  <issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <issueManagement>
     <system>jira</system>
     <url>http://issues.apache.org/jira/browse/OPENEJB</url>
   </issueManagement>
