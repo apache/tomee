@@ -417,7 +417,7 @@ public class JtaEntityManager implements EntityManager {
         try {
             final Timer timer = Op.find.start(this);
             try {
-                return entityManager.find(entityClass, entityManager, lockMode);
+                return entityManager.find(entityClass, primaryKey, lockMode);
             } finally {
                 timer.stop();
             }
@@ -433,7 +433,7 @@ public class JtaEntityManager implements EntityManager {
         try {
             final Timer timer = Op.find.start(this);
             try {
-                return entityManager.find(entityClass, entityManager, lockMode, properties);
+                return entityManager.find(entityClass, primaryKey, lockMode, properties);
             } finally {
                 timer.stop();
             }
