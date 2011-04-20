@@ -546,7 +546,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {
-                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactories);
+                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
                 } catch (NameAlreadyBoundException e) {
                     throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
