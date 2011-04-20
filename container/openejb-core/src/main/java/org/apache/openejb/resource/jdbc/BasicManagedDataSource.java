@@ -133,4 +133,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp.managed.Basi
     protected void wrapTransactionManager() {
     }
 
+	public synchronized void close() throws SQLException {
+	}
+    
 }
