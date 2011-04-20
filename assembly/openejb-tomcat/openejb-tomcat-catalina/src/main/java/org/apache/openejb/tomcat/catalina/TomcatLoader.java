@@ -145,6 +145,7 @@ public class TomcatLoader implements Loader {
             //Look for custom system properties
             File file = new File(conf, "system.properties");
             if (file.exists()) {
+                System.out.println("Processing conf/system.properties: " + file.toString());
                 Properties systemProperties = new Properties();
                 fin = new FileInputStream(file);
                 InputStream in = new BufferedInputStream(fin);
