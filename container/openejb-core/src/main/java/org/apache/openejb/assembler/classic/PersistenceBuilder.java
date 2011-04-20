@@ -88,7 +88,7 @@ public class PersistenceBuilder {
         nonJtaDataSourceEnv = SystemInstance.get().getProperty(NON_JTADATASOURCE_PROP);
     }
 
-    public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader, Map<String, ValidatorFactory> validatorFactories) throws Exception {
+    public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
