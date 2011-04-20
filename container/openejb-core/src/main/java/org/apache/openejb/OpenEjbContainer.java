@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import bsh.Modifiers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -54,6 +55,7 @@ import javax.naming.Name;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -217,6 +219,8 @@ public class OpenEjbContainer extends EJBContainer {
 
                 for (String caller : callers) {
 
+                    if (!isValid(caller)) continue;
+                    
                     final ManagedBean bean = ejbJar.addEnterpriseBean(new ManagedBean(caller, caller));
 
                     // set it to bean so it can get UserTransaction injection
@@ -279,6 +283,22 @@ public class OpenEjbContainer extends EJBContainer {
                 }
 
                 throw new InitializationException(e);
+            }
+        }
+
+        private boolean isValid(String caller) {
+            try {
+                final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+                final Class<?> clazz = loader.loadClass(caller);
+
+                if (clazz.isEnum()) return false;
+                if (clazz.isInterface()) return false;
+                if (Modifier.isAbstract(clazz.getModifiers())) return false;
+
+                return true;
+            } catch (ClassNotFoundException e) {
+                return false;
             }
         }
 
