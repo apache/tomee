@@ -748,6 +748,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     private void safeBind(Context comp, String name, Object value) {
         try {
+        	Object lookup = null;
+        	
+        	try {
+				lookup = comp.lookup(name);
+			} catch (Exception e) {
+			}
+			
+			if (lookup != null) {
+				logger.info(name + " already bound, ignoring");
+				return;
+			}
+			
             comp.bind(name, value);
         } catch (NamingException e) {
             logger.error("Error in safeBind method", e);
