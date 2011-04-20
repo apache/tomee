@@ -27,6 +27,7 @@ import javax.persistence.ValidationMode;
 import javax.sql.DataSource;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.validation.ValidatorFactory;
 
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
@@ -87,7 +88,7 @@ public class PersistenceBuilder {
         nonJtaDataSourceEnv = SystemInstance.get().getProperty(NON_JTADATASOURCE_PROP);
     }
 
-    public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader) throws Exception {
+    public EntityManagerFactory createEntityManagerFactory(PersistenceUnitInfo info, ClassLoader classLoader, Map<String, ValidatorFactory> validatorFactories) throws Exception {
         PersistenceUnitInfoImpl unitInfo = new PersistenceUnitInfoImpl(persistenceClassLoaderHandler);
 
         // Persistence Unit Id
@@ -109,6 +110,8 @@ public class PersistenceBuilder {
         // Exclude Unlisted Classes
         unitInfo.setExcludeUnlistedClasses(info.excludeUnlistedClasses);
 
+        Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+
         // JTA Datasource
         String jtaDataSourceId = info.jtaDataSource;
         if (jtaDataSourceEnv != null) jtaDataSourceId = jtaDataSourceEnv;
@@ -119,7 +122,6 @@ public class PersistenceBuilder {
                     if (!jtaDataSourceId.startsWith("java:openejb/Resource/")
                             && !jtaDataSourceId.startsWith("openejb/Resource/")) jtaDataSourceId = "openejb/Resource/"+jtaDataSourceId;
 
-                    Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
                     DataSource jtaDataSource = (DataSource) context.lookup(jtaDataSourceId);
                     unitInfo.setJtaDataSource(jtaDataSource);
                 } catch (NamingException e) {
@@ -170,7 +172,6 @@ public class PersistenceBuilder {
                 try {
                     if (!nonJtaDataSourceId.startsWith("java:openejb/Resource/")) nonJtaDataSourceId = "java:openejb/Resource/"+nonJtaDataSourceId;
 
-                    Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
                     DataSource nonJtaDataSource = (DataSource) context.lookup(nonJtaDataSourceId);
                     unitInfo.setNonJtaDataSource(nonJtaDataSource);
                 } catch (NamingException e) {
@@ -194,8 +195,10 @@ public class PersistenceBuilder {
             Class clazz = classLoader.loadClass(persistenceProviderClassName);
             PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
-            // Create entity manager factory
-            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, new HashMap());
+            // Create entity manager factories with the validator factory
+            Map<String, Object> properties = new HashMap<String, Object>();
+            properties.put("javax.persistence.validator.ValidatorFactory", new ValidatorFactoryWrapper());
+            EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
             return emf;
         } finally {
             final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
@@ -206,5 +209,9 @@ public class PersistenceBuilder {
                 }
             }
         }
+    }
+
+    public static String getOpenEJBJndiName(String unit) {
+        return Assembler.PERSISTENCE_UNIT_NAMING_CONTEXT + unit;
     }
 }

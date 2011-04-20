@@ -391,6 +391,9 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+                // Bean Validation
+                standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT + webAppInfo.moduleId));
+
                 if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
                     WebContext webContext = getContainerSystem().getWebContext(webAppInfo.moduleId);
                     if (webContext != null) {

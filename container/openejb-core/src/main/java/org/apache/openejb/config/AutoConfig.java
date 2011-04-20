@@ -60,6 +60,8 @@ import org.apache.openejb.util.UniqueDefaultLinkResolver;
 import javax.annotation.ManagedBean;
 import javax.jms.Queue;
 import javax.jms.Topic;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,6 +98,9 @@ public class AutoConfig implements DynamicDeployer {
         // User transaction is automatically handled
         ignoredReferenceTypes.add("javax.transaction.UserTransaction");
         ignoredReferenceTypes.add("javax.ejb.TimerService");
+        // Bean Validation is automatically handled
+        ignoredReferenceTypes.add(Validator.class.getName());
+        ignoredReferenceTypes.add(ValidatorFactory.class.getName());
     }
 
     private final ConfigurationFactory configFactory;

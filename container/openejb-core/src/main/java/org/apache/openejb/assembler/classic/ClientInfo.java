@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ClientInfo extends InfoObject {
+public class ClientInfo extends ValidationInfoObject {
 
     public String path;
     public String description;
@@ -40,5 +40,4 @@ public class ClientInfo extends InfoObject {
 
     public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
     public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
-
 }

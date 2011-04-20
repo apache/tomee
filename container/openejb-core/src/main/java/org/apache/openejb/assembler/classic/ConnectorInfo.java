@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ConnectorInfo extends InfoObject {
+public class ConnectorInfo extends ValidationInfoObject {
 
     public String path;
     public String description;

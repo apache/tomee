@@ -31,9 +31,8 @@ import java.util.TreeSet;
 /**
  * @version $Rev$ $Date$
  */
-public class ConnectorModule implements DeploymentModule {
+public class ConnectorModule extends Module implements DeploymentModule {
     private final ValidationContext validation;
-    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     private Connector connector;
     private ClassLoader classLoader;
@@ -73,10 +72,6 @@ public class ConnectorModule implements DeploymentModule {
 
     public URI getModuleUri() {
         return id.getUri();
-    }
-
-    public Map<String, Object> getAltDDs() {
-        return altDDs;
     }
 
     public Connector getConnector() {
