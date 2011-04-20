@@ -51,8 +51,13 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>commons-dbcp-all</artifactId>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
