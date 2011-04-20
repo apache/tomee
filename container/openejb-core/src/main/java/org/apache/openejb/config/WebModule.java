@@ -35,9 +35,8 @@ import org.apache.xbean.finder.IAnnotationFinder;
 /**
  * @version $Rev$ $Date$
  */
-public class WebModule implements WsModule {
+public class WebModule extends Module implements WsModule {
     private final ValidationContext validation;
-    private final Map<String,Object> altDDs = new HashMap<String,Object>();
 
     private WebApp webApp;
     private Webservices webservices;
@@ -112,10 +111,6 @@ public class WebModule implements WsModule {
 
     public ValidationContext getValidation() {
         return validation;
-    }
-
-    public Map<String, Object> getAltDDs() {
-        return altDDs;
     }
 
     public WebApp getWebApp() {

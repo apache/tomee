@@ -23,18 +23,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -56,6 +46,8 @@ import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidatorFactory;
+
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.AppContext;
@@ -89,7 +81,6 @@ import org.apache.openejb.core.transaction.SimpleWorkManager;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
-import org.apache.openejb.jee.sun.Default;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -99,7 +90,6 @@ import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.AsmParameterNameLoader;
-import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -121,7 +111,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     public static final String JAVA_OPENEJB_NAMING_CONTEXT = "openejb/";
 
-    public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = "openejb/PersistenceUnit/";
+    public static final String PERSISTENCE_UNIT_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "PersistenceUnit/";
+
+    public static final String VALIDATOR_FACTORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "ValidatorFactory/";
+    public static final String VALIDATOR_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Validator/";
 
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
@@ -136,6 +129,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     protected OpenEjbConfigurationFactory configFactory;
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
+    private final Set<String> moduleIds = new HashSet<String>();
 
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
@@ -513,12 +507,46 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
 
+            Context containerSystemContext = containerSystem.getJNDIContext();
+
+            // Bean Validation
+            // ValidatorFactory needs to be put in the map sent to the entity manager factory
+            // so it has to be constructed before
+            Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+            for (ClientInfo clientInfo : appInfo.clients) {
+                validatorFactories.put(clientInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
+            }
+            for (ConnectorInfo connectorInfo : appInfo.connectors) {
+                validatorFactories.put(connectorInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
+            }
+            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                validatorFactories.put(ejbJarInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
+            }
+            for (WebAppInfo webAppInfo : appInfo.webApps) {
+                validatorFactories.put(webAppInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
+            }
+            moduleIds.addAll(validatorFactories.keySet());
+
+            // validators bindings
+            for (Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
+                String moduleId = validatorFactory.getKey();
+                ValidatorFactory factory = validatorFactory.getValue();
+                try {
+                    containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + moduleId, factory);
+                    containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + moduleId, factory.usingContext().getValidator());
+                } catch (NameAlreadyBoundException e) {
+                    throw new OpenEJBException("ValidatorFactory already exists for module " + moduleId);
+                } catch (Exception e) {
+                    throw new OpenEJBException(e);
+                }
+            }
+
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {
-                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
+                    EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader, validatorFactories);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
                 } catch (NameAlreadyBoundException e) {
                     throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
@@ -1014,6 +1042,17 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 undeployException.getCauses().add(new Exception("persistence-unit: " + unitInfo.id + ": " + t.getMessage(), t));
             }
         }
+
+        for (String moduleId : moduleIds) {
+            try {
+                globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + moduleId);
+                globalContext.unbind(VALIDATOR_NAMING_CONTEXT + moduleId);
+            } catch (NamingException e) {
+                undeployException.getCauses().add(new Exception("validator: " + moduleId + ": " + e.getMessage(), e));
+            }
+        }
+        moduleIds.clear();
+
 
         try {
             if (globalContext instanceof IvmContext) {

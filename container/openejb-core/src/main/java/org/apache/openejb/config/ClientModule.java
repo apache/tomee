@@ -32,7 +32,7 @@ import java.io.File;
 /**
  * @version $Rev$ $Date$
  */
-public class ClientModule implements DeploymentModule {
+public class ClientModule extends Module implements DeploymentModule {
     private final ValidationContext validation;
     private ApplicationClient applicationClient;
     private ClassLoader classLoader;
@@ -41,7 +41,6 @@ public class ClientModule implements DeploymentModule {
     private AtomicReference<IAnnotationFinder> finder;
     private final Set<String> localClients = new HashSet<String>();
     private final Set<String> remoteClients = new HashSet<String>();
-    private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private ID id;
     private final Set<String> watchedResources = new TreeSet<String>();
 
@@ -97,10 +96,6 @@ public class ClientModule implements DeploymentModule {
 
     public URI getModuleUri() {
         return id.getUri();
-    }
-
-    public Map<String, Object> getAltDDs() {
-        return altDDs;
     }
 
     public ApplicationClient getApplicationClient() {

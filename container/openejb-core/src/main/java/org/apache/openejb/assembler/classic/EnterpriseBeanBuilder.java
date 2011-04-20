@@ -196,6 +196,7 @@ class EnterpriseBeanBuilder {
                 deployment.setRetainIfExeption(method, removeMethod.retainIfException);
             }
 
+            String moduleId = moduleContext.getId();
             Map<EntityManagerFactory, Map> extendedEntityManagerFactories = new HashMap<EntityManagerFactory, Map>();
             for (PersistenceContextReferenceInfo info : statefulBeanInfo.jndiEnc.persistenceContextRefs) {
                 if (info.extended) {
@@ -204,7 +205,7 @@ class EnterpriseBeanBuilder {
 
                     try {
                         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-                        Object o = containerSystem.getJNDIContext().lookup("openejb/PersistenceUnit/" + info.unitId);
+                        Object o = containerSystem.getJNDIContext().lookup(PersistenceBuilder.getOpenEJBJndiName(info.unitId));
                         extendedEntityManagerFactories.put((EntityManagerFactory) o, info.properties);
                     } catch (NamingException e) {
                         throw new OpenEJBException("PersistenceUnit '" + info.unitId + "' not found for EXTENDED ref '" + info.referenceName + "'");

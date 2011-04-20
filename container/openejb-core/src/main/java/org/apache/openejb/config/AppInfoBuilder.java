@@ -30,6 +30,7 @@ import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
+import org.apache.openejb.assembler.classic.ValidatorBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
@@ -54,7 +55,6 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.JpaJaxbUtil;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
-import org.apache.openejb.jee.jpa.unit.Property;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
@@ -148,6 +148,7 @@ class AppInfoBuilder {
                     bean.containerId = d.getContainerId();
                 }
 
+                ejbJarInfo.validationInfo = ValidatorBuilder.getInfo(ejbModule.getValidationConfig());
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
@@ -262,6 +263,7 @@ class AppInfoBuilder {
             clientInfo.callbackHandler = applicationClient.getCallbackHandler();
             clientInfo.moduleId = getClientModuleId(clientModule);
             clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
+            clientInfo.validationInfo = ValidatorBuilder.getInfo(clientModule.getValidationConfig());
 
             jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId, clientInfo.jndiEnc, clientInfo.jndiEnc);
             appInfo.clients.add(clientInfo);
@@ -277,6 +279,7 @@ class AppInfoBuilder {
             webAppInfo.path = webModule.getJarLocation();
             webAppInfo.moduleId = webModule.getModuleId();
             webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
+            webAppInfo.validationInfo = ValidatorBuilder.getInfo(webModule.getValidationConfig());
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
@@ -314,6 +317,7 @@ class AppInfoBuilder {
             connectorInfo.path = connectorModule.getJarLocation();
             connectorInfo.moduleId = connectorModule.getModuleId();
             connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
+            connectorInfo.validationInfo = ValidatorBuilder.getInfo(connectorModule.getValidationConfig());
 
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {

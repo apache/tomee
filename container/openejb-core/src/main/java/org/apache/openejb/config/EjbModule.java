@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @version $Revision$ $Date$
  */
-public class EjbModule implements WsModule {
+public class EjbModule extends Module implements WsModule {
 
     private final ValidationContext validation;
 
@@ -49,7 +49,6 @@ public class EjbModule implements WsModule {
     private Webservices webservices;
 
     private final AtomicReference<IAnnotationFinder> finder = new AtomicReference<IAnnotationFinder>();
-    private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private Beans beans;
 
@@ -114,10 +113,6 @@ public class EjbModule implements WsModule {
 
     public ValidationContext getValidation() {
         return validation;
-    }
-
-    public Map<String, Object> getAltDDs() {
-        return altDDs;
     }
 
     public ClassLoader getClassLoader() {
