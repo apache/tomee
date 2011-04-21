@@ -93,7 +93,7 @@
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
-    AccessTimeout = 0 milliseconds
+    AccessTimeout = 30 seconds
 
     # Specifies the size of the bean pools for this stateless
     # SessionBean container.  If StrictPooling is not used, instances
@@ -361,7 +361,7 @@
     # seconds, minutes, hours, days.  Or any combination such as
     # "1 hour and 27 minutes and 10 seconds"
 
-    AccessTimeout = 0 milliseconds
+    AccessTimeout = 30 seconds
 
     # The cache is responsible for managing stateful bean
     # instances.  The cache can page instances to disk as memory
