@@ -24,11 +24,13 @@ import javax.naming.Context;
 public class ModuleContext extends DeploymentContext {
     private final AppContext appContext;
     private final Context moduleJndiContext;
+    private final String uniqueId;
 
-    public ModuleContext(String id, AppContext appContext, Context moduleJndiContext) {
+    public ModuleContext(String id, String uniqueId, AppContext appContext, Context moduleJndiContext) {
         super(id, appContext.getOptions());
         this.appContext = appContext;
         this.moduleJndiContext = moduleJndiContext;
+        this.uniqueId = uniqueId;
     }
 
     public AppContext getAppContext() {
@@ -41,5 +43,9 @@ public class ModuleContext extends DeploymentContext {
 
     public Context getModuleJndiContext() {
         return moduleJndiContext;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
     }
 }

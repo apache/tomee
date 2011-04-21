@@ -91,6 +91,7 @@ public class JndiEncBuilder {
     private final boolean beanManagedTransactions;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
+    private final String uniqueId;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
     private final AppContext appContext;
@@ -98,11 +99,11 @@ public class JndiEncBuilder {
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, classLoader, null);
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+        this(jndiEnc, injections, null, moduleId, uniqueId, classLoader, null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, String uniqueId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         this.appContext = appContext;
@@ -113,6 +114,7 @@ public class JndiEncBuilder {
         } catch (URISyntaxException e) {
             throw new OpenEJBException(e);
         }
+        this.uniqueId = uniqueId;
         this.classLoader = classLoader;
     }
 
@@ -446,12 +448,8 @@ public class JndiEncBuilder {
         bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // bind bean validation objects
-        String moduleId = null;
-        if (moduleUri != null) {
-            moduleId = moduleUri.toString();
-        }
-        bindings.put("comp/ValidatorFactory", new IntraVmJndiReference(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT + moduleId));
-        bindings.put("comp/Validator", new IntraVmJndiReference(Assembler.VALIDATOR_NAMING_CONTEXT + moduleId));
+        bindings.put("comp/ValidatorFactory", new IntraVmJndiReference(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT + uniqueId));
+        bindings.put("comp/Validator", new IntraVmJndiReference(Assembler.VALIDATOR_NAMING_CONTEXT + uniqueId));
 
         // bind UserTransaction if bean managed transactions
         UserTransaction userTransaction = null;
