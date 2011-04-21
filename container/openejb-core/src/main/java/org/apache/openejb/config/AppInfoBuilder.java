@@ -150,6 +150,7 @@ class AppInfoBuilder {
 
                 ejbJarInfo.validationInfo = ValidatorBuilder.getInfo(ejbModule.getValidationConfig());
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
+                ejbJarInfo.uniqueId = ejbModule.getUniqueId();
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
@@ -264,6 +265,7 @@ class AppInfoBuilder {
             clientInfo.moduleId = getClientModuleId(clientModule);
             clientInfo.watchedResources.addAll(clientModule.getWatchedResources());
             clientInfo.validationInfo = ValidatorBuilder.getInfo(clientModule.getValidationConfig());
+            clientInfo.uniqueId = clientModule.getUniqueId();
 
             jndiEncInfoBuilder.build(applicationClient, clientModule.getJarLocation(), clientInfo.moduleId, clientInfo.jndiEnc, clientInfo.jndiEnc);
             appInfo.clients.add(clientInfo);
@@ -280,6 +282,7 @@ class AppInfoBuilder {
             webAppInfo.moduleId = webModule.getModuleId();
             webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
             webAppInfo.validationInfo = ValidatorBuilder.getInfo(webModule.getValidationConfig());
+            webAppInfo.uniqueId = webModule.getUniqueId();
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
@@ -318,6 +321,7 @@ class AppInfoBuilder {
             connectorInfo.moduleId = connectorModule.getModuleId();
             connectorInfo.watchedResources.addAll(connectorModule.getWatchedResources());
             connectorInfo.validationInfo = ValidatorBuilder.getInfo(connectorModule.getValidationConfig());
+            connectorInfo.uniqueId = connectorModule.getUniqueId();
 
             List<URL> libraries = connectorModule.getLibraries();
             for (URL url : libraries) {

@@ -130,6 +130,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
     private final Set<String> moduleIds = new HashSet<String>();
+    private static final String GLOBAL_UNIQUE_ID = "global";
 
 
     public org.apache.openejb.spi.ContainerSystem getContainerSystem() {
@@ -494,8 +495,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
         List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
         appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
-        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, classLoader).build(JndiEncBuilder.JndiScope.global);
-        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
+        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, GLOBAL_UNIQUE_ID, classLoader).build(JndiEncBuilder.JndiScope.global);
+        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses
@@ -514,28 +515,28 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // so it has to be constructed before
             Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
             for (ClientInfo clientInfo : appInfo.clients) {
-                validatorFactories.put(clientInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
+                validatorFactories.put(clientInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
             }
             for (ConnectorInfo connectorInfo : appInfo.connectors) {
-                validatorFactories.put(connectorInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
+                validatorFactories.put(connectorInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
             }
             for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                validatorFactories.put(ejbJarInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
+                validatorFactories.put(ejbJarInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
             }
             for (WebAppInfo webAppInfo : appInfo.webApps) {
-                validatorFactories.put(webAppInfo.moduleId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
+                validatorFactories.put(webAppInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
             }
             moduleIds.addAll(validatorFactories.keySet());
 
             // validators bindings
             for (Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
-                String moduleId = validatorFactory.getKey();
+                String id = validatorFactory.getKey();
                 ValidatorFactory factory = validatorFactory.getValue();
                 try {
-                    containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + moduleId, factory);
-                    containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + moduleId, factory.usingContext().getValidator());
+                    containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
+                    containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, factory.usingContext().getValidator());
                 } catch (NameAlreadyBoundException e) {
-                    throw new OpenEJBException("ValidatorFactory already exists for module " + moduleId);
+                    throw new OpenEJBException("ValidatorFactory already exists for module " + id);
                 } catch (Exception e) {
                     throw new OpenEJBException(e);
                 }
@@ -713,7 +714,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, classLoader, appContext);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, clientInfo.uniqueId, classLoader, appContext);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag
@@ -1043,12 +1044,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        for (String moduleId : moduleIds) {
+        for (String sId : moduleIds) {
             try {
-                globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + moduleId);
-                globalContext.unbind(VALIDATOR_NAMING_CONTEXT + moduleId);
+                globalContext.unbind(VALIDATOR_FACTORY_NAMING_CONTEXT + sId);
+                globalContext.unbind(VALIDATOR_NAMING_CONTEXT + sId);
             } catch (NamingException e) {
-                undeployException.getCauses().add(new Exception("validator: " + moduleId + ": " + e.getMessage(), e));
+                undeployException.getCauses().add(new Exception("validator: " + sId + ": " + e.getMessage(), e));
             }
         }
         moduleIds.clear();

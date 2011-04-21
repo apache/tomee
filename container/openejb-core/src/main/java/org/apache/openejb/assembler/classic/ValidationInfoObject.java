@@ -21,4 +21,5 @@ package org.apache.openejb.assembler.classic;
  */
 public class ValidationInfoObject extends InfoObject {
     public ValidationInfo validationInfo;
+    public String uniqueId;
 }
