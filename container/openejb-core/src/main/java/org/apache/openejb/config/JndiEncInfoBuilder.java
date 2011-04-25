@@ -111,19 +111,10 @@ public class JndiEncInfoBuilder {
         return resolver;
     }
 
-    public void build(JndiConsumer jndiConsumer, String ejbName, String moduleId, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {
+    public void build(JndiConsumer jndiConsumer, String ejbName, String moduleId, URI moduleUri, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {
         assert moduleJndiEnc != null;
         assert compJndiEnc != null;
-        assert jndiConsumer != null;
-        
-        URI moduleUri = null;
-        if (moduleId != null) {
-            try {
-                moduleUri = new URI(moduleId);
-            } catch (URISyntaxException e) {
-                throw new OpenEJBException("Illegal moduleId " + moduleId, e);
-            }
-        }
+        assert jndiConsumer != null;              
 
         /* Build Environment entries *****************/
         buildEnvEntryInfos(jndiConsumer, moduleJndiEnc, compJndiEnc);

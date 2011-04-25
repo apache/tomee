@@ -92,7 +92,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
             JndiEncInfoBuilder infoBuilder = new JndiEncInfoBuilder(appModule);
             JndiEncInfo moduleJndiEnc = new JndiEncInfo();
             JndiEncInfo jndiEnc = new JndiEncInfo();
-            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.appId, moduleJndiEnc, jndiEnc);
+            infoBuilder.build(cdiInfo, cdiInfo.getBeanName(), appModule.appId, null, moduleJndiEnc, jndiEnc);
 
             InjectionBuilder builder = new InjectionBuilder(classLoader);
             List<Injection> injections = builder.buildInjections(jndiEnc);
