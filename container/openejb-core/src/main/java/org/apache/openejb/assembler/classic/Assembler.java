@@ -509,39 +509,41 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
 
             Context containerSystemContext = containerSystem.getJNDIContext();
+            
+            if (!SystemInstance.get().hasProperty("openejb.geronimo")) {
+                // Bean Validation
+                // ValidatorFactory needs to be put in the map sent to the entity manager factory
+                // so it has to be constructed before
+                Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
+                for (ClientInfo clientInfo : appInfo.clients) {
+                    validatorFactories.put(clientInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
+                }
+                for (ConnectorInfo connectorInfo : appInfo.connectors) {
+                    validatorFactories.put(connectorInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
+                }
+                for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
+                    validatorFactories.put(ejbJarInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
+                }
+                for (WebAppInfo webAppInfo : appInfo.webApps) {
+                    validatorFactories.put(webAppInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
+                }
+                moduleIds.addAll(validatorFactories.keySet());
 
-            // Bean Validation
-            // ValidatorFactory needs to be put in the map sent to the entity manager factory
-            // so it has to be constructed before
-            Map<String, ValidatorFactory> validatorFactories = new HashMap<String, ValidatorFactory>();
-            for (ClientInfo clientInfo : appInfo.clients) {
-                validatorFactories.put(clientInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, clientInfo.validationInfo));
-            }
-            for (ConnectorInfo connectorInfo : appInfo.connectors) {
-                validatorFactories.put(connectorInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, connectorInfo.validationInfo));
-            }
-            for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-                validatorFactories.put(ejbJarInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, ejbJarInfo.validationInfo));
-            }
-            for (WebAppInfo webAppInfo : appInfo.webApps) {
-                validatorFactories.put(webAppInfo.uniqueId, ValidatorBuilder.buildFactory(classLoader, webAppInfo.validationInfo));
-            }
-            moduleIds.addAll(validatorFactories.keySet());
-
-            // validators bindings
-            for (Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
-                String id = validatorFactory.getKey();
-                ValidatorFactory factory = validatorFactory.getValue();
-                try {
-                    containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
-                    containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, factory.usingContext().getValidator());
-                } catch (NameAlreadyBoundException e) {
-                    throw new OpenEJBException("ValidatorFactory already exists for module " + id);
-                } catch (Exception e) {
-                    throw new OpenEJBException(e);
+                // validators bindings
+                for (Entry<String, ValidatorFactory> validatorFactory : validatorFactories.entrySet()) {
+                    String id = validatorFactory.getKey();
+                    ValidatorFactory factory = validatorFactory.getValue();
+                    try {
+                        containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
+                        containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, factory.usingContext().getValidator());
+                    } catch (NameAlreadyBoundException e) {
+                        throw new OpenEJBException("ValidatorFactory already exists for module " + id);
+                    } catch (Exception e) {
+                        throw new OpenEJBException(e);
+                    }
                 }
             }
-
+            
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
