@@ -21,8 +21,6 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
 
-import javax.xml.rpc.handler.MessageContext;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -51,6 +49,15 @@ public class SingletonContext extends BaseSessionContext {
                 }
             case getCallerPrincipal:
             case isCallerInRole:
+                switch (operation) {
+                case INJECTION:
+                case CREATE:
+                case POST_CONSTRUCT:
+                case PRE_DESTROY:
+                    throw illegal(call, operation);
+                default:
+                    return;
+                }
             case timerMethod:
             case setRollbackOnly:
             case getRollbackOnly:
@@ -58,8 +65,6 @@ public class SingletonContext extends BaseSessionContext {
                 switch (operation) {
                     case INJECTION:
                     case CREATE:
-                    case POST_CONSTRUCT:
-                    case PRE_DESTROY:
                         throw illegal(call, operation);
                     default:
                         return;
