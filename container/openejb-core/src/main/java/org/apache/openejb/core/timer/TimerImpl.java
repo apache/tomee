@@ -16,18 +16,19 @@
  */
 package org.apache.openejb.core.timer;
 
-import javax.ejb.EJBContext;
-import javax.ejb.Timer;
-import javax.ejb.TimerHandle;
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.EJBException;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerHandle;
+
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.ThreadContext;
 
 public class TimerImpl implements Timer {
     private final TimerData timerData;
@@ -85,8 +86,8 @@ public class TimerImpl implements Timer {
      * Insure that timer methods can be invoked for the current operation on this Context.
      */
     private void checkState() throws IllegalStateException, NoSuchObjectLocalException {
-        final BeanContext deployment = timerData.timerService.deployment;
-        final BaseContext context = (BaseContext) deployment.get(EJBContext.class);
+        final BeanContext beanContext = ThreadContext.getThreadContext().getBeanContext();
+        final BaseContext context = (BaseContext) beanContext.get(EJBContext.class);
         context.check(BaseContext.Call.timerMethod);
 
         if (timerData.isCancelled()) {
