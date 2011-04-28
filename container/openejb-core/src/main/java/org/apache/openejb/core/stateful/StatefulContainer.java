@@ -264,9 +264,7 @@ public class StatefulContainer implements RpcContainer {
             public boolean matches(Instance instance) {
                 return beanContext == instance.beanContext;
             }
-        });
-
-        beanContext.set(EJBContext.class, this.sessionContext);
+        });        
     }
 
     public synchronized void deploy(BeanContext beanContext) throws OpenEJBException {
@@ -306,6 +304,8 @@ public class StatefulContainer implements RpcContainer {
         } catch (NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext", e);
         }
+        
+        beanContext.set(EJBContext.class, this.sessionContext);
     }
 
     /**
