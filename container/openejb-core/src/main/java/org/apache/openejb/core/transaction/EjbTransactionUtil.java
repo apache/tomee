@@ -115,7 +115,7 @@ public final class EjbTransactionUtil {
      */
     public static void handleApplicationException(TransactionPolicy txPolicy, Throwable appException, boolean rollback) throws ApplicationException {
         if (rollback) {
-            txPolicy.setRollbackOnly();
+            txPolicy.setRollbackOnly(appException);
         }
 
         if (!(appException instanceof ApplicationException)) {
@@ -139,7 +139,7 @@ public final class EjbTransactionUtil {
         }
 
         // Mark the transaction for rollback
-        txPolicy.setRollbackOnly();
+        txPolicy.setRollbackOnly(sysException);
 
         // Throw InvalidateReferenceException
         if (txPolicy.isClientTransaction()) {

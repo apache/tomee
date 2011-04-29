@@ -99,6 +99,10 @@ public class SpringTransactionPolicy implements TransactionPolicy {
         return getTransactionStatus().isRollbackOnly();
     }
 
+    public void setRollbackOnly(Throwable t) {
+        getTransactionStatus().setRollbackOnly();
+    }
+    
     public void setRollbackOnly() {
         getTransactionStatus().setRollbackOnly();
     }

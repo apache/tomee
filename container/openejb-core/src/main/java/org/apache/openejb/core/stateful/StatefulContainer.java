@@ -967,7 +967,7 @@ public class StatefulContainer implements RpcContainer {
                     logger.error(message, e);
 
                     // [2] Mark the transaction for rollback.
-                    txPolicy.setRollbackOnly();
+                    txPolicy.setRollbackOnly(e);
 
                     // [3] Discard the instance
                     discardInstance(callContext);
