@@ -16,28 +16,29 @@
  */
 package org.apache.openejb.core.transaction;
 
-import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.InvalidTransactionException;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.Synchronization;
-import javax.transaction.xa.XAResource;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.xa.XAResource;
+import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected final static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -47,7 +48,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     protected final TransactionManager transactionManager;
     private final TransactionSynchronizationRegistry synchronizationRegistry;
-    private Map<Object,Object> resources;
+    private Map<Object, Object> resources;
     private final List<TransactionSynchronization> synchronizations = new LinkedList<TransactionSynchronization>();
     private boolean rollbackOnly;
 
@@ -79,7 +80,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
 
     public boolean isRollbackOnly() {
         Transaction trasaction = getCurrentTransaction();
-        if (trasaction != null)  {
+        if (trasaction != null) {
             try {
                 int status = trasaction.getStatus();
                 return status == Status.STATUS_MARKED_ROLLBACK;
@@ -92,9 +93,14 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     public void setRollbackOnly() {
+        setRollbackOnly(null);
+    }
+
+    @Override
+    public void setRollbackOnly(Throwable reason) {
         Transaction trasaction = getCurrentTransaction();
-        if (trasaction != null)  {
-            setRollbackOnly(trasaction);
+        if (trasaction != null) {
+            setRollbackOnly(trasaction, reason);
         } else {
             rollbackOnly = true;
         }
@@ -117,7 +123,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
 
         if (resources == null) {
-            resources = new LinkedHashMap<Object,Object>();
+            resources = new LinkedHashMap<Object, Object>();
         }
         resources.put(key, value);
     }
@@ -206,15 +212,42 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
 
-    protected void setRollbackOnly(Transaction tx) {
+    protected void setRollbackOnly(Transaction tx, Throwable reason) {
         try {
-            if (tx != null && tx.getStatus() == Status.STATUS_ACTIVE) {
+            if (tx == null || tx.getStatus() != Status.STATUS_ACTIVE) return;
+
+            if (reason == null) {
+
                 tx.setRollbackOnly();
-                txLogger.debug("TX {0}: setRollbackOnly() on transaction {1}", transactionType, tx);
+
+            } else {
+
+                final Method setRollbackOnly = setRollbackOnlyMethod(tx);
+
+                if (setRollbackOnly != null) {
+
+                    setRollbackOnly.invoke(tx, reason);
+
+                } else {
+
+                    tx.setRollbackOnly();
+
+                }
             }
+            
+            txLogger.debug("TX {0}: setRollbackOnly() on transaction {1}", transactionType, tx);
+
         } catch (Exception e) {
             txLogger.error("Exception during setRollbackOnly()", e);
             throw new IllegalStateException("No transaction active", e);
+        }
+    }
+
+    private Method setRollbackOnlyMethod(Transaction tx) {
+        try {
+            return tx.getClass().getMethod("setRollbackOnly", Throwable.class);
+        } catch (Throwable e) {
+            return null;
         }
     }
 
@@ -252,7 +285,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             if (tx == null) {
                 txLogger.debug("TX {0}: No transaction to resume", transactionType);
             } else {
-                txLogger.debug("TX {0}: Resuming transaction {1}" ,transactionType, tx);
+                txLogger.debug("TX {0}: Resuming transaction {1}", transactionType, tx);
                 transactionManager.resume(tx);
             }
         } catch (InvalidTransactionException ite) {

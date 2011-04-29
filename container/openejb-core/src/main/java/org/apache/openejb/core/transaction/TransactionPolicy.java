@@ -80,6 +80,11 @@ public interface TransactionPolicy {
     void setRollbackOnly();
 
     /**
+     * Sets this TransactionPolicy to rollback when completed
+     */
+    void setRollbackOnly(Throwable reason);
+
+    /**
      * Commits or rolls back this TransactionPolicy.  If there the actual
      * transaction is completed or there is no actual transaction, the
      * registered TransactionSynchronization are called.  Otherwise, the
