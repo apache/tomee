@@ -269,17 +269,17 @@ public class OpenEjbContainer extends EJBContainer {
 
             } catch (OpenEJBException e) {
 
-                throw new InitializationException(e);
+                throw new EJBException(e);
 
             } catch (MalformedURLException e) {
 
-                throw new InitializationException(e);
+                throw new EJBException(e);
 
             } catch (Exception e) {
 
-                if (e instanceof IllegalStateException) {
+                if (e instanceof EJBException) {
 
-                    throw (IllegalStateException) e;
+                    throw (EJBException) e;
                 }
 
                 throw new InitializationException(e);
