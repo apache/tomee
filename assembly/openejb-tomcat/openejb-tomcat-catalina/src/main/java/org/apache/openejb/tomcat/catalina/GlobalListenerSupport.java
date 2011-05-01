@@ -27,6 +27,9 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.deploy.ContextTransaction;
+import org.apache.naming.factory.Constants;
+import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
 import org.apache.tomcat.JarScanner;
 
@@ -117,6 +120,10 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (Lifecycle.CONFIGURE_START_EVENT.equals(type)) {
             	if (TomcatHelper.isTomcat7()) {
             		TomcatHelper.configureJarScanner(standardContext);
+            		
+            		ContextTransaction contextTransaction = new ContextTransaction();
+                    contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
+                    standardContext.getNamingResources().setTransaction(contextTransaction);
             	}
             }
         } else if (source instanceof StandardHost) {
