@@ -17,13 +17,17 @@
 package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Join;
+import org.apache.openejb.util.SetAccessible;
 
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+
 import static java.util.Arrays.asList;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
@@ -37,6 +41,51 @@ import java.lang.reflect.Method;
  * @version $Rev$ $Date$
  */
 public class MethodInfoUtil {
+    
+    
+    /**
+     * Finds the nearest java.lang.reflect.Method with the given NamedMethodInfo
+     * Callbacks can be private so class.getMethod() cannot be used.  Searching
+     * starts by looking in the specified class, if the method is not found searching continues with
+     * the immediate parent and continues recurssively until the method is found or java.lang.Object
+     * is reached.  If the method is not found a IllegalStateException is thrown.
+     *
+     * @param clazz
+     * @param methodName
+     * @param parameterTypes
+     * @return
+     * @throws IllegalStateException if the method is not found in this class or any of its parent classes
+     */
+    public static Method toMethod(Class clazz, NamedMethodInfo info) {
+        List<Class> parameterTypes = new ArrayList<Class>();
+
+        if (info.methodParams != null){
+            for (String paramType : info.methodParams) {
+                try {
+                    parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
+                } catch (ClassNotFoundException cnfe) {
+                    throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
+                }
+            }
+        }
+
+        Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
+
+        IllegalStateException noSuchMethod = null;
+        while (clazz != null) {
+            try {
+                Method method = clazz.getDeclaredMethod(info.methodName, parameters);
+                return SetAccessible.on(method);
+            } catch (NoSuchMethodException e) {
+                if (noSuchMethod == null) {
+                    noSuchMethod = new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
+                }
+                clazz = clazz.getSuperclass();
+            }
+        }
+
+        throw noSuchMethod;
+    }    
 
     public static List<Method> matchingMethods(Method signature, Class clazz) {
         List<Method> list = new ArrayList<Method>();
