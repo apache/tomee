@@ -173,7 +173,7 @@ class EnterpriseBeanBuilder {
             StatefulBeanInfo statefulBeanInfo = (StatefulBeanInfo) bean;
 
             for (InitMethodInfo init : statefulBeanInfo.initMethods) {
-                Method beanMethod = toMethod(ejbClass, init.beanMethod);
+                Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);
                 List<Method> methods = new ArrayList<Method>();
 
                 if (home != null) methods.addAll(Arrays.asList(home.getMethods()));
@@ -191,7 +191,7 @@ class EnterpriseBeanBuilder {
             }
 
             for (RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
-                Method method = toMethod(ejbClass, removeMethod.beanMethod);
+                Method method = MethodInfoUtil.toMethod(ejbClass, removeMethod.beanMethod);
                 deployment.getRemoveMethods().add(method);
                 deployment.setRetainIfExeption(method, removeMethod.retainIfException);
             }
@@ -276,7 +276,7 @@ class EnterpriseBeanBuilder {
         //we could directly check the matching bean method.
         if (ejbType == BeanType.STATELESS || ejbType == BeanType.SINGLETON || ejbType == BeanType.STATEFUL) {
             for (NamedMethodInfo methodInfo : bean.asynchronous) {
-                Method method = toMethod(ejbClass, methodInfo);
+                Method method = MethodInfoUtil.toMethod(ejbClass, methodInfo);
                 deployment.getMethodContext(deployment.getMatchingBeanMethod(method)).setAsynchronous(true);
             }
             for (String className : bean.asynchronousClasses) {
@@ -349,9 +349,9 @@ class EnterpriseBeanBuilder {
         try {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
                 timeout = ejbClass.getMethod("ejbTimeout", Timer.class);
-            } else if (info.methodParams != null) {
+            } else {
                 try {
-                    timeout = toMethod(ejbClass, info);
+                    timeout = MethodInfoUtil.toMethod(ejbClass, info);
                 } catch (IllegalStateException e) {
                     //Spec 18.2.5.3 [102] For the compatibility of timeout method signature, if method-params is  not set, it is also required to search the method signaure below :
                     //void <METHOD> (Timer timer)
@@ -360,13 +360,13 @@ class EnterpriseBeanBuilder {
                     // not get 'Callback method does not exist' runtime exceptions and instead
                     // get a validation failure.  Then we can explicitly add the (Timer) param
                     // if the fallback method does exist.
-                    if (info.methodParams.size() == 0) {
+                    if (info.methodParams == null) {
                         NamedMethodInfo candidateInfo = new NamedMethodInfo();
                         candidateInfo.className = info.className;
                         candidateInfo.id = info.id;
                         candidateInfo.methodName = info.methodName;
                         candidateInfo.methodParams = Arrays.asList(Timer.class.getName());
-                        timeout = toMethod(ejbClass, candidateInfo);
+                        timeout = MethodInfoUtil.toMethod(ejbClass, candidateInfo);
                     }
                 }
             }
@@ -375,36 +375,6 @@ class EnterpriseBeanBuilder {
         }
 
         return timeout;
-    }
-
-    private Method toMethod(Class clazz, NamedMethodInfo info) {
-        List<Class> parameterTypes = new ArrayList<Class>();
-
-        if (info.methodParams != null){
-            for (String paramType : info.methodParams) {
-                try {
-                    parameterTypes.add(Classes.forName(paramType, clazz.getClassLoader()));
-                } catch (ClassNotFoundException cnfe) {
-                    throw new IllegalStateException("Parameter class could not be loaded for type " + paramType, cnfe);
-                }
-            }
-        }
-
-        Class[] parameters = parameterTypes.toArray(new Class[parameterTypes.size()]);
-
-        IllegalStateException noSuchMethod = null;
-        while (clazz != null) {
-            try {
-                return clazz.getDeclaredMethod(info.methodName, parameters);
-            } catch (NoSuchMethodException e) {
-                if (noSuchMethod == null) {
-                    noSuchMethod = new IllegalStateException("Callback method does not exist: " + clazz.getName() + "." + info.methodName, e);
-                }
-                clazz = clazz.getSuperclass();
-            }
-        }
-
-        throw noSuchMethod;
     }
 
 
