@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class EJBCronTriggerTest {
 
-	@Test(timeout = 1000000)
+	@Test(timeout = 1000)
 	public void testSimpleDate() throws ParseException {
 		ScheduleExpression expr = new ScheduleExpression().year(2008).month(12).dayOfMonth(1).start(new Date(0));
 		EJBCronTrigger trigger = new EJBCronTrigger(expr);
@@ -148,11 +148,12 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2000,1,27,23,1,59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2000, 1, 26, 0, 0, 0).getTime()));
     }
 
-	@Test(timeout = 5000000)
+	@Test(timeout = 5000)
     public void testOrdinalNumbersDayOfMonth() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfMonth("2nd mon").hour(23).minute(1).second(59).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
-        assertEquals(new GregorianCalendar(2010, 6, 12, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 0, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 9, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 1, 0, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 5, 13, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 10, 0, 0, 0).getTime()));
     }
 
 
@@ -178,20 +179,21 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2010, 6, 28, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 2, 0).getTime()));
     }
 	
-    @Test(timeout = 5000000)
+    @Test(timeout = 500)
     public void testRangeCDayOfMonth() throws ParseException {
-        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("Last Fri - 1st Mon").hour(23).minute(1).second(59).start(new Date(0));
+        //7-27
+        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("1st Sat - 4th FRI").hour(23).minute(1).second(59).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
-        assertEquals(new GregorianCalendar(2010, 6, 1, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 23, 0, 0).getTime()));
-        assertEquals(new GregorianCalendar(2010, 6, 2, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 23, 2, 0).getTime()));
-        assertEquals(new GregorianCalendar(2010, 6, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 26, 23, 0, 0).getTime()));
-        assertEquals(new GregorianCalendar(2010, 6, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 0, 0).getTime()));
-        assertEquals(new GregorianCalendar(2010, 6, 28, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 2, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 7, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 1, 23, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 9, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 8, 23, 2, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 18, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 23, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 26, 23, 3, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 5, 4, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 28, 23, 3, 0).getTime()));
     }	
 	
 	
 
-	@Test(timeout = 5000)
+	@Test(timeout = 500)
     public void testRangeADayOfWeek() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfWeek("tue-fri").hour(23).minute(1).second(59).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
@@ -306,23 +308,6 @@ public class EJBCronTriggerTest {
         }
 	}
 	
-	
-	@Test(timeout = 50000000)
-    public void testInvalidSingleInputs1() throws ParseException {
-    
-    // invalid  hour
-    ScheduleExpression expr = new ScheduleExpression().dayOfMonth(6).hour("24/1").minute(1).second(59).start(new Date(0));
-    boolean parseExceptionThrown = false;
-    
-    try {
-        new EJBCronTrigger(expr);
-    } catch (ParseException e){
-        parseExceptionThrown=true;
-    }
-    assertTrue(parseExceptionThrown);
-    
-    
-    }
 	
 	
 	@Test(timeout = 500)
