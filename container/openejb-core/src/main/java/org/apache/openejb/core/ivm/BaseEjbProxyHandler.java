@@ -115,10 +115,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (interfaces == null || interfaces.size() == 0) {
             InterfaceType objectInterfaceType = (interfaceType.isHome()) ? interfaceType.getCounterpart() : interfaceType;
             interfaces = new ArrayList<Class>(beanContext.getInterfaces(objectInterfaceType));
-            if (mainInterface == null && interfaces.size() == 1) {
-                mainInterface = interfaces.get(0);
-            }
         }
+        
+        if (mainInterface == null && interfaces.size() == 1) {
+            mainInterface = interfaces.get(0);
+        }
+        
         setInterfaces(interfaces);
         setMainInterface(mainInterface);
         if (mainInterface == null) {
