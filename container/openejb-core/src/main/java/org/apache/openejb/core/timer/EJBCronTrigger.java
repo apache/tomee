@@ -48,15 +48,45 @@ public class EJBCronTrigger extends Trigger {
 
     private static final Pattern INCREMENTS = Pattern.compile("(\\d+|\\*)/(\\d+)*");
 
-	private static final Pattern LIST = Pattern.compile("(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-9]+))?(LAST)?" +
-			"(?:,(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-9]+))?(LAST)?)*");
+	private static final Pattern LIST = Pattern.compile("(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-7]+))?(LAST)?" +
+			"(?:,(([A-Za-z0-9]+)(-[A-Za-z0-9]+)?)?((1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+))?(-([0-7]+))?(LAST)?)*");
 	
 	private static final Pattern RANGE = Pattern.compile("([A-Za-z0-9]+)-([A-Za-z0-9]+)");
-	private static final Pattern WEEKDAY = Pattern.compile("(1ST|2ND|3RD|4TH|5TH|LAST)([A-za-z]+)");
-	private static final Pattern DAYS_TO_LAST = Pattern.compile("-([0-9]+)");
+	private static final Pattern WEEKDAY = Pattern.compile("(1ST|2ND|3RD|4TH|5TH|LAST)(SUN|MON|TUE|WED|THU|FRI|SAT)");
+	private static final Pattern DAYS_TO_LAST = Pattern.compile("-([0-7]+)");
+	
+	private static final Pattern VALID_YEAR = Pattern.compile("([0-9][0-9][0-9][0-9])|\\*");
+	private static final Pattern VALID_MONTH = Pattern.compile("(([0]?[1-9])|(1[0-2]))|\\*");
+	private static final Pattern VALID_DAYS_OF_WEEK = Pattern.compile("[0-7]|\\*");
+	private static final Pattern VALID_DAYS_OF_MONTH = Pattern.compile("((1ST|2ND|3RD|4TH|5TH|LAST)(SUN|MON|TUE|WED|THU|FRI|SAT))|(([1-9])|(0[1-9])|([12])([0-9]?)|(3[01]?))|(LAST)|-([0-7])|[*]");
+	private static final Pattern VALID_HOUR = Pattern.compile("(([0-1]?[0-9])|([2][0-3]))|\\*");
+	private static final Pattern VALID_MINUTE = Pattern.compile("([0-5]?[0-9])|\\*");
+	private static final Pattern VALID_SECOND = Pattern.compile("([0-5]?[0-9])|\\*");
+	
+
 
 	private static final String LAST_IDENTIFIER = "LAST";
+	
+	private static final String RANGE_CHAR="-";
+	
+	private static final String INCREMENTS_CHAR="/";
+	
+    private static final Map<String, Integer> MONTHS_MAP = new HashMap<String, Integer>();
+    private static final Map<String, Integer> WEEKDAYS_MAP = new HashMap<String, Integer>();
 
+    static {
+        int i = 1;
+        // Jan -> 1
+        for (String month : new DateFormatSymbols(Locale.US).getShortMonths()) {
+            MONTHS_MAP.put(month.toUpperCase(Locale.US), i++);
+        }
+        i = 0;
+        // SUN -> 1
+        for (String weekday : new DateFormatSymbols(Locale.US).getShortWeekdays()) {
+            WEEKDAYS_MAP.put(weekday.toUpperCase(Locale.US), i++);
+        }
+    }
+	
     private static final int[] ORDERED_CALENDAR_FIELDS = { Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND };
 
     private static final Map<Integer, Integer> CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP = new LinkedHashMap<Integer, Integer>();
@@ -71,6 +101,9 @@ public class EJBCronTrigger extends Trigger {
         CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.put(Calendar.MINUTE, 5);
         CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.put(Calendar.SECOND, 6);
     }
+    
+    
+    
 
 	private final FieldExpression[] expressions = new FieldExpression[7];
 
@@ -131,8 +164,29 @@ public class EJBCronTrigger extends Trigger {
 	 *             are out of range
 	 */
 	protected FieldExpression parseExpression(int field, String expr) throws ParseException {
+	    
+	    if (expr == null || expr.isEmpty()){
+	        throw new ParseException(field, expr, "expression can't be null");
+	    }
+	    
 		// Get rid of whitespace and convert to uppercase
 		expr = expr.replaceAll("\\s+", "").toUpperCase();
+		
+		
+        if (expr.length() > 1 && expr.indexOf(",") > 0) {
+
+            String[] expressions = expr.split(",");
+
+            for (String sub_expression : expressions) {
+                validateExpression(field, sub_expression);
+            }
+
+        } else {
+
+            validateExpression(field, expr);
+
+        }
+		
 
 		if (expr.equals("*")) {
 		    return new AsteriskExpression(field);
@@ -147,6 +201,7 @@ public class EJBCronTrigger extends Trigger {
 		case Calendar.HOUR_OF_DAY:
 		case Calendar.MINUTE:
 		case Calendar.SECOND:
+		    	    
 			m = INCREMENTS.matcher(expr);
 			if (m.matches()) {
 				return new IncrementExpression(m, field);
@@ -169,14 +224,101 @@ public class EJBCronTrigger extends Trigger {
 			}
 			break;
 		}
+		
+       
 
 		m = LIST.matcher(expr);
+		
 		if (m.matches()) {
 			return new ListExpression(m, field);
 		}
 
 		throw new ParseException(field, expr, "Unparseable time expression");
 	}
+        
+	
+	private void validateExpression(int field, String expression) throws ParseException {
+	    
+
+        if (expression.length() > 2 && expression.indexOf(RANGE_CHAR) > 0) {
+            
+            for (String sub_expression : expression.split(RANGE_CHAR)) {
+                validateSingleToken(field, sub_expression);
+            }
+            
+        } else if (expression.length() > 2 && expression.indexOf(INCREMENTS_CHAR) > 0) {
+            
+            for (String sub_expression : expression.split(INCREMENTS_CHAR)) {
+                validateSingleToken(field, sub_expression);
+            }
+            
+        } else {
+            
+            validateSingleToken(field, expression);
+            
+        }
+	    
+	}
+        
+    private void validateSingleToken(int field, String token) throws ParseException{
+        
+        if(token==null || token.isEmpty()) {
+          throw new ParseException(field, token, "expression can't be null");
+        }
+        
+        switch (field) {
+        
+        case Calendar.YEAR:
+            Matcher m = VALID_YEAR.matcher(token);
+            if (!m.matches()) {
+                throw new ParseException(field, token, "Valid YEAR is four digit");
+            }
+            break;               
+            
+        case Calendar.MONTH:
+            m = VALID_MONTH.matcher(token);
+            if (!(m.matches() || MONTHS_MAP.containsKey(token))) {
+                throw new ParseException(field, token, "Valid MONTH is 1-12 or {'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', Dec'}");
+            }
+            break;
+            
+        case Calendar.DAY_OF_MONTH:
+            m = VALID_DAYS_OF_MONTH.matcher(token);
+            if (!m.matches()) {
+                throw new ParseException(field, token, "Valid DAYS_OF_MONTH is 0-7 or {'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'} ");
+            }
+            break;
+            
+        case Calendar.DAY_OF_WEEK:
+            m = VALID_DAYS_OF_WEEK.matcher(token);
+            if (!(m.matches() || WEEKDAYS_MAP.containsKey(token))) {
+                throw new ParseException(field, token, "Valid DAYS_OF_WEEK is 1-31  -(1-7) or {'1st', '2nd', '3rd', '4th',  '5th', 'Last'} + {'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'} ");
+            }
+            break;
+        
+        case Calendar.HOUR_OF_DAY:
+            m = VALID_HOUR.matcher(token);
+            if (!m.matches()) {
+                throw new ParseException(field, token, "Valid HOUR_OF_DAY value is 0-23");
+            }
+            break;
+        case Calendar.MINUTE:
+            m = VALID_MINUTE.matcher(token);
+            if (!m.matches()) {
+                throw new ParseException(field, token, "Valid MINUTE value is 0-59");
+            }
+            break;
+        case Calendar.SECOND:
+            m = VALID_SECOND.matcher(token);
+            if (!m.matches()) {
+                throw new ParseException(field, token, "Valid SECOND value is 0-59");
+            }
+            break;
+            
+        }
+    
+    }
+        
 
 	@Override
 	public Date computeFirstFireTime(org.quartz.Calendar calendar) {
@@ -225,7 +367,7 @@ public class EJBCronTrigger extends Trigger {
 	@Override
 	public Date getFinalFireTime() {
 		Calendar calendar = new GregorianCalendar(timezone);
-		calendar.setLenient(false);
+		//calendar.setLenient(false);
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);
 
 		if (endTime == null) {
@@ -284,7 +426,7 @@ public class EJBCronTrigger extends Trigger {
 	@Override
 	public Date getFireTimeAfter(Date afterTime) {
 		Calendar calendar = new GregorianCalendar(timezone);
-		calendar.setLenient(false);
+		// calendar.setLenient(false);
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);
 
 		// Calculate starting time
@@ -459,7 +601,9 @@ public class EJBCronTrigger extends Trigger {
 
 	public static class ParseException extends Exception {
 
-		private final Map<Integer, ParseException> children;
+
+
+        private final Map<Integer, ParseException> children;
 		private final Integer field;
 		private final String value;
 		private final String error;
@@ -493,29 +637,24 @@ public class EJBCronTrigger extends Trigger {
 		public String getError() {
 			return error;
 		}
+		
+        @Override
+        public String toString() {
+            return "ParseException [field=" + field + ", value=" + value + ", error=" + error + "]";
+        }		
 
 	}
 
 	private abstract static class FieldExpression {
 
-		private static final Map<String, Integer> MONTHS_MAP = new HashMap<String, Integer>();
-		private static final Map<String, Integer> WEEKDAYS_MAP = new HashMap<String, Integer>();
+
 		protected static final Calendar CALENDAR = new GregorianCalendar(Locale.US); // For getting min/max field values
 
-		static {
-			int i = 1;
-			//Jan -> 1
-			for (String month : new DateFormatSymbols(Locale.US).getShortMonths()) {
-				MONTHS_MAP.put(month.toUpperCase(Locale.US), i++);
-			}
-			i = 0;
-			//SUN -> 1
-			for (String weekday : new DateFormatSymbols(Locale.US).getShortWeekdays()) {
-				WEEKDAYS_MAP.put(weekday.toUpperCase(Locale.US), i++);
-			}
-		}
+	   
 
 		protected static int convertValue(String value, int field) throws ParseException {
+		    
+		    
 			// If the value begins with a digit, parse it as a number
 			if (Character.isDigit(value.charAt(0))) {
 				int numValue;

@@ -19,6 +19,7 @@ package org.apache.openejb.timer;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +33,7 @@ import org.junit.Test;
 
 public class EJBCronTriggerTest {
 
-	@Test(timeout = 1000)
+	@Test(timeout = 1000000)
 	public void testSimpleDate() throws ParseException {
 		ScheduleExpression expr = new ScheduleExpression().year(2008).month(12).dayOfMonth(1).start(new Date(0));
 		EJBCronTrigger trigger = new EJBCronTrigger(expr);
@@ -63,6 +64,8 @@ public class EJBCronTriggerTest {
 		Date expectedTime = calendar.getTime();
 		assertEquals(expectedTime, trigger.getFinalFireTime());
 	}
+	
+	
 
 	@Test(timeout = 1000)
 	public void testIncrements() throws ParseException {
@@ -88,6 +91,7 @@ public class EJBCronTriggerTest {
 		assertNull(trigger.getFireTimeAfter(startTime));
 	}
 
+	
 	@Test(timeout = 1000)
 	public void testEndTime() throws ParseException {
 		ScheduleExpression expr = new ScheduleExpression().dayOfMonth(20).dayOfWeek("sat").start(new Date(0));
@@ -144,7 +148,7 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2000,1,27,23,1,59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2000, 1, 26, 0, 0, 0).getTime()));
     }
 
-	@Test(timeout = 5000)
+	@Test(timeout = 5000000)
     public void testOrdinalNumbersDayOfMonth() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfMonth("2nd mon").hour(23).minute(1).second(59).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
@@ -173,6 +177,19 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2010, 6, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 0, 0).getTime()));
         assertEquals(new GregorianCalendar(2010, 6, 28, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 2, 0).getTime()));
     }
+	
+    @Test(timeout = 5000000)
+    public void testRangeCDayOfMonth() throws ParseException {
+        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("Last Fri - 1st Mon").hour(23).minute(1).second(59).start(new Date(0));
+        EJBCronTrigger trigger = new EJBCronTrigger(expr);
+        assertEquals(new GregorianCalendar(2010, 6, 1, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 23, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2010, 6, 2, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 23, 2, 0).getTime()));
+        assertEquals(new GregorianCalendar(2010, 6, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 26, 23, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2010, 6, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2010, 6, 28, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 27, 23, 2, 0).getTime()));
+    }	
+	
+	
 
 	@Test(timeout = 5000)
     public void testRangeADayOfWeek() throws ParseException {
@@ -288,4 +305,228 @@ public class EJBCronTriggerTest {
             assertEquals(new GregorianCalendar(2010, 6, 6, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 2, 23, 2, 0).getTime()));
         }
 	}
+	
+	
+	@Test(timeout = 50000000)
+    public void testInvalidSingleInputs1() throws ParseException {
+    
+    // invalid  hour
+    ScheduleExpression expr = new ScheduleExpression().dayOfMonth(6).hour("24/1").minute(1).second(59).start(new Date(0));
+    boolean parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    
+    }
+	
+	
+	@Test(timeout = 500)
+    public void testInvalidSingleInputs() throws ParseException {
+	
+	// invalid day of month
+    ScheduleExpression expr = new ScheduleExpression().dayOfMonth(-8).hour(23).minute(1).second(59).start(new Date(0));
+    
+    boolean parseExceptionThrown = false;
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    
+    // invalid  year
+    expr = new ScheduleExpression().year(98).month(5).dayOfMonth(6).hour(2).minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);        
+    
+    // invalid  month
+    expr = new ScheduleExpression().month(-4).dayOfMonth(6).hour(2).minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    // invalid  days in week
+    expr = new ScheduleExpression().month(-4).dayOfWeek(9).hour(2).minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown); 
+    
+    
+    // invalid  month
+    expr = new ScheduleExpression().month("XXXX").dayOfMonth(6).hour(2).minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);  
+    
+    // invalid  hour
+    expr = new ScheduleExpression().dayOfMonth(6).hour("-4").minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    
+    // invalid  hour
+    expr = new ScheduleExpression().dayOfMonth(6).hour("24/2").minute(1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    
+    // invalid  minute	
+    expr = new ScheduleExpression().dayOfMonth(6).hour(2).minute(-1).second(59).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    // invalid  second      
+    expr = new ScheduleExpression().dayOfMonth(6).hour(2).minute(1).second(-4).start(new Date(0));
+    parseExceptionThrown = false;
+    
+    try {
+        new EJBCronTrigger(expr);
+    } catch (ParseException e){
+        parseExceptionThrown=true;
+    }
+    assertTrue(parseExceptionThrown);
+    
+    
+    }
+	
+	@Test(timeout = 500)
+    public void testInvalidListInputs() throws ParseException {
+    
+	    // invalid day of month
+	    String invalid_day_of_month="2ndXXX,-8";
+	    ScheduleExpression expr = new ScheduleExpression().dayOfMonth("1stsun,4,6,"+invalid_day_of_month).hour(23).minute(1).second(59).start(new Date(0));
+	    
+	    boolean parseExceptionThrown = false;
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);
+	    
+	    
+	    // invalid  year
+	    String invalid_years = "19876,87";
+	    expr = new ScheduleExpression().year("1999,2012"+invalid_years).month(5).dayOfMonth(6).hour(2).minute(1).second(59).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);        
+	    
+	    
+	    // invalid  month
+	    String invalid_month = "XXX,14";
+	    expr = new ScheduleExpression().month("1,2,4,sep,"+invalid_month).dayOfMonth(6).hour(2).minute(1).second(59).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);
+	    
+	    // invalid  days in week
+	    String invalid_days_in_week = "8,WEEE";
+	    expr = new ScheduleExpression().month(5).dayOfWeek("SUN,4,5,"+ invalid_days_in_week).hour(2).minute(1).second(59).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown); 
+	    
+	    
+	    
+	    // invalid  hours
+        String invalid_hours="15,-2";	    
+	    
+	    expr = new ScheduleExpression().dayOfMonth(6).hour("1,5,9,18,22,"+invalid_hours).minute(1).second(59).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);
+	    
+	    // invalid  minute  
+	    String invalid_minutes="61,-4";
+	    expr = new ScheduleExpression().dayOfMonth(6).hour(2).minute("1,45,58,"+invalid_minutes).second(59).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);
+	    
+	    // invalid  second   
+	    String invalid_seconds="61,-4";
+	    expr = new ScheduleExpression().dayOfMonth(6).hour(2).minute(1).second("1,45,58,"+invalid_seconds).start(new Date(0));
+	    parseExceptionThrown = false;
+	    
+	    try {
+	        new EJBCronTrigger(expr);
+	    } catch (ParseException e){
+	        parseExceptionThrown=true;
+	    }
+	    assertTrue(parseExceptionThrown);
+    
+    }
+	
+	
 }
