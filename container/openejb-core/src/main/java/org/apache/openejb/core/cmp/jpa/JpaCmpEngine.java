@@ -262,6 +262,13 @@ public class JpaCmpEngine implements CmpEngine {
             if (arg instanceof EJBLocalObject) {
                 arg = Cmp2Util.getEntityBean(((EJBLocalObject) arg));
             }
+            try {
+                query.getParameter(i + 1);
+            } catch (IllegalArgumentException e) {
+                // IllegalArgumentException means that the parameter with the
+                // specified position does not exist
+                continue;
+            }
             query.setParameter(i + 1, arg);
         }
 
