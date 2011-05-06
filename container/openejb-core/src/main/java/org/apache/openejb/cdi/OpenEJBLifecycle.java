@@ -152,6 +152,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Scan
             this.scannerService.scan();
 
+            if (!(scannerService instanceof CdiScanner)) {
+                new CdiScanner().init(startupObject);
+            }
+
             //Deploy bean from XML. Also configures deployments, interceptors, decorators.
 
 //            final CdiScanner cdiScanner = buildScanner();
