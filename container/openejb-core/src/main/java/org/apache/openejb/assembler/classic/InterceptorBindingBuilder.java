@@ -113,14 +113,22 @@ public class InterceptorBindingBuilder {
             toMethods(clazz, beanInfo.aroundTimeout, beanAsInterceptor.getAroundTimeout());
         }
 
-        for (Method method : beanContext.getBeanClass().getMethods()) {
-            List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
+       
+        while (clazz != null && !clazz.equals(Object.class)) 
+        {
+            
+            for (Method method : clazz.getDeclaredMethods()) {
+                List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
 
-            // The bean itself gets to intercept too and is always last.
-            methodInterceptors.add(beanAsInterceptor);
-
-            beanContext.setMethodInterceptors(method, methodInterceptors);
+                // The bean itself gets to intercept too and is always last.
+                methodInterceptors.add(beanAsInterceptor);
+                beanContext.setMethodInterceptors(method, methodInterceptors);
+            } 
+            
+             clazz = clazz.getSuperclass();
+ 
         }
+        
 
         List<InterceptorData> callbackInterceptorDatas = createInterceptorDatas(null, beanInfo.ejbName, this.packageAndClassBindings);
 
