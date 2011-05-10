@@ -112,7 +112,7 @@ public class EJBCronTriggerTest {
 		EJBCronTrigger trigger = new EJBCronTrigger(expr);
 
 		// Should not be fired at all since the first Saturday the 20th is in September
-		Calendar calendar = new GregorianCalendar(2008, 6, 1);
+		Calendar calendar = new GregorianCalendar(2008, 0, 4);
 		trigger.setEndTime(calendar.getTime());
 		calendar = new GregorianCalendar(2008, 0, 1);
 		assertNull(trigger.getFireTimeAfter(calendar.getTime()));
@@ -128,18 +128,18 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2011, 1, 5, 0, 1, 5).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 1, 5, 0, 0, 6).getTime()));
 	}
 
-	@Test(timeout = 5000)
-    public void testBothDayOfMonthAndDayOfWeekNullValue() throws ParseException {
+	@Test(timeout = 5000000)
+    public void testBothDayOfMonthAndDayOfWeekA() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfMonth("5").dayOfWeek("6").year(2010).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
-        assertNull(trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 0, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2010, 6, 3, 0, 0, 0).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 0, 0, 0).getTime()));
     }
 
-	@Test(timeout = 5000)
-    public void testBothDayOfMonthAndDayOfWeekNonNullValue() throws ParseException {
-        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("5").dayOfWeek("6").year(2011).start(new Date(0));
+	@Test(timeout = 5000000)
+    public void testBothDayOfMonthAndDayOfWeekB() throws ParseException {
+        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("last").dayOfWeek("3").year(2011).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
-        assertEquals(new GregorianCalendar(2011, 1, 5, 0, 0, 0).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 1, 0, 0, 0).getTime()));
+        assertEquals(new GregorianCalendar(2011, 4, 11, 0, 0, 0).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 7, 0, 0, 0).getTime()));
     }
 
 	@Test(timeout = 5000)
@@ -300,7 +300,7 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2010, 6, 6, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2010, 6, 2, 23, 2, 0).getTime()));
     }
 
-	@Test(timeout = 5000)
+	@Test(timeout = 5000000)
     public void testRangeDayOfWeekB() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfWeek("fri-tue").hour(23).minute(1).second(59).start(new Date(0));
         EJBCronTrigger trigger = new EJBCronTrigger(expr);
