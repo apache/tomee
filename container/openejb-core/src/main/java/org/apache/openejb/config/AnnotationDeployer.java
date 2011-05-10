@@ -2127,10 +2127,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 for (javax.ejb.Schedule schedule : scheduleAnnotationList) {
                     Timer timer = new Timer();
-                    timer.setInfo(schedule.info());
                     timer.setPersistent(schedule.persistent());
-                    timer.setInfo(schedule.info());
-                    timer.setTimezone(schedule.timezone());
+                    timer.setInfo((schedule.info()==null||schedule.info().isEmpty())?null:schedule.info());
+                    timer.setTimezone((schedule.timezone()==null||schedule.timezone().isEmpty())?null:schedule.timezone());
                     //Copy TimerSchedule
                     TimerSchedule timerSchedule = new TimerSchedule();
                     timerSchedule.setSecond(schedule.second());
