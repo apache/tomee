@@ -60,6 +60,7 @@ public class IntervalTimerData extends TimerData {
         Date startTime = new Date(initialExpiration.getTime() - intervalDuration);
         simpleTrigger.setStartTime(startTime);
         simpleTrigger.setRepeatInterval(intervalDuration);
+        simpleTrigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
         return simpleTrigger;
     }
 
