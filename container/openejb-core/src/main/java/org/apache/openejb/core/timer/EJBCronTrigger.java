@@ -448,35 +448,67 @@ public class EJBCronTrigger extends Trigger {
 		}
 
 		int currentFieldIndex = 0;
+		
 		while (currentFieldIndex <=6 && calendar.before(stopCalendar)) {
+		    
 			FieldExpression expr = expressions[currentFieldIndex];
 			Integer value = expr.getNextValue(calendar);
-            if (value != null) {
+			
+			/*
+			 * 18.2.1.2 Expression Rules
+			 * If dayOfMonth has a non-wildcard value and dayOfWeek has a non-wildcard value, then either the
+			 * dayOfMonth field or the dayOfWeek field must match the current day (even though the other of the
+			 * two fields need not match the current day).
+			 */
+            if (currentFieldIndex == 2 && !(expressions[3] instanceof AsteriskExpression)){
+                
+                Calendar calendarDayOfWeek =(Calendar)calendar.clone();
+                
+                Integer nextDayOfWeek = expressions[3].getNextValue(calendarDayOfWeek);
+                
+                while (nextDayOfWeek == null){
+                    calendarDayOfWeek.add(Calendar.DAY_OF_MONTH, 1);
+                    nextDayOfWeek = expressions[3].getNextValue(calendarDayOfWeek);
+                }
+                
+                if (value!=null && nextDayOfWeek!=null) {
+                    
+                    calendarDayOfWeek.set(expressions[3].field, nextDayOfWeek);
+                    int newDayOfMonth = calendarDayOfWeek.get(expressions[2].field);
+                    value = Math.min(value, newDayOfMonth);
+                    
+                    //Next valid DayOfWeek might exist in next month.
+                    calendar.set(Calendar.MONTH, calendarDayOfWeek.get(Calendar.MONTH));
+                }
+            }
+			
+            if (currentFieldIndex >= 1 && value == null) {
+                
+                    // No suitable value was found, so move back to the previous field
+                    // and increase the value
+                    // When current field is HOUR_OF_DAY, its upper field is DAY_OF_MONTH, so we need to -2 due to DAY_OF_WEEK.
+                    int parentFieldIndex = currentFieldIndex ==4 ? currentFieldIndex- 2 : currentFieldIndex - 1;
+                    int maxAffectedFieldType = upadteCalendar(calendar, expressions[parentFieldIndex].field, 1);
+                    currentFieldIndex = CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.get(maxAffectedFieldType);
+                    resetFields(calendar, maxAffectedFieldType, false);
+                
+            } else if (value != null) {
+                
                 int oldValue = calendar.get(expr.field);
                 if (oldValue != value) {
                     // The value has changed, so update the calendar and reset all
                     // less significant fields
                     calendar.set(expr.field, value);
                     resetFields(calendar, expr.field, false);
+                    currentFieldIndex++;
 
-                    // If the weekday changed, the day of month changed too
-                    if (expr.field == Calendar.DAY_OF_WEEK) {
-                        currentFieldIndex--;
-                    } else {
-                        currentFieldIndex++;
-                    }
                 } else {
                     currentFieldIndex++;
                 }
-            } else if (currentFieldIndex >= 1) {
-                // No suitable value was found, so move back to the previous field
-                // and increase the value
-                // When current field is HOUR_OF_DAY, its upper field is DAY_OF_MONTH, so we need to -2 due to DAY_OF_WEEK.
-                int parentFieldIndex = currentFieldIndex ==4 ? currentFieldIndex- 2 : currentFieldIndex - 1;
-                int maxAffectedFieldType = upadteCalendar(calendar, expressions[parentFieldIndex].field, 1);
-                currentFieldIndex = CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.get(maxAffectedFieldType);
-                resetFields(calendar, maxAffectedFieldType, false);
+                
             } else {
+                
+                log.debug("end of getFireTimeAfter, result is:"+ null);
                 return null;
             }
         }
