@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +44,8 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 public class EJBCronTrigger extends Trigger {
+    
+    private static final Logger log = Logger.getInstance(LogCategory.TIMER, EJBCronTrigger.class);
 
     private static final Pattern INCREMENTS = Pattern.compile("(\\d+|\\*)/(\\d+)*");
 
@@ -72,8 +72,8 @@ public class EJBCronTrigger extends Trigger {
     private static final Map<String, Integer> WEEKDAYS_MAP = new HashMap<String, Integer>();
 
     static {
-        int i = 1;
-        // Jan -> 1
+        int i = 0;
+        // Jan -> 0
         for (String month : new DateFormatSymbols(Locale.US).getShortMonths()) {
             MONTHS_MAP.put(month.toUpperCase(Locale.US), i++);
         }
@@ -112,6 +112,7 @@ public class EJBCronTrigger extends Trigger {
 	private TimeZone timezone;
 
 	public EJBCronTrigger(ScheduleExpression expr) throws ParseException {
+	    
 		Map<Integer, String> fieldValues = new LinkedHashMap<Integer, String>();
 		fieldValues.put(Calendar.YEAR, expr.getYear());
 		fieldValues.put(Calendar.MONTH, expr.getMonth());
@@ -312,6 +313,9 @@ public class EJBCronTrigger extends Trigger {
 
 	@Override
 	public Date computeFirstFireTime(org.quartz.Calendar calendar) {
+	    
+	    log.debug("computeFirstFireTime starts, , current nextFireTime :"+nextFireTime);
+	    
 		// Copied from org.quartz.CronTrigger
         nextFireTime = getFireTimeAfter(new Date(getStartTime().getTime() - 1000l));
 
@@ -320,12 +324,15 @@ public class EJBCronTrigger extends Trigger {
             nextFireTime = getFireTimeAfter(nextFireTime);
         }
 		Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources").debug("computeFirstFireTime [" + calendar + "] nextFireTime [" + nextFireTime + "]");
+		
+		log.debug("computeFirstFireTime completed, current nextFireTime :"+nextFireTime);
         return nextFireTime;
 	}
 
 	@Override
 	public int executionComplete(JobExecutionContext context,
 			JobExecutionException result) {
+	    log.debug("executionComplete");
 		// Copied from org.quartz.CronTrigger
         if (result != null && result.refireImmediately()) {
             return INSTRUCTION_RE_EXECUTE_JOB;
@@ -410,11 +417,15 @@ public class EJBCronTrigger extends Trigger {
                 return null; // The job will never be run
             }
 		}
+        
 		return calendar.after(stopCalendar) ? calendar.getTime() : null;
+		
+		
 	}
 
 	@Override
 	public Date getFireTimeAfter(Date afterTime) {
+	    log.debug("start to getFireTimeAfter:"+afterTime);
 		Calendar calendar = new GregorianCalendar(timezone);
         // calendar.setLenient(false);
 		calendar.setFirstDayOfWeek(Calendar.SUNDAY);
@@ -449,7 +460,7 @@ public class EJBCronTrigger extends Trigger {
                     resetFields(calendar, expr.field, false);
 
                     // If the weekday changed, the day of month changed too
-                    if (currentFieldIndex == 3) {
+                    if (expr.field == Calendar.DAY_OF_WEEK) {
                         currentFieldIndex--;
                     } else {
                         currentFieldIndex++;
@@ -469,6 +480,9 @@ public class EJBCronTrigger extends Trigger {
                 return null;
             }
         }
+		
+		log.debug("end of getFireTimeAfter, result is:"+ (calendar.before(stopCalendar) ? calendar.getTime() : null));
+		
 		return calendar.before(stopCalendar) ? calendar.getTime() : null;
 	}
 
@@ -543,11 +557,15 @@ public class EJBCronTrigger extends Trigger {
 	public void triggered(org.quartz.Calendar calendar) {
 		// Copied from org.quartz.CronTrigger
 		previousFireTime = nextFireTime;
+		
         nextFireTime = getFireTimeAfter(nextFireTime);
+        
+        
         while (nextFireTime != null && calendar != null
                 && !calendar.isTimeIncluded(nextFireTime.getTime())) {
             nextFireTime = getFireTimeAfter(nextFireTime);
         }
+        log.info("EJBCronTrigger is triggered by quartz scheduler");
 	}
 
 	@Override
@@ -563,6 +581,7 @@ public class EJBCronTrigger extends Trigger {
         } else {
             nextFireTime = new Date();
         }
+        
 	}
 
 	@Override
@@ -582,6 +601,7 @@ public class EJBCronTrigger extends Trigger {
                 }
             }
         }
+        
 	}
 
 	@Override
@@ -652,17 +672,10 @@ public class EJBCronTrigger extends Trigger {
 
 				if (field == Calendar.DAY_OF_WEEK) {
 					numValue++;
-					if (numValue == 8) {
-						numValue = 1;
-					}
 				} else if (field == Calendar.MONTH) {
 					numValue--; // Months are 0-based
 				}
 
-				// Validate the value
-				if (numValue < CALENDAR.getMinimum(field) || numValue > CALENDAR.getMaximum(field)) {
-					throw new ParseException(field, value, "Value is out of range");
-				}
 				return numValue;
 			}
 
@@ -685,6 +698,16 @@ public class EJBCronTrigger extends Trigger {
 
 		protected int convertValue(String value) throws ParseException {
 			return convertValue(value, field);
+		}
+		
+		protected boolean isValidResult(Calendar calendar, Integer result){
+		    
+		    if (result!=null && result>=calendar.getActualMinimum(field) && result <=calendar.getActualMaximum(field)){
+                return true;
+            } 
+		    
+		    return false;
+		    
 		}
 
 		/**
@@ -828,6 +851,34 @@ public class EJBCronTrigger extends Trigger {
                 endValue=convertValue(endWeekDay);
             }
             
+            
+            /*
+             * handle 0-7 for day of week range.
+             * 
+             * both 0 and 7 represent Sun.  We need to remove one from the range.
+             * 
+             */
+            if (field == Calendar.DAY_OF_WEEK) {
+                
+                if ((beginValue == 8 && endValue == 1)||(endValue == 8 && beginValue == 1)) {
+                    beginValue = 1;
+                    endValue = 7;
+                } else {
+                    
+                    
+                    if (beginValue == 8) {
+                        beginValue = 1;
+                    }
+
+                    if (endValue == 8) {
+                        endValue = 1;
+                    }           
+                }
+            }
+            
+            
+            
+            
             // Try converting a textual value to numeric
             if (endWeekDay.equals(LAST_IDENTIFIER)) {
                 start = -1;
@@ -872,15 +923,15 @@ public class EJBCronTrigger extends Trigger {
             int currValue = calendar.get(field);
             if (start2 != -1) {
                 if (currValue >= start2) {
-                    return currValue;
+                    return isValidResult(calendar,currValue)?currValue:null;
                 } else if (currValue > end) {
-                    return start2;
+                    return isValidResult(calendar,start2)?start2:null;
                 }
             }
             if (currValue <= start) {
-                return start;
+                return isValidResult(calendar,start)?start:null;
             } else if (currValue <= end) {
-                return currValue;
+                return isValidResult(calendar,currValue)?currValue:null;
             } else {
                 return null;
             }
@@ -901,15 +952,15 @@ public class EJBCronTrigger extends Trigger {
 		    int currValue = calendar.get(field);
             if (start2 != -1) {
                 if (currValue >= start2) {
-                    return currValue;
+                    return isValidResult(calendar,currValue)?currValue:null;
                 }
             }
             if (currValue <= start) {
                 return null;
             } else if (currValue <= end) {
-                return currValue;
+                return isValidResult(calendar,currValue)?currValue:null;
             } else {
-                return end;
+                return isValidResult(calendar,end)?end:null;
             }
 		}
 
@@ -992,6 +1043,11 @@ public class EJBCronTrigger extends Trigger {
                     
                 } else {
                     int individualValue = convertValue(value);
+                    
+                    if(field == Calendar.DAY_OF_WEEK && individualValue == 8){
+                        individualValue = 1;  
+                    }
+                    
                     values.add(individualValue);
                 }
             }
@@ -1035,7 +1091,9 @@ public class EJBCronTrigger extends Trigger {
 		    
 			int currValue = calendar.get(field);
 			
-			return newValues.ceiling(currValue);
+			Integer result = newValues.ceiling(currValue);
+			
+			return isValidResult(calendar, result)? result : null;
 			
 		}
 
@@ -1045,8 +1103,10 @@ public class EJBCronTrigger extends Trigger {
 		    TreeSet<Integer> newValues= getNewValuesFromDynamicExpressions(calendar);
 		    
 			int currValue = calendar.get(field);
+			
+			Integer result =newValues.floor(currValue);
             
-			return newValues.floor(currValue);
+			return isValidResult(calendar, result)? result : null;
 		}
 	}
 
@@ -1064,26 +1124,54 @@ public class EJBCronTrigger extends Trigger {
 
 		@Override
 		public Integer getNextValue(Calendar calendar) {
-			// Only applicable for seconds, minutes and hours so the actual maximum does not vary
-			// so currValue is always valid
-			int currValue = Math.max(calendar.get(field), start);
-			int maxValue = calendar.getMaximum(field);
-			if (currValue % interval > 0) {
-				int nextValue = currValue + (interval - currValue % interval);
-				return nextValue <= maxValue ? nextValue : null;
-			}
-			return currValue;
+		    
+            int currValue = calendar.get(field);
+
+            if (currValue > start) {
+
+                Integer nextValue = start + interval;
+
+                while (isValidResult(calendar, nextValue)) {
+
+                    if (nextValue >= currValue)
+                        return nextValue;
+
+                    nextValue = nextValue + interval;
+
+                }
+
+            } else {
+                return new Integer(start);
+            }
+
+            return null;
+		
 		}
 
 		@Override
 		public Integer getPreviousValue(Calendar calendar) {
-			// Only applicable for seconds, minutes and hours so the actual maximum does not vary
-			// so currValue is always valid
-			int maxValue = calendar.getMaximum(field);
-			int currValue = Math.min(calendar.get(field), maxValue);
-			int nextValue = currValue - currValue % interval;
-			return nextValue >= start ? nextValue : null;
-		}
+		    
+            int currValue = calendar.get(field);
+
+            if (currValue < start) {
+
+                Integer previousValue = start - interval;
+
+                while (isValidResult(calendar, previousValue)) {
+
+                    if (previousValue < currValue)
+                        return previousValue;
+
+                    previousValue = previousValue - interval;
+
+                }
+
+            } else {
+                return new Integer(start);
+            }
+
+            return null;
+        }
 
 	}
 
@@ -1102,7 +1190,9 @@ public class EJBCronTrigger extends Trigger {
 		public Integer getNextValue(Calendar calendar) {
 			int currDay = calendar.get(Calendar.DAY_OF_MONTH);
             Integer nthDay = getWeekdayInMonth(calendar);
-			return nthDay != null && nthDay >= currDay ? nthDay : null;
+			Integer result = nthDay != null && nthDay >= currDay ? nthDay : null;
+			
+			return isValidResult(calendar, result)? result : null;
 		}
         
         public Integer getWeekdayInMonth(Calendar calendar){
@@ -1115,12 +1205,14 @@ public class EJBCronTrigger extends Trigger {
 			// one we're looking for
 			int firstWeekday = (currDay % 7) - (currWeekday - weekday);
 			
+            firstWeekday = (firstWeekday == 0) ? 7 : firstWeekday;
+			
 			// Then calculate how many such weekdays there is in this month
-			int numWeekdays = (maxDay - firstWeekday) / 7;
+			int numWeekdays = firstWeekday>=0?(maxDay - firstWeekday) / 7 +1:(maxDay - firstWeekday) / 7;
 
 			// Then calculate the Nth of those days, or the last one if ordinal is null
 			int multiplier = ordinal != null ? ordinal : numWeekdays;
-			int nthDay = firstWeekday>0?(firstWeekday + (multiplier-1) * 7):(firstWeekday + multiplier * 7);
+			int nthDay = firstWeekday>=0?(firstWeekday + (multiplier-1) * 7):(firstWeekday + multiplier * 7);
 
 			// Return the calculated day, or null if the day is out of range
 			return nthDay <= maxDay ? nthDay : null;
@@ -1131,8 +1223,9 @@ public class EJBCronTrigger extends Trigger {
             
               int currDay = calendar.get(Calendar.DAY_OF_MONTH);
               Integer nthDay = getWeekdayInMonth(calendar);
-              return nthDay != null && nthDay <= currDay ? nthDay : null;
-        
+              Integer result = nthDay != null && nthDay <= currDay ? nthDay : null;
+              
+              return isValidResult(calendar, result)? result : null;
 		}
 
 	}
@@ -1156,13 +1249,15 @@ public class EJBCronTrigger extends Trigger {
 			int currValue = calendar.get(field);
 			int maxValue = calendar.getActualMaximum(field);
 			int value = maxValue - days;
-			return currValue <= value ? value : null;
+			Integer result = currValue <= value ? value : null;
+			return isValidResult(calendar, result)? result : null;
 		}
 
 		@Override
 		public Integer getPreviousValue(Calendar calendar) {
 			int maxValue = calendar.getActualMaximum(field);
-			return maxValue - days;
+			Integer result = maxValue - days;
+			return isValidResult(calendar, result)? result : null;
 		}
 
 	}
