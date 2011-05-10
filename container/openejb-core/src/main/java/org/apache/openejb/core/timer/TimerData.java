@@ -31,6 +31,7 @@ import javax.transaction.Transaction;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
@@ -50,6 +51,12 @@ public abstract class TimerData {
     private boolean persistent;
 
     protected Trigger trigger;
+    
+    protected Scheduler scheduler;
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
 
     // EJB Timer object given to user code
     private final Timer timer;
@@ -203,8 +210,20 @@ public abstract class TimerData {
     public boolean isPersistent(){
         return persistent;
     }
-
+    
+    
     public Trigger getTrigger() {
+        
+        if (scheduler != null) {
+            try {
+                if (scheduler.getTrigger(trigger.getName(), trigger.getGroup()) != null) {
+                    return scheduler.getTrigger(trigger.getName(), trigger.getGroup());
+                }
+            } catch (SchedulerException e) {
+                return null;
+            }
+        } 
+
         return trigger;
     }
 
@@ -212,13 +231,21 @@ public abstract class TimerData {
         if (cancelled) {
             throw new NoSuchObjectLocalException("The timer has been cancelled");
         }
-        Date nextTimeout = trigger.getNextFireTime();
+        
+        
+        Date nextTimeout = null;
+        
+        if(getTrigger()!=null){
+        
+            nextTimeout = getTrigger().getNextFireTime();
+        }
+        
+        
+
         if (nextTimeout == null) {
             throw new NoMoreTimeoutsException("The timer has no future timeouts");
-        } else if (nextTimeout.getTime() < System.currentTimeMillis()) {
-            //TODO Double check whether the thrown exception is expected, this may occurs while the timeout is arrived, but the task has not scheduled yet.
-            throw new NoSuchObjectLocalException("The timer has been expired");
-        }
+        } 
+        
         return nextTimeout;
     }
 

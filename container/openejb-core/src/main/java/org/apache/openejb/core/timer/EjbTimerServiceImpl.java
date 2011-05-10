@@ -35,7 +35,6 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.BaseContext;
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -145,7 +144,9 @@ public class EjbTimerServiceImpl implements EjbTimerService {
      */
     public void schedule(TimerData timerData) {
         if (scheduler == null) throw new IllegalStateException("scheduler is configured properly");
-
+        
+        timerData.setScheduler(scheduler);
+        
         Trigger trigger = timerData.getTrigger();
         trigger.setJobName(OPENEJB_TIMEOUT_JOB_NAME);
         trigger.setJobGroup(OPENEJB_TIMEOUT_JOB_GROUP_NAME);
