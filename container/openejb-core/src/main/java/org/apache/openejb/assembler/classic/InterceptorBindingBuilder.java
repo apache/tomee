@@ -114,19 +114,14 @@ public class InterceptorBindingBuilder {
         }
 
        
-        while (clazz != null && !clazz.equals(Object.class)) 
-        {
-            
+        while (clazz != null && clazz != Object.class) {
             for (Method method : clazz.getDeclaredMethods()) {
                 List<InterceptorData> methodInterceptors = createInterceptorDatas(method, beanInfo.ejbName, this.bindings);
-
                 // The bean itself gets to intercept too and is always last.
                 methodInterceptors.add(beanAsInterceptor);
                 beanContext.setMethodInterceptors(method, methodInterceptors);
-            } 
-            
-             clazz = clazz.getSuperclass();
- 
+            }
+            clazz = clazz.getSuperclass();
         }
         
 

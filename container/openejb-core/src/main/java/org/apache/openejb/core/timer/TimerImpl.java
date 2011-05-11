@@ -56,7 +56,7 @@ public class TimerImpl implements Timer {
 
     public Serializable getInfo() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        return timerData.getInfo()==null?null:(Serializable)timerData.getInfo();
+        return (Serializable) timerData.getInfo();
     }
 
     public TimerHandle getHandle() throws IllegalStateException, NoSuchObjectLocalException {
