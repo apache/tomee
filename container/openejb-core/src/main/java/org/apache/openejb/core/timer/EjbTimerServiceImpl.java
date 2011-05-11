@@ -28,6 +28,7 @@ import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
 import org.apache.openejb.BeanContext;
@@ -313,8 +314,8 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             if (timer == null) {
                 return;
             }
-
             for (int tries = 0; tries < (1 + retryAttempts); tries++) {
+                boolean retry = false;
                 // if transacted, begin the transaction
                 if (transacted) {
                     try {
@@ -324,41 +325,45 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                         return;
                     }
                 }
-
                 // call the timeout method
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
                     Method ejbTimeout = timerData.getTimeoutMethod();
                     container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] { timer }, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
+                    retry = true;
                     // exception from a timer does not necessairly mean failure
                     log.warning("RuntimeException from ejbTimeout on " + deployment.getDeploymentID(), e);
+                    try {
+                        transactionManager.setRollbackOnly();
+                    } catch (SystemException e1) {
+                        log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
+                    }
                 } catch (OpenEJBException e) {
+                    retry = true;
                     log.warning("Exception from ejbTimeout on " + deployment.getDeploymentID(), e);
+                    if (transacted) {
+                        try {
+                            transactionManager.setRollbackOnly();
+                        } catch (SystemException e1) {
+                            log.warning("Exception occured while setting RollbackOnly for container transaction", e1);
+                        }
+                    }
                 } finally {
                     try {
-                        if (!transacted || transactionManager.getStatus() == Status.STATUS_ACTIVE) {
-                            // clean up the timer store
-                            //TODO shall we do all this via Quartz listener ???
-                            if (timerData.getType() == TimerType.SingleAction) {
-                                timerStore.removeTimer(timerData.getId());
+                        if (!transacted) {
+                            if (retry) {
+                                continue;
                             } else {
-                                timerStore.updateIntervalTimer(timerData);
+                                return;
                             }
-
-                            // commit the tx
-                            if (transacted) {
-                                transactionManager.commit();
-                            }
-
-                            // all is cool
-                            //noinspection ReturnInsideFinallyBlock
+                        } else if (transactionManager.getStatus() == Status.STATUS_ACTIVE) {
+                            transactionManager.commit();
                             return;
                         } else {
-                            // tx was marked rollback, so roll it back
-                            if (transacted) {
-                                transactionManager.rollback();
-                            }
+                            // tx was marked rollback, so roll it back and retry.
+                            transactionManager.rollback();
+                            continue;
                         }
                     } catch (Exception e) {
                         log.warning("Exception occured while completing container transaction", e);
@@ -373,9 +378,16 @@ public class EjbTimerServiceImpl implements EjbTimerService {
             log.warning("Error occured while calling ejbTimeout", e);
             throw e;
         } finally {
-            // if this is a single action timer, mark it as cancelled
+            // clean up the timer store
+            //TODO shall we do all this via Quartz listener ???
             if (timerData.getType() == TimerType.SingleAction) {
-                cancelled(timerData);
+                timerStore.removeTimer(timerData.getId());
+                timerData.setExpired(true);
+            } else if (timerData.getType() == TimerType.Calendar && timerData.getNextTimeout() == null) {
+                timerStore.removeTimer(timerData.getId());
+                timerData.setExpired(true);
+            } else {
+                timerStore.updateIntervalTimer(timerData);
             }
         }
     }

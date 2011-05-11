@@ -21,8 +21,6 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import javax.ejb.EJBException;
-import javax.ejb.NoMoreTimeoutsException;
-import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.transaction.Status;
@@ -79,6 +77,14 @@ public abstract class TimerData {
      * when we are registered to avoid multiple registrations.
      */
     private boolean synchronizationRegistered = false;
+    
+    /**
+     *  Used to set timer to expired state after the timeout callback method has been successfully invoked.
+     *  only apply to 
+     *  1, Single action timer
+     *  2, Calendar timer there are no future timeout.
+     */
+    private boolean expired;    
 
     public TimerData(long id, EjbTimerServiceImpl timerService, String deploymentId, Object primaryKey, Method timeoutMethod, TimerConfig timerConfig) {
         this.id = id;
@@ -227,11 +233,7 @@ public abstract class TimerData {
         return trigger;
     }
 
-    public Date getNextTimeout() throws NoSuchObjectLocalException, NoMoreTimeoutsException {
-        if (cancelled) {
-            throw new NoSuchObjectLocalException("The timer has been cancelled");
-        }
-        
+    public Date getNextTimeout() {       
         
         Date nextTimeout = null;
         
@@ -240,18 +242,20 @@ public abstract class TimerData {
             nextTimeout = getTrigger().getNextFireTime();
         }
         
-        
-
-        if (nextTimeout == null) {
-            throw new NoMoreTimeoutsException("The timer has no future timeouts");
-        } 
-        
         return nextTimeout;
     }
 
-    public long getTimeRemaining() throws NoSuchObjectLocalException, NoMoreTimeoutsException {
+    public long getTimeRemaining() {
         Date nextTimeout = getNextTimeout();
         return nextTimeout.getTime() - System.currentTimeMillis();
+    }
+    
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired){
+        this.expired = expired;
     }
 
     public abstract TimerType getType();

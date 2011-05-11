@@ -21,6 +21,7 @@ import java.util.Date;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
+import javax.ejb.NoMoreTimeoutsException;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
@@ -44,13 +45,16 @@ public class TimerImpl implements Timer {
 
     public long getTimeRemaining() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
-        /*long now = System.currentTimeMillis();
-        long then = timerData.getExpiration().getTime();*/
+        Date nextTimeout = timerData.getNextTimeout();
+        if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
         return timerData.getTimeRemaining();
     }
 
     public Date getNextTimeout() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
+        
+        Date nextTimeout = timerData.getNextTimeout();
+        if (nextTimeout == null) throw new NoMoreTimeoutsException("The timer has no future timeouts");
         return timerData.getNextTimeout();
     }
 
@@ -61,6 +65,9 @@ public class TimerImpl implements Timer {
 
     public TimerHandle getHandle() throws IllegalStateException, NoSuchObjectLocalException {
         checkState();
+        if(!timerData.isPersistent()){
+           throw new IllegalStateException("can't getHandle for a non-persistent timer");
+        }
         return new TimerHandleImpl(timerData.getId(), timerData.getDeploymentId());
     }
 
@@ -92,6 +99,10 @@ public class TimerImpl implements Timer {
 
         if (timerData.isCancelled()) {
             throw new NoSuchObjectLocalException("Timer has been cancelled");
+        }
+        
+        if (timerData.isExpired()){
+            throw new NoSuchObjectLocalException("The timer has expired");
         }
     }
 
