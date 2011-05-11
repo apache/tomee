@@ -251,14 +251,14 @@ public class CheckCallbacks extends ValidationBase {
 
     private void checkAroundTypeInvoke(String aroundType, Class ejbClass, String declaringClassName, String declaringMethodName, String componentName) {
         try {
-            Class<?> delcaringClass = null;
+            Class<?> declaringClass = null;
             try {
-                delcaringClass = declaringClassName == null ? ejbClass : loadClass(declaringClassName);
+                declaringClass = declaringClassName == null ? ejbClass : loadClass(declaringClassName);
             } catch (OpenEJBException e) {
                 fail(componentName, "missing.class", declaringClassName, aroundType, ejbClass.getName());
                 return;
             }
-            Method method = getMethod(delcaringClass, declaringMethodName, InvocationContext.class);
+            Method method = getMethod(declaringClass, declaringMethodName, InvocationContext.class);
 
             Class<?> returnType = method.getReturnType();
 
@@ -312,7 +312,7 @@ public class CheckCallbacks extends ValidationBase {
                 return;
             }
             Method method = getMethod(delcaringClass, callback.getMethodName(), parameterTypes);
-            if (implementsSessionBean(ejbClass)) {
+            if (implementsSessionBean(delcaringClass)) {
                 SessionBean sb = (SessionBean) bean;
                 if ("PreDestroy".equals(type)) {
                     if (!callback.getMethodName().equals("ejbRemove"))
