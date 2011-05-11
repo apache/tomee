@@ -537,7 +537,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         containerSystemContext.bind(VALIDATOR_FACTORY_NAMING_CONTEXT + id, factory);
                         containerSystemContext.bind(VALIDATOR_NAMING_CONTEXT + id, factory.usingContext().getValidator());
                     } catch (NameAlreadyBoundException e) {
-                        throw new OpenEJBException("ValidatorFactory already exists for module " + id);
+                        throw new OpenEJBException("ValidatorFactory already exists for module " + id, e);
                     } catch (Exception e) {
                         throw new OpenEJBException(e);
                     }
