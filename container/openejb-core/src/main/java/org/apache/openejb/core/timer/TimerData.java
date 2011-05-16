@@ -92,7 +92,7 @@ public abstract class TimerData {
         this.deploymentId = deploymentId;
         this.primaryKey = primaryKey;
         this.info = timerConfig == null ? null : timerConfig.getInfo();
-        this.persistent = timerConfig == null ? false : timerConfig.isPersistent();
+        this.persistent = timerConfig == null ? true : timerConfig.isPersistent();
         this.timer = new TimerImpl(this);
         this.timeoutMethod = timeoutMethod;
     }
