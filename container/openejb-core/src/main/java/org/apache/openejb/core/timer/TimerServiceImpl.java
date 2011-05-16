@@ -39,19 +39,19 @@ public class TimerServiceImpl implements TimerService {
     }
 
     public Timer createTimer(Date initialExpiration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialExpiration, intervalDuration, new TimerConfig(info, false));
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialExpiration, intervalDuration, new TimerConfig(info, true));
     }
 
     public Timer createTimer(Date expiration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, expiration, new TimerConfig(info, false));
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, expiration, new TimerConfig(info, true));
     }
 
     public Timer createTimer(long initialDuration, long intervalDuration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialDuration, intervalDuration, new TimerConfig(info, false));
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, initialDuration, intervalDuration, new TimerConfig(info, true));
     }
 
     public Timer createTimer(long duration, Serializable info) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, duration, new TimerConfig(info, false));
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, duration, new TimerConfig(info, true));
     }
 
     public Collection<Timer> getTimers() throws IllegalStateException, EJBException {
@@ -76,7 +76,7 @@ public class TimerServiceImpl implements TimerService {
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
         
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), new TimerConfig(null, false));
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), new TimerConfig(null, true));
     }
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
