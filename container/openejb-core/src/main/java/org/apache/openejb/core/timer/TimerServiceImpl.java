@@ -75,10 +75,27 @@ public class TimerServiceImpl implements TimerService {
     }
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, scheduleExpression, new TimerConfig(null, false));
+        
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), new TimerConfig(null, false));
     }
 
     public Timer createCalendarTimer(ScheduleExpression scheduleExpression, TimerConfig timerConfig) throws IllegalArgumentException, IllegalStateException, EJBException {
-        return ejbTimerService.createTimer(primaryKey, ejbTimeout, scheduleExpression, timerConfig);
+        return ejbTimerService.createTimer(primaryKey, ejbTimeout, copy(scheduleExpression), timerConfig);
+    }
+    
+    private ScheduleExpression copy(ScheduleExpression scheduleExpression){
+        ScheduleExpression scheduleExpressionCopy = new ScheduleExpression();
+        scheduleExpressionCopy.year(scheduleExpression.getYear());
+        scheduleExpressionCopy.month(scheduleExpression.getMonth());
+        scheduleExpressionCopy.dayOfMonth(scheduleExpression.getDayOfMonth());
+        scheduleExpressionCopy.dayOfWeek(scheduleExpression.getDayOfWeek());
+        scheduleExpressionCopy.hour(scheduleExpression.getHour());
+        scheduleExpressionCopy.minute(scheduleExpression.getMinute());
+        scheduleExpressionCopy.second(scheduleExpression.getSecond());
+        scheduleExpressionCopy.start(scheduleExpression.getStart());
+        scheduleExpressionCopy.end(scheduleExpression.getEnd());
+        scheduleExpressionCopy.timezone(scheduleExpression.getTimezone());
+        
+        return scheduleExpressionCopy;
     }
 }
