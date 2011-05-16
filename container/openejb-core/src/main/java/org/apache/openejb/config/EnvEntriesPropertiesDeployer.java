@@ -100,6 +100,9 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
 
     private void apply(JndiConsumer bean, EnvEntry newEntry, String componentName) {
         EnvEntry entry = bean.getEnvEntryMap().get(newEntry.getName());
+        if(entry == null){
+            entry = bean.getEnvEntryMap().get("java:comp/env/" + newEntry.getName());
+        }
         if (entry != null){
             if (SystemInstance.get().getOptions().get("envprops.override", false)) {
                 log.debug("envprops.override", componentName, entry.getName(), entry.getEnvEntryValue(), newEntry.getEnvEntryValue());
