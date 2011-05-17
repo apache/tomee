@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * javaee_web_services_1_3.xsd
- * 
+ *
  * <p>Java class for port-componentType complex type.
  *
  * <p>The following schema fragment specifies the expected content contained within this class.
@@ -96,12 +96,13 @@ public class PortComponent implements Keyable<String> {
     @XmlElement(name = "wsdl-port")
     protected QName wsdlPort;
     @XmlElement(name = "enable-mtom")
-    protected boolean enableMtom;
+    protected Boolean enableMtom;
     @XmlElement(name = "mtom-threshold")
     protected Integer mtomThreshold;
+    @XmlElement(name = "addressing")
     protected Addressing addressing;
     @XmlElement(name = "respect-binding")
-    protected Boolean respectBinding;
+    protected RespectBinding respectBinding;
     @XmlElement(name = "protocol-binding")
     protected String protocolBinding;
     @XmlElement(name = "service-endpoint-interface")
@@ -171,10 +172,14 @@ public class PortComponent implements Keyable<String> {
     }
 
     public boolean isEnableMtom() {
+        return enableMtom == null ? false : enableMtom;
+    }
+
+    public Boolean getEnableMtom() {
         return enableMtom;
     }
 
-    public void setEnableMtom(boolean value) {
+    public void setEnableMtom(Boolean value) {
         this.enableMtom = value;
     }
 
@@ -194,11 +199,11 @@ public class PortComponent implements Keyable<String> {
         this.addressing = value;
     }
 
-    public Boolean getRespectBinding() {
+    public RespectBinding getRespectBinding() {
         return respectBinding;
     }
 
-    public void setRespectBinding(Boolean value) {
+    public void setRespectBinding(RespectBinding value) {
         this.respectBinding = value;
     }
 
