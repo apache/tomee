@@ -77,7 +77,7 @@ public class PortComponentRef {
     protected Integer mtomThreshold;
     protected Addressing addressing;
     @XmlElement(name = "respect-binding")
-    protected Boolean respectBinding;
+    protected RespectBinding respectBinding;
     @XmlElement(name = "port-component-link")
     protected String portComponentLink;
     @XmlTransient
@@ -125,11 +125,11 @@ public class PortComponentRef {
         this.addressing = value;
     }
 
-    public Boolean getRespectBinding() {
+    public RespectBinding getRespectBinding() {
         return respectBinding;
     }
 
-    public void setRespectBinding(Boolean value) {
+    public void setRespectBinding(RespectBinding value) {
         this.respectBinding = value;
     }
 
