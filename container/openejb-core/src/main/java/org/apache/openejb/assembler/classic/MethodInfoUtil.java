@@ -41,8 +41,8 @@ import java.lang.reflect.Method;
  * @version $Rev$ $Date$
  */
 public class MethodInfoUtil {
-    
-    
+
+
     /**
      * Finds the nearest java.lang.reflect.Method with the given NamedMethodInfo
      * Callbacks can be private so class.getMethod() cannot be used.  Searching
@@ -85,7 +85,7 @@ public class MethodInfoUtil {
         }
 
         throw noSuchMethod;
-    }    
+    }
 
     public static List<Method> matchingMethods(Method signature, Class clazz) {
         List<Method> list = new ArrayList<Method>();
@@ -277,14 +277,18 @@ public class MethodInfoUtil {
                     } else if (methodInfo.methodIntf.equals("Home")) {
                         methods.addAll(matchingMethods(methodInfo, beanContext.getHomeInterface()));
                     } else if (methodInfo.methodIntf.equals("Remote")) {
-                        methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
+                        if (beanContext.getRemoteInterface() != null) {
+                            methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
+                        }
                         for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
                     } else if (methodInfo.methodIntf.equals("LocalHome")) {
                         methods.addAll(matchingMethods(methodInfo, beanContext.getLocalHomeInterface()));
                     } else if (methodInfo.methodIntf.equals("Local")) {
-                        methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
+                        if (beanContext.getLocalInterface() != null) {
+                            methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
+                        }
                         for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
                             methods.addAll(matchingMethods(methodInfo, intf));
                         }
@@ -356,7 +360,7 @@ public class MethodInfoUtil {
             Method method = iterator.next();
             if (containerMethod(method)) iterator.remove();
         }
-        
+
         return methods;
     }
 
