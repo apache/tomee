@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.ejb.EJBHome;
 
 public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externalizable {
+	private static final long serialVersionUID = -858340852654709679L;
 
     public static final byte STATEFUL = (byte) 6;
 
