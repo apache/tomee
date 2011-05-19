@@ -317,6 +317,7 @@
     <module>server</module>
     <module>examples</module>
     <module>assembly</module>
+    <module>tck</module>
   </modules>
 
   <profiles>
