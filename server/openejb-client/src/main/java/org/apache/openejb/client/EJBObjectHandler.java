@@ -16,14 +16,28 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.proxy.ProxyManager;
-
-import javax.ejb.EJBException;
-import javax.ejb.EJBObject;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.ejb.EJBException;
+import javax.ejb.EJBObject;
+
+import org.apache.openejb.client.proxy.ProxyManager;
 
 public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
@@ -35,11 +49,16 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     protected static final Method GETHANDLER = getMethod(EJBObjectProxy.class, "getEJBObjectHandler", null);
 
+    protected static final Method CANCEL = getMethod(Future.class, "cancel", boolean.class);
+
+    //TODO figure out how to configure and manage the thread pool on the client side
+    protected static final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>();
+    protected static final ExecutorService executorService = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue);
     /*
     * The registryId is a logical identifier that is used as a key when placing EntityEJBObjectHandler into
     * the BaseEjbProxyHanlder's liveHandleRegistry.  EntityEJBObjectHandlers that represent the same
     * bean identity (keyed by the registry id) will be stored together so that they can be removed together
-    * when the EJBInvocationHandler.invalidateAllHandlers is invoked. The EntityEJBObjectHandler uses a 
+    * when the EJBInvocationHandler.invalidateAllHandlers is invoked. The EntityEJBObjectHandler uses a
     * compound key composed of the entity bean's primary key, deployment id, and
     * container id.  This uniquely identifies the bean identity that is proxied by this handler allowing it
     * to be removed with other handlers bound to the same registry id.
@@ -209,10 +228,39 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     protected Object businessMethod(Method method, Object[] args, Object proxy) throws Throwable {
 
+        if (ejb.isAsynchronousMethod(method)) {
+            try {
+                String requestId = UUID.randomUUID().toString();
+                EJBResponse response = new EJBResponse();
+                AsynchronousCall asynchronousCall = new AsynchronousCall(method, args, proxy, requestId, response);
+                return new FutureAdapter(executorService.submit(asynchronousCall), response, requestId);
+            } catch (RejectedExecutionException e) {
+                throw new EJBException("failed to allocate internal resource to execute the target task", e);
+            }
+        } else {
+            return _businessMethod(method, args, proxy, null);
+        }
+    }
+
+    private Object _businessMethod(Method method, Object[] args, Object proxy, String requestId) throws Throwable {
         EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
 
+        //Currently, we only set the requestId while the asynchronous invocation is called
+        req.getBody().setRequestId(requestId);
         EJBResponse res = request(req);
+        return _handleBusinessMethodResponse(res);
+    }
 
+    private Object _businessMethod(Method method, Object[] args, Object proxy, String requestId, EJBResponse response) throws Throwable {
+        EJBRequest req = new EJBRequest(RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD, ejb, method, args, primaryKey);
+
+        //Currently, we only set the request while the asynchronous invocation is called
+        req.getBody().setRequestId(requestId);
+        EJBResponse res = request(req, response);
+        return _handleBusinessMethodResponse(res);
+    }
+
+    private Object _handleBusinessMethodResponse(EJBResponse res) throws Throwable{
         switch (res.getResponseCode()) {
             case ResponseCodes.EJB_ERROR:
                 throw new SystemError((ThrowableArtifact) res.getResult());
@@ -227,4 +275,133 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
         }
     }
 
+    private class AsynchronousCall implements Callable {
+
+        private Method method;
+
+        private Object[] args;
+
+        private Object proxy;
+
+        private String requestId;
+
+        private EJBResponse response;
+
+        public AsynchronousCall(Method method, Object[] args, Object proxy, String requestId, EJBResponse response) {
+            this.method = method;
+            this.args = args;
+            this.proxy = proxy;
+            this.requestId = requestId;
+            this.response = response;
+        }
+
+        @Override
+        public Object call() throws Exception {
+            try {
+                return _businessMethod(method, args, proxy, requestId, response);
+            } catch (Exception e) {
+                throw e;
+            } catch (Throwable error) {
+                throw new SystemException(error);
+            }
+        }
+    }
+
+    private class FutureAdapter<T> implements Future<T> {
+
+        private Future<T> target;
+
+        private String requestId;
+
+        private EJBResponse response;
+
+        private volatile boolean canceled;
+
+        private AtomicBoolean lastMayInterruptIfRunningValue = new AtomicBoolean(false);
+
+        public FutureAdapter(Future<T> target, EJBResponse response, String requestId) {
+            this.target = target;
+            this.requestId = requestId;
+            this.response = response;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            /* In EJB 3.1 spec 3.4.8.1.1
+             * a. If a client calls cancel on its Future object, the container will attempt to cancel 
+             *    the associated asynchronous invocation only if that invocation has not already been dispatched.
+             *    There is no guarantee that an asynchronous invocation can be cancelled, regardless of how quickly 
+             *    cancel is called after the client receives its Future object.
+             *    If the asynchronous invocation can not be cancelled, the method must return false.
+             *    If the asynchronous invocation is successfully cancelled, the method must return true.
+             *
+             * b. The meaning of parameter mayInterruptIfRunning is changed.
+             *
+             *  So, we should never call cancel(true), or the underlying Future object will try to interrupt the target thread.
+            */
+
+            /**
+             * We use our own flag canceled to identify whether the task is canceled successfully.
+             */
+            if (canceled) {
+                return true;
+            }
+            if (blockingQueue.remove(target)) {
+                // We successfully remove the task from the queue
+                canceled = true;
+                return true;
+            } else {
+                // Did not find the task in the queue, the status might be ran/canceled or running
+                // Future.isDone() will return true when the task has been ran or canceled,
+                // Since we never call the Future.cancel method, the isDone method will only return true when the task has ran
+                if (!target.isDone()) {
+                    //The task is in the running state
+                    if (lastMayInterruptIfRunningValue.getAndSet(mayInterruptIfRunning) == mayInterruptIfRunning) {
+                        return false;
+                    }
+                    EJBRequest req = new EJBRequest(RequestMethodConstants.FUTURE_CANCEL, ejb, CANCEL, new Object[] { Boolean.valueOf(mayInterruptIfRunning) }, primaryKey);
+                    req.getBody().setRequestId(requestId);
+                    try {
+                        EJBResponse res = request(req);
+                        if(res.getResponseCode() != ResponseCodes.EJB_OK) {
+                            //TODO how do we notify the user that we fail to configure the value ?
+                        }
+                    } catch (Exception e) {
+                        //TODO how to handle
+                        return false;
+                    }
+                }
+                return false;
+            }
+        }
+
+        @Override
+        public T get() throws InterruptedException, ExecutionException {
+            if (canceled) {
+                throw new CancellationException();
+            }
+            return target.get();
+        }
+
+        @Override
+        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            if (canceled) {
+                throw new CancellationException();
+            }
+            return target.get(timeout, unit);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return canceled;
+        }
+
+        @Override
+        public boolean isDone() {
+            if (canceled) {
+                return false;
+            }
+            return target.isDone();
+        }
+    }
 }

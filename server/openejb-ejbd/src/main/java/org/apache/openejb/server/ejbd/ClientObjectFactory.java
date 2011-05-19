@@ -146,7 +146,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
                 idCode,
                 convert(info.getInterfaceType()),
                 info.getInterfaces(),
-                info.getInterface());
+                beanContext.getAsynchronousMethodSignatures());
         eMetaData.loadProperties(beanContext.getProperties());
         
         Object primKey = info.getPrimaryKey();
@@ -190,17 +190,17 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
         return hanlder.createEJBHomeProxy();
     }
 
-    private EJBMetaDataImpl buildEjbMetaData(ProxyInfo info, BeanContext deployment, int idCode) {
-        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(deployment.getHomeInterface(),
-                deployment.getRemoteInterface(),
-                deployment.getPrimaryKeyClass(),
-                deployment.getComponentType().toString(),
-                deployment.getDeploymentID().toString(),
+    private EJBMetaDataImpl buildEjbMetaData(ProxyInfo info, BeanContext beanContext, int idCode) {
+        EJBMetaDataImpl eMetaData = new EJBMetaDataImpl(beanContext.getHomeInterface(),
+                beanContext.getRemoteInterface(),
+                beanContext.getPrimaryKeyClass(),
+                beanContext.getComponentType().toString(),
+                beanContext.getDeploymentID().toString(),
                 idCode,
                 convert(info.getInterfaceType()),
                 info.getInterfaces(),
-                info.getInterface());
-        eMetaData.loadProperties(deployment.getProperties());
+                beanContext.getAsynchronousMethodSignatures());
+        eMetaData.loadProperties(beanContext.getProperties());
         return eMetaData;
     }
 }

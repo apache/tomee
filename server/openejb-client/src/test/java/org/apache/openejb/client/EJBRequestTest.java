@@ -38,7 +38,7 @@ public class EJBRequestTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ejb = new EJBMetaDataImpl(FooHome.class, FooObject.class, Integer.class, "BMP_ENTITY", "FooBeanID", InterfaceType.BUSINESS_REMOTE, null);
+        ejb = new EJBMetaDataImpl(FooHome.class, FooObject.class, Integer.class, "BMP_ENTITY", "FooBeanID", InterfaceType.BUSINESS_REMOTE, null, null);
     }
 
     public void testEJBHomeCreate() throws Exception {

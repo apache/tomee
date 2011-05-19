@@ -68,14 +68,21 @@ public class Client {
 
     public static Response request(Request req, Response res, ServerMetaData server) throws RemoteException {
         try {
-            return client.processRequest(req, res, server);
+            return client.processRequest(req, res, server, null);
         } finally {
             failed.remove();
         }
     }
 
-    protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
-//        System.out.println("req = " + req);
+    public static Response request(Request req, Response res, ServerMetaData server, URI preferedServerURI) throws RemoteException {
+        try {
+            return client.processRequest(req, res, server, preferedServerURI);
+        } finally {
+            failed.remove();
+        }
+    }
+
+    protected Response processRequest(Request req, Response res, ServerMetaData server, URI preferredServerURI) throws RemoteException {
         if (server == null)
             throw new IllegalArgumentException("Server instance cannot be null");
 
@@ -87,9 +94,16 @@ public class Client {
 
         Connection conn = null;
         try {
-            conn = ConnectionManager.getConnection(cluster, server, req);
+            if (preferredServerURI != null) {
+                conn = ConnectionManager.getConnection(preferredServerURI);
+            } else {
+                conn = ConnectionManager.getConnection(cluster, server, req);
+            }
+            if (res instanceof EJBResponse) {
+                ((EJBResponse) res).setResponseServerURI(conn.getURI());
+            }
         } catch (IOException e) {
-            throw new RemoteException("Unable to connect",e);
+            throw new RemoteException("Unable to connect", e);
         }
 
         try {
@@ -278,9 +292,11 @@ public class Client {
             Set<URI> failed = getFailed();
             failed.add(conn.getURI());
             conn.discard();
-            if (e instanceof RetryException || getRetry()){
+            //If the preferred server URI is configured, we will not try to fail over to other servers
+            //Currently, while calling Future.cancel method remotely, the initial business method invocation server URI should be used.
+            if ((e instanceof RetryException || getRetry()) && preferredServerURI == null) {
                 try {
-                    processRequest(req, res, server);
+                    processRequest(req, res, server, null);
                 } catch (RemoteFailoverException re) {
                     throw re;
                 } catch (RemoteException re) {

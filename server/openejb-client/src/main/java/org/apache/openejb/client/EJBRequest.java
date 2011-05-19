@@ -20,13 +20,14 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
-
 import java.rmi.Remote;
+import java.util.UUID;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.rmi.PortableRemoteObject;
-import javax.rmi.CORBA.Tie;
 import javax.rmi.CORBA.Stub;
+import javax.rmi.CORBA.Tie;
 
 import org.omg.CORBA.ORB;
 
@@ -117,11 +118,12 @@ public class EJBRequest implements ClusterableRequest {
         private transient ORB orb; 
         private transient Method methodInstance;
         private transient Class interfaceClass;
-//        private transient Class methodClass;
         private transient String methodName;
         private transient Class[] methodParamTypes;
         private transient Object[] methodParameters;
         private transient Object primaryKey;
+
+        private transient String requestId;
 
         public Body(EJBMetaDataImpl ejb) {
             this.ejb = ejb;
@@ -190,15 +192,25 @@ public class EJBRequest implements ClusterableRequest {
             this.primaryKey = primaryKey;
         }
 
+        public String getRequestId() {
+            return requestId;
+        }
+
+        public void setRequestId(String requestId) {
+            this.requestId = requestId;
+        }
+
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             byte version = in.readByte(); // future use
 
+            requestId = null;
             ClassNotFoundException result = null;
             primaryKey = null;
 //            methodClass = null;
             methodName = null;
             methodInstance = null;
             try {
+                requestId = (String)in.readObject();
                 primaryKey = in.readObject();
                 interfaceClass = (Class) in.readObject();
 //                methodClass = (Class) in.readObject();
@@ -227,6 +239,8 @@ public class EJBRequest implements ClusterableRequest {
         public void writeExternal(ObjectOutput out) throws IOException {
             // write out the version of the serialized data for future use
             out.writeByte(1);
+
+            out.writeObject(requestId);
 
             out.writeObject(primaryKey);
 
@@ -470,49 +484,51 @@ public class EJBRequest implements ClusterableRequest {
     }
 
     public String toString() {
-        StringBuffer s = null;
+        StringBuilder s = null; 
         switch (requestMethod) {
             case RequestMethodConstants.EJB_HOME_GET_EJB_META_DATA:
-                s = new StringBuffer("EJB_HOME.GET_EJB_META_DATA");
+                s = new StringBuilder("EJB_HOME.GET_EJB_META_DATA");
                 break;
             case RequestMethodConstants.EJB_HOME_GET_HOME_HANDLE:
-                s = new StringBuffer("EJB_HOME.GET_HOME_HANDLE");
+                s = new StringBuilder("EJB_HOME.GET_HOME_HANDLE");
                 break;
             case RequestMethodConstants.EJB_HOME_REMOVE_BY_HANDLE:
-                s = new StringBuffer("EJB_HOME.REMOVE_BY_HANDLE");
+                s = new StringBuilder("EJB_HOME.REMOVE_BY_HANDLE");
                 break;
             case RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY:
-                s = new StringBuffer("EJB_HOME.REMOVE_BY_PKEY");
+                s = new StringBuilder("EJB_HOME.REMOVE_BY_PKEY");
                 break;
             case RequestMethodConstants.EJB_HOME_FIND:
-                s = new StringBuffer("EJB_HOME.FIND");
+                s = new StringBuilder("EJB_HOME.FIND");
                 break;
             case RequestMethodConstants.EJB_HOME_CREATE:
-                s = new StringBuffer("EJB_HOME.CREATE");
+                s = new StringBuilder("EJB_HOME.CREATE");
                 break;
             case RequestMethodConstants.EJB_HOME_METHOD:
-                s = new StringBuffer("EJB_HOME.HOME_METHOD");
+                s = new StringBuilder("EJB_HOME.HOME_METHOD");
                 break;
             case RequestMethodConstants.EJB_OBJECT_GET_EJB_HOME:
-                s = new StringBuffer("EJB_OBJECT.GET_EJB_HOME");
+                s = new StringBuilder("EJB_OBJECT.GET_EJB_HOME");
                 break;
             case RequestMethodConstants.EJB_OBJECT_GET_HANDLE:
-                s = new StringBuffer("EJB_OBJECT.GET_HANDLE");
+                s = new StringBuilder("EJB_OBJECT.GET_HANDLE");
                 break;
             case RequestMethodConstants.EJB_OBJECT_GET_PRIMARY_KEY:
-                s = new StringBuffer("EJB_OBJECT.GET_PRIMARY_KEY");
+                s = new StringBuilder("EJB_OBJECT.GET_PRIMARY_KEY");
                 break;
             case RequestMethodConstants.EJB_OBJECT_IS_IDENTICAL:
-                s = new StringBuffer("EJB_OBJECT.IS_IDENTICAL");
+                s = new StringBuilder("EJB_OBJECT.IS_IDENTICAL");
                 break;
             case RequestMethodConstants.EJB_OBJECT_REMOVE:
-                s = new StringBuffer("EJB_OBJECT.REMOVE");
+                s = new StringBuilder("EJB_OBJECT.REMOVE");
                 break;
             case RequestMethodConstants.EJB_OBJECT_BUSINESS_METHOD:
-                s = new StringBuffer("EJB_OBJECT.BUSINESS_METHOD");
+                s = new StringBuilder("EJB_OBJECT.BUSINESS_METHOD");
                 break;
+            case RequestMethodConstants.FUTURE_CANCEL:
+                s = new StringBuilder("FUTURE.CANCEL");
             default:
-                s = new StringBuffer("EJB_UKNOWN."+requestMethod);
+                s = new StringBuilder("EJB_UKNOWN."+requestMethod);
         }
         s.append(':').append(deploymentId);
         if (body != null) {

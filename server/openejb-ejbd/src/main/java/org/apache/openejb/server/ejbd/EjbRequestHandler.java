@@ -21,6 +21,10 @@ import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ProxyInfo;
@@ -32,6 +36,7 @@ import org.apache.openejb.client.EJBResponse;
 import org.apache.openejb.client.RequestMethodConstants;
 import org.apache.openejb.client.ResponseCodes;
 import org.apache.openejb.client.ThrowableArtifact;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
@@ -45,9 +50,11 @@ class EjbRequestHandler {
 
     private final ClusterableRequestHandler clusterableRequestHandler;
 
+    private Map<String, AtomicBoolean> asynchronousInvocationCancelMap = new ConcurrentHashMap<String, AtomicBoolean>();
+
     EjbRequestHandler(EjbDaemon daemon) {
         this.daemon = daemon;
-        
+
         clusterableRequestHandler = newClusterableRequestHandler();
     }
 
@@ -73,7 +80,6 @@ class EjbRequestHandler {
 
         CallContext call = null;
         BeanContext di = null;
-        RpcContainer c = null;
 
         try {
             di = this.daemon.getDeployment(req);
@@ -190,6 +196,10 @@ class EjbRequestHandler {
                 case RequestMethodConstants.EJB_HOME_REMOVE_BY_PKEY:
                     doEjbHome_REMOVE_BY_PKEY(req, res);
                     break;
+
+                case RequestMethodConstants.FUTURE_CANCEL:
+                    doFUTURE_CANCEL_METHOD(req, res);
+                    break;
             }
 
         } catch (org.apache.openejb.InvalidateReferenceException e) {
@@ -230,18 +240,47 @@ class EjbRequestHandler {
         clusterableRequestHandler.updateServer(beanContext, req, res);
     }
 
+    protected void doFUTURE_CANCEL_METHOD(EJBRequest req, EJBResponse res) throws Exception {
+        AtomicBoolean invocationCancelTag = asynchronousInvocationCancelMap.get(req.getBody().getRequestId());
+        if (invocationCancelTag == null) {
+            //TODO ?
+        } else {
+            invocationCancelTag.set((Boolean) req.getBody().getMethodParameters()[0]);
+            res.setResponse(ResponseCodes.EJB_OK, null);
+        }
+    }
+ 
     protected void doEjbObject_BUSINESS_METHOD(EJBRequest req, EJBResponse res) throws Exception {
 
         CallContext call = CallContext.getCallContext();
-        RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
-
-        Object result = c.invoke(req.getDeploymentId(),
-                req.getInterfaceClass(), req.getMethodInstance(),
-                req.getMethodParameters(),
-                req.getPrimaryKey()
-        );
-        
-        res.setResponse(ResponseCodes.EJB_OK, result);
+        BeanContext beanContext = (BeanContext)call.getBeanContext();
+        boolean asynchronous = beanContext.isAsynchronous(req.getMethodInstance());
+        try {
+            if (asynchronous) {
+                AtomicBoolean invocationCancelTag = new AtomicBoolean(false);
+                ThreadContext.initAsynchronousCancelled(invocationCancelTag);
+                asynchronousInvocationCancelMap.put(req.getBody().getRequestId(), invocationCancelTag);
+            }
+            RpcContainer c = (RpcContainer) call.getBeanContext().getContainer();
+            
+            Object result = c.invoke(req.getDeploymentId(),
+                                     req.getInterfaceClass(), req.getMethodInstance(),
+                                     req.getMethodParameters(),
+                                     req.getPrimaryKey()
+                                     );
+ 
+            //Pass the internal value to the remote client, as AsyncResult is not serializable
+            if(result != null && asynchronous) {
+                result = ((Future)result).get();
+            }
+ 
+            res.setResponse(ResponseCodes.EJB_OK, result);
+        } finally {
+            if (asynchronous) {
+                ThreadContext.removeAsynchronousCancelled();
+                asynchronousInvocationCancelMap.remove(req.getBody().getRequestId());
+            }
+        }
     }
 
     protected void doEjbHome_METHOD(EJBRequest req, EJBResponse res) throws Exception {
