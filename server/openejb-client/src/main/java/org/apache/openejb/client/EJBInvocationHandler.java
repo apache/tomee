@@ -140,6 +140,18 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
         return response;
     }
 
+    protected EJBResponse request(EJBRequest req, EJBResponse res) throws Exception {
+        req.setClientIdentity(getClientIdentity());
+
+        req.setServerHash(server.buildHash());
+
+        Client.request(req, res, server);
+        if (null != res.getServer()) {
+            server.merge(res.getServer());
+        }
+        return res;
+    }
+
     protected Object getClientIdentity() {
         if (client != null) {
             Object identity = client.getClientIdentity();

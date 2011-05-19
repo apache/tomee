@@ -16,15 +16,18 @@
  */
 package org.apache.openejb.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Properties;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.ejb.EJBHome;
 
@@ -54,6 +57,8 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     protected transient Class mainInterface;
 
+    protected final transient Set<String> asynchronousMethods = new HashSet<String>();
+
     protected final transient Properties properties = new Properties();
 
     protected transient Class keyClass;
@@ -69,9 +74,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces) {
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
         this.interfaceType = interfaceType;
-        
+
         if ("STATEFUL".equalsIgnoreCase(typeOfBean)){
             this.type = STATEFUL;
         } else if ("STATELESS".equalsIgnoreCase(typeOfBean)){
@@ -88,22 +93,25 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (businessInterfaces != null){
             this.businessClasses.addAll(businessInterfaces);
         }
+        if (asynchronousMethodSignatures != null) {
+            this.asynchronousMethods.addAll(asynchronousMethodSignatures);
+        }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces) {
-        this(homeInterface, remoteInterface, typeOfBean, interfaceType, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+        this(homeInterface, remoteInterface, typeOfBean, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         if (type == CMP_ENTITY || type == BMP_ENTITY) {
             this.keyClass = primaryKeyClass;
         }
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, InterfaceType interfaceType, List<Class> businessInterfaces) {
-        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, interfaceType, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         this.deploymentID = deploymentID;
     }
 
-    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces, Class mainInterface) {
-        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, interfaceType, businessInterfaces);
+    public EJBMetaDataImpl(Class homeInterface, Class remoteInterface, Class primaryKeyClass, String typeOfBean, String deploymentID, int deploymentCode, InterfaceType interfaceType, List<Class> businessInterfaces, Set<String> asynchronousMethodSignatures) {
+        this(homeInterface, remoteInterface, primaryKeyClass, typeOfBean, deploymentID, interfaceType, businessInterfaces, asynchronousMethodSignatures);
         this.deploymentCode = deploymentCode;
     }
 
@@ -141,6 +149,17 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
 
     public boolean isSession() {
         return (type == STATEFUL || type == STATELESS || type == SINGLETON);
+    }
+
+    public boolean isAsynchronousMethod(Method method) {
+        if(asynchronousMethods.size() == 0) {
+            return false;
+        }
+        return asynchronousMethods.contains(generateMethodSignature(method));
+    }
+
+    public void addAsynchronousMethod(Method method) {
+        asynchronousMethods.add(generateMethodSignature(method));
     }
 
     protected void setEJBHomeProxy(EJBHomeProxy home) {
@@ -194,8 +213,14 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
             out.writeObject(primaryKey);
         }
         out.writeObject(mainInterface);
+
         out.writeByte(interfaceType.ordinal());
 
+        out.writeInt(asynchronousMethods.size());
+        for (String asynchronousMethod : asynchronousMethods) {
+            out.writeObject(asynchronousMethod);
+        }
+ 
         if (properties.size() == 0) {
             out.writeBoolean(false);
         } else {
@@ -234,6 +259,9 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
         if (version > 1) {
             byte typeIndex = in.readByte();
             interfaceType = InterfaceType.values()[typeIndex];
+        }
+        for (int i = in.readInt(); i > 0; i--) {
+            asynchronousMethods.add((String)in.readObject());
         }
 
         final boolean hasProperties = in.readBoolean();
@@ -279,5 +307,13 @@ public class EJBMetaDataImpl implements javax.ejb.EJBMetaData, java.io.Externali
                 }
             }
         }
+    }
+
+    private String generateMethodSignature(Method method) {
+        StringBuilder buffer = new StringBuilder(method.getName());
+        for(Class<?> parameterType : method.getParameterTypes()) {
+            buffer.append(parameterType.getName());
+        }
+        return buffer.toString();
     }
 }

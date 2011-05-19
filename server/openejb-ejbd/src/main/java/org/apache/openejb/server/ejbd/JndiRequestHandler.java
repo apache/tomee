@@ -371,7 +371,7 @@ class JndiRequestHandler {
                         -1,
                         convert(proxyInfo.getInterfaceType()),
                         null,
-                        proxyInfo.getInterface());
+                        beanContext.getAsynchronousMethodSignatures());
                 metaData.loadProperties(beanContext.getProperties());
                 log(metaData);
                 res.setResult(metaData);
@@ -393,7 +393,7 @@ class JndiRequestHandler {
                         -1,
                         convert(proxyInfo.getInterfaceType()),
                         proxyInfo.getInterfaces(),
-                        proxyInfo.getInterface());
+                        beanContext.getAsynchronousMethodSignatures());
                 metaData.setPrimaryKey(proxyInfo.getPrimaryKey());
                 metaData.loadProperties(beanContext.getProperties());
 

@@ -17,9 +17,10 @@
  */
 package org.apache.openejb.client;
 
-import java.rmi.RemoteException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.rmi.RemoteException;
 
 public class LoginTestUtil {
     public static Request serverRequest;
@@ -36,7 +37,8 @@ public class LoginTestUtil {
         }
 
         Client.setClient(new Client() {
-            protected Response processRequest(Request req, Response res, ServerMetaData server) throws RemoteException {
+            @Override
+            protected Response processRequest(Request req, Response res, ServerMetaData server, URI preferredServerURI) throws RemoteException {
                 serverRequest = req;
                 return serverResponse;
             }

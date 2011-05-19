@@ -50,5 +50,7 @@ public class RequestMethodConstants {
     public static final int JNDI_LIST = 28;
     public static final int JNDI_LIST_BINDINGS = 29;
 
+    public static final int FUTURE_CANCEL = 35;
+
 }
 
