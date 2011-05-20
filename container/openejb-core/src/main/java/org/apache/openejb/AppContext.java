@@ -17,6 +17,7 @@
 package org.apache.openejb;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
@@ -39,7 +40,7 @@ public class AppContext extends DeploymentContext {
     private final Context globalJndiContext;
     private final Context appJndiContext;
     private final boolean standaloneModule;
-    private BeanManager beanManager;
+    private WebBeansContext webBeansContext;
 
     private BlockingQueue<Runnable> blockingQueue;
     private ExecutorService asynchPool;
@@ -59,16 +60,15 @@ public class AppContext extends DeploymentContext {
     }
 
     public BeanManager getBeanManager() {
-        return beanManager;
+        return webBeansContext.getBeanManagerImpl();
     }
 
-    /**
-     * TODO: Ideally this would be a final field
-     * @param beanManager
-     */
-    @Deprecated
-    public void setBeanManager(BeanManager beanManager) {
-        this.beanManager = beanManager;
+    public WebBeansContext getWebBeansContext() {
+        return webBeansContext;
+    }
+
+    public void setWebBeansContext(WebBeansContext webBeansContext) {
+        this.webBeansContext = webBeansContext;
     }
 
     @Override

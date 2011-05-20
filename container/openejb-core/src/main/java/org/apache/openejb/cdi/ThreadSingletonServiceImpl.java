@@ -40,6 +40,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     }
 
+
+
     @Override
     public void initialize(StartupObject startupObject) {
         //initialize owb context, cf geronimo's OpenWebBeansGBean
@@ -74,17 +76,25 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     @Override
     public Object contextEntered(WebBeansContext newOWBContext) {
+        return enter(newOWBContext);
+    }
+
+    public static Object enter(WebBeansContext newOWBContext) {
         WebBeansContext oldContext = contexts.get();
         contexts.set(newOWBContext);
         contextMessage(newOWBContext, "Enter:");
         return oldContext;
     }
 
-    private void contextMessage(WebBeansContext newOWBContext, String prefix) {
+    private static void contextMessage(WebBeansContext newOWBContext, String prefix) {
     }
 
     @Override
     public void contextExited(Object oldContext) {
+        exit(oldContext);
+    }
+
+    public static void exit(Object oldContext) {
         if (oldContext != null && !(oldContext instanceof WebBeansContext)) throw new IllegalArgumentException("ThreadSingletonServiceImpl can only be used with WebBeansContext, not " + oldContext.getClass().getName());
         contexts.set((WebBeansContext) oldContext);
     }
