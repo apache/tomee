@@ -22,15 +22,20 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.jboss.testharness.api.DeploymentException;
 
+import javax.enterprise.inject.spi.BeanManager;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +49,8 @@ import java.util.Map;
  */
 public class StandaloneContainersImpl implements org.jboss.testharness.spi.StandaloneContainers {
 
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tck"), StandaloneContainersImpl.class);
+
     private AppContext appContext;
 
     private DeploymentException deploymentException;
@@ -53,20 +60,22 @@ public class StandaloneContainersImpl implements org.jboss.testharness.spi.Stand
     }
 
     public boolean deploy(Collection<Class<?>> classes, Collection<URL> urls) {
-        System.out.println("StandaloneContainersImpl.deploy");
+        logger.debug("StandaloneContainersImpl.deploy");
 
         List<String> classNames = new ArrayList<String>();
 
         for (Class<?> clazz : classes) classNames.add(clazz.getName());
 
-        Collections.sort(classNames);
+        if (logger.isDebugEnabled()) {
+            Collections.sort(classNames);
 
-        for (String clazz : classNames) {
-            System.out.println("clazz = " + clazz);
-        }
+            for (String clazz : classNames) {
+                logger.debug("clazz = " + clazz);
+            }
 
-        for (URL url : urls) {
-            System.out.println("url = " + url);
+            for (URL url : urls) {
+                logger.debug("url = " + url);
+            }
         }
 
         try {
@@ -96,36 +105,39 @@ public class StandaloneContainersImpl implements org.jboss.testharness.spi.Stand
 
             // This must be set or the OWB static lookup code won't work and everything will fall apart
             Thread.currentThread().setContextClassLoader(appContext.getClassLoader());
-
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Deploy failed", e);
             deploymentException = new DeploymentException("Deploy failed", e);
             return false;
         }
-        //            System.out.println("StandaloneContainersImpl.deploy(classes, urls)");
+        //            logger.debug("StandaloneContainersImpl.deploy(classes, urls)");
         //            for (Class<?> clazz : classes) {
-        //                System.out.println("clazz = " + clazz);
+        //                logger.debug("clazz = " + clazz);
         //            }
         //            for (URL url : urls) {
-        //                System.out.println("url = " + url);
+        //                logger.debug("url = " + url);
         //            }
+
+
+        ThreadSingletonServiceImpl.enter(appContext.getWebBeansContext());
+
         return true;
     }
 
     public DeploymentException getDeploymentException() {
-        System.out.println("StandaloneContainersImpl.getDeploymentException");
+        logger.debug("StandaloneContainersImpl.getDeploymentException");
         return deploymentException;
     }
 
     public void undeploy() {
-        System.out.println("StandaloneContainersImpl.undeploy");
+        logger.debug("StandaloneContainersImpl.undeploy");
     }
 
     public void setup() {
-        System.out.println("StandaloneContainersImpl.setup");
+        logger.debug("StandaloneContainersImpl.setup");
     }
 
     public void cleanup() {
-        System.out.println("StandaloneContainersImpl.cleanup");
+        logger.debug("StandaloneContainersImpl.cleanup");
     }
 }

@@ -124,7 +124,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
         cdiPlugin.setAppContext(stuff.getAppContext());
-
+        stuff.getAppContext().setWebBeansContext(webBeansContext);
         cdiPlugin.startup();
 
         //Configure EJB Deployments
@@ -149,12 +149,15 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Scanning process
             logger.debug("Scanning classpaths for beans artifacts.");
 
-            //Scan
-            this.scannerService.scan();
-
-            if (!(scannerService instanceof CdiScanner)) {
+            if (scannerService instanceof CdiScanner) {
+                final CdiScanner service = (CdiScanner) scannerService;
+                service.init(startupObject);
+            } else {
                 new CdiScanner().init(startupObject);
             }
+
+            //Scan
+            this.scannerService.scan();
 
             //Deploy bean from XML. Also configures deployments, interceptors, decorators.
 

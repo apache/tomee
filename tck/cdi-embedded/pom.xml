@@ -44,7 +44,20 @@
       <artifactId>jsr299-tck-impl</artifactId>
       <version>1.0.4.SP1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+
+    <dependency>
+       <groupId>org.testng</groupId>
+       <artifactId>testng</artifactId>
+       <version>6.0.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -54,33 +67,33 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/suite.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
           </suiteXmlFiles>
           <systemProperties>
-            <property>
-              <name>org.jboss.testharness.standalone</name>
-              <value>false</value>
-            </property>
-            <property>
-              <name>org.jboss.testharness.runIntegrationTests</name>
-              <value>true</value>
-            </property>
-            <property>
-              <name>org.jboss.testharness.container.forceRestart</name>
-              <value>true</value>
-            </property>
-            <property>
-              <name>org.jboss.testharness.libraryDirectory</name>
-              <value>${project.build.directory}/dependency/lib</value>
-            </property>
-            <property>
-              <name>org.jboss.testharness.outputDirectory</name>
-              <value>target</value>
-            </property>
-            <property>
-              <name>deleteArtifacts</name>
-              <value>true</value>
-            </property>
+            <!--<property>-->
+              <!--<name>org.jboss.testharness.standalone</name>-->
+              <!--<value>false</value>-->
+            <!--</property>-->
+            <!--<property>-->
+              <!--<name>org.jboss.testharness.runIntegrationTests</name>-->
+              <!--<value>true</value>-->
+            <!--</property>-->
+            <!--<property>-->
+              <!--<name>org.jboss.testharness.container.forceRestart</name>-->
+              <!--<value>true</value>-->
+            <!--</property>-->
+            <!--<property>-->
+              <!--<name>org.jboss.testharness.libraryDirectory</name>-->
+              <!--<value>${project.build.directory}/dependency/lib</value>-->
+            <!--</property>-->
+            <!--<property>-->
+              <!--<name>org.jboss.testharness.outputDirectory</name>-->
+              <!--<value>target</value>-->
+            <!--</property>-->
+            <!--<property>-->
+              <!--<name>deleteArtifacts</name>-->
+              <!--<value>true</value>-->
+            <!--</property>-->
           </systemProperties>
         </configuration>
       </plugin>
