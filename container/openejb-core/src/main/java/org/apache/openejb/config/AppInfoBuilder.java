@@ -390,7 +390,9 @@ class AppInfoBuilder {
                         }
                     }
                     properties.setProperty("TransactionSupport", transactionSupport);
-                    properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                    if (connectorInfo.resourceAdapter != null) {
+                    	properties.setProperty("ResourceAdapter", connectorInfo.resourceAdapter.id);
+                    }
 
                     ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
                     connectorInfo.outbound.add(resourceInfo);

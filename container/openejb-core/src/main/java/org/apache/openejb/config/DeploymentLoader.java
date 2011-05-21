@@ -151,7 +151,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 AppModule appModule;
                 Class<? extends DeploymentModule> o = EjbModule.class;
-                EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, null);
+                EjbModule ejbModule = createEjbModule(baseUrl, jarPath, classLoader, getModuleId(jarFile));
 
                 // wrap the EJB Module with an Application Module
                 appModule = new AppModule(ejbModule);
@@ -163,7 +163,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ClientModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
-                ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), null);
+                ClientModule clientModule = createClientModule(baseUrl, jarLocation, OpenEJB.class.getClassLoader(), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(clientModule);
@@ -171,7 +171,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             if (ConnectorModule.class.equals(moduleClass)) {
                 String jarLocation = URLs.toFilePath(baseUrl);
-                ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), null);
+                ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, OpenEJB.class.getClassLoader(), getModuleId(jarFile));
 
                 // Wrap the resource module with an Application Module
                 return new AppModule(connectorModule);
@@ -234,7 +234,12 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    protected AppModule createAppModule(File jarFile, String jarPath) throws OpenEJBException {
+    private String getModuleId(File file) {
+    	String filename = file.getName();
+    	return System.getProperty(filename + ".moduleId");
+	}
+
+	protected AppModule createAppModule(File jarFile, String jarPath) throws OpenEJBException {
         File appDir = unpack(jarFile);
         try {
             appDir = appDir.getCanonicalFile();
