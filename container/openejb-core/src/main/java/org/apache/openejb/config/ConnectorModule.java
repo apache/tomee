@@ -50,7 +50,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
         this.classLoader = classLoader;
 
         File file = (jarLocation == null) ? null : new File(jarLocation);
-        this.id = new ID(null, connector, null, file, null, this);
+        this.id = new ID(null, connector, moduleId, file, null, this);
         this.validation = new ValidationContext(this);
     }
 
