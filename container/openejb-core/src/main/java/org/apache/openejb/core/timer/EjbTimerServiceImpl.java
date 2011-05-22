@@ -40,6 +40,7 @@ import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.SetAccessible;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -329,6 +330,7 @@ public class EjbTimerServiceImpl implements EjbTimerService {
                 try {
                     RpcContainer container = (RpcContainer) deployment.getContainer();
                     Method ejbTimeout = timerData.getTimeoutMethod();
+                    SetAccessible.on(ejbTimeout);
                     container.invoke(deployment.getDeploymentID(), InterfaceType.TIMEOUT, ejbTimeout.getDeclaringClass(), ejbTimeout, new Object[] { timer }, timerData.getPrimaryKey());
                 } catch (RuntimeException e) {
                     retry = true;
