@@ -29,4 +29,7 @@ public class JndiUrlReference extends Reference {
         return new InitialContext().lookup(jndiName);
     }
 
+    public String getJndiName() {
+        return jndiName;
+    }
 }
