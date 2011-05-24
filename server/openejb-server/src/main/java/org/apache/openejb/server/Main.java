@@ -67,7 +67,7 @@ public class Main {
                 options.addOption(option(null, service + "-port", "int", "cmd.start.opt.port", service));
                 options.addOption(option(null, service + "-bind", "host", "cmd.start.opt.bind", service));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             services = Collections.EMPTY_SET;
         }
 
@@ -91,9 +91,9 @@ public class Main {
                 String text = finder.findString("org.apache.openejb.cli/start.examples");
                 System.out.println(text);
                 return;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("Unable to print examples:");
-                e.printStackTrace();
+                e.printStackTrace(System.err);
                 throw new SystemExitException(-2);
             }
         }
