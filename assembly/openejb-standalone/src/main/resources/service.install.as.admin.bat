@@ -1,6 +1,6 @@
 @ECHO off
 CLS
-REM================================================
+REM ================================================
 REM Licensed to the Apache Software Foundation (ASF) under one or more
 REM contributor license agreements.  See the NOTICE file distributed with
 REM this work for additional information regarding copyright ownership.
@@ -17,7 +17,7 @@ REM See the License for the specific language governing permissions and
 REM limitations under the License.
 REM _______________________________________________
 REM $Rev$
-REM================================================
+REM ================================================
 
 @IF NOT "%ECHO%" == ""  ECHO %ECHO%
 @IF "%OS%" == "Windows_NT" setlocal
@@ -101,22 +101,26 @@ SET classpath="%corejar%;%daemonjar%"
 
 ECHO Installing service using JVM: %jvm%
 
+REM Allow file access to Local System 
+cacls "%openejb%" /E /P System:F
+
 %proc% //IS//OpenEJBServer --DisplayName="OpenEJB Server" ^
 	--Install=%proc% ^
 	--Startup auto ^
-	--StartPath=%openejb% ^
+	--StartPath="%openejb%" ^
 	--Description="OpenEJB Server Service" ^
-	--Jvm=%jvm% ^
+	--Jvm="%jvm%" ^
 	--Classpath=%classpath% ^
 	--StartMode=jvm ^
 	--StartClass=org.apache.openejb.daemon.NTService --StartMethod=start ^
 	--StopMode=jvm ^
 	--StopClass=org.apache.openejb.daemon.NTService --StopMethod=stop ^
 	--LogPrefix=service ^
-	--LogPath=%logs% --StdOutput="%logs%\service.out.log" --StdError="%logs%\service.err.log" --PidFile=service.pid ^
+	--LogPath="%logs%" --StdOutput="%logs%\service.out.log" --StdError="%logs%\service.err.log" --PidFile=service.pid ^
 	--LogLevel=Info ^
 	++JvmOptions=-Dopenejb.home="%openejb%";-Xms128M;-Xmx512M;-XX:MaxPermSize=256M
-	rem ++DependsOn= \
+	REM ++DependsOn=AnotherServiceName
+	REM Add ^ symbol to end of ++JvmOptions line if ++DependsOn is uncommented 
 
 NET START OpenEJBServer
 
