@@ -22,23 +22,27 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -262,6 +266,28 @@ public class JeeTest extends TestCase {
 
     public void testRar16() throws Exception {
         marshalAndUnmarshal(Connector.class, "connector-1.6-example.xml", null);
+    }
+    
+    public void testWebServiceHandlers() throws Exception {
+        QName[] expectedServiceNames = { new QName("http://www.helloworld.org", "HelloService", "ns1"), new QName("http://www.bar.org", "HelloService", "bar"),
+                new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null };
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml");
+        try {
+            HandlerChains handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, in);
+            for (int index = 0; index < handlerChains.getHandlerChain().size(); index++) {
+                HandlerChain handlerChain = handlerChains.getHandlerChain().get(index);
+                QName serviceName = handlerChain.getServiceNamePattern();
+                QName expectedServiceName = expectedServiceNames[index];
+                if (expectedServiceName == null) {
+                    assertNull(serviceName);
+                } else {
+                    assertEquals("serviceNamePattern at index " + index + " mismatches", expectedServiceName, serviceName );
+                }
+            }
+            System.out.println(JaxbJavaee.marshal(HandlerChains.class, handlerChains));
+        } finally {
+            in.close();
+        }        
     }
 
     public static <T> T marshalAndUnmarshal(Class<T> type, String sourceXmlFile, String expectedXmlFile) throws Exception {

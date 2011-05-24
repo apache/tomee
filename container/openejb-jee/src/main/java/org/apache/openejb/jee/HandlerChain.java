@@ -16,18 +16,19 @@
  */
 package org.apache.openejb.jee;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlList;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * javaee_web_services_client_1_3.xsd
@@ -64,8 +65,10 @@ import java.util.List;
     "handler"
 })
 public class HandlerChain {
+    @XmlJavaTypeAdapter(HandlerChainsStringQNameAdapter.class)
     @XmlElement(name = "service-name-pattern")
     protected QName serviceNamePattern;
+    @XmlJavaTypeAdapter(HandlerChainsStringQNameAdapter.class)
     @XmlElement(name = "port-name-pattern")
     protected QName portNamePattern;
     @XmlList
