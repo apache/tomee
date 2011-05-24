@@ -323,7 +323,6 @@ public class EJBCronTrigger extends Trigger {
                 && !calendar.isTimeIncluded(nextFireTime.getTime())) {
             nextFireTime = getFireTimeAfter(nextFireTime);
         }
-		Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources").debug("computeFirstFireTime [" + calendar + "] nextFireTime [" + nextFireTime + "]");
 		
 		log.debug("computeFirstFireTime completed, current nextFireTime :"+nextFireTime);
         return nextFireTime;
@@ -586,7 +585,7 @@ public class EJBCronTrigger extends Trigger {
                 && !calendar.isTimeIncluded(nextFireTime.getTime())) {
             nextFireTime = getFireTimeAfter(nextFireTime);
         }
-        log.info("EJBCronTrigger is triggered by quartz scheduler");
+        log.debug("EJBCronTrigger is triggered by quartz scheduler");
 	}
 
 	@Override
