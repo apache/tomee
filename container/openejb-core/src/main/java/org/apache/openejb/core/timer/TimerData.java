@@ -100,7 +100,11 @@ public abstract class TimerData {
     public void stop() {
         if (trigger != null) {
             try {
-                timerService.getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+                final Scheduler s = timerService.getScheduler();
+                
+                if(!s.isShutdown()){                
+                    s.unscheduleJob(trigger.getName(), trigger.getGroup());
+                }
             } catch (SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
             }
@@ -150,7 +154,11 @@ public abstract class TimerData {
         timerService.cancelled(TimerData.this);
         if (trigger != null) {
             try {
-                timerService.getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
+                final Scheduler s = timerService.getScheduler();
+                
+                if(!s.isShutdown()){
+                    s.unscheduleJob(trigger.getName(), trigger.getGroup());
+                }
             } catch (SchedulerException e) {
                 throw new EJBException("fail to cancel the timer", e);
             }
@@ -204,9 +212,11 @@ public abstract class TimerData {
     }
 
     private class TimerDataSynchronization implements Synchronization {
+        @Override
         public void beforeCompletion() {
         }
 
+        @Override
         public void afterCompletion(int status) {
             synchronizationRegistered = false;
             transactionComplete(status == Status.STATUS_COMMITTED);
