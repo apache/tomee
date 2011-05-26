@@ -239,6 +239,9 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
         AsynchronousCall asynchronousCall = new AsynchronousCall(interfce, method, args, asynchronousCancelled);
         try {
             Future<Object> retValue = beanContext.getModuleContext().getAppContext().submitTask(asynchronousCall);
+            if (method.getReturnType() == Void.TYPE) {
+                return null;
+            }
             return new FutureAdapter<Object>(retValue, asynchronousCancelled, beanContext.getModuleContext().getAppContext());
         } catch (RejectedExecutionException e) {
             throw new EJBException("fail to allocate internal resource to execute the target task", e);
