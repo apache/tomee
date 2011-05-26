@@ -33,6 +33,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.AccessLocalException;
+import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
@@ -356,7 +357,16 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             if(canceled) {
                 throw new CancellationException();
             }
-            return target.get();
+            
+            T object = null;
+
+            try {
+                object = target.get();
+            } catch (Throwable e) {
+                handleException(e);
+            }
+
+            return object;
         }
 
         @Override
@@ -364,7 +374,37 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             if (canceled) {
                 throw new CancellationException();
             }
-            return target.get(timeout, unit);
+            
+            T object = null;
+
+            try {
+                object = target.get(timeout, unit);
+            } catch (Throwable e) {
+                handleException(e);
+            }
+
+            return object;
+            
+        }
+        
+        private void handleException(Throwable e) throws ExecutionException {
+            
+            //unwarp the exception to find the root cause
+            while (e.getCause() != null) {
+                e = (Throwable) e.getCause();
+            }
+
+            boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
+
+            // throw checked excpetion and ConcurrentAccessTimeoutException directly.
+            if (!isExceptionUnchecked || e instanceof EJBException) {
+                throw new ExecutionException(e);
+            }
+
+            // wrap unchecked exception with EJBException before throwing.
+            throw (e instanceof Exception) ? new ExecutionException(new EJBException((Exception) e))
+                    : new ExecutionException(new EJBException(new Exception(e)));
+            
         }
 
         @Override
