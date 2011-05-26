@@ -3,6 +3,7 @@
     <session>
       <ejb-name>OrangeBean</ejb-name>
       <ejb-class>org.superbiz.altdd.Orange</ejb-class>
+      <session-type>Stateless</session-type>
     </session>
   </enterprise-beans>
 </ejb-jar>

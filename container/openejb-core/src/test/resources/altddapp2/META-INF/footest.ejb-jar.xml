@@ -3,6 +3,7 @@
     <session id="OrangeBean">
       <ejb-name>OrangeBean</ejb-name>
       <ejb-class>org.apache.openejb.config.AltDDPrefixTest$OrangeBean</ejb-class>
+      <session-type>Stateless</session-type>      
     </session>
   </enterprise-beans>
   <interceptors>
