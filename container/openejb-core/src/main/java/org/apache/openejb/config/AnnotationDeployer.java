@@ -467,11 +467,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new SingletonBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -481,6 +479,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         sessionBean.setMappedName(singleton.mappedName());
                     }
                 }
+                LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateless.class)) {
@@ -493,11 +492,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new StatelessBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -507,6 +504,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         sessionBean.setMappedName(stateless.mappedName());
                     }
                 }
+                LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateful.class)) {
@@ -519,11 +517,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (enterpriseBean == null) {
                     enterpriseBean = new StatefulBean(ejbName, beanClass.get());
                     ejbJar.addEnterpriseBean(enterpriseBean);
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean.getEjbClass() == null) {
                     enterpriseBean.setEjbClass(beanClass.get());
-                    LegacyProcessor.process(beanClass.get(), enterpriseBean);
                 }
                 if (enterpriseBean instanceof SessionBean) {
                     SessionBean sessionBean = (SessionBean) enterpriseBean;
@@ -533,6 +529,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         sessionBean.setMappedName(stateful.mappedName());
                     }
                 }
+                LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
@@ -568,12 +565,11 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (messageBean == null) {
                     messageBean = new MessageDrivenBean(ejbName);
                     ejbJar.addEnterpriseBean(messageBean);
-                    LegacyProcessor.process(beanClass.get(), messageBean);
                 }
                 if (messageBean.getEjbClass() == null) {
                     messageBean.setEjbClass(beanClass.get());
-                    LegacyProcessor.process(beanClass.get(), messageBean);
                 }
+                LegacyProcessor.process(beanClass.get(), messageBean);
             }
 
             AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
@@ -3815,4 +3811,5 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         return 0;
     }
+    
 }

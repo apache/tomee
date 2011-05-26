@@ -172,7 +172,7 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlElement(name = "ejb-class")
     protected String ejbClass;
     @XmlElement(name = "session-type")
-    protected SessionType sessionType = SessionType.STATELESS;
+    protected SessionType sessionType;
     @XmlElement(name = "stateful-timeout")
     protected Timeout statefulTimeout;
     @XmlElement(name = "timeout-method")
