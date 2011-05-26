@@ -33,6 +33,7 @@ import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
+import javax.ejb.NoSuchEJBException;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -630,7 +631,7 @@ public class StatefulContainer implements RpcContainer {
 
                 // Did we find the instance?
                 if (instance == null) {
-                    throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
+                    throw new InvalidateReferenceException(new NoSuchEJBException("Not Found"));
                 }
 
                 
