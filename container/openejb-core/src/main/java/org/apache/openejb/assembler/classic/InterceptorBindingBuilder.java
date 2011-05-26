@@ -96,6 +96,34 @@ public class InterceptorBindingBuilder {
         Class clazz = beanContext.getBeanClass();
 
         InterceptorData beanAsInterceptor = new InterceptorData(clazz);
+        
+        
+
+        if (beanInfo instanceof StatelessBeanInfo) {
+            /*
+             * 4.3.10.2 If the stateless session bean instance has an ejbCreate method, 
+             * the container treats the ejbCreate method as the instance’s PostConstruct method,
+             *  and, in this case, the PostConstruct annotation (or deployment descriptor metadata)
+             *  can only be applied to the bean’s ejbCreate method.
+             */
+            NamedMethodInfo info = new NamedMethodInfo();
+            info.className = clazz.getName();
+            info.methodName = "ejbCreate";
+            info.methodParams = new ArrayList<String>();
+            
+            try {
+                Method ejbcreate = MethodInfoUtil.toMethod(clazz, info);
+                if (ejbcreate != null) {
+                    CallbackInfo ejbcreateAsPostConstruct = new CallbackInfo();
+                    ejbcreateAsPostConstruct.className = ejbcreate.getDeclaringClass().getName();
+                    ejbcreateAsPostConstruct.method = "ejbCreate";
+                    beanInfo.postConstruct.add(ejbcreateAsPostConstruct);
+                }
+            } catch (IllegalStateException e) {
+                // there's no ejbCreate method in stateless bean.
+            }
+
+        }
 
         toMethods(clazz, beanInfo.aroundInvoke, beanAsInterceptor.getAroundInvoke());
         toCallback(clazz, beanInfo.postConstruct, beanAsInterceptor.getPostConstruct());
@@ -272,10 +300,10 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
-                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz)){
+                if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz) && !methods.contains(method)){
                     methods.add(method);
                 }
-                if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)){
                     methods.add(method);
                 }  else {
                     // check for a private method on the declared class
@@ -289,7 +317,7 @@ public class InterceptorBindingBuilder {
                         try {
                             method = getMethod(c, callbackInfo.method, InvocationContext.class);
                             // make sure it is private
-                            if (Modifier.isPrivate(method.getModifiers())) {
+                            if (Modifier.isPrivate(method.getModifiers()) && !methods.contains(method)) {
                                 SetAccessible.on(method);
                                 methods.add(method);
                             }
@@ -330,9 +358,9 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, parameterTypes);
-                if (callbackInfo.className == null){
+                if (callbackInfo.className == null && !methods.contains(method)){
                     methods.add(method);
-                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className)){
+                } else if (method.getDeclaringClass().getName().equals(callbackInfo.className) && !methods.contains(method)){
                     methods.add(method);
                 } else {
                     // check for a private method on the declared class
@@ -346,7 +374,7 @@ public class InterceptorBindingBuilder {
                         try {
                             method = c.getDeclaredMethod(callbackInfo.method);
                             // make sure it is private
-                            if (Modifier.isPrivate(method.getModifiers())) {
+                            if (Modifier.isPrivate(method.getModifiers()) && !methods.contains(method)) {
                                 SetAccessible.on(method);
                                 methods.add(method);
                             }
