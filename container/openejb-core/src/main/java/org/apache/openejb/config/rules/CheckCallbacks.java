@@ -324,13 +324,11 @@ public class CheckCallbacks extends ValidationBase {
                     if (!callback.getMethodName().equals("ejbPassivate"))
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
                 } else if ("PostConstruct".equals(type)) {
-                    if (sb.getSessionType().equals(SessionType.STATELESS)) {
-                        if (!callback.getMethodName().equals("ejbCreate")) {
-                            fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
-                        }
-                    } else {
+
+                    if (!callback.getMethodName().equals("ejbCreate")) {
                         fail(bean.getEjbName(), "callback.sessionbean.invalidusage", type, callback.getMethodName(), ejbClass);
                     }
+
                 }
                 // @AfterCompletion, @BeforeCompletion and @AfterBegin are assumed to be allowed to be used on Stateful bean implementing javax.ejb.SessionBean
             }
