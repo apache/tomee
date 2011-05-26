@@ -467,10 +467,15 @@ public class EJBCronTrigger extends Trigger {
                     nextDayOfWeek = expressions[3].getNextValue(calendarDayOfWeek);
                 }
 
-                if (value != null && nextDayOfWeek != null) {
+                if (nextDayOfWeek != null) {
                     calendarDayOfWeek.set(expressions[3].field, nextDayOfWeek);
                     int newDayOfMonth = calendarDayOfWeek.get(expressions[2].field);
-                    value = Math.min(value, newDayOfMonth);
+                    
+                    if (value == null) {
+                        value = newDayOfMonth;
+                    } else {
+                        value = Math.min(value, newDayOfMonth);
+                    }
                     //Next valid DayOfWeek might exist in next month.
                     calendar.set(Calendar.MONTH, calendarDayOfWeek.get(Calendar.MONTH));
                 }
