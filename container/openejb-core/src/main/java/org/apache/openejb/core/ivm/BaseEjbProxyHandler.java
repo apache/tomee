@@ -270,17 +270,23 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                     IntraVmCopyMonitor.post();
                 }
             }
-
+            IntraVmCopyMonitor.State oldStrategy =  strategy;
+            if (getBeanContext().isAsynchronous(method)){
+                strategy = IntraVmCopyMonitor.State.NONE;
+            }
+   
             try {
 
                 Object returnValue = _invoke(proxy, interfce, method, args);
-
                 return copy(strategy, returnValue);
             } catch (Throwable throwable) {
                 throwable = copy(strategy, throwable);
                 throw convertException(throwable, method, interfce);
+            } finally {
+                strategy = oldStrategy;
             }
         } finally {
+            
             if (callContext == null && localClientIdentity != null) {
                 SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 securityService.disassociate();
