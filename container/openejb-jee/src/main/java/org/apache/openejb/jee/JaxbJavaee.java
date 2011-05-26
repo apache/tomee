@@ -336,7 +336,7 @@ public class JaxbJavaee {
         }
 
         public String lookupNamespaceURI(String prefix) {
-            for (int index = effectiveNamespaces.size() - 1; index > 0; index--) {
+            for (int index = effectiveNamespaces.size() - 1; index >= 0; index--) {
                 Map.Entry<String, String> entry = effectiveNamespaces.get(index);
                 if (entry.getKey().equals(prefix)) {
                     return entry.getValue();
