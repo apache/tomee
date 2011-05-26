@@ -449,7 +449,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static HandlerChains readHandlerChains(URL url) throws OpenEJBException {
         HandlerChains handlerChains;
         try {
-            handlerChains = (HandlerChains) JaxbJavaee.unmarshalJavaee(HandlerChains.class, url.openStream());
+            handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, url.openStream());
         } catch (SAXException e) {
             throw new OpenEJBException("Cannot parse the webservices.xml file: " + url.toExternalForm(), e);
         } catch (JAXBException e) {
