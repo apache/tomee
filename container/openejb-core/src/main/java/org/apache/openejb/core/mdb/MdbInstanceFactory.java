@@ -157,11 +157,15 @@ public class MdbInstanceFactory {
         }
 
         ThreadContext callContext = ThreadContext.getThreadContext();
-        Operation originalOperation = callContext.getCurrentOperation();
-        BaseContext.State[] originalAllowedStates = callContext.getCurrentAllowedStates();
+        
+        Operation originalOperation = callContext == null ? null : callContext.getCurrentOperation();
+        BaseContext.State[] originalAllowedStates = callContext == null ? null : callContext.getCurrentAllowedStates();
+
         try {
             // call post destroy method
-            callContext.setCurrentOperation(Operation.PRE_DESTROY);
+            if (callContext != null) {
+                callContext.setCurrentOperation(Operation.PRE_DESTROY);
+            }
             Method remove = instance.bean instanceof MessageDrivenBean ? MessageDrivenBean.class.getMethod("ejbRemove") : null;
             List<InterceptorData> callbackInterceptors = beanContext.getCallbackInterceptors();
             InterceptorStack interceptorStack = new InterceptorStack(instance.bean, remove, Operation.PRE_DESTROY, callbackInterceptors, instance.interceptors);
@@ -169,8 +173,11 @@ public class MdbInstanceFactory {
         } catch (Throwable re) {
             MdbInstanceFactory.logger.error("The bean instance " + instance.bean + " threw a system exception:" + re, re);
         } finally {
-            callContext.setCurrentOperation(originalOperation);
-            callContext.setCurrentAllowedStates(originalAllowedStates);
+            
+            if (callContext != null) {
+                callContext.setCurrentOperation(originalOperation);
+                callContext.setCurrentAllowedStates(originalAllowedStates);
+            }
         }
     }
 

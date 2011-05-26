@@ -31,11 +31,14 @@ import javax.interceptor.InvocationContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.Classes;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 /**
  * @version $Rev$ $Date$
  */
 public class InterceptorStack {
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private final Object beanInstance;
     private final List<Interceptor> interceptors;
     private final Method targetMethod;
@@ -122,11 +125,15 @@ public class InterceptorStack {
     public Object invoke(Object... parameters) throws Exception {
         try {
             InvocationContext invocationContext = createInvocationContext(parameters);
-            ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
+            if (ThreadContext.getThreadContext() != null) {
+                ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
+            }
             Object value = invocationContext.proceed();
             return value;
         } finally {
-            ThreadContext.getThreadContext().remove(InvocationContext.class);
+            if (ThreadContext.getThreadContext() != null) {
+                ThreadContext.getThreadContext().remove(InvocationContext.class);
+            }
         }
     }
 
