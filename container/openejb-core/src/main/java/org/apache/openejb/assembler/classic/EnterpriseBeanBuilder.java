@@ -349,7 +349,7 @@ class EnterpriseBeanBuilder {
         try {
             if (TimedObject.class.isAssignableFrom(ejbClass)) {
                 timeout = ejbClass.getMethod("ejbTimeout", Timer.class);
-            } else {
+            } else if (info != null){
                 try {
                     timeout = MethodInfoUtil.toMethod(ejbClass, info);
                 } catch (IllegalStateException e) {
