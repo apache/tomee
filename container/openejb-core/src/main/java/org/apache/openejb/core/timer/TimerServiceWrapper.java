@@ -33,8 +33,12 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.MethodContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 public class TimerServiceWrapper implements TimerService {
+    
+    private static final Logger log = Logger.getInstance(LogCategory.TIMER, TimerServiceWrapper.class);
 
     public TimerServiceWrapper() {
     }
@@ -102,7 +106,7 @@ public class TimerServiceWrapper implements TimerService {
             }
             
             if (!hasSchedules) {
-                throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID() + " due to no timeout method nor schedules in methodContext is configured");
+                log.error("This ejb does not support timers " + beanContext.getDeploymentID() + " due to no timeout method nor schedules in methodContext is configured");
             }
             
         }
