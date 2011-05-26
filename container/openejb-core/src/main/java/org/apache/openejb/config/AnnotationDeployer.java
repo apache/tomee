@@ -2724,10 +2724,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
-                if (resource.type().equals(Object.class)) {
-                    fail(consumer.getJndiConsumerName(), "resourceAnnotation.onClassWithNoType");
-                    shouldReturn = true;
-                }
+
                 if (shouldReturn) return;
             }
 
@@ -2759,7 +2756,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
 
                 Class type;
-                if (resource.type() != java.lang.Object.class) {
+                if (member == null) {
                     type = resource.type();
                 } else {
                     type = member.getType();
