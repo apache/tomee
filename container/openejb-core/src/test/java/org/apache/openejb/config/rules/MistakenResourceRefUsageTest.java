@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 @RunWith(ValidationRunner.class)
 public class MistakenResourceRefUsageTest {
     @Keys( { @Key(value = "resourceRef.onEntityManagerFactory", count = 2), @Key(value = "resourceRef.onEntityManager", count = 2),
-            @Key(value = "resourceAnnotation.onClassWithNoName", count = 2), @Key(value = "resourceAnnotation.onClassWithNoType", count = 2) })
+            @Key(value = "resourceAnnotation.onClassWithNoName", count = 2) })
     public EjbJar wrongUsage() throws OpenEJBException {
         EjbJar ejbJar = new EjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(FooStateless.class));
