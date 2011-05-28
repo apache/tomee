@@ -631,7 +631,7 @@ public class StatefulContainer implements RpcContainer {
 
                 // Did we find the instance?
                 if (instance == null) {
-                    throw new InvalidateReferenceException(new NoSuchEJBException("Not Found"));
+                    throw new InvalidateReferenceException(new NoSuchObjectException("Not Found"));
                 }
 
                 

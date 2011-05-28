@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 import java.rmi.AccessException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.ejb.EJBAccessException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EJBObject;
+import javax.ejb.NoSuchEJBException;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -393,10 +395,20 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
             while (e.getCause() != null) {
                 e = (Throwable) e.getCause();
             }
+            
+            /* 
+             * StatefulContainer.obtainInstance(Object, ThreadContext, Method)
+             * will return NoSuchObjectException instead of NoSuchEJBException             * 
+             * when it can't obtain an instance.   Actually, the async client 
+             * is expecting a NoSuchEJBException.  Wrap it here as a workaround.
+             */
+            if (e instanceof NoSuchObjectException) {
+                e = new NoSuchEJBException(e.getMessage(), (Exception) e);
+            }
 
             boolean isExceptionUnchecked = (e instanceof Error) || (e instanceof RuntimeException);
 
-            // throw checked excpetion and ConcurrentAccessTimeoutException directly.
+            // throw checked excpetion and EJBException directly.
             if (!isExceptionUnchecked || e instanceof EJBException) {
                 throw new ExecutionException(e);
             }
