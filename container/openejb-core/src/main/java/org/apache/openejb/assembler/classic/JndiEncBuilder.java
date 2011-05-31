@@ -91,6 +91,7 @@ public class JndiEncBuilder {
     private final boolean beanManagedTransactions;
     private final JndiEncInfo jndiEnc;
     private final URI moduleUri;
+    private final String moduleId;
     private final String uniqueId;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
@@ -99,21 +100,19 @@ public class JndiEncBuilder {
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, uniqueId, classLoader, null);
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, null);
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, String uniqueId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         this.appContext = appContext;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
-        try {
-            moduleUri = moduleId == null? null: new URI(moduleId);
-        } catch (URISyntaxException e) {
-            throw new OpenEJBException(e);
-        }
+        this.moduleId = moduleId;
+        this.moduleUri = moduleUri;
+
         this.uniqueId = uniqueId;
         this.classLoader = classLoader;
     }
@@ -460,8 +459,8 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialModuleBindings(Map<String, Object> bindings) {
-        if (moduleUri != null) {
-            bindings.put("module/ModuleName", moduleUri.toString());
+        if (moduleId != null) {
+            bindings.put("module/ModuleName", moduleId);
         }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
@@ -470,8 +469,8 @@ public class JndiEncBuilder {
     }
 
     private void addSpecialAppBindings(Map<String, Object> bindings) {
-        if (moduleUri != null) {
-            bindings.put("app/AppName", moduleUri.toString());
+        if (moduleId != null) {
+            bindings.put("app/AppName", moduleId);
         }
         // ensure the bindings will be non-empty
         if (bindings.isEmpty()) {
