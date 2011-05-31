@@ -99,7 +99,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
 
             cdiInfo.setInjections(injections);
             // TODO: handle app/global/module namespaces?
-            JndiEncBuilder encBuilder = new JndiEncBuilder(jndiEnc, injections, appModule.appId, appModule.appId, classLoader);
+            JndiEncBuilder encBuilder = new JndiEncBuilder(jndiEnc, injections, appModule.appId, null, appModule.appId, classLoader);
             this.contexts.put(cdiInfo, encBuilder.build(JndiEncBuilder.JndiScope.comp));
         }
     }

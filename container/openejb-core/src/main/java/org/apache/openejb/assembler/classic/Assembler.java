@@ -495,8 +495,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
         List<Injection> appInjections = injectionBuilder.buildInjections(appInfo.globalJndiEnc);
         appInjections.addAll(injectionBuilder.buildInjections(appInfo.appJndiEnc));
-        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, GLOBAL_UNIQUE_ID, classLoader).build(JndiEncBuilder.JndiScope.global);
-        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
+        Context globalJndiContext = new JndiEncBuilder(appInfo.globalJndiEnc, appInjections, null, null, GLOBAL_UNIQUE_ID, classLoader).build(JndiEncBuilder.JndiScope.global);
+        Context appJndiContext = new JndiEncBuilder(appInfo.appJndiEnc, appInjections, appInfo.appId, null, appInfo.appId, classLoader).build(JndiEncBuilder.JndiScope.app);
 
         try {
             // Generate the cmp2/cmp1 concrete subclasses
@@ -716,7 +716,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, clientInfo.uniqueId, classLoader, appContext);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader, appContext);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag
