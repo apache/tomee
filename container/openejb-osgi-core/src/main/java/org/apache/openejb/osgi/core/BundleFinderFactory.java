@@ -52,7 +52,7 @@ public class BundleFinderFactory extends FinderFactory {
             BundleContext bundleContext = bundle.getBundleContext();
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
             PackageAdmin packageAdmin = (PackageAdmin) bundleContext.getService(sr);
-            final String location = module.getModuleId();
+            final String location = module.getModuleUri().toString();
             boolean useLocation = location != null
                     && !location.isEmpty()
                     && !module.getJarLocation().endsWith(".war")
