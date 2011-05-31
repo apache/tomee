@@ -23,6 +23,8 @@ import java.util.Map;
 
 public class Module {
     private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
+    
+    private boolean isStandaloneModule = true;
 
     private ValidationConfigType validationConfig;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
@@ -47,4 +49,14 @@ public class Module {
     public String getUniqueId() {
         return uniqueId;
     }
+    
+    public boolean isStandaloneModule() {
+        return isStandaloneModule;
+    }
+    
+    public void setStandaloneModule(boolean isStandalone) {
+        isStandaloneModule = isStandalone;
+    }    
+    
+       
 }
