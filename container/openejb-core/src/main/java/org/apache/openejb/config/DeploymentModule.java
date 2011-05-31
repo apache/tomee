@@ -44,6 +44,10 @@ public interface DeploymentModule {
     ValidationContext getValidation();
 
     Set<String> getWatchedResources();
+    
+    boolean isStandaloneModule();
+    
+    void setStandaloneModule(boolean isStandalone);
 
     class ID {
         private final String name;

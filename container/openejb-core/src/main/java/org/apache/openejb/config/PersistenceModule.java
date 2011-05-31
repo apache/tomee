@@ -90,4 +90,12 @@ public class PersistenceModule implements DeploymentModule {
                 "rootUrl='" + rootUrl + '\'' +
                 '}';
     }
+
+    public boolean isStandaloneModule() {
+        return false;
+    }
+
+    public void setStandaloneModule(boolean isStandalone) {
+       //do nothing        
+    }
 }

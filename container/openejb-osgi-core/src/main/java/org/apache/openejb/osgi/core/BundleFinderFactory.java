@@ -53,10 +53,10 @@ public class BundleFinderFactory extends FinderFactory {
             ServiceReference sr = bundleContext.getServiceReference(PackageAdmin.class.getName());
             PackageAdmin packageAdmin = (PackageAdmin) bundleContext.getService(sr);
             final String location = module.getModuleUri().toString();
+            final boolean isWAR = location.endsWith(".war");
             boolean useLocation = location != null
                     && !location.isEmpty()
-                    && !module.getJarLocation().endsWith(".war")
-                    && !module.getJarLocation().endsWith(".jar");
+                    && !module.isStandaloneModule();
             if (useLocation) {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
@@ -67,12 +67,12 @@ public class BundleFinderFactory extends FinderFactory {
 
                     @Override
                     public boolean zipFileDiscoveryRequired(String s) {
-                        return s.equals(location);
+                        return isWAR ? s.startsWith(location) : s.equals(location);
                     }
 
                     @Override
                     public boolean directoryDiscoveryRequired(String s) {
-                        return s.equals(location);
+                        return isWAR ? s.startsWith(location) : s.equals(location);
                     }
                 };
 

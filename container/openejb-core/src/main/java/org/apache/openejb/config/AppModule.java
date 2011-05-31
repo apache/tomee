@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 
 import java.io.File;
 import java.net.URI;
@@ -94,6 +93,10 @@ public class AppModule implements DeploymentModule {
     public boolean isStandaloneModule() {
         return standaloneModule;
     }
+    
+    public void setStandaloneModule(boolean isStandalone) {
+       //do nothing
+    }    
 
     public ValidationContext getValidation() {
         return validation;
@@ -250,6 +253,5 @@ public class AppModule implements DeploymentModule {
                 "moduleId='" + id.getName() + '\'' +
                 '}';
     }
-
 
 }
