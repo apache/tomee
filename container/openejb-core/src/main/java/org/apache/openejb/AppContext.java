@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @version $Rev$ $Date$
 */
 public class AppContext extends DeploymentContext {
+
     private final SystemInstance systemInstance;
     private final ClassLoader classLoader;
     private final Context globalJndiContext;

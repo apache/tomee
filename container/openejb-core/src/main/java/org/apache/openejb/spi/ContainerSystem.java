@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.spi;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.core.WebContext;
 
 import javax.naming.Context;
+import java.util.List;
 
 public interface ContainerSystem {
 
@@ -35,4 +37,8 @@ public interface ContainerSystem {
     WebContext getWebContext(String id);
 
     Context getJNDIContext();
+
+    List<AppContext> getAppContexts();
+
+    void addAppContext(AppContext appContext);
 }

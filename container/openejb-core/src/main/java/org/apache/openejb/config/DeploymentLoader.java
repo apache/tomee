@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1086,11 +1087,29 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static Map<String, URL> getDescriptors(ResourceFinder finder, boolean log) throws OpenEJBException {
         try {
 
-            return altDDSources(finder.getResourcesMap(ddDir), log);
+            return altDDSources(mapDescriptors(finder), log);
 
         } catch (IOException e) {
             throw new OpenEJBException("Unable to determine descriptors in jar.", e);
         }
+    }
+
+    private static Map<String, URL> mapDescriptors(ResourceFinder finder)
+        throws IOException
+    {
+        final Map<String, URL> map = finder.getResourcesMap(ddDir);
+
+        if (map.size() == 0) {
+
+            String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence.xml"};
+            for (String descriptor : known) {
+
+                final URL url = finder.getResource(ddDir + descriptor);
+                if (url != null) map.put(descriptor, url);
+            }
+
+        }
+        return map;
     }
 
     /**
@@ -1249,9 +1268,8 @@ public class DeploymentLoader implements DeploymentFilterable {
             pathToScanDescriptors=new URL(baseURLString.substring(0,baseURLString.lastIndexOf("WEB-INF/classes/")));
 
         }
-        ResourceFinder finder = new ResourceFinder("", classLoader, pathToScanDescriptors);
 
-        Map<String, URL> descriptors = altDDSources(finder.getResourcesMap(ddDir), false);
+        Map<String, URL> descriptors = getDescriptors(classLoader, pathToScanDescriptors);
 
         String path = baseUrl.getPath();
         if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
@@ -1273,7 +1291,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             return WebModule.class;
         }
 
-        if (descriptors.containsKey("ejb-jar.xml")) {
+        if (descriptors.containsKey("ejb-jar.xml") || descriptors.containsKey("beans.xml")) {
             return EjbModule.class;
         }
 
@@ -1296,6 +1314,14 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         throw new UnknownModuleTypeException("Unknown module type: url=" + baseUrl.toExternalForm());
+    }
+
+    private Map<String, URL> getDescriptors(ClassLoader classLoader, URL pathToScanDescriptors)
+        throws IOException
+    {
+        ResourceFinder finder = new ResourceFinder("", classLoader, pathToScanDescriptors);
+
+        return altDDSources(mapDescriptors(finder), false);
     }
 
     private Class<? extends DeploymentModule> checkAnnotations(URL urls, ClassLoader classLoader, final boolean scanPotentialEjbModules, final boolean scanPotentialClientModules) {

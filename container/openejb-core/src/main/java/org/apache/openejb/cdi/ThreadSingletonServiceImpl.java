@@ -20,12 +20,17 @@
 
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.AppContext;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ResourceInjectionService;
+
+import java.util.List;
 
 /**
  * @version $Rev:$ $Date:$
@@ -100,8 +105,21 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     }
 
     private WebBeansContext getContext() {
+        return get();
+    }
+
+    public static WebBeansContext get()
+    {
         WebBeansContext context = contexts.get();
         if (context == null) {
+            // Fallback strategy is to just grab the first AppContext and assume it is the right one
+            // This kind of algorithm could be greatly improved
+            final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+            final List<AppContext> appContexts = containerSystem.getAppContexts();
+
+            if (appContexts.size() > 0) return appContexts.get(0).getWebBeansContext();
+
             throw new IllegalStateException("On a thread without an initialized context");
         }
         return context;

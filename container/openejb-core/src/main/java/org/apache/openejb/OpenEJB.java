@@ -70,7 +70,7 @@ public final class OpenEJB {
             if (appServer == null) {
                 throw new IllegalArgumentException("appServer must not be null");
             }
-            initialized = new Exception("Initialized at "+new Date()).fillInStackTrace();
+            initialized = new InitializationException("Initialized at "+new Date()).fillInStackTrace();
 
             Logger.configure();
             Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
@@ -242,7 +242,7 @@ public final class OpenEJB {
 
     public static void destroy() {
         Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-        assembler.destroy();
+        if (assembler != null) assembler.destroy();
         SystemInstance.reset();
         instance = null;
     }
@@ -282,5 +282,12 @@ public final class OpenEJB {
      */
     public static boolean isInitialized() {
         return instance != null || SystemInstance.get().getComponent(ContainerSystem.class) != null;
+    }
+
+    public static class InitializationException extends Exception {
+        public InitializationException(String message)
+        {
+            super(message);
+        }
     }
 }

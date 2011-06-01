@@ -16,7 +16,11 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
 * @version $Rev$ $Date$
@@ -24,16 +28,23 @@ import java.io.IOException;
 public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
 
     public boolean isProxy(Object instance) {
+        System.out.println("isProxy: " + instance);
         return instance.getClass().getName().contains("$$");
     }
 
     @Override
     public byte[] serialize(Object instance) throws IOException {
-        return new byte[0];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(baos);
+        os.writeObject(instance);
+        os.flush();
+        return baos.toByteArray();
     }
 
     @Override
     public Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        return null;
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ObjectInputStream is = new ObjectInputStream(bais);
+        return is.readObject();
     }
 }

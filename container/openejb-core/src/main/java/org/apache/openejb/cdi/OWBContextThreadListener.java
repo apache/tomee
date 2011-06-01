@@ -45,7 +45,8 @@ public class OWBContextThreadListener implements ThreadContextListener {
         AppContext appContext = moduleContext.getAppContext();
         WebBeansContext owbContext = appContext.get(WebBeansContext.class);
         if (owbContext == null) {
-            throw new IllegalStateException("WebBeansContext not initialized in appContext " + appContext);
+//            throw new IllegalStateException("WebBeansContext not initialized in appContext " + appContext);
+            return;
         }
         Object oldOWBContext = singletonService.contextEntered(owbContext);
         OWBContextHolder holder = new OWBContextHolder(oldOWBContext);

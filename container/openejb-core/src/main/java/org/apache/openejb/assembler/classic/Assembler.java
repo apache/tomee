@@ -507,6 +507,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
+            containerSystem.addAppContext(appContext);
 
             Context containerSystemContext = containerSystem.getJNDIContext();
             

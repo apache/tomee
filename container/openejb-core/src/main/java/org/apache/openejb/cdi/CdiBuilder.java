@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.WebBeansFinder;
@@ -36,6 +37,8 @@ public class CdiBuilder {
     }
 
     public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
+        if (!hasBeans(appInfo)) return;
+
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
         logger.info("existing thread singleton service in SystemInstance() " + singletonService);
         //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would
@@ -44,6 +47,14 @@ public class CdiBuilder {
             singletonService = initializeOWB(getClass().getClassLoader());
         }
         singletonService.initialize(new StartupObject(appContext, appInfo, allDeployments));
+    }
+
+    private boolean hasBeans(AppInfo appInfo) {
+        for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+            if (ejbJar.beans != null) return true;
+        }
+
+        return false;
     }
 
     public static ThreadSingletonService initializeOWB(ClassLoader classLoader) {
