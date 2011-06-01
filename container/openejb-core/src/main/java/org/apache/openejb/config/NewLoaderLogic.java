@@ -158,11 +158,15 @@ public class NewLoaderLogic {
                 "axis2-",
                 "bcprov-",
                 "bsh-",
+                "bval-core",
+                "bval-jsr",
                 "catalina-",
                 "cglib-",
+                "commons-beanutils",
                 "commons-cli-",
                 "commons-codec-",
                 "commons-collections-",
+                "commons-dbcp",
                 "commons-dbcp-all-1.3-",
                 "commons-discovery-",
                 "commons-httpclient-",
@@ -178,16 +182,18 @@ public class NewLoaderLogic {
                 "derby-",
                 "dom4j-",
                 "geronimo-",
+                "gragent.jar",
                 "guice-",
+                "hibernate-",
                 "howl-",
                 "hsqldb-",
                 "htmlunit-",
-                "hibernate-",
                 "icu4j-",
                 "idb-",
                 "idea_rt.jar",
                 "jasypt-",
                 "javaee-",
+                "javaee-api",
                 "javassist-",
                 "javaws.jar",
                 "javax.",
@@ -212,6 +218,10 @@ public class NewLoaderLogic {
                 "myfaces-",
                 "neethi-",
                 "nekohtml-",
+                "openejb-api",
+                "openejb-javaagent",
+                "openejb-jee",
+                "openejb-loader",
                 "openjpa-",
                 "opensaml-",
                 "openwebbeans-",
@@ -231,6 +241,10 @@ public class NewLoaderLogic {
                 "stax-api-",
                 "swizzle-",
                 "testng-",
+                "webbeans-ee",
+                "webbeans-ejb",
+                "webbeans-impl",
+                "webbeans-spi",
                 "wsdl4j-",
                 "wss4j-",
                 "wstx-asl-",
@@ -250,7 +264,8 @@ public class NewLoaderLogic {
         while (iterator.hasNext()) {
             URL url = iterator.next();
             File file = URLs.toFile(url);
-            String name = file.getName();
+
+            String name = filter(file).getName();
 //            System.out.println("JAR "+name);
             if (filter.accept(name)) iterator.remove();
         }
@@ -259,6 +274,22 @@ public class NewLoaderLogic {
 
         return new UrlSet(urls);
     }
+
+    private static File filter(File location) {
+        List<String> invalid = new ArrayList<String>();
+        invalid.add("classes");
+        invalid.add("test-classes");
+        invalid.add("target");
+        invalid.add("build");
+        invalid.add("dist");
+        invalid.add("bin");
+
+        while (invalid.contains(location.getName())) {
+            location = location.getParentFile();
+        }
+        return location;
+    }
+
 
     public static void _loadFromClasspath(FileUtils base, List<URL> jarList, ClassLoader classLoader) {
 

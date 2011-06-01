@@ -145,7 +145,7 @@ public class CdiScanner implements ScannerService {
         try {
             return classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load " + type + " class", e);
+            throw new RuntimeException("Unable to load class: "+className, e);
         }
     }
 

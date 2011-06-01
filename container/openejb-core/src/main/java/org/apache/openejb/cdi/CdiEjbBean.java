@@ -26,8 +26,10 @@ import javax.ejb.Remove;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.SessionBeanType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
@@ -35,6 +37,23 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
         super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
+
+
+        if (beanContext.isLocalbean()) addApiType(beanContext.getBeanClass());
+
+        addApiType(beanContext.getHomeInterface());
+        addApiType(beanContext.getLocalHomeInterface());
+
+        for (Class clazz : beanContext.getBusinessLocalInterfaces()) addApiType(clazz);
+        for (Class clazz : beanContext.getBusinessRemoteInterfaces()) addApiType(clazz);
+
+    }
+
+    @Override
+    public void addApiType(Class<?> apiType) {
+        if (apiType == null) return;
+
+        super.addApiType(apiType);
     }
 
     public BeanContext getBeanContext() {

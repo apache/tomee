@@ -16,7 +16,6 @@
  */
 package org.apache.openejb;
 
-import bsh.Modifiers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.config.AppModule;
@@ -77,13 +76,15 @@ public class OpenEjbContainer extends EJBContainer {
 
     private static OpenEjbContainer instance;
 
-    private final Context context;
+    private final AppContext appContext;
 
     private ServiceManagerProxy serviceManager;
     private Options options;
+    private OpenEjbContainer.GlobalContext globalJndiContext;
 
-    private OpenEjbContainer(Map<?, ?> map, Context context) {
-        this.context = new GlobalContext(context);
+    private OpenEjbContainer(Map<?, ?> map, AppContext appContext) {
+        this.appContext = appContext;
+        this.globalJndiContext = new GlobalContext(appContext.getGlobalJndiContext());
 
         final Properties properties = new Properties();
         properties.putAll(map);
@@ -99,7 +100,7 @@ public class OpenEjbContainer extends EJBContainer {
             serviceManager.stop();
         }
         try {
-            context.close();
+            globalJndiContext.close();
         } catch (NamingException e) {
             throw new IllegalStateException(e);
         }
@@ -109,7 +110,7 @@ public class OpenEjbContainer extends EJBContainer {
 
     @Override
     public Context getContext() {
-        return context;
+        return globalJndiContext;
     }
 
     public <T> T inject(T object) {
@@ -188,7 +189,7 @@ public class OpenEjbContainer extends EJBContainer {
         public EJBContainer createEJBContainer(Map<?, ?> map) {
             if (isOtherProvider(map)) return null;
 
-            if (instance != null) {
+            if (instance != null || OpenEJB.isInitialized()) {
                 logger.info("EJBContainer already initialized.  Call ejbContainer.close() to allow reinitialization");
                 return instance;
             }
@@ -265,7 +266,7 @@ public class OpenEjbContainer extends EJBContainer {
                 }
 
 
-                return instance = new OpenEjbContainer(map, appContext.getGlobalJndiContext());
+                return instance = new OpenEjbContainer(map, appContext);
 
             } catch (OpenEJBException e) {
 
@@ -283,6 +284,13 @@ public class OpenEjbContainer extends EJBContainer {
                 }
 
                 throw new InitializationException(e);
+            } finally {
+                if (instance == null && OpenEJB.isInitialized()) {
+                    try {
+                        OpenEJB.destroy();
+                    } catch (Exception e) {
+                    }
+                }
             }
         }
 

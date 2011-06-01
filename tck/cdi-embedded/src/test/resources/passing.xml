@@ -5,6 +5,11 @@
 
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
+    <!--<packages>-->
+        <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
+        <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
+    <!--</packages>-->
+
     <classes>
 
       <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.AroundInvokeInterceptorTest"/>
@@ -42,6 +47,7 @@
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.passivatingManagedBeanWithNonPassivatingInjcetedField.PassivatingManagedBeanWithNonPassivatingInjcetedFieldTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.passivatingProducerMethodWithNonPassivatingParameter.PassivatingProducerMethodWithNonPassivatingParameterTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.unserializableSimpleInjectedIntoPassivatingEnterpriseBean.UnserializableSimpleInjectedIntoPassivatingEnterpriseBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.custom.broken.finalBeanClass.CustomDecoratorMatchingBeanWithFinalClassTest"/>
       <class name="org.jboss.jsr299.tck.tests.decorators.definition.DecoratorDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.decorators.definition.broken.decoratorListedTwiceInBeansXml.DecoratorListedTwiceInBeansXmlTest"/>
       <class name="org.jboss.jsr299.tck.tests.decorators.definition.broken.enabledDecoratorIsNotDecorator.EnabledDecoratorNotADecoratorTest"/>
@@ -66,15 +72,18 @@
       <class name="org.jboss.jsr299.tck.tests.definition.bean.genericbroken.GenericManagedBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.name.NameDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.qualifier.QualifierDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.definition.qualifier.enterprise.EnterpriseQualifierDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.scope.ScopeDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.scope.broken.tooManyScopes.TooManyScopesTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.scope.enterprise.EnterpriseScopeDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.stereotype.StereotypeDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.stereotype.broken.scopeConflict.IncompatibleStereotypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.stereotype.defaultNamed.DefaultNamedTest"/>
+      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.enterprise.EnterpriseStereotypeDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.definition.stereotype.inheritance.StereotypeInheritenceTest"/>
       <class name="org.jboss.jsr299.tck.tests.deployment.lifecycle.broken.failsDuringBeanDiscovery.DeploymentFailureTest"/>
       <class name="org.jboss.jsr299.tck.tests.deployment.lifecycle.broken.failsDuringValidation.AfterBeanDiscoveryFailureTest"/>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryMissingBeansXmlTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.EventTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.bindingTypes.EventBindingTypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.broken.inject.withoutType.EventInjectionWithoutTypeTest"/>
@@ -88,6 +97,7 @@
       <class name="org.jboss.jsr299.tck.tests.event.eventTypes.EventTypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.fires.FireEventTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.fires.nonbinding.NonBindingTypePassedToFireTest"/>
+      <class name="org.jboss.jsr299.tck.tests.event.implicit.ImplicitEventTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.ObserverTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.abortProcessing.ObserverExceptionAbortsProcessingTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.checkedException.CheckedExceptionWrappedTest"/>
@@ -107,6 +117,7 @@
       <class name="org.jboss.jsr299.tck.tests.extensions.beanManager.BeanManagerTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.DisposalMethodDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.initializerUnallowed.InitializerUnallowedDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.methodOnSessionBean.DisposalMethodOnSessionBean"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.multiParams.MultipleDisposeParametersDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.observesUnallowed.ObserverParameterUnallowedDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.producesUnallowed.ProducesUnallowedDefinitionTest"/>
@@ -124,6 +135,7 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.broken.parameterAnnotatedObserves.ParameterAnnotatedObservesTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.definition.ProducerFieldDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.definition.broken.parameterizedReturnTypeWithWildcard.ParameterizedReturnTypeWithWildcardTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.definition.enterprise.EnterpriseProducerFieldDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.lifecycle.ProducerFieldLifecycleTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.broken.enterprise.nonbusiness.ProducerMethodNotBusinessMethodTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.broken.parameterAnnotatedDisposes.ParameterAnnotatedDisposesTest"/>
@@ -137,6 +149,7 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.dependentWithPublicField.DependentWithPublicFieldTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.tooManyInitializerAnnotatedConstructors.TooManyInitializerAnnotatedConstructorsTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.lifecycle.unproxyable.UnproxyableManagedBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.producer.method.ProducerMethodSpecializationTest"/>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.producer.method.broken.indirectOverride.IndirectOverrideTest"/>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.producer.method.broken.specializesStaticMethod.SpecializesStaticMethodTest"/>
@@ -164,6 +177,7 @@
       <class name="org.jboss.jsr299.tck.tests.lookup.byname.ResolutionByNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicateNameResolution.DuplicateNameResolutionTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicatePrefixResolution.DuplicateNamePrefixResolutionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.ClientProxyTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.array.ArrayTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalClass.FinalClassTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalMethod.FinalMethodTest"/>
@@ -172,11 +186,13 @@
       <class name="org.jboss.jsr299.tck.tests.lookup.dependency.resolution.broken.ambiguous.AmbiguousDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.dependency.resolution.broken.unsatisfied.UnsatisfiedDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.dynamic.DynamicLookupTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.dynamic.builtin.BuiltinInstanceTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.InjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.any.AnyInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.CreationalContextForNonContextualTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.nullableBean.NullableBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.InjectableReferenceTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.InjectionPointTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.normal.scope.NormalScopedBeanWithInjectionPoint"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.reference.ambiguous.AmbiguousInjectableReferenceTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.reference.unresolved.UnsatisfiedInjectableReferenceTest"/>
@@ -186,15 +202,13 @@
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.broken.type.variable.TypeVariableInjectionPointTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.decorator.DecoratorNotInjectedTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.interceptor.InterceptorNotResolvedTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.parameterized.AssignabilityOfRawAndParameterizedTypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.PolicyAvailabilityTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.incorrect.name.NoClassWithSpecifiedNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.incorrect.name.stereotype.NoAnnotationWithSpecifiedNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.not.policy.ClassIsNotPolicyTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.not.policy.stereotype.ClassIsNotPolicyTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.same.type.twice.SameTypeListedTwiceTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest"/>
-
+      <class name="org.jboss.jsr299.tck.tests.policy.enterprise.SessionBeanPolicyTest"/>
     </classes>
   </test>
 </suite>

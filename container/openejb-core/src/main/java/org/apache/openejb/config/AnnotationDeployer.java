@@ -21,6 +21,7 @@ import static java.util.Arrays.asList;
 import static org.apache.openejb.util.Join.join;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -84,6 +85,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -112,6 +114,7 @@ import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.AroundTimeout;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.AsyncMethod;
+import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.ConcurrencyManagementType;
 import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ConcurrentMethod;
@@ -590,6 +593,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                     mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
                 }
             }
+
+            {
+                final Beans beans = ejbModule.getBeans();
+
+                if (beans != null) {
+                    beans.getManagedClasses().addAll(finder.getAnnotatedClassNames());
+                }
+            }
+
 
             return ejbModule;
         }

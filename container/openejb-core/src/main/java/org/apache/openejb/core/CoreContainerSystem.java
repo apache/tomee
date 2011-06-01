@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.core;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Container;
 import org.apache.openejb.loader.SystemInstance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,11 +32,11 @@ import javax.naming.Context;
  * @org.apache.xbean.XBean element="containerSystem"
  */
 public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSystem {
-    Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
-    Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
-    Map<String, WebContext> webDeployments = new ConcurrentHashMap<String, WebContext>();
+    private final Map<Object, AppContext> apps = new ConcurrentHashMap<Object, AppContext>();
+    private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
+    private final Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
+    private final Map<String, WebContext> webDeployments = new ConcurrentHashMap<String, WebContext>();
     private final Context jndiContext;
-
 
     /**
      * Constructs a CoreContainerSystem and initializes the root JNDI context.
@@ -121,5 +124,15 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
 
     public Context getJNDIContext() {
         return jndiContext;
+    }
+
+    @Override
+    public List<AppContext> getAppContexts() {
+        return new ArrayList<AppContext>(apps.values());
+    }
+
+    @Override
+    public void addAppContext(AppContext appContext) {
+        apps.put(appContext.getId(), appContext);
     }
 }
