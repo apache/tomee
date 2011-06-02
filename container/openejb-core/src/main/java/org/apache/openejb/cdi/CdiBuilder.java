@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.logger.WebBeansLogger;
 
@@ -33,11 +34,16 @@ import org.apache.webbeans.logger.WebBeansLogger;
 public class CdiBuilder {
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(CdiBuilder.class);
 
+    private static final WebBeansContext noContext = new WebBeansContext();
+
     public CdiBuilder() {
     }
 
     public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
-        if (!hasBeans(appInfo)) return;
+        if (!hasBeans(appInfo)) {
+            appContext.setWebBeansContext(noContext);
+            return;
+        }
 
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
         logger.info("existing thread singleton service in SystemInstance() " + singletonService);
