@@ -41,7 +41,6 @@ import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
-import com.sun.istack.internal.Nullable;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
