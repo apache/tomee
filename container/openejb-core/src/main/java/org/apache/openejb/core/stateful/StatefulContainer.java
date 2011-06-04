@@ -33,7 +33,6 @@ import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
-import javax.ejb.NoSuchEJBException;
 import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
@@ -369,7 +368,7 @@ public class StatefulContainer implements RpcContainer {
             createContext.setCurrentAllowedStates(null);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod), createContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod, interfaceType), createContext);
 
             Instance instance = null;
             try {
@@ -459,7 +458,7 @@ public class StatefulContainer implements RpcContainer {
             }
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             boolean retain = false;
@@ -561,7 +560,7 @@ public class StatefulContainer implements RpcContainer {
             checkAuthorization(callMethod, interfaceType);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             Instance instance = null;

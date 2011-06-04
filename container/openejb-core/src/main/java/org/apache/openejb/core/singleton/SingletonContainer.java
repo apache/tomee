@@ -214,7 +214,7 @@ public class SingletonContainer implements RpcContainer {
 
         Object returnValue;
         try {
-            TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, callType), callContext);
 
             returnValue = null;
             try {

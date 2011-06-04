@@ -309,6 +309,105 @@ public class MethodInfoUtil {
         return attributes;
     }
 
+    public static Map<ViewMethod, MethodAttributeInfo> resolveViewAttributes(List<? extends MethodAttributeInfo> infos, BeanContext beanContext) {
+        Map<ViewMethod, MethodAttributeInfo> attributes = new LinkedHashMap<ViewMethod, MethodAttributeInfo>();
+
+        Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
+
+        for (MethodAttributeInfo attributeInfo : infos) {
+            for (MethodInfo methodInfo : attributeInfo.methods) {
+
+                if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
+
+                    List<Method> methods = new ArrayList<Method>();
+
+                    if (methodInfo.methodIntf == null) {
+                        methods.addAll(matchingMethods(methodInfo, wildCardView));
+                    } else if (methodInfo.methodIntf.equals("Home")) {
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getHomeInterface()));
+                    } else if (methodInfo.methodIntf.equals("Remote")) {
+                        if (beanContext.getRemoteInterface() != null) {
+                            methods.addAll(matchingMethods(methodInfo, beanContext.getRemoteInterface()));
+                        }
+                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                            methods.addAll(matchingMethods(methodInfo, intf));
+                        }
+                    } else if (methodInfo.methodIntf.equals("LocalHome")) {
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getLocalHomeInterface()));
+                    } else if (methodInfo.methodIntf.equals("Local")) {
+                        if (beanContext.getLocalInterface() != null) {
+                            methods.addAll(matchingMethods(methodInfo, beanContext.getLocalInterface()));
+                        }
+                        for (Class intf : beanContext.getBusinessRemoteInterfaces()) {
+                            methods.addAll(matchingMethods(methodInfo, intf));
+                        }
+                    } else if (methodInfo.methodIntf.equals("ServiceEndpoint")) {
+                        methods.addAll(matchingMethods(methodInfo, beanContext.getServiceEndpointInterface()));
+                    }
+
+                    for (Method method : methods) {
+                        if (containerMethod(method)) {
+                            continue;
+                        }
+
+                        final ViewMethod viewMethod = new ViewMethod(methodInfo.methodIntf, method);
+                        attributes.put(viewMethod, attributeInfo);
+//                        List<MethodAttributeInfo> methodAttributeInfos = attributes.get(method);
+//                        if (methodAttributeInfos == null) {
+//                            methodAttributeInfos = new ArrayList<MethodAttributeInfo>();
+//                            attributes.put(method, methodAttributeInfos);
+//                        }
+//                        methodAttributeInfos.add(attributeInfo);
+                    }
+                }
+            }
+        }
+        return attributes;
+    }
+
+    public static class ViewMethod {
+        private final String view;
+        private final Method method;
+
+        public ViewMethod(String view, Method method) {
+            this.view = view;
+            this.method = method;
+        }
+
+        public String getView() {
+            return view;
+        }
+
+        public Method getMethod() {
+            return method;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ViewMethod that = (ViewMethod) o;
+
+            if (!method.equals(that.method)) return false;
+            if (view != null ? !view.equals(that.view) : that.view != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = view != null ? view.hashCode() : 0;
+            result = 31 * result + method.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s : %s(%s)", view, method.getName(), Join.join(", ", Classes.getSimpleNames(method.getParameterTypes())));
+        }
+    }
+
     private static boolean containerMethod(Method method) {
         return (method.getDeclaringClass() == EJBObject.class ||
                 method.getDeclaringClass() == EJBHome.class ||

@@ -180,6 +180,11 @@ public class Method {
         this.methodIntf = value;
     }
 
+    public Method withInterface(MethodIntf methodIntf) {
+        setMethodIntf(methodIntf);
+        return this;
+    }
+
     public String getMethodName() {
         return methodName;
     }
