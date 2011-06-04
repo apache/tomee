@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveAttributes;
+import static org.apache.openejb.assembler.classic.MethodInfoUtil.resolveViewAttributes;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -50,23 +51,33 @@ public class MethodTransactionBuilder {
 
         methodTransactionInfos = normalize(methodTransactionInfos);
 
-        Map<Method, MethodAttributeInfo> attributes = resolveAttributes(methodTransactionInfos, beanContext);
+        final Map<MethodInfoUtil.ViewMethod, MethodAttributeInfo> attributes = resolveViewAttributes(methodTransactionInfos, beanContext);
 
         Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodTransactionBuilder.class);
-        if (log.isDebugEnabled()) {
-            for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
-                Method method = entry.getKey();
-                MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
-                log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(value));
-            }
+        final boolean debug = log.isDebugEnabled();
+
+        for (Map.Entry<MethodInfoUtil.ViewMethod, MethodAttributeInfo> entry : attributes.entrySet()) {
+            final MethodInfoUtil.ViewMethod viewMethod = entry.getKey();
+            final Method method = viewMethod.getMethod();
+            final String view = viewMethod.getView();
+
+            MethodTransactionInfo transactionInfo = (MethodTransactionInfo) entry.getValue();
+
+            if (debug) log.debug("Transaction Attribute: " + method + " -- " + MethodInfoUtil.toString(transactionInfo));
+
+            beanContext.setMethodTransactionAttribute(method, TransactionType.get(transactionInfo.transAttribute), view);
+        }
+    }
+
+    private static String getMethodInterface(MethodTransactionInfo value) {
+        // We can only do this because we have previously processed all the
+        // MethodTransactionInfo objects so there is one per method
+        // It makes code like this easier to handle
+        for (MethodInfo methodInfo : value.methods) {
+            return methodInfo.methodIntf;
         }
 
-        for (Map.Entry<Method, MethodAttributeInfo> entry : attributes.entrySet()) {
-            MethodTransactionInfo value = (MethodTransactionInfo) entry.getValue();
-
-//            logger.info(entry.getKey().toString() +"  "+ value.transAttribute);
-            beanContext.setMethodTransactionAttribute(entry.getKey(), TransactionType.get(value.transAttribute));
-        }
+        return null;
     }
 
     /**

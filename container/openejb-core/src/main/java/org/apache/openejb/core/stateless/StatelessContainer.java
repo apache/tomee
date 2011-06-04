@@ -212,7 +212,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
         Object returnValue = null;
         try {

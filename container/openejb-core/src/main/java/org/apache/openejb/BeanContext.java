@@ -41,6 +41,7 @@ import javax.ejb.Timer;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
+import com.sun.istack.internal.Nullable;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
@@ -58,8 +59,6 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.recipe.ConstructionException;
 
@@ -126,6 +125,7 @@ public class BeanContext extends DeploymentContext {
     private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
     private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
     private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
+    private final Map<String, ViewContext> viewContextMap = new HashMap<String, ViewContext>();
 
     private Index<EntityManagerFactory,Map> extendedEntityManagerFactories;
 
@@ -412,36 +412,57 @@ public class BeanContext extends DeploymentContext {
     }
 
     public TransactionType getTransactionType(Method method) {
-        // Check the cache
-        TransactionType type = methodTransactionType.get(method);
-        if (type != null) {
-            return type;
+        return getTransactionType(method, null);
+    }
+
+    public TransactionType getTransactionType(Method method, InterfaceType interfaceType) {
+
+        MethodContext methodContext = null;
+
+        if (interfaceType != null) {
+            methodContext = getViewMethodContext(method, interfaceType.getSpecName());
         }
 
-        // Bean managed EJBs always get the BeanManaged policy
-        if (isBeanManagedTransaction) {
-            return TransactionType.BeanManaged;
+        if (methodContext == null) methodContext = methodContextMap.get(method);
+
+        if (methodContext == null) {
+            final Method beanMethod = getMatchingBeanMethod(method);
+            methodContext = getMethodContext(beanMethod);
         }
 
-        // Check the matching bean method for the supplied method
-        Method beanMethod = getMatchingBeanMethod(method);
-        if (beanMethod != null){
-            type = methodTransactionType.get(beanMethod);
-            if (type != null) {
-                return type;
-            }
-        }
+        return methodContext.getTransactionType();
 
-        // All transaction attributes should have been set during deployment, so log a message
-        Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
-        log.debug("The following method doesn't have a transaction policy assigned: " + method);
-
-        // default transaction policy is required
-        type = getTransactionType();
-
-        // cache this default to avoid extra log messages
-        methodTransactionType.put(method, type);
-        return type;
+//
+//        // Check the cache
+//        TransactionType type = methodTransactionType.get(method);
+//        if (type != null) {
+//            return type;
+//        }
+//
+//        // Bean managed EJBs always get the BeanManaged policy
+//        if (isBeanManagedTransaction) {
+//            return TransactionType.BeanManaged;
+//        }
+//
+//        // Check the matching bean method for the supplied method
+//        Method beanMethod = getMatchingBeanMethod(method);
+//        if (beanMethod != null){
+//            type = methodTransactionType.get(beanMethod);
+//            if (type != null) {
+//                return type;
+//            }
+//        }
+//
+//        // All transaction attributes should have been set during deployment, so log a message
+//        Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
+//        log.debug("The following method doesn't have a transaction policy assigned: " + method);
+//
+//        // default transaction policy is required
+//        type = getTransactionType();
+//
+//        // cache this default to avoid extra log messages
+//        methodTransactionType.put(method, type);
+//        return type;
     }
 
     public TransactionType getTransactionType() {
@@ -650,24 +671,41 @@ public class BeanContext extends DeploymentContext {
      * TODO: Move to MethodContext
      */
     public void setMethodTransactionAttribute(Method method, TransactionType transactionType) throws OpenEJBException {
+        setMethodTransactionAttribute(method, transactionType, null);
+    }
 
-        // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
-        // bean message listener methods. The use of the other transaction attributes is not meaningful
-        // for message-driven bean message listener methods because there is no pre-existing client transaction
-        // context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
-        if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
-            if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
+    /**
+     * TODO: Move to MethodContext
+     */
+    public void setMethodTransactionAttribute(Method method, TransactionType transactionType, String view) throws OpenEJBException {
 
-                if ((method.equals(this.ejbTimeout) || methodContextMap.get(method).isAsynchronous()) && transactionType == TransactionType.RequiresNew) {
-                    // do nothing. This is allowed as the timer callback method for a message driven bean
-                    // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
-                } else {
-                    throw new OpenEJBException("The transaction attribute " + transactionType + " is not supported for the method "
-                                               + method.getName() + " of the Message Driven Bean " + beanClass.getName());
-                }
-            }
+//        method = getMatchingBeanMethod(method);
+
+        if (view == null) {
+            getMethodContext(method).setTransactionType(transactionType);
+        } else {
+            initViewMethodContext(method, view).setTransactionType(transactionType);
         }
-        methodTransactionType.put(method, transactionType);
+
+        return;
+
+//        // Only the NOT_SUPPORTED and REQUIRED transaction attributes may be used for message-driven
+//        // bean message listener methods. The use of the other transaction attributes is not meaningful
+//        // for message-driven bean message listener methods because there is no pre-existing client transaction
+//        // context(REQUIRES_NEW, SUPPORTS) and no client to handle exceptions (MANDATORY, NEVER).
+//        if (componentType.isMessageDriven() && !isBeanManagedTransaction) {
+//            if (transactionType != TransactionType.NotSupported && transactionType != TransactionType.Required) {
+//
+//                if ((method.equals(this.ejbTimeout) || methodContextMap.get(method).isAsynchronous()) && transactionType == TransactionType.RequiresNew) {
+//                    // do nothing. This is allowed as the timer callback method for a message driven bean
+//                    // can also have a transaction policy of RequiresNew Sec 5.4.12 of Ejb 3.0 Core Spec
+//                } else {
+//                    throw new OpenEJBException("The transaction attribute " + transactionType + " is not supported for the method "
+//                                               + method.getName() + " of the Message Driven Bean " + beanClass.getName());
+//                }
+//            }
+//        }
+//        methodTransactionType.put(method, transactionType);
     }
 
     public List<Method> getRemoveMethods() {
@@ -1230,5 +1268,39 @@ public class BeanContext extends DeploymentContext {
             buffer.append(parameterType.getName());
         }
         return buffer.toString();
+    }
+
+    private MethodContext getViewMethodContext(Method method, String view) {
+        ViewContext viewContext = this.viewContextMap.get(view);
+        return (viewContext == null) ? null : viewContext.getMethodContext(method);
+    }
+
+    private MethodContext initViewMethodContext(Method method, String view) {
+        ViewContext viewContext = this.viewContextMap.get(view);
+        if (viewContext == null) {
+            viewContext = new ViewContext();
+            viewContextMap.put(view, viewContext);
+        }
+
+        return viewContext.initMethodContext(method);
+    }
+
+    public class ViewContext {
+
+        private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
+
+        public MethodContext getMethodContext(Method method) {
+            return methodContextMap.get(method);
+        }
+
+        public MethodContext initMethodContext(Method method) {
+            MethodContext methodContext = methodContextMap.get(method);
+            if (methodContext != null) return methodContext;
+
+            methodContext = new MethodContext(BeanContext.this, method);
+            methodContextMap.put(method, methodContext);
+
+            return methodContext;
+        }
     }
 }

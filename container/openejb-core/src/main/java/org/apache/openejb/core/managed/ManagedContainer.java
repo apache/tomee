@@ -358,7 +358,7 @@ public class ManagedContainer implements RpcContainer {
             createContext.setCurrentAllowedStates(null);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod), createContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(createContext.getBeanContext().getTransactionType(callMethod, interfaceType), createContext);
 
             Instance instance = null;
             try {
@@ -448,7 +448,7 @@ public class ManagedContainer implements RpcContainer {
             }
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             boolean retain = false;
@@ -550,7 +550,7 @@ public class ManagedContainer implements RpcContainer {
             checkAuthorization(callMethod, interfaceType);
 
             // Start transaction
-            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod), callContext);
+            TransactionPolicy txPolicy = createTransactionPolicy(callContext.getBeanContext().getTransactionType(callMethod, interfaceType), callContext);
 
             Object returnValue = null;
             Instance instance = null;
