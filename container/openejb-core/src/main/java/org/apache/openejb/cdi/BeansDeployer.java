@@ -100,6 +100,9 @@ public class BeansDeployer {
         BeanManagerImpl beanManager = webBeansContext.getBeanManagerImpl();
         WebBeansUtil webBeansUtil = webBeansContext.getWebBeansUtil();
 
+        // Register Manager built-in component
+        beanManager.addInternalBean(webBeansUtil.getManagerBean());
+
         // Register Conversation built-in component
         beanManager.addBean(webBeansUtil.getConversationBean());
 
