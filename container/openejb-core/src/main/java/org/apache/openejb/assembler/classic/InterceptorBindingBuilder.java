@@ -99,9 +99,10 @@ public class InterceptorBindingBuilder {
         
         
 
-        if (beanInfo instanceof StatelessBeanInfo) {
+        if (beanInfo instanceof StatelessBeanInfo || beanInfo instanceof MessageDrivenBeanInfo) {
             /*
-             * 4.3.10.2 If the stateless session bean instance has an ejbCreate method, 
+             * 4.3.10.2 and 4.5.8
+             * If the stateless session bean or MDB instance has an ejbCreate method, 
              * the container treats the ejbCreate method as the instance’s PostConstruct method,
              *  and, in this case, the PostConstruct annotation (or deployment descriptor metadata)
              *  can only be applied to the bean’s ejbCreate method.
