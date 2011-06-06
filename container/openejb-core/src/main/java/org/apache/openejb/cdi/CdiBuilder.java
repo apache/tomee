@@ -34,16 +34,10 @@ import org.apache.webbeans.logger.WebBeansLogger;
 public class CdiBuilder {
     private static final WebBeansLogger logger = WebBeansLogger.getLogger(CdiBuilder.class);
 
-    private static final WebBeansContext noContext = new WebBeansContext();
-
     public CdiBuilder() {
     }
 
     public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
-        if (!hasBeans(appInfo)) {
-            appContext.setWebBeansContext(noContext);
-            return;
-        }
 
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
         logger.info("existing thread singleton service in SystemInstance() " + singletonService);
