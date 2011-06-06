@@ -171,20 +171,20 @@ public class EntityContainer implements RpcContainer {
 
                     if (methodName.startsWith("create")) {
 
-                        return createEJBObject(callMethod, args, callContext);
+                        return createEJBObject(callMethod, args, callContext, type);
                     } else if (methodName.startsWith("find")) {
 
-                        return findMethod(callMethod, args, callContext);
+                        return findMethod(callMethod, args, callContext, type);
                     } else {
 
-                        return homeMethod(callMethod, args, callContext);
+                        return homeMethod(callMethod, args, callContext, type);
                     }
                 } else if (methodName.equals("remove")) {
-                    removeEJBObject(callMethod, args, callContext);
+                    removeEJBObject(callMethod, args, callContext, type);
                     return null;
                 }
             } else if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove")) {
-                removeEJBObject(callMethod, args, callContext);
+                removeEJBObject(callMethod, args, callContext, type);
                 return null;
             }
 
@@ -193,7 +193,7 @@ public class EntityContainer implements RpcContainer {
 
             callContext.set(Method.class, runMethod);
 
-            Object retValue = invoke(callMethod, runMethod, args, callContext);
+            Object retValue = invoke(type, callMethod, runMethod, args, callContext);
 
             return retValue;
 
@@ -210,9 +210,9 @@ public class EntityContainer implements RpcContainer {
         return instanceManager;
     }
 
-    protected Object invoke(Method callMethod, Method runMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+    protected Object invoke(InterfaceType type, Method callMethod, Method runMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
         EntityBean bean = null;
 
@@ -296,7 +296,7 @@ public class EntityContainer implements RpcContainer {
     protected void didCreateBean(ThreadContext callContext, EntityBean bean) throws OpenEJBException {
     }
 
-    protected ProxyInfo createEJBObject(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+    protected ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType type) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
         callContext.setCurrentOperation(Operation.CREATE);
@@ -315,7 +315,7 @@ public class EntityContainer implements RpcContainer {
         * super classes afterInvoke( ) method will be executed committing the transaction if its a CMT.
         */
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
         EntityBean bean = null;
         Object primaryKey = null;
@@ -365,11 +365,11 @@ public class EntityContainer implements RpcContainer {
 
     }
 
-    protected Object findMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+    protected Object findMethod(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType type) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
         callContext.setCurrentOperation(Operation.FIND);
         Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
-        Object returnValue = invoke(callMethod, runMethod, args, callContext);
+        Object returnValue = invoke(type, callMethod, runMethod, args, callContext);
 
         /*
         * Find operations return either a single primary key or a collection of primary keys.
@@ -397,11 +397,11 @@ public class EntityContainer implements RpcContainer {
         return returnValue;
     }
 
-    protected Object homeMethod(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+    protected Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType type) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
         callContext.setCurrentOperation(Operation.HOME);
         Method runMethod = beanContext.getMatchingBeanMethod(callMethod);
-        return invoke(callMethod, runMethod, args, callContext);
+        return invoke(type, callMethod, runMethod, args, callContext);
     }
 
     protected void didRemove(EntityBean bean, ThreadContext threadContext) throws OpenEJBException {
@@ -423,11 +423,11 @@ public class EntityContainer implements RpcContainer {
         }
     }
 
-    protected void removeEJBObject(Method callMethod, Object [] args, ThreadContext callContext) throws OpenEJBException {
+    protected void removeEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType type) throws OpenEJBException {
         callContext.setCurrentOperation(Operation.REMOVE);
 
         BeanContext beanContext = callContext.getBeanContext();
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
         EntityBean bean = null;
         try {
