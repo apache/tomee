@@ -254,20 +254,20 @@ public class CmpContainer implements RpcContainer {
             if (EJBHome.class.isAssignableFrom(declaringClass) || EJBLocalHome.class.isAssignableFrom(declaringClass)) {
                 if (declaringClass != EJBHome.class && declaringClass != EJBLocalHome.class) {
                     if (methodName.startsWith("create")) {
-                        return createEJBObject(callMethod, args, callContext);
+                        return createEJBObject(callMethod, args, callContext, type);
                     } else if (methodName.equals("findByPrimaryKey")) {
-                        return findByPrimaryKey(callMethod, args, callContext);
+                        return findByPrimaryKey(callMethod, args, callContext, type);
                     } else if (methodName.startsWith("find")) {
-                        return findEJBObject(callMethod, args, callContext);
+                        return findEJBObject(callMethod, args, callContext, type);
                     } else {
-                        return homeMethod(callMethod, args, callContext);
+                        return homeMethod(callMethod, args, callContext, type);
                     }
                 } else if (methodName.equals("remove")) {
-                    removeEJBObject(callMethod, callContext);
+                    removeEJBObject(callMethod, callContext, type);
                     return null;
                 }
             } else if ((EJBObject.class == declaringClass || EJBLocalObject.class == declaringClass) && methodName.equals("remove")) {
-                removeEJBObject(callMethod, callContext);
+                removeEJBObject(callMethod, callContext, type);
                 return null;
             }
 
@@ -277,7 +277,7 @@ public class CmpContainer implements RpcContainer {
 
             callContext.set(Method.class, runMethod);
 
-            Object retValue = businessMethod(callMethod, runMethod, args, callContext);
+            Object retValue = businessMethod(callMethod, runMethod, args, callContext, type);
 
             return retValue;
         } finally {
@@ -465,10 +465,10 @@ public class CmpContainer implements RpcContainer {
         }
     }
 
-    private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+    private Object businessMethod(Method callMethod, Method runMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         EntityBean bean;
         Object returnValue = null;
@@ -507,10 +507,10 @@ public class CmpContainer implements RpcContainer {
         return returnValue;
     }
 
-    private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+    private Object homeMethod(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         EntityBean bean;
         Object returnValue = null;
@@ -562,10 +562,10 @@ public class CmpContainer implements RpcContainer {
         return returnValue;
     }
 
-    private ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+    private ProxyInfo createEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         EntityBean bean;
         Object primaryKey = null;
@@ -633,10 +633,10 @@ public class CmpContainer implements RpcContainer {
         return new ProxyInfo(beanContext, primaryKey);
     }
 
-    private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+    private Object findByPrimaryKey(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
             EntityBean bean = (EntityBean) cmpEngine.loadBean(callContext, args[0]);
@@ -660,10 +660,10 @@ public class CmpContainer implements RpcContainer {
         throw new AssertionError("Should not get here");
     }
 
-    private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext) throws OpenEJBException {
+    private Object findEJBObject(Method callMethod, Object[] args, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
             List<Object> results = cmpEngine.queryBeans(callContext, callMethod, args);
@@ -794,10 +794,10 @@ public class CmpContainer implements RpcContainer {
         return result;
     }
 
-    private void removeEJBObject(Method callMethod, ThreadContext callContext) throws OpenEJBException {
+    private void removeEJBObject(Method callMethod, ThreadContext callContext, InterfaceType interfaceType) throws OpenEJBException {
         BeanContext beanContext = callContext.getBeanContext();
 
-        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod), callContext);
+        TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, interfaceType), callContext);
 
         try {
             EntityBean entityBean = (EntityBean) cmpEngine.loadBean(callContext, callContext.getPrimaryKey());
