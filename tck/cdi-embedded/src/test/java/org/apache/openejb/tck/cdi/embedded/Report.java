@@ -23,8 +23,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$
@@ -38,7 +40,7 @@ public class Report {
     private final LinkedList<TestClass> classes = new LinkedList<TestClass>();
 
     private void main() throws Exception {
-        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
+        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/latest.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -51,7 +53,7 @@ public class Report {
                 }
 
                 if ("test-method".equals(name)) {
-                    classes.getLast().addStatus(attributes.getValue("status"));
+                    classes.getLast().addStatus(attributes.getValue("status"), attributes.getValue("name"));
                 }
             }
         });
@@ -60,12 +62,29 @@ public class Report {
 
         int i = 0;
         for (TestClass testClass : classes) {
-            if (!testClass.hasFailures()) continue;
-            System.out.printf("<class name=\"%s\"/>\n", testClass.name);
-            i++;
+
+            for (TestResult result : testClass.getResults()) {
+                if (result.status == Status.PASS) continue;
+
+                System.out.printf("%s(%s)\n", result.name, testClass.name);
+            }
         }
+        i++;
 
         System.out.println(i);
+    }
+
+    public static enum Status {
+        PASS, FAIL, ERROR;
+    }
+    public static class TestResult {
+        private final String name;
+        private final Status status;
+
+        public TestResult(String name, Status status) {
+            this.name = name;
+            this.status = status;
+        }
     }
 
     public static class TestClass implements Comparable<TestClass>{
@@ -74,15 +93,21 @@ public class Report {
         private int failed;
         private int passed;
         private int error;
+        private final List<TestResult> results = new ArrayList<TestResult>();
 
         public TestClass(String name) {
             this.name = name;
         }
 
-        public void addStatus(String status) {
+        public void addStatus(String status, String testName) {
+            results.add(new TestResult(testName, Status.valueOf(status)));
             if ("PASS".equals(status)) passed++;
             if ("FAIL".equals(status)) failed++;
             if ("ERROR".equals(status)) error++;
+        }
+
+        public List<TestResult> getResults() {
+            return results;
         }
 
         public boolean hasFailures() {
