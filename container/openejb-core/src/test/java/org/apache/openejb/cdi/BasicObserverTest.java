@@ -19,12 +19,12 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Module;
-import org.apache.webbeans.config.WebBeansContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +37,11 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(ApplicationComposer.class)
 public class BasicObserverTest {
 
+    @Inject
+    private BeanManager beanManager;
+
     @Test
     public void test() throws Exception {
-        final BeanManager beanManager = WebBeansContext.getInstance().getBeanManagerImpl();
         assertNotNull(beanManager);
 
         final Catastrophy catastrophy = new Catastrophy();
