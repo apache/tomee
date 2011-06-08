@@ -20,8 +20,14 @@
 
 package org.apache.openejb.cdi;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -29,6 +35,9 @@ import java.util.Set;
 
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
+
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.webbeans.config.OWBLogConst;
@@ -39,6 +48,7 @@ import org.apache.webbeans.container.InjectionResolver;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.intercept.InterceptorData;
 import org.apache.webbeans.logger.WebBeansLogger;
+import org.apache.webbeans.portable.events.ExtensionLoader;
 import org.apache.webbeans.portable.events.ProcessAnnotatedTypeImpl;
 import org.apache.webbeans.portable.events.discovery.BeforeShutdownImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
@@ -49,6 +59,7 @@ import org.apache.webbeans.spi.ScannerService;
 import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.xml.WebBeansXMLConfigurator;
+import org.apache.xbean.finder.ResourceFinder;
 
 /**
  * @version $Rev:$ $Date:$
@@ -104,6 +115,30 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         return this.beanManager;
     }
 
+    private String readContents(URL resource) throws IOException {
+        InputStream in = resource.openStream();
+        BufferedInputStream reader = null;
+        StringBuffer sb = new StringBuffer();
+
+        try {
+            reader = new BufferedInputStream(in);
+
+            int b = reader.read();
+            while (b != -1) {
+                sb.append((char) b);
+                b = reader.read();
+            }
+
+            return sb.toString().trim();
+        } finally {
+            try {
+                in.close();
+                reader.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
     @Override
     public void startApplication(Object startupObject)
     {
@@ -123,8 +158,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Get Plugin
         CdiPlugin cdiPlugin = (CdiPlugin) webBeansContext.getPluginLoader().getEjbPlugin();
 
-        cdiPlugin.setAppContext(stuff.getAppContext());
-        stuff.getAppContext().setWebBeansContext(webBeansContext);
+        final AppContext appContext = stuff.getAppContext();
+
+        cdiPlugin.setAppContext(appContext);
+        appContext.setWebBeansContext(webBeansContext);
         cdiPlugin.startup();
 
         //Configure EJB Deployments
@@ -133,12 +170,12 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Resournce Injection Service
         CdiResourceInjectionService injectionService = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
         injectionService.setAppModule(stuff.getAppInfo());
-        injectionService.setClassLoader(stuff.getAppContext().getClassLoader());
+        injectionService.setClassLoader(appContext.getClassLoader());
 
         //Deploy the beans
         try {
             //Load Extensions
-            webBeansContext.getExtensionLoader().loadExtensionServices();
+            loadExtensions(appContext);
 
             //Initialize contexts
             this.contextsService.init(startupObject);
@@ -242,6 +279,28 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         afterStartApplication(startupObject);
 
         logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
+    }
+
+    private void loadExtensions(AppContext appContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        final ExtensionLoader extensionLoader = webBeansContext.getExtensionLoader();
+
+        // Load regularly visible Extensions
+        extensionLoader.loadExtensionServices(appContext.getClassLoader());
+
+        // Load any potentially misplaced extensions -- TCK seems to be full of them
+        // This could perhaps be improved or addressed elsewhere
+        final String s = "WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension";
+        final ArrayList<URL> list = Collections.list(appContext.getClassLoader().getResources(s));
+        for (URL url : list) {
+            final String className = readContents(url).trim();
+
+            final Class<?> extensionClass = appContext.getClassLoader().loadClass(className);
+
+            if (Extension.class.isAssignableFrom(extensionClass)) {
+                final Extension extension = (Extension) extensionClass.newInstance();
+                extensionLoader.addExtension(extension);
+            }
+        }
     }
 
     private void deployManagedBeans(Set<Class<?>> beanClasses, List<BeanContext> ejbs) {

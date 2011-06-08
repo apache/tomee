@@ -99,6 +99,7 @@
       <class name="org.jboss.jsr299.tck.tests.event.fires.nonbinding.NonBindingTypePassedToFireTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.implicit.ImplicitEventTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.ObserverTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.abortProcessing.ObserverExceptionAbortsProcessingTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.checkedException.CheckedExceptionWrappedTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.conditional.ConditionalObserverTest"/>
