@@ -16,10 +16,12 @@
  */
 package org.apache.openejb.junit;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InjectionProcessor;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -258,7 +260,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 final AppInfo appInfo = config.configureApplication(appModule);
 
-                assembler.createApplication(appInfo);
+                final AppContext appContext = assembler.createApplication(appInfo);
 
                 try {
                     final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
@@ -267,6 +269,15 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
                     processor.createInstance();
+
+                    try {
+                        OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
+                        beanInjector.inject(testInstance);
+                    } catch (Throwable t) {
+                        // TODO handle this differently
+                        // this is temporary till the injector can be rewritten
+                    }
+
 
                     System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 

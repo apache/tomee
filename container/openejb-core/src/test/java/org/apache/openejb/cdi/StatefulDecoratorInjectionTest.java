@@ -29,13 +29,11 @@ import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.ApplicationException;
 import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-
 import java.security.Principal;
 
 import static junit.framework.Assert.assertNotNull;

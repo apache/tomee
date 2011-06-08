@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -124,6 +125,14 @@ public class OpenEjbContainer extends EJBContainer {
         if (context == null) throw new NoInjectionMetaDataException(clazz.getName());
 
         final InjectionProcessor processor = new InjectionProcessor(object, context.getInjections(), context.getJndiContext());
+
+        try {
+            OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
+            beanInjector.inject(object);
+        } catch (Throwable t) {
+            // TODO handle this differently
+            // this is temporary till the injector can be rewritten
+        }
 
         try {
             return (T) processor.createInstance();
