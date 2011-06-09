@@ -420,6 +420,8 @@ public class JndiBuilder {
 
                 String name = strategy.getName(bean.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, localHomeInterface);
+                
+                optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), localHomeInterface.getName(), InterfaceType.EJB_LOCAL_HOME));
 
                 name = "openejb/Deployment/" + format(bean.getDeploymentID(), bean.getLocalInterface().getName());
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
@@ -443,7 +445,9 @@ public class JndiBuilder {
                 String name = strategy.getName(homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, homeInterface);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, homeInterface);
-
+                
+                optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), homeInterface.getName(), InterfaceType.EJB_HOME));
+                
                 name = "openejb/Deployment/" + format(bean.getDeploymentID(), bean.getRemoteInterface().getName());
                 bind(name, ref, bindings, beanInfo, homeInterface);
 
