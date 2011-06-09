@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
+
 package org.apache.openejb.jee.oejb2;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,6 +38,12 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="moduleId" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}artifactType" minOccurs="0"/>
  *         &lt;element name="dependencies" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}dependenciesType" minOccurs="0"/>
+ *         &lt;element name="bundle-activator" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="bundle-classPath" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="import-package" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="export-package" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="require-bundle" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="dynamic-import-package" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="hidden-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
  *         &lt;element name="non-overridable-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
  *         &lt;element name="private-classes" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}classFilterType" minOccurs="0"/>
@@ -52,18 +61,37 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "environmentType", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2", propOrder = {
     "moduleId",
     "dependencies",
+    "bundleActivator",
+    "bundleClassPath",
+    "importPackage",
+    "exportPackage",
+    "requireBundle",
+    "dynamicImportPackage",
     "hiddenClasses",
     "nonOverridableClasses",
     "privateClasses",
     "inverseClassloading",
     "suppressDefaultEnvironment"
 })
+
 public class EnvironmentType {
 
     @XmlElement(name="moduleId", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ArtifactType moduleId;
     @XmlElement(name="dependencies", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected DependenciesType dependencies;
+    @XmlElement(name = "bundle-activator", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected String bundleActivator;
+    @XmlElement(name = "bundle-classPath", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected List<String> bundleClassPath;
+    @XmlElement(name = "import-package", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected List<String> importPackage;
+    @XmlElement(name = "export-package", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected List<String> exportPackage;
+    @XmlElement(name = "require-bundle", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected List<String> requireBundle;
+    @XmlElement(name = "dynamic-import-package", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
+    protected List<String> dynamicImportPackage;
     @XmlElement(name = "hidden-classes", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
     protected ClassFilterType hiddenClasses;
     @XmlElement(name = "non-overridable-classes", namespace = "http://geronimo.apache.org/xml/ns/deployment-1.2")
@@ -121,6 +149,175 @@ public class EnvironmentType {
      */
     public void setDependencies(DependenciesType value) {
         this.dependencies = value;
+    }
+
+    /**
+     * Gets the value of the bundleActivator property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBundleActivator() {
+        return bundleActivator;
+    }
+
+    /**
+     * Sets the value of the bundleActivator property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBundleActivator(String value) {
+        this.bundleActivator = value;
+    }
+
+    /**
+     * Gets the value of the bundleClassPath property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the bundleClassPath property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getBundleClassPath().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getBundleClassPath() {
+        if (bundleClassPath == null) {
+            bundleClassPath = new ArrayList<String>();
+        }
+        return this.bundleClassPath;
+    }
+
+    /**
+     * Gets the value of the importPackage property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the importPackage property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getImportPackage().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getImportPackage() {
+        if (importPackage == null) {
+            importPackage = new ArrayList<String>();
+        }
+        return this.importPackage;
+    }
+
+    /**
+     * Gets the value of the exportPackage property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the exportPackage property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getExportPackage().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getExportPackage() {
+        if (exportPackage == null) {
+            exportPackage = new ArrayList<String>();
+        }
+        return this.exportPackage;
+    }
+
+    /**
+     * Gets the value of the requireBundle property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the requireBundle property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getRequireBundle().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getRequireBundle() {
+        if (requireBundle == null) {
+            requireBundle = new ArrayList<String>();
+        }
+        return this.requireBundle;
+    }
+
+    /**
+     * Gets the value of the dynamicImportPackage property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the dynamicImportPackage property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getDynamicImportPackage().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getDynamicImportPackage() {
+        if (dynamicImportPackage == null) {
+            dynamicImportPackage = new ArrayList<String>();
+        }
+        return this.dynamicImportPackage;
     }
 
     /**
@@ -191,7 +388,7 @@ public class EnvironmentType {
      *     {@link ClassFilterType }
      *     
      */
-    public void setPrivatelasses(ClassFilterType value) {
+    public void setPrivateClasses(ClassFilterType value) {
         this.privateClasses = value;
     }
 
