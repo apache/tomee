@@ -147,8 +147,4 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return toReturn;
     }
 
-    @Override
-    public String getName() {
-        return beanContext.getEjbName();
-    }
 }
