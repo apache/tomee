@@ -28,6 +28,7 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.Transactio
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransactions;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 
+import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.TransactionManager;
 
 public class GeronimoConnectionManagerFactory   {
@@ -48,8 +49,19 @@ public class GeronimoConnectionManagerFactory   {
     private boolean allConnectionsEqual = true;
     private int connectionMaxWaitMilliseconds = 5000;
     private int connectionMaxIdleMinutes = 15;
+    private ManagedConnectionFactory mcf;
 
-    public String getName() {
+    
+    
+    public ManagedConnectionFactory getMcf() {
+		return mcf;
+	}
+
+	public void setMcf(ManagedConnectionFactory mcf) {
+		this.mcf = mcf;
+	}
+
+	public String getName() {
         return name;
     }
 
@@ -150,6 +162,7 @@ public class GeronimoConnectionManagerFactory   {
                 null,
                 new AutoConnectionTracker(),
                 (RecoverableTransactionManager)transactionManager,
+                mcf,
                 name,
                 classLoader);
         return connectionManager;

@@ -16,32 +16,68 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.ClientInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.EjbJar;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.xbean.finder.Annotated;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.archive.ClassesArchive;
-import org.junit.Assert;
-import org.junit.Test;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.ApplicationException;
 import javax.ejb.Local;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import java.lang.reflect.Method;
-import java.util.List;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.resource.Referenceable;
+import javax.resource.ResourceException;
+import javax.resource.cci.MessageListener;
+import javax.resource.cci.Record;
+import javax.resource.spi.Activation;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.AdministeredObject;
+import javax.resource.spi.AuthenticationMechanism;
+import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionDefinition;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.InvalidPropertyException;
+import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.SecurityPermission;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
+import javax.resource.spi.work.WorkContext;
+import javax.security.auth.Subject;
+import javax.transaction.xa.XAResource;
+
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.ConfigProperty;
+import org.apache.openejb.jee.Connector;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.TransactionSupportType;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version $Rev$ $Date$
@@ -182,8 +218,79 @@ public class AnnotationDeployerTest {
         assert bean != null;
         assert (((SessionBean)bean).getLocalBean() == null);        
     }
+    
+    @Test
+    public void testResourceAdapter() throws Exception {
+    	ConnectorModule connectorModule = testConnectorModule();
+    	AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
+    	discvrAnnBeans.deploy(connectorModule);
+    	
+    	Connector connector = connectorModule.getConnector();
+    	Assert.assertEquals("displayName", connector.getDisplayName());
+    	Assert.assertEquals("description", connector.getDescription());
+    	Assert.assertEquals("eisType", connector.getEisType());
+    	Assert.assertEquals("vendorName", connector.getVendorName());
+    	Assert.assertEquals("version", connector.getResourceAdapterVersion());
+    	Assert.assertEquals("smallIcon", connector.getIcon().getSmallIcon());
+    	Assert.assertEquals("largeIcon", connector.getIcon().getLargeIcon());
+    	Assert.assertEquals("licenseDescription", connector.getLicense().getDescription());
+    	Assert.assertEquals(true, connector.getLicense().isLicenseRequired());
+    	
+    	List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
+    	Assert.assertEquals("description", securityPermission.get(0).getDescription());
+    	Assert.assertEquals("permissionSpec", securityPermission.get(0).getSecurityPermissionSpec());
+    	
+    	List<String> requiredWorkContext = connector.getRequiredWorkContext();
+    	Assert.assertEquals(TestWorkContext.class.getName(), requiredWorkContext.get(0));
+    	
+    	List<org.apache.openejb.jee.AuthenticationMechanism> authenticationMechanism = connector.getResourceAdapter().getOutboundResourceAdapter().getAuthenticationMechanism();
+    	Assert.assertEquals("authMechanism", authenticationMechanism.get(0).getAuthenticationMechanismType());
+    	Assert.assertEquals(CredentialInterface.GenericCredential.toString(), authenticationMechanism.get(0).getCredentialInterface());
+    	Assert.assertEquals("description", authenticationMechanism.get(0).getDescription());
+    	
+    	Assert.assertEquals(TransactionSupportType.NO_TRANSACTION, connector.getResourceAdapter().getOutboundResourceAdapter().getTransactionSupport());
+    	Assert.assertEquals(true, connector.getResourceAdapter().getOutboundResourceAdapter().isReauthenticationSupport());
+    	
+    	Assert.assertEquals(Connection.class.getName(), connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition().get(0).getConnectionInterface());
+    	Assert.assertEquals(ConnectionImpl.class.getName(), connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition().get(0).getConnectionImplClass());
+    	Assert.assertEquals(ConnectionFactory.class.getName(), connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition().get(0).getConnectionFactoryInterface());
+    	Assert.assertEquals(ConnectionFactoryImpl.class.getName(), connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition().get(0).getConnectionFactoryImplClass());
+    	
+    	Assert.assertEquals(TestActivation.class.getName(), connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener().get(0).getActivationSpec().getActivationSpecClass());
+    	Assert.assertEquals(TestMessageListener.class.getName(), connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener().get(0).getMessageListenerType());
+    	
+    	Assert.assertEquals(TestAdminObject.class.getName(), connector.getResourceAdapter().getAdminObject().get(0).getAdminObjectClass());
+    	Assert.assertEquals(TestAdminObjectInterface.class.getName(), connector.getResourceAdapter().getAdminObject().get(0).getAdminObjectInterface());
+    }
 
-    @ApplicationException(rollback = true)
+    private ConnectorModule testConnectorModule() {
+    	Connector connector = new Connector();
+    	ConnectorModule connectorModule = new ConnectorModule(connector);
+        connectorModule.setFinder(new ClassFinder(TestConnector.class, TestManagedConnectionFactory.class, TestActivation.class, TestAdminObject.class));
+        return connectorModule;
+    }
+    
+    @Test
+    public void testConfigProperties() throws Exception {
+    	ClassFinder finder = new ClassFinder(TestAdminObject.class);
+    	
+    	final List<ConfigProperty> configProperty = new ArrayList<ConfigProperty>();
+    	
+		Object object = new Object() {
+			 public List<ConfigProperty> getConfigProperty() {
+		        return configProperty;
+		    }
+		};
+		
+		new AnnotationDeployer.DiscoverAnnotatedBeans().process(null, TestAdminObject.class.getName(), object);
+		Assert.assertEquals(2, configProperty.size());
+		Assert.assertEquals("myNumber", configProperty.get(0).getConfigPropertyName());
+		Assert.assertEquals("java.lang.Integer", configProperty.get(0).getConfigPropertyType());
+		Assert.assertEquals("myProperty", configProperty.get(1).getConfigPropertyName());
+		Assert.assertEquals("java.lang.String", configProperty.get(1).getConfigPropertyType());
+    }
+
+	@ApplicationException(rollback = true)
     public abstract class BusinessException extends Exception {
     }
 
@@ -233,4 +340,143 @@ public class AnnotationDeployerTest {
         public void emerald(){}
     }
 
-}
+    @javax.resource.spi.Connector(description="description", 
+		displayName="displayName", smallIcon="smallIcon",
+		largeIcon="largeIcon", vendorName="vendorName",
+		eisType="eisType",
+		version="version",
+		licenseDescription={"licenseDescription"},
+		licenseRequired=true,
+		authMechanisms = {@AuthenticationMechanism(authMechanism="authMechanism", 
+				credentialInterface=CredentialInterface.GenericCredential, description={"description"})},
+		reauthenticationSupport=true,
+		securityPermissions = {@SecurityPermission(permissionSpec="permissionSpec", description="description")},
+		transactionSupport = TransactionSupportLevel.NoTransaction,
+		requiredWorkContexts = {TestWorkContext.class}
+    )
+    public static class TestConnector implements ResourceAdapter {
+
+		public void endpointActivation(MessageEndpointFactory mef, ActivationSpec spec) throws ResourceException {
+		}
+
+		public void endpointDeactivation(MessageEndpointFactory mef, ActivationSpec spec) {
+		}
+
+		public XAResource[] getXAResources(ActivationSpec[] specs) throws ResourceException {
+			return null;
+		}
+
+		public void start(BootstrapContext ctx) throws ResourceAdapterInternalException {
+		}
+
+		public void stop() {
+		}
+    }
+    
+    @ConnectionDefinition(connection=Connection.class, connectionFactory=ConnectionFactory.class, connectionImpl=ConnectionImpl.class, connectionFactoryImpl=ConnectionFactoryImpl.class)
+    public static class TestManagedConnectionFactory implements ManagedConnectionFactory {
+
+		public Object createConnectionFactory() throws ResourceException {
+			return null;
+		}
+
+		public Object createConnectionFactory(ConnectionManager connectionManager) throws ResourceException {
+			return null;
+		}
+
+		public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
+			return null;
+		}
+
+		public PrintWriter getLogWriter() throws ResourceException {
+			return null;
+		}
+
+		public ManagedConnection matchManagedConnections(Set managedConnections, Subject subject, ConnectionRequestInfo connectionRequestInfo) throws ResourceException {
+			return null;
+		}
+
+		public void setLogWriter(PrintWriter writer) throws ResourceException {
+		}
+    	
+    }
+    
+    public static class TestWorkContext implements WorkContext {
+		public String getDescription() {
+			return "Description";
+		}
+
+		public String getName() {
+			return "Name";
+		}
+    }
+ 
+    public static interface Connection {
+    }
+    
+    public static class ConnectionImpl implements Connection {
+    }
+    
+    public static interface ConnectionFactory extends Serializable, Referenceable {
+    }
+    
+    public static class ConnectionFactoryImpl implements ConnectionFactory {
+
+		public void setReference(Reference reference) {
+		}
+
+		public Reference getReference() throws NamingException {
+			return null;
+		}
+    }
+    
+    @Activation(messageListeners={TestMessageListener.class})
+    public static class TestActivation implements ActivationSpec, Serializable {
+
+		public ResourceAdapter getResourceAdapter() {
+			return null;
+		}
+
+		public void setResourceAdapter(ResourceAdapter arg0) throws ResourceException {
+		}
+
+		public void validate() throws InvalidPropertyException {
+		}
+    }
+    
+    public static class TestMessageListener implements MessageListener {
+		public Record onMessage(Record arg0) throws ResourceException {
+			return null;
+		}
+    }
+    
+    public static interface TestAdminObjectInterface {
+    }
+    
+    public static interface SomeOtherInterface {
+    }
+    
+    @AdministeredObject(adminObjectInterfaces={TestAdminObjectInterface.class})
+    public static class TestAdminObject implements TestAdminObjectInterface, SomeOtherInterface {
+    	private String myProperty;
+    	
+    	@javax.resource.spi.ConfigProperty(ignore=true)
+    	private int myNumber;
+
+		public String getMyProperty() {
+			return myProperty;
+		}
+
+		public void setMyProperty(String myProperty) {
+			this.myProperty = myProperty;
+		}
+
+		public int getMyNumber() {
+			return myNumber;
+		}
+
+		public void setMyNumber(int myNumber) {
+			this.myNumber = myNumber;
+		}
+    }
+ }

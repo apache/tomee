@@ -17,6 +17,7 @@
  */
 package org.apache.openejb.core.mdb;
 
+import java.util.Collections;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javax.jms.Connection;
@@ -32,6 +33,8 @@ import junit.framework.TestCase;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.connector.work.TransactionContextHandler;
+import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
@@ -58,10 +61,12 @@ public class JmsProxyTest extends TestCase {
         Executor threadPool = Executors.newFixedThreadPool(30);
 
         // create a work manager which ActiveMQ uses to dispatch message delivery jobs
-        WorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, transactionManager);
+        
+        TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(transactionManager);
+        GeronimoWorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
 
         // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
-        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager);
+        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager, transactionManager);
 
         // start the resource adapter
         try {
