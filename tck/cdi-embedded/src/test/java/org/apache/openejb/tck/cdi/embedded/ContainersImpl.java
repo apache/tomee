@@ -18,26 +18,32 @@ package org.apache.openejb.tck.cdi.embedded;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.cdi.ThreadSingletonService;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
 import org.jboss.testharness.api.DeploymentException;
+import org.jboss.testharness.impl.packaging.ear.EjbJarXml;
+import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
 import org.jboss.testharness.spi.Containers;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.AccessibleObject;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @version $Rev$ $Date$
@@ -80,14 +86,11 @@ public class ContainersImpl implements Containers {
         return true;
     }
 
-    private void dump(Object o)
-    {
-        try
-        {
+    private void dump(Object o) {
+        try {
             final Class<? extends Object> clazz = o.getClass();
 
-            for (Field field : clazz.getDeclaredFields())
-            {
+            for (Field field : clazz.getDeclaredFields()) {
                 SetAccessible.on(field);
 
                 if (Collection.class.isAssignableFrom(field.getType())) {
@@ -95,28 +98,104 @@ public class ContainersImpl implements Containers {
                     System.out.println(field.getName() + "\t= " + collection.size());
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
+    }
+
+    private URL getResource(Class clazz, String path) {
+        final String resourcePath = clazz.getPackage().getName().replace(".", "/") + "/" + path;
+
+        return clazz.getClassLoader().getResource(resourcePath);
     }
 
     private File writeToFile(InputStream archive, String name) throws IOException {
         final File file = File.createTempFile("deploy", "-" + name);
         file.deleteOnExit();
 
-        final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-
         try {
-            int i = -1;
-            while ((i = archive.read()) != -1) out.write(i);
-        } finally {
-            out.close();
-        }
 
+            Map<String, URL> resources = new HashMap<String, URL>();
+            
+            final Class<?> clazz = this.getClass().getClassLoader().loadClass(name.replace(".jar", ""));
+
+            if (clazz.isAnnotationPresent(EjbJarXml.class)) {
+                final URL resource = getResource(clazz, clazz.getAnnotation(EjbJarXml.class).value());
+                
+                if (resource != null) resources.put("META-INF/ejb-jar.xml", resource);
+            }
+
+            if (clazz.isAnnotationPresent(PersistenceXml.class)) {
+                final URL resource = getResource(clazz, clazz.getAnnotation(PersistenceXml.class).value());
+                
+                if (resource != null) resources.put("META-INF/persistence.xml", resource);
+            }
+
+            final boolean isJar = name.endsWith(".jar");
+
+            final ZipInputStream zin = new ZipInputStream(archive);
+            final ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+
+            for (ZipEntry entry; (entry = zin.getNextEntry()) != null; ) {
+                String entryName = entry.getName();
+
+                if (entryName.startsWith("WEB-INF")) {
+                    System.out.println(entryName);
+                }
+                if (isJar && entryName.startsWith("WEB-INF/classes/")) {
+                    entryName = entryName.replaceFirst("WEB-INF/classes/","");
+                }
+
+                InputStream src = zin;
+
+                if (resources.containsKey(entryName)) {
+                    src = resources.get(entryName).openStream();
+                }
+
+                resources.remove(entryName);
+
+                zout.putNextEntry(new ZipEntry(entryName));
+
+                copy(src, zout);
+            }
+
+            for (Map.Entry<String, URL> entry : resources.entrySet()) {
+
+                zout.putNextEntry(new ZipEntry(entry.getKey()));
+
+                copy(entry.getValue().openStream(), zout);
+            }
+
+            close(zin);
+            close(zout);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return file;
     }
+
+    private static void copy(InputStream from, OutputStream to) throws IOException {
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = from.read(buffer)) != -1) {
+            to.write(buffer, 0, length);
+        }
+    }
+
+    public static void close(Closeable closeable) throws IOException {
+        if (closeable == null) return;
+        try {
+            if (closeable instanceof Flushable) {
+                ((Flushable) closeable).flush();
+            }
+        } catch (IOException e) {
+        }
+        try {
+            closeable.close();
+        } catch (IOException e) {
+        }
+    }
+
 
     @Override
     public DeploymentException getDeploymentException() {

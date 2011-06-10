@@ -115,6 +115,7 @@
       <class name="org.jboss.jsr299.tck.tests.extensions.annotated.AlternativeMetaDataTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.bean.bytype.BeanByTypeTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.beanManager.BeanManagerTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.container.event.ContainerEventTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.DisposalMethodDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.initializerUnallowed.InitializerUnallowedDefinitionTest"/>
@@ -130,6 +131,7 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithConversationScope.StatelessWithConversationScopeTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithRequestScope.StatelessWithRequestScopeTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithSessionScope.StatelessWithSessionScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.definition.EnterpriseBeanViaXmlTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.InitializerMethodTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.broken.methodAnnotatedProduces.InitializerMethodAnnotatedProducesTest"/>
