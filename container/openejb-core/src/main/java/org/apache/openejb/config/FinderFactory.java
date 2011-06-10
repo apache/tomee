@@ -49,6 +49,12 @@ public class FinderFactory {
             final ClassLoader webClassLoader = webModule.getClassLoader();
             return new AnnotationFinder(new ClasspathArchive(webClassLoader, webModule.getUrls())).link();
         }
+        
+        if (module instanceof ConnectorModule) {
+        	ConnectorModule connectorModule = (ConnectorModule) module;
+        	final ClassLoader connectorClassLoader = connectorModule.getClassLoader();
+        	return new AnnotationFinder(new ClasspathArchive(connectorClassLoader, connectorModule.getLibraries())).link();
+        }
 
         if (module.getJarLocation() != null) {
             String location = module.getJarLocation();

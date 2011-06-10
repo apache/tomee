@@ -49,7 +49,10 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidatorFactory;
 
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.connector.work.TransactionContextHandler;
+import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.apache.geronimo.transaction.manager.XAWork;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
@@ -1276,7 +1279,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             WorkManager workManager;
             if (transactionManager instanceof GeronimoTransactionManager) {
                 GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
-                workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, geronimoTransactionManager);
+                TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(geronimoTransactionManager);
+                workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
             } else {
                 workManager = new SimpleWorkManager(threadPool);
             }
@@ -1310,6 +1314,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             connectionManagerRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             connectionManagerRecipe.setAllProperties(serviceInfo.properties);
             connectionManagerRecipe.setProperty("name", serviceInfo.id);
+            connectionManagerRecipe.setProperty("mcf", managedConnectionFactory);
 
             // standard properties
             connectionManagerRecipe.setProperty("transactionManager", transactionManager);

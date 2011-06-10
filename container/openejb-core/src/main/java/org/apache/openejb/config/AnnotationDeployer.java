@@ -20,6 +20,10 @@ import static java.lang.reflect.Modifier.isAbstract;
 import static java.util.Arrays.asList;
 import static org.apache.openejb.util.Join.join;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -28,6 +32,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -97,6 +102,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContexts;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnits;
+import javax.resource.spi.Activation;
+import javax.resource.spi.AdministeredObject;
+import javax.resource.spi.ConnectionDefinition;
+import javax.resource.spi.ConnectionDefinitions;
+import javax.resource.spi.Connector;
+import javax.resource.spi.SecurityPermission;
+import javax.resource.spi.work.WorkContext;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
@@ -109,15 +121,19 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationSpec;
+import org.apache.openejb.jee.AdminObject;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.AroundInvoke;
 import org.apache.openejb.jee.AroundTimeout;
 import org.apache.openejb.jee.AssemblyDescriptor;
 import org.apache.openejb.jee.AsyncMethod;
+import org.apache.openejb.jee.AuthenticationMechanism;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.ConcurrencyManagementType;
 import org.apache.openejb.jee.ConcurrentLockType;
 import org.apache.openejb.jee.ConcurrentMethod;
+import org.apache.openejb.jee.ConfigProperty;
 import org.apache.openejb.jee.ContainerConcurrency;
 import org.apache.openejb.jee.ContainerTransaction;
 import org.apache.openejb.jee.EjbJar;
@@ -133,6 +149,8 @@ import org.apache.openejb.jee.FacesManagedBean;
 import org.apache.openejb.jee.Filter;
 import org.apache.openejb.jee.Handler;
 import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.Icon;
+import org.apache.openejb.jee.InboundResourceadapter;
 import org.apache.openejb.jee.InitMethod;
 import org.apache.openejb.jee.Injectable;
 import org.apache.openejb.jee.InjectionTarget;
@@ -141,14 +159,18 @@ import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.Invokable;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.License;
 import org.apache.openejb.jee.Lifecycle;
 import org.apache.openejb.jee.LifecycleCallback;
 import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.MessageAdapter;
 import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.MethodAttribute;
 import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -158,6 +180,7 @@ import org.apache.openejb.jee.RemoteBean;
 import org.apache.openejb.jee.RemoveMethod;
 import org.apache.openejb.jee.ResAuth;
 import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ResourceEnvRef;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SecurityIdentity;
@@ -170,12 +193,14 @@ import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.Tag;
+import org.apache.openejb.jee.Text;
 import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.Timer;
 import org.apache.openejb.jee.TimerConsumer;
 import org.apache.openejb.jee.TimerSchedule;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.TransactionSupportType;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
@@ -186,6 +211,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.MetaAnnotatedClass;
 import org.apache.xbean.finder.archive.ClassesArchive;
@@ -384,8 +410,508 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
+        	
+        	org.apache.openejb.jee.Connector connector = connectorModule.getConnector();
+        	if (connector == null) {
+        		connector = new org.apache.openejb.jee.Connector();
+        	}
+        	
+        	// JCA 1.6 - 18.3.1 do not look at annotations if the provided connector
+        	// deployment descriptor is "meta-data complete".
+        	
+        	float specVersion = 0;
+        	try {
+        		specVersion = Float.parseFloat(connector.getVersion());
+        	} catch (Exception e) {
+        	}
+        	
+			if (specVersion < 1.6 || Boolean.TRUE.equals(connector.isMetadataComplete())) {
+				return connectorModule;
+			}
+        	
+        	
+        	IAnnotationFinder finder = connectorModule.getFinder();
+        	if (finder == null) {
+        		try {
+        			finder = FinderFactory.createFinder(connectorModule);
+					connectorModule.setFinder(finder);
+				} catch (Exception e) {
+					// TODO: some sort of error
+					return connectorModule;
+				}
+        	}
+        	
+        	List<Class<?>> connectorClasses = finder.findAnnotatedClasses(Connector.class);
+        	
+        	// are we allowed to have more than one connector class? Not without a deployment descriptor
+        	if (connector.getResourceAdapter() == null || connector.getResourceAdapter().getResourceAdapterClass() == null ||  connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
+        		if (connectorClasses.size() == 0) {
+        			// fail some validation here too
+        		}
+        		
+        		if (connectorClasses.size() > 1) {
+        			// too many connector classes, this is against the spec
+        			// something like connectorModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
+        		}
+        	}
+        	
+        	Class<?> connectorClass = null;
+        	if (connectorClasses.size() == 1) {
+        		connectorClass = connectorClasses.get(0);
+        	}
+        	
+        	if (connectorClasses.size() > 1) {
+        		for (Class<?> cls : connectorClasses) {
+        			if (cls.getName().equals(connector.getResourceAdapter().getResourceAdapterClass())) {
+        				connectorClass = cls;
+        				break;
+        			}
+        		}
+        	}
+        	
+        	if (connectorClass != null) {
+	    		if (connector.getResourceAdapter() == null) {
+	    			connector.setResourceAdapter(new ResourceAdapter());
+	    		}
+	    			
+	    		if (connector.getResourceAdapter().getResourceAdapterClass() == null || connector.getResourceAdapter().getResourceAdapterClass().length() == 0) {
+	    			connector.getResourceAdapter().setResourceAdapterClass(connectorClass.getName().toString());
+	    		}
+	    		
+	    		Connector connectorAnnotation = connectorClass.getAnnotation(Connector.class);
+	    		
+	    		connector.setDisplayNames(getTexts(connector.getDisplayNames(), connectorAnnotation.displayName()));
+	    		connector.setDescriptions(getTexts(connector.getDescriptions(), connectorAnnotation.description()));
+	    		
+	    		connector.setEisType(getString(connector.getEisType(), connectorAnnotation.eisType()));
+	    		connector.setVendorName(getString(connector.getVendorName(), connectorAnnotation.vendorName()));
+	    		connector.setResourceAdapterVersion(getString(connector.getResourceAdapterVersion(), connectorAnnotation.version()));
+	    		
+	    		if (connector.getIcons().isEmpty()) {
+	    			int smallIcons = connectorAnnotation.smallIcon().length;
+	    			int largeIcons = connectorAnnotation.largeIcon().length;
+	    			
+	    			for (int i = 0; i < smallIcons && i < largeIcons; i++) {
+	    				Icon icon = new Icon();
+	    				if (i < smallIcons) {
+	    					icon.setSmallIcon(connectorAnnotation.smallIcon()[i]);
+	    				}
+	    				
+	    				if (i < largeIcons) {
+	    					icon.setLargeIcon(connectorAnnotation.largeIcon()[i]);
+	    				}
+	    				
+	    				connector.getIcons().add(icon);
+	    			}
+	    		}
+	    		
+	    		if (connector.getLicense() == null) {
+	    			License license = new License();
+					connector.setLicense(license);
+					license.setLicenseRequired(connectorAnnotation.licenseRequired());
+	    		}
+	    		
+	    		connector.getLicense().setDescriptions(getTexts(connector.getLicense().getDescriptions(), connectorAnnotation.licenseDescription()));
+	    		
+	    		
+	    		SecurityPermission[] annotationSecurityPermissions = connectorAnnotation.securityPermissions();
+				List<org.apache.openejb.jee.SecurityPermission> securityPermission = connector.getResourceAdapter().getSecurityPermission();
+				if (securityPermission == null || securityPermission.size() == 0) {
+					for (SecurityPermission sp : annotationSecurityPermissions) {
+						org.apache.openejb.jee.SecurityPermission permission = new org.apache.openejb.jee.SecurityPermission();
+						permission.setSecurityPermissionSpec(sp.permissionSpec());
+						permission.setDescriptions(stringsToTexts(sp.description()));
+						securityPermission.add(permission);
+					}
+				}
+				
+				Class<? extends WorkContext>[] annotationRequiredWorkContexts = connectorAnnotation.requiredWorkContexts();
+				List<String> requiredWorkContext = connector.getRequiredWorkContext();
+				if (requiredWorkContext.size() == 0) {
+					for (Class<? extends WorkContext> cls : annotationRequiredWorkContexts) {
+						requiredWorkContext.add(cls.getName());
+					}
+				}
+				
+				OutboundResourceAdapter outboundResourceAdapter = connector.getResourceAdapter().getOutboundResourceAdapter();
+				if (outboundResourceAdapter == null) {
+					outboundResourceAdapter = new OutboundResourceAdapter();
+					connector.getResourceAdapter().setOutboundResourceAdapter(outboundResourceAdapter);
+				}
+				
+				List<AuthenticationMechanism> authenticationMechanisms = outboundResourceAdapter.getAuthenticationMechanism();
+				javax.resource.spi.AuthenticationMechanism[] authMechanisms = connectorAnnotation.authMechanisms();
+				if (authenticationMechanisms.size() == 0) {
+					for (javax.resource.spi.AuthenticationMechanism am : authMechanisms) {
+						AuthenticationMechanism authMechanism = new AuthenticationMechanism();
+						authMechanism.setAuthenticationMechanismType(am.authMechanism());
+						authMechanism.setCredentialInterface(am.credentialInterface().toString());
+						authMechanism.setDescriptions(stringsToTexts(am.description()));
+						
+						authenticationMechanisms.add(authMechanism);
+					}
+				}
+				
+				if (outboundResourceAdapter.getTransactionSupport() == null) {
+					outboundResourceAdapter.setTransactionSupport(TransactionSupportType.fromValue(connectorAnnotation.transactionSupport().toString()));
+				}
+				
+				if (outboundResourceAdapter.isReauthenticationSupport() == null) {
+					outboundResourceAdapter.setReauthenticationSupport(connectorAnnotation.reauthenticationSupport());
+				}
+        	} else {
+        		// we couldn't process a connector class - probably a validation issue which we should warn about.
+        	}
+
+        	// process @ConnectionDescription(s)
+        	List<Class<?>> classes = finder.findAnnotatedClasses(ConnectionDefinitions.class);
+        	for (Class<?> cls : classes) {
+				ConnectionDefinitions connectionDefinitionsAnnotation = cls.getAnnotation(ConnectionDefinitions.class);
+				ConnectionDefinition[] definitions = connectionDefinitionsAnnotation.value();
+				
+				for (ConnectionDefinition definition : definitions) {
+					processConnectionDescription(connector.getResourceAdapter(), definition, cls);
+				}
+			}
+        	
+        	classes = finder.findAnnotatedClasses(ConnectionDefinition.class);
+        	for (Class<?> cls : classes) {
+				ConnectionDefinition connectionDefinitionAnnotation = cls.getAnnotation(ConnectionDefinition.class);
+				processConnectionDescription(connector.getResourceAdapter(), connectionDefinitionAnnotation, cls);
+			}
+        	
+        	
+        	InboundResourceadapter inboundResourceAdapter = connector.getResourceAdapter().getInboundResourceAdapter();
+        	if (inboundResourceAdapter == null) {
+        		inboundResourceAdapter = new InboundResourceadapter();
+        		connector.getResourceAdapter().setInboundResourceAdapter(inboundResourceAdapter);
+        	}
+        	
+        	MessageAdapter messageAdapter = inboundResourceAdapter.getMessageAdapter();
+        	if (messageAdapter == null) {
+        		messageAdapter = new MessageAdapter();
+        		inboundResourceAdapter.setMessageAdapter(messageAdapter);
+        	}
+        	
+        	classes = finder.findAnnotatedClasses(Activation.class);
+        	for (Class<?> cls : classes) {
+        		MessageListener messageListener = null;
+        		Activation activationAnnotation = cls.getAnnotation(Activation.class);
+
+        		List<MessageListener> messageListeners = messageAdapter.getMessageListener();
+				for (MessageListener ml : messageListeners) {
+					if (cls.getName().equals(ml.getActivationSpec().getActivationSpecClass())) {
+						messageListener = ml;
+						break;
+					}
+				}
+				
+				if (messageListener == null) {
+					Class<?>[] listeners = activationAnnotation.messageListeners();
+					for (Class<?> listener : listeners) {
+						messageAdapter.addMessageListener(new MessageListener(listener.getName(), cls.getName()));	
+					}
+				}
+			}
+        	
+        	classes = finder.findAnnotatedClasses(AdministeredObject.class);
+        	List<AdminObject> adminObjects = connector.getResourceAdapter().getAdminObject();
+        	for (Class<?> cls : classes) {
+				AdministeredObject administeredObjectAnnotation = cls.getAnnotation(AdministeredObject.class);
+				Class[] adminObjectInterfaces = administeredObjectAnnotation.adminObjectInterfaces();
+				
+				AdminObject adminObject = null;
+				for (AdminObject admObj : adminObjects) {
+					if (admObj.getAdminObjectClass().equals(cls.getName())) {
+						adminObject = admObj;
+					}
+				}
+				
+				if (adminObject == null) {
+					for (Class iface : adminObjectInterfaces) {
+						AdminObject newAdminObject = new AdminObject();
+						newAdminObject.setAdminObjectClass(cls.getName());
+						newAdminObject.setAdminObjectInterface(iface.getName());
+						adminObjects.add(newAdminObject);	
+					}
+				}
+			}
+        	
+        	// need to make a list of classes to process for config properties
+        	
+        	// resource adapter
+        	String raCls = connector.getResourceAdapter().getResourceAdapterClass();
+        	process(connectorModule.getClassLoader(), raCls, connector.getResourceAdapter());
+        	
+        	// managedconnectionfactory
+        	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getOutboundResourceAdapter() != null) {
+	        	List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinitions = connector.getResourceAdapter().getOutboundResourceAdapter().getConnectionDefinition();
+	        	for (org.apache.openejb.jee.ConnectionDefinition connectionDefinition : connectionDefinitions) {
+	        		process(connectorModule.getClassLoader(), connectionDefinition.getManagedConnectionFactoryClass(), connectionDefinition);
+				}
+        	}
+        	
+        	// administeredobject
+        	if (connector.getResourceAdapter() != null) {
+	        	List<AdminObject> raAdminObjects = connector.getResourceAdapter().getAdminObject();
+	        	for (AdminObject raAdminObject : raAdminObjects) {
+					process(connectorModule.getClassLoader(), raAdminObject.getAdminObjectClass(), raAdminObject);
+				}
+        	}
+        	
+        	// activationspec
+        	if (connector.getResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter() != null && connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter() != null) {
+	        	List<MessageListener> messageListeners = connector.getResourceAdapter().getInboundResourceAdapter().getMessageAdapter().getMessageListener();
+	        	for (MessageListener messageListener : messageListeners) {
+					ActivationSpec activationSpec = messageListener.getActivationSpec();
+					process(connectorModule.getClassLoader(), activationSpec.getActivationSpecClass(), activationSpec);
+				}
+        	}
+        	
             return connectorModule;
         }
+
+		void process(ClassLoader cl, String cls, Object object) {
+
+			List<ConfigProperty> configProperties = null;
+			try {
+			// grab a list of ConfigProperty objects
+				configProperties = (List<ConfigProperty>) object.getClass().getDeclaredMethod("getConfigProperty").invoke(object);
+			} catch (Exception e) {
+			}
+			
+			if (configProperties == null) {
+				// can't get config properties
+				return;
+			}
+			
+			ClassLoader classLoader = cl;
+			if (classLoader == null) {
+				classLoader = Thread.currentThread().getContextClassLoader();
+			}
+			
+			final List<String> allowedTypes = Arrays.asList(new String[] { Boolean.class.getName(), String.class.getName(), Integer.class.getName(), Double.class.getName(), Byte.class.getName(), Short.class.getName(), Long.class.getName(), Float.class.getName(), Character.class.getName()});
+			
+			try {
+				Class<?> clazz = classLoader.loadClass(cls);
+				
+				// add any annotated method/fields
+				Field[] declaredFields = clazz.getDeclaredFields();
+				for (Field field : declaredFields) {
+					javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
+					if (annotation == null) {
+						continue;
+					}
+					
+					String name = field.getName();
+					if (! containsConfigProperty(configProperties, name)) {
+						String type = getConfigPropertyType(annotation, field.getType());
+						
+						if (type != null) {
+							ConfigProperty configProperty = new ConfigProperty();
+							configProperties.add(configProperty);
+							
+							configProperty.setConfigPropertyName(name);
+							configProperty.setConfigPropertyType(type);
+							configProperty.setConfigPropertyConfidential(annotation.confidential());
+							configProperty.setConfigPropertyIgnore(annotation.ignore());
+							configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+							configProperty.setConfigPropertyValue(annotation.defaultValue());
+						}
+					}
+				}
+				
+				Method[] declaredMethods = clazz.getDeclaredMethods();
+				for (Method method : declaredMethods) {
+					if (! method.getName().startsWith("set")) {
+						continue;
+					}
+					
+					if (! (method.getParameterTypes().length == 1)) {
+						continue;
+					}
+					
+					javax.resource.spi.ConfigProperty annotation = method.getAnnotation(javax.resource.spi.ConfigProperty.class);
+					if (annotation == null) {
+						continue;
+					}
+					
+					String name = method.getName();
+					
+					
+					if (! containsConfigProperty(configProperties, name)) {
+						String type = getConfigPropertyType(annotation, method.getParameterTypes()[0]);
+						
+						if (type != null) {
+							ConfigProperty configProperty = new ConfigProperty();
+							configProperties.add(configProperty);
+							
+							configProperty.setConfigPropertyName(name);
+							configProperty.setConfigPropertyType(type);
+							configProperty.setConfigPropertyConfidential(annotation.confidential());
+							configProperty.setConfigPropertyIgnore(annotation.ignore());
+							configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+							configProperty.setConfigPropertyValue(annotation.defaultValue());
+							configProperty.setDescriptions(stringsToTexts(annotation.description()));
+						}
+					}
+				}
+				
+				// add any introspected properties
+				BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+				PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+				
+				for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+					String name = propertyDescriptor.getName();
+					Class<?> type = propertyDescriptor.getPropertyType();
+					if (type.isPrimitive()) {
+						type = getWrapper(type.getName());
+					}
+					
+					if (! allowedTypes.contains(type.getName())) {
+						continue;
+					}
+					
+					if (! containsConfigProperty(configProperties, name)) {
+						if (type != null) {
+							ConfigProperty configProperty = new ConfigProperty();
+							configProperties.add(configProperty);
+							
+							configProperty.setConfigPropertyName(name);
+							configProperty.setConfigPropertyType(type.getName());
+							configProperty.setConfigPropertyConfidential(false);
+							configProperty.setConfigPropertyIgnore(false);
+							configProperty.setConfigPropertySupportsDynamicUpdates(false);
+						}
+					}
+				}
+			} catch (Exception  e) {
+				e.printStackTrace();
+			}
+		}
+
+		private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
+			Class<?> t = annotation.type();
+			if (t == null || t.equals(Object.class)) {
+				t = type;
+			}
+			
+			if (t.isPrimitive()) {
+				t = getWrapper(t.getName());
+			}
+			
+			return t.getName();
+		}
+
+		private boolean containsConfigProperty(List<ConfigProperty> configProperties, String name) {
+			for (ConfigProperty configProperty : configProperties) {
+				if (configProperty.getConfigPropertyName().equals(name)) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		private Class<?> getWrapper(String primitiveType) {
+			final Map<String,Class<?>> builtInMap = new HashMap<String,Class<?>>();{
+			       builtInMap.put("int", Integer.class);
+			       builtInMap.put("long", Long.class);
+			       builtInMap.put("double", Double.class);
+			       builtInMap.put("float", Float.class);
+			       builtInMap.put("bool", Boolean.class);
+			       builtInMap.put("char", Character.class);
+			       builtInMap.put("byte", Byte.class);
+			       builtInMap.put("void", Void.class);
+			       builtInMap.put("short", Short.class);
+			}
+			
+			return builtInMap.get(primitiveType);
+		}
+
+		private void processConnectionDescription(ResourceAdapter resourceAdapter, ConnectionDefinition connectionDefinitionAnnotation, Class<?> cls) {
+			// try and find the managed connection factory
+			
+			OutboundResourceAdapter outboundResourceAdapter = resourceAdapter.getOutboundResourceAdapter();
+			if (outboundResourceAdapter == null) {
+				outboundResourceAdapter = new OutboundResourceAdapter();
+				resourceAdapter.setOutboundResourceAdapter(outboundResourceAdapter);
+			}
+			
+			List<org.apache.openejb.jee.ConnectionDefinition> connectionDefinition = outboundResourceAdapter.getConnectionDefinition();
+			
+			org.apache.openejb.jee.ConnectionDefinition definition = null;
+			for (org.apache.openejb.jee.ConnectionDefinition cd : connectionDefinition) {
+				if (cd.getManagedConnectionFactoryClass().equals(cls.getName())) {
+					definition = cd;
+					break;
+				}
+			}
+			
+			if (definition == null) {
+				definition = new org.apache.openejb.jee.ConnectionDefinition();
+				outboundResourceAdapter.getConnectionDefinition().add(definition);
+			}
+			
+			if (definition.getManagedConnectionFactoryClass() == null) {
+				definition.setManagedConnectionFactoryClass(cls.getName());
+			}
+			
+			if (definition.getConnectionInterface() == null) {
+				definition.setConnectionInterface(connectionDefinitionAnnotation.connection().getName());
+			}
+			
+			if (definition.getConnectionImplClass() == null) {
+				definition.setConnectionImplClass(connectionDefinitionAnnotation.connectionImpl().getName());
+			}
+			
+			if (definition.getConnectionFactoryInterface() == null) {
+				definition.setConnectionFactoryInterface(connectionDefinitionAnnotation.connectionFactory().getName());
+			}
+			
+			if (definition.getConnectionFactoryImplClass() == null) {
+				definition.setConnectionFactoryImplClass(connectionDefinitionAnnotation.connectionFactoryImpl().getName());
+			}
+		}
+
+		private Text[] stringsToTexts(String[] strings) {
+			if (strings == null) {
+				return null;
+			}
+			
+			Text[] result = new Text[strings.length];
+			for (int i = 0; i < result.length; i++) {
+				result[i] = new Text();
+				result[i].setValue(strings[i]);
+			}
+			
+			return result;
+		}
+
+		private String getString(String descriptorString, String annotationString) {
+			if (descriptorString != null && descriptorString.length() > 0) {
+				return descriptorString;
+			}
+			
+			if (annotationString != null && annotationString.length() > 0) {
+				return annotationString;
+			}
+			
+			return null;
+		}
+
+		private Text[] getTexts(Text[] originalTexts, String[] newStrings) {
+			if (newStrings != null && newStrings.length > 0 && (originalTexts == null || originalTexts.length == 0)) {
+				Text[] texts = new Text[newStrings.length];
+				for (int i = 0; i < newStrings.length; i++) {
+					texts[i] = new Text(null, newStrings[i]);
+				}
+
+				return texts;
+			} else {
+				return originalTexts;
+			}
+		}
 
         public WebModule deploy(WebModule webModule) throws OpenEJBException {
             WebApp webApp = webModule.getWebApp();

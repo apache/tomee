@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.jee.Connector;
+import org.apache.xbean.finder.IAnnotationFinder;
 
 import java.io.File;
 import java.net.URI;
@@ -40,6 +41,8 @@ public class ConnectorModule extends Module implements DeploymentModule {
     private final Set<String> watchedResources = new TreeSet<String>();
 
     private ID id;
+
+	private IAnnotationFinder finder;
     
     public ConnectorModule(Connector connector) {
         this(connector, Thread.currentThread().getContextClassLoader(), null, null);
@@ -105,5 +108,11 @@ public class ConnectorModule extends Module implements DeploymentModule {
                 '}';
     }
 
+	public IAnnotationFinder getFinder() {
+		return finder;
+	}
 
+	public void setFinder(IAnnotationFinder finder) {
+		this.finder = finder;
+	}
 }
