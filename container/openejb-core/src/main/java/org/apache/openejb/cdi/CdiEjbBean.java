@@ -45,7 +45,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         addApiType(beanContext.getLocalHomeInterface());
 
         for (Class clazz : beanContext.getBusinessLocalInterfaces()) addApiType(clazz);
-        for (Class clazz : beanContext.getBusinessRemoteInterfaces()) addApiType(clazz);
 
     }
 
