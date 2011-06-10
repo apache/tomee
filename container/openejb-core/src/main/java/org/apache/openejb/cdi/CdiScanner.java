@@ -62,7 +62,7 @@ public class CdiScanner implements ScannerService {
         AppInfo appInfo = startupObject.getAppInfo();
         ClassLoader classLoader = startupObject.getAppContext().getClassLoader();
 
-        WebBeansContext webBeansContext = WebBeansContext.getInstance();
+        WebBeansContext webBeansContext = startupObject.getAppContext().getWebBeansContext();
         final AlternativesManager alternativesManager = webBeansContext.getAlternativesManager();
         final DecoratorsManager decoratorsManager = webBeansContext.getDecoratorsManager();
         final InterceptorsManager interceptorsManager = webBeansContext.getInterceptorsManager();

@@ -303,7 +303,7 @@ public class BeansDeployer {
                     }
 
                     if (beanName.equals(other)) {
-                        InjectionResolver resolver = InjectionResolver.getInstance();
+                        InjectionResolver resolver = webBeansContext.getBeanManagerImpl().getInjectionResolver();
                         Set<Bean<?>> beans = resolver.implResolveByName(beanName);
                         if (beans.size() > 1) {
                             beans = resolver.findByAlternatives(beans);

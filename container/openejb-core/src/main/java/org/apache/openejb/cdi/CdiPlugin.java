@@ -97,7 +97,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 	}
 
 	public void startup() {
-		webBeansContext = WebBeansContext.getInstance();
+		webBeansContext = appContext.getWebBeansContext();
 		this.contexsServices = (CdiAppContextsService) webBeansContext.getContextsService();
 		this.contexsServices.init(null);
 	}
@@ -115,22 +115,22 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 			this.contexsServices.destroy(null);
 
 			// Free all plugin resources
-			WebBeansContext.getInstance().getPluginLoader().shutDown();
+            webBeansContext.getPluginLoader().shutDown();
 
 			// Clear extensions
-			WebBeansContext.getInstance().getExtensionLoader().clear();
+			webBeansContext.getExtensionLoader().clear();
 
 			// Delete Resolutions Cache
 			InjectionResolver.getInstance().clearCaches();
 
 			// Delte proxies
-			WebBeansContext.getInstance().getJavassistProxyFactory().clear();
+			webBeansContext.getJavassistProxyFactory().clear();
 
 			// Delete AnnotateTypeCache
-			WebBeansContext.getInstance().getAnnotatedElementFactory().clear();
+			webBeansContext.getAnnotatedElementFactory().clear();
 
 			// JMs Manager clear
-			WebBeansContext.getInstance().getjMSManager().clear();
+			webBeansContext.getjMSManager().clear();
 
 			// Clear the resource injection service
 			CdiResourceInjectionService injectionServices = (CdiResourceInjectionService) webBeansContext.getService(ResourceInjectionService.class);
