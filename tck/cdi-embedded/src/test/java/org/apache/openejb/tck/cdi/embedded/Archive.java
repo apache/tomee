@@ -32,19 +32,16 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * @version $Rev$ $Date$
  */
-public class Archive
-{
+public class Archive {
 
     private final String name;
 
     private final InputStream in;
 
 
-    public Archive(Iterable<URL> urls, Iterable<Class<?>> classes)
-    {
+    public Archive(Iterable<URL> urls, Iterable<Class<?>> classes) {
 
-        try
-        {
+        try {
             ClassLoader loader = Archive.class.getClassLoader();
 
             // Create the ZIP file
@@ -54,8 +51,7 @@ public class Archive
 
             this.name = name(classes);
 
-            for (Class clazz : classes)
-            {
+            for (Class clazz : classes) {
 
                 String name = clazz.getName().replace('.', File.separatorChar) + ".class";
 
@@ -68,8 +64,7 @@ public class Archive
                 InputStream in = new BufferedInputStream(resource.openStream());
 
                 int i = -1;
-                while ((i = in.read()) != -1)
-                {
+                while ((i = in.read()) != -1) {
                     out.write(i);
                 }
 
@@ -77,8 +72,7 @@ public class Archive
                 out.closeEntry();
             }
 
-            for (final URL url : urls)
-            {
+            for (final URL url : urls) {
 
                 final String name = "META-INF/" + new File(url.getFile()).getName();
 
@@ -87,8 +81,7 @@ public class Archive
                 final InputStream in = new BufferedInputStream(url.openStream());
 
                 int i = -1;
-                while ((i = in.read()) != -1)
-                {
+                while ((i = in.read()) != -1) {
                     out.write(i);
                 }
 
@@ -99,31 +92,24 @@ public class Archive
             out.close();
 
             this.in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public InputStream getIn()
-    {
+    public InputStream getIn() {
         return in;
     }
 
-    private String name(Iterable<Class<?>> classes)
-    {
-        for (Class<?> clazz : classes)
-        {
+    private String name(Iterable<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
             if (clazz.getName().endsWith("AbstractJSR299Test")) continue;
-            if (clazz.getName().endsWith("Test"))
-            {
-                return clazz.getName()+".jar";
+            if (clazz.getName().endsWith("Test")) {
+                return clazz.getName() + ".jar";
             }
         }
 
