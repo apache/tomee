@@ -99,7 +99,6 @@
       <class name="org.jboss.jsr299.tck.tests.event.fires.nonbinding.NonBindingTypePassedToFireTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.implicit.ImplicitEventTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.ObserverTest"/>
-      <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.abortProcessing.ObserverExceptionAbortsProcessingTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.checkedException.CheckedExceptionWrappedTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.conditional.ConditionalObserverTest"/>
@@ -116,6 +115,7 @@
       <class name="org.jboss.jsr299.tck.tests.extensions.annotated.AlternativeMetaDataTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.bean.bytype.BeanByTypeTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.beanManager.BeanManagerTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.DisposalMethodDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.initializerUnallowed.InitializerUnallowedDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.methodOnSessionBean.DisposalMethodOnSessionBean"/>
@@ -130,6 +130,7 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithConversationScope.StatelessWithConversationScopeTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithRequestScope.StatelessWithRequestScopeTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.broken.statelessWithSessionScope.StatelessWithSessionScopeTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.InitializerMethodTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.broken.methodAnnotatedProduces.InitializerMethodAnnotatedProducesTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.initializer.broken.parameterAnnotatedDisposes.ParameterAnnotatedDisposesTest"/>
@@ -203,6 +204,7 @@
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.broken.type.variable.TypeVariableInjectionPointTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.decorator.DecoratorNotInjectedTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.interceptor.InterceptorNotResolvedTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.parameterized.AssignabilityOfRawAndParameterizedTypesTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.PolicyAvailabilityTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.incorrect.name.NoClassWithSpecifiedNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.policy.broken.incorrect.name.stereotype.NoAnnotationWithSpecifiedNameTest"/>
