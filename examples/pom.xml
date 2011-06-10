@@ -76,6 +76,7 @@
     <module>movies-complete</module>
     <module>schedule-methods-meta</module>
     <module>testing-security-meta</module>
+    <module>decorators</module>
   </modules>
   <profiles>
     <profile>
