@@ -216,7 +216,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             // verfiy state
             switch (entry.getState()) {
                 case AVAILABLE:
-                    throw new IllegalStateException("The entry " + key + " is not checked-out");
+                    if (lru.contains(entry)) {
+                        entry.resetTimeOut();
+                        return;
+                    } else {
+                        throw new IllegalStateException("The entry " + key + " is not checked-out");
+                    }
                 case PASSIVATED:
                     // An entry in-use should not be passivated so we can only assume
                     // that the caller never checked out the bean in the first place
