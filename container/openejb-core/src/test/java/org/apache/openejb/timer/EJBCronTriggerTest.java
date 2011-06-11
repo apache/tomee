@@ -157,14 +157,34 @@ public class EJBCronTriggerTest {
        assertEquals(new GregorianCalendar(2011, 4, 18, 23, 59, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 23, 59, 58).getTime()));
    }
    
-/*   @Test(timeout = 5000000)
+   @Test(timeout = 5000)
    public void testBothDayOfMonthAndDayOfWeekE() throws ParseException {
        ScheduleExpression expr = new ScheduleExpression().year(2011).dayOfMonth("19").dayOfWeek("3").hour(23).minute(59).second(58).start(new GregorianCalendar(2011, 4, 18, 23, 59, 58).getTime());
        EJBCronTrigger trigger = new EJBCronTrigger(expr);
        assertEquals(new GregorianCalendar(2011, 4, 19, 23, 59, 58).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 23, 59, 59).getTime()));
        
        System.out.println(trigger.getNextFireTime());
-   }   */  
+   }     
+   
+   @Test(timeout = 5000)
+   public void testBothDayOfMonthAndDayOfWeekF() throws ParseException {
+       ScheduleExpression expr = new ScheduleExpression().year(2011).dayOfMonth("19").dayOfWeek("3").hour(20).minute(59).second(59).start(new GregorianCalendar(2011, 4, 18, 20, 59, 58).getTime());
+       EJBCronTrigger trigger = new EJBCronTrigger(expr);
+       assertEquals(new GregorianCalendar(2011, 4, 18, 20, 59, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 20, 59, 58).getTime()));
+       assertEquals(new GregorianCalendar(2011, 4, 19, 20, 59, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 20, 59, 59).getTime()));
+       
+       System.out.println(trigger.getNextFireTime());
+   }    
+   
+   @Test(timeout = 5000000)
+   public void testBothDayOfMonthAndDayOfWeekG() throws ParseException {
+       ScheduleExpression expr = new ScheduleExpression().year(2011).dayOfMonth("12").dayOfWeek("6").hour(20).minute(59).second(59).start(new GregorianCalendar(2011, 5, 11, 20, 59, 58).getTime());
+       EJBCronTrigger trigger = new EJBCronTrigger(expr);
+       //assertEquals(new GregorianCalendar(2011, 5, 11, 20, 59, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 5, 11, 20, 59, 58).getTime()));
+       assertEquals(new GregorianCalendar(2011, 5, 12, 20, 59, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 5, 11, 20, 59, 59).getTime()));
+       
+       System.out.println(trigger.getNextFireTime());
+   }     
 
 	@Test(timeout = 5000)
     public void testLastDayOfMonthA() throws ParseException {
