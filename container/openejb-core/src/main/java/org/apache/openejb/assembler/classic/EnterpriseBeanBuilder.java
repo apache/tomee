@@ -191,9 +191,26 @@ class EnterpriseBeanBuilder {
             }
 
             for (RemoveMethodInfo removeMethod : statefulBeanInfo.removeMethods) {
-                Method method = MethodInfoUtil.toMethod(ejbClass, removeMethod.beanMethod);
-                deployment.getRemoveMethods().add(method);
-                deployment.setRetainIfExeption(method, removeMethod.retainIfException);
+                
+                if (removeMethod.beanMethod.methodParams == null) {
+
+                    MethodInfo methodInfo = new MethodInfo();
+                    methodInfo.methodName = removeMethod.beanMethod.methodName;
+                    methodInfo.methodParams = removeMethod.beanMethod.methodParams;
+                    methodInfo.className = removeMethod.beanMethod.className;
+                    List<Method> methods = MethodInfoUtil.matchingMethods(methodInfo, ejbClass);
+
+                    for (Method method : methods) {
+                        deployment.getRemoveMethods().add(method);
+                        deployment.setRetainIfExeption(method, removeMethod.retainIfException);
+                    }
+
+                } else {
+                    Method method = MethodInfoUtil.toMethod(ejbClass, removeMethod.beanMethod);
+                    deployment.getRemoveMethods().add(method);
+                    deployment.setRetainIfExeption(method, removeMethod.retainIfException);
+                }
+                
             }
 
             String moduleId = moduleContext.getId();
