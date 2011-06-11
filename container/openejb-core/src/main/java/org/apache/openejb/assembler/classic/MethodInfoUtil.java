@@ -547,13 +547,13 @@ public class MethodInfoUtil {
     }
 
     public static View view(MethodInfo methodInfo) {
-        if (!methodInfo.className.equals("*")) return View.CLASS;
+        if (methodInfo.className != null && !methodInfo.className.equals("*")) return View.CLASS;
         if (methodInfo.methodIntf != null && !methodInfo.methodIntf.equals("*")) return View.INTERFACE;
         else return View.ANY;
     }
 
     public static Level level(MethodInfo methodInfo) {
-        if (methodInfo.ejbName.equals("*")) return Level.PACKAGE;
+        if (methodInfo.ejbName != null && methodInfo.ejbName.equals("*")) return Level.PACKAGE;
         if (methodInfo.methodName.equals("*")) return Level.BEAN;
         if (methodInfo.methodParams == null) return Level.OVERLOADED_METHOD;
         return Level.EXACT_METHOD;

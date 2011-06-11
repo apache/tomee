@@ -128,7 +128,7 @@ public class StatefulContainer implements RpcContainer {
 
             for (Class businessLocal : beanContext.getBusinessLocalInterfaces()) {
                 try {
-                    Method method = businessLocal.getMethod(removeMethod.getName());
+                    Method method = businessLocal.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
                 }
@@ -136,7 +136,7 @@ public class StatefulContainer implements RpcContainer {
 
             for (Class businessRemote : beanContext.getBusinessRemoteInterfaces()) {
                 try {
-                    Method method = businessRemote.getMethod(removeMethod.getName());
+                    Method method = businessRemote.getMethod(removeMethod.getName(), removeMethod.getParameterTypes());
                     methods.put(method, MethodType.REMOVE);
                 } catch (NoSuchMethodException thatsFine) {
                 }
