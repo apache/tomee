@@ -28,7 +28,9 @@ public class ProxyInterfaceResolver {
     public static List<Class> getInterfaces(Class implementation, Class mainInterface, List<Class> interfaces){
         List<Class> valid = new ArrayList<Class>();
         // The intended interface is safe to add
-        valid.add(mainInterface);
+        if (mainInterface != null) {
+            valid.add(mainInterface);
+        }
 
         // Any interface the bean implements is safe (potentially)
         for (Class interfce : interfaces) {
