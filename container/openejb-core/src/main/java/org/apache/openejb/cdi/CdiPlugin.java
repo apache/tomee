@@ -168,7 +168,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 		final Class beanClass = deployment.getBeanClass();
 		final List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
 
-		List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
+		List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce == Object.class? null: interfce, localInterfaces);
 		BeanContext.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
 		return home.create();
 
