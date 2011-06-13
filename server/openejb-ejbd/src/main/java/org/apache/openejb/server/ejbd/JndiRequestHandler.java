@@ -36,6 +36,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
+import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
@@ -75,6 +76,7 @@ class JndiRequestHandler {
     private final Context ejbJndiTree;
     private Context clientJndiTree;
     private final Context deploymentsJndiTree;
+//    private final Context globalTree;
     private final ClusterableRequestHandler clusterableRequestHandler;
     private Context rootContext;
 
@@ -82,6 +84,8 @@ class JndiRequestHandler {
         ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
         deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
+        // TODO if we had an actual global context, we'd look it up like this
+//        globalTree = (Context) containerSystem.getJNDIContext().lookup("openejb/global");
         rootContext = containerSystem.getJNDIContext();
         try {
             clientJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/client");
@@ -157,6 +161,8 @@ class JndiRequestHandler {
 
         if (name.startsWith("openejb/Deployment/")) {
             context = rootContext;
+        } else if (name.startsWith("global/")) {
+            context = getGlobalTree();
         } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
             context = deploymentsJndiTree;
         } else if (req.getModuleId() != null && clientJndiTree != null) {
@@ -473,6 +479,15 @@ class JndiRequestHandler {
         }
     }
 
+    // TODO this is a terrible hack
+    // We don't actually have a global context yet
+    public Context getGlobalTree() {
+        for (AppContext appContext : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
+            return appContext.getGlobalJndiContext();
+        }
+
+        return new IvmContext();
+    }
 
     public static class DbcpDataSource {
         private final Object object;

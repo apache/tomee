@@ -69,7 +69,7 @@ public class AppClientTest extends TestCase {
         final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
         final ConfigurationFactory config = new ConfigurationFactory();
 
-        final EjbModule ejbModule = new EjbModule(new EjbJar(), new OpenejbJar());
+        final EjbModule ejbModule = new EjbModule(new EjbJar("testejbmodule"), new OpenejbJar());
         final EjbJar ejbJar = ejbModule.getEjbJar();
         ejbJar.addEnterpriseBean(new StatelessBean(Orange.class));
 
@@ -77,7 +77,7 @@ public class AppClientTest extends TestCase {
 
         final ClientModule clientModule = new ClientModule(new ApplicationClient(), loader, "orange-client", OrangeAppClient.class.getName(), "orange-client");
 
-        final AppModule appModule = new AppModule(loader, "test");
+        final AppModule appModule = new AppModule(loader, "testapp");
 
         appModule.getClientModules().add(clientModule);
         appModule.getEjbModules().add(ejbModule);
@@ -102,6 +102,11 @@ public class AppClientTest extends TestCase {
         assertTrue(business instanceof OrangeBusinessRemote);
         OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
         assertEquals("nap", orangeBusinessRemote.echo("pan"));
+
+        final Object global = context.lookup("global/testapp/testejbmodule/Orange!" + OrangeBusinessRemote.class.getName());
+        assertTrue(global instanceof OrangeBusinessRemote);
+        OrangeBusinessRemote globalOrangeBusinessRemote = (OrangeBusinessRemote) global;
+        assertEquals("nap", globalOrangeBusinessRemote.echo("pan"));
     }
 
     public static interface OrangeHome extends EJBHome {
