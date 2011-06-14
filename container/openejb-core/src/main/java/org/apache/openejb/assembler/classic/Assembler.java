@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +31,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MalformedObjectNameException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -1079,6 +1085,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 globalContext.unbind("/openejb/client/" + clientId);
             } catch (Throwable t) {
                 undeployException.getCauses().add(new Exception("client: " + clientId + ": " + t.getMessage(), t));
+            }
+        }
+
+        // mbeans
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        for (String objectName : appInfo.jmx) {
+            try {
+              ObjectName on = new ObjectName(objectName);
+              if (server.isRegistered(on)) {
+                      server.unregisterMBean(on);
+              }
+            } catch (InstanceNotFoundException e) {
+                logger.warning("can't unregister " + objectName + " because the mbean was not found", e);
+            } catch (MBeanRegistrationException e) {
+                logger.warning("can't unregister " + objectName, e);
+            } catch (MalformedObjectNameException mone) {
+                logger.warning("can't unregister because the ObjectName is malformed: " + objectName, mone);
             }
         }
 

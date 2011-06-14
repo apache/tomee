@@ -38,4 +38,5 @@ public class AppInfo extends InfoObject {
     public final JndiEncInfo globalJndiEnc = new JndiEncInfo();
     public final JndiEncInfo appJndiEnc = new JndiEncInfo();
     public String cmpMappingsXml;
+    public Set<String> jmx = new TreeSet<String>();
 }

@@ -103,6 +103,7 @@ class AppInfoBuilder {
         appInfo.path = appModule.getJarLocation();
         appInfo.standaloneModule = appModule.isStandaloneModule();
         appInfo.watchedResources.addAll(appModule.getWatchedResources());
+        appInfo.jmx = appModule.getMBeans();
 
         if (appInfo.appId == null) throw new IllegalArgumentException("AppInfo.appId cannot be null");
         if (appInfo.path == null) appInfo.path = appInfo.appId;

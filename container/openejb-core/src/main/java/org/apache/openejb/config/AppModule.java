@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import java.util.HashSet;
 import org.apache.openejb.jee.Application;
 import org.apache.openejb.jee.jpa.EntityMappings;
 
@@ -48,6 +49,7 @@ public class AppModule implements DeploymentModule {
     private final Map<String,Object> altDDs = new HashMap<String,Object>();
     private final Set<String> watchedResources = new TreeSet<String>();
     private final boolean standaloneModule;
+    private Set<String> mBeans = new HashSet<String>();
 
     private ID id;
 
@@ -88,6 +90,14 @@ public class AppModule implements DeploymentModule {
         this.id = new ID(null, application, null, file, null, this);
         this.validation = new ValidationContext(this);
         this.standaloneModule = standaloneModule;
+    }
+
+    public Set<String> getMBeans() {
+        return mBeans;
+    }
+
+    public void setMBeans(Set<String> mBeans) {
+        this.mBeans = mBeans;
     }
 
     public boolean isStandaloneModule() {

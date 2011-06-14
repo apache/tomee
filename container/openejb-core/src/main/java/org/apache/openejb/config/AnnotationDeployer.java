@@ -25,7 +25,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -90,7 +89,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -254,11 +252,13 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final DiscoverAnnotatedBeans discoverAnnotatedBeans;
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
+    private final MBeanDeployer mBeanDeployer;
 
     public AnnotationDeployer() {
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
+        mBeanDeployer = new MBeanDeployer();
     }
 
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -267,6 +267,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             appModule = discoverAnnotatedBeans.deploy(appModule);
             appModule = envEntriesPropertiesDeployer.deploy(appModule);
             appModule = processAnnotatedBeans.deploy(appModule);
+            appModule = mBeanDeployer.deploy(appModule);
             return appModule;
         } finally {
             removeModule();

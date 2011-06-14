@@ -16,12 +16,8 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.config.sys.JaxbOpenejb;
-import org.apache.openejb.jee.bval.PropertyType;
-import org.apache.openejb.jee.bval.ValidationConfigType;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-
+import java.io.InputStream;
+import java.util.Map;
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
@@ -29,11 +25,11 @@ import javax.validation.TraversableResolver;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 import javax.validation.ValidatorFactory;
-import javax.validation.spi.ValidationProvider;
 import javax.xml.bind.JAXBElement;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
+import org.apache.openejb.jee.bval.PropertyType;
+import org.apache.openejb.jee.bval.ValidationConfigType;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 public final class ValidatorBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ValidatorBuilder.class);
@@ -44,22 +40,6 @@ public final class ValidatorBuilder {
 
     public static ValidatorFactory buildFactory(ClassLoader classLoader, ValidationInfo info) {
         return buildFactory(info, classLoader);
-    }
-
-    public static ValidationConfigType readConfig(URL url) {
-        if (url == null) {
-            return null;
-        }
-
-        ValidationConfigType validationConfigType;
-        try {
-            validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, url.openStream());
-        } catch (Throwable t) {
-            logger.warning("Unable to create module ValidatorFactory instance.  Using default factory", t);
-            return null;
-        }
-
-        return validationConfigType;
     }
 
     public static ValidationInfo getInfo(ValidationConfigType config) {
