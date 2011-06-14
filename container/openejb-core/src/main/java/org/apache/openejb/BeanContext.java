@@ -38,9 +38,11 @@ import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
@@ -1143,7 +1145,8 @@ public class BeanContext extends DeploymentContext {
         ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
-        WebBeansContext webBeansContext = WebBeansContext.getInstance();
+        CdiEjbBean<?> owbBean = (CdiEjbBean<?>) get(Bean.class);
+        WebBeansContext webBeansContext = owbBean == null? WebBeansContext.getInstance(): owbBean.getWebBeansContext();
 
         try {
             final Context ctx = this.getJndiEnc();
@@ -1151,7 +1154,13 @@ public class BeanContext extends DeploymentContext {
 
             // Create bean instance
 
-            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanClass, this.getInjections(), null, null, org.apache.openejb.InjectionProcessor.unwrap(ctx));
+            //TODO OPENEJB-1578 owbBean == null for MDBs.  Figure out how to get the Bean for an MDB and allow constructor injection there too.
+            InjectionProcessor injectionProcessor;
+            if (owbBean != null) {
+                injectionProcessor = new InjectionProcessor(owbBean.create(), this.getInjections(), InjectionProcessor.unwrap(ctx));
+            } else {
+                injectionProcessor = new InjectionProcessor(beanClass, this.getInjections(), null, null, org.apache.openejb.InjectionProcessor.unwrap(ctx));
+            }
             final Object bean = injectionProcessor.createInstance();
 
             // TODO we likely don't want to create a new one each time -- investigate the destroy() method
