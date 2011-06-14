@@ -19,20 +19,25 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
+import org.apache.webbeans.annotation.DependentScopeLiteral;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
+import org.apache.webbeans.inject.InjectableConstructor;
 
 import javax.ejb.Remove;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.SessionBeanType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
+    private final CreationalContext<T> creationalContext;
+    private final Constructor<T> constructor;
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
         super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), webBeansContext);
@@ -46,6 +51,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
         for (Class clazz : beanContext.getBusinessLocalInterfaces()) addApiType(clazz);
 
+        beanContext.set(Bean.class, this);
+
+        //TODO correct scope not clear
+        setImplScopeType(new DependentScopeLiteral());
+        BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
+        creationalContext = beanManagerImpl.createCreationalContext(this);
+        constructor = webBeansContext.getWebBeansUtil().defineConstructor(getReturnType());
+        webBeansContext.getDefinitionUtil().addConstructorInjectionPointMetaData(this, constructor);
     }
 
     @Override
@@ -57,6 +70,12 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     public BeanContext getBeanContext() {
         return this.beanContext;
+    }
+
+    public T create() {
+        InjectableConstructor<T> ic = new InjectableConstructor<T>(constructor, this, creationalContext);
+
+        return ic.doInjection();
     }
 
     private static SessionBeanType toSessionType(BeanType beanType) {
@@ -117,7 +136,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private final List<Method> findRemove(Class beanClass, Class beanInterface) {
+    private List<Method> findRemove(Class beanClass, Class beanInterface) {
         List<Method> toReturn = new ArrayList<Method>();
 
         // Get all the public methods of the bean class and super class
