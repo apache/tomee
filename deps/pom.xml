@@ -29,5 +29,6 @@
 
   <modules>
     <module>javaee-api</module>
+    <module>mbean-annotation-api</module>
   </modules>
 </project>

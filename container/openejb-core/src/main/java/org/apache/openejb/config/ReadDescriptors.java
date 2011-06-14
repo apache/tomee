@@ -16,8 +16,24 @@
  */
 package org.apache.openejb.config;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.ValidatorBuilder;
+import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.core.webservices.WsdlResolver;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
@@ -31,6 +47,7 @@ import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.TldTaglib;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.Webservices;
+import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
@@ -44,25 +61,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-
-import static org.apache.openejb.util.URLs.toFilePath;
 
 public class ReadDescriptors implements DynamicDeployer {
     @SuppressWarnings({"unchecked"})
@@ -130,13 +128,19 @@ public class ReadDescriptors implements DynamicDeployer {
 
     }
 
-    private void readValidationConfigType(Module module) {
+    private void readValidationConfigType(Module module) throws OpenEJBException {
         if (module.getValidationConfig() != null) {
             return;
         }
         URL url = (URL) module.getAltDDs().get("validation.xml");
         if (url != null) {
-            module.setValidationConfig(ValidatorBuilder.readConfig(url));
+            ValidationConfigType validationConfigType;
+            try {
+                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, url.openStream());
+                module.setValidationConfig(validationConfigType);
+            } catch (Throwable t) {
+                throw new OpenEJBException("Unable to create module ValidatorFactory instance.  Using default factory");
+            }
         }
     }
 
