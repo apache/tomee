@@ -164,8 +164,6 @@ class JndiRequestHandler {
 
         if (name.startsWith("openejb/Deployment/")) {
             context = rootContext;
-        } else if (name.startsWith("global/")) {
-            context = getGlobalTree();
         } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
             context = deploymentsJndiTree;
         } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/global")){
@@ -484,15 +482,6 @@ class JndiRequestHandler {
         }
     }
 
-    // TODO this is a terrible hack
-    // We don't actually have a global context yet
-    public Context getGlobalTree() {
-        for (AppContext appContext : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
-            return appContext.getGlobalJndiContext();
-        }
-
-        return new IvmContext();
-    }
 
     public static class DbcpDataSource {
         private final Object object;

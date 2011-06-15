@@ -89,7 +89,7 @@ public class AppClientTest extends TestCase {
         props.put("java.naming.provider.url", "ejbd://127.0.0.1:" + port);
         props.put("openejb.client.moduleId", "orange-client");
         
-        final Context context = new InitialContext(props);
+        Context context = new InitialContext(props);
 
         final Object home = context.lookup("comp/env/home");
         assertTrue(home instanceof OrangeHome);
@@ -102,6 +102,9 @@ public class AppClientTest extends TestCase {
         assertTrue(business instanceof OrangeBusinessRemote);
         OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
         assertEquals("nap", orangeBusinessRemote.echo("pan"));
+        
+        props.put("openejb.client.moduleId", "openejb/global");
+        context = new InitialContext(props);
 
         final Object global = context.lookup("global/testapp/testejbmodule/Orange!" + OrangeBusinessRemote.class.getName());
         assertTrue(global instanceof OrangeBusinessRemote);
