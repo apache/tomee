@@ -60,7 +60,8 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
             if (!(jndiContext.lookup("openejb/local") instanceof Context)
             || !(jndiContext.lookup("openejb/remote") instanceof Context)
             || !(jndiContext.lookup("openejb/client") instanceof Context)
-            || !(jndiContext.lookup("openejb/Deployment") instanceof Context)) {
+            || !(jndiContext.lookup("openejb/Deployment") instanceof Context)
+            || !(jndiContext.lookup("openejb/global") instanceof Context)) {
                 throw new RuntimeException("core openejb naming context not properly initialized.  It must have subcontexts for openejb/local, openejb/remote, openejb/client, and openejb/Deployment already present");
             }
         }
