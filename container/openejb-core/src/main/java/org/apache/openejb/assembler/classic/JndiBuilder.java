@@ -352,7 +352,7 @@ public class JndiBuilder {
 
                 String name = strategy.getName(beanClass, JndiNameStrategy.Interface.LOCALBEAN);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
-                bindJava(bean, beanClass.getName(), ref);
+                bindJava(bean, beanClass, ref, bindings, beanInfo);
 
                 simpleNameRef = ref;
             }
@@ -377,7 +377,7 @@ public class JndiBuilder {
 
                 String externalName = "openejb/local/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 bind(externalName, ref, bindings, beanInfo, interfce);
-                bindJava(bean, interfce.getName(), ref);
+                bindJava(bean, interfce, ref, bindings, beanInfo);
                 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -404,7 +404,7 @@ public class JndiBuilder {
                 String name = strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
-                bindJava(bean, interfce.getName(), ref);
+                bindJava(bean, interfce, ref, bindings, beanInfo);
                 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -428,7 +428,7 @@ public class JndiBuilder {
 
                 name = "openejb/Deployment/" + format(bean.getDeploymentID(), bean.getLocalInterface().getName(), InterfaceType.EJB_LOCAL);
                 bind(name, ref, bindings, beanInfo, localHomeInterface);
-                bindJava(bean, localHomeInterface.getName(), ref);
+                bindJava(bean, localHomeInterface, ref, bindings, beanInfo);
 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -453,7 +453,7 @@ public class JndiBuilder {
 
                 name = "openejb/Deployment/" + format(bean.getDeploymentID(), bean.getRemoteInterface().getName(), InterfaceType.EJB_OBJECT);
                 bind(name, ref, bindings, beanInfo, homeInterface);
-                bindJava(bean, homeInterface.getName(), ref);
+                bindJava(bean, homeInterface, ref, bindings, beanInfo);
 
                 if (simpleNameRef == null) simpleNameRef = ref;
             }
@@ -463,7 +463,7 @@ public class JndiBuilder {
 
         try {
             if (simpleNameRef != null) {
-                bindJava(bean, null, simpleNameRef);
+                bindJava(bean, null, simpleNameRef, bindings, beanInfo);
             }
         } catch (NamingException e) {
             throw new RuntimeException("Unable to bind simple java:global name in jndi", e);
@@ -509,7 +509,7 @@ public class JndiBuilder {
 
     private void bind(String name, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo, Class intrface) throws NamingException {
 
-        if (name.startsWith("openejb/local/") || name.startsWith("openejb/remote/") || name.startsWith("openejb/localbean/")) {
+        if (name.startsWith("openejb/local/") || name.startsWith("openejb/remote/") || name.startsWith("openejb/localbean/") || name.startsWith("openejb/global/")) {
 
             String externalName = name.replaceFirst("openejb/[^/]+/", "");
 
@@ -529,7 +529,7 @@ public class JndiBuilder {
                     beanInfo.jndiNames.add(externalName);
 
                     JndiNameInfo nameInfo = new JndiNameInfo();
-                    nameInfo.intrface = intrface.getName();
+                    nameInfo.intrface = intrface == null ? null : intrface.getName();
                     nameInfo.name = externalName;
                     beanInfo.jndiNamess.add(nameInfo);
 
@@ -565,7 +565,7 @@ public class JndiBuilder {
 
     //ee6 specified ejb bindings in module, app, and global contexts
 
-    private void bindJava(BeanContext cdi, String interfaceName, Reference ref) throws NamingException {
+    private void bindJava(BeanContext cdi, Class intrface, Reference ref, Bindings bindings, EnterpriseBeanInfo beanInfo) throws NamingException {
         Context moduleContext = cdi.getModuleContext().getModuleJndiContext();
         Context appContext = cdi.getModuleContext().getAppContext().getAppJndiContext();
         Context globalContext = cdi.getModuleContext().getAppContext().getGlobalJndiContext();
@@ -573,8 +573,8 @@ public class JndiBuilder {
         String appName = cdi.getModuleContext().getAppContext().isStandaloneModule() ? "" : cdi.getModuleContext().getAppContext().getId() + "/";
         String moduleName = cdi.getModuleID() + "/";
         String beanName = cdi.getEjbName();
-        if (interfaceName != null) {
-            beanName = beanName + "!" + interfaceName;
+        if (intrface != null) {
+            beanName = beanName + "!" + intrface.getName();
         }
         try {
             String globalName = "global/" + appName + moduleName + beanName;
@@ -583,13 +583,21 @@ public class JndiBuilder {
                 logger.info(String.format("Jndi(name=\"java:%s\")", globalName));
             }
             globalContext.bind(globalName, ref);
+            bind("openejb/global/" + globalName, ref, bindings, beanInfo, intrface);
         } catch (NameAlreadyBoundException e) {
             //one interface in more than one role (e.g. both Local and Remote
             return;
         }
-        appContext.bind("app/" + moduleName + beanName, ref);
+        
+        String globalAppName = "app/" + moduleName + beanName;
+        
+        appContext.bind(globalAppName, ref);
+        bind("openejb/global/" + globalAppName, ref, bindings, beanInfo, intrface);
+        
         moduleContext.bind("module/" + beanName, ref);
     }
+    
+    
 
     /**
      * This may not be that performant, but it's certain to be faster than the

@@ -186,6 +186,11 @@ public class AppModule implements DeploymentModule {
     public String getJarLocation() {
         return (id.getLocation() != null) ? id.getLocation().getAbsolutePath() : null;
     }
+    
+    public void setModuleId(String moduleId) {
+        
+        this.id = new ID(null, application, moduleId, id.getLocation(), id.getUri(), this);
+    }    
 
     public String getModuleId() {
         return id.getName();

@@ -41,6 +41,7 @@ public class IvmJndiFactory implements JndiFactory {
             jndiRootContext.bind("openejb/remote/.", "");
             jndiRootContext.bind("openejb/client/.", "");
             jndiRootContext.bind("openejb/Deployment/.", "");
+            jndiRootContext.bind("openejb/global/.", "");
         } catch (javax.naming.NamingException e) {
             throw new RuntimeException("this should not happen", e);
         }
