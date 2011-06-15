@@ -53,6 +53,7 @@ import javax.transaction.TransactionRequiredException;
 import javax.transaction.TransactionRolledbackException;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.core.ThreadContext;
@@ -271,7 +272,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 }
             }
             IntraVmCopyMonitor.State oldStrategy =  strategy;
-            if (getBeanContext().isAsynchronous(method)){
+            if (getBeanContext().isAsynchronous(method) || getBeanContext().getComponentType().equals(BeanType.MANAGED)){
                 strategy = IntraVmCopyMonitor.State.NONE;
             }
    
