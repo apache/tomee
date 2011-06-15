@@ -151,7 +151,7 @@ public class EjbModule extends Module implements WsModule {
         if (openejbJar == null) openejbJar = new OpenejbJar();
         openejbJar.setModuleName(moduleId);
         
-        this.id = new ID(openejbJar, ejbJar, id.getName(), id.getLocation(), id.getUri(), this);
+        this.id = new ID(openejbJar, ejbJar, moduleId, id.getLocation(), id.getUri(), this);
     }
 
     public URI getModuleUri() {
