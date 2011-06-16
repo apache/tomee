@@ -2399,7 +2399,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && all.remote.isEmpty()
                         ) {
 
-                    if (interfaces.size() == 0 || beanClass.isAnnotationPresent(ManagedBean.class)) {
+                    if (interfaces.size() == 0) {
                         // No interfaces?  Then @LocalBean
 
                         sessionBean.setLocalBean(new Empty());
@@ -2416,6 +2416,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                         return;
                     }
                 }
+                
+                //alway set Local View for ManagedBean
+                if (beanClass.isAnnotationPresent(ManagedBean.class)){
+                    sessionBean.setLocalBean(new Empty());
+                }
+                
 
                 /**
                  * Track any interfaces we didn't use
