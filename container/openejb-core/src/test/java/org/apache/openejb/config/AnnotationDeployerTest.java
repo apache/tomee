@@ -226,8 +226,6 @@ public class AnnotationDeployerTest {
     	AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
     	discvrAnnBeans.deploy(connectorModule);
 
-        Locale.setDefault(Locale.ENGLISH); // otherwise icons will not be found, cf Connector class
-
     	Connector connector = connectorModule.getConnector();
     	Assert.assertEquals("displayName", connector.getDisplayName());
     	Assert.assertEquals("description", connector.getDescription());
