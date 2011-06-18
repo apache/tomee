@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -107,6 +108,12 @@ import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.work.WorkContext;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
@@ -494,6 +501,9 @@ public class AnnotationDeployer implements DynamicDeployer {
 	    			
 	    			for (int i = 0; i < smallIcons && i < largeIcons; i++) {
 	    				Icon icon = new Icon();
+                        // locale can't be specified in the annotation and it is en by default
+                        // so on other systems it doesn't work because Icon return the default locale
+                        icon.setLang(Locale.getDefault().getLanguage());
 	    				if (i < smallIcons) {
 	    					icon.setSmallIcon(connectorAnnotation.smallIcon()[i]);
 	    				}
@@ -962,6 +972,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 servlet.setServletClass(webServiceClass.getName());
                 webApp.getServlet().add(servlet);
             }
+
+            webModule.getRestClasses().addAll(findRestClasses(finder));
 
             return webModule;
         }
@@ -4354,5 +4366,28 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         return 0;
     }
-    
+
+    private static Collection<String> findRestClasses(IAnnotationFinder finder) {
+        Collection<String> classes = new HashSet<String>();
+
+        // annotations on classes
+        List<Class<?>> annotatedClasses = finder.findAnnotatedClasses(Path.class);
+        for (Class<?> clazz : annotatedClasses) {
+            classes.add(clazz.getName());
+        }
+
+        // methods annotations
+        List<Method> methods = new ArrayList<Method>();
+        methods.addAll(finder.findAnnotatedMethods(Path.class));
+        methods.addAll(finder.findAnnotatedMethods(HEAD.class));
+        methods.addAll(finder.findAnnotatedMethods(PUT.class));
+        methods.addAll(finder.findAnnotatedMethods(POST.class));
+        methods.addAll(finder.findAnnotatedMethods(DELETE.class));
+        methods.addAll(finder.findAnnotatedMethods(GET.class));
+        for (Method method : methods) {
+            classes.add(method.getDeclaringClass().getName());
+        }
+
+        return classes;
+    }
 }
