@@ -36,6 +36,7 @@ import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.JndiBuilder;
 import org.apache.openejb.assembler.classic.JndiBuilder.JndiNameStrategy;
+import org.apache.openejb.assembler.classic.JndiBuilder.JndiNameStrategy.Interface;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -120,7 +121,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
                             if (!applicationContext.containsBean(beanName)) {
                                 EJB ejb = entry.getValue();
                                 applicationContext.getBeanFactory().registerSingleton(beanName, ejb);
-                                logger.info("Exported EJB " + deployment.getEjbName() + " with interface " + entry.getValue().getInterface().getName() + " to Spring bean " + entry.getKey());
+                                logger.info("Exported EJB " + deployment.getEjbName() + " with interface " + ejb.getInterface().getName() + " to Spring bean " + entry.getKey());
                             }
                         }
                     }
@@ -142,25 +143,29 @@ public abstract class AbstractApplication implements ApplicationContextAware {
 
         Class remoteHome = deployment.getHomeInterface();
         if (remoteHome != null) {
-            String externalName = strategy.getName(remoteHome, JndiNameStrategy.Interface.REMOTE_HOME);
-            bindings.put(externalName, new EJB(deployment, remoteHome));
+            for (Map.Entry<String, String> entry : strategy.getNames(remoteHome, JndiNameStrategy.Interface.REMOTE_HOME).entrySet()) {
+                bindings.put(entry.getValue(), new EJB(deployment, remoteHome));
+            }
         }
 
 
         Class localHome = deployment.getLocalHomeInterface();
         if (localHome != null) {
-            String externalName = strategy.getName(localHome, JndiNameStrategy.Interface.LOCAL_HOME);
-            bindings.put(externalName, new EJB(deployment, remoteHome));
+            for (Map.Entry<String, String> entry : strategy.getNames(localHome, Interface.LOCAL_HOME).entrySet()) {
+                bindings.put(entry.getValue(), new EJB(deployment, localHome));
+            }
         }
 
         for (Class businessLocal : deployment.getBusinessLocalInterfaces()) {
-            String externalName = strategy.getName(businessLocal, JndiNameStrategy.Interface.BUSINESS_LOCAL);
-            bindings.put(externalName, new EJB(deployment, businessLocal));
+            for (Map.Entry<String, String> entry : strategy.getNames(businessLocal, Interface.BUSINESS_LOCAL).entrySet()) {
+                bindings.put(entry.getValue(), new EJB(deployment, businessLocal));
+            }
         }
 
         for (Class businessRemote : deployment.getBusinessRemoteInterfaces()) {
-            String externalName = strategy.getName(businessRemote, JndiNameStrategy.Interface.BUSINESS_REMOTE);
-            bindings.put(externalName, new EJB(deployment, businessRemote));
+            for (Map.Entry<String, String> entry : strategy.getNames(businessRemote, Interface.BUSINESS_REMOTE).entrySet()) {
+                bindings.put(entry.getValue(), new EJB(deployment, businessRemote));
+            }
         }
 
 //        if (MessageListener.class.equals(deployment.getMdbInterface())) {

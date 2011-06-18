@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import static org.apache.openejb.util.Classes.packageName;
 
+import java.util.TreeMap;
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 import javax.naming.Reference;
@@ -56,6 +57,7 @@ import java.lang.reflect.Constructor;
  */
 public class JndiBuilder {
 
+    public static final String DEFAULT_NAME_KEY = "default";
 
     final boolean embeddedEjbContainerApi;
 
@@ -165,7 +167,8 @@ public class JndiBuilder {
 
         public void begin(BeanContext beanContext);
 
-        public String getName(Class interfce, Interface type);
+        public String getName(Class interfce, String key, Interface type);
+        public Map<String, String> getNames(Class interfce, Interface type);
 
         public void end();
     }
@@ -174,6 +177,7 @@ public class JndiBuilder {
 
     public static class TemplatedStrategy implements JndiNameStrategy {
         private static final String JNDINAME_FORMAT = "openejb.jndiname.format";
+        private static final String KEYS = "default,local,global,app";
         private org.apache.openejb.util.StringTemplate template;
         private HashMap<String, EnterpriseBeanInfo> beanInfos;
 
@@ -181,7 +185,7 @@ public class JndiBuilder {
         private BeanContext bean;
         
         // Set in begin()
-        private Map<String, StringTemplate> templates;
+        private HashMap<String, Map<String, StringTemplate>> templates;
 
         private String format;
         private Map<String, String> appContext;
@@ -234,18 +238,27 @@ public class JndiBuilder {
             }
         }
 
+        private Map<String, StringTemplate> addTemplate(Map<String, StringTemplate> map, String key, StringTemplate template) {
+            Map<String, StringTemplate> m = map;
+            if (m == null) {
+                m = new TreeMap<String, StringTemplate> ();
+            }
+            m.put(key, template);
+            return m;
+        }
+
         public void begin(BeanContext bean) {
             this.bean = bean;
             
             EnterpriseBeanInfo beanInfo = beanInfos.get(bean.getDeploymentID());
 
-            templates = new HashMap<String, StringTemplate>();
-            templates.put("", template);
+            templates = new HashMap<String, Map<String, StringTemplate>>();
+            templates.put("", addTemplate(null, "default", template));
 
             for (JndiNameInfo nameInfo : beanInfo.jndiNamess) {
                 String intrface = nameInfo.intrface;
                 if (intrface == null) intrface = "";
-                templates.put(intrface, new StringTemplate(nameInfo.name));
+                templates.put(intrface, addTemplate(templates.get(intrface), getType(nameInfo.name), new StringTemplate(nameInfo.name)));
             }
             beanInfo.jndiNames.clear();
             beanInfo.jndiNamess.clear();
@@ -260,11 +273,23 @@ public class JndiBuilder {
             this.beanContext.put("deploymentId", bean.getDeploymentID().toString());
         }
 
+        private static String getType(String name) {
+            int start = 0;
+            if (name.charAt(0) == '/') {
+                start = 1;
+            }
+            int end = name.substring(start).indexOf('/');
+            if (end < 0) {
+                return DEFAULT_NAME_KEY;
+            }
+            return name.substring(start, end);
+        }
+
         public void end() {
         }
 
-        public String getName(Class interfce, Interface type) {
-            StringTemplate template = templates.get(interfce.getName());
+        public String getName(Class interfce, String key, Interface type) {
+            Map<String, StringTemplate> template = templates.get(interfce.getName());
             if (template == null) template = templates.get(type.getAnnotationName());
             if (template == null) template = templates.get("");
 
@@ -279,7 +304,18 @@ public class JndiBuilder {
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
             contextData.put("interfaceClass.packageName", packageName(interfce));
 
-            return template.apply(contextData);
+            if (template.containsKey(key)) {
+                return template.get(key).apply(contextData);
+            }
+            return template.get(DEFAULT_NAME_KEY).apply(contextData);
+        }
+
+        @Override public Map<String, String> getNames(Class interfce, Interface type) {
+            Map<String, String> names = new HashMap<String, String>();
+            for (String key : KEYS.split(",")) {
+                names.put(key, getName(interfce, key, type));
+            }
+            return names;
         }
     }
 
@@ -293,7 +329,7 @@ public class JndiBuilder {
         public void end() {
         }
 
-        public String getName(Class interfce, Interface type) {
+        public String getName(Class interfce, String key, Interface type) {
             String id = beanContext.getDeploymentID() + "";
             if (id.charAt(0) == '/') {
                 id = id.substring(1);
@@ -310,6 +346,12 @@ public class JndiBuilder {
                     return id + "BusinessRemote";
             }
             return id;
+        }
+
+        @Override public Map<String, String> getNames(Class interfce, Interface type) {
+            Map<String, String> names = new HashMap<String, String>();
+            names.put("", getName(interfce, DEFAULT_NAME_KEY, type));
+            return names;
         }
     }
 
@@ -350,7 +392,7 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(bean.getDeploymentID(), beanClass.getName(), InterfaceType.BUSINESS_LOCALBEAN_HOME);
                 bind(internalName, ref, bindings, beanInfo, beanClass);
 
-                String name = strategy.getName(beanClass, JndiNameStrategy.Interface.LOCALBEAN);
+                String name = strategy.getName(beanClass, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.LOCALBEAN);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, beanClass);
                 bindJava(bean, beanClass, ref, bindings, beanInfo);
 
@@ -375,7 +417,7 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(bean.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_LOCAL);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
-                String externalName = "openejb/local/" + strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_LOCAL);
+                String externalName = "openejb/local/" + strategy.getName(interfce, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.BUSINESS_LOCAL);
                 bind(externalName, ref, bindings, beanInfo, interfce);
                 bindJava(bean, interfce, ref, bindings, beanInfo);
                 
@@ -401,7 +443,7 @@ public class JndiBuilder {
                 String internalName = "openejb/Deployment/" + format(bean.getDeploymentID(), interfce.getName(), InterfaceType.BUSINESS_REMOTE);
                 bind(internalName, ref, bindings, beanInfo, interfce);
 
-                String name = strategy.getName(interfce, JndiNameStrategy.Interface.BUSINESS_REMOTE);
+                String name = strategy.getName(interfce, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.BUSINESS_REMOTE);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, interfce);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, interfce);
                 bindJava(bean, interfce, ref, bindings, beanInfo);
@@ -418,7 +460,7 @@ public class JndiBuilder {
 
                 ObjectReference ref = new ObjectReference(bean.getEJBLocalHome());
 
-                String name = strategy.getName(bean.getLocalHomeInterface(), JndiNameStrategy.Interface.LOCAL_HOME);
+                String name = strategy.getName(bean.getLocalHomeInterface(), DEFAULT_NAME_KEY, JndiNameStrategy.Interface.LOCAL_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, localHomeInterface);
                 
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), localHomeInterface.getName(), InterfaceType.EJB_LOCAL_HOME));
@@ -442,7 +484,7 @@ public class JndiBuilder {
 
                 ObjectReference ref = new ObjectReference(bean.getEJBHome());
 
-                String name = strategy.getName(homeInterface, JndiNameStrategy.Interface.REMOTE_HOME);
+                String name = strategy.getName(homeInterface, DEFAULT_NAME_KEY, JndiNameStrategy.Interface.REMOTE_HOME);
                 bind("openejb/local/" + name, ref, bindings, beanInfo, homeInterface);
                 bind("openejb/remote/" + name, ref, bindings, beanInfo, homeInterface);
                 
