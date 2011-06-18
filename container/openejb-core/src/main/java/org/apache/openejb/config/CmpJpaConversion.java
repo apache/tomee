@@ -990,15 +990,17 @@ public class CmpJpaConversion implements DynamicDeployer {
             // class in the hierarchy. 
             MappedSuperclass superclass = new MappedSuperclass(clazz.getName());
             for (java.lang.reflect.Field field : clazz.getDeclaredFields()) {
-                String fieldName = field.getName();
-                // if this is one of bean's persistence fields, create the mapping 
-                if (persistantFields.contains(fieldName)) {
-                    fields.put(fieldName, superclass);
-                    persistantFields.remove(fieldName);
-                } else if (!ENHANCED_FIELDS.contains(fieldName)){
-                    // these are fields we need to identify as transient for the persistence engine. 
-                    Transient transientField = new Transient(fieldName);
-                    superclass.addField(transientField);
+                if (!field.isSynthetic()) {
+                    String fieldName = field.getName();
+                    // if this is one of bean's persistence fields, create the mapping
+                    if (persistantFields.contains(fieldName)) {
+                        fields.put(fieldName, superclass);
+                        persistantFields.remove(fieldName);
+                    } else if (!ENHANCED_FIELDS.contains(fieldName)){
+                        // these are fields we need to identify as transient for the persistence engine.
+                        Transient transientField = new Transient(fieldName);
+                        superclass.addField(transientField);
+                    }
                 }
             }
             clazz = clazz.getSuperclass();
