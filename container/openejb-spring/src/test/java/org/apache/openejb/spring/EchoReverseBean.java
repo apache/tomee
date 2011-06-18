@@ -20,7 +20,7 @@ package org.apache.openejb.spring;
 import javax.ejb.EJB;
 
 public class EchoReverseBean {
-    @EJB
+    @EJB(name = "EchoBeanLocal")
     public Echo echo;
 
     public Echo getEcho() {
