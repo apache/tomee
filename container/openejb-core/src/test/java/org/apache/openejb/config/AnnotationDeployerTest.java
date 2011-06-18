@@ -28,6 +28,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -224,7 +225,9 @@ public class AnnotationDeployerTest {
     	ConnectorModule connectorModule = testConnectorModule();
     	AnnotationDeployer.DiscoverAnnotatedBeans discvrAnnBeans = new AnnotationDeployer.DiscoverAnnotatedBeans();
     	discvrAnnBeans.deploy(connectorModule);
-    	
+
+        Locale.setDefault(Locale.ENGLISH); // otherwise icons will not be found, cf Connector class
+
     	Connector connector = connectorModule.getConnector();
     	Assert.assertEquals("displayName", connector.getDisplayName());
     	Assert.assertEquals("description", connector.getDescription());
