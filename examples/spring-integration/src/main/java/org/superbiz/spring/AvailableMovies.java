@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class AvailableMovies {
 
-    @EJB
+    @EJB(name = "MoviesLocal")
     private Movies moviesEjb;
 
     private List<Movie> movies;
@@ -50,6 +50,10 @@ public class AvailableMovies {
 
     public void setMovies(List<Movie> movies) {
         this.movies = movies;
+    }
+
+    public void setMoviesEjb(Movies moviesEjb) {
+        this.moviesEjb = moviesEjb;
     }
 }
 //END SNIPPET: code

@@ -16,6 +16,8 @@
  */
 package org.superbiz.spring;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class Theater {
      *
      * @param movies
      */
-    @Autowired
+    @Inject @Named(value = "MoviesLocal")
     public Theater(Movies movies) {
         this.movies = movies;
     }
