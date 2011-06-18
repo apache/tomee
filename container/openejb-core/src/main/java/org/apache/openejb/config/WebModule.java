@@ -35,7 +35,7 @@ import org.apache.xbean.finder.IAnnotationFinder;
 /**
  * @version $Rev$ $Date$
  */
-public class WebModule extends Module implements WsModule {
+public class WebModule extends Module implements WsModule, RESTModule {
     private final ValidationContext validation;
 
     private WebApp webApp;
@@ -48,6 +48,7 @@ public class WebModule extends Module implements WsModule {
     // List of all faces configuration files found in this web module
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
     private IAnnotationFinder finder;
+    private final Set<String> restClasses = new TreeSet<String>();
 
     private ID id;
     
@@ -174,5 +175,9 @@ public class WebModule extends Module implements WsModule {
                 "moduleId='" + id.getName() + '\'' +
                 ", contextRoot='" + contextRoot + '\'' +
                 '}';
+    }
+
+    @Override public Set<String> getRestClasses() {
+        return restClasses;
     }
 }
