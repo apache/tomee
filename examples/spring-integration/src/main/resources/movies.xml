@@ -127,6 +127,9 @@
         </bean>
       </list>
     </property>
+    <!--property name="moviesEjb">
+      <ref bean="MoviesLocal" />
+    </property-->
   </bean>
 
   <bean name="theater1" class="org.superbiz.spring.Theater">
