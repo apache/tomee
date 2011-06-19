@@ -253,7 +253,7 @@ public class JndiBuilder {
             EnterpriseBeanInfo beanInfo = beanInfos.get(bean.getDeploymentID());
 
             templates = new HashMap<String, Map<String, StringTemplate>>();
-            templates.put("", addTemplate(null, "default", template));
+            templates.put("", addTemplate(null, DEFAULT_NAME_KEY, template));
 
             for (JndiNameInfo nameInfo : beanInfo.jndiNamess) {
                 String intrface = nameInfo.intrface;
@@ -304,10 +304,20 @@ public class JndiBuilder {
             contextData.put("interfaceClass.simpleName", interfce.getSimpleName());
             contextData.put("interfaceClass.packageName", packageName(interfce));
 
+            StringTemplate stringTemplate = null;
+            
             if (template.containsKey(key)) {
-                return template.get(key).apply(contextData);
+                stringTemplate = template.get(key);
+            } else {
+                stringTemplate = template.get(DEFAULT_NAME_KEY);
             }
-            return template.get(DEFAULT_NAME_KEY).apply(contextData);
+            
+            if (stringTemplate == null){
+                stringTemplate = template.values().iterator().next();
+            } 
+            
+            return  stringTemplate.apply(contextData);
+          
         }
 
         @Override public Map<String, String> getNames(Class interfce, Interface type) {
