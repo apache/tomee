@@ -289,6 +289,7 @@ public class AnnotationDeployerTest {
 		Assert.assertEquals("java.lang.Integer", configProperty.get(0).getConfigPropertyType());
 		Assert.assertEquals("myProperty", configProperty.get(1).getConfigPropertyName());
 		Assert.assertEquals("java.lang.String", configProperty.get(1).getConfigPropertyType());
+		Assert.assertEquals("This is a test", configProperty.get(1).getConfigPropertyValue());
     }
 
 	@ApplicationException(rollback = true)
@@ -459,7 +460,7 @@ public class AnnotationDeployerTest {
     
     @AdministeredObject(adminObjectInterfaces={TestAdminObjectInterface.class})
     public static class TestAdminObject implements TestAdminObjectInterface, SomeOtherInterface {
-    	private String myProperty;
+    	private String myProperty = "This is a test";
     	
     	@javax.resource.spi.ConfigProperty(ignore=true)
     	private int myNumber;
