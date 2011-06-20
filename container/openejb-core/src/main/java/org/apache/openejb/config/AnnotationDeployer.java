@@ -705,68 +705,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 			
 			try {
 				Class<?> clazz = classLoader.loadClass(cls);
-				
-				// add any annotated method/fields
-				Field[] declaredFields = clazz.getDeclaredFields();
-				for (Field field : declaredFields) {
-					javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
-					if (annotation == null) {
-						continue;
-					}
-					
-					String name = field.getName();
-					if (! containsConfigProperty(configProperties, name)) {
-						String type = getConfigPropertyType(annotation, field.getType());
-						
-						if (type != null) {
-							ConfigProperty configProperty = new ConfigProperty();
-							configProperties.add(configProperty);
-							
-							configProperty.setConfigPropertyName(name);
-							configProperty.setConfigPropertyType(type);
-							configProperty.setConfigPropertyConfidential(annotation.confidential());
-							configProperty.setConfigPropertyIgnore(annotation.ignore());
-							configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-							configProperty.setConfigPropertyValue(annotation.defaultValue());
-						}
-					}
-				}
-				
-				Method[] declaredMethods = clazz.getDeclaredMethods();
-				for (Method method : declaredMethods) {
-					if (! method.getName().startsWith("set")) {
-						continue;
-					}
-					
-					if (! (method.getParameterTypes().length == 1)) {
-						continue;
-					}
-					
-					javax.resource.spi.ConfigProperty annotation = method.getAnnotation(javax.resource.spi.ConfigProperty.class);
-					if (annotation == null) {
-						continue;
-					}
-					
-					String name = method.getName();
-					
-					
-					if (! containsConfigProperty(configProperties, name)) {
-						String type = getConfigPropertyType(annotation, method.getParameterTypes()[0]);
-						
-						if (type != null) {
-							ConfigProperty configProperty = new ConfigProperty();
-							configProperties.add(configProperty);
-							
-							configProperty.setConfigPropertyName(name);
-							configProperty.setConfigPropertyType(type);
-							configProperty.setConfigPropertyConfidential(annotation.confidential());
-							configProperty.setConfigPropertyIgnore(annotation.ignore());
-							configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
-							configProperty.setConfigPropertyValue(annotation.defaultValue());
-							configProperty.setDescriptions(stringsToTexts(annotation.description()));
-						}
-					}
-				}
+				Object o = clazz.newInstance();
 				
 				// add any introspected properties
 				BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
@@ -788,11 +727,70 @@ public class AnnotationDeployer implements DynamicDeployer {
 							ConfigProperty configProperty = new ConfigProperty();
 							configProperties.add(configProperty);
 							
+							Object value = null;
+							try {
+								value = propertyDescriptor.getReadMethod().invoke(o);
+							} catch (Exception e) {
+							}
+							
+							javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
+							if (annotation == null && clazz.getDeclaredField(name) != null) {
+								// if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
+								annotation = clazz.getDeclaredField(name).getAnnotation(javax.resource.spi.ConfigProperty.class);
+							}
+							
 							configProperty.setConfigPropertyName(name);
-							configProperty.setConfigPropertyType(type.getName());
-							configProperty.setConfigPropertyConfidential(false);
-							configProperty.setConfigPropertyIgnore(false);
-							configProperty.setConfigPropertySupportsDynamicUpdates(false);
+							configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
+							if (value != null) {
+								configProperty.setConfigPropertyValue(value.toString());
+							}
+							
+							if (annotation != null) {
+								if (annotation.defaultValue() != null && annotation.defaultValue().length() > 0) {
+									configProperty.setConfigPropertyValue(annotation.defaultValue());
+								}
+								configProperty.setConfigPropertyConfidential(annotation.confidential());
+								configProperty.setConfigPropertyIgnore(annotation.ignore());
+								configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+								configProperty.setDescriptions(stringsToTexts(annotation.description()));
+							}
+						}
+					}
+				}
+				
+				// add any annotated fields we haven't already picked up
+				Field[] declaredFields = clazz.getDeclaredFields();
+				for (Field field : declaredFields) {
+					javax.resource.spi.ConfigProperty annotation = field.getAnnotation(javax.resource.spi.ConfigProperty.class);
+					
+					String name = field.getName();
+					Object value = null;
+					try {
+						value = field.get(o);
+					} catch (Exception e) {
+					}
+
+					if (! containsConfigProperty(configProperties, name)) {
+						String type = getConfigPropertyType(annotation, field.getType());
+						
+						if (type != null) {
+							ConfigProperty configProperty = new ConfigProperty();
+							configProperties.add(configProperty);
+							
+							configProperty.setConfigPropertyName(name);
+							configProperty.setConfigPropertyType(type);
+							if (value != null) {
+								configProperty.setConfigPropertyValue(value.toString());
+							}
+							
+							if (annotation != null) {
+								if (annotation.defaultValue() != null) {
+									configProperty.setConfigPropertyValue(annotation.defaultValue());
+								}
+								configProperty.setConfigPropertyConfidential(annotation.confidential());
+								configProperty.setConfigPropertyIgnore(annotation.ignore());
+								configProperty.setConfigPropertySupportsDynamicUpdates(annotation.supportsDynamicUpdates());
+							}
 						}
 					}
 				}
@@ -802,7 +800,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 		}
 
 		private String getConfigPropertyType(javax.resource.spi.ConfigProperty annotation, Class<?> type) {
-			Class<?> t = annotation.type();
+			Class<?> t = (annotation == null) ? null : annotation.type();
 			if (t == null || t.equals(Object.class)) {
 				t = type;
 			}
