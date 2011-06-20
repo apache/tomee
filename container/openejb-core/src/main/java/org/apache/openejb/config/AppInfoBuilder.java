@@ -187,10 +187,10 @@ class AppInfoBuilder {
                 EnterpriseBean enterpriseBean = beanData.get(beanInfo.ejbName);
 
                 // Build the JNDI info tree for the EJB
-                jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleId, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
+                jndiEncInfoBuilder.build(enterpriseBean, beanInfo.ejbName, ejbJar.moduleName, ejbModule.getModuleUri(), ejbJar.moduleJndiEnc, beanInfo.jndiEnc);
 
 
-                jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleId);
+                jndiEncInfoBuilder.buildDependsOnRefs(ejbModule, enterpriseBean, beanInfo, ejbJar.moduleName);
             }
         }
 

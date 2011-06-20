@@ -393,7 +393,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public AppContext createEjbJar(EjbJarInfo ejbJar) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
-        appInfo.appId = ejbJar.moduleId;
+        appInfo.appId = ejbJar.moduleName;
         appInfo.ejbJars.add(ejbJar);
         return createApplication(appInfo);
     }
@@ -405,7 +405,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public AppContext createEjbJar(EjbJarInfo ejbJar, ClassLoader classLoader) throws NamingException, IOException, OpenEJBException {
         AppInfo appInfo = new AppInfo();
         appInfo.path = ejbJar.path;
-        appInfo.appId = ejbJar.moduleId;
+        appInfo.appId = ejbJar.moduleName;
         appInfo.ejbJars.add(ejbJar);
         return createApplication(appInfo, classLoader);
     }

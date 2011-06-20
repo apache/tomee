@@ -36,7 +36,7 @@ public class AuthorBean implements EntityBean, Cmp2Entity {
     public static Object deploymentInfo;
     static {
         try {
-            deploymentInfo = new BeanContext("author", null, new ModuleContext("", "", new AppContext("", SystemInstance.get(), Author.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
+            deploymentInfo = new BeanContext("author", null, new ModuleContext("", null, "", new AppContext("", SystemInstance.get(), Author.class.getClassLoader(), new IvmContext(), new IvmContext(), false), new IvmContext()),
                     AuthorBean.class,
                     null,
                     null,

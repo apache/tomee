@@ -99,7 +99,7 @@ public class JndiEncInfoBuilder {
 
             EjbResolver ejbJarResolver = new EjbResolver(earResolver, EJBJAR, ejbJarInfo);
 
-            ejbJarResolvers.put(ejbJarInfo.moduleId, ejbJarResolver);
+            ejbJarResolvers.put(ejbJarInfo.moduleName, ejbJarResolver);
         }
     }
 
@@ -430,10 +430,10 @@ public class JndiEncInfoBuilder {
         return beanInfo != null && beanInfo.localbean;
     }
 
-    private EnterpriseBeanInfo getBeanInfo(String moduleId, String deploymentId) {
+    private EnterpriseBeanInfo getBeanInfo(String moduleName, String deploymentId) {
         List<EjbJarInfo> ejbJars = appInfo.ejbJars;
         for (EjbJarInfo ejbJar : ejbJars) {
-            if (!ejbJar.moduleId.equals(moduleId)) continue;
+            if (!ejbJar.moduleName.equals(moduleName)) continue;
 
             List<EnterpriseBeanInfo> enterpriseBeans = ejbJar.enterpriseBeans;
             for (EnterpriseBeanInfo enterpriseBean : enterpriseBeans) {

@@ -1075,8 +1075,12 @@ public class BeanContext extends DeploymentContext {
     }
 
     public String getModuleID() {
-        return getModuleContext().getId();
+        return getModuleContext().getModuleURI().toString();
     }
+    
+    public String getModuleName() {
+        return getModuleContext().getId();
+    }    
 
     public String getRunAs() {
         return runAs;

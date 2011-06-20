@@ -26,7 +26,7 @@ import java.util.TreeSet;
 public class EjbJarInfo extends ValidationInfoObject {
     public final Properties properties = new Properties();
 
-    public String moduleId;
+    public String moduleName;
     public URI moduleUri;
     public String path;
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();

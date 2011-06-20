@@ -256,7 +256,7 @@ public class Deploy {
         System.out.println("App(id=" + appInfo.path + ")");
 
         for (EjbJarInfo info : appInfo.ejbJars) {
-            System.out.println("    EjbJar(id=" + info.moduleId + ", path=" + info.path + ")");
+            System.out.println("    EjbJar(id=" + info.moduleName + ", path=" + info.path + ")");
             for (EnterpriseBeanInfo beanInfo : info.enterpriseBeans) {
                 System.out.println("        Ejb(ejb-name=" + beanInfo.ejbName + ", id=" + beanInfo.ejbDeploymentId + ")");
                 for (String name : beanInfo.jndiNames) {

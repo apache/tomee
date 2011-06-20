@@ -188,8 +188,8 @@ public class VmDeploymentManager implements DeploymentManager {
                     if (allowedModuleType != null && !allowedModuleType.equals(ModuleType.EJB)) {
                         return null;
                     }
-                    if (ejbJarInfo.moduleId == appInfo.path) {
-                        return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
+                    if (ejbJarInfo.moduleName == appInfo.appId) {
+                        return new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleName);
                     }
                 }
             }
@@ -232,7 +232,7 @@ public class VmDeploymentManager implements DeploymentManager {
             clientModuleId.setParentTargetModuleID(earModuleId);
         }
         for (EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            TargetModuleIDImpl ejbJarModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleId);
+            TargetModuleIDImpl ejbJarModuleId = new TargetModuleIDImpl(DEFAULT_TARGET, ejbJarInfo.moduleName);
             ejbJarModuleId.setParentTargetModuleID(earModuleId);
         }
         for (ConnectorInfo connectorInfo : appInfo.connectors) {

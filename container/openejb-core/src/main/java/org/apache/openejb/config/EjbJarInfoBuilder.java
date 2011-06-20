@@ -141,7 +141,7 @@ public class EjbJarInfoBuilder {
 
         EjbJarInfo ejbJar = new EjbJarInfo();
         ejbJar.path = jar.getJarLocation();
-        ejbJar.moduleId = jar.getModuleId();
+        ejbJar.moduleName = jar.getModuleId();
         ejbJar.moduleUri =jar.getModuleUri();
 
         ejbJar.watchedResources.addAll(jar.getWatchedResources());
