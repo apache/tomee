@@ -56,6 +56,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.RpcContainer;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -236,6 +237,8 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
             if (methodName.equals("writeReplace")) return _writeReplace(proxy);
             else throw new UnsupportedOperationException("Unknown method: " + method);
+        } else if (method.getDeclaringClass() == BeanContext.Removable.class) {
+            return _invoke(proxy, BeanContext.Removable.class, method, args);
         }
 
         Class interfce = getInvokedInterface(method);

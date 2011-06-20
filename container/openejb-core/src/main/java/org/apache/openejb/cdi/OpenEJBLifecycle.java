@@ -40,6 +40,7 @@ import javax.enterprise.inject.spi.Extension;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.OWBLogConst;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
@@ -242,6 +243,10 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
                 webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
+
+
+//                final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
+//                manager.addBean(new NewCdiEjbBean<Object>(bean));
             }
 
             //Check Specialization
@@ -279,6 +284,15 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         afterStartApplication(startupObject);
 
         logger.info(OWBLogConst.INFO_0001, Long.toString(System.currentTimeMillis() - begin));
+    }
+
+    public static class NewEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
+
+        public NewEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
+            super(beanContext, webBeansContext);
+        }
+
+
     }
 
     private void loadExtensions(AppContext appContext) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {

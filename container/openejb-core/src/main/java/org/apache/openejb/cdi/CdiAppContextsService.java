@@ -22,6 +22,7 @@ import org.apache.webbeans.context.AbstractContextsService;
 import org.apache.webbeans.context.ApplicationContext;
 import org.apache.webbeans.context.DependentContext;
 import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.context.SessionContext;
 import org.apache.webbeans.context.SingletonContext;
 import org.apache.webbeans.spi.ContextsService;
 
@@ -29,6 +30,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ContextException;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
@@ -36,13 +38,12 @@ import java.lang.annotation.Annotation;
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
-    private static ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
-    private static ThreadLocal<ApplicationContext> applicationContext = new ThreadLocal<ApplicationContext>();
-    private static ThreadLocal<SingletonContext> singletonContext = new ThreadLocal<SingletonContext>();
-    private static DependentContext dependentContext = new DependentContext();
+    private ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
+    private ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
+    private DependentContext dependentContext = new DependentContext();
 
-    private volatile ApplicationContext currentApplicationContext = null;
-    private volatile SingletonContext currentSingletonContext = null;
+    private final ApplicationContext currentApplicationContext = new ApplicationContext();
+    private final SingletonContext currentSingletonContext = new SingletonContext();
 
     public CdiAppContextsService() {
         dependentContext.setActive(true);
@@ -50,11 +51,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     @Override
     public void init(Object initializeObject) {
-        //Start application context
-        startContext(ApplicationScoped.class, initializeObject);
-
-        //Start signelton context
-        startContext(Singleton.class, initializeObject);
+        currentApplicationContext.setActive(true);
+        currentSingletonContext.setActive(true);
     }
 
     @Override
@@ -62,8 +60,9 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
                 initRequestContext();
+            } else if (scopeType.equals(SessionScoped.class)) {
+                initSessionContext();
             } else if (scopeType.equals(ApplicationScoped.class)) {
-                initApplicationContext();
             } else if (scopeType.equals(Dependent.class)) {
                 // Do nothing
             } else if (scopeType.equals(Singleton.class)) {
@@ -84,6 +83,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
                 destroyRequestContext();
+            } else if (scopeType.equals(SessionScoped.class)) {
+                destroySessionContext();
             } else if (scopeType.equals(ApplicationScoped.class)) {
                 destroyApplicationContext();
             } else if (scopeType.equals(Dependent.class)) {
@@ -105,82 +106,62 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
     public Context getCurrentContext(Class<? extends Annotation> scopeType) {
         if (supportsContext(scopeType)) {
             if (scopeType.equals(RequestScoped.class)) {
-                return requestContext.get();
+                return getRequestContext();
+            } else if (scopeType.equals(SessionScoped.class)) {
+                return getSessionContext();
             } else if (scopeType.equals(ApplicationScoped.class)) {
-                return applicationContext.get();
+                return currentApplicationContext;
             } else if (scopeType.equals(Dependent.class)) {
                 return dependentContext;
             } else {
-                return singletonContext.get();
+                return currentSingletonContext;
             }
         }
 
         return null;
     }
 
-    private void initApplicationContext() {
-        if (this.currentApplicationContext != null) {
-            applicationContext.set(this.currentApplicationContext);
-        } else {
-            ApplicationContext currentApplicationContext = new ApplicationContext();
-            currentApplicationContext.setActive(true);
+    private Context getRequestContext() {
+        RequestContext context = requestContext.get();
+        if (context == null) {
 
-            this.currentApplicationContext = currentApplicationContext;
-            applicationContext.set(currentApplicationContext);
+            context = new RequestContext();
+            context.setActive(true);
+
+            requestContext.set(context);
         }
+        return context;
+    }
+
+    private Context getSessionContext() {
+        SessionContext context = sessionContext.get();
+        if (context == null) {
+
+            context = new SessionContext();
+            context.setActive(true);
+
+            sessionContext.set(context);
+        }
+        return context;
     }
 
     private void destroyApplicationContext() {
         // look for thread local
         // this can be set by initRequestContext
-        ApplicationContext context = this.currentApplicationContext;
-
-        // using in tests
-        if (context == null) {
-            context = applicationContext.get();
-        }
-
-        // Destroy context
-        if (context != null) {
-            context.destroy();
-        }
-
-        this.currentApplicationContext = null;
+//        this.currentApplicationContext.destroy();
     }
 
     private void initSingletonContext() {
-        if (this.currentSingletonContext != null) {
-            singletonContext.set(currentSingletonContext);
-        } else {
-            SingletonContext context = new SingletonContext();
-            context.setActive(true);
-            this.currentSingletonContext = context;
-
-            singletonContext.set(context);
-        }
-
     }
 
     private void destroySingletonContext() {
-        SingletonContext context = this.currentSingletonContext;
-
-        // using in tests
-        if (context == null) {
-            context = singletonContext.get();
-        }
-
-        // context is not null
-        // destroy it
-        if (context != null) {
-            context.destroy();
-        }
-
-        this.currentSingletonContext = null;
+//        this.currentSingletonContext.destroy();
     }
 
     @Override
     public boolean supportsContext(Class<? extends Annotation> scopeType) {
         if (scopeType.equals(RequestScoped.class)
+                || scopeType.equals(SessionScoped.class)
                 || scopeType.equals(ApplicationScoped.class)
                 || scopeType.equals(Dependent.class)
                 || scopeType.equals(Singleton.class)) {
@@ -196,12 +177,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         rq.setActive(true);
 
         requestContext.set(rq);
-
-        // Init threadLocal application context
-        initApplicationContext();
-
-        // Init threadlocal singleton context
-        initSingletonContext();
     }
 
     private void destroyRequestContext() {
@@ -215,38 +190,43 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
         // Remove
         requestContext.remove();
-        requestContext.set(null);
+    }
 
-        // Remove singleton and application contexts
-        singletonContext.remove();
-        singletonContext.set(null);
+    private void initSessionContext() {
 
-        applicationContext.remove();
-        applicationContext.set(null);
+        SessionContext rq = new SessionContext();
+        rq.setActive(true);
 
+        sessionContext.set(rq);
+    }
+
+    private void destroySessionContext() {
+        // Get context
+        SessionContext context = sessionContext.get();
+
+        // Destroy context
+        if (context != null) {
+            context.destroy();
+        }
+
+        // Remove
+        sessionContext.remove();
     }
 
     public void destroy(Object destroyObject) {
-        //Destroy application context
-        endContext(ApplicationScoped.class, destroyObject);
+//        //Destroy application context
+//        endContext(ApplicationScoped.class, destroyObject);
+//
+//        //Destroy singleton context
+//        endContext(Singleton.class, destroyObject);
 
-        //Destroy singleton context
-        endContext(Singleton.class, destroyObject);
-
-        this.currentApplicationContext = null;
-        this.currentSingletonContext = null;
 
         //Remove thread locals
         //for preventing memory leaks
         requestContext.remove();
-        applicationContext.remove();
-        singletonContext.remove();
 
         //Thread local values to null
         requestContext.set(null);
-        applicationContext.set(null);
-        singletonContext.set(null);
-
     }
 
 }

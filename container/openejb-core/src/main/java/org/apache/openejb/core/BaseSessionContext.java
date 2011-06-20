@@ -136,6 +136,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
                 List<Class> interfaces = new ArrayList<Class>();
                 interfaces.addAll(di.getInterfaces(interfaceType));
                 interfaces.add(IntraVmProxy.class);
+                interfaces.add(BeanContext.Removable.class);
                 return ProxyManager.newProxyInstance(interfaces.toArray(new Class[interfaces.size()]), handler);
             }
         } catch (IllegalAccessException iae) {

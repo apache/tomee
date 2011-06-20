@@ -37,6 +37,8 @@ import javax.ejb.RemoveException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -54,6 +56,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.config.rules.CheckDependsOn;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -121,6 +124,12 @@ public class StatefulContainer implements RpcContainer {
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(BeanContext beanContext) {
         Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
+
+        try {
+            methods.put(BeanContext.Removable.class.getDeclaredMethod("$$remove"), MethodType.REMOVE);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Internal code change: BeanContext.Removable.$$remove() method was deleted", e);
+        }
 
         List<Method> removeMethods = beanContext.getRemoveMethods();
         for (Method removeMethod : removeMethods) {
@@ -433,11 +442,19 @@ public class StatefulContainer implements RpcContainer {
     protected Object removeEJBObject(BeanContext beanContext, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         if (primKey == null) throw new NullPointerException("primKey is null");
 
+        final Class scope = beanContext.get(Bean.class).getScope();
+        if(scope != Dependent.class) {
+            throw new UnsupportedOperationException("Can not call EJB Statefull Bean Remove Method without scoped @Dependent.  Found scope: @"+scope.getSimpleName());
+        }
+
+
+        final boolean internalRemove = BeanContext.Removable.class == callMethod.getDeclaringClass();
+
         ThreadContext callContext = new ThreadContext(beanContext, primKey);
         ThreadContext oldCallContext = ThreadContext.enter(callContext);
         try {
             // Security check
-            checkAuthorization(callMethod, interfaceType);
+            if (!internalRemove) checkAuthorization(callMethod, interfaceType);
 
             // If a bean managed transaction is active, the bean can not be removed
             if (interfaceType.isComponent()) {
@@ -479,34 +496,36 @@ public class StatefulContainer implements RpcContainer {
                     }
                 }
 
-                // Register the entity managers
-                registerEntityManagers(instance, callContext);
+                if (!internalRemove) {
+                    // Register the entity managers
+                    registerEntityManagers(instance, callContext);
 
-                // Register for synchronization callbacks
-                registerSessionSynchronization(instance, callContext);
+                    // Register for synchronization callbacks
+                    registerSessionSynchronization(instance, callContext);
 
-                // Setup for remove invocation
-                callContext.setCurrentOperation(Operation.REMOVE);
-                callContext.setCurrentAllowedStates(null);
-                callContext.setInvokedInterface(callInterface);
-                runMethod = beanContext.getMatchingBeanMethod(callMethod);
-                callContext.set(Method.class, runMethod);
+                    // Setup for remove invocation
+                    callContext.setCurrentOperation(Operation.REMOVE);
+                    callContext.setCurrentAllowedStates(null);
+                    callContext.setInvokedInterface(callInterface);
+                    runMethod = beanContext.getMatchingBeanMethod(callMethod);
+                    callContext.set(Method.class, runMethod);
 
-                // Do not pass arguments on home.remove(remote) calls
-                Class<?> declaringClass = callMethod.getDeclaringClass();
-                if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
-                    args = new Object[]{};
-                }
+                    // Do not pass arguments on home.remove(remote) calls
+                    Class<?> declaringClass = callMethod.getDeclaringClass();
+                    if (declaringClass.equals(EJBHome.class) || declaringClass.equals(EJBLocalHome.class)){
+                        args = new Object[]{};
+                    }
 
-                // Initialize interceptor stack
-                List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
-                InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
+                    // Initialize interceptor stack
+                    List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
+                    InterceptorStack interceptorStack = new InterceptorStack(instance.bean, runMethod, Operation.REMOVE, interceptors, instance.interceptors);
 
-                // Invoke
-                if (args == null){
-                    returnValue = interceptorStack.invoke();
-                } else {
-                    returnValue = interceptorStack.invoke(args);
+                    // Invoke
+                    if (args == null){
+                        returnValue = interceptorStack.invoke();
+                    } else {
+                        returnValue = interceptorStack.invoke(args);
+                    }
                 }
             } catch (InvalidateReferenceException e) {
                 throw e;

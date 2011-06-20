@@ -202,4 +202,18 @@ public class ThreadContext {
     public void setDiscardInstance(boolean discardInstance) {
         this.discardInstance = discardInstance;
     }
+
+    @Override
+    public String toString() {
+        return "ThreadContext{" +
+                "beanContext=" + beanContext.getId() +
+                ", primaryKey=" + primaryKey +
+                ", data=" + data.size() +
+                ", oldClassLoader=" + oldClassLoader +
+                ", currentOperation=" + currentOperation +
+                ", invokedInterface=" + invokedInterface +
+                ", transactionPolicy=" + transactionPolicy +
+                ", discardInstance=" + discardInstance +
+                '}';
+    }
 }
