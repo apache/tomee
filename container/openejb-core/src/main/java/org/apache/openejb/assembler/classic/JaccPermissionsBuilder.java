@@ -132,7 +132,7 @@ public class JaccPermissionsBuilder {
         ejbJar.methodPermissions.addAll(normalized);
         ejbJar.excludeList.clear();
 
-        PolicyContext policyContext = new PolicyContext(ejbJar.moduleId);
+        PolicyContext policyContext = new PolicyContext(ejbJar.moduleUri.toString());
 
         for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
             BeanContext beanContext = deployments.get(enterpriseBean.ejbDeploymentId);

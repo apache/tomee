@@ -16,6 +16,8 @@
  */
 package org.apache.openejb;
 
+import java.net.URI;
+
 import javax.naming.Context;
 
 /**
@@ -25,9 +27,11 @@ public class ModuleContext extends DeploymentContext {
     private final AppContext appContext;
     private final Context moduleJndiContext;
     private final String uniqueId;
+    private final URI moduleURI;
 
-    public ModuleContext(String id, String uniqueId, AppContext appContext, Context moduleJndiContext) {
+    public ModuleContext(String id, URI moduleURI, String uniqueId, AppContext appContext, Context moduleJndiContext) {
         super(id, appContext.getOptions());
+        this.moduleURI = moduleURI;
         this.appContext = appContext;
         this.moduleJndiContext = moduleJndiContext;
         this.uniqueId = uniqueId;
@@ -48,4 +52,8 @@ public class ModuleContext extends DeploymentContext {
     public String getUniqueId() {
         return uniqueId;
     }
+    
+    public URI getModuleURI() {
+        return moduleURI;
+    }    
 }
