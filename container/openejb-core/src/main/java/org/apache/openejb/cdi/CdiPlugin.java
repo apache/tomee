@@ -38,6 +38,7 @@ import org.apache.webbeans.spi.plugins.OpenWebBeansEjbPlugin;
 import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
 import org.apache.webbeans.util.WebBeansUtil;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.spi.Bean;
@@ -215,7 +216,8 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
 	@Override
 	public boolean isStatefulBean(Class<?> clazz) {
-		throw new IllegalStateException("Statement should never be reached");
+        // TODO Make the EjbPlugin pass in the Bean<T> instance
+		return clazz.isAnnotationPresent(Stateful.class);
 	}
 
 	@Override
@@ -349,4 +351,36 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 		return System.getProperties();
 	}
 
+    @Override
+    public Method resolveViewMethod(Bean<?> component, Method declaredMethod) {
+//        if (true)return declaredMethod;
+        if (!(component instanceof CdiEjbBean)) return declaredMethod;
+
+        CdiEjbBean cdiEjbBean = (CdiEjbBean) component;
+
+        final BeanContext beanContext = cdiEjbBean.getBeanContext();
+
+        for (Class intface : beanContext.getBusinessLocalInterfaces()) {
+            try {
+                return intface.getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+            } catch (NoSuchMethodException e) {
+            }
+        }
+        return declaredMethod;
+    }
+
+    //TODO Delete if we end up not needing this
+    public Method resolveBeanMethod(Bean<?> component, Method declaredMethod) {
+        if (!(component instanceof CdiEjbBean)) return declaredMethod;
+
+        CdiEjbBean cdiEjbBean = (CdiEjbBean) component;
+
+        final BeanContext beanContext = cdiEjbBean.getBeanContext();
+
+        try {
+            return beanContext.getBeanClass().getMethod(declaredMethod.getName(), declaredMethod.getParameterTypes());
+        } catch (NoSuchMethodException e) {
+            return declaredMethod;
+        }
+    }
 }

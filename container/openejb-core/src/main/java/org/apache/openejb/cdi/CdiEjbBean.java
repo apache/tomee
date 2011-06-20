@@ -20,24 +20,31 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.webbeans.annotation.DependentScopeLiteral;
+import org.apache.webbeans.component.AbstractOwbBean;
+import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
 import org.apache.webbeans.inject.InjectableConstructor;
 
 import javax.ejb.Remove;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.New;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.SessionBeanType;
+import javax.enterprise.util.AnnotationLiteral;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
-    private final CreationalContext<T> creationalContext;
-    private final Constructor<T> constructor;
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
         super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), webBeansContext);
@@ -52,13 +59,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         for (Class clazz : beanContext.getBusinessLocalInterfaces()) addApiType(clazz);
 
         beanContext.set(Bean.class, this);
-
-        //TODO correct scope not clear
-        setImplScopeType(new DependentScopeLiteral());
-        BeanManagerImpl beanManagerImpl = webBeansContext.getBeanManagerImpl();
-        creationalContext = beanManagerImpl.createCreationalContext(this);
-        constructor = webBeansContext.getWebBeansUtil().defineConstructor(getReturnType());
-        webBeansContext.getDefinitionUtil().addConstructorInjectionPointMetaData(this, constructor);
     }
 
     @Override
@@ -70,12 +70,6 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     public BeanContext getBeanContext() {
         return this.beanContext;
-    }
-
-    public T create() {
-        InjectableConstructor<T> ic = new InjectableConstructor<T>(constructor, this, creationalContext);
-
-        return ic.doInjection();
     }
 
     private static SessionBeanType toSessionType(BeanType beanType) {
@@ -107,6 +101,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
         BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
 
+        beanContext.set(CreationalContext.class, creationalContext);
         return (T) home.create();
     }
 
@@ -127,6 +122,21 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         }
 
         return clazzes;
+    }
+
+    @Override
+    protected void destroyComponentInstance(T instance, CreationalContext<T> creational) {
+
+        if (instance instanceof BeanContext.Removable) {
+            BeanContext.Removable removable = (BeanContext.Removable) instance;
+            removable.$$remove();
+        }
+
+    }
+
+    @Override
+    protected void destroyStatefulSessionBeanInstance(T proxyInstance, Object ejbInstance) {
+        super.destroyStatefulSessionBeanInstance(proxyInstance, ejbInstance);
     }
 
     @Override

@@ -138,6 +138,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
                 proxyInterfaces.addAll(handler.getInterfaces());
                 proxyInterfaces.add(IntraVmProxy.class);
+                proxyInterfaces.add(BeanContext.Removable.class);
                 return ProxyManager.newProxyInstance(proxyInterfaces.toArray(new Class[]{}), handler);
             }
 

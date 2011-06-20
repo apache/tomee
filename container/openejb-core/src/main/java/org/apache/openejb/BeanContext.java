@@ -38,11 +38,12 @@ import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
-import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.openejb.cdi.CdiEjbBean;
+import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
@@ -60,6 +61,7 @@ import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
+import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.recipe.ConstructionException;
 
@@ -76,6 +78,10 @@ public class BeanContext extends DeploymentContext {
 
     public interface BusinessRemoteHome extends javax.ejb.EJBHome {
         Object create();
+    }
+
+    public interface Removable {
+        void $$remove();
     }
 
     public interface ServiceEndpoint {
@@ -1149,32 +1155,37 @@ public class BeanContext extends DeploymentContext {
         ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
-        CdiEjbBean<?> owbBean = (CdiEjbBean<?>) get(Bean.class);
-        WebBeansContext webBeansContext = owbBean == null? WebBeansContext.getInstance(): owbBean.getWebBeansContext();
+        WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+
+        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
+
+        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
+
+        if (beanDefinition == null) {
+            beanDefinition = beanConstructor;
+        }
 
         try {
+            final CreationalContext<Object> creationalContext;
+            if (get(CreationalContext.class) == null) {
+                creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+            } else {
+                creationalContext = get(CreationalContext.class);
+            }
+
             final Context ctx = this.getJndiEnc();
             final Class beanClass = this.getBeanClass();
 
             // Create bean instance
 
-            //TODO OPENEJB-1578 owbBean == null for MDBs.  Figure out how to get the Bean for an MDB and allow constructor injection there too.
-            InjectionProcessor injectionProcessor;
-            if (owbBean != null) {
-                injectionProcessor = new InjectionProcessor(owbBean.create(), this.getInjections(), InjectionProcessor.unwrap(ctx));
-            } else {
-                injectionProcessor = new InjectionProcessor(beanClass, this.getInjections(), null, null, org.apache.openejb.InjectionProcessor.unwrap(ctx));
-            }
-            final Object bean = injectionProcessor.createInstance();
+            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
 
-            // TODO we likely don't want to create a new one each time -- investigate the destroy() method
-            try {
-                OWBInjector beanInjector = new OWBInjector(webBeansContext);
-                beanInjector.inject(bean);
-            } catch (Throwable t) {
-                // TODO handle this differently
-                // this is temporary till the injector can be rewritten
-            }
+            final Object beanInstance = injectionProcessor.createInstance();
+
+            beanDefinition.injectSuperFields(beanInstance, creationalContext);
+            beanDefinition.injectSuperMethods(beanInstance, creationalContext);
+            beanDefinition.injectFields(beanInstance, creationalContext);
+            beanDefinition.injectMethods(beanInstance, creationalContext);
 
             // Create interceptors
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
@@ -1191,14 +1202,16 @@ public class BeanContext extends DeploymentContext {
                 }
 
                 final Class clazz = interceptorData.getInterceptorClass();
-                final InjectionProcessor interceptorInjector = new InjectionProcessor(clazz, this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
+
+                final ConstructorInjectionBean interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz);
+                final InjectionProcessor interceptorInjector = new InjectionProcessor(interceptorConstructor.create(creationalContext), this.getInjections(), org.apache.openejb.InjectionProcessor.unwrap(ctx));
                 try {
                     final Object interceptorInstance = interceptorInjector.createInstance();
 
                     // TODO we likely don't want to create a new one each time -- investigate the destroy() method
                     try {
                         OWBInjector interceptorCdiInjector = new OWBInjector(webBeansContext);
-                        interceptorCdiInjector.inject(interceptorInstance);
+                        interceptorCdiInjector.inject(interceptorInstance, creationalContext);
                     } catch (Throwable t) {
                         // TODO handle this differently
                         // this is temporary till the injector can be rewritten
@@ -1210,12 +1223,12 @@ public class BeanContext extends DeploymentContext {
                 }
             }
 
-            interceptorInstances.put(beanClass.getName(), bean);
+            interceptorInstances.put(beanClass.getName(), beanInstance);
 
             // Invoke post construct method
             callContext.setCurrentOperation(Operation.POST_CONSTRUCT);
             final List<InterceptorData> callbackInterceptors = this.getCallbackInterceptors();
-            final InterceptorStack postConstruct = new InterceptorStack(bean, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
+            final InterceptorStack postConstruct = new InterceptorStack(beanInstance, null, Operation.POST_CONSTRUCT, callbackInterceptors, interceptorInstances);
             
             //Transaction Demarcation for Singleton PostConstruct method
             TransactionType transactionType;
@@ -1245,7 +1258,7 @@ public class BeanContext extends DeploymentContext {
                 EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
             }
 
-            return new InstanceContext(this, bean, interceptorInstances);
+            return new InstanceContext(this, beanInstance, interceptorInstances, creationalContext);
         } finally {
             ThreadContext.exit(oldContext);
         }                        

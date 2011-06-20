@@ -18,7 +18,9 @@
 package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
+import org.apache.openejb.util.SetAccessible;
 import org.apache.xbean.finder.ClassFinder;
+import serp.bytecode.Annotation;
 
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
@@ -138,17 +140,26 @@ public class InterceptorData {
 
         InterceptorData data = new InterceptorData(clazz);
 
-        data.aroundInvoke.addAll(finder.findAnnotatedMethods(AroundInvoke.class));
-        data.postConstruct.addAll(finder.findAnnotatedMethods(PostConstruct.class));
-        data.preDestroy.addAll(finder.findAnnotatedMethods(PreDestroy.class));
-        data.postActivate.addAll(finder.findAnnotatedMethods(PostActivate.class));
-        data.prePassivate.addAll(finder.findAnnotatedMethods(PrePassivate.class));
-        data.afterBegin.addAll(finder.findAnnotatedMethods(AfterBegin.class));
-        data.beforeCompletion.addAll(finder.findAnnotatedMethods(BeforeCompletion.class));
-        data.afterCompletion.addAll(finder.findAnnotatedMethods(AfterCompletion.class));
-        data.aroundTimeout.addAll(finder.findAnnotatedMethods(AroundTimeout.class));
+        add(finder, data.aroundInvoke, AroundInvoke.class);
+        add(finder, data.postConstruct, PostConstruct.class);
+        add(finder, data.preDestroy, PreDestroy.class);
+        add(finder, data.postActivate, PostActivate.class);
+        add(finder, data.prePassivate, PrePassivate.class);
+        add(finder, data.afterBegin, AfterBegin.class);
+        add(finder, data.beforeCompletion, BeforeCompletion.class);
+        add(finder, data.afterCompletion, AfterCompletion.class);
+        add(finder, data.aroundTimeout, AroundTimeout.class);
 
         return data;
+    }
+
+    private static void add(ClassFinder finder, Set<Method> methods, Class<? extends java.lang.annotation.Annotation> annotation) {
+
+        final List<Method> annotatedMethods = finder.findAnnotatedMethods(annotation);
+        for (Method method : annotatedMethods) {
+            SetAccessible.on(method);
+            methods.add(method);
+        }
     }
 
     @Override

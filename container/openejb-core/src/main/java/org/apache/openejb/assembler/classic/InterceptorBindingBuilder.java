@@ -273,6 +273,7 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
+                SetAccessible.on(method);
                 if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz) && !methods.contains(method)){
                     methods.add(method);
                 }

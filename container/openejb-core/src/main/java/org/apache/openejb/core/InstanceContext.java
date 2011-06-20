@@ -18,6 +18,7 @@ package org.apache.openejb.core;
 
 import org.apache.openejb.BeanContext;
 
+import javax.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 
 /**
@@ -28,6 +29,7 @@ public class InstanceContext {
     private final BeanContext beanContext;
     private final Object bean;
     private final Map<String, Object> interceptors;
+    private final CreationalContext creationalContext;
 
     /**
      * A slot where the container can put instance-specific
@@ -35,10 +37,15 @@ public class InstanceContext {
      */
     private Object instanceData;
 
-    public InstanceContext(BeanContext beanContext, Object bean, Map<String, Object> interceptors) {
+    public InstanceContext(BeanContext beanContext, Object bean, Map<String, Object> interceptors, CreationalContext creationalContext) {
         this.beanContext = beanContext;
         this.bean = bean;
         this.interceptors = interceptors;
+        this.creationalContext = creationalContext;
+    }
+
+    public CreationalContext getCreationalContext() {
+        return creationalContext;
     }
 
     public BeanContext getBeanContext() {

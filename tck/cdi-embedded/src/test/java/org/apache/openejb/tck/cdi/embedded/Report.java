@@ -23,6 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class Report {
     private final LinkedList<TestClass> classes = new LinkedList<TestClass>();
 
     private void main() throws Exception {
-        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
+//        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
+        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -65,10 +67,94 @@ public class Report {
 
         Collections.sort(classes);
 
+        textReport(file);
+        passingXml(file);
+        failingXml(file);
+
+    }
+
+    private void textReport(File file) throws FileNotFoundException {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", ".txt"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
         printResults(out);
         out.close();
+    }
+
+    private void passingXml(File file) throws FileNotFoundException {
+        final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-passing.xml"));
+        final PrintStream out = new PrintStream(new FileOutputStream(report));
+
+        out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
+        out.println("  <test name=\"CDI TCK\">");
+        out.println("    <!--<packages>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.tests.*\"/>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>-->\n" +
+                "    <!--</packages>-->");
+        out.println("    <classes>");
+
+        for (TestClass testClass : classes) {
+
+            if (!contains(testClass, Status.FAIL)) {
+                out.printf("      <class name=\"%s\"/>\n", testClass.name);
+            } else if (contains(testClass, Status.PASS)) {
+                out.printf("      <class name=\"%s\">\n", testClass.name);
+                out.printf("        <methods>\n");
+
+                for (TestResult result : testClass.getResults()) {
+                    if (result.status == Status.FAIL) {
+                        out.printf("          <exclude name=\"%s\"/>\n", result.name);
+                    }
+                }
+
+                out.printf("        </methods>\n");
+                out.printf("      </class>\n");
+            }
+        }
+        out.println("    </classes>");
+        out.println("  </test>");
+        out.println("</suite>");
+
+        out.close();
+    }
+
+    private void failingXml(File file) throws FileNotFoundException {
+        final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-failing.xml"));
+        final PrintStream out = new PrintStream(new FileOutputStream(report));
+
+        out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
+        out.println("  <test name=\"CDI TCK\">");
+        out.println("    <!--<packages>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.tests.*\"/>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>-->\n" +
+                "    <!--</packages>-->");
+        out.println("    <classes>");
+
+        for (TestClass testClass : classes) {
+
+            if (contains(testClass, Status.FAIL)) {
+                out.printf("      <class name=\"%s\"/>\n", testClass.name);
+            }
+        }
+        out.println("    </classes>");
+        out.println("  </test>");
+        out.println("</suite>");
+
+        out.close();
+    }
+
+    private boolean contains(TestClass testClass, Status status) {
+
+        for (TestResult result : testClass.getResults()) {
+            if (result.name.equals("beforeClass")) continue;
+            if (result.name.equals("afterClass")) continue;
+            if (result.name.equals("afterSuite")) continue;
+            if (result.name.equals("beforeSuite")) continue;
+
+            if (result.status == status)  {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void printResults(PrintStream out) {

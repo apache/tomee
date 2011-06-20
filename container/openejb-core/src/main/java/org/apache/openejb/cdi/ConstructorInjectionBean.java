@@ -1,0 +1,47 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.apache.openejb.cdi;
+
+import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.webbeans.component.AbstractOwbBean;
+import org.apache.webbeans.component.WebBeansType;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.inject.InjectableConstructor;
+
+import javax.enterprise.context.spi.CreationalContext;
+import java.lang.reflect.Constructor;
+
+/**
+* @version $Rev$ $Date$
+*/
+public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> {
+
+    private final Constructor<T> constructor;
+
+    public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType) {
+        super(WebBeansType.DEPENDENT, returnType, webBeansContext);
+
+        constructor = webBeansContext.getWebBeansUtil().defineConstructor(getReturnType());
+        webBeansContext.getDefinitionUtil().addConstructorInjectionPointMetaData(this, constructor);
+    }
+
+    @Override
+    protected T createInstance(CreationalContext<T> tCreationalContext) {
+        InjectableConstructor<T> ic = new InjectableConstructor<T>(constructor, this, tCreationalContext);
+        return ic.doInjection();
+    }
+}
