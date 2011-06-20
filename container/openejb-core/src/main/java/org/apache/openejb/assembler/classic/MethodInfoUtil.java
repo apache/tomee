@@ -500,13 +500,20 @@ public class MethodInfoUtil {
     }
 
     public static boolean matches(Method method, MethodInfo methodInfo) {
+        return matches(method, methodInfo.methodName, methodInfo.methodParams);
+    }
 
-        if (!methodInfo.methodName.equals(method.getName())) {
+    public static boolean matches(Method method, NamedMethodInfo methodInfo) {
+        return matches(method, methodInfo.methodName, methodInfo.methodParams);
+    }
+
+    public static boolean matches(Method method, String methodName, List<String> methodParams) {
+
+        if (!methodName.equals(method.getName())) {
             return false;
         }
 
         // do we have parameters?
-        List<String> methodParams = methodInfo.methodParams;
         if (methodParams == null) {
             return true;
         }

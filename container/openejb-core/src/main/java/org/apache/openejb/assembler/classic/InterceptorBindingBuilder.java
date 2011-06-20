@@ -71,7 +71,7 @@ public class InterceptorBindingBuilder {
         }
 
         for (InterceptorInfo info : ejbJarInfo.interceptors) {
-            Class clazz = null;
+            Class<?> clazz = null;
             try {
                 clazz = Class.forName(info.clazz, true, cl);
             } catch (ClassNotFoundException e) {
@@ -93,7 +93,7 @@ public class InterceptorBindingBuilder {
     }
 
     public void build(BeanContext beanContext, EnterpriseBeanInfo beanInfo) {
-        Class clazz = beanContext.getBeanClass();
+        Class<?> clazz = beanContext.getBeanClass();
 
         InterceptorData beanAsInterceptor = new InterceptorData(clazz);
         
@@ -249,35 +249,7 @@ public class InterceptorBindingBuilder {
         if (level == Level.CLASS) return true;
 
         NamedMethodInfo methodInfo = info.method;
-
-        if (!methodInfo.methodName.equals(method.getName())) return false;
-
-        // do we have parameters?
-        List<String> params = methodInfo.methodParams;
-        if (params == null) return true;
-
-        // do we have the same number of parameters?
-        if (params.size() != method.getParameterTypes().length) return false;
-
-        // match parameters names
-        Class<?>[] parameterTypes = method.getParameterTypes();
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-
-            Class<?> parameterType = parameterTypes[i];
-            String methodParam = params.get(i);
-
-            try {
-                Class param = Classes.forName(methodParam, parameterType.getClassLoader());
-                if (!param.equals(parameterType)) {
-                    return false;
-                }
-            } catch (ClassNotFoundException e) {
-                return false;
-            }
-        }
-
-        return true;
+        return MethodInfoUtil.matches(method, methodInfo);
     }
 
 
@@ -295,7 +267,7 @@ public class InterceptorBindingBuilder {
      * @param callbackInfos the raw CallbackInfo objects
      * @param callbacks the collection where the created methods will be placed
      */
-    private void toMethods(Class clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks) {
+    private void toMethods(Class<?> clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks) {
         List<Method> methods = new ArrayList<Method>();
 
         for (CallbackInfo callbackInfo : callbackInfos) {
@@ -310,7 +282,7 @@ public class InterceptorBindingBuilder {
                     // check for a private method on the declared class
 
                     // find declared class
-                    Class c = clazz;
+                    Class<?> c = clazz;
                     while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
 
                     // get callback method
@@ -353,7 +325,7 @@ public class InterceptorBindingBuilder {
      * @param callbackInfos
      * @param callbacks
      */
-    private void toCallback(Class clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks, Class... parameterTypes) {
+    private void toCallback(Class<?> clazz, List<CallbackInfo> callbackInfos, Set<Method> callbacks, Class<?>... parameterTypes) {
         List<Method> methods = new ArrayList<Method>();
 
         for (CallbackInfo callbackInfo : callbackInfos) {
@@ -367,7 +339,7 @@ public class InterceptorBindingBuilder {
                     // check for a private method on the declared class
 
                     // find declared class
-                    Class c = clazz;
+                    Class<?> c = clazz;
                     while (c != null && !c.getName().equals(callbackInfo.className)) c = c.getSuperclass();
 
                     // get callback method
@@ -406,7 +378,7 @@ public class InterceptorBindingBuilder {
      * @return
      * @throws NoSuchMethodException if the method is not found in this class or any of its parent classes
      */
-    private Method getMethod(Class clazz, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+    private Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         NoSuchMethodException original = null;
         while (clazz != null){
             try {
