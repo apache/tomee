@@ -186,7 +186,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
 
         String deploymentId = (String) deployment.getDeploymentID();
         for (EjbJarInfo ejbJar : appInfo.ejbJars) {
-            if (ejbJar.moduleId.equals(deployment.getModuleName())) {
+            if (ejbJar.moduleName.equals(deployment.getModuleName())) {
                 Set<String> moduleDeploymentIds = new TreeSet<String>();
                 for (EnterpriseBeanInfo enterpriseBean : ejbJar.enterpriseBeans) {
                     moduleDeploymentIds.add(enterpriseBean.ejbDeploymentId);

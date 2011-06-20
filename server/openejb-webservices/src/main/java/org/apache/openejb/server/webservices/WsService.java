@@ -216,7 +216,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                     logger.info("Using "+ WS_ADDRESS_FORMAT +" '"+format+"'");
                     deploymentIdTemplate = new StringTemplate(format);
                 }
-                contextData.put("ejbJarId", ejbJar.moduleId);
+                contextData.put("ejbJarId", ejbJar.moduleName);
 
                 for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
                     if (bean instanceof StatelessBeanInfo || bean instanceof SingletonBeanInfo) {
