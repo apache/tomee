@@ -19,7 +19,9 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.Options;
+import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.JAXBContextFactory;
 import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
@@ -30,11 +32,15 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class OutputGeneratedDescriptors implements DynamicDeployer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
@@ -70,11 +76,35 @@ public class OutputGeneratedDescriptors implements DynamicDeployer {
                 writeGeronimoOpenejb(ejbModule);
             }
         }
+        
+        for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
+			writeRaXml(connectorModule);
+		}
 
         return appModule;
     }
 
-    private void writeGenratedCmpMappings(AppModule appModule) {
+    private void writeRaXml(ConnectorModule connectorModule) {
+    	try {
+	    	Connector connector = connectorModule.getConnector();
+	
+	        File tempFile = File.createTempFile("ra-", connectorModule.getModuleId() + ".xml");
+	        FileOutputStream fout = new FileOutputStream(tempFile);
+	        BufferedOutputStream out = new BufferedOutputStream(fout);
+	
+	        try {
+		    	JAXBContext ctx = JAXBContextFactory.newInstance(Connector.class);
+		    	Marshaller marshaller = ctx.createMarshaller();
+		    	marshaller.marshal(connector, out);
+	        } catch (JAXBException e) {
+	        } finally {
+	        	out.close();
+	        }
+    	} catch (IOException e) {
+    	}
+	}
+
+	private void writeGenratedCmpMappings(AppModule appModule) {
         try {
             File tempFile = File.createTempFile("openejb-cmp-generated-orm-", ".xml");
             FileOutputStream fout = new FileOutputStream(tempFile);
