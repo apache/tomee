@@ -21,7 +21,6 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
-import org.apache.openejb.util.Classes;
 import org.apache.openejb.OpenEJBException;
 
 import javax.interceptor.InvocationContext;
@@ -45,7 +44,7 @@ public class InterceptorBindingBuilder {
     private final List<InterceptorBindingInfo> packageAndClassBindings;
 
     public static enum Level {
-        PACKAGE, CLASS, OVERLOADED_METHOD, EXACT_METHOD
+        PACKAGE, ANNOTATION_CLASS, CLASS, ANNOTATION_METHOD, OVERLOADED_METHOD, EXACT_METHOD
     }
 
     public static enum Type {
@@ -65,7 +64,7 @@ public class InterceptorBindingBuilder {
         packageAndClassBindings = new ArrayList<InterceptorBindingInfo>();
         for (InterceptorBindingInfo binding : bindings) {
             Level level = level(binding);
-            if (level == Level.PACKAGE || level == Level.CLASS){
+            if (level == Level.PACKAGE || level == Level.CLASS || level == Level.ANNOTATION_CLASS){
                 packageAndClassBindings.add(binding);
             }
         }
@@ -193,7 +192,9 @@ public class InterceptorBindingBuilder {
         //   (highest/first)
         //    - Method-level bindings with params
         //    - Method-level with no params
+        //    - Method-level bindings with params from annotations
         //    - Class-level
+        //    - Class-level from annotation
         //    - Package-level (aka. default level)
         //   (lowest/last)
         //
@@ -215,6 +216,7 @@ public class InterceptorBindingBuilder {
             Type type = type(level, info);
 
             if (type == Type.EXPLICIT_ORDERING && !excludes.contains(level)){
+
                 methodBindings.add(info);
                 // An explicit ordering trumps all other bindings of the same level or below
                 // (even other explicit order bindings).  Any bindings that were higher than
@@ -237,7 +239,10 @@ public class InterceptorBindingBuilder {
 
             if (!excludes.contains(level)) methodBindings.add(info);
 
-            if (info.excludeClassInterceptors) excludes.add(Level.CLASS);
+            if (info.excludeClassInterceptors) {
+                excludes.add(Level.CLASS);
+                excludes.add(Level.ANNOTATION_CLASS);
+            }
             if (info.excludeDefaultInterceptors) excludes.add(Level.PACKAGE);
         }
         return methodBindings;
@@ -246,7 +251,7 @@ public class InterceptorBindingBuilder {
     private boolean implies(Method method, String ejbName, Level level, InterceptorBindingInfo info) {
         if (level == Level.PACKAGE) return true;
         if (!ejbName.equals(info.ejbName)) return false;
-        if (level == Level.CLASS) return true;
+        if (level == Level.CLASS || level == Level.ANNOTATION_CLASS) return true;
 
         NamedMethodInfo methodInfo = info.method;
         return MethodInfoUtil.matches(method, methodInfo);
@@ -273,7 +278,6 @@ public class InterceptorBindingBuilder {
         for (CallbackInfo callbackInfo : callbackInfos) {
             try {
                 Method method = getMethod(clazz, callbackInfo.method, InvocationContext.class);
-                SetAccessible.on(method);
                 if (callbackInfo.className == null && method.getDeclaringClass().equals(clazz) && !methods.contains(method)){
                     methods.add(method);
                 }
@@ -416,14 +420,14 @@ public class InterceptorBindingBuilder {
         }
 
         if (info.method == null) {
-            return Level.CLASS;
+            return info.className == null ? Level.CLASS : Level.ANNOTATION_CLASS;
         }
 
         if (info.method.methodParams == null) {
             return Level.OVERLOADED_METHOD;
         }
 
-        return Level.EXACT_METHOD;
+        return info.className == null ? Level.EXACT_METHOD : Level.ANNOTATION_METHOD;
     }
 
     private static Type type(Level level, InterceptorBindingInfo info) {
@@ -431,11 +435,11 @@ public class InterceptorBindingBuilder {
             return Type.EXPLICIT_ORDERING;
         }
 
-        if (level == Level.CLASS && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
+        if ((level == Level.CLASS  || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors && info.excludeDefaultInterceptors) {
             return Type.SAME_AND_LOWER_EXCLUSION;
         }
 
-        if (level == Level.CLASS && info.excludeClassInterceptors) {
+        if ((level == Level.CLASS  || level == Level.ANNOTATION_CLASS) && info.excludeClassInterceptors) {
             return Type.SAME_LEVEL_EXCLUSION;
         }
 

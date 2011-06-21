@@ -328,6 +328,7 @@ public class EjbJarInfoBuilder {
             }
 
             info.method = toInfo(binding.getMethod());
+            info.className = binding.getClassName();
             ejbJar.interceptorBindings.add(info);
         }
     }

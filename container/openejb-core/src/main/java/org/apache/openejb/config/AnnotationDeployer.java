@@ -1767,12 +1767,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     binding.setMethod(new NamedMethod(method.get()));
                 }
 
-                final ExcludeClassInterceptors excludeClassInterceptors = clazz.getAnnotation(ExcludeClassInterceptors.class);
-                if (excludeClassInterceptors != null) {
-                    InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
-                    binding.setExcludeClassInterceptors(true);
-                }
-
                 for (Annotated<Method> method : sortMethods(annotationFinder.findMetaAnnotatedMethods(ExcludeClassInterceptors.class))) {
                     InterceptorBinding binding = assemblyDescriptor.addInterceptorBinding(new InterceptorBinding(bean));
                     binding.setExcludeClassInterceptors(true);
