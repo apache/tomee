@@ -47,16 +47,24 @@ public class ObjectNameBuilder {
     }
 
     public ObjectName build() {
+
+        StringBuilder sb = new StringBuilder(domain + ":");
+
         try {
-            StringBuilder sb = new StringBuilder(domain + ":");
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                sb.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
+                String sv = entry.getValue();
+
+                if (null != sv) {
+                    sv = sv.replace(':', '_');
+                }
+
+                sb.append(entry.getKey()).append("=").append(sv).append(",");
             }
             sb.deleteCharAt(sb.lastIndexOf(","));
 
             return new ObjectName(sb.toString());
         } catch (MalformedObjectNameException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Failed to build valid name for: " + sb.toString(), e);
         }
     }
 
