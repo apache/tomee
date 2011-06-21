@@ -42,6 +42,7 @@ import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.PortComponent;
@@ -139,6 +140,22 @@ class AppInfoBuilder {
                 for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                     EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
 
+                    /*
+                     * JRG - there's probably a better way of handling this, but this code handles the case when:
+                     * 
+                     * A connector with two or more inbound adapter is registered, causing two containers named with the format:
+                     * 	<moduleId>-<message listener interface>
+                     * 
+                     * This code adjusts the container id for the associated MDBs by sticking the message listener interface on the end.
+                     * 
+                     */
+                    if (bean instanceof MessageDrivenBeanInfo && !containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
+                		MessageDrivenBeanInfo mdb = (MessageDrivenBeanInfo) bean;
+                		String newContainerId = d.getContainerId() + "-" + mdb.mdbInterface;
+                		if (containerIds.contains(newContainerId)) {
+                			d.setContainerId(newContainerId);
+                		}
+                    }
 
                     if (!containerIds.contains(d.getContainerId()) && !skipMdb(bean)) {
                         String msg = messages.format("config.noContainerFound", d.getContainerId(), d.getEjbName());
