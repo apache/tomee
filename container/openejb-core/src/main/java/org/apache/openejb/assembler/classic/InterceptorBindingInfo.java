@@ -24,6 +24,7 @@ import java.util.ArrayList;
  */
 public class InterceptorBindingInfo extends InfoObject {
     public String ejbName;
+    public String className;
     public final List<String> interceptors = new ArrayList<String>();
     public final List<String> interceptorOrder = new ArrayList<String>();
     public boolean excludeDefaultInterceptors;

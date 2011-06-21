@@ -91,16 +91,20 @@ public class InterceptorBinding {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+    
+    @XmlTransient
+    protected String className;
 
     public InterceptorBinding() {
     }
 
     public InterceptorBinding(EnterpriseBean bean, Interceptor... interceptors) {
         this(bean.getEjbName(), interceptors);
+        this.className = bean.getEjbClass();
     }
 
     public InterceptorBinding(String ejbName, Interceptor... interceptors) {
-        this.ejbName = ejbName;
+        this.ejbName = ejbName;        
         List<String> interceptorClasses = this.getInterceptorClass();
         for (Interceptor interceptor : interceptors) {
             interceptorClasses.add(interceptor.getInterceptorClass());
@@ -113,7 +117,7 @@ public class InterceptorBinding {
     }
 
     public InterceptorBinding(String ejbName) {
-        this.ejbName = ejbName;
+        this.ejbName = ejbName;         
     }
 
     @XmlElement(name = "description", required = true)
@@ -185,4 +189,7 @@ public class InterceptorBinding {
         this.id = value;
     }
 
+    public String getClassName() {
+        return className;
+    }
 }
