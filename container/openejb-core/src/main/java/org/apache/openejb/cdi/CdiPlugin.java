@@ -61,9 +61,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin, TransactionService, SecurityService {
+public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPlugin, OpenWebBeansEjbPlugin {
 
-	private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiPlugin.class);
 	private AppContext appContext;
 	private Set<Class<?>> beans;
 
@@ -223,132 +222,6 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 	@Override
 	public boolean isStatelessBean(Class<?> clazz) {
 		throw new IllegalStateException("Statement should never be reached");
-	}
-
-	@Override
-	public Transaction getTransaction() {
-		TransactionManager manager = getTransactionManager();
-		if (manager != null) {
-			try {
-				return manager.getTransaction();
-			} catch (SystemException e) {
-				logger.error("Error is occured while getting transaction instance from system", e);
-			}
-		}
-
-		return null;
-	}
-
-	@Override
-	public TransactionManager getTransactionManager() {
-		// TODO Convert to final field
-		return SystemInstance.get().getComponent(TransactionManager.class);
-	}
-
-	@Override
-	public UserTransaction getUserTransaction() {
-		UserTransaction ut = null;
-
-		// TODO Convert to final field
-		ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-		try {
-			ut = (UserTransaction) containerSystem.getJNDIContext().lookup("comp/UserTransaction");
-		} catch (NamingException e) {
-			logger.debug("User transaction is not bound to context, lets create it");
-			ut = new CoreUserTransaction(getTransactionManager());
-
-		}
-		return ut;
-	}
-
-	@Override
-	public void registerTransactionSynchronization(TransactionPhase phase, ObserverMethod<? super Object> observer, Object event) throws Exception {
-		TransactionalEventNotifier.registerTransactionSynchronization(phase, observer, event);
-	}
-
-	@Override
-	public Principal getCurrentPrincipal() {
-
-		// TODO Convert to final field
-		org.apache.openejb.spi.SecurityService<?> service = SystemInstance.get().getComponent(org.apache.openejb.spi.SecurityService.class);
-		if (service != null) {
-			return service.getCallerPrincipal();
-		}
-
-		return null;
-	}
-
-	@Override
-	public <T> Constructor<T> doPrivilegedGetDeclaredConstructor(Class<T> clazz, Class<?>... parameterTypes) {
-		try {
-			return clazz.getDeclaredConstructor(parameterTypes);
-		} catch (NoSuchMethodException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public <T> Constructor<?>[] doPrivilegedGetDeclaredConstructors(Class<T> clazz) {
-		return clazz.getDeclaredConstructors();
-	}
-
-	@Override
-	public <T> Method doPrivilegedGetDeclaredMethod(Class<T> clazz, String name, Class<?>... parameterTypes) {
-		try {
-			return clazz.getDeclaredMethod(name, parameterTypes);
-		} catch (NoSuchMethodException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public <T> Method[] doPrivilegedGetDeclaredMethods(Class<T> clazz) {
-		return clazz.getDeclaredMethods();
-	}
-
-	@Override
-	public <T> Field doPrivilegedGetDeclaredField(Class<T> clazz, String name) {
-		try {
-			return clazz.getDeclaredField(name);
-		} catch (NoSuchFieldException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public <T> Field[] doPrivilegedGetDeclaredFields(Class<T> clazz) {
-		return clazz.getDeclaredFields();
-	}
-
-	@Override
-	public void doPrivilegedSetAccessible(AccessibleObject obj, boolean flag) {
-		obj.setAccessible(flag);
-	}
-
-	@Override
-	public boolean doPrivilegedIsAccessible(AccessibleObject obj) {
-		return obj.isAccessible();
-	}
-
-	@Override
-	public <T> T doPrivilegedObjectCreate(Class<T> clazz) throws PrivilegedActionException, IllegalAccessException, InstantiationException {
-		return clazz.newInstance();
-	}
-
-	@Override
-	public void doPrivilegedSetSystemProperty(String propertyName, String value) {
-		System.setProperty(propertyName, value);
-	}
-
-	@Override
-	public String doPrivilegedGetSystemProperty(String propertyName, String defaultValue) {
-		return System.getProperty(propertyName, defaultValue);
-	}
-
-	@Override
-	public Properties doPrivilegedGetSystemProperties() {
-		return System.getProperties();
 	}
 
     @Override

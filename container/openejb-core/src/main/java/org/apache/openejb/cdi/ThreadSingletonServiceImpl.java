@@ -29,6 +29,8 @@ import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ResourceInjectionService;
+import org.apache.webbeans.spi.SecurityService;
+import org.apache.webbeans.spi.ValidatorService;
 
 import java.util.List;
 
@@ -69,13 +71,15 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
     private void setConfiguration(OpenWebBeansConfiguration configuration) {
         //from CDI builder
+        configuration.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
 //        configuration.setProperty(OpenWebBeansConfiguration.APPLICATION_IS_JSP, "true");
 
         configuration.setProperty(OpenWebBeansConfiguration.CONTAINER_LIFECYCLE, OpenEJBLifecycle.class.getName());
-//        configuration.setProperty(OpenWebBeansConfiguration.JNDI_SERVICE, NoopJndiService.class.getName());
+        configuration.setProperty(OpenWebBeansConfiguration.TRANSACTION_SERVICE, OpenEJBTransactionService.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.SCANNER_SERVICE, CdiScanner.class.getName());
         configuration.setProperty(OpenWebBeansConfiguration.CONTEXTS_SERVICE, CdiAppContextsService.class.getName());
+        configuration.setProperty(OpenWebBeansConfiguration.VALIDATOR_SERVICE, OpenEJBValidatorService.class.getName());
         configuration.setProperty(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
     }
 
