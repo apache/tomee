@@ -77,6 +77,7 @@
     <module>schedule-methods-meta</module>
     <module>testing-security-meta</module>
     <module>decorators</module>
+    <module>dynamic-datasource-routing</module>
   </modules>
   <profiles>
     <profile>
