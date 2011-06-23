@@ -116,6 +116,8 @@ public class DynamicDataSourceTest {
             st.close();
             connection.close();
         }
+
+        ctx.close();
     }
 }
 

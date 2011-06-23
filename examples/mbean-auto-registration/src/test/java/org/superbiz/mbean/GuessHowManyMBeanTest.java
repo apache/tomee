@@ -22,7 +22,7 @@ public class GuessHowManyMBeanTest {
     @Test public void play() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("openejb.user.mbeans.list", GuessHowManyMBean.class.getName());
-        EJBContainer.createEJBContainer(properties);
+        EJBContainer container = EJBContainer.createEJBContainer(properties);
 
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         ObjectName objectName = new ObjectName(OBJECT_NAME);
@@ -32,5 +32,7 @@ public class GuessHowManyMBeanTest {
         assertEquals(3, server.getAttribute(objectName, "value"));
         assertEquals("winner", server.invoke(objectName, "tryValue", new Object[]{3}, null));
         assertEquals("not the correct value, please have another try", server.invoke(objectName, "tryValue", new Object[]{2}, null));
+
+        container.close();
     }
 }
