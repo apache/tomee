@@ -58,7 +58,6 @@ import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.apache.geronimo.transaction.manager.XAWork;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
@@ -1104,6 +1103,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.warning("can't unregister because the ObjectName is malformed: " + objectName, mone);
             }
         }
+
+        containerSystem.removeAppContext(appInfo.appId);
 
         ClassLoaderUtil.destroyClassLoader(appInfo.path);
 

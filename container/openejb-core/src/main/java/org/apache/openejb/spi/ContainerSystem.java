@@ -39,6 +39,6 @@ public interface ContainerSystem {
     Context getJNDIContext();
 
     List<AppContext> getAppContexts();
-
-    void addAppContext(AppContext appContext);
+    
+    AppContext getAppContext(Object id);
 }
