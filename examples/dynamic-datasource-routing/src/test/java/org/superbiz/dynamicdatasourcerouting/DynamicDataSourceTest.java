@@ -65,38 +65,6 @@ import static org.junit.Assert.assertEquals;
     Password
     JtaManaged = true
   </Resource>
- <!-- Router and datasource -->
-  <Resource id="My Router" type="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter" provider="org.routertest:DeterminedRouter">
-    DatasourceNames = database1 database2 database3
-    DefaultDataSourceName = database1
-  </Resource>
-  <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="org.router:RoutedDataSource">
-    Router = My Router
-  </Resource>
-
-  <!-- real datasources -->
-  <Resource id="database1" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db1
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
-  <Resource id="database2" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db2
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
-  <Resource id="database3" type="DataSource">
-    JdbcDriver = org.hsqldb.jdbcDriver
-    JdbcUrl = jdbc:hsqldb:mem:db3
-    UserName = sa
-    Password
-    JtaManaged = true
-  </Resource>
-
  * @author Romain Manni-Bucau
  */
 public class DynamicDataSourceTest {
@@ -128,10 +96,6 @@ public class DynamicDataSourceTest {
             // routed datasource
         properties.setProperty("Routed Datasource", "new://Resource?provider=RoutedDataSource&type=" + Router.class.getName());
         properties.setProperty("Routed Datasource.Router", "My Router");
-
-        // convenient bean to create tables for each persistence unit
-        /*BoostrapUtility utility = (BoostrapUtility) ctx.lookup("java:global/dynamic-datasource-routing/BoostrapUtility");
-        utility.initDatabase();*/
 
         Context ctx = EJBContainer.createEJBContainer(properties).getContext();
         RoutedPersister ejb = (RoutedPersister) ctx.lookup("java:global/dynamic-datasource-routing/RoutedPersister");
