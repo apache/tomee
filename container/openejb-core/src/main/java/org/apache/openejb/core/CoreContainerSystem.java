@@ -133,7 +133,15 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
     }
 
     @Override
+    public AppContext getAppContext(Object id) {
+        return apps.get(id);
+    }
+
     public void addAppContext(AppContext appContext) {
         apps.put(appContext.getId(), appContext);
+    }
+    
+    public void removeAppContext(Object id) {
+        apps.remove(id);
     }
 }
