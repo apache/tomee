@@ -78,6 +78,7 @@
     <module>testing-security-meta</module>
     <module>decorators</module>
     <module>dynamic-datasource-routing</module>
+    <module>mbean-auto-registration</module>
   </modules>
   <profiles>
     <profile>
