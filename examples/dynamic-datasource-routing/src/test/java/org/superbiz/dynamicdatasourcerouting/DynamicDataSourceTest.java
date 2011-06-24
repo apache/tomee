@@ -81,7 +81,6 @@ public class DynamicDataSourceTest {
             properties.setProperty(dbName, "new://Resource?type=DataSource");
             dbName += ".";
             properties.setProperty(dbName + "JdbcDriver", "org.hsqldb.jdbcDriver");
-            properties.setProperty(dbName + "JdbcDriver", "org.hsqldb.jdbcDriver");
             properties.setProperty(dbName + "JdbcUrl", "jdbc:hsqldb:mem:db" + i);
             properties.setProperty(dbName + "UserName", "sa");
             properties.setProperty(dbName + "Password", "");

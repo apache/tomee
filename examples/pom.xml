@@ -79,6 +79,7 @@
     <module>decorators</module>
     <module>dynamic-datasource-routing</module>
     <module>mbean-auto-registration</module>
+    <module>datasource-ciphered-password</module>
   </modules>
   <profiles>
     <profile>
