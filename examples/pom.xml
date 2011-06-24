@@ -80,6 +80,7 @@
     <module>dynamic-datasource-routing</module>
     <module>mbean-auto-registration</module>
     <module>datasource-ciphered-password</module>
+    <module>bean-validation-design-by-contract</module>
   </modules>
   <profiles>
     <profile>

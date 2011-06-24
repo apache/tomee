@@ -20,10 +20,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
-  <artifactId>mbean-auto-registration</artifactId>
+  <artifactId>bean-validation-design-by-contract</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: MBean Auto Registration</name>
+  <name>OpenEJB :: Examples :: Bean Validation Design By Contract</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <openejb.version>4.0.0-SNAPSHOT</openejb.version>
@@ -87,4 +87,5 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+
 </project>
