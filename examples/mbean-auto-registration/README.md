@@ -1,8 +1,19 @@
 # MBean auto registration
 
-[Download as zip](dynamic-datasource-routing.zip)
+[Download as zip](mbean-auto-registration.zip)
 
 This example shows how to automatically create and register mbeans using OpenEJB features.
+
+# Dependencies
+
+To be able to use it you need to import the mbean api (annotations):
+
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>mbean-annotation-api</artifactId>
+      <version>4.0.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
 
 # The MBean
 
