@@ -10,7 +10,6 @@ import javax.naming.Context;
 import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.openejb.resource.jdbc.PasswordCipher;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,8 +18,8 @@ import static junit.framework.Assert.assertNotNull;
 /**
  * @author Romain Manni-Bucau
  */
-public class DataSourceCipheredExample {
-    private static final String USER = DataSourceCipheredExample.class.getSimpleName();
+public class DataSourceCipheredExampleTest {
+    private static final String USER = DataSourceCipheredExampleTest.class.getSimpleName();
     private static final String PASSWORD = "YouLLN3v3rFindM3";
     private static final String DATASOURCE_URL = "jdbc:hsqldb:mem:protected";
 
