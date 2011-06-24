@@ -59,14 +59,21 @@ import org.apache.openejb.core.transaction.EjbTransactionUtil;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionType;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.recipe.ConstructionException;
 
 
 public class BeanContext extends DeploymentContext {
+    private Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
+
+    public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
+    public static final String USER_INTERCEPTOR_SEPARATOR = ", ";
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();
@@ -141,6 +148,7 @@ public class BeanContext extends DeploymentContext {
     private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
     private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
     private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
+    private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
     private final Map<String, String> activationProperties = new HashMap<String, String>();
     private final List<Injection> injections = new ArrayList<Injection>();
     private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
@@ -195,6 +203,34 @@ public class BeanContext extends DeploymentContext {
         return null;
     }
 
+    /**
+     * load default interceptors configured in properties.
+     */
+    private BeanContext(String id, Context jndiContext, ModuleContext moduleContext, BeanType componentType, boolean localBean) {
+        super(id, moduleContext.getOptions());
+        this.moduleContext = moduleContext;
+        this.jndiContext = jndiContext;
+        this.localbean = localBean;
+        this.componentType = componentType;
+
+        String interceptors = SystemInstance.get().getProperties().getProperty(USER_INTERCEPTOR_KEY);
+        if (interceptors != null) {
+            String[] interceptorArray = interceptors.split(USER_INTERCEPTOR_SEPARATOR);
+            ClassLoader classLoader = moduleContext.getClassLoader();
+            for (String interceptor : interceptorArray) {
+                Object interceptorObject;
+                try {
+                    Class<?> clazz = classLoader.loadClass(interceptor);
+                    interceptorObject = clazz.newInstance();
+                } catch (Exception e) {
+                    logger.warning("interceptor " + interceptor + " not found, are you sure the container can load it?");
+                    continue;
+                }
+                addUserInterceptor(interceptorObject);
+            }
+        }
+    }
+
     public BeanContext(String id, Context jndiContext, ModuleContext moduleContext,
                               Class beanClass, Class homeInterface,
                               Class remoteInterface,
@@ -203,9 +239,7 @@ public class BeanContext extends DeploymentContext {
                               Class serviceEndpointInterface, List<Class> businessLocals, List<Class> businessRemotes, Class pkClass,
                               BeanType componentType,
                               boolean localBean) throws SystemException {
-        super(id, moduleContext.getOptions());
-        this.moduleContext = moduleContext;
-        this.jndiContext = jndiContext;
+        this(id, jndiContext, moduleContext, componentType, localBean);
 
         if (beanClass == null) throw new NullPointerException("beanClass input parameter is null");
         this.pkClass = pkClass;
@@ -224,9 +258,6 @@ public class BeanContext extends DeploymentContext {
         this.beanClass = beanClass;
         this.pkClass = pkClass;
         this.serviceEndpointInterface = serviceEndpointInterface;
-
-        this.componentType = componentType;
-        this.localbean = localBean;
 
 //        if (businessLocal != null && localHomeInterface == null){
 //            this.localHomeInterface = BusinessLocalHome.class;
@@ -342,13 +373,10 @@ public class BeanContext extends DeploymentContext {
     }
 
     public BeanContext(String id, Context jndiContext, ModuleContext moduleContext, Class beanClass, Class mdbInterface, Map<String, String> activationProperties) throws SystemException {
-        super(id, moduleContext.getOptions());
-        this.jndiContext = jndiContext;
-        this.moduleContext = moduleContext;
+        this(id, jndiContext, moduleContext, BeanType.MESSAGE_DRIVEN, false);
         this.beanClass = beanClass;
         this.mdbInterface = mdbInterface;
         this.activationProperties.putAll(activationProperties);
-        this.componentType = BeanType.MESSAGE_DRIVEN;
 
         if (TimedObject.class.isAssignableFrom(beanClass)) {
             try {
@@ -358,7 +386,6 @@ public class BeanContext extends DeploymentContext {
             }
         }
         createMethodMap();
-        localbean = false;
     }
 
 
@@ -762,8 +789,14 @@ public class BeanContext extends DeploymentContext {
         systemInterceptors.add(new InterceptorInstance(interceptor));
     }
 
-    public List<InterceptorInstance> getSystemInterceptors() {
-        return systemInterceptors;
+    public void addUserInterceptor(Object interceptor) {
+        userInterceptors.add(new InterceptorInstance(interceptor));
+    }
+
+    public List<InterceptorInstance> getUserAndSystemInterceptors() {
+        List<InterceptorInstance> interceptors = new ArrayList<InterceptorInstance>(systemInterceptors);
+        interceptors.addAll(userInterceptors);
+        return interceptors;
     }
 
     private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
@@ -798,7 +831,7 @@ public class BeanContext extends DeploymentContext {
 
     public List<InterceptorData> getInterceptorData() {
         List<InterceptorData> datas = new ArrayList<InterceptorData>();
-        for (InterceptorInstance instance : systemInterceptors) {
+        for (InterceptorInstance instance : getUserAndSystemInterceptors()) {
             datas.add(instance.getData());
         }
         return datas;
@@ -1191,7 +1224,7 @@ public class BeanContext extends DeploymentContext {
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
 
             // Add the stats interceptor instance and other already created interceptor instances
-            for (InterceptorInstance interceptorInstance : this.getSystemInterceptors()) {
+            for (InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
                 final Class clazz = interceptorInstance.getData().getInterceptorClass();
                 interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
             }
