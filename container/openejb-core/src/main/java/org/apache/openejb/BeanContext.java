@@ -73,7 +73,7 @@ public class BeanContext extends DeploymentContext {
     private Logger logger = Logger.getInstance(LogCategory.OPENEJB, BeanContext.class);
 
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
-    public static final String USER_INTERCEPTOR_SEPARATOR = ", ";
+    public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();
@@ -218,15 +218,17 @@ public class BeanContext extends DeploymentContext {
             String[] interceptorArray = interceptors.split(USER_INTERCEPTOR_SEPARATOR);
             ClassLoader classLoader = moduleContext.getClassLoader();
             for (String interceptor : interceptorArray) {
-                Object interceptorObject;
-                try {
-                    Class<?> clazz = classLoader.loadClass(interceptor);
-                    interceptorObject = clazz.newInstance();
-                } catch (Exception e) {
-                    logger.warning("interceptor " + interceptor + " not found, are you sure the container can load it?");
-                    continue;
+                if (interceptor != null && !interceptor.isEmpty()) {
+                    Object interceptorObject;
+                    try {
+                        Class<?> clazz = classLoader.loadClass(interceptor);
+                        interceptorObject = clazz.newInstance();
+                    } catch (Exception e) {
+                        logger.warning("interceptor " + interceptor + " not found, are you sure the container can load it?");
+                        continue;
+                    }
+                    addUserInterceptor(interceptorObject);
                 }
-                addUserInterceptor(interceptorObject);
             }
         }
     }
