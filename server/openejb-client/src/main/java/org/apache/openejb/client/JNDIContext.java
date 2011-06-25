@@ -28,20 +28,9 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.reflect.Constructor;
-import javax.naming.AuthenticationException;
-import javax.naming.ConfigurationException;
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.OperationNotSupportedException;
-import javax.naming.ServiceUnavailableException;
-import javax.naming.NameClassPair;
-import javax.naming.Binding;
+import javax.naming.*;
 import javax.naming.spi.InitialContextFactory;
+import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
 
 /** 
@@ -244,7 +233,16 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return subCtx;
 
             case ResponseCodes.JNDI_DATA_SOURCE:
-                return createDataSource((DataSourceMetaData) res.getResult());
+                Object o = res.getResult();
+                if (o instanceof DataSourceMetaData) {
+                    return createDataSource((DataSourceMetaData) res.getResult());
+                } else if (o instanceof Reference) {
+                    try {
+                        return NamingManager.getObjectInstance(o, getNameParser(name).parse(name), this, env);
+                    } catch (Exception e) {
+                        throw (NamingException)new NamingException("Could not dereference " + o).initCause(e);
+                    }
+                }
 
             case ResponseCodes.JNDI_WEBSERVICE:
                 return createWebservice((WsMetaData) res.getResult());
@@ -446,11 +444,11 @@ public class JNDIContext implements InitialContextFactory, Context {
     }
 
     public NameParser getNameParser(String name) throws NamingException {
-        throw new OperationNotSupportedException("TODO: Needs to be implemented");
+        return new SimpleNameParser();
     }
 
     public NameParser getNameParser(Name name) throws NamingException {
-        return getNameParser(name.toString());
+        return new SimpleNameParser();
     }
 
     public String composeName(String name, String prefix) throws NamingException {
@@ -527,6 +525,24 @@ public class JNDIContext implements InitialContextFactory, Context {
     public Context createSubcontext(Name name) throws NamingException {
         return createSubcontext(name.toString());
     }
+
+    private static final class SimpleNameParser implements NameParser {
+         private static final Properties PARSER_PROPERTIES = new Properties();
+
+         static {
+             PARSER_PROPERTIES.put("jndi.syntax.direction", "left_to_right");
+             PARSER_PROPERTIES.put("jndi.syntax.separator", "/");
+         }
+
+
+         private SimpleNameParser() {
+         }
+
+         public Name parse(String name) throws NamingException {
+             return new CompoundName(name, PARSER_PROPERTIES);
+         }
+     }
+
 
 }
 

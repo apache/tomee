@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.ejbd;
 
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
@@ -33,6 +34,7 @@ import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.resource.Referenceable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
@@ -63,6 +65,7 @@ import org.apache.openejb.core.webservices.PortAddress;
 import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ServiceRefData;
+import org.apache.openejb.jee.JavaXmlTypeMapping;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -202,17 +205,23 @@ class JndiRequestHandler {
                 return;
             } else if (object == null) {
                 throw new NullPointerException("lookup of '"+name+"' returned null");
-            } else if (object instanceof DataSource && object.getClass().getName().equals("org.apache.commons.dbcp.BasicDataSource")){
-                try {
-                    DbcpDataSource cf = new DbcpDataSource(object);
-                    DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
+            } else if (object instanceof DataSource) {
+                if (object.getClass().getName().equals("org.apache.commons.dbcp.BasicDataSource")) {
+                    try {
+                        DbcpDataSource cf = new DbcpDataSource(object);
+                        DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
+                        res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
+                        res.setResult(dataSourceMetaData);
+                    } catch (Exception e) {
+                        res.setResponseCode(ResponseCodes.JNDI_ERROR);
+                        res.setResult(new ThrowableArtifact(e));
+                    }
+                    return;
+                } else if (object instanceof Referenceable) {
                     res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
-                    res.setResult(dataSourceMetaData);
-                } catch (Exception e) {
-                    res.setResponseCode(ResponseCodes.JNDI_ERROR);
-                    res.setResult(new ThrowableArtifact(e));
+                    res.setResult(((Referenceable) object).getReference());
+                    return;
                 }
-                return;
             } else if (object instanceof ConnectionFactory){
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ConnectionFactory.class.getName());
