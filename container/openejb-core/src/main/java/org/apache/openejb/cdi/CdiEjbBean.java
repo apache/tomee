@@ -175,6 +175,13 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return points;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.webbeans.component.AbstractBean#isPassivationCapable()
+     */
+    @Override
+    public boolean isPassivationCapable() {
+        return getWebBeansContext().getBeanManagerImpl().isPassivatingScope(getScope());
+    }
 
     @SuppressWarnings("unchecked")
     private List<Method> findRemove(Class beanClass, Class beanInterface) {
