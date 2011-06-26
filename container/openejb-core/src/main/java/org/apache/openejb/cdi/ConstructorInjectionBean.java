@@ -17,8 +17,8 @@
 package org.apache.openejb.cdi;
 
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
-import org.apache.webbeans.component.AbstractOwbBean;
 import org.apache.webbeans.component.WebBeansType;
+import org.apache.webbeans.config.DefinitionUtil;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.InjectableConstructor;
 
@@ -36,7 +36,14 @@ public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> 
         super(WebBeansType.DEPENDENT, returnType, webBeansContext);
 
         constructor = webBeansContext.getWebBeansUtil().defineConstructor(getReturnType());
-        webBeansContext.getDefinitionUtil().addConstructorInjectionPointMetaData(this, constructor);
+
+        final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
+
+        definitionUtil.addConstructorInjectionPointMetaData(this, constructor);
+
+        // these are not used immediately in createInstance()
+//        definitionUtil.defineInjectedFields(this);
+//        definitionUtil.defineInjectedMethods(this);
     }
 
     @Override
