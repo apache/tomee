@@ -37,7 +37,6 @@ import javax.resource.Referenceable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import org.apache.activemq.filter.PrefixDestinationFilter;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
