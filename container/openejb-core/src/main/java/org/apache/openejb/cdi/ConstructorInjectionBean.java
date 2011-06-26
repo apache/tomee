@@ -21,6 +21,7 @@ import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.DefinitionUtil;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.inject.InjectableConstructor;
+import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.enterprise.context.spi.CreationalContext;
 import java.lang.reflect.Constructor;
@@ -35,9 +36,20 @@ public class ConstructorInjectionBean<T> extends AbstractInjectionTargetBean<T> 
     public ConstructorInjectionBean(WebBeansContext webBeansContext, Class<T> returnType) {
         super(WebBeansType.DEPENDENT, returnType, webBeansContext);
 
-        constructor = webBeansContext.getWebBeansUtil().defineConstructor(getReturnType());
+        if (webBeansContext == null) throw new NullPointerException("webBeansContext");
+        if (returnType == null) throw new NullPointerException("returnType");
+
+        final WebBeansUtil webBeansUtil = webBeansContext.getWebBeansUtil();
+
+        if (webBeansUtil == null) throw new NullPointerException("webBeansUtil");
+
+        constructor = webBeansUtil.defineConstructor(returnType);
+
+        if (constructor == null) throw new NullPointerException("constructor");
 
         final DefinitionUtil definitionUtil = getWebBeansContext().getDefinitionUtil();
+
+        if (definitionUtil == null) throw new NullPointerException("definitionUtil");
 
         definitionUtil.addConstructorInjectionPointMetaData(this, constructor);
 
