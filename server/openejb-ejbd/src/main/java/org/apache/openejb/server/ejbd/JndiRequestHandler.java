@@ -204,7 +204,7 @@ class JndiRequestHandler {
             } else if (object == null) {
                 throw new NullPointerException("lookup of '"+name+"' returned null");
             } else if (object instanceof DataSource) {
-                if (object.getClass().getName().equals("org.apache.commons.dbcp.BasicDataSource")) {
+                if (isDbcpDataSource(object)) {
                     try {
                         DbcpDataSource cf = new DbcpDataSource(object);
                         DataSourceMetaData dataSourceMetaData = new DataSourceMetaData(cf.getDriverClassName(), cf.getUrl(), cf.getUsername(), cf.getPassword());
@@ -436,6 +436,15 @@ class JndiRequestHandler {
             }
         }
 
+    }
+
+    private boolean isDbcpDataSource(Object object) {
+
+        for (Class<?> clazz = object.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            if (clazz.getName().equals("org.apache.commons.dbcp.BasicDataSource")) return true;
+        }
+
+        return false;
     }
 
     private void log(EJBMetaDataImpl metaData) {

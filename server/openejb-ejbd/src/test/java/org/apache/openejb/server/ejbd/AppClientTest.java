@@ -27,12 +27,12 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServicePool;
 
+import javax.annotation.Resource;
 import javax.ejb.CreateException;
 import javax.ejb.EJB;
 import javax.ejb.EJBHome;
@@ -41,6 +41,7 @@ import javax.ejb.Remote;
 import javax.ejb.RemoteHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
@@ -102,7 +103,12 @@ public class AppClientTest extends TestCase {
         assertTrue(business instanceof OrangeBusinessRemote);
         OrangeBusinessRemote orangeBusinessRemote = (OrangeBusinessRemote) business;
         assertEquals("nap", orangeBusinessRemote.echo("pan"));
-        
+
+        final Object dataSourceObject = context.lookup("comp/env/datasource");
+        assertTrue(dataSourceObject instanceof DataSource);
+//        DataSource dataSource = (DataSource) dataSourceObject;
+//        assertEquals("nap", orangeBusinessRemote.echo("pan"));
+
         props.put("openejb.client.moduleId", "openejb/global");
         context = new InitialContext(props);
 
@@ -135,6 +141,9 @@ public class AppClientTest extends TestCase {
     }
 
     public static class OrangeAppClient {
+
+        @Resource(name = "datasource")
+        public static DataSource dataSource;
 
         @EJB(name = "home")
         public static OrangeHome orangeHome;

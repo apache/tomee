@@ -142,6 +142,8 @@ public class JNDIResponse implements ClusterableResponse {
                 m.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_DATA_SOURCE:
+                DataSourceMetaData ds = (DataSourceMetaData) result;
+                ds.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_INJECTIONS:
                 InjectionMetaData imd = (InjectionMetaData) result;
