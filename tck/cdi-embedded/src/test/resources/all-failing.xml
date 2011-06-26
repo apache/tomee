@@ -11,9 +11,9 @@
       <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.dependent.DependentContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.dependent.ejb.DependentContextEjbTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingDecorator.EnterpriseBeanWithNonPassivatingDecoratorTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.request.RequestContextTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest"/>

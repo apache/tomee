@@ -38,7 +38,10 @@ import javax.ejb.LockType;
 import javax.ejb.MessageDrivenBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 import javax.naming.Context;
 import javax.persistence.EntityManagerFactory;
 
@@ -65,7 +68,12 @@ import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
+import org.apache.webbeans.component.EnterpriseBeanMarker;
+import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.inject.AbstractInjectable;
+import org.apache.webbeans.proxy.JavassistProxyFactory;
 import org.apache.xbean.recipe.ConstructionException;
 
 
@@ -1217,10 +1225,7 @@ public class BeanContext extends DeploymentContext {
 
             final Object beanInstance = injectionProcessor.createInstance();
 
-            beanDefinition.injectSuperFields(beanInstance, creationalContext);
-            beanDefinition.injectSuperMethods(beanInstance, creationalContext);
-            beanDefinition.injectFields(beanInstance, creationalContext);
-            beanDefinition.injectMethods(beanInstance, creationalContext);
+            inject(beanInstance, creationalContext);
 
             // Create interceptors
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();
@@ -1297,6 +1302,68 @@ public class BeanContext extends DeploymentContext {
         } finally {
             ThreadContext.exit(oldContext);
         }                        
+    }
+
+    protected <X> X getBean(Class<X> clazz, Bean<?> bean)
+    {
+        return clazz.cast(bean);
+    }
+
+    public <T> void inject(T instance, CreationalContext<T> ctx)
+    {
+
+        WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+
+        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
+
+        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
+
+        if (beanDefinition == null) {
+            beanDefinition = beanConstructor;
+        }
+
+        if(!(ctx instanceof CreationalContextImpl))
+        {
+            ctx = webBeansContext.getCreationalContextFactory().wrappedCreationalContext(ctx, beanDefinition);
+        }
+
+        Object oldInstanceUnderInjection = AbstractInjectable.instanceUnderInjection.get();
+        boolean isInjectionToAnotherBean = false;
+        try
+        {
+            Contextual<?> contextual = null;
+            if(ctx instanceof CreationalContextImpl)
+            {
+                contextual = ((CreationalContextImpl)ctx).getBean();
+                isInjectionToAnotherBean = contextual == getBean(InjectionTargetBean.class, beanDefinition) ? false : true;
+            }
+
+            if(!isInjectionToAnotherBean)
+            {
+                AbstractInjectable.instanceUnderInjection.set(instance);
+            }
+
+            InjectionTargetBean<T> bean = getBean(InjectionTargetBean.class, beanDefinition);
+
+            bean.injectResources(instance, ctx);
+            bean.injectSuperFields(instance, ctx);
+            bean.injectSuperMethods(instance, ctx);
+            bean.injectFields(instance, ctx);
+            bean.injectMethods(instance, ctx);
+        }
+        finally
+        {
+            if(oldInstanceUnderInjection != null)
+            {
+                AbstractInjectable.instanceUnderInjection.set(oldInstanceUnderInjection);
+            }
+            else
+            {
+                AbstractInjectable.instanceUnderInjection.set(null);
+                AbstractInjectable.instanceUnderInjection.remove();
+            }
+        }
+
     }
 
     public Set<Class<?>> getAsynchronousClasses() {
