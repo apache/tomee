@@ -6,19 +6,14 @@
     <!--</packages>-->
     <classes>
       <class name="org.jboss.jsr299.tck.tests.context.dependent.ejb.DependentContextEjbTest"/>
-      <!--<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>-->
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>
       <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
+      <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanICTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationIntegrationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.sameName.SameNameTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest"/>
     </classes>

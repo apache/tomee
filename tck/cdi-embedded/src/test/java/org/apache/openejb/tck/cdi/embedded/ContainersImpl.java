@@ -29,6 +29,7 @@ import org.jboss.testharness.spi.Containers;
 
 import javax.ejb.embeddable.EJBContainer;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,8 +37,11 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +113,24 @@ public class ContainersImpl implements Containers {
         return clazz.getClassLoader().getResource(resourcePath);
     }
 
+
+    public static void main(String[] args) throws IOException {
+        new ContainersImpl().memoryMappedFile();
+
+        System.out.println();
+    }
+
+    public void memoryMappedFile() throws IOException {
+
+        FileChannel rwChannel = new RandomAccessFile(new File("/tmp/memory-mapped.txt"), "rw").getChannel();
+
+        final byte[] bytes = "hello world".getBytes();
+
+        ByteBuffer writeonlybuffer = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, bytes.length);
+        writeonlybuffer.put(bytes);
+        writeonlybuffer.compact();
+    }
+
     private File writeToFile(InputStream archive, String name) throws IOException {
         final File file = File.createTempFile("deploy", "-" + name);
         file.deleteOnExit();
@@ -116,34 +138,32 @@ public class ContainersImpl implements Containers {
         try {
 
             Map<String, URL> resources = new HashMap<String, URL>();
-            
+
             final Class<?> clazz = this.getClass().getClassLoader().loadClass(name.replace(".jar", ""));
 
             if (clazz.isAnnotationPresent(EjbJarXml.class)) {
                 final URL resource = getResource(clazz, clazz.getAnnotation(EjbJarXml.class).value());
-                
+
                 if (resource != null) resources.put("META-INF/ejb-jar.xml", resource);
             }
 
             if (clazz.isAnnotationPresent(PersistenceXml.class)) {
                 final URL resource = getResource(clazz, clazz.getAnnotation(PersistenceXml.class).value());
-                
+
                 if (resource != null) resources.put("META-INF/persistence.xml", resource);
             }
 
             final boolean isJar = name.endsWith(".jar");
 
             final ZipInputStream zin = new ZipInputStream(archive);
-            final ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(524288);
+            final ZipOutputStream zout = new ZipOutputStream(byteArrayOutputStream);
 
             for (ZipEntry entry; (entry = zin.getNextEntry()) != null; ) {
                 String entryName = entry.getName();
 
-                if (entryName.startsWith("WEB-INF")) {
-                    System.out.println(entryName);
-                }
                 if (isJar && entryName.startsWith("WEB-INF/classes/")) {
-                    entryName = entryName.replaceFirst("WEB-INF/classes/","");
+                    entryName = entryName.replaceFirst("WEB-INF/classes/", "");
                 }
 
                 InputStream src = zin;
@@ -168,10 +188,21 @@ public class ContainersImpl implements Containers {
 
             close(zin);
             close(zout);
+
+            writeToFile(file, byteArrayOutputStream);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return file;
+    }
+
+    private void writeToFile(File file, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
+        final byte[] bytes = byteArrayOutputStream.toByteArray();
+
+        final FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(bytes);
+        fileOutputStream.close();
     }
 
     private static void copy(InputStream from, OutputStream to) throws IOException {
