@@ -20,6 +20,7 @@ import org.apache.webbeans.annotation.NewLiteral;
 import org.apache.webbeans.component.NewBean;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.New;
 import javax.enterprise.util.AnnotationLiteral;
 import java.lang.annotation.Annotation;
@@ -37,7 +38,8 @@ public class NewCdiEjbBean<T> extends CdiEjbBean<T> implements NewBean<T> {
 
         this.getImplQualifiers().add(new NewLiteral(getReturnType()));
 
-
+        this.apiTypes.clear();
+        this.apiTypes.addAll(that.getTypes());
         this.setName(null);
         this.getInjectedFields().addAll(that.getInjectedFields());
         this.getInjectedFromSuperFields().addAll(that.getInjectedFromSuperFields());

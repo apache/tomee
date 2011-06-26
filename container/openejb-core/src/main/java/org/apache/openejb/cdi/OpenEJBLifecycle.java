@@ -273,15 +273,15 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             //Fire Event
             deployer.fireAfterDeploymentValidationEvent();
 
-//            for (BeanContext beanContext : stuff.getBeanContexts()) {
-//
-//                final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);;
-//
-//                if (bean == null) continue;
-//
-//                final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
-//                manager.addBean(new NewCdiEjbBean<Object>(bean));
-//            }
+            for (BeanContext beanContext : stuff.getBeanContexts()) {
+
+                final CdiEjbBean<Object> bean = beanContext.get(CdiEjbBean.class);;
+
+                if (bean == null) continue;
+
+                final BeanManagerImpl manager = webBeansContext.getBeanManagerImpl();
+                manager.addBean(new NewCdiEjbBean<Object>(bean));
+            }
 
         } catch (Exception e1) {
             Assembler.logger.error("CDI Beans module deployment failed", e1);

@@ -48,6 +48,7 @@ public class Report {
     private void main() throws Exception {
 //        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
         final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
+//        final File file = new File("/Users/dblevins/work/uber/testng-results.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -86,17 +87,15 @@ public class Report {
 
         out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
         out.println("  <test name=\"CDI TCK\">");
-        out.println("    <!--<packages>-->\n" +
-                "        <!--<package name=\"org.jboss.jsr299.tck.tests.*\"/>-->\n" +
-                "        <!--<package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>-->\n" +
-                "    <!--</packages>-->");
+        out.println("    <packages>\n" +
+                "        <package name=\"org.jboss.jsr299.tck.tests.*\"/>\n" +
+                "        <package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>\n" +
+                "    </packages>");
         out.println("    <classes>");
 
         for (TestClass testClass : classes) {
 
-            if (!contains(testClass, Status.FAIL)) {
-                out.printf("      <class name=\"%s\"/>\n", testClass.name);
-            } else if (contains(testClass, Status.PASS)) {
+            if (contains(testClass, Status.FAIL)) {
                 out.printf("      <class name=\"%s\">\n", testClass.name);
                 out.printf("        <methods>\n");
 

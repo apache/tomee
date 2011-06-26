@@ -121,25 +121,12 @@
         <methods>
           <exclude name="testCreateSFSB"/>
           <exclude name="testDependentObjectsDestroyed"/>
-          <exclude name="testDestroyRemovesSFSB"/>
           <exclude name="testSerializeSFSB"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanICTest">
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest">
         <methods>
-          <exclude name="testNewBeanHasNoDisposalMethods"/>
-          <exclude name="testNewBeanHasNoProducerMethods"/>
-          <exclude name="testNewBeanHasSameConstructor"/>
-          <exclude name="testNewBeanHasSameInitializers"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
-        <methods>
-          <exclude name="testForEachEnterpriseBeanANewBeanExists"/>
-          <exclude name="testNewBeanHasNoBeanELName"/>
-          <exclude name="testNewBeanHasNoStereotypes"/>
-          <exclude name="testNewBeanIsHasOnlyNewBinding"/>
-          <exclude name="testNewBeanIsDependentScoped"/>
+          <exclude name="testApplicationCannotCallRemoveMethodOnNonDependentScopedSessionEnterpriseBean"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest">

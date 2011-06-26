@@ -32,10 +32,12 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.New;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
 import javax.enterprise.util.AnnotationLiteral;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,6 +107,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         return (T) home.create();
     }
 
+    @Override
+    protected void afterConstructor(T instance, CreationalContext<T> tCreationalContext) {
+    }
+
+//    @Override
+//    public void postConstruct(T instance, CreationalContext<T> cretionalContext) {
+//    }
+
     public String getEjbName() {
         return this.beanContext.getEjbName();
     }
@@ -144,6 +154,27 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         // Should we delegate to super and merge both?
         return findRemove(beanContext.getBeanClass(), beanContext.getBusinessLocalInterface());
     }
+
+    public List<InjectionPoint> getInjectionPoint(Member member)
+    {
+        if (member instanceof Method) {
+            Method method = (Method) member;
+            member = beanContext.getMatchingBeanMethod(method);
+        }
+
+        List<InjectionPoint> points = new ArrayList<InjectionPoint>();
+
+        for(InjectionPoint ip : injectionPoints)
+        {
+            if(ip.getMember().equals(member))
+            {
+                points.add(ip);
+            }
+        }
+
+        return points;
+    }
+
 
     @SuppressWarnings("unchecked")
     private List<Method> findRemove(Class beanClass, Class beanInterface) {
