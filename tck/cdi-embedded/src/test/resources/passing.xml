@@ -128,6 +128,7 @@
       <class name="org.jboss.jsr299.tck.tests.event.observer.abortProcessing.ObserverExceptionAbortsProcessingTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.checkedException.CheckedExceptionWrappedTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.conditional.ConditionalObserverTest"/>
+      <class name="org.jboss.jsr299.tck.tests.event.observer.enterprise.EnterpriseEventInheritenceTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.resolve.ResolveEventObserversTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.resolve.enterprise.ResolveEnterpriseEventObserverTest"/>
       <class name="org.jboss.jsr299.tck.tests.event.observer.runtimeException.ObserverExceptionRethrownTest"/>
@@ -157,12 +158,7 @@
       <class name="org.jboss.jsr299.tck.tests.extensions.processBean.ProcessSessionBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>
       <class name="org.jboss.jsr299.tck.tests.extensions.producer.broken.injectionTargetError.InjectionTargetDefinitionErrorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest">
-        <methods>
-          <exclude name="testDefaultValidatorBean"/>
-          <exclude name="testDefaultValidatorFactoryBean"/>
-        </methods>
-      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.DisposalMethodDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.initializerUnallowed.InitializerUnallowedDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.disposal.method.definition.broken.methodOnSessionBean.DisposalMethodOnSessionBean"/>
@@ -190,8 +186,8 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
         <methods>
           <exclude name="testForEachEnterpriseBeanANewBeanExists"/>
-          <exclude name="testNewBeanHasNoStereotypes"/>
           <exclude name="testNewBeanHasNoBeanELName"/>
+          <exclude name="testNewBeanHasNoStereotypes"/>
           <exclude name="testNewBeanIsDependentScoped"/>
           <exclude name="testNewBeanIsHasOnlyNewBinding"/>
         </methods>
@@ -244,15 +240,7 @@
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.nonExistantClassInBeansXml.NonExistantClassInBeansXmlTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.nonInterceptorClassInBeansXml.NonInterceptorClassInBeansXmlTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.sameClassListedTwiceInBeansXml.SameClassListedTwiceInBeansXmlTest"/>
-      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.custom.CustomInterceptorTest">
-        <methods>
-          <exclude name="testCustomAroundInvokeInterceptor"/>
-          <exclude name="testCustomAroundTimeoutInterceptor"/>
-          <exclude name="testCustomPreDestroyInterceptor"/>
-          <exclude name="testCustomPostActivateInterceptor"/>
-          <exclude name="testCustomPrePassivateInterceptor"/>
-        </methods>
-      </class>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.custom.CustomInterceptorTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.interceptorOrder.SessionBeanInterceptorOrderTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.simpleInterception.SessionBeanInterceptorDefinitionTest"/>
       <class name="org.jboss.jsr299.tck.tests.interceptors.definition.interceptorCalledBeforeDecorator.InterceptorCalledBeforeDecoratorTest"/>

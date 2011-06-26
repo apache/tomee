@@ -39,6 +39,8 @@ import org.apache.webbeans.spi.plugins.OpenWebBeansJavaEEPlugin;
 import org.apache.webbeans.util.WebBeansUtil;
 
 import javax.ejb.Stateful;
+import javax.enterprise.context.spi.Context;
+import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.spi.Bean;
@@ -161,40 +163,15 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 	}
 
 	@Override
-	public Object getSessionBeanProxy(Bean<?> bean, Class<?> interfce, CreationalContext<?> creationalContext) {
-		final CdiEjbBean ejbBean = (CdiEjbBean) bean;
-		final BeanContext deployment = ejbBean.getBeanContext();
+ 	public Object getSessionBeanProxy(Bean<?> bean, Class<?> interfce, CreationalContext<?> creationalContext) {
 
-		final Class beanClass = deployment.getBeanClass();
-		final List<Class> localInterfaces = deployment.getBusinessLocalInterfaces();
+        final Context context = webBeansContext.getBeanManagerImpl().getContext(bean.getScope());
 
-		List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce == Object.class? null: interfce, localInterfaces);
-		BeanContext.BusinessLocalHome home = deployment.getBusinessLocalHome(interfaces, interfaces.get(0));
-		return home.create();
+        final CreationalContext<Object> cc = (CreationalContext<Object>) creationalContext;
+        final Contextual<Object> component = (Contextual<Object>) bean;
 
-		// try {
-		//
-		// ((CdiEjbBean<Object>) bean).setIface(iface);
-		//
-		// Class<?> clazz = JavassistProxyFactory.getInstance().getEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean);
-		//
-		// if (clazz == null) {
-		// ProxyFactory factory = new ProxyFactory();
-		// factory.setInterfaces(new Class[]{(Class<?>) iface});
-		// clazz = JavassistProxyFactory.getInstance().defineEjbBeanProxyClass((BaseEjbBean<Object>) (CdiEjbBean<Object>) bean, factory);
-		// }
-		//
-		// Object proxyInstance = (Object) ClassUtil.newInstance(clazz);
-		//
-		// EjbBeanProxyHandler handler = new EjbBeanProxyHandler((CdiEjbBean<Object>) bean, creationalContext);
-		//
-		// ((ProxyObject) proxyInstance).setHandler(handler);
-		//
-		// return proxyInstance;
-		//
-		// } catch (Exception e) {
-		// throw new WebBeansException(e);
-		// }
+        return context.get(component, cc);
+
 	}
 
 	@Override
