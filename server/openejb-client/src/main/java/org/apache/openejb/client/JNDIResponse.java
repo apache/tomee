@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 
+import javax.naming.Reference;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -105,6 +106,9 @@ public class JNDIResponse implements ClusterableResponse {
                 ncpe.readExternal(in);
                 result = ncpe;
                 break;
+            case ResponseCodes.JNDI_REFERENCE:
+                result = (Reference)in.readObject();
+                break;
         }
     }
 
@@ -138,8 +142,6 @@ public class JNDIResponse implements ClusterableResponse {
                 m.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_DATA_SOURCE:
-                DataSourceMetaData ds = (DataSourceMetaData) result;
-                ds.writeExternal(out);
                 break;
             case ResponseCodes.JNDI_INJECTIONS:
                 InjectionMetaData imd = (InjectionMetaData) result;
@@ -152,6 +154,10 @@ public class JNDIResponse implements ClusterableResponse {
             case ResponseCodes.JNDI_ENUMERATION:
                 NameClassPairEnumeration ncpe = (NameClassPairEnumeration) result;
                 ncpe.writeExternal(out);
+                break;
+            case ResponseCodes.JNDI_REFERENCE:
+                Reference ref = (Reference) result;
+                out.writeObject(ref);
                 break;
         }
     }

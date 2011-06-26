@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
@@ -38,7 +37,7 @@ import javax.resource.Referenceable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import org.apache.openejb.AppContext;
+import org.apache.activemq.filter.PrefixDestinationFilter;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
@@ -65,7 +64,6 @@ import org.apache.openejb.core.webservices.PortAddress;
 import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortRefData;
 import org.apache.openejb.core.webservices.ServiceRefData;
-import org.apache.openejb.jee.JavaXmlTypeMapping;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
@@ -133,11 +131,11 @@ class JndiRequestHandler {
             if (req.getRequestString().startsWith("/")) {
                 req.setRequestString(req.getRequestString().substring(1));
             }
-            Context context = getContext(req);
+            String prefix = getPrefix(req);
 
             switch(req.getRequestMethod()){
-                case RequestMethodConstants.JNDI_LOOKUP: doLookup(req, res, context); break;
-                case RequestMethodConstants.JNDI_LIST: doList(req, res, context); break;
+                case RequestMethodConstants.JNDI_LOOKUP: doLookup(req, res, prefix); break;
+                case RequestMethodConstants.JNDI_LIST: doList(req, res, prefix); break;
             }
 
         } catch (Throwable e) {
@@ -161,25 +159,25 @@ class JndiRequestHandler {
         }
     }
 
-    private Context getContext(JNDIRequest req) throws NamingException {
-        Context context;
+    private String getPrefix(JNDIRequest req) throws NamingException {
+        String prefix;
         String name = req.getRequestString();
 
         if (name.startsWith("openejb/Deployment/")) {
-            context = rootContext;
+            prefix = "";
         } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/Deployment")){
-            context = deploymentsJndiTree;
+            prefix = "openejb/Deployment/";
         } else if (req.getModuleId() != null && req.getModuleId().equals("openejb/global")){
-            context = globalJndiTree;
+            prefix = "openejb/global/";
         } else if (req.getModuleId() != null && clientJndiTree != null) {
-            context = (Context) clientJndiTree.lookup(req.getModuleId());
+            prefix = "openejb/client/" + req.getModuleId() + "/";// + (Context) clientJndiTree.lookup(req.getModuleId());
         } else {
-            context = ejbJndiTree;
+            prefix = "openejb/remote/";
         }
-        return context;
+        return prefix;
     }
 
-    private void doLookup(JNDIRequest req, JNDIResponse res, Context context) {
+    private void doLookup(JNDIRequest req, JNDIResponse res, String prefix) {
         Object object;
         String name = req.getRequestString();
 
@@ -188,7 +186,7 @@ class JndiRequestHandler {
             if (name.equals("info/injections")) {
 
                 //noinspection unchecked
-                List<Injection> injections = (List<Injection>) context.lookup(name);
+                List<Injection> injections = (List<Injection>) rootContext.lookup(prefix + name);
                 InjectionMetaData metaData = new InjectionMetaData();
                 for (Injection injection : injections) {
                     metaData.addInjection(injection.getTarget().getName(), injection.getName(), injection.getJndiName());
@@ -197,7 +195,7 @@ class JndiRequestHandler {
                 res.setResult(metaData);
                 return;
             } else {
-                object = context.lookup(name);
+                object = rootContext.lookup(prefix + name);
             }
 
             if (object instanceof Context) {
@@ -218,7 +216,7 @@ class JndiRequestHandler {
                     }
                     return;
                 } else if (object instanceof Referenceable) {
-                    res.setResponseCode(ResponseCodes.JNDI_DATA_SOURCE);
+                    res.setResponseCode(ResponseCodes.JNDI_REFERENCE);
                     res.setResult(((Referenceable) object).getReference());
                     return;
                 }
@@ -464,10 +462,10 @@ class JndiRequestHandler {
         clusterableRequestHandler.updateServer(proxyInfo.getBeanContext(), req, res);
     }
 
-    private void doList(JNDIRequest req, JNDIResponse res, Context context) {
+    private void doList(JNDIRequest req, JNDIResponse res, String prefix) {
         String name = req.getRequestString();
         try {
-            NamingEnumeration<NameClassPair> namingEnumeration = context.list(name);
+            NamingEnumeration<NameClassPair> namingEnumeration = rootContext.list(prefix + name);
             if (namingEnumeration == null){
                 res.setResponseCode(ResponseCodes.JNDI_OK);
                 res.setResult(null);
