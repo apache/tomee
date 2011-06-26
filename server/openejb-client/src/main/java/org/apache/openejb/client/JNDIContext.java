@@ -233,16 +233,7 @@ public class JNDIContext implements InitialContextFactory, Context {
                 return subCtx;
 
             case ResponseCodes.JNDI_DATA_SOURCE:
-                Object o = res.getResult();
-                if (o instanceof DataSourceMetaData) {
-                    return createDataSource((DataSourceMetaData) res.getResult());
-                } else if (o instanceof Reference) {
-                    try {
-                        return NamingManager.getObjectInstance(o, getNameParser(name).parse(name), this, env);
-                    } catch (Exception e) {
-                        throw (NamingException)new NamingException("Could not dereference " + o).initCause(e);
-                    }
-                }
+                return createDataSource((DataSourceMetaData) res.getResult());
 
             case ResponseCodes.JNDI_WEBSERVICE:
                 return createWebservice((WsMetaData) res.getResult());
@@ -254,6 +245,14 @@ public class JNDIContext implements InitialContextFactory, Context {
                     return null;
                 }
                 return parseEntry(prop, value);
+
+            case ResponseCodes.JNDI_REFERENCE:
+                Reference ref = (Reference)res.getResult();
+                try {
+                    return NamingManager.getObjectInstance(ref, getNameParser(name).parse(name), this, env);
+                } catch (Exception e) {
+                    throw (NamingException) new NamingException("Could not dereference " + ref).initCause(e);
+                }
 
             case ResponseCodes.JNDI_NOT_FOUND:
                 throw new NameNotFoundException(name + " does not exist in the system.  Check that the app was successfully deployed.");
