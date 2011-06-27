@@ -17,8 +17,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import javax.persistence.EntityManagerFactory;
-
 public interface WebAppBuilder {
     void deployWebApps(AppInfo appInfo, ClassLoader classLoader) throws Exception;
     void undeployWebApps(AppInfo appInfo) throws Exception;

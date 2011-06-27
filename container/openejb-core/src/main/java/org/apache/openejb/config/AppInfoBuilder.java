@@ -301,6 +301,8 @@ class AppInfoBuilder {
             webAppInfo.watchedResources.addAll(webModule.getWatchedResources());
             webAppInfo.validationInfo = ValidatorBuilder.getInfo(webModule.getValidationConfig());
             webAppInfo.uniqueId = webModule.getUniqueId();
+            webAppInfo.restApplications.addAll(webModule.getRestApplications());
+            webAppInfo.restClass.addAll(webModule.getRestClasses());
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();

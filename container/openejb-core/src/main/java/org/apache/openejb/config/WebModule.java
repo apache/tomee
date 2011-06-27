@@ -49,6 +49,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
     private IAnnotationFinder finder;
     private final Set<String> restClasses = new TreeSet<String>();
+    private final Set<String> restApplications = new TreeSet<String>();
 
     private ID id;
     
@@ -179,5 +180,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     @Override public Set<String> getRestClasses() {
         return restClasses;
+    }
+
+    public Set<String> getRestApplications() {
+        return restApplications;
     }
 }
