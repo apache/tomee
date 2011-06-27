@@ -62,6 +62,7 @@ public class ServletMapping {
     @XmlElement(name = "servlet-name", required = true)
     protected String servletName;
     @XmlElement(name = "url-pattern", required = true)
+    @XmlJavaTypeAdapter(TrimStringAdapter.class)
     protected List<String> urlPattern;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

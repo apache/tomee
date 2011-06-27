@@ -67,6 +67,7 @@ public class FilterMapping {
     @XmlElement(name = "filter-name", required = true)
     protected String filterName;
     @XmlElement(name = "url-pattern")
+    @XmlJavaTypeAdapter(TrimStringAdapter.class)
     protected List<String> urlPattern;
     @XmlElement(name = "servlet-name")
     protected List<String> servletName;
