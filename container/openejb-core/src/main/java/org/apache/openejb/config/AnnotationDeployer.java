@@ -1996,7 +1996,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                             String name = intf.getName();
                             if (!name.equals("java.io.Serializable") &&
                                     !name.equals("java.io.Externalizable") &&
-                                    !name.startsWith("javax.ejb.")) {
+                                    !name.startsWith("javax.ejb.") &&
+                                    !intf.isSynthetic()) {
                                 interfaces.add(intf);
                             }
                         }
