@@ -329,6 +329,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         return knownEnvironmentEntries.contains(type.getName()) || type.isEnum();
     }
 
+    public static boolean isShareableJNDINamespace(String jndiName) {
+        return jndiName.startsWith("java:global/") || jndiName.startsWith("java:app/") || jndiName.startsWith("java:module/");
+    }
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
 
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
@@ -3342,9 +3345,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                         envEntry.setLookupName(lookupName);
 
                         reference = envEntry;
+                    } else if(isShareableJNDINamespace(refName)){
+                        EnvEntry envEntry = new EnvEntry();
+                        envEntry.setName(member.getDeclaringClass().getName() + "/" + member.getName());
+                        envEntry.setLookupName(refName);
+
+                        consumer.getEnvEntry().add(envEntry);                        
+                        reference = envEntry;
                     } else {
                         /*
-                         * Can't add env-entry since @Resource.lookup is not set.
+                         * Can't add env-entry since @Resource.lookup is not set and it is NOT in a shareable JNDI name space
                          */
                         return;
                     }
