@@ -106,6 +106,7 @@ import org.apache.openejb.util.References;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
@@ -689,6 +690,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             new CdiBuilder().build(appInfo, appContext, allDeployments);
 
+            ensureWebBeansContext(appContext);
+
             // now that everything is configured, deploy to the container
             if (start) {
                 // deploy
@@ -792,6 +795,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
         }
+    }
+
+    private void ensureWebBeansContext(AppContext appContext) {
+        WebBeansContext webBeansContext = appContext.get(WebBeansContext.class);
+        if (webBeansContext == null) webBeansContext = appContext.getWebBeansContext();
+        if (webBeansContext == null) webBeansContext = new WebBeansContext();
+
+        appContext.set(WebBeansContext.class, webBeansContext);
+        appContext.setWebBeansContext(webBeansContext);
     }
 
     private TransactionPolicyFactory createTransactionPolicyFactory(EjbJarInfo ejbJar, ClassLoader classLoader) {
