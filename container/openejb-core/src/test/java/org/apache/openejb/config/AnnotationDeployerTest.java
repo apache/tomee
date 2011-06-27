@@ -23,10 +23,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -63,6 +69,8 @@ import javax.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ClientInfo;
@@ -73,10 +81,13 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.TransactionSupportType;
+import org.apache.openejb.jee.WebApp;
 import org.apache.xbean.finder.Annotated;
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
+import org.apache.xbean.finder.archive.JarArchive;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -480,5 +491,53 @@ public class AnnotationDeployerTest {
 		public void setMyNumber(int myNumber) {
 			this.myNumber = myNumber;
 		}
+    }
+
+    @Test
+    public void findRestClasses() throws Exception {
+        WebApp webApp = new WebApp();
+        webApp.setContextRoot("/");
+        webApp.setId("web");
+        webApp.setVersion("2.5");
+        WebModule webModule = new WebModule(webApp, webApp.getContextRoot(), Thread.currentThread().getContextClassLoader(), "myapp", webApp.getId());
+        webModule.setFinder(new AnnotationFinder(new ClassesArchive(RESTClass.class, RESTMethod.class, RESTApp.class)).link());
+
+        AnnotationDeployer annotationDeployer = new AnnotationDeployer();
+        webModule = annotationDeployer.deploy(webModule);
+
+        Set<String> classes = webModule.getRestClasses();
+        Set<String> applications = webModule.getRestApplications();
+
+        assertEquals(2, classes.size());
+        assertTrue(classes.contains(RESTClass.class.getName()));
+        assertTrue(classes.contains(RESTMethod.class.getName()));
+
+        assertEquals(1, applications.size());
+        assertEquals(RESTApp.class.getName(), applications.iterator().next());
+    }
+
+    @Path("/") public static class RESTClass {
+
+    }
+
+    public static class RESTMethod {
+        @Path("/method") public void noop() {
+            // no-op
+        }
+    }
+
+    public static class RESTApp extends Application {
+        public java.util.Set<java.lang.Class<?>> getClasses() {
+            return new HashSet<Class<?>>() {{
+                add(RESTClass.class);
+                add(RESTMethod.class);
+            }};
+        }
+        public java.util.Set<java.lang.Object> getSingletons() {
+            return new HashSet<Object>() {{
+                add(new RESTMethod());
+                add(new RESTMethod());
+            }};
+        }
     }
  }

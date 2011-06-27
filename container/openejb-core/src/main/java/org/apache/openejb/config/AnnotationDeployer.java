@@ -114,6 +114,7 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Application;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
@@ -974,7 +975,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webApp.getServlet().add(servlet);
             }
 
+            /*
+             *REST
+             */
+            // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(finder));
+            // Applications
+            List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
+            for (Class<? extends Application> app : applications) {
+                webModule.getRestApplications().add(app.getName());
+            }
 
             return webModule;
         }
@@ -4381,11 +4391,13 @@ public class AnnotationDeployer implements DynamicDeployer {
         // methods annotations
         List<Method> methods = new ArrayList<Method>();
         methods.addAll(finder.findAnnotatedMethods(Path.class));
+        /* should be useless...
         methods.addAll(finder.findAnnotatedMethods(HEAD.class));
         methods.addAll(finder.findAnnotatedMethods(PUT.class));
         methods.addAll(finder.findAnnotatedMethods(POST.class));
         methods.addAll(finder.findAnnotatedMethods(DELETE.class));
         methods.addAll(finder.findAnnotatedMethods(GET.class));
+        */
         for (Method method : methods) {
             classes.add(method.getDeclaringClass().getName());
         }

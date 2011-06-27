@@ -32,6 +32,8 @@ public class WebAppInfo extends ValidationInfoObject {
     public String host;
     public String contextRoot;
     public final Set<String> watchedResources = new TreeSet<String>();
+    public final Set<String> restClass = new TreeSet<String>();
+    public final Set<String> restApplications = new TreeSet<String>();
     public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
     public final List<ServletInfo> servlets = new ArrayList<ServletInfo>();
