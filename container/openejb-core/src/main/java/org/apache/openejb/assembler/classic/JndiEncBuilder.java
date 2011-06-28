@@ -206,6 +206,11 @@ public class JndiEncBuilder {
                 continue;
             }
 
+            //It is possible that the value and location are both null, as it is allowed to use @Resource(name="java:global/env/abc") with no value is specified in DD            
+            if(entry.value == null) {
+                continue;
+            }
+
             try {
                 Class type = Classes.deprimitivize(getType(entry.type, entry));
                 Object obj = null;
