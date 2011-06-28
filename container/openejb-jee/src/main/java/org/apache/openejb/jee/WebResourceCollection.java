@@ -73,6 +73,7 @@ public class WebResourceCollection {
     @XmlTransient
     protected TextMap description = new TextMap();
     @XmlElement(name = "url-pattern", required = true)
+    @XmlJavaTypeAdapter(TrimStringAdapter.class)
     protected List<String> urlPattern;
     @XmlElement(name = "http-method")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
