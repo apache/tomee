@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import static java.lang.String.format;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import org.apache.openejb.OpenEJBException;
@@ -325,10 +324,11 @@ public class JndiEncInfoBuilder {
     private void buildEnvEntryInfos(JndiConsumer item, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) {
         for (EnvEntry env : item.getEnvEntry()) {
             // ignore env entries without a value and lookup name
-            if (env.getEnvEntryValue() == null && env.getLookupName() == null) {
+            //If the the reference name of the environment entry is belong to those shareable JNDI name space, it somewhat is a valid one            
+            if (env.getEnvEntryValue() == null && env.getLookupName() == null && !isShareableJNDINamespace(env.getEnvEntryName())) {
                 continue;
             }
-            
+
             EnvEntryInfo info = new EnvEntryInfo();
 
             info.referenceName = env.getEnvEntryName();
@@ -338,6 +338,10 @@ public class JndiEncInfoBuilder {
             info.targets.addAll(buildInjectionInfos(env));
             insert(info, appInfo.globalJndiEnc.envEntries, appInfo.appJndiEnc.envEntries, moduleJndiEnc.envEntries, compJndiEnc.envEntries);
         }
+    }
+
+    private boolean isShareableJNDINamespace(String jndiName) {
+        return jndiName.startsWith("java:global/") || jndiName.startsWith("java:app/") || jndiName.startsWith("java:module/");
     }
 
     public ReferenceLocationInfo buildLocationInfo(JndiReference reference) {

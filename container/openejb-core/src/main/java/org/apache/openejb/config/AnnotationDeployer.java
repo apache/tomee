@@ -3358,9 +3358,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         reference = envEntry;
                     } else if(isShareableJNDINamespace(refName)){
                         EnvEntry envEntry = new EnvEntry();
-                        envEntry.setName(member.getDeclaringClass().getName() + "/" + member.getName());
-                        envEntry.setLookupName(refName);
-
+                        envEntry.setName(refName);
                         consumer.getEnvEntry().add(envEntry);                        
                         reference = envEntry;
                     } else {
