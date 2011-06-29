@@ -329,10 +329,16 @@ public class EJBCronTriggerTest {
         assertEquals(new GregorianCalendar(2011, 4, 18, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 18, 23, 0, 0).getTime()));
         assertEquals(new GregorianCalendar(2011, 4, 27, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 26, 23, 3, 0).getTime()));
         assertEquals(new GregorianCalendar(2011, 5, 4, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 28, 23, 3, 0).getTime()));
-    }	
+    }
+    
+    @Test(timeout = 5000)
+    public void testRangeDayOfMonthD() throws ParseException {
+        //current day is later than start day of range.
+        ScheduleExpression expr = new ScheduleExpression().dayOfMonth("-7-1").hour(23).minute(1).second(59).start(new Date(0));
+        EJBCronTrigger trigger = new EJBCronTrigger(expr);
+        assertEquals(new GregorianCalendar(2011, 5, 28, 23, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 5, 28, 23, 0, 0).getTime()));
+    }
 	
-	
-
 	@Test(timeout = 500)
     public void testRangeDayOfWeekA() throws ParseException {
         ScheduleExpression expr = new ScheduleExpression().dayOfWeek("tue-fri").hour(23).minute(1).second(59).start(new Date(0));

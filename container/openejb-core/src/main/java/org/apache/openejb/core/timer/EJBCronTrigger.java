@@ -879,7 +879,8 @@ public class EJBCronTrigger extends Trigger {
                 } else if (startWeekdayExpr != null) {
                     beginValue = startWeekdayExpr.getWeekdayInMonth(calendar);
                 } else if (startDaysFromLastDayExpr != null) {
-                    beginValue = startDaysFromLastDayExpr.getNextValue(calendar);
+                    Integer next = startDaysFromLastDayExpr.getNextValue(calendar);
+                    beginValue = next == null ? calendar.get(field) : next;
                 } else {
                     beginValue = convertValue(startWeekDay);
                 }
@@ -889,7 +890,8 @@ public class EJBCronTrigger extends Trigger {
                 } else if (endWeekdayExpr != null) {
                     endValue = endWeekdayExpr.getWeekdayInMonth(calendar);
                 } else if (endDaysFromLastDayExpr != null) {
-                    endValue = endDaysFromLastDayExpr.getNextValue(calendar);
+                    Integer next = endDaysFromLastDayExpr.getNextValue(calendar);
+                    endValue = next == null ? calendar.get(field) : next;
                 } else {
                     endValue = convertValue(endWeekDay);
                 }
