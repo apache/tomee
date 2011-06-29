@@ -451,26 +451,31 @@ public class MdbContainer implements RpcContainer {
     public void release(BeanContext deployInfo, Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
+        boolean contextExitRequired = false;
         if (callContext == null) {
             callContext = new ThreadContext(deployInfo, null);
             ThreadContext.enter(callContext);
+            contextExitRequired = true;
 
         }
-
-        // if we have an mdb call context we need to invoke the after invoke method
-        MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
-        if (mdbCallContext != null) {
-            try {
-                afterInvoke(mdbCallContext.txPolicy, callContext);
-            } catch (Exception e) {
-                logger.error("error while releasing message endpoint", e);
-            } finally {
-                EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
-                endpointFactory.getInstanceFactory().freeInstance((Instance)instance, false);
-                ThreadContext.exit(mdbCallContext.oldCallContext);
+        try {
+            // if we have an mdb call context we need to invoke the after invoke method
+            MdbCallContext mdbCallContext = callContext.get(MdbCallContext.class);
+            if (mdbCallContext != null) {
+                try {
+                    afterInvoke(mdbCallContext.txPolicy, callContext);
+                } catch (Exception e) {
+                    logger.error("error while releasing message endpoint", e);
+                } finally {
+                    EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
+                    endpointFactory.getInstanceFactory().freeInstance((Instance) instance, false);
+                }
+            }
+        } finally {
+            if (contextExitRequired) {
+                ThreadContext.exit(callContext);
             }
         }
-
     }
 
     private static class MdbCallContext {
