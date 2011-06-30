@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>tck</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>4.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>bval-embedded</artifactId>
+  <name>OpenEJB :: TCK :: Bean Validation Embedded</name>
+  <description>Aggregates dependencies and runs the JSR-303 TCK</description>
+
+  <properties>
+    <validation.provider>org.apache.bval.jsr303.ApacheValidationProvider</validation.provider>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.jsr303.tck</groupId>
+      <artifactId>jsr303-tck</artifactId>
+      <version>1.0.3.GA</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.8</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <argLine>-Xmx512m</argLine>
+          <forkMode>once</forkMode>
+          <systemProperties>
+            <property>
+              <name>validation.provider</name>
+              <value>${validation.provider}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

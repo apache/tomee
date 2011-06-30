@@ -29,5 +29,6 @@
 
   <modules>
     <module>cdi-embedded</module>
+    <module>bval-embedded</module>
   </modules>
 </project>
