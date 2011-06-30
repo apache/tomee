@@ -18,6 +18,8 @@
 package org.apache.openejb.util.proxy;
 
 import junit.framework.TestCase;
+
+import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -223,6 +225,13 @@ public class LocalBeanProxyGeneratorImplTest extends TestCase {
 	    } catch (EJBException e) {
 	        // that's what we expect
 	    }
+	}
+	
+	@Test
+	public void testProxyShouldBeInstanceOfIntraVmProxy() throws Exception {
+		TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
+		SampleLocalBean proxy = loadProxy(invocationHandler);
+		assertTrue(proxy instanceof IntraVmProxy);
 	}
 	
 	@Test
