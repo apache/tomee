@@ -270,6 +270,13 @@ public class EJBCronTriggerTest {
        EJBCronTrigger trigger = new EJBCronTrigger(expr);
        assertEquals(new GregorianCalendar(2011, 4, 6, 14, 1, 59).getTime(), trigger.getFireTimeAfter(new GregorianCalendar(2011, 4, 5, 23, 1, 30).getTime()));
    }
+   
+   @Test(timeout = 5000)
+   public void testSimpleDayOfWeekC() throws ParseException {
+       ScheduleExpression expr = new ScheduleExpression().year(2011).month(6).dayOfWeek("3").hour(22).minute(1).second(1).start(new Date(0));;
+       EJBCronTrigger trigger = new EJBCronTrigger(expr);
+       assertEquals(null, trigger.getFireTimeAfter(new GregorianCalendar(2011, 5, 29, 23, 1, 1).getTime()));
+   }      
 
    
    @Test(timeout = 5000)

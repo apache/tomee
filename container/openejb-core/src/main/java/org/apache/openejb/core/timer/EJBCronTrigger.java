@@ -452,7 +452,6 @@ public class EJBCronTrigger extends Trigger {
 
            
             FieldExpression expr = expressions[currentFieldIndex];
-            int oldValue1 = calendar.get(expr.field);
             Integer value = expr.getNextValue(calendar);
 
             /*
@@ -462,16 +461,16 @@ public class EJBCronTrigger extends Trigger {
              * two fields need not match the current day).
              */
             if (currentFieldIndex == 2 && !(expressions[3] instanceof AsteriskExpression)) {
-                Calendar calendarDayOfWeek = (Calendar) calendar.clone();
-                Integer nextDayOfWeek = expressions[3].getNextValue(calendarDayOfWeek);
+                Calendar clonedCalendarDayOfWeek = (Calendar) calendar.clone();
+                Integer nextDayOfWeek = expressions[3].getNextValue(clonedCalendarDayOfWeek);
                 while (nextDayOfWeek == null) {
-                    calendarDayOfWeek.add(Calendar.DAY_OF_MONTH, 1);
-                    nextDayOfWeek = expressions[3].getNextValue(calendarDayOfWeek);
+                    clonedCalendarDayOfWeek.add(Calendar.DAY_OF_MONTH, 1);
+                    nextDayOfWeek = expressions[3].getNextValue(clonedCalendarDayOfWeek);
                 }
 
                 if (nextDayOfWeek != null) {
-                    calendarDayOfWeek.set(expressions[3].field, nextDayOfWeek);
-                    int newDayOfMonth = calendarDayOfWeek.get(expressions[2].field);
+                    clonedCalendarDayOfWeek.set(expressions[3].field, nextDayOfWeek);
+                    int newDayOfMonth = clonedCalendarDayOfWeek.get(expressions[2].field);
                     
                     if (value == null) {
                         value = newDayOfMonth;
@@ -479,7 +478,12 @@ public class EJBCronTrigger extends Trigger {
                         value = Math.min(value, newDayOfMonth);
                     }
                     //Next valid DayOfWeek might exist in next month.
-                    calendar.set(Calendar.MONTH, calendarDayOfWeek.get(Calendar.MONTH));
+                    
+                    if(expressions[1].getNextValue(clonedCalendarDayOfWeek)==null){
+                        return null;
+                    }else {
+                        calendar.set(Calendar.MONTH, clonedCalendarDayOfWeek.get(Calendar.MONTH));
+                    }
                 }
             }
 
