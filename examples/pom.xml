@@ -32,6 +32,7 @@
   <name>OpenEJB :: Examples</name>
   <modules>
     <module>applicationexception</module>
+    <module>application-composer</module>
     <module>simple-stateful</module>
     <module>simple-stateless</module>
     <module>simple-stateless-with-descriptor</module>
