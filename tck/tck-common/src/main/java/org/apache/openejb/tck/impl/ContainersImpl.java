@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.tck.cdi.embedded;
+package org.apache.openejb.tck.impl;
 
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -28,7 +28,7 @@ import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
 import org.jboss.testharness.spi.Containers;
 
 import javax.ejb.embeddable.EJBContainer;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -184,6 +184,13 @@ public class ContainersImpl implements Containers {
                 zout.putNextEntry(new ZipEntry(entry.getKey()));
 
                 copy(entry.getValue().openStream(), zout);
+            }
+
+            if (!resources.containsKey("META-INF/beans.xml")) { // force it to be a module
+                zout.putNextEntry(new ZipEntry("META-INF/beans.xml"));
+                final InputStream in = new ByteArrayInputStream("<beans />".getBytes());
+                copy(in, zout);
+                in.close();
             }
 
             close(zin);
