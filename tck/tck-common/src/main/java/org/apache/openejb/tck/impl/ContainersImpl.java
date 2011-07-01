@@ -24,8 +24,11 @@ import org.apache.openejb.tck.util.ZipUtil;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.testharness.api.DeploymentException;
+import org.jboss.testharness.impl.packaging.Resource;
+import org.jboss.testharness.impl.packaging.Resources;
 import org.jboss.testharness.impl.packaging.ear.EjbJarXml;
 import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
+import org.jboss.testharness.impl.packaging.jsr303.ValidationXml;
 import org.jboss.testharness.spi.Containers;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -37,7 +40,6 @@ import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -154,6 +156,36 @@ public class ContainersImpl implements Containers {
                 if (resource != null) resources.put("META-INF/persistence.xml", resource);
             }
 
+            if (clazz.isAnnotationPresent(ValidationXml.class)) {
+                String path = clazz.getAnnotation(ValidationXml.class).value();
+                if (path.contains(".jar")) {
+                    path = path.substring(path.indexOf( "!" ) + 2);
+                }
+
+                final URL resource = getResource(clazz, path);
+                if (resource != null) {
+                    resources.put("META-INF/validation.xml", resource);
+                }
+            }
+
+            if (clazz.isAnnotationPresent(Resource.class)) {
+                Resource resourceAnn = clazz.getAnnotation(Resource.class);
+                final URL resource = getResource(clazz, resourceAnn.source());
+                if (resource != null) {
+                    resources.put(resourceAnn.destination().replaceFirst("WEB-INF/classes/", ""), resource);
+                }
+            }
+
+            if (clazz.isAnnotationPresent(Resources.class)) {
+                Resources resourcesAnn = clazz.getAnnotation(Resources.class);
+                for (Resource resourceAnn : resourcesAnn.value()) {
+                    final URL resource = getResource(clazz, resourceAnn.source());
+                    if (resource != null) {
+                        resources.put(resourceAnn.destination().replaceFirst("WEB-INF/classes/", ""), resource);
+                    }
+                }
+            }
+
             final boolean isJar = name.endsWith(".jar");
 
             final ZipInputStream zin = new ZipInputStream(archive);
@@ -187,7 +219,7 @@ public class ContainersImpl implements Containers {
                 ZipUtil.copy(entry.getValue().openStream(), zout);
             }
 
-            if (System.getProperty("force.deployment") != null) {
+            if (System.getProperty("force.deployment") != null && !resources.containsKey("META-INF/beans.xml")) {
                 zout.putNextEntry(new ZipEntry("META-INF/beans.xml"));
                 final InputStream in = new ByteArrayInputStream("<beans />".getBytes());
                 ZipUtil.copy(in, zout);
