@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.tck.cdi.embedded;
+package org.apache.openejb.tck.impl;
 
 import java.net.URL;
 import java.util.Collection;
@@ -31,6 +31,10 @@ public class StandaloneContainersImpl
 
     private final ContainersImpl containers = new ContainersImpl();
 
+    protected ContainersImpl getContainers() {
+        return containers;
+    }
+
     @Override
     public void deploy(Collection<Class<?>> classes)
         throws DeploymentException
@@ -39,9 +43,9 @@ public class StandaloneContainersImpl
     }
 
     @Override
-    public boolean deploy(Collection<Class<?>> classes, Collection<URL> beansXmls)
+    public boolean deploy(Collection<Class<?>> classes, Collection<URL> xmls)
     {
-        final Archive archive = new Archive(beansXmls, classes);
+        final Archive archive = new Archive(xmls, classes);
         return containers.deploy(archive.getIn(), archive.getName());
     }
 
