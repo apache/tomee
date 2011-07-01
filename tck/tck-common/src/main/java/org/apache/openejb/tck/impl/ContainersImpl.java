@@ -20,6 +20,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.tck.util.ZipUtil;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.testharness.api.DeploymentException;
@@ -176,20 +177,20 @@ public class ContainersImpl implements Containers {
 
                 zout.putNextEntry(new ZipEntry(entryName));
 
-                copy(src, zout);
+                ZipUtil.copy(src, zout);
             }
 
             for (Map.Entry<String, URL> entry : resources.entrySet()) {
 
                 zout.putNextEntry(new ZipEntry(entry.getKey()));
 
-                copy(entry.getValue().openStream(), zout);
+                ZipUtil.copy(entry.getValue().openStream(), zout);
             }
 
-            if (!resources.containsKey("META-INF/beans.xml")) { // force it to be a module
+            if (System.getProperty("force.deployment") != null) {
                 zout.putNextEntry(new ZipEntry("META-INF/beans.xml"));
                 final InputStream in = new ByteArrayInputStream("<beans />".getBytes());
-                copy(in, zout);
+                ZipUtil.copy(in, zout);
                 in.close();
             }
 
@@ -210,14 +211,6 @@ public class ContainersImpl implements Containers {
         final FileOutputStream fileOutputStream = new FileOutputStream(file);
         fileOutputStream.write(bytes);
         fileOutputStream.close();
-    }
-
-    private static void copy(InputStream from, OutputStream to) throws IOException {
-        byte[] buffer = new byte[1024];
-        int length = 0;
-        while ((length = from.read(buffer)) != -1) {
-            to.write(buffer, 0, length);
-        }
     }
 
     public static void close(Closeable closeable) throws IOException {
