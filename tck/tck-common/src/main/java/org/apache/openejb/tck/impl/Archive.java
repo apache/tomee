@@ -46,7 +46,6 @@ import static junit.framework.Assert.fail;
  * @version $Rev$ $Date$
  */
 public class Archive {
-
     private final String name;
 
     private final InputStream in;
@@ -103,26 +102,17 @@ public class Archive {
 
                 out.putNextEntry(new ZipEntry(name));
 
-                final InputStream in = new
-                        BufferedInputStream(url.openStream());
+                final InputStream in = new BufferedInputStream(url.openStream());
 
                 ZipUtil.copy(in, out);
 
-                in.close();
-            }
-
-            if (System.getProperty("force.deployment") != null) {
-                out.putNextEntry(new ZipEntry("META-INF/beans.xml"));
-                final InputStream in = new ByteArrayInputStream("<beans />".getBytes());
-                ZipUtil.copy(in, out);
                 in.close();
             }
 
             // Complete the ZIP file
             out.close();
 
-            this.in = new
-                    ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            this.in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
