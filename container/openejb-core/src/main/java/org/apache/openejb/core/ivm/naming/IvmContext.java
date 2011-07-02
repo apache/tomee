@@ -50,13 +50,9 @@ import javax.naming.InitialContext;
 import javax.naming.spi.ObjectFactory;
 
 import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.assembler.classic.JndiBuilder;
 import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
-import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.naming.context.ContextUtil;
 
 /*
@@ -69,6 +65,7 @@ import org.apache.xbean.naming.context.ContextUtil;
  * @org.apache.xbean.XBean element="ivmContext"
  */
 public class IvmContext implements Context, Serializable {
+
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
     boolean readOnly = false;
@@ -146,16 +143,14 @@ public class IvmContext implements Context, Serializable {
         */
         Object obj = fastCache.get(compoundName);
         if (obj == null) {
+
             try {
                 obj = mynode.resolve(new ParsedName(compoundName));
             } catch (NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
 
-            // don't cache proxies
-            if (!(obj instanceof IntraVmProxy)) {
-            	fastCache.put(compoundName, obj);
-            }
+            fastCache.put(compoundName, obj);
         }
 
         if (obj == null){
