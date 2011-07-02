@@ -43,7 +43,7 @@ public class OWBContextThreadListener implements ThreadContextListener {
         //TODO its not clear what the scope for one of these context should be: ejb, module, or app
         //For now, go with the attachment of the BeanManager to AppContext
         AppContext appContext = moduleContext.getAppContext();
-        WebBeansContext owbContext = appContext.get(WebBeansContext.class);
+        WebBeansContext owbContext = appContext.getWebBeansContext();
         if (owbContext == null) {
 //            throw new IllegalStateException("WebBeansContext not initialized in appContext " + appContext);
             return;

@@ -27,21 +27,31 @@ import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
+import javax.el.ELResolver;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.jsp.JspApplicationContext;
+import javax.servlet.jsp.JspFactory;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.webbeans.component.InjectionPointBean;
 import org.apache.webbeans.component.NewBean;
 import org.apache.webbeans.config.OWBLogConst;
+import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -57,10 +67,10 @@ import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.ScannerService;
+import org.apache.webbeans.spi.adaptor.ELAdaptor;
 import org.apache.webbeans.util.WebBeansConstants;
 import org.apache.webbeans.util.WebBeansUtil;
 import org.apache.webbeans.xml.WebBeansXMLConfigurator;
-import org.apache.xbean.finder.ResourceFinder;
 
 /**
  * @version $Rev:$ $Date:$
@@ -88,17 +98,19 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     /**Root container.*/
     private final BeanManagerImpl beanManager;
     private final WebBeansContext webBeansContext;
+    /**Manages unused conversations*/
+    private ScheduledExecutorService service = null;
 
-    public OpenEJBLifecycle()
-    {
-        this(null);
+    //TODO make sure this isn't used and remove it
+    public OpenEJBLifecycle() {
+        this(WebBeansContext.currentInstance());
     }
 
-    public OpenEJBLifecycle(Properties properties)
+    public OpenEJBLifecycle(WebBeansContext webBeansContext)
     {
-        beforeInitApplication(properties);
+        this.webBeansContext = webBeansContext;
+        beforeInitApplication(null);
 
-        webBeansContext = WebBeansContext.getInstance();
         this.beanManager = webBeansContext.getBeanManagerImpl();
         this.xmlDeployer = new WebBeansXMLConfigurator();
         this.deployer = new BeansDeployer(this.xmlDeployer, webBeansContext);
@@ -107,7 +119,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         this.scannerService = webBeansContext.getScannerService();
         this.contextsService = webBeansContext.getContextsService();
 
-        initApplication(properties);
+        initApplication(null);
     }
 
     @Override
@@ -466,14 +478,109 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
         //Do nothing as default
     }
 
-    protected void afterStartApplication(Object startupObject)
+    protected void afterStartApplication(final Object startupObject)
     {
-        //Do nothing as default
+    }
+
+    public void startServletContext(final ServletContext startupObject) {
+        String strDelay = webBeansContext.getOpenWebBeansConfiguration().getProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "150000");
+        long delay = Long.parseLong(strDelay);
+
+        service = Executors.newScheduledThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runable) {
+                Thread t = new Thread(runable, "OwbConversationCleaner-" + ((ServletContext) (startupObject)).getContextPath());
+                t.setDaemon(true);
+                return t;
+            }
+        });
+        service.scheduleWithFixedDelay(new ConversationCleaner(webBeansContext), delay, delay, TimeUnit.MILLISECONDS);
+
+        ELAdaptor elAdaptor = webBeansContext.getService(ELAdaptor.class);
+        ELResolver resolver = elAdaptor.getOwbELResolver();
+        //Application is configured as JSP
+        if (webBeansContext.getOpenWebBeansConfiguration().isJspApplication()) {
+            logger.debug("Application is configured as JSP. Adding EL Resolver.");
+
+            JspFactory factory = JspFactory.getDefaultFactory();
+            if (factory != null) {
+                JspApplicationContext applicationCtx = factory.getJspApplicationContext((ServletContext) (startupObject));
+                applicationCtx.addELResolver(resolver);
+            } else {
+                logger.debug("Default JSPFactroy instance has not found");
+            }
+        }
+
+        // Add BeanManager to the 'javax.enterprise.inject.spi.BeanManager' servlet context attribute
+        ServletContext servletContext = (ServletContext) (startupObject);
+        servletContext.setAttribute(BeanManager.class.getName(), getBeanManager());
+
+    }
+
+    /**
+     * Conversation cleaner thread, that
+     * clears unused conversations.
+     *
+     */
+    private static class ConversationCleaner implements Runnable
+    {
+        private final WebBeansContext webBeansContext;
+
+        private ConversationCleaner(WebBeansContext webBeansContext) {
+            this.webBeansContext = webBeansContext;
+        }
+
+        public void run()
+        {
+            webBeansContext.getConversationManager().destroyWithRespectToTimout();
+
+        }
     }
 
     protected void afterStopApplication(Object stopObject) throws Exception
     {
-        //Do nothing as default
+
+        //Clear the resource injection service
+        ResourceInjectionService injectionServices = webBeansContext.getService(ResourceInjectionService.class);
+        if(injectionServices != null)
+        {
+            injectionServices.clear();
+        }
+
+        //Comment out for commit OWB-502
+        //ContextFactory.cleanUpContextFactory();
+
+        this.cleanupShutdownThreadLocals();
+
+        if (logger.wblWillLogInfo())
+        {
+            stopObject = getServletContext(stopObject);
+            logger.info(OWBLogConst.INFO_0002, stopObject instanceof ServletContext? ((ServletContext)stopObject).getContextPath() : stopObject);
+        }
+    }
+
+    /**
+     * Ensures that all ThreadLocals, which could have been set in this
+     * (shutdown-) Thread, are removed in order to prevent memory leaks.
+     */
+    private void cleanupShutdownThreadLocals()
+    {
+        // TODO maybe there are more to cleanup
+
+        InjectionPointBean.removeThreadLocal();
+    }
+
+    /**
+     * Returns servelt context otherwise throws exception.
+     * @param object object
+     * @return servlet context
+     */
+    private Object getServletContext(Object object) {
+        if (object instanceof ServletContextEvent) {
+            object = ((ServletContextEvent) object).getServletContext();
+            return object;
+        }
+        return object;
     }
 
     protected void beforeStartApplication(Object startupObject)
@@ -483,6 +590,9 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     protected void beforeStopApplication(Object stopObject) throws Exception
     {
-        //Do nothing as default
+        if(service != null)
+        {
+            service.shutdownNow();
+        }
     }
 }
