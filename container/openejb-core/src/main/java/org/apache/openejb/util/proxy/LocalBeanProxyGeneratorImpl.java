@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.xbean.asm.ClassWriter;
 import org.apache.xbean.asm.FieldVisitor;
 import org.apache.xbean.asm.Label;
@@ -90,7 +89,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
         String proxyClassName = proxyName.replaceAll("\\.", "/");
 
         // push class signature
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, new String[] { getAsmTypeAsString(IntraVmProxy.class, true) });
+        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, proxyClassName, null, clsToOverride, null);
 		cw.visitSource(clsToOverride + ".java", null);
 
 		// push InvocationHandler fields
@@ -125,7 +124,7 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 		mv.visitMaxs(0, 0);
 		mv.visitEnd();
 
-		Map<String, List<Method>> methodMap = getNonPrivateMethods(new Class[] { clsToProxy, IntraVmProxy.class });
+		Map<String, List<Method>> methodMap = getNonPrivateMethods(clsToProxy);
 
 		for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
 		    for (Method method : entry.getValue()) {	
@@ -153,39 +152,34 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 	 * that are not final or static. The returned map includes the inherited methods
 	 * and ensures that overridden methods are included once.
 	 */
-	private Map<String, List<Method>> getNonPrivateMethods(Class<?>[] classes) {
-		Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
-		
-		for (int i = 0; i < classes.length; i++) {
-			Class<?> clazz = classes[i];
-		    
-	        while (clazz != null) {
-	            for (Method method : clazz.getDeclaredMethods()) {
-	                int modifiers = method.getModifiers();
-	                if (Modifier.isFinal(modifiers) || 
-	                    Modifier.isPrivate(modifiers) || 
-	                    Modifier.isStatic(modifiers)) {
-	                    continue;
-	                }
-	                
-	                List<Method> methods = methodMap.get(method.getName());
-	                if (methods == null) {
-	                    methods = new ArrayList<Method>();
-	                    methods.add(method);
-	                    methodMap.put(method.getName(), methods);
-	                } else {
-	                    if (isOverridden(methods, method)) {
-	                        // method is overridden in superclass, so do nothing
-	                    } else {
-	                        // method is not overridden, so add it
-	                        methods.add(method);
-	                    }
-	                }
-	            }
-	            
-	            clazz = clazz.getSuperclass();
-	        }
-		}
+	private Map<String, List<Method>> getNonPrivateMethods(Class<?> clazz) {
+	    Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        while (clazz != null) {
+            for (Method method : clazz.getDeclaredMethods()) {
+                int modifiers = method.getModifiers();
+                if (Modifier.isFinal(modifiers) || 
+                    Modifier.isPrivate(modifiers) || 
+                    Modifier.isStatic(modifiers)) {
+                    continue;
+                }
+                
+                List<Method> methods = methodMap.get(method.getName());
+                if (methods == null) {
+                    methods = new ArrayList<Method>();
+                    methods.add(method);
+                    methodMap.put(method.getName(), methods);
+                } else {
+                    if (isOverridden(methods, method)) {
+                        // method is overridden in superclass, so do nothing
+                    } else {
+                        // method is not overridden, so add it
+                        methods.add(method);
+                    }
+                }
+            }
+            
+            clazz = clazz.getSuperclass();
+        }
         return methodMap;
 	}
 	
