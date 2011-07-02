@@ -443,19 +443,19 @@ public class JaxbJavaee {
             
             if (localName.equals("application") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("6")){
                 AttributesImpl newAtts = new AttributesImpl(atts);
-                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                newAtts.setValue(newAtts.getIndex("version"), "6");
                 return newAtts;
             } 
             
             if (localName.equals("application-client") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("6")){
                 AttributesImpl newAtts = new AttributesImpl(atts);
-                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                newAtts.setValue(newAtts.getIndex("version"), "6");
                 return newAtts;
             } 
             
             if (localName.equals("connector") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("1.6")){
                 AttributesImpl newAtts = new AttributesImpl(atts);
-                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                newAtts.setValue(newAtts.getIndex("version"), "1.6");
                 return newAtts;
             } 
             
