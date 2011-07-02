@@ -94,6 +94,7 @@ public class JspPropertyGroup {
     protected LocalCollection<Icon> icon = new LocalCollection<Icon>();
 
     @XmlElement(name = "url-pattern", required = true)
+    @XmlJavaTypeAdapter(TrimStringAdapter.class)
     protected List<String> urlPattern;
     @XmlElement(name = "el-ignored")
     protected Boolean elIgnored;
