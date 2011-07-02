@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://java.sun.com/xml/ns/javaee"
+            xmlns:javaee="http://java.sun.com/xml/ns/javaee"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            version="2.0">
+  <xsd:annotation>
+    <xsd:documentation>
+      javaee_web_services_metadata_handler.xsd v2.0.1 11/09/2007
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:annotation>
+    <xsd:documentation>
+
+      Copyright 2004-2007 BEA Systems, Inc.
+
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="javaee_5.xsd"/>
+
+  <xsd:element name="handler-chains"
+               type="javaee:service-ref_handler-chainsType">
+    <xsd:annotation>
+      <xsd:documentation>
+
+	The handler-chains element is the root element for defining
+	handlerchains.
+
+	The Web Services Metadata for the Java Platform (JSR-181), Version 2.0
+	specification defines the @javax.jws.HandlerChain annotation
+	that refers to an XML descriptor conforming to this schema.
+
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+</xsd:schema>
