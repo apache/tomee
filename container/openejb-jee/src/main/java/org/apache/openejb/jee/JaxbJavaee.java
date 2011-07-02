@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.net.URL;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -38,12 +41,19 @@ import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
@@ -92,11 +102,11 @@ public class JaxbJavaee {
      * @throws JAXBException if the xml cannot be marshalled into a T.
      */
     public static <T>Object unmarshalJavaee(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
-        InputSource inputSource = new InputSource(in);
-
+        
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
+        
         SAXParser parser = factory.newSAXParser();
 
         JAXBContext ctx = JaxbJavaee.getContext(type);
@@ -108,12 +118,12 @@ public class JaxbJavaee {
             }
         });
 
-
         JavaeeNamespaceFilter xmlFilter = new JavaeeNamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
-
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
-
+        
+        // unmarshall
+        SAXSource source = new SAXSource(xmlFilter, new InputSource(in));
+        
         currentPublicId.set(new TreeSet<String>());
         try {
             JAXBElement<T> element = unmarshaller.unmarshal(source, type);
@@ -234,7 +244,6 @@ public class JaxbJavaee {
             }
         });
 
-
         JaxbJavaee.HandlerChainsNamespaceFilter xmlFilter = new JaxbJavaee.HandlerChainsNamespaceFilter(parser.getXMLReader());
         xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
         HandlerChainsStringQNameAdapter adapter = new HandlerChainsStringQNameAdapter();
@@ -277,6 +286,7 @@ public class JaxbJavaee {
             super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
         }
     }
+    
     public static class NoSourceFilter extends XMLFilterImpl {
         private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
@@ -395,4 +405,269 @@ public class JaxbJavaee {
             super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
         }
     }
+
+    public static class Javaee6SchemaFilter extends XMLFilterImpl {
+        private static final InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
+
+        public Javaee6SchemaFilter(XMLReader xmlReader) {
+            super(xmlReader);
+        }
+
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            Set<String> publicIds = currentPublicId.get();
+            if (publicIds != null) {
+                publicIds.add(publicId);
+            }
+            return EMPTY_INPUT_SOURCE;
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qname, Attributes atts) throws SAXException {
+            super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, fixVersion(localName, atts));
+            
+        }
+
+        private Attributes fixVersion(String localName, Attributes atts){
+            if (localName.equals("web-app") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("3.0")) {
+                AttributesImpl newAtts = new AttributesImpl(atts);
+                newAtts.setValue(newAtts.getIndex("version"), "3.0");
+                return newAtts;
+            } 
+            
+            if (localName.equals("ejb-jar") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("3.1")){
+                AttributesImpl newAtts = new AttributesImpl(atts);
+                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                return newAtts;
+            } 
+            
+            if (localName.equals("application") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("6")){
+                AttributesImpl newAtts = new AttributesImpl(atts);
+                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                return newAtts;
+            } 
+            
+            if (localName.equals("application-client") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("6")){
+                AttributesImpl newAtts = new AttributesImpl(atts);
+                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                return newAtts;
+            } 
+            
+            if (localName.equals("connector") && atts.getIndex("version")!=-1 && !atts.getValue(atts.getIndex("version")).equals("1.6")){
+                AttributesImpl newAtts = new AttributesImpl(atts);
+                newAtts.setValue(newAtts.getIndex("version"), "3.1");
+                return newAtts;
+            } 
+            
+            return atts;
+        }
+        
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            super.endElement("http://java.sun.com/xml/ns/javaee", localName, qName);
+        }
+    }
+    
+
+    /**
+     * validate the inputStream, which should be a Java EE standard deployment descriptor against its schema type
+     * Note, this method will use the new Java EE 6 schema to validate the old descriptors after changing their namespace and version.
+     * @param type
+     * @param in
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    public static void validateJavaee(JavaeeSchema type, InputStream in) throws ParserConfigurationException, SAXException, IOException {
+        URL javaeeSchemaURL = resolveJavaeeSchemaURL(type);
+        if (javaeeSchemaURL == null) {
+            throw new IllegalArgumentException("Can not find the xsd file against type:" + type);
+        }
+        
+        URL xmlSchemaURL = JaxbJavaee.getSchemaURL("xml.xsd");
+        if (xmlSchemaURL == null) {
+            throw new IllegalArgumentException("Can not find the xml.xsd file");
+        }
+        
+        // get the parser
+        SAXParserFactory parserfactory = SAXParserFactory.newInstance();
+        parserfactory.setNamespaceAware(true);
+        parserfactory.setValidating(false);
+        SAXParser parser = parserfactory.newSAXParser();
+        
+        // get the xml filter
+        Javaee6SchemaFilter xmlFilter = new Javaee6SchemaFilter(parser.getXMLReader());
+        
+        // get the source
+        SAXSource sourceForValidate = new SAXSource(xmlFilter, new InputSource(in));
+        
+        // get the schema
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        
+        JaxbJavaeeSchemaResourceResolver resourceResolver = new JaxbJavaeeSchemaResourceResolver();  
+        schemaFactory.setResourceResolver(resourceResolver);  
+        
+        Schema schema = schemaFactory.newSchema(
+                new Source[] {
+                        new StreamSource(xmlSchemaURL.openStream()),
+                        new StreamSource(javaeeSchemaURL.openStream())
+                });
+
+        // validate
+        schema.newValidator().validate(sourceForValidate);
+    }
+    
+    private static URL getSchemaURL(String xsdFileName){
+        return JaxbJavaee.class.getClassLoader().getResource("/META-INF/schema/" + xsdFileName);
+    }
+    
+    private static URL resolveJavaeeSchemaURL(JavaeeSchema type){
+        URL schemaURL = null;
+        if (type.equals(JavaeeSchema.WEB_APP_3_0)){
+            //will include web-common.xsd, jsp_2_2.xsd, javaee_6.xsd and javaee_web_services_client_1_3.xsd
+            schemaURL = JaxbJavaee.getSchemaURL(JavaeeSchema.WEB_APP_3_0.getSchemaFileName());
+        } else if (type.equals(JavaeeSchema.EJB_JAR_3_1)) {
+            schemaURL = JaxbJavaee.getSchemaURL(JavaeeSchema.EJB_JAR_3_1.getSchemaFileName());
+        } else if (type.equals(JavaeeSchema.APPLICATION_6)) {
+            schemaURL = JaxbJavaee.getSchemaURL(JavaeeSchema.APPLICATION_6.getSchemaFileName());
+        } else if (type.equals(JavaeeSchema.APPLICATION_CLIENT_6)) {
+            schemaURL = JaxbJavaee.getSchemaURL(JavaeeSchema.APPLICATION_CLIENT_6.getSchemaFileName());
+        } else if (type.equals(JavaeeSchema.CONNECTOR_1_6)) {
+            schemaURL = JaxbJavaee.getSchemaURL(JavaeeSchema.CONNECTOR_1_6.getSchemaFileName());
+        }
+        
+        return schemaURL;
+    }
+    
+    static class JaxbJavaeeSchemaResourceResolver implements LSResourceResolver {  
+        
+        /**  
+         * Allow the application to resolve external resources.   
+         */
+        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {  
+//            System.out.println("\n>> Resolving "  +  "\n"   
+//                              + "TYPE: "  + type +  "\n"   
+//                              + "NAMESPACE_URI: "  + namespaceURI +  "\n"    
+//                              + "PUBLIC_ID: "  + publicId +  "\n"   
+//                              + "SYSTEM_ID: "  + systemId +  "\n"   
+//                              + "BASE_URI: "  + baseURI +  "\n" );  
+              
+            LSInput lsInput = new LSInputImpl();  
+              
+            // In all Java EE schema xsd files, the <xsd:include schemaLocation=../> always reference to a relative path. 
+            // so the systemId here will be the xsd file name.
+            URL schemaURL = JaxbJavaee.getSchemaURL(systemId);
+
+            InputStream is = null;
+            if (schemaURL!=null) {
+                try {
+                    is = schemaURL.openStream();
+                } catch (IOException e) {
+                    //should not happen
+                    throw new RuntimeException(e);
+                }
+            }
+                        
+            lsInput.setSystemId(systemId);  
+            lsInput.setByteStream(is);  
+          
+            return  lsInput;  
+        }  
+        
+        
+        
+        /**  
+         *   
+         * Represents an input source for data  
+         *  
+         */   
+        class LSInputImpl implements LSInput {  
+      
+            private String publicId;  
+            private String systemId;  
+            private String baseURI;  
+            private InputStream byteStream;  
+            private Reader charStream;  
+            private String stringData;  
+            private String encoding;  
+            private boolean certifiedText;  
+            
+            public LSInputImpl() {
+            }
+
+            public LSInputImpl(String publicId, String systemId, InputStream byteStream) {
+                this.publicId = publicId;
+                this.systemId = systemId;
+                this.byteStream = byteStream;
+            }
+
+            public String getBaseURI() {
+                return baseURI;
+            }
+
+            public InputStream getByteStream() {
+                return byteStream;
+            }
+
+            public boolean getCertifiedText() {
+                return certifiedText;
+            }
+
+            public Reader getCharacterStream() {
+                return charStream;
+            }
+
+            public String getEncoding() {
+                return encoding;
+            }
+
+            public String getPublicId() {
+                return publicId;
+            }
+
+            public String getStringData() {
+                return stringData;
+            }
+
+            public String getSystemId() {
+                return systemId;
+            }
+
+            public void setBaseURI(String baseURI) {
+                this.baseURI = baseURI;
+            }
+
+            public void setByteStream(InputStream byteStream) {
+                this.byteStream = byteStream;
+            }
+
+            public void setCertifiedText(boolean certifiedText) {
+                this.certifiedText = certifiedText;
+            }
+
+            public void setCharacterStream(Reader characterStream) {
+                this.charStream = characterStream;
+            }
+
+            public void setEncoding(String encoding) {
+                this.encoding = encoding;
+            }
+
+            public void setPublicId(String publicId) {
+                this.publicId = publicId;
+            }
+
+            public void setStringData(String stringData) {
+                this.stringData = stringData;
+            }
+
+            public void setSystemId(String systemId) {
+                this.systemId = systemId;
+            }  
+              
+        }  
+      
+    }  
+
 }
+
