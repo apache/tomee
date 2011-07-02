@@ -28,7 +28,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
+      <directory>${basedir}/target/apache-tomcat-7.0.16</directory>
       <outputDirectory>/apache-tomee-${version}</outputDirectory>
       <includes>
         <include>**/*</include>
@@ -38,7 +38,7 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/apache-tomcat-7.0.11</directory>
+      <directory>${basedir}/target/apache-tomcat-7.0.16</directory>
       <outputDirectory>/apache-tomee-${version}</outputDirectory>
       <includes>
         <include>**/bin/**/*</include>
