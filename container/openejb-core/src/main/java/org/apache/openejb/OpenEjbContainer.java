@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import javax.validation.ValidationException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.OWBInjector;
@@ -270,6 +271,8 @@ public class OpenEjbContainer extends EJBContainer {
 
                 try {
                     appContext = assembler.createApplication(appInfo, appModule.getClassLoader());
+                } catch (ValidationException ve) {
+                    throw ve;
                 } catch (Exception e) {
                     throw new AssembleApplicationException(e);
                 }
@@ -285,6 +288,8 @@ public class OpenEjbContainer extends EJBContainer {
 
                 throw new EJBException(e);
 
+            } catch (ValidationException ve) {
+                throw ve;
             } catch (Exception e) {
 
                 if (e instanceof EJBException) {
