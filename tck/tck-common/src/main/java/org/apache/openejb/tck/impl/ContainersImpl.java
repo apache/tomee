@@ -16,10 +16,14 @@
  */
 package org.apache.openejb.tck.impl;
 
+import javax.ejb.EJBException;
+import javax.ejb.embeddable.EJBContainer;
+import javax.validation.ValidationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.tck.OpenEJBTckDeploymentRuntimeException;
 import org.apache.openejb.tck.util.ZipUtil;
 import org.apache.openejb.util.SetAccessible;
 import org.apache.webbeans.config.WebBeansContext;
@@ -31,7 +35,6 @@ import org.jboss.testharness.impl.packaging.ear.PersistenceXml;
 import org.jboss.testharness.impl.packaging.jsr303.ValidationXml;
 import org.jboss.testharness.spi.Containers;
 
-import javax.ejb.embeddable.EJBContainer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -43,6 +46,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Collection;
@@ -61,6 +65,7 @@ public class ContainersImpl implements Containers {
 
     private Exception exception;
     private EJBContainer container;
+    private ClassLoader originalClassLoader;
 
     @Override
     public boolean deploy(InputStream archive, String name) {
@@ -76,17 +81,23 @@ public class ContainersImpl implements Containers {
             assembler.destroy();
         }
         try {
+            final File file = writeToFile(archive, name);
             final Map<String, Object> map = new HashMap<String, Object>();
-            map.put(EJBContainer.MODULES, writeToFile(archive, name));
+            map.put(EJBContainer.MODULES, file);
             map.put(EJBContainer.APP_NAME, name);
 
+            originalClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[]{ file.toURI().toURL() }, originalClassLoader));
             container = EJBContainer.createEJBContainer(map);
 
             final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get();
             dump(webBeansContext.getBeanManagerImpl());
-
         } catch (Exception e) {
-            exception = e;
+            if (e instanceof EJBException && e.getCause() instanceof ValidationException) {
+                exception = ValidationException.class.cast(e.getCause());
+            } else {
+                exception = e;
+            }
             return false;
         }
 
@@ -95,7 +106,7 @@ public class ContainersImpl implements Containers {
 
     private void dump(Object o) {
         try {
-            final Class<? extends Object> clazz = o.getClass();
+            final Class<?> clazz = o.getClass();
 
             for (Field field : clazz.getDeclaredFields()) {
                 SetAccessible.on(field);
@@ -106,7 +117,7 @@ public class ContainersImpl implements Containers {
                 }
             }
         } catch (Exception e) {
-
+            // no-op
         }
     }
 
@@ -165,6 +176,8 @@ public class ContainersImpl implements Containers {
                 final URL resource = getResource(clazz, path);
                 if (resource != null) {
                     resources.put("META-INF/validation.xml", resource);
+                } else {
+                    throw new OpenEJBTckDeploymentRuntimeException("can't find validation descriptor file " + path);
                 }
             }
 
@@ -204,19 +217,17 @@ public class ContainersImpl implements Containers {
                 if (resources.containsKey(entryName)) {
                     src = resources.get(entryName).openStream();
                 }
-
                 resources.remove(entryName);
 
                 zout.putNextEntry(new ZipEntry(entryName));
-
                 ZipUtil.copy(src, zout);
             }
 
             for (Map.Entry<String, URL> entry : resources.entrySet()) {
-
                 zout.putNextEntry(new ZipEntry(entry.getKey()));
-
-                ZipUtil.copy(entry.getValue().openStream(), zout);
+                InputStream in = entry.getValue().openStream();
+                ZipUtil.copy(in, zout);
+                in.close();
             }
 
             if (System.getProperty("force.deployment") != null && !resources.containsKey("META-INF/beans.xml")) {
@@ -252,10 +263,12 @@ public class ContainersImpl implements Containers {
                 ((Flushable) closeable).flush();
             }
         } catch (IOException e) {
+            // no-op
         }
         try {
             closeable.close();
         } catch (IOException e) {
+            // no-op
         }
     }
 
@@ -267,7 +280,12 @@ public class ContainersImpl implements Containers {
 
     @Override
     public void undeploy(String name) {
-        if (container != null) container.close();
+        if (container != null) {
+            container.close();
+        }
+        if (originalClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
     }
 
     @Override
