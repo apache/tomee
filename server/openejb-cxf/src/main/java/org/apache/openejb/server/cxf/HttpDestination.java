@@ -361,7 +361,7 @@ public class HttpDestination extends AbstractHTTPDestination {
             // set response code
             Integer i = (Integer) this.message.get(Message.RESPONSE_CODE);
             if (i != null) {
-                this.response.setStatusCode(i.intValue());
+                this.response.setStatus(i.intValue());
             }
 
             // set content-type

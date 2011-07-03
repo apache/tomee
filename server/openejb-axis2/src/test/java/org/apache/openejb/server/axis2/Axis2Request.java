@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.server.axis2;
 
+import javax.servlet.ServletInputStream;
 import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpSession;
 
 import java.io.IOException;
@@ -25,12 +27,12 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-class Axis2Request implements HttpRequest {
+class Axis2Request extends HttpRequestImpl {
     private int contentLength;
 
     private String contentType;
 
-    private InputStream in;
+    private ServletInputStream in;
 
     private Method method;
 
@@ -44,7 +46,8 @@ class Axis2Request implements HttpRequest {
 
     private String remoteAddress;
 
-    public Axis2Request(int contentLength, String contentType, InputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+    public Axis2Request(int contentLength, String contentType, ServletInputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+        super(uri);
         this.contentLength = contentLength;
         this.contentType = contentType;
         this.in = in;
@@ -68,12 +71,12 @@ class Axis2Request implements HttpRequest {
         return headers.get(name);
     }
 
-    public InputStream getInputStream() throws IOException {
+    public ServletInputStream getInputStream() throws IOException {
         return in;
     }
 
-    public Method getMethod() {
-        return method;
+    public String getMethod() {
+        return method.name();
     }
 
     public String getParameter(String name) {

@@ -61,7 +61,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
             }
         }
 
-        if (token != null || HttpRequest.Method.GET == request.getMethod()) {
+        if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
             httpListener.onMessage(request, response);
         } else {
             // login failed,  return 401

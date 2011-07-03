@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.server.axis2;
 
+import javax.servlet.ServletOutputStream;
 import org.apache.openejb.server.httpd.HttpResponse;
+import org.apache.openejb.server.httpd.HttpResponseImpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,14 +27,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-class Axis2Response implements HttpResponse {
+class Axis2Response extends HttpResponseImpl {
     private int contentLength;
 
     private String contentType;
 
     private String host;
 
-    private OutputStream out;
+    private ServletOutputStream out;
 
     private int method;
 
@@ -50,7 +52,7 @@ class Axis2Response implements HttpResponse {
 
     private String statusMessage;
 
-    public Axis2Response(String contentType, String host, String path, URL uri, int port, OutputStream out) {
+    public Axis2Response(String contentType, String host, String path, URL uri, int port, ServletOutputStream out) {
         this.contentType = contentType;
         this.host = host;
         this.parameters = new HashMap<String,String>();
@@ -73,7 +75,7 @@ class Axis2Response implements HttpResponse {
         return host;
     }
 
-    public OutputStream getOutputStream() {
+    public ServletOutputStream getOutputStream() {
         return out;
     }
 

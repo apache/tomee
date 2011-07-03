@@ -16,19 +16,14 @@
  */
 package org.apache.openejb.server.httpd;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.net.URLEncoder;
+import java.util.*;
 
 /** This class takes care of HTTP Responses.  It sends data back to the browser.
  */
@@ -49,7 +44,7 @@ public class HttpResponseImpl implements HttpResponse {
     /** the writer for the response */
     private transient PrintWriter writer;
     /** the raw body */
-    private transient ByteArrayOutputStream baos;
+    private transient ServletByteArrayOutputStream sosi;
 
     /** the HTTP version */
     public static final String HTTP_VERSION = "HTTP/1.1";
@@ -65,6 +60,10 @@ public class HttpResponseImpl implements HttpResponse {
     private HttpRequestImpl request;
     private URLConnection content;
 
+    private boolean commited = false;
+    private String encoding = "UTF-8";
+    private Locale locale = Locale.getDefault();
+
     protected void setRequest(HttpRequestImpl request){
         this.request = request;
     }
@@ -77,6 +76,71 @@ public class HttpResponseImpl implements HttpResponse {
         headers.put(name, value);
     }
 
+    @Override
+    public void setIntHeader(String s, int i) {
+        headers.put(s, Integer.toString(i));
+    }
+
+    @Override
+    public void setStatus(int i) {
+        setCode(i);
+    }
+
+    @Override
+    public void setStatus(int i, String s) {
+        setCode(i);
+        setStatusMessage(s);
+    }
+
+    @Override
+    public void addCookie(Cookie cookie) {
+        headers.put(cookie.getName(), cookie.getValue());
+    }
+
+    @Override
+    public void addDateHeader(String s, long l) {
+        headers.put(s, Long.toString(l));
+    }
+
+    @Override
+    public void addHeader(String s, String s1) {
+        headers.put(s, s1);
+    }
+
+    @Override
+    public void addIntHeader(String s, int i) {
+        setIntHeader(s, i);
+    }
+
+    @Override
+    public boolean containsHeader(String s) {
+        return headers.containsKey(s);
+    }
+
+    @Override
+    public String encodeURL(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return s;
+        }
+    }
+
+    @Override
+    public String encodeRedirectURL(String s) {
+        return encodeURL(s);
+    }
+
+    @Override
+    public String encodeUrl(String s) {
+        return encodeURL(s);
+    }
+
+    @Override
+    public String encodeRedirectUrl(String s) {
+        return encodeRedirectURL(s);
+    }
+
     /** Gets a header based on the name passed in
      * @param name The name of the header
      * @return the value of the header
@@ -85,22 +149,71 @@ public class HttpResponseImpl implements HttpResponse {
         return headers.get(name);
     }
 
-    /** Gets the PrintWriter to send data to the browser
-     * @return the PrintWriter to send data to the browser
-     */
-    public PrintWriter getPrintWriter(){
-        return writer;
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headers.keySet();
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return Arrays.asList(headers.get(s));
+    }
+
+    @Override
+    public int getStatus() {
+        return getCode();
+    }
+
+    @Override
+    public void sendError(int i) throws IOException {
+        setCode(i);
+    }
+
+    @Override
+    public void sendError(int i, String s) throws IOException {
+        setCode(i);
+        setStatusMessage(s);
+    }
+
+    @Override
+    public void sendRedirect(String s) throws IOException {
+        // no-op
+    }
+
+    @Override
+    public void setDateHeader(String s, long l) {
+        addDateHeader(s, l);
     }
 
     /** gets the OutputStream to send data to the browser
      * @return the OutputStream to send data to the browser
      */
-    public OutputStream getOutputStream(){
-        return baos;
+    public ServletOutputStream getOutputStream(){
+        return sosi;
+    }
+
+    @Override
+    public PrintWriter getWriter() throws IOException {
+        return writer;
+    }
+
+    @Override
+    public boolean isCommitted() {
+        return commited;
     }
 
     public void flushBuffer() throws IOException {
         // there is really no way to flush
+    }
+
+    @Override
+    public int getBufferSize() {
+        return sosi.getOutputStream().size();
+    }
+
+    @Override
+    public String getCharacterEncoding() {
+        return encoding;
     }
 
     /** sets the HTTP response code to be sent to the browser.  These codes are:
@@ -118,6 +231,7 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public void setCode(int code){
         this.code = code;
+        commited = true;
     }
 
     /** gets the HTTP response code
@@ -134,11 +248,21 @@ public class HttpResponseImpl implements HttpResponse {
         setHeader("Content-Type", type);
     }
 
+    @Override
+    public void setLocale(Locale loc) {
+        locale = loc;
+    }
+
     /** gets the content type that will be sent to the browser
      * @return the content type (i.e. "text/html")
      */
     public String getContentType(){
         return getHeader("Content-Type");
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
     }
 
     /** Sets the response string to be sent to the browser
@@ -151,6 +275,26 @@ public class HttpResponseImpl implements HttpResponse {
     /** resets the data to be sent to the browser */
     public void reset(){
         initBody();
+    }
+
+    @Override
+    public void resetBuffer() {
+        sosi.getOutputStream().reset();
+    }
+
+    @Override
+    public void setBufferSize(int i) {
+        // no-op
+    }
+
+    @Override
+    public void setCharacterEncoding(String s) {
+        encoding = s;
+    }
+
+    @Override
+    public void setContentLength(int i) {
+        // no-op
     }
 
     /** resets the data to be sent to the browser with the response code and response
@@ -220,8 +364,8 @@ public class HttpResponseImpl implements HttpResponse {
 
      /** initalizes the body */
     private void initBody(){
-        baos = new ByteArrayOutputStream();
-        writer = new PrintWriter( baos );
+        sosi = new ServletByteArrayOutputStream();
+        writer = new PrintWriter(sosi);
     }
 
     /** Creates a string version of the response similar to:
@@ -253,7 +397,7 @@ public class HttpResponseImpl implements HttpResponse {
         if (content == null){
             writer.flush();
             writer.close();
-            body = baos.toByteArray();
+            body = sosi.getOutputStream().toByteArray();
             setHeader("Content-Length", body.length+"");
         } else {
             setHeader("Content-Length", content.getContentLength()+"");
@@ -363,7 +507,12 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected static HttpResponseImpl createError(String message, Throwable t){
         HttpResponseImpl res = new HttpResponseImpl(500, "Internal Server Error", "text/html");
-        PrintWriter body = res.getPrintWriter();
+        PrintWriter body = null;
+        try {
+            body = res.getWriter();
+        } catch (IOException e) { // impossible normally
+            // no-op
+        }
 
         body.println("<html>");
         body.println("<body>");
@@ -411,7 +560,12 @@ public class HttpResponseImpl implements HttpResponse {
      */
     protected static HttpResponseImpl createForbidden(String ip){
         HttpResponseImpl res = new HttpResponseImpl(403, "Forbidden", "text/html");
-        PrintWriter body = res.getPrintWriter();
+        PrintWriter body = null;
+        try {
+            body = res.getWriter();
+        } catch (IOException e) { // normally impossible
+            // no-op
+        }
 
         body.println("<html>");
         body.println("<body>");
@@ -442,7 +596,7 @@ public class HttpResponseImpl implements HttpResponse {
 
         /** Response body */
         writer.flush();
-        body = baos.toByteArray();
+        body = sosi.getOutputStream().toByteArray();
         //System.out.println("[] body "+body.length );
         out.writeObject( body );
     }
@@ -468,9 +622,9 @@ public class HttpResponseImpl implements HttpResponse {
         /** Response body */
         body = (byte[]) in.readObject();
         //System.out.println("[] body "+body.length );
-        baos = new ByteArrayOutputStream();
-        baos.write( body );
-        writer = new PrintWriter( baos );
+        sosi = new ServletByteArrayOutputStream();
+        sosi.write(body);
+        writer = new PrintWriter(sosi);
 
     }
     /**
@@ -478,14 +632,6 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public void setContent(URLConnection content) {
         this.content = content;
-    }
-
-    public void setStatusCode(int code) {
-        this.setCode(code);
-    }
-
-    public int getStatusCode() {
-        return this.getCode();
     }
 
     public void setStatusMessage(String responseString) {

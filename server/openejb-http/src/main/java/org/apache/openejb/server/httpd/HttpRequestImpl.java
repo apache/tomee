@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.server.httpd;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import org.apache.openejb.core.security.jaas.UserPrincipal;
+import org.apache.openejb.util.ArrayEnumeration;
+
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * A class to take care of HTTP Requests.  It parses headers, content, form and url
@@ -43,7 +43,7 @@ public class HttpRequestImpl implements HttpRequest {
     /**
      * 5.1.1    Method
      */
-    private Method method;
+    private String method;
 
     /**
      * 5.1.2    Request-URI
@@ -70,6 +70,8 @@ public class HttpRequestImpl implements HttpRequest {
      */
     private final Map<String,String> parameters = new HashMap<String,String>();
 
+    private final Map<String, Part> parts = new HashMap<String, Part>();
+
     /**
      * Cookies sent from the client
      */
@@ -79,7 +81,7 @@ public class HttpRequestImpl implements HttpRequest {
      * the content of the body of the request
      */
     private byte[] body;
-    private InputStream in;
+    private ServletByteArrayIntputStream in;
     private int length;
     private String contentType;
 
@@ -93,6 +95,11 @@ public class HttpRequestImpl implements HttpRequest {
      */
     private final Map<String,Object> attributes = new HashMap<String,Object>();
 
+    private String path = "/";
+    private Locale locale = Locale.getDefault();
+    private HttpSession session;
+    private String encoding = "UTF-8";
+
     public HttpRequestImpl(URI socketURI) {
         this.socketURI = socketURI;
     }
@@ -105,6 +112,21 @@ public class HttpRequestImpl implements HttpRequest {
      */
     public String getHeader(String name) {
         return headers.get(name);
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        return new ArrayEnumeration(new ArrayList<String>(headers.keySet()));
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String s) {
+        return new ArrayEnumeration(Arrays.asList(headers.get(s)));
+    }
+
+    @Override
+    public int getIntHeader(String s) {
+        return Integer.parseInt(s);
     }
 
     /**
@@ -139,8 +161,66 @@ public class HttpRequestImpl implements HttpRequest {
      * Gets the request method.
      * @return the request method
      */
-    public Method getMethod() {
+    public String getMethod() {
         return method;
+    }
+
+    @Override
+    public Part getPart(String s) throws IOException, ServletException {
+        return parts.get(s);
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return parts.values();
+    }
+
+    @Override
+    public String getPathInfo() {
+        return path;
+    }
+
+    @Override
+    public String getPathTranslated() {
+        return path;
+    }
+
+    @Override
+    public String getQueryString() {
+        StringBuilder str = new StringBuilder("");
+        for (Map.Entry<String, String> q : queryParams.entrySet()) {
+            str.append(q.getKey()).append("=").append(q.getValue()).append("&");
+        }
+        String out = str.toString();
+        if (out.isEmpty()) {
+            return out;
+        }
+        return out.substring(0, out.length() - 1);
+    }
+
+    @Override
+    public String getRemoteUser() {
+        return null; // TODO
+    }
+
+    @Override
+    public String getRequestedSessionId() {
+        return session.getId();
+    }
+
+    @Override
+    public String getRequestURI() {
+        return getURI().toString();
+    }
+
+    @Override
+    public StringBuffer getRequestURL() {
+        return new StringBuffer(getRequestURI());
+    }
+
+    @Override
+    public String getServletPath() {
+        return getPathInfo();
     }
 
     /**
@@ -160,8 +240,38 @@ public class HttpRequestImpl implements HttpRequest {
         return contentType;
     }
 
-    public InputStream getInputStream() throws IOException {
+    @Override
+    public DispatcherType getDispatcherType() {
+        return DispatcherType.REQUEST;
+    }
+
+    public ServletInputStream getInputStream() throws IOException {
         return this.in;
+    }
+
+    @Override
+    public String getLocalAddr() {
+        return getURI().getHost();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public Enumeration<Locale> getLocales() {
+        return new ArrayEnumeration(Arrays.asList(Locale.getAvailableLocales()));
+    }
+
+    @Override
+    public String getLocalName() {
+        return locale.getLanguage();
+    }
+
+    @Override
+    public int getLocalPort() {
+        return getURI().getPort();
     }
 
     /*------------------------------------------------------------*/
@@ -237,11 +347,11 @@ public class HttpRequestImpl implements HttpRequest {
         }
 
         if (token.equalsIgnoreCase("GET")) {
-            method = Method.GET;
+            method = Method.GET.name();
         } else if (token.equalsIgnoreCase("POST")) {
-            method = Method.POST;
+            method = Method.POST.name();
         } else {
-            method = Method.UNSUPPORTED;
+            method = Method.UNSUPPORTED.name();
             throw new IOException("Unsupported HTTP Request Method :" + token);
         }
     }
@@ -395,7 +505,7 @@ public class HttpRequestImpl implements HttpRequest {
 
         contentType = getHeader(HttpRequest.HEADER_CONTENT_TYPE);
 
-        if (method == Method.POST && FORM_URL_ENCODED.equals(contentType)) {
+        if (method.equals(Method.POST.name()) && FORM_URL_ENCODED.equals(contentType)) {
             String rawParams;
 
             try {
@@ -413,13 +523,13 @@ public class HttpRequestImpl implements HttpRequest {
                 StringTokenizer param = new StringTokenizer(parameters.nextToken(), "=");
 
                 /* [1] Parse the Name */
-                name = URLDecoder.decode(param.nextToken());
+                name = URLDecoder.decode(param.nextToken(), "UTF-8");
                 if (name == null)
                     break;
 
                 /* [2] Parse the Value */
                 if (param.hasMoreTokens()) {
-                    value = URLDecoder.decode(param.nextToken());
+                    value = URLDecoder.decode(param.nextToken(), "UTF-8");
                 } else {
                     value = ""; //if there is no token set value to blank string
                 }
@@ -430,7 +540,7 @@ public class HttpRequestImpl implements HttpRequest {
                 formParams.put(name, value);
                     //System.out.println(name + ": " + value);
             }
-        } else if (method == Method.POST && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
+        } else if (method.equals(Method.POST.name()) && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -450,18 +560,20 @@ public class HttpRequestImpl implements HttpRequest {
                     in.readLine();
                 }
                 body = out.toByteArray();
-                this.in = new ByteArrayInputStream(body);
+                this.in = new ServletByteArrayIntputStream(body);
             } catch (Exception e) {
                 throw (IOException)new IOException("Unable to read chunked body").initCause(e);
             }
-        } else if (method == Method.POST){
+        } else if (method.equals(Method.POST.name())){
             // TODO This really is terrible
             body = readContent(in);
-            this.in = new ByteArrayInputStream(body);
+            this.in = new ServletByteArrayIntputStream(body);
         } else {
             body = new byte[0];
-            this.in = new ByteArrayInputStream(body);
+            this.in = new ServletByteArrayIntputStream(body);
         }
+
+        session = new HttpSessionImpl();
 
     }
 
@@ -518,7 +630,41 @@ public class HttpRequestImpl implements HttpRequest {
         return length;
     }
 
-    protected Map getCookies() {
+    @Override
+    public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        return true; // TODO?
+    }
+
+    @Override
+    public String getAuthType() {
+        return "BASIC"; // to manage?
+    }
+
+    @Override
+    public String getContextPath() {
+        return path;
+    }
+
+    @Override
+    public Cookie[] getCookies() {
+        if (cookies != null) return toCookies(cookies);
+
+        cookies = new HashMap<String,String>();
+
+        String cookieHeader = getHeader(HEADER_COOKIE);
+        if (cookieHeader == null) return toCookies(cookies);
+
+        StringTokenizer tokens = new StringTokenizer(cookieHeader, ";");
+        while (tokens.hasMoreTokens()) {
+            StringTokenizer token = new StringTokenizer(tokens.nextToken(), "=");
+            String name = token.nextToken();
+            String value = token.nextToken();
+            cookies.put(name, value);
+        }
+        return toCookies(cookies);
+    }
+
+    protected Map<?, ?> getInternalCookies() {
         if (cookies != null) return cookies;
 
         cookies = new HashMap<String,String>();
@@ -536,28 +682,150 @@ public class HttpRequestImpl implements HttpRequest {
         return cookies;
     }
 
+    private Cookie[] toCookies(Map<String, String> cookies) {
+        Cookie[] out = new Cookie[cookies.size()];
+        int i = 0;
+        for (Map.Entry<String, String> entry : cookies.entrySet()) {
+            out[i++] = new Cookie(entry.getKey(), entry.getValue());
+        }
+        return out;
+    }
+
+    @Override
+    public long getDateHeader(String s) {
+        return Long.parseLong(s);
+    }
+
     protected String getCookie(String name) {
-        return (String) getCookies().get(name);
+        return (String) getInternalCookies().get(name);
     }
 
     public HttpSession getSession(boolean create) {
-        return null;
+        return session;
+    }
+
+    protected URI getSocketURI() {
+        return socketURI;
+    }
+
+    @Override
+    public Principal getUserPrincipal() {
+        return new UserPrincipal("");
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromCookie() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromUrl() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromURL() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdValid() {
+        return false;
+    }
+
+    @Override
+    public boolean isUserInRole(String s) {
+        return true; // TODO?
+    }
+
+    @Override
+    public void login(String s, String s1) throws ServletException {
+        // no-op
+    }
+
+    @Override
+    public void logout() throws ServletException {
+        // no-op
     }
 
     public HttpSession getSession() {
         return getSession(true);
     }
-    
+
+    @Override
+    public AsyncContext getAsyncContext() {
+        return null;
+    }
+
     public Object getAttribute(String name) {
         return attributes.get(name);
+    }
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        return new ArrayEnumeration(new ArrayList<String>(attributes.keySet()));
+    }
+
+    @Override
+    public String getCharacterEncoding() {
+        return encoding;
     }
 
     public void setAttribute(String name, Object value){
         attributes.put(name, value);
     }
 
+    @Override
+    public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
+        encoding = s;
+    }
+
+    @Override
+    public AsyncContext startAsync() {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
+        return null;
+    }
+
     public String getParameter(String name) {
         return parameters.get(name);
+    }
+
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        Map<String, String[]> params = new HashMap<String, String[]>();
+        for (Map.Entry<String, String> p : parameters.entrySet()) {
+            params.put(p.getKey(), new String[] { p.getValue() });
+        }
+        return params;
+    }
+
+    @Override
+    public Enumeration<String> getParameterNames() {
+        return new ArrayEnumeration(new ArrayList<String>(parameters.keySet()));
+    }
+
+    @Override
+    public String[] getParameterValues(String s) {
+        return new String[] { parameters.get(s) };
+    }
+
+    @Override
+    public String getProtocol() {
+        return uri.getScheme();
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return null;
+    }
+
+    @Override
+    public String getRealPath(String s) {
+        return path;
     }
 
     public Map<String,String> getParameters() {
@@ -567,5 +835,60 @@ public class HttpRequestImpl implements HttpRequest {
     public String getRemoteAddr() {
         // todo how do we get this value?
         return null;
+    }
+
+    @Override
+    public String getRemoteHost() {
+        return getURI().getHost();
+    }
+
+    @Override
+    public int getRemotePort() {
+        return getURI().getPort();
+    }
+
+    @Override
+    public RequestDispatcher getRequestDispatcher(String s) {
+        return null;
+    }
+
+    @Override
+    public String getScheme() {
+        return getURI().getScheme();
+    }
+
+    @Override
+    public String getServerName() {
+        return getURI().getHost();
+    }
+
+    @Override
+    public int getServerPort() {
+        return getURI().getPort();
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+        return false;
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return false; // TODO?
+    }
+
+    @Override
+    public void removeAttribute(String s) {
+        attributes.remove(s);
     }
 }
