@@ -22,9 +22,6 @@
     <test name="JSR-303-TCK">
         <method-selectors>
             <method-selector>
-                <selector-class name="org.jboss.testharness.impl.testng.DisableIntegrationTestsMethodSelector"/>
-            </method-selector>
-            <method-selector>
                 <selector-class name="org.jboss.testharness.impl.testng.ExcludeIncontainerUnderInvestigationMethodSelector"/>
             </method-selector>
         </method-selectors>

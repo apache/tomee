@@ -31,7 +31,16 @@
   <description>Aggregates dependencies and runs the JSR-303 TCK</description>
 
   <dependencies>
-
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-osgi-locator</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-osgi-registry</artifactId>
+      <version>1.0</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-validation_1.0_spec</artifactId>
@@ -70,6 +79,10 @@
         <exclusion>
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.validation</groupId>
+          <artifactId>validation-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
