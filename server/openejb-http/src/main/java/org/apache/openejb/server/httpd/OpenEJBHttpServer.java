@@ -153,8 +153,12 @@ public class OpenEJBHttpServer implements HttpServer {
         } catch (Throwable t) {
             res.setCode(400);
             res.setResponseString("Could not read the request");
-            res.getPrintWriter().println(t.getMessage());
-            t.printStackTrace(res.getPrintWriter());
+            try {
+                res.getWriter().println(t.getMessage());
+                t.printStackTrace(res.getWriter());
+            } catch (IOException e) {
+                // no-op
+            }
             log.error("BAD REQUEST", t);
             throw new OpenEJBException("Could not read the request.\n" + t.getClass().getName() + ":\n" + t.getMessage(), t);
         }

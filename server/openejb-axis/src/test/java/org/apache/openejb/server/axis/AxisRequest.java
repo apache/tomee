@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.server.axis;
 
+import javax.servlet.ServletInputStream;
 import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.HttpRequestImpl;
 import org.apache.openejb.server.httpd.HttpSession;
 
 import java.io.IOException;
@@ -25,34 +27,29 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AxisRequest implements HttpRequest {
+public class AxisRequest extends HttpRequestImpl {
     private int contentLength;
 
     private String contentType;
 
-    private InputStream in;
+    private ServletInputStream in;
 
     private Method method;
 
     private Map<String,String> parameters;
 
-    private URI uri;
-
     private Map<String,String> headers;
-
-    private Map<String,Object> attributes;
 
     private String remoteAddress;
 
-    public AxisRequest(int contentLength, String contentType, InputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+    public AxisRequest(int contentLength, String contentType, ServletInputStream in, Method method, Map<String,String> parameters, URI uri, Map<String,String> headers, String remoteAddress) {
+        super(uri);
         this.contentLength = contentLength;
         this.contentType = contentType;
         this.in = in;
         this.method = method;
         this.parameters = parameters;
-        this.uri = uri;
         this.headers = headers;
-        this.attributes = new HashMap<String,Object>();
         this.remoteAddress = remoteAddress;
     }
 
@@ -68,12 +65,12 @@ public class AxisRequest implements HttpRequest {
         return headers.get(name);
     }
 
-    public InputStream getInputStream() throws IOException {
+    public ServletInputStream getInputStream() throws IOException {
         return in;
     }
 
-    public Method getMethod() {
-        return method;
+    public String getMethod() {
+        return method.name();
     }
 
     public String getParameter(String name) {
@@ -85,15 +82,7 @@ public class AxisRequest implements HttpRequest {
     }
 
     public URI getURI() {
-        return uri;
-    }
-
-    public Object getAttribute(String name) {
-        return attributes.get(name);
-    }
-
-    public void setAttribute(String name, Object value) {
-        attributes.put(name, value);
+        return getSocketURI();
     }
 
     public String getRemoteAddr() {

@@ -26,6 +26,8 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.ServletIntputStreamAdapter;
+import org.apache.openejb.server.httpd.ServletOutputStreamAdapter;
 import org.apache.openejb.server.webservices.WsConstants;
 
 import javax.xml.namespace.QName;
@@ -97,7 +99,7 @@ public class AxisWsContainerTest extends AbstractTestCase {
                 new AxisRequest(
                     504,
                     "text/xml; charset=utf-8",
-                    in,
+                    new ServletIntputStreamAdapter(in),
                     HttpRequest.Method.GET,
                     new HashMap<String,String>(),
                     location,
@@ -105,7 +107,7 @@ public class AxisWsContainerTest extends AbstractTestCase {
                     "127.0.0.1");
             
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            AxisResponse res = new AxisResponse("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, out);
+            AxisResponse res = new AxisResponse("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, new ServletOutputStreamAdapter(out));
             req.setAttribute(WsConstants.POJO_INSTANCE, pojoClass.newInstance());
             container.onMessage(req, res);
             

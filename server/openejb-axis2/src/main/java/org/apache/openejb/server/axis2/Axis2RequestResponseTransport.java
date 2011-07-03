@@ -51,7 +51,7 @@ public class Axis2RequestResponseTransport implements RequestResponseTransport {
 
         response.setContentType("text/xml; charset=" + msgContext.getProperty("message.character-set-encoding"));
 
-        response.setStatusCode(HttpURLConnection.HTTP_ACCEPTED);
+        response.setStatus(HttpURLConnection.HTTP_ACCEPTED);
         try {
             response.flushBuffer();
         } catch (IOException e) {

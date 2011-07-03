@@ -132,7 +132,7 @@ public class AxisWsContainer implements HttpListener {
                 responseMessage = messageContext.getResponseMessage();
             } catch (AxisFault fault) {
                 
-               	if(req.getMethod() == HttpRequest.Method.GET && req.getParameters().isEmpty()){
+               	if(req.getMethod().equals(HttpRequest.Method.GET.name()) && req.getParameters().isEmpty()){
                		String serviceName = req.getURI().getRawPath();
                     serviceName = serviceName.substring(serviceName.lastIndexOf("/")+1);
                		printServiceInfo(res,serviceName);
@@ -148,13 +148,13 @@ public class AxisWsContainer implements HttpListener {
             if (messageContext.getOperation() != null) {
                 if (messageContext.getOperation().getMep() == OperationType.ONE_WAY) {
                     // No content, so just indicate accepted
-                    res.setStatusCode(202);
+                    res.setStatus(HttpServletResponse.SC_ACCEPTED);
                     return;
                 } else if (responseMessage == null) {
                     responseMessage = handleException(messageContext, null, new RuntimeException("No response for non-one-way operation"));
                 }
             } else if (responseMessage == null) {
-                res.setStatusCode(202);
+                res.setStatus(HttpServletResponse.SC_ACCEPTED);
                 return;
             }
             try {
@@ -175,7 +175,7 @@ public class AxisWsContainer implements HttpListener {
 //                if (responseEncoding != null) {
 //                    try {
 //                        responseMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING,
-//                                                responseEncoding);
+//                                               responseEncoding);
 //                    } catch (SOAPException e) {
 //                        log.info(Messages.getMessage("exception00"), e);
 //                    }
@@ -196,7 +196,7 @@ public class AxisWsContainer implements HttpListener {
         Message responseMessage;
         //other exceptions are internal trouble
         responseMessage = context.getResponseMessage();
-        res.setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         Message responseMsg = responseMessage;
         logger.warning(Messages.getMessage("exception00"), e);
         if (responseMsg == null) {
@@ -234,7 +234,7 @@ public class AxisWsContainer implements HttpListener {
             // TODO: less generic realm choice?
             res.setHeader("WWW-Authenticate", "Basic realm=\"AXIS\"");
         }
-        res.setStatusCode(status);
+        res.setStatus(status);
         responseMessage = context.getResponseMessage();
         if (responseMessage == null) {
             responseMessage = new Message(fault);

@@ -47,6 +47,7 @@ import org.apache.openejb.server.axis2.client.Axis2Config;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.ServletOutputStreamAdapter;
 import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
@@ -56,6 +57,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.handler.Handler;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -167,16 +171,16 @@ public abstract class Axis2WsContainer implements HttpListener {
                 MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
                 // If the fault is not going along the back channel we should be 202ing
                 if (AddressingHelper.isFaultRedirected(msgContext)) {
-                    response.setStatusCode(HttpURLConnection.HTTP_ACCEPTED);
+                    response.setStatus(HttpURLConnection.HTTP_ACCEPTED);
                 } else {
-                    response.setStatusCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
+                    response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
                 }
                 AxisEngine.sendFault(faultContext);
             } catch (Exception ex) {
                 if (AddressingHelper.isFaultRedirected(msgContext)) {
-                    response.setStatusCode(HttpURLConnection.HTTP_ACCEPTED);
+                    response.setStatus(HttpURLConnection.HTTP_ACCEPTED);
                 } else {
-                    response.setStatusCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
+                    response.setStatus(HttpURLConnection.HTTP_INTERNAL_ERROR);
                     response.setHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/plain");
                     PrintWriter pw = new PrintWriter(response.getOutputStream());
                     ex.printStackTrace(pw);
@@ -210,9 +214,9 @@ public abstract class Axis2WsContainer implements HttpListener {
 
     public void doService2(HttpRequest request, HttpResponse response, MessageContext msgContext) throws Exception {
 
-        if (request.getMethod() == HttpRequest.Method.GET) {
+        if (request.getMethod().equals(HttpRequest.Method.GET.name())) {
             processGETRequest(request, response, this.service, msgContext);
-        } else if (request.getMethod() == HttpRequest.Method.POST) {
+        } else if (request.getMethod().equals(HttpRequest.Method.POST.name())) {
             processPOSTRequest(request, response, this.service, msgContext);
         } else {
             throw new UnsupportedOperationException("[" + request.getMethod() + " ] method not supported");
@@ -229,12 +233,12 @@ public abstract class Axis2WsContainer implements HttpListener {
 
         if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
             if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
-                response.setStatusCode(HttpURLConnection.HTTP_ACCEPTED);
+                response.setStatus(HttpURLConnection.HTTP_ACCEPTED);
                 return;
             }
-            response.setStatusCode(HttpURLConnection.HTTP_OK);
+            response.setStatus(HttpURLConnection.HTTP_OK);
         } else {
-            response.setStatusCode(HttpURLConnection.HTTP_ACCEPTED);
+            response.setStatus(HttpURLConnection.HTTP_ACCEPTED);
         }
     }
 
@@ -286,7 +290,7 @@ public abstract class Axis2WsContainer implements HttpListener {
             InvocationResponse processed = RESTUtil.processURLRequest(msgContext, response.getOutputStream(), contentType);
 
             if (!processed.equals(InvocationResponse.CONTINUE)) {
-                response.setStatusCode(HttpURLConnection.HTTP_OK);
+                response.setStatus(HttpURLConnection.HTTP_OK);
                 String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
                 PrintWriter pw = new PrintWriter(response.getOutputStream());
                 pw.write(s);
@@ -296,7 +300,12 @@ public abstract class Axis2WsContainer implements HttpListener {
     }
 
     protected void setMsgContextProperties(HttpRequest request, HttpResponse response, AxisService service, MessageContext msgContext) {
-        msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
+        try {
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
+        } catch (IOException e) {
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, new ServletOutputStreamAdapter(new ByteArrayOutputStream()));
+        }
+
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, new Axis2TransportInfo(response));
         msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL, new Axis2RequestResponseTransport(response));
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, request.getURI().toString());

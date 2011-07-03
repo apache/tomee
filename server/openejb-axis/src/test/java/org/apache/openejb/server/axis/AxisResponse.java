@@ -16,20 +16,20 @@
  */
 package org.apache.openejb.server.axis;
 
-import org.apache.openejb.server.httpd.HttpResponse;
+import javax.servlet.ServletOutputStream;
+import org.apache.openejb.server.httpd.HttpResponseImpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AxisResponse implements HttpResponse {
+public class AxisResponse extends HttpResponseImpl {
     private int contentLength;
     private String contentType;
     private String host;
-    private OutputStream out;
+    private ServletOutputStream out;
     private int method;
     private Map<String,String> parameters;
     private String path;
@@ -39,7 +39,7 @@ public class AxisResponse implements HttpResponse {
     private int statusCode;
     private String statusMessage;
 
-    public AxisResponse(String contentType, String host, String path, URL uri, int port, OutputStream out) {
+    public AxisResponse(String contentType, String host, String path, URL uri, int port, ServletOutputStream out) {
         this.contentType = contentType;
         this.host = host;
         this.parameters = new HashMap<String,String>();
@@ -63,7 +63,7 @@ public class AxisResponse implements HttpResponse {
         return host;
     }
 
-    public OutputStream getOutputStream() {
+    public ServletOutputStream getOutputStream() {
         return out;
     }
 
@@ -131,15 +131,6 @@ public class AxisResponse implements HttpResponse {
         uri = url;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int code) {
-        statusCode = code;
-
-    }
-
     public String getStatusMessage() {
         return statusMessage;
     }
@@ -150,14 +141,5 @@ public class AxisResponse implements HttpResponse {
     }
 
     public void flushBuffer() throws java.io.IOException {
-    }
-
-    public void setHeader(String name, String value) {
-        headers.put(name, value);
-    }
-
-
-    public PrintWriter getPrintWriter() throws IOException {
-        throw new UnsupportedOperationException();
     }
 }

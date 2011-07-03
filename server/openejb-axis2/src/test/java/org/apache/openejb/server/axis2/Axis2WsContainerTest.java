@@ -20,6 +20,7 @@ import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.axis2.pojo.PojoWsContainer;
 import org.apache.openejb.server.axis2.testdata.simple.HelloWorld;
 import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.ServletOutputStreamAdapter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -61,7 +62,7 @@ public class Axis2WsContainerTest extends Axis2AbstractTestCase {
                 new HashMap<String,String>(),
                 "127.0.0.1");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Axis2Response res = new Axis2Response("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, out);
+        Axis2Response res = new Axis2Response("text/xml; charset=utf-8", "127.0.0.1", null, null, 8080, new ServletOutputStreamAdapter(out));
         
         PojoWsContainer container = new PojoWsContainer(port, HelloWorld.class, null, "/axis2");
         container.start();

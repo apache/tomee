@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.server.httpd;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 
 
@@ -25,7 +25,7 @@ import java.util.Map;
  *  parameters.
  *
  */
-public interface HttpRequest extends java.io.Serializable{
+public interface HttpRequest extends java.io.Serializable, HttpServletRequest {
     /**
      * Request methods
      */
@@ -94,46 +94,6 @@ public interface HttpRequest extends java.io.Serializable{
      */
     Map getParameters();
 
-    /**
-     * Returns the current <code>HttpSession</code> associated with this
-     * request or, if there is no current session and <code>create</code> is
-     * true, returns a new session.
-     *
-     * <p>If <code>create</code> is <code>false</code> and the request has no
-     * valid <code>HttpSession</code>, this method returns <code>null</code>.
-     *
-     * @param create <code>true</code> to create a new session for this request
-     * if necessary; <code>false</code> to return <code>null</code> if there's
-     * no current session
-     *
-     * @return the <code>HttpSession</code> associated with this request or
-     * <code>null</code> if <code>create</code> is <code>false</code> and the
-     * request has no valid session
-     *
-     * @see #getSession()
-     */
-    public HttpSession getSession(boolean create);
-
-    /**
-     * Returns the current session associated with this request, or if the
-     * request does not have a session, creates one.
-     *
-     * @return the <code>HttpSession</code> associated with this request
-     *
-     * @see #getSession(boolean)
-     */
-    public HttpSession getSession();
-
-    /** Gets a header based the header name passed in.
-     * @param name The name of the header to get
-     * @return The value of the header
-     */
-    public String getHeader(String name);
-
-    /** Gets an integer value of the request method.
-     * @return The integer value of the method
-     */
-    public Method getMethod();
 
     /** Gets the URI for the current URL page.
      * @return The URI
@@ -143,8 +103,6 @@ public interface HttpRequest extends java.io.Serializable{
     int getContentLength();
 
     String getContentType();
-
-    InputStream getInputStream() throws IOException;
 
     public Object getAttribute(String name);
 
