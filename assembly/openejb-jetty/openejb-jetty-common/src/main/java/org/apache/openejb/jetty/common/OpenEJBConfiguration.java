@@ -22,7 +22,15 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.*;
+import org.apache.openejb.config.AnnotationDeployer;
+import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ClientModule;
+import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.DeploymentLoader;
+import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.ReadDescriptors;
+import org.apache.openejb.config.UnknownModuleTypeException;
+import org.apache.openejb.config.WebModule;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
@@ -30,24 +38,23 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.plus.annotation.InjectionCollection;
+import org.eclipse.jetty.webapp.AbstractConfiguration;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
-public class OpenEJBConfiguration implements Configuration {
+public class OpenEJBConfiguration extends AbstractConfiguration {
     private ConfigurationFactory configurationFactory;
     private Assembler assembler;
     private static final org.apache.openejb.util.Logger logger = org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB.createChild("jetty"), "org.apache.openejb.util.resources");
@@ -136,12 +143,6 @@ public class OpenEJBConfiguration implements Configuration {
         }
 
         return null;
-    }
-
-    public void postConfigure(WebAppContext context) throws Exception {
-    }
-
-    public void deconfigure(WebAppContext context) throws Exception {
     }
 
     /**
