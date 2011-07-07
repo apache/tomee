@@ -119,6 +119,9 @@
     <!-- Used in assembly/openejb-tomcat* projects  -->
     <tomcatVersion>7.0.16</tomcatVersion>
 
+    <!-- used by cxf -->
+    <jetty.version>7.4.2.v20110526</jetty.version>
+
     <!--
        - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding
        -->
@@ -572,6 +575,36 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-continuation</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-io</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-http</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-security</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+      <dependency>
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-core</artifactId>
         <version>${bval.version}</version>
@@ -966,7 +999,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.5.8</version>
+        <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -1021,7 +1054,7 @@
       <dependency>
         <groupId>org.apache.neethi</groupId>
         <artifactId>neethi</artifactId>
-        <version>2.0.4</version>
+        <version>3.0.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.ws.commons.axiom</groupId>

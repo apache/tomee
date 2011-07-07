@@ -27,19 +27,26 @@ import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.BindingInfo;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.Destination;
+import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.core.webservices.HandlerResolverImpl;
 import org.apache.openejb.core.webservices.PortData;
 
+import javax.naming.Context;
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
-import javax.naming.Context;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 public abstract class CxfEndpoint {
@@ -61,10 +68,10 @@ public abstract class CxfEndpoint {
 
 	protected HandlerResolverImpl handlerResolver;
 	
-	protected HttpTransportFactory httpTransportFactory;
+	protected HTTPTransportFactory httpTransportFactory;
 
 	public CxfEndpoint(Bus bus, PortData port, Context context,
-			Object implementor, HttpTransportFactory httpTransportFactory) {
+			Object implementor, HTTPTransportFactory httpTransportFactory) {
 		this.bus = bus;
 		this.port = port;
 		this.context = context;
@@ -73,36 +80,12 @@ public abstract class CxfEndpoint {
 		this.bus.setExtension(this, CxfEndpoint.class);
 	}
 
-	protected URL getWsdlURL(URL configurationBaseUrl, String wsdlFile) {
-		URL wsdlURL = null;
-		if (wsdlFile != null && wsdlFile.trim().length() > 0) {
-			wsdlFile = wsdlFile.trim();
-			try {
-				wsdlURL = new URL(wsdlFile);
-			} catch (MalformedURLException e) {
-				// Not a URL, try as a resource
-				wsdlURL = getImplementorClass().getResource("/" + wsdlFile);
-
-				if (wsdlURL == null && configurationBaseUrl != null) {
-					// Cannot get it as a resource, try with
-					// configurationBaseUrl
-					try {
-						wsdlURL = new URL(configurationBaseUrl, wsdlFile);
-					} catch (MalformedURLException ee) {
-						// ignore
-					}
-				}
-			}
-		}
-		return wsdlURL;
-	}
-
 	protected Class getImplementorClass() {
 		return this.implementor.getClass();
 	}
 
 	protected org.apache.cxf.endpoint.Endpoint getEndpoint() {
-		return ((ServerImpl) getServer()).getEndpoint();
+		return getServer().getEndpoint();
 	}
 
 	public boolean isSOAP11() {
@@ -167,13 +150,7 @@ public abstract class CxfEndpoint {
 		
 		@Override
 		protected BindingInfo createBindingInfo() {
-			BindingInfo bindingInfo = super.createBindingInfo();
-			
-			if(httpTransportFactory != null) {
-				httpTransportFactory.registerDestinationFactory();
-			}
-			
-			return bindingInfo;
+			return super.createBindingInfo();
 		}
 	}
 
@@ -184,6 +161,7 @@ public abstract class CxfEndpoint {
 		svrFactory.setServiceFactory(serviceFactory);
 		svrFactory.setStart(false);
 		svrFactory.setServiceBean(implementor);
+        svrFactory.setDestinationFactory(httpTransportFactory);
 
 		if (HTTPBinding.HTTP_BINDING.equals(implInfo.getBindingType())) {
 			svrFactory.setTransportId("http://cxf.apache.org/bindings/xformat");

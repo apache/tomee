@@ -41,6 +41,6 @@ public class PojoWsContainer extends CxfWsContainer {
 
     public void start() {
         super.start();
-        this.destination.setPassSecurityContext(true);
+        // removed?: this.destination.setPassSecurityContext(true);
     }
 }

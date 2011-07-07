@@ -20,24 +20,22 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
-import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.webservices.saaj.SaajUniverse;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class CxfWsContainer implements HttpListener {
     protected final Bus bus;
     protected final PortData port;
-    protected HttpDestination destination;
+    protected AbstractHTTPDestination destination;
     protected CxfEndpoint endpoint;
-    protected HttpTransportFactory httpTransportFactory;
+    protected HTTPTransportFactory httpTransportFactory;
 
     public CxfWsContainer(Bus bus, PortData port) {
         this.bus = bus;
@@ -48,13 +46,12 @@ public abstract class CxfWsContainer implements HttpListener {
 
         httpTransportFactory = new HttpTransportFactory(bus);
         httpTransportFactory.setTransportIds(ids);
-        httpTransportFactory.registerDestinationFactory();
     }
 
     public void start() {
         endpoint = createEndpoint();
         endpoint.publish("http://nopath");
-        destination = (HttpDestination) endpoint.getServer().getDestination();
+        destination = (AbstractHTTPDestination) endpoint.getServer().getDestination();
     }
 
     protected abstract CxfEndpoint createEndpoint();
@@ -71,51 +68,7 @@ public abstract class CxfWsContainer implements HttpListener {
     }
 
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-        if (request.getMethod().equals(HttpRequest.Method.GET.name())) {
-            processGET(request, response);
-        } else {
-            processPOST(request, response);
-        }
-    }
-
-    protected void processGET(HttpRequest request, HttpResponse response) throws Exception {
-        boolean wsdlRequest = request.getParameter("wsdl") != null ||
-                request.getParameter("WSDL") != null ||
-                request.getParameter("xsd") != null ||
-                request.getParameter("XSD") != null;
-
-        if (wsdlRequest) {
-            getWsdl(request, response);
-        } else if (endpoint.isSOAP11()) {
-            EndpointInfo ei = this.destination.getEndpointInfo();
-            response.setContentType("text/html");
-            PrintWriter pw = new PrintWriter(response.getOutputStream());
-            pw.write("<html><title>Web Service</title><body>");
-            pw.write("Hi, this is '" + ei.getService().getName().getLocalPart() + "' web service.");
-            pw.write("</body></html>");
-            pw.flush();
-        } else {
-            processPOST(request, response);
-        }
-    }
-
-    protected void processPOST(HttpRequest request, HttpResponse response) throws Exception {
-        SaajUniverse universe = new SaajUniverse();
-        universe.set(SaajUniverse.DEFAULT);
-        try {
-            destination.invoke(request, response);
-        } finally {
-            universe.unset();
-        }
-    }
-
-    private void getWsdl(HttpRequest request, HttpResponse response) throws Exception {
-        WsdlQueryHandler queryHandler = new WsdlQueryHandler(this.bus);
-        String requestUri = request.getURI().toString();
-        EndpointInfo ei = this.destination.getEndpointInfo();
-        OutputStream out = response.getOutputStream();
-        response.setContentType("text/xml");
-        queryHandler.writeResponse(requestUri, null, ei, out);
+        destination.invoke(null, request.getServletContext(), request, response);
     }
 
     /*

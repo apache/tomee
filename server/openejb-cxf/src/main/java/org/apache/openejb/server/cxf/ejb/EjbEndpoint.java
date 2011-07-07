@@ -26,13 +26,13 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.handler.logical.LogicalHandlerInInterceptor;
 import org.apache.cxf.jaxws.handler.soap.SOAPHandlerInterceptor;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.server.cxf.ConfigureCxfSecurity;
 import org.apache.openejb.server.cxf.CxfEndpoint;
 import org.apache.openejb.server.cxf.CxfServiceConfiguration;
-import org.apache.openejb.server.cxf.HttpTransportFactory;
 import org.apache.openejb.server.cxf.JaxWsImplementorInfoImpl;
 
 import javax.xml.ws.WebServiceException;
@@ -44,7 +44,7 @@ import java.util.List;
 public class EjbEndpoint extends CxfEndpoint {
     private final BeanContext beanContext;
 
-    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HttpTransportFactory httpTransportFactory) {
+    public EjbEndpoint(Bus bus, PortData portData, BeanContext beanContext, HTTPTransportFactory httpTransportFactory) {
         super(bus, portData, beanContext.getJndiEnc(), beanContext.getBeanClass(), httpTransportFactory);
         this.beanContext = beanContext;
 
@@ -96,7 +96,7 @@ public class EjbEndpoint extends CxfEndpoint {
 
     }
 
-    private static void removeHandlerInterceptors(List<Interceptor> interceptors) {
+    private static void removeHandlerInterceptors(List<? extends Interceptor> interceptors) {
         for (Interceptor interceptor : interceptors) {
             if (interceptor instanceof MustUnderstandInterceptor || interceptor instanceof LogicalHandlerInInterceptor || interceptor instanceof SOAPHandlerInterceptor) {
                 interceptors.remove(interceptor);
