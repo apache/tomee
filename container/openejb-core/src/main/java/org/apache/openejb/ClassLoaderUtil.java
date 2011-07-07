@@ -332,10 +332,7 @@ public class ClassLoaderUtil {
                     if (item instanceof URL) {
                         url = (URL) item;
                     } else if (item instanceof String) {
-                        //Avoid space in string like file:///C:/Program files   
-                        JarFile jf = (JarFile)fileCache.get(item);
-                        url = (URL)ucf.get(jf);
-                        jf.close();
+                        url = new URI((String) item).toURL();
                     } else {
                         logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
                         continue;
