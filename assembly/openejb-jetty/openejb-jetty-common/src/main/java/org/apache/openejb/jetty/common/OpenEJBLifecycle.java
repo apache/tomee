@@ -21,14 +21,21 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.OptionsLog;
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.webapp.Configuration;
+import org.eclipse.jetty.webapp.FragmentConfiguration;
+import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
+import org.eclipse.jetty.webapp.TagLibConfiguration;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.webapp.WebInfConfiguration;
+import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -70,15 +77,13 @@ public class OpenEJBLifecycle extends AbstractLifeCycle {
         webAppContext.setServer(server);
        
         webAppContext.setConfigurationClasses(new String[] {
-                "org.eclipse.jetty.webapp.WebInfConfiguration",
-                "org.eclipse.jetty.webapp.WebXmlConfiguration",
-                "org.eclipse.jetty.webapp.MetaInfConfiguration",
-                "org.eclipse.jetty.webapp.FragmentConfiguration",
-                "org.apache.openejb.jetty.common.OpenEJBConfiguration",
-                "org.eclipse.jetty.plus.webapp.EnvConfiguration",
-                "org.eclipse.jetty.plus.webapp.Configuration",
-                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
-                "org.eclipse.jetty.webapp.TagLibConfiguration"
+                WebInfConfiguration.class.getName(),
+                WebXmlConfiguration.class.getName(),
+                FragmentConfiguration.class.getName(),
+                OpenEJBConfiguration.class.getName(),
+                EnvConfiguration.class.getName(),
+                JettyWebXmlConfiguration.class.getName(),
+                TagLibConfiguration.class.getName()
         });
 
         // intercept all requests and wire up to the security service
