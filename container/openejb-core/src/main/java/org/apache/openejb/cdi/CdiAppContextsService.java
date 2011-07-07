@@ -16,11 +16,12 @@
  */
 package org.apache.openejb.cdi;
 
-import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.AbstractContextsService;
 import org.apache.webbeans.context.ApplicationContext;
+import org.apache.webbeans.context.ConversationContext;
 import org.apache.webbeans.context.DependentContext;
 import org.apache.webbeans.context.RequestContext;
 import org.apache.webbeans.context.SessionContext;
@@ -29,31 +30,41 @@ import org.apache.webbeans.spi.ContextsService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ContextException;
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.inject.Singleton;
+
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiAppContextsService.class);
-    private ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
-    private ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
-    private DependentContext dependentContext = new DependentContext();
+    private final ThreadLocal<RequestContext> requestContext = new ThreadLocal<RequestContext>();
+    private final ThreadLocal<SessionContext> sessionContext = new ThreadLocal<SessionContext>();
+    private final ThreadLocal<ConversationContext> conversationContext;
+    private final DependentContext dependentContext = new DependentContext();
 
     private final ApplicationContext currentApplicationContext = new ApplicationContext();
     private final SingletonContext currentSingletonContext = new SingletonContext();
 
     public CdiAppContextsService() {
+        this(false);
+    }
+
+    public CdiAppContextsService(WebBeansContext webBeansContext) {
+        this(webBeansContext.getOpenWebBeansConfiguration().supportsConversation());
+    }
+
+    public CdiAppContextsService(boolean supportsConversation) {
         dependentContext.setActive(true);
+        if (supportsConversation) {
+            conversationContext = new ThreadLocal<ConversationContext>();
+        } else {
+            conversationContext = null;
+        }
     }
 
     @Override
@@ -74,6 +85,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 // Do nothing
             } else if (scopeType.equals(Singleton.class)) {
                 initSingletonContext();
+            } else if (conversationContext != null && scopeType.equals(ConversationScoped.class)) {
+                initConversationContext((ConversationContext)startParameter);
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
@@ -98,6 +111,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 // Do nothing
             } else if (scopeType.equals(Singleton.class)) {
                 destroySingletonContext();
+            } else if (conversationContext != null && scopeType.equals(ConversationScoped.class)) {
+                destroyConversationContext();
             } else {
                 if (logger.isWarningEnabled()) {
                     logger.warning("CDI-OpenWebBeans container in OpenEJB does not support context scope "
@@ -120,6 +135,8 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 return currentApplicationContext;
             } else if (scopeType.equals(Dependent.class)) {
                 return dependentContext;
+            } else if (conversationContext != null && scopeType.equals(ConversationScoped.class)) {
+                return getConversationContext();
             } else {
                 return currentSingletonContext;
             }
@@ -138,7 +155,6 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             requestContext.set(context);
         }
         return context;
-//        return ThreadContext.getThreadContext().get(RequestContext.class);
     }
 
     private Context getSessionContext() {
@@ -172,11 +188,57 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
                 || scopeType.equals(SessionScoped.class)
                 || scopeType.equals(ApplicationScoped.class)
                 || scopeType.equals(Dependent.class)
-                || scopeType.equals(Singleton.class)) {
+                || scopeType.equals(Singleton.class)
+                || (scopeType.equals(ConversationScoped.class) && conversationContext != null)) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Get current conversation ctx.
+     *
+     * @return conversation context
+     */
+    private ConversationContext getConversationContext() {
+        return conversationContext.get();
+    }
+
+    /**
+     * Initialize conversation context.
+     *
+     * @param context context
+     */
+    private void initConversationContext(ConversationContext context) {
+        if (context == null) {
+            if (conversationContext.get() == null) {
+                ConversationContext newContext = new ConversationContext();
+                newContext.setActive(true);
+
+                conversationContext.set(newContext);
+            } else {
+                conversationContext.get().setActive(true);
+            }
+
+        } else {
+            context.setActive(true);
+            conversationContext.set(context);
+        }
+    }
+
+    /**
+     * Destroy conversation context.
+     */
+    private void destroyConversationContext() {
+        ConversationContext context = getConversationContext();
+
+        if (context != null) {
+            context.destroy();
+        }
+
+        conversationContext.set(null);
+        conversationContext.remove();
     }
 
     private void initRequestContext() {
