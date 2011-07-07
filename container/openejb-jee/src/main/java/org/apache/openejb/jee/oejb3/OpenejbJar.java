@@ -76,7 +76,12 @@ public class OpenejbJar implements NamedModule {
 
     @Override
     public String getId() {
-        return null;
+        return getModuleName();
+    }
+
+    @Override
+    public void setId(String id) {
+        setModuleName(id);
     }
 
     @Override
@@ -84,6 +89,7 @@ public class OpenejbJar implements NamedModule {
         return moduleName;
     }
 
+    @Override
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }

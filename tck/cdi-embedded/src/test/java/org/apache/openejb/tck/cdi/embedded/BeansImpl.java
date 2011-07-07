@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.tck.cdi.embedded;
 
+import org.apache.openejb.core.ivm.IntraVmProxy;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class BeansImpl implements org.jboss.jsr299.tck.spi.Beans {
 
     public boolean isProxy(Object instance) {
         System.out.println("isProxy: " + instance);
-        return instance.getClass().getName().contains("$$");
+        return instance instanceof IntraVmProxy || instance.getClass().getName().contains("$$");
     }
 
     @Override

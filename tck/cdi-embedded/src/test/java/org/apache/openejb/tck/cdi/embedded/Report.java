@@ -85,13 +85,17 @@ public class Report {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-passing.xml"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
 
-        out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
-        out.println("  <test name=\"CDI TCK\">");
-        out.println("    <packages>\n" +
+        out.println("" +
+                "<suite name=\"CDI TCK\" verbose=\"0\">\n" +
+                "  <listeners>\n" +
+                "    <listener class-name=\"org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener\" />\n" +
+                "  </listeners>\n" +
+                "  <test name=\"CDI TCK\">" +
+                "    <packages>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.tests.*\"/>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>\n" +
-                "    </packages>");
-        out.println("    <classes>");
+                "    </packages>\n" +
+                "    <classes>");
 
         for (TestClass testClass : classes) {
 

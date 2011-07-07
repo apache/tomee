@@ -146,6 +146,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
                 receipe.allow(Option.NAMED_PARAMETERS);
 
                 fillInjectionProperties(receipe, entry.getKey().getInjections(), managedBeanInstance.getClass(), entry.getValue());
+                receipe.create();
                 return;
             }
         }

@@ -68,7 +68,7 @@ public class CdiInterceptor implements Serializable {
         };
 
 //        callable = new ScopeActivator(callable, ApplicationScoped.class);
-        callable = new ScopeActivator(callable, RequestScoped.class);
+//        callable = new ScopeActivator(callable, RequestScoped.class);
         return callable.call();
     }
 

@@ -1,10 +1,16 @@
 <suite name="CDI TCK" verbose="0">
+
+  <listeners>
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener" />
+  </listeners>
+
   <test name="CDI TCK">
     <packages>
         <package name="org.jboss.jsr299.tck.tests.*"/>
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContext2Test"/>
       <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest">
         <methods>
           <exclude name="testApplicationContextSharedBetweenServletRequests"/>

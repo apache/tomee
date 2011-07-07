@@ -1,4 +1,7 @@
 <suite name="CDI TCK" verbose="0">
+  <listeners>
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener" />
+  </listeners>
   <test name="CDI TCK">
     <!--<packages>-->
         <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->

@@ -167,6 +167,11 @@ public class Application implements JndiConsumer, NamedModule {
         return getApplicationName();
     }
 
+    @Override
+    public void setModuleName(String name) {
+        setApplicationName(name);
+    }
+
     @XmlElement(name = "description", required = true)
     public Text[] getDescriptions() {
         return description.toArray();
