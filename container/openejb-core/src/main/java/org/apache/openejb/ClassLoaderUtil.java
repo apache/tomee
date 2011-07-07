@@ -17,12 +17,6 @@
  */
 package org.apache.openejb;
 
-import org.apache.openejb.core.TempClassLoader;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.UrlCache;
-
 import java.beans.Introspector;
 import java.io.File;
 import java.io.ObjectInputStream;
@@ -30,7 +24,6 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -45,6 +38,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.jar.JarFile;
+
+import org.apache.openejb.core.TempClassLoader;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.UrlCache;
 
 /**
  * @version $Revision$ $Date$
@@ -308,77 +306,36 @@ public class ClassLoaderUtil {
         logger.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
 
         try {
-            Class jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
+            Class<?> jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
 
             synchronized (jarFileFactory) {
 
                 Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
 
                 fileCacheField.setAccessible(true);
-                Map fileCache = (Map) fileCacheField.get(null);
+                Map<Object, JarFile> fileCache = (Map<Object, JarFile>) fileCacheField.get(null);
 
                 Field urlCacheField = jarFileFactory.getDeclaredField("urlCache");
                 urlCacheField.setAccessible(true);
-                Map ucf = (Map) urlCacheField.get(null);
 
-                List<URL> urls = new ArrayList<URL>();
-                File file;
-                URL url;
+                Map<JarFile, Object> ucf = (Map<JarFile, Object>) urlCacheField.get(null);
 
-                for (final Object item : fileCache.keySet()) {
-
-                    url = null;
-
-                    if (item instanceof URL) {
-                        url = (URL) item;
-                    } else if (item instanceof String) {
-                        url = new URI((String) item).toURL();
-                    } else {
-                        logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
-                        continue;
-                    }
-
-                    file = null;
-                    try {
-                        file = URLs.toFile(url);
-                    } catch (IllegalArgumentException e) {
-                        //unknown kind of url
-                        return;
-                    }
-                    if (url != null && isParent(jarLocation, file)) {
-                        urls.add(url);
+                List<Object> removedKeys = new ArrayList<Object>();
+                for (Map.Entry<Object, JarFile> entry : fileCache.entrySet()) {
+                    if (isParent(jarLocation, new File(entry.getValue().getName()))) {
+                        removedKeys.add(entry.getKey());
                     }
                 }
 
-                JarFile jarFile;
-                String key;
-                for (final URL jar : urls) {
-
-                    //Fudge together a sun.net.www.protocol.jar.JarFileFactory compatible key
-                    key = ("file:///" + new File(URI.create(jar.toString())).getAbsolutePath().replace('\\', '/'));
-                    jarFile = (JarFile) fileCache.remove(key);
-
-                    if (jarFile == null) {
-
-                        key = jar.toExternalForm();
-                        jarFile = (JarFile) fileCache.remove(key);
-
-                        if (jarFile == null) {
-
-							jarFile = (JarFile) fileCache.remove(jar);
-
-                            if (jarFile == null) {
-	                            continue;
-	                        }
+                for(Object key : removedKeys) {
+                    JarFile jarFile = fileCache.remove(key);
+                    if(jarFile != null) {
+                        ucf.remove(jarFile);
+                        try {
+                            jarFile.close();
+                        } catch (Throwable e) {
+                            //Ignore
                         }
-                    }
-
-                    ucf.remove(jarFile);
-
-                    try {
-                        jarFile.close();
-                    } catch (Throwable e) {
-                        //Ignore
                     }
                 }
             }
