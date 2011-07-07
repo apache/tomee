@@ -103,67 +103,71 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-bundle</artifactId>
-      <version>2.2.10</version>
+      <version>2.4.1</version>
       <exclusions>
         <exclusion>
           <groupId>antlr</groupId>
           <artifactId>antlr</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>asm</groupId>
           <artifactId>asm</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
+          <groupId>aopalliance</groupId>
+          <artifactId>aopalliance</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-xjc</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.sun.xml.fastinfoset</groupId>
-          <artifactId>FastInfoset</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.jw.rs</groupId>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-security</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jettison</groupId>
+          <artifactId>jettison</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
           <artifactId>jsr311-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
+          <groupId>org.apache.xmlbeans</groupId>
+          <artifactId>xmlbeans</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.xml.soap</groupId>
-          <artifactId>saaj-api</artifactId>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>stax2-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-core</artifactId>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_3.0_spec</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-extensions-json</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-extensions-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-i18n</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-parser</artifactId>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-stax-api_1.0_spec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -179,79 +183,47 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jaxws_2.1_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_2.5_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.neethi</groupId>
-          <artifactId>neethi</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.santuario</groupId>
-          <artifactId>xmlsec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.velocity</groupId>
-          <artifactId>velocity</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.commons.axiom</groupId>
-          <artifactId>axiom-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.commons.axiom</groupId>
-          <artifactId>axiom-impl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.ws.security</groupId>
-          <artifactId>wss4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.xmlbeans</groupId>
-          <artifactId>xmlbeans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk15</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.jettison</groupId>
-          <artifactId>jettison</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.codehaus.jra</groupId>
           <artifactId>jra</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.codehaus.woodstox</groupId>
-          <artifactId>wstx-asl</artifactId>
+          <groupId>rhino</groupId>
+          <artifactId>js</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty-util</artifactId>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
+          <groupId>oro</groupId>
+          <artifactId>oro</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>saaj-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jaxws_2.2_spec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -259,11 +231,19 @@
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
+          <artifactId>spring-expression</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-context-support</artifactId>
+          <artifactId>spring-aop</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-asm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -282,26 +262,26 @@
           <artifactId>spring-web</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>oro</groupId>
-          <artifactId>oro</artifactId>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>rhino</groupId>
-          <artifactId>js</artifactId>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>xalan</groupId>
-          <artifactId>serializer</artifactId>
+          <groupId>org.opensaml</groupId>
+          <artifactId>openws</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>xalan</groupId>
-          <artifactId>xalan</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-resolver</groupId>
-          <artifactId>xml-resolver</artifactId>
+          <groupId>org.opensaml</groupId>
+          <artifactId>xmltooling</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
     </dependency>
     <dependency>
       <groupId>xml-resolver</groupId>

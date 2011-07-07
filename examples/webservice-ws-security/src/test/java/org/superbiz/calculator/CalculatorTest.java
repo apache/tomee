@@ -24,7 +24,6 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.handler.WSHandlerConstants;
@@ -46,23 +45,15 @@ import java.util.Properties;
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup
-    private InitialContext initialContext;
-
     protected void setUp() throws Exception {
-        BasicConfigurator.configure();
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
         properties.setProperty("openejb.embedded.remotable", "true");
 
-        initialContext = new InitialContext(properties);
+        new InitialContext(properties);
     }
     //END SNIPPET: setup
 
-    /**
-     * Create a webservice client using wsdl url
-     *
-     * @throws Exception
-     */
     //START SNIPPET: webservice
     public void testCalculatorViaWsInterface() throws Exception {
         Service calcService = Service.create(new URL("http://127.0.0.1:4204/CalculatorImpl?wsdl"),

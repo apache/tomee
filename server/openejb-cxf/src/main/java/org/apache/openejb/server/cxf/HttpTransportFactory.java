@@ -20,38 +20,21 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.DestinationFactory;
-import org.apache.cxf.transport.DestinationFactoryManager;
-import org.apache.cxf.transport.http.AbstractHTTPTransportFactory;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 
 import java.io.IOException;
 
-public class HttpTransportFactory extends AbstractHTTPTransportFactory implements DestinationFactory {
+public class HttpTransportFactory extends HTTPTransportFactory {
     public HttpTransportFactory() {
-    	super();
+    	// no-op
     }
   
     public HttpTransportFactory(Bus bus) {
         setBus(bus);
+
     }
 
-    public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        HttpDestination destination = new HttpDestination(getBus(), this, endpointInfo);
-        configure(destination);
-        return destination;
-    }
-    
-    /**
-     * Registers our destination factory
-     */
-    public void registerDestinationFactory() {
-        DestinationFactoryManager factoryManager = bus.getExtension(DestinationFactoryManager.class);
-
-        factoryManager.registerDestinationFactory("http://cxf.apache.org/transports/http/configuration", this);
-        factoryManager.registerDestinationFactory("http://cxf.apache.org/bindings/xformat", this);
-        factoryManager.registerDestinationFactory("http://www.w3.org/2003/05/soap/bindings/HTTP/", this);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/soap/http", this);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/wsdl/http/", this);
-        factoryManager.registerDestinationFactory("http://schemas.xmlsoap.org/wsdl/soap/http", this);
+    @Override public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
+        return new HttpDestination(getBus(), getRegistry(), endpointInfo, endpointInfo.getAddress());
     }
 }

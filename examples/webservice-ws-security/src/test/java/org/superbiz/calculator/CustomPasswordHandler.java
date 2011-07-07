@@ -16,19 +16,15 @@
  */
 package org.superbiz.calculator;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.ws.security.WSPasswordCallback;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
 public class CustomPasswordHandler implements CallbackHandler {
-
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    @Override public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
 
         if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN) {
@@ -42,25 +38,5 @@ public class CustomPasswordHandler implements CallbackHandler {
             pc.setPassword("serverPassword");
 
         }
-
-        if ((pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN)
-                || (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN_UNKNOWN)) {
-
-            SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            Object token = null;
-            try {
-                securityService.disassociate();
-
-                token = securityService.login(pc.getIdentifer(), pc.getPassword());
-                securityService.associate(token);
-
-            } catch (LoginException e) {
-                e.printStackTrace();
-                throw new SecurityException("wrong password");
-            } finally {
-            }
-        }
-
-
     }
 }

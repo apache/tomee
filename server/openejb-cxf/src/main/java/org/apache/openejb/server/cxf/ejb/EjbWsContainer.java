@@ -38,6 +38,6 @@ public class EjbWsContainer extends CxfWsContainer {
 
     public void start() {
         super.start();
-        this.destination.setPassSecurityContext(true);
+        // removed?: this.destination.setPassSecurityContext(true);
     }
 }
