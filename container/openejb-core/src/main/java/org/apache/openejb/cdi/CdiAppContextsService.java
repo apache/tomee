@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.context.AbstractContextsService;
@@ -34,6 +35,12 @@ import javax.enterprise.context.SessionScoped;
 import javax.enterprise.context.spi.Context;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CdiAppContextsService extends AbstractContextsService implements ContextsService {
 
@@ -131,6 +138,7 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             requestContext.set(context);
         }
         return context;
+//        return ThreadContext.getThreadContext().get(RequestContext.class);
     }
 
     private Context getSessionContext() {

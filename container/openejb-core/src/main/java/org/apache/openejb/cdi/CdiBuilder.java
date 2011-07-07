@@ -39,6 +39,7 @@ public class CdiBuilder {
 
     public void build(AppInfo appInfo, AppContext appContext, List<BeanContext> allDeployments) {
 
+        ThreadContext.addThreadContextListener(new RequestScopedThreadContextListener());
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
         logger.info("existing thread singleton service in SystemInstance() " + singletonService);
         //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would

@@ -21,6 +21,8 @@ package org.apache.openejb.jee;
  */
 public interface NamedModule {
 
+    void setId(String id);
+    void setModuleName(String name);
     String getId();
     String getModuleName();
 }

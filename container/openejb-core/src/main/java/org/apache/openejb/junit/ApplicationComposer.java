@@ -23,6 +23,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.config.AppModule;
+import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
@@ -31,11 +32,13 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.Application;
+import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.ManagedBean;
+import org.apache.openejb.jee.NamedModule;
 import org.apache.openejb.jee.TransactionType;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
@@ -44,6 +47,8 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Join;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -89,7 +94,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class};
+        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -179,22 +184,25 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
+                    setId(ejbJar, method);
                     appModule.getEjbModules().add(new EjbModule(ejbJar));
 
                 } else if (obj instanceof EnterpriseBean) {
 
                     final EnterpriseBean bean = (EnterpriseBean) obj;
-                    final EjbJar ejbJar = new EjbJar();
+                    final EjbJar ejbJar = new EjbJar(method.getName());
                     ejbJar.addEnterpriseBean(bean);
                     appModule.getEjbModules().add(new EjbModule(ejbJar));
 
                 } else if (obj instanceof Application) {
 
                     application = (Application) obj;
+                    setId(application, method);
 
                 } else if (obj instanceof Connector) {
 
                     final Connector connector = (Connector) obj;
+                    setId(connector, method);
                     appModule.getConnectorModules().add(new ConnectorModule(connector));
 
                 } else if (obj instanceof Persistence) {
@@ -210,8 +218,16 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                 } else if (obj instanceof Beans) {
 
                     final Beans beans = (Beans) obj;
-                    final EjbModule ejbModule = new EjbModule(new EjbJar());
+                    final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
                     ejbModule.setBeans(beans);
+                    appModule.getEjbModules().add(ejbModule);
+
+                } else if (obj instanceof Class[]) {
+
+                    final Class[] beans = (Class[]) obj;
+                    final EjbModule ejbModule = new EjbModule(new EjbJar(method.getName()));
+                    ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(beans)).link());
+                    ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
                 }
             }
@@ -294,6 +310,17 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
             } finally {
                 SystemInstance.reset();
             }
+        }
+
+        private <Module extends NamedModule> Module setId(Module module, FrameworkMethod method) {
+            return setId(module, method.getName());
+        }
+
+        private <Module extends NamedModule> Module setId(Module module, String name) {
+            if (module.getModuleName() != null) return module;
+            if (module.getId() != null) return module;
+            module.setId(name);
+            return module;
         }
     }
 }
