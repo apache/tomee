@@ -57,6 +57,7 @@ public class BundleFinderFactory extends FinderFactory {
             boolean useLocation = location != null
                     && !location.isEmpty()
                     && !module.isStandaloneModule();
+            BundleAnnotationFinder bundleAnnotationFinder;
             if (useLocation) {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
@@ -76,7 +77,7 @@ public class BundleFinderFactory extends FinderFactory {
                     }
                 };
 
-                return new BundleAnnotationFinder(packageAdmin, bundle, filter);
+                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter);
             } else {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
@@ -96,8 +97,10 @@ public class BundleFinderFactory extends FinderFactory {
                     }
                 };
 
-                return new BundleAnnotationFinder(packageAdmin, bundle, filter);
+                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter);
             }
+            bundleAnnotationFinder.link();
+            return bundleAnnotationFinder;
         }
 
         throw new IllegalStateException("Module classloader is not a BundleReference. Only use BundleFactoryFinder in an pure osgi environment");
