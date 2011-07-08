@@ -83,50 +83,60 @@ public class CdiScanner implements ScannerService {
             if (beans == null) continue;
 
             for (String className : beans.interceptors) {
-                Class<?> clazz = load(className, "interceptor", classLoader);
+                Class<?> clazz = load(className, classLoader);
 
-                // TODO: Move check to validation phase
-                if (AnnotationUtil.hasAnnotation(clazz.getDeclaredAnnotations(), Interceptor.class) && !annotationManager.hasInterceptorBindingMetaAnnotation(
-                    clazz.getDeclaredAnnotations())) {
-                    throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
+                if (clazz != null) {
+// TODO: Move check to validation phase
+                    if (AnnotationUtil.hasAnnotation(clazz.getDeclaredAnnotations(), Interceptor.class) && !annotationManager.hasInterceptorBindingMetaAnnotation(
+                        clazz.getDeclaredAnnotations())) {
+                        throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " must have at least one @InterceptorBindingType");
+                    }
+
+                    if (interceptorsManager.isInterceptorEnabled(clazz)) {
+                        throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
+                    }
+
+                    interceptorsManager.addNewInterceptor(clazz);
+                    classes.add(clazz);
                 }
-
-                if (interceptorsManager.isInterceptorEnabled(clazz)) {
-                    throw new WebBeansConfigurationException("Interceptor class : " + clazz.getName() + " is already defined");
-                }
-
-                interceptorsManager.addNewInterceptor(clazz);
-                classes.add(clazz);
             }
 
             for (String className : beans.decorators) {
-                Class<?> clazz = load(className, "decorator", classLoader);
+                Class<?> clazz = load(className, classLoader);
 
-                if (decoratorsManager.isDecoratorEnabled(clazz)) {
-                    throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
+                if (clazz != null) {
+                    if (decoratorsManager.isDecoratorEnabled(clazz)) {
+                        throw new WebBeansConfigurationException("Decorator class : " + clazz.getName() + " is already defined");
+                    }
+
+                    decoratorsManager.addNewDecorator(clazz);
+                    classes.add(clazz);
                 }
-
-                decoratorsManager.addNewDecorator(clazz);
-                classes.add(clazz);
             }
 
 
             for (String className : beans.alternativeStereotypes) {
-                Class<?> clazz = load(className, "alternative-stereotype", classLoader);
-                alternativesManager.addStereoTypeAlternative(clazz, null, null);
-                classes.add(clazz);
+                Class<?> clazz = load(className, classLoader);
+                if (clazz != null) {
+                    alternativesManager.addStereoTypeAlternative(clazz, null, null);
+                    classes.add(clazz);
+                }
             }
 
             for (String className : beans.alternativeClasses) {
-                Class<?> clazz = load(className, "alternative-class", classLoader);
-                alternativesManager.addClazzAlternative(clazz, null, null);
-                classes.add(clazz);
+                Class<?> clazz = load(className, classLoader);
+                if (clazz != null) {
+                    alternativesManager.addClazzAlternative(clazz, null, null);
+                    classes.add(clazz);
+                }
             }
 
             for (String className : beans.managedClasses) {
                 if (ejbClasses.contains(className)) continue;
-                final Class clazz = load(className, "managed", classLoader);
-                classes.add(clazz);
+                final Class clazz = load(className, classLoader);
+                if (clazz != null) {
+                    classes.add(clazz);
+                }
             }
         }
 
@@ -140,12 +150,19 @@ public class CdiScanner implements ScannerService {
         return null;
     }
 
-    private Class load(String className, String type, ClassLoader classLoader) {
-//        System.out.println("cdi.load = " + className);
+    /**
+     *
+     * @param className  name of class to load
+     * @param classLoader classloader to (try to) load it from
+     * @return the loaded class if possible, or null if loading fails.
+     */
+    private Class load(String className, ClassLoader classLoader) {
         try {
             return classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unable to load class: "+className, e);
+            return null;
+        } catch (NoClassDefFoundError e) {
+            return null;
         }
     }
 
