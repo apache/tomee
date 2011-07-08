@@ -111,6 +111,8 @@ public class CdiScanner implements ScannerService {
 
                     decoratorsManager.addNewDecorator(clazz);
                     classes.add(clazz);
+                } else {
+                    throw new WebBeansConfigurationException("Could not load decorator class: " + className);
                 }
             }
 
@@ -120,6 +122,8 @@ public class CdiScanner implements ScannerService {
                 if (clazz != null) {
                     alternativesManager.addStereoTypeAlternative(clazz, null, null);
                     classes.add(clazz);
+                } else {
+                    throw new WebBeansConfigurationException("Could not load alternativeStereotype class: " + className);
                 }
             }
 
@@ -128,6 +132,8 @@ public class CdiScanner implements ScannerService {
                 if (clazz != null) {
                     alternativesManager.addClazzAlternative(clazz, null, null);
                     classes.add(clazz);
+                } else {
+                    throw new WebBeansConfigurationException("Could not load alternative class: " + className);
                 }
             }
 
