@@ -56,6 +56,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.config.rules.CheckDependsOn;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
@@ -442,7 +443,7 @@ public class StatefulContainer implements RpcContainer {
     protected Object removeEJBObject(BeanContext beanContext, Object primKey, Class callInterface, Method callMethod, Object[] args, InterfaceType interfaceType) throws OpenEJBException {
         if (primKey == null) throw new NullPointerException("primKey is null");
 
-        final Class scope = beanContext.get(Bean.class).getScope();
+        final Class scope = beanContext.get(CdiEjbBean.class).getScope();
         if(scope != Dependent.class) {
             throw new UnsupportedOperationException("Can not call EJB Statefull Bean Remove Method without scoped @Dependent.  Found scope: @"+scope.getSimpleName());
         }
