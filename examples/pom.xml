@@ -83,6 +83,7 @@
     <module>datasource-ciphered-password</module>
     <module>bean-validation-design-by-contract</module>
     <module>cdi-example</module>
+	<module>cdi-interceptors</module>
   </modules>
   <profiles>
     <profile>
