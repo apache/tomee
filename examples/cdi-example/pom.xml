@@ -17,11 +17,8 @@
     limitations under the License.
 -->
 
-<!-- $Rev: 1086252 $ $Date: 2011-03-28 07:26:42 -0700 (Mon, 28 Mar 2011) $ -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-example</artifactId>
@@ -65,10 +62,8 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
-    <!--
-    The <scope>test</scope> guarantees that none of your runtime
-    code is dependent on any OpenEJB classes.
-    -->
+    <!-- The <scope>test</scope> guarantees that none of your runtime code 
+      is dependent on any OpenEJB classes. -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
