@@ -16,10 +16,18 @@
  */
 package org.apache.openejb.osgi.core;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+
 import org.apache.openejb.config.DeploymentModule;
 import org.apache.openejb.config.FinderFactory;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.BundleAnnotationFinder;
+import org.apache.xbean.osgi.bundle.util.BundleResourceFinder;
 import org.apache.xbean.osgi.bundle.util.DiscoveryRange;
 import org.apache.xbean.osgi.bundle.util.ResourceDiscoveryFilter;
 import org.osgi.framework.Bundle;
@@ -32,6 +40,8 @@ import org.osgi.service.packageadmin.PackageAdmin;
  * @version $Rev$ $Date$
  */
 public class BundleFinderFactory extends FinderFactory {
+    private static final String META_INF_BEANS_XML = "META-INF/beans.xml";
+    private static final String WEB_INF_BEANS_XML = "WEB-INF/beans.xml";
 
     @Override
     public IAnnotationFinder create(DeploymentModule module) throws Exception {
@@ -57,6 +67,8 @@ public class BundleFinderFactory extends FinderFactory {
             boolean useLocation = location != null
                     && !location.isEmpty()
                     && !module.isStandaloneModule();
+            Set<String> beanArchiveJarNames = findBeansXml(bundle, packageAdmin, useLocation? location : "");
+
             BundleAnnotationFinder bundleAnnotationFinder;
             if (useLocation) {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
@@ -77,7 +89,7 @@ public class BundleFinderFactory extends FinderFactory {
                     }
                 };
 
-                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter);
+                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter, beanArchiveJarNames);
             } else {
                 ResourceDiscoveryFilter filter = new ResourceDiscoveryFilter() {
 
@@ -97,13 +109,67 @@ public class BundleFinderFactory extends FinderFactory {
                     }
                 };
 
-                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter);
+                bundleAnnotationFinder = new BundleAnnotationFinder(packageAdmin, bundle, filter, beanArchiveJarNames);
             }
             bundleAnnotationFinder.link();
             return bundleAnnotationFinder;
         }
 
         throw new IllegalStateException("Module classloader is not a BundleReference. Only use BundleFactoryFinder in an pure osgi environment");
+    }
+
+    //TODO consider passing in location?
+    private Set<String> findBeansXml(Bundle mainBundle, PackageAdmin packageAdmin, String location)
+            throws Exception
+    {
+        final Set<String> beanArchiveJarNames = new HashSet<String>();
+        BundleResourceFinder brfXmlJar =  new BundleResourceFinder(packageAdmin, mainBundle, "", META_INF_BEANS_XML);
+
+        BundleResourceFinder.ResourceFinderCallback rfCallback = new BundleResourceFinder.ResourceFinderCallback()
+        {
+
+            public boolean foundInDirectory(Bundle bundle, String basePath, URL url) throws Exception
+            {
+//                logger.info("adding the following beans.xml URL: " + url);
+                beanArchiveJarNames.add(basePath);
+                return true;
+            }
+
+            public boolean foundInJar(Bundle bundle, String jarName, ZipEntry entry, InputStream in) throws Exception
+            {
+                URL jarURL = bundle.getEntry(jarName);
+//                URL beansUrl = new URL("jar:" + jarURL.toString() + "!/" + entry.getName());
+
+//                logger.info("adding the following beans.xml URL: " + beansUrl);
+
+                beanArchiveJarNames.add(jarName);
+                return true;
+            }
+
+        };
+
+        brfXmlJar.find(rfCallback);
+
+// TODO I found no other way to find WEB-INF/beanx.xml directly
+        Enumeration<URL> urls = mainBundle.findEntries(location + "/WEB-INF", "beans.xml", true);
+        boolean webBeansXmlFound = false;
+        while (urls != null && urls.hasMoreElements()) {
+            URL webBeansXml = urls.nextElement();
+            String webBeansXMlString = webBeansXml.toExternalForm();
+            if (!webBeansXMlString.endsWith("/" + WEB_INF_BEANS_XML)) {
+                continue;
+            }
+
+            if (webBeansXmlFound) {
+                throw new IllegalStateException("found more than WEB-INF/beans.xml file!" + webBeansXml);
+            }
+
+            //            logger.info("adding the following WEB-INF/beans.xml URL: " + webBeansXml);
+            beanArchiveJarNames.add(location + (location.isEmpty()? "": "/") + "WEB-INF/classes/");
+            webBeansXmlFound = true;
+
+        }
+        return beanArchiveJarNames;
     }
 
 }
