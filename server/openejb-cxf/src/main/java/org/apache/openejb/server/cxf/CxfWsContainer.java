@@ -23,6 +23,7 @@ import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.server.cxf.transport.HttpTransportFactory;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
@@ -69,29 +70,5 @@ public abstract class CxfWsContainer implements HttpListener {
 
     public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
         destination.invoke(null, request.getServletContext(), request, response);
-    }
-
-    /*
-     * Ensure the bus created is unqiue and non-shared.
-     * The very first bus created is set as a default bus which then can
-     * be (re)used in other places.
-     */
-    public static Bus getBus() {
-        getDefaultBus();
-        return new ExtensionManagerBus();
-    }
-
-    /*
-     * Ensure the Spring bus is initialized with the CXF module classloader
-     * instead of the application classloader.
-     */
-    public static Bus getDefaultBus() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(CxfEndpoint.class.getClassLoader());
-        try {
-            return BusFactory.getDefaultBus();
-        } finally {
-            Thread.currentThread().setContextClassLoader(cl);
-        }
     }
 }

@@ -17,51 +17,13 @@
  */
 package org.apache.openejb.server.webservices;
 
-import java.net.InetAddress;
-import java.net.URI;
-import java.util.ArrayList;
+import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
+import org.apache.openejb.server.httpd.HttpListener;
+import org.apache.openejb.server.httpd.OpenEJBHttpRegistry;
+
 import java.util.List;
 
-import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
-import org.apache.openejb.assembler.classic.ServiceInfo;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpListenerRegistry;
-import org.apache.openejb.server.httpd.HttpRequest;
-import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.server.httpd.HttpServerFactory;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-
-public class OpenEJBHttpWsRegistry implements WsRegistry {
-    public static final Logger log = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
-    private final HttpListenerRegistry registry;
-    private final List<URI> baseUris = new ArrayList<URI>();
-
-    public OpenEJBHttpWsRegistry() {
-        try {
-            OpenEjbConfiguration configuration = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-            for (ServiceInfo service : configuration.facilities.services) {
-                if (service.className.equals(HttpServerFactory.class.getName())) {
-                    int port = Integer.parseInt(service.properties.getProperty("port"));
-                    String ip = service.properties.getProperty("bind");
-                    if ("0.0.0.0".equals(ip)) {
-                        InetAddress[] addresses = InetAddress.getAllByName(ip);
-                        for (InetAddress address : addresses) {
-                            baseUris.add(new URI("http", null, address.getHostAddress(), port, null, null, null));
-                        }
-                    } else {
-                        baseUris.add(new URI("http", null, ip, port, null, null, null));
-                    }
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            log.error("Web Services disabled: Unable to build base URIs for Web Service registry", e);
-        }
-        registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
-    }
-
+public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegistry {
     public List<String> setWsContainer(String virtualHost, String contextRoot, String servletName, HttpListener wsContainer) throws Exception {
         throw new UnsupportedOperationException("OpenEJB http server does not support POJO webservices");
     }
@@ -82,42 +44,13 @@ public class OpenEJBHttpWsRegistry implements WsRegistry {
             httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName);
         }
 
-        // assure context root with a leading slash
-        if (!path.startsWith("/")) path = "/" + path;
-
-        httpListener = new ClassLoaderHttpListener(httpListener, classLoader);
-        registry.addHttpListener(httpListener, path);
+        addWrappedHttpListener(httpListener, classLoader, path);
 
         // register wsdl locations for service-ref resolution
-        List<String> addresses = new ArrayList<String>();
-        for (URI baseUri : baseUris) {
-            URI address = baseUri.resolve(path);
-            addresses.add(address.toString());
-        }
-        return addresses;
+        return getResolvedAddresses(path);
     }
 
     public void removeWsContainer(String path) {
         registry.removeHttpListener(path);
-    }
-
-    private static class ClassLoaderHttpListener implements HttpListener {
-        private final HttpListener delegate;
-        private final ClassLoader classLoader;
-
-        private ClassLoaderHttpListener(HttpListener delegate, ClassLoader classLoader) {
-            this.delegate = delegate;
-            this.classLoader = classLoader;
-        }
-
-        public void onMessage(HttpRequest request, HttpResponse response) throws Exception {
-            ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-            try {
-                delegate.onMessage(request, response);
-            } finally {
-                Thread.currentThread().setContextClassLoader(oldCl);
-            }
-        }
     }
 }

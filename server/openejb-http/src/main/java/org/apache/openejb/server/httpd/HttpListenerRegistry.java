@@ -52,9 +52,11 @@ public class HttpListenerRegistry implements HttpListener {
         }
     }
 
-    public void removeHttpListener(String regex) {
+    public HttpListener removeHttpListener(String regex) {
+        HttpListener listener;
         synchronized (registry) {
-            registry.remove(regex);
+            listener = registry.remove(regex);
         }
+        return listener;
     }
 }

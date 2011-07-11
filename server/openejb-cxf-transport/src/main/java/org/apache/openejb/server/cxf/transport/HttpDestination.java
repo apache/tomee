@@ -15,26 +15,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf;
+package org.apache.openejb.server.cxf.transport;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.Destination;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.openejb.server.httpd.HttpRequest;
+import org.apache.openejb.server.httpd.HttpResponse;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Logger;
 
-public class HttpTransportFactory extends HTTPTransportFactory {
-    public HttpTransportFactory() {
-    	// no-op
-    }
-  
-    public HttpTransportFactory(Bus bus) {
-        setBus(bus);
-
+public class HttpDestination extends AbstractHTTPDestination {
+    public HttpDestination(Bus bus, DestinationRegistry registry, EndpointInfo endpointInfo, String path) throws IOException {
+        super(bus, registry, endpointInfo, path, true);
     }
 
-    @Override public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        return new HttpDestination(getBus(), getRegistry(), endpointInfo, endpointInfo.getAddress());
+    @Override public Logger getLogger() {
+        return Logger.getLogger(HttpDestination.class.getName());
     }
 }
