@@ -126,9 +126,8 @@
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomcat.version>6.0.29</tomcat.version>
     <localRepository>${settings.localRepository}</localRepository>
-    <openejb.home>${project.build.directory}/apache-tomcat-${tomcatVersion}</openejb.home>
+    <openejb.home>${project.build.directory}/apache-tomcat-${tomcat.version}</openejb.home>
     <skipTests>${maven.test.skip}</skipTests>
   </properties>
 </project>
