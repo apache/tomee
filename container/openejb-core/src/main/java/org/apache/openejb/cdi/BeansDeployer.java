@@ -31,6 +31,7 @@ import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.interceptor.Interceptor;
 
+import org.apache.webbeans.annotation.AnnotationManager;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
 import org.apache.webbeans.component.AbstractProducerBean;
 import org.apache.webbeans.component.EnterpriseBeanMarker;
@@ -442,31 +443,31 @@ public class BeansDeployer {
      */
     protected void checkStereoTypes(ScannerService scanner)
     {
-        //TODO Update
-//        logger.debug("Checking StereoType constraints has started.");
-//
-//        addDefaultStereoTypes();
-//
-//        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
-//
-//        Set<Class<?>> beanClasses = scanner.getBeanClasses();
-//        if (beanClasses != null && beanClasses.size() > 0) {
-//
-//            for (Class<?> beanClass : beanClasses) {
-//                if (beanClass.isAnnotation()) {
-//                    Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
-//                    if (annotationManager.isStereoTypeAnnotation(stereoClass)) {
-//                        if (!webBeansContext.getxMLAnnotationTypeManager().hasStereoType(stereoClass)) {
-//                            WebBeansUtil.checkStereoTypeClass(stereoClass);
-//                            StereoTypeModel model = new StereoTypeModel(webBeansContext, stereoClass);
-//                            webBeansContext.getStereoTypeManager().addStereoTypeModel(model);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        logger.debug("Checking StereoType constraints has ended.");
+        logger.debug("Checking StereoType constraints has started.");
+
+        addDefaultStereoTypes();
+
+        final AnnotationManager annotationManager = webBeansContext.getAnnotationManager();
+
+        Set<Class<?>> beanClasses = scanner.getBeanClasses();
+        if (beanClasses != null && beanClasses.size() > 0)
+        {
+            for(Class<?> beanClass : beanClasses)
+            {
+                if(beanClass.isAnnotation())
+                {
+                    Class<? extends Annotation> stereoClass = (Class<? extends Annotation>) beanClass;
+                    if (annotationManager.isStereoTypeAnnotation(stereoClass))
+                    {
+                        annotationManager.checkStereoTypeClass(stereoClass, stereoClass.getDeclaredAnnotations());
+                        StereoTypeModel model = new StereoTypeModel(webBeansContext, stereoClass);
+                        webBeansContext.getStereoTypeManager().addStereoTypeModel(model);
+                    }
+                }
+            }
+        }
+
+        logger.debug("Checking StereoType constraints has ended.");
     }
 
     /**
