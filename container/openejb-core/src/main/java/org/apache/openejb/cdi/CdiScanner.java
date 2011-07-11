@@ -98,6 +98,8 @@ public class CdiScanner implements ScannerService {
 
                     interceptorsManager.addNewInterceptor(clazz);
                     classes.add(clazz);
+                } else {
+                    throw new WebBeansConfigurationException("Could not load interceptor class: " + className);
                 }
             }
 
