@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.openejb.server.webservices;
+package org.apache.openejb.server.httpd;
 
-import org.apache.openejb.server.httpd.HttpListener;
-import org.apache.openejb.server.httpd.HttpRequest;
-import org.apache.openejb.server.httpd.HttpResponse;
-import org.apache.openejb.util.Base64;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Base64;
 
 import javax.security.auth.login.LoginException;
 

@@ -120,6 +120,7 @@
     <tomcat.version>7.0.16</tomcat.version>
 
     <!-- used mainly by jetty modules -->
+    <cxf.version>2.4.1</cxf.version>
     <jetty.version>7.4.2.v20110526</jetty.version>
 
     <!--
@@ -575,6 +576,16 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-bundle</artifactId>
+      <version>${cxf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
         <version>${jetty.version}</version>

@@ -40,6 +40,7 @@ import org.apache.openejb.core.webservices.PortAddressRegistry;
 import org.apache.openejb.core.webservices.PortData;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.Injection;
 import org.apache.openejb.util.Logger;
@@ -255,7 +256,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                 List<String> addresses = wsRegistry.addWsContainer(location, container, virtualHost, realm, transport, auth, classLoader);
 
                                 // one of the registered addresses to be the connonical address
-                                String address = selectSingleAddress(addresses);
+                                String address = HttpUtil.selectSingleAddress(addresses);
 
                                 if (address != null) {
                                     // register wsdl location
@@ -314,7 +315,7 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                     List<String> addresses = wsRegistry.setWsContainer(virtualHost, webApp.contextRoot, servlet.servletName, container);
 
                     // one of the registered addresses to be the connonical address
-                    String address = selectSingleAddress(addresses);
+                    String address = HttpUtil.selectSingleAddress(addresses);
 
                     // add address to global registry
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
@@ -386,26 +387,6 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                 }
             }
         }
-    }
-
-    private String selectSingleAddress(List<String> addresses) {
-        if (addresses == null || addresses.isEmpty()) return null;
-
-        // return the first http address
-        for (String address : addresses) {
-            if (address.startsWith("http:")) {
-                return address;
-            }
-        }
-        // return the first https address
-        for (String address : addresses) {
-            if (address.startsWith("https:")) {
-                return address;
-            }
-        }
-        // just return the first address
-        String address = addresses.iterator().next();
-        return address;
     }
 
     private String autoAssignWsLocation(EnterpriseBeanInfo bean, PortData port, Map<String, String> contextData, StringTemplate template) {

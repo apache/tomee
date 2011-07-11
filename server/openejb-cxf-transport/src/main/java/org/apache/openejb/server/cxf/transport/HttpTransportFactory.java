@@ -15,26 +15,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.cxf.pojo;
+package org.apache.openejb.server.cxf.transport;
 
 import org.apache.cxf.Bus;
-import org.apache.openejb.core.webservices.PortData;
-import org.apache.openejb.server.cxf.CxfWsContainer;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.Destination;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 
-import javax.naming.Context;
+import java.io.IOException;
 
-public class PojoWsContainer extends CxfWsContainer {
-    private final Context context;
-    private final Class target;
+public class HttpTransportFactory extends HTTPTransportFactory {
+    public HttpTransportFactory() {
+    	// no-op
+    }
+  
+    public HttpTransportFactory(Bus bus) {
+        setBus(bus);
 
-    public PojoWsContainer(Bus bus, PortData port, Context context, Class target) {
-        super(bus, port);
-        if (target == null) throw new NullPointerException("target is null");
-        this.context = context;
-        this.target = target;
     }
 
-    protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(bus, port, context, target);
+    @Override public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
+        return new HttpDestination(getBus(), getRegistry(), endpointInfo, endpointInfo.getAddress());
     }
 }

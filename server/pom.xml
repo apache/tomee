@@ -44,6 +44,9 @@
     <module>openejb-cxf</module>
     <module>openejb-multicast</module>
     <module>openejb-daemon</module>
+    <module>openejb-cxf-rs</module>
+    <module>openejb-cxf-transport</module>
+    <module>openejb-rest</module>
   </modules>
 </project>
 

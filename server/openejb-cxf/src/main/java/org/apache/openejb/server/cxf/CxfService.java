@@ -20,9 +20,10 @@ package org.apache.openejb.server.cxf;
 import org.apache.cxf.Bus;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.webservices.PortData;
+import org.apache.openejb.server.cxf.client.SaajInterceptor;
 import org.apache.openejb.server.cxf.ejb.EjbWsContainer;
 import org.apache.openejb.server.cxf.pojo.PojoWsContainer;
-import org.apache.openejb.server.cxf.client.SaajInterceptor;
+import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsService;
 
@@ -43,7 +44,7 @@ public class CxfService extends WsService {
     }
 
     protected HttpListener createEjbWsContainer(URL moduleBaseUrl, PortData port, BeanContext beanContext) {
-        Bus bus = CxfWsContainer.getBus();
+        Bus bus = CxfUtil.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 
@@ -61,7 +62,7 @@ public class CxfService extends WsService {
     }
 
     protected HttpListener createPojoWsContainer(URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot) {
-        Bus bus = CxfWsContainer.getBus();
+        Bus bus = CxfUtil.getBus();
 
         CxfCatalogUtils.loadOASISCatalog(bus, moduleBaseUrl, "META-INF/jax-ws-catalog.xml");
 

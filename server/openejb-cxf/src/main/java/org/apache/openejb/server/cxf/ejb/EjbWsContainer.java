@@ -35,9 +35,4 @@ public class EjbWsContainer extends CxfWsContainer {
     	EjbEndpoint ep = new EjbEndpoint(bus, port, beanContext, httpTransportFactory);
         return ep;
     }
-
-    public void start() {
-        super.start();
-        // removed?: this.destination.setPassSecurityContext(true);
-    }
 }
