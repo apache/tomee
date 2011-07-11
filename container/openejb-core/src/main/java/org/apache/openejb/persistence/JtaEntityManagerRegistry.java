@@ -144,9 +144,10 @@ public class JtaEntityManagerRegistry {
     /**
      * Removed the registered entity managers for the specified component.
      * @param deploymentId the id of the component
+     * @return EntityManager map we are removing
      */
-    public void removeEntityManagers(String deploymentId, Object primaryKey) {
-        extendedRegistry.get().removeEntityManagers(new InstanceId(deploymentId, primaryKey));
+    public Map<EntityManagerFactory, EntityManager> removeEntityManagers(String deploymentId, Object primaryKey) {
+        return extendedRegistry.get().removeEntityManagers(new InstanceId(deploymentId, primaryKey));
     }
 
     /**
@@ -210,12 +211,12 @@ public class JtaEntityManagerRegistry {
             entityManagersByDeploymentId.put(instanceId, entityManagers);
         }
 
-        private void removeEntityManagers(InstanceId instanceId) {
+        private Map<EntityManagerFactory, EntityManager> removeEntityManagers(InstanceId instanceId) {
             if (instanceId == null) {
                 throw new NullPointerException("InstanceId is null");
             }
 
-            entityManagersByDeploymentId.remove(instanceId);
+            return entityManagersByDeploymentId.remove(instanceId);
         }
 
         private EntityManager getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
