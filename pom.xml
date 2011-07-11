@@ -116,10 +116,10 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <!-- Used in assembly/openejb-tomcat* projects  -->
-    <tomcatVersion>7.0.16</tomcatVersion>
+    <!-- Used mainly in assembly/openejb-tomcat* projects  -->
+    <tomcat.version>7.0.16</tomcat.version>
 
-    <!-- used by cxf -->
+    <!-- used mainly by jetty modules -->
     <jetty.version>7.4.2.v20110526</jetty.version>
 
     <!--
@@ -1035,7 +1035,7 @@
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-catalina</artifactId>
-        <version>${tomcatVersion}</version>
+        <version>${tomcat.version}</version>
         <optional>true</optional>
         <scope>provided</scope>
       </dependency>
