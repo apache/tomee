@@ -1,3 +1,19 @@
+/*
+ *     Licensed to the Apache Software Foundation (ASF) under one or more
+ *     contributor license agreements.  See the NOTICE file distributed with
+ *     this work for additional information regarding copyright ownership.
+ *     The ASF licenses this file to You under the Apache License, Version 2.0
+ *     (the "License"); you may not use this file except in compliance with
+ *     the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -117,6 +133,11 @@ public class RestDeploymentTest {
         assertEquals("Hi from REST World!", hi);
     }
 
+    @Test public void second() {
+        String hi = WebClient.create(BASE_URL).path("/second/hi2/2nd").get(String.class);
+        assertEquals("hi 2nd", hi);
+    }
+
     @Test public void expert() throws Exception {
         Response response = WebClient.create(BASE_URL).path("/expert/still-hi").post("Pink Floyd");
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
@@ -130,5 +151,9 @@ public class RestDeploymentTest {
             writer.write(c);
         }
         assertEquals("hi Pink Floyd", writer.toString());
+    }
+
+    @Test public void nonListed() { // default handler from openejb-http
+        assertEquals("", WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class));
     }
 }
