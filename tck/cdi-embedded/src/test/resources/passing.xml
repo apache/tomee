@@ -1,16 +1,13 @@
 <suite name="CDI TCK" verbose="0">
-
   <listeners>
     <listener class-name="org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener" />
   </listeners>
-
   <test name="CDI TCK">
     <packages>
         <package name="org.jboss.jsr299.tck.tests.*"/>
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContext2Test"/>
       <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest">
         <methods>
           <exclude name="testApplicationContextSharedBetweenServletRequests"/>
@@ -88,11 +85,6 @@
           <exclude name="testRequestScopeIsDestroyedAfterServletRequest"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest">
-        <methods>
-          <exclude name="testRequestScopeDestroyedAfterCallToEjbTimeoutMethod"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest">
         <methods>
           <exclude name="testSessionContextDestroyedWhenHttpSessionInvalidated"/>
@@ -125,17 +117,6 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">
         <methods>
           <exclude name="testCreateSFSB"/>
-          <exclude name="testSerializeSFSB"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest">
-        <methods>
-          <exclude name="testApplicationCannotCallRemoveMethodOnNonDependentScopedSessionEnterpriseBean"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest">
-        <methods>
-          <exclude name="testNonStaticProducerMethodInheritedBySpecializingSubclass"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.env.EnvInjectionTest">
@@ -147,9 +128,9 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest">
         <methods>
           <exclude name="testBeanTypesAndBindingTypesOfPersistenceContext"/>
+          <exclude name="testInjectionOfPersistenceContext"/>
           <exclude name="testInjectionOfPersistenceUnit"/>
           <exclude name="testPassivationOfPersistenceContext"/>
-          <exclude name="testInjectionOfPersistenceContext"/>
           <exclude name="testPassivationOfPersistenceUnit"/>
         </methods>
       </class>
@@ -191,9 +172,9 @@
           <exclude name="testSpecializingAndSpecializedBeanHasName"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.nonExistantClassInBeansXml.NonExistantClassInBeansXmlTest">
         <methods>
-          <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
+          <exclude name="testNonExistantClassInBeansXmlNotOk"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">

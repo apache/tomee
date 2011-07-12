@@ -71,6 +71,7 @@ public class Report {
         textReport(file);
         passingXml(file);
         failingXml(file);
+//        printResults(System.out);
 
     }
 
@@ -90,7 +91,7 @@ public class Report {
                 "  <listeners>\n" +
                 "    <listener class-name=\"org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener\" />\n" +
                 "  </listeners>\n" +
-                "  <test name=\"CDI TCK\">" +
+                "  <test name=\"CDI TCK\">\n" +
                 "    <packages>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.tests.*\"/>\n" +
                 "        <package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>\n" +
@@ -124,7 +125,11 @@ public class Report {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-failing.xml"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
 
-        out.println("<suite name=\"CDI TCK\" verbose=\"0\">");
+        out.println("<suite name=\"CDI TCK\" verbose=\"0\">\n"+
+        "  <listeners>\n" +
+        "    <listener class-name=\"org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener\" />\n" +
+        "  </listeners>");
+
         out.println("  <test name=\"CDI TCK\">");
         out.println("    <!--<packages>-->\n" +
                 "        <!--<package name=\"org.jboss.jsr299.tck.tests.*\"/>-->\n" +
@@ -198,13 +203,18 @@ public class Report {
     public static enum Status {
         PASS, FAIL, ERROR;
     }
-    public static class TestResult {
+    public static class TestResult implements Comparable<TestResult> {
         private final String name;
         private final Status status;
 
         public TestResult(String name, Status status) {
             this.name = name;
             this.status = status;
+        }
+
+        @Override
+        public int compareTo(TestResult testResult) {
+            return this.name.compareTo(testResult.name);
         }
     }
 
@@ -228,6 +238,7 @@ public class Report {
         }
 
         public List<TestResult> getResults() {
+            Collections.sort(results);
             return results;
         }
 

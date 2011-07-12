@@ -147,13 +147,13 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 
     private Context getRequestContext() {
         RequestContext context = requestContext.get();
-        if (context == null) {
-
-            context = new RequestContext();
-            context.setActive(true);
-
-            requestContext.set(context);
-        }
+//        if (context == null) {
+//
+//            context = new RequestContext();
+//            context.setActive(true);
+//
+//            requestContext.set(context);
+//        }
         return context;
     }
 
