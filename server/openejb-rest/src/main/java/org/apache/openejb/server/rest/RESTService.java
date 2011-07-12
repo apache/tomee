@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *     contributor license agreements.  See the NOTICE file distributed with
+ *     this work for additional information regarding copyright ownership.
+ *     The ASF licenses this file to You under the Apache License, Version 2.0
+ *     (the "License"); you may not use this file except in compliance with
+ *     the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
+ */
+
 package org.apache.openejb.server.rest;
 
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -45,7 +62,6 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
 
     private final Set<AppInfo> deployedApplications = new HashSet<AppInfo>();
     private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
-    private final Map<String, Application> deployedRESTApplications = new HashMap<String, Application>();
     private Assembler assembler;
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
@@ -182,11 +198,6 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     @Override public void beforeApplicationDestroyed(AppInfo appInfo) {
         if (deployedApplications.contains(appInfo)) {
             for (WebAppInfo webApp : appInfo.webApps) {
-                for (Map.Entry<String, Application> restApp : deployedRESTApplications.entrySet()) {
-                    if (restApp.getKey().endsWith(webApp.contextRoot)) {
-                        deployedRESTApplications.remove(restApp.getKey());
-                    }
-                }
                 for (Map.Entry<String, Object> instances : restInstances.entrySet()) {
                     if (instances.getKey().endsWith(webApp.contextRoot)) {
                         undeployRestObject(instances.getKey());

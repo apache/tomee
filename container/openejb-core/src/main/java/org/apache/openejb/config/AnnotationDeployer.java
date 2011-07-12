@@ -4384,21 +4384,21 @@ public class AnnotationDeployer implements DynamicDeployer {
         // annotations on classes
         List<Class<?>> annotatedClasses = finder.findAnnotatedClasses(Path.class);
         for (Class<?> clazz : annotatedClasses) {
-            classes.add(clazz.getName());
+            int modifiers = clazz.getModifiers();
+            if (!Modifier.isAbstract(modifiers)) {
+                classes.add(clazz.getName());
+            }
         }
 
-        // methods annotations
+        // methods annotations: inheritance is managed like it to be more efficient
         List<Method> methods = new ArrayList<Method>();
         methods.addAll(finder.findAnnotatedMethods(Path.class));
-        /* should be useless...
-        methods.addAll(finder.findAnnotatedMethods(HEAD.class));
-        methods.addAll(finder.findAnnotatedMethods(PUT.class));
-        methods.addAll(finder.findAnnotatedMethods(POST.class));
-        methods.addAll(finder.findAnnotatedMethods(DELETE.class));
-        methods.addAll(finder.findAnnotatedMethods(GET.class));
-        */
         for (Method method : methods) {
-            classes.add(method.getDeclaringClass().getName());
+            Class<?> clazz = method.getDeclaringClass();
+            int modifiers = clazz.getModifiers();
+            if (!Modifier.isAbstract(modifiers)) {
+                classes.add(clazz.getName());
+            }
         }
 
         return classes;
