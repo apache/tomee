@@ -641,10 +641,7 @@ public class JndiBuilder {
             return;
         }
         
-        String globalAppName = "app/" + moduleName + beanName;
-        
-        appContext.bind(globalAppName, ref);
-        bind("openejb/global/" + globalAppName, ref, bindings, beanInfo, intrface);
+        appContext.bind("app/" + moduleName + beanName, ref);
         
         moduleContext.bind("module/" + beanName, ref);
     }
