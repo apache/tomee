@@ -95,10 +95,11 @@ public class JtaEntityManagerRegistry {
 
         // if extended context, there must be an entity manager already registered with the tx
         if (extended) {
-            EntityManager entityManager = getInheritedEntityManager(entityManagerFactory);
-            if (entityManager == null) {
+            EntityManagerTracker entityManagerTracker = getInheritedEntityManager(entityManagerFactory);
+            if (entityManagerTracker == null || entityManagerTracker.getEntityManager() == null) {
                 throw new IllegalStateException("InternalError: an entity manager should already be registered for this extended persistence unit");
             }
+            EntityManager entityManager = entityManagerTracker.getEntityManager();
 
             // if transaction is active, we need to register the entity manager with the transaction manager
             if (transactionActive) {
@@ -137,16 +138,17 @@ public class JtaEntityManagerRegistry {
      * @throws EntityManagerAlreadyRegisteredException if an entity manager is already registered with the transaction
      * for one of the supplied entity manager factories; for EJBs this should be caught and rethown as an EJBException
      */
-    public void addEntityManagers(String deploymentId, Object primaryKey, Map<EntityManagerFactory, EntityManager> entityManagers) throws EntityManagerAlreadyRegisteredException {
+    public void addEntityManagers(String deploymentId, Object primaryKey, Map<EntityManagerFactory, EntityManagerTracker> entityManagers) throws EntityManagerAlreadyRegisteredException {
         extendedRegistry.get().addEntityManagers(new InstanceId(deploymentId, primaryKey), entityManagers);
     }
 
     /**
      * Removed the registered entity managers for the specified component.
      * @param deploymentId the id of the component
+     * @return EntityManager map we are removing
      */
-    public void removeEntityManagers(String deploymentId, Object primaryKey) {
-        extendedRegistry.get().removeEntityManagers(new InstanceId(deploymentId, primaryKey));
+    public Map<EntityManagerFactory, EntityManagerTracker> removeEntityManagers(String deploymentId, Object primaryKey) {
+        return extendedRegistry.get().removeEntityManagers(new InstanceId(deploymentId, primaryKey));
     }
 
     /**
@@ -154,7 +156,7 @@ public class JtaEntityManagerRegistry {
      * @param entityManagerFactory the entity manager factory from which an entity manager is needed
      * @return the existing entity manager or null if one is not found
      */
-    public EntityManager getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
+    public EntityManagerTracker getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
         return extendedRegistry.get().getInheritedEntityManager(entityManagerFactory);
     }
 
@@ -179,10 +181,11 @@ public class JtaEntityManagerRegistry {
     }
 
     private class ExtendedRegistry {
-        private final Map<InstanceId, Map<EntityManagerFactory, EntityManager>> entityManagersByDeploymentId =
-                new HashMap<InstanceId, Map<EntityManagerFactory, EntityManager>>();
+        private final Map<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>> entityManagersByDeploymentId =
+                new HashMap<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>>();
 
-        private void addEntityManagers(InstanceId instanceId, Map<EntityManagerFactory, EntityManager> entityManagers) throws EntityManagerAlreadyRegisteredException {
+        private void addEntityManagers(InstanceId instanceId, Map<EntityManagerFactory, EntityManagerTracker> entityManagers)
+                throws EntityManagerAlreadyRegisteredException {
             if (instanceId == null) {
                 throw new NullPointerException("instanceId is null");
             }
@@ -191,9 +194,9 @@ public class JtaEntityManagerRegistry {
             }
 
             if (isTransactionActive()) {
-                for (Map.Entry<EntityManagerFactory, EntityManager> entry : entityManagers.entrySet()) {
+                for (Map.Entry<EntityManagerFactory, EntityManagerTracker> entry : entityManagers.entrySet()) {
                     EntityManagerFactory entityManagerFactory = entry.getKey();
-                    EntityManager entityManager = entry.getValue();
+                    EntityManager entityManager = entry.getValue().getEntityManager();
                     EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
                     EntityManager oldEntityManager = (EntityManager) transactionRegistry.getResource(txKey);
                     if (entityManager == oldEntityManager) {
@@ -210,23 +213,23 @@ public class JtaEntityManagerRegistry {
             entityManagersByDeploymentId.put(instanceId, entityManagers);
         }
 
-        private void removeEntityManagers(InstanceId instanceId) {
+        private Map<EntityManagerFactory, EntityManagerTracker> removeEntityManagers(InstanceId instanceId) {
             if (instanceId == null) {
                 throw new NullPointerException("InstanceId is null");
             }
 
-            entityManagersByDeploymentId.remove(instanceId);
+            return entityManagersByDeploymentId.remove(instanceId);
         }
 
-        private EntityManager getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
+        private EntityManagerTracker getInheritedEntityManager(EntityManagerFactory entityManagerFactory) {
             if (entityManagerFactory == null) {
                 throw new NullPointerException("entityManagerFactory is null");
             }
 
-            for (Map<EntityManagerFactory, EntityManager> entityManagers : entityManagersByDeploymentId.values()) {
-                EntityManager entityManager = entityManagers.get(entityManagerFactory);
-                if (entityManager != null) {
-                    return entityManager;
+            for (Map<EntityManagerFactory, EntityManagerTracker> entityManagers : entityManagersByDeploymentId.values()) {
+                EntityManagerTracker entityManagerTracker = entityManagers.get(entityManagerFactory);
+                if (entityManagerTracker != null) {
+                    return entityManagerTracker;
                 }
             }
             return null;
@@ -240,14 +243,14 @@ public class JtaEntityManagerRegistry {
                 throw new TransactionRequiredException();
             }
 
-            Map<EntityManagerFactory, EntityManager> entityManagers = entityManagersByDeploymentId.get(instanceId);
+            Map<EntityManagerFactory, EntityManagerTracker> entityManagers = entityManagersByDeploymentId.get(instanceId);
             if (entityManagers == null) {
                 return;
             }
 
-            for (Map.Entry<EntityManagerFactory, EntityManager> entry : entityManagers.entrySet()) {
+            for (Map.Entry<EntityManagerFactory, EntityManagerTracker> entry : entityManagers.entrySet()) {
                 EntityManagerFactory entityManagerFactory = entry.getKey();
-                EntityManager entityManager = entry.getValue();
+                EntityManager entityManager = entry.getValue().getEntityManager();
                 entityManager.joinTransaction();
                 EntityManagerTxKey txKey = new EntityManagerTxKey(entityManagerFactory);
                 transactionRegistry.putResource(txKey, entityManager);
@@ -289,6 +292,36 @@ public class JtaEntityManagerRegistry {
             result = deploymentId.hashCode();
             result = 29 * result + primaryKey.hashCode();
             return result;
+        }
+    }
+
+    /**
+     * This object is used track all EntityManagers inherited in order
+     * to effectively close it when the latest Extended persistence context
+     * is no more accessed.
+     */
+    public static class EntityManagerTracker {
+        // must take care of the first inheritance level
+        private transient int counter;
+        private EntityManager entityManager;
+
+        public EntityManagerTracker(EntityManager entityManager) {
+            if (entityManager == null) throw new NullPointerException("entityManager is null.");
+
+            this.counter = 0;
+            this.entityManager = entityManager;
+        }
+
+        public int incCounter() {
+            return counter++;
+        }
+
+        public int decCounter() {
+            return counter--;
+        }
+
+        public EntityManager getEntityManager() {
+            return entityManager;
         }
     }
 

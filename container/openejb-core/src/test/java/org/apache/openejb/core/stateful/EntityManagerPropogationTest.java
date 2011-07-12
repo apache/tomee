@@ -39,28 +39,53 @@ import org.apache.openjpa.persistence.ArgumentException;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Local;
-import javax.ejb.Remove;
 import javax.ejb.NoSuchEJBException;
+import javax.ejb.Remove;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static javax.persistence.PersistenceContextType.EXTENDED;
 import static javax.persistence.PersistenceContextType.TRANSACTION;
-import java.io.IOException;
 
 public class EntityManagerPropogationTest extends TestCase {
 
     public void test() throws Exception {
+        _testEMClose();
         _testExtended();
         _testExtendedRemove();
+        _testExtendedRandomRemove();
         _testNotTooExtended();
         _testTransaction();
-	_testSFTr2SFEx();
-	_testSFEx2SLTr2SFEx();
-	_testSLTr2SFEx();
+        _testSFTr2SFEx();
+        _testSFEx2SLTr2SFEx();
+        _testSLTr2SFEx();
+    }
+
+    private void _testEMClose() throws Exception {
+        InitialContext ctx = new InitialContext();
+
+        PleaseCloseMyExtendedEmBean checkExtendedWorks = (PleaseCloseMyExtendedEmBean) ctx.lookup("PleaseCloseMyExtendedEmLocalBean");
+        EntityManager savedReference = checkExtendedWorks.getDelegate();
+        checkExtendedWorks.remove();
+        assertFalse(savedReference.isOpen());
+
+        PleaseCloseMyEmBean please = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyEmLocalBean");
+        savedReference = please.getDelegate();
+        please.remove();
+        assertFalse(savedReference.isOpen());
+
+        PleaseCloseMyEmBean statelessIsEasier = (PleaseCloseMyEmBean) ctx.lookup("PleaseCloseMyLessEmLocalBean");
+        savedReference = statelessIsEasier.getDelegate();
+        statelessIsEasier.remove();
+        assertFalse(savedReference.isOpen());
     }
 
     public void _testExtended() throws Exception {
@@ -115,6 +140,42 @@ public class EntityManagerPropogationTest extends TestCase {
             node = next;
         }
 
+    }
+
+    public void _testExtendedRandomRemove() throws Exception {
+
+        InitialContext ctx = new InitialContext();
+        int size;
+        Random rdm = new Random();
+
+        for (int l = 0 ; l < 10 ; l++) { // because Romain is not sure of the Random ;-)
+            Node node = (Node) ctx.lookup("ExtendedLocalBean");
+            List<Node> nodes = new ArrayList<Node>();
+            List<EntityManager> delegates = new ArrayList<EntityManager>();
+
+            while (node.getChild() != null) {
+                nodes.add(node);
+                delegates.add(node.getDelegateEntityManager());
+                node = node.getChild();
+            }
+
+            // random remove all stateful
+            do {
+                size = nodes.size();
+                int i = rdm.nextInt(size);
+                Node n = nodes.remove(i);
+                EntityManager entityManager = delegates.remove(i);
+
+                n.remove();
+
+                if (--size == 0) {
+                    assertFalse(entityManager.isOpen());
+                } else {
+                    assertTrue(entityManager.isOpen());
+                }
+
+            } while (size > 0);
+        }
     }
 
     /**
@@ -217,7 +278,7 @@ public class EntityManagerPropogationTest extends TestCase {
 	    node.createUntilLeaf(8, "Yellow");
 	    
 	    fail("5.6.3.1 Requirements for Persistence Context Propagation (persistence spec)" +
-	    		"\n\t--> we cannot have two persistence contexts associated with the transaction");
+                "\n\t--> we cannot have two persistence contexts associated with the transaction");
 	    
 	} catch (EJBException e) {
 	    // OK
@@ -240,6 +301,10 @@ public class EntityManagerPropogationTest extends TestCase {
 
         // Create an ejb-jar.xml for this app
         EjbJar ejbJar = new EjbJar();
+
+        ejbJar.addEnterpriseBean(new StatefulBean("PleaseCloseMyExtendedEm", PleaseCloseMyExtendedEmBean.class));
+        ejbJar.addEnterpriseBean(new StatefulBean("PleaseCloseMyEm", PleaseCloseMyEmBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean("PleaseCloseMyLessEm", PleaseCloseMyEmBean.class));
 
         // Add six beans and link them all in a chain
         addStatefulBean(ejbJar, ExtendedContextBean.class, "Extended", "Extendedx2");
@@ -349,9 +414,35 @@ public class EntityManagerPropogationTest extends TestCase {
         Node getChild();
         
         String getDelegateEntityManagerReference();
-        
+
+        EntityManager getDelegateEntityManager();
     }
 
+    public static class PleaseCloseMyExtendedEmBean {
+
+        @PersistenceContext(unitName = "testUnit", type = EXTENDED)
+        protected EntityManager context;
+
+        public EntityManager getDelegate() {
+            return (EntityManager) context.getDelegate();
+        }
+
+        @Remove
+        public void remove(){}
+    }
+
+    public static class PleaseCloseMyEmBean {
+
+        @PersistenceContext(unitName = "testUnit", type = TRANSACTION)
+        protected EntityManager context;
+
+        public EntityManager getDelegate() {
+            return (EntityManager) context.getDelegate();
+        }
+
+        @Remove
+        public void remove(){}
+    }
 
     /**
      * The root stateful session bean is essentially the "owner"
@@ -371,6 +462,10 @@ public class EntityManagerPropogationTest extends TestCase {
         protected EntityManager getEntityManager() {
             return context;
         }
+
+        public EntityManager getDelegateEntityManager() {
+            return (EntityManager) context.getDelegate();
+        }
     }
 
     public static class TransactionContextBean extends NodeBean {
@@ -380,6 +475,10 @@ public class EntityManagerPropogationTest extends TestCase {
 
         protected EntityManager getEntityManager() {
             return context;
+        }
+
+        public EntityManager getDelegateEntityManager() {
+            return (EntityManager) context.getDelegate();
         }
     }
 
@@ -441,6 +540,10 @@ public class EntityManagerPropogationTest extends TestCase {
         }
         
         public String getDelegateEntityManagerReference() {
+            return null;
+        }
+
+        public EntityManager getDelegateEntityManager() {
             return null;
         }
 
