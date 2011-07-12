@@ -33,6 +33,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.interceptor.AroundInvoke;
+import javax.interceptor.AroundTimeout;
 import javax.interceptor.InvocationContext;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -57,6 +58,7 @@ public class CdiInterceptor implements Serializable {
         this.webBeansContext = bean.getWebBeansContext();
     }
 
+    @AroundTimeout
     @AroundInvoke
     public Object aroundInvoke(final InvocationContext ejbContext) throws Exception {
 
@@ -85,14 +87,11 @@ public class CdiInterceptor implements Serializable {
         public Object call() throws Exception {
 
             Context ctx = contextService.getCurrentContext(scopeType);
-            boolean active = false;
 
             if (ctx == null) {
                 contextService.startContext(scopeType, null);
             } else if (!ctx.isActive()) {
                 contextService.activateContext(scopeType);
-            } else {
-                active = true;
             }
 
             try {
@@ -100,8 +99,6 @@ public class CdiInterceptor implements Serializable {
             } finally {
                 if (ctx == null) {
                     contextService.endContext(scopeType, null);
-                } else if (!active) {
-                    contextService.deActivateContext(scopeType);
                 }
             }
         }

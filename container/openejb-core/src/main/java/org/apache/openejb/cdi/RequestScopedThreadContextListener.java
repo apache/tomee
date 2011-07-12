@@ -16,9 +16,14 @@
  */
 package org.apache.openejb.cdi;
 
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ThreadContextListener;
-import org.apache.webbeans.context.RequestContext;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
+
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.spi.Context;
 
 /**
  * @version $Rev$ $Date$
@@ -28,45 +33,38 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
 
     @Override
     public void contextEntered(ThreadContext oldContext, ThreadContext newContext) {
-        Request request = getRequestData(oldContext);
 
-        if (request == null) {
-            request = new Request(newContext);
+        final BeanContext beanContext = newContext.getBeanContext();
+
+        final WebBeansContext webBeansContext = beanContext.getModuleContext().getAppContext().getWebBeansContext();
+        final ContextsService contextsService = webBeansContext.getContextsService();
+
+        final Context requestContext = contextsService.getCurrentContext(RequestScoped.class);
+
+        if (requestContext == null) {
+            contextsService.startContext(RequestScoped.class, null);
+            newContext.set(DestroyContext.class, new DestroyContext(contextsService, newContext));
         }
-
-        request.propogate(newContext);
     }
 
     @Override
     public void contextExited(ThreadContext exitedContext, ThreadContext reenteredContext) {
-        final Request request = getRequestData(exitedContext);
+        if (exitedContext == null) return;
 
-        if (request.start == exitedContext) request.complete();
+        final DestroyContext destroyContext = exitedContext.get(DestroyContext.class);
+
+        if (destroyContext == null || destroyContext.threadContext != exitedContext) return;
+
+        destroyContext.contextsService.endContext(RequestScoped.class, null);
     }
 
-    private Request getRequestData(ThreadContext threadContext) {
-        if (threadContext == null) return null;
-        return threadContext.get(Request.class);
-    }
+    private static class DestroyContext {
+        private final ContextsService contextsService;
+        private final ThreadContext threadContext;
 
-
-    private static class Request {
-        private final ThreadContext start;
-        private final RequestContext context;
-
-        public Request(ThreadContext start) {
-            this.start = start;
-            this.context = new RequestContext();
-            this.context.setActive(true);
-        }
-
-        public void propogate(ThreadContext threadContext) {
-            threadContext.set(Request.class, this);
-            threadContext.set(RequestContext.class, context);
-        }
-
-        public void complete() {
-            context.destroy();
+        private DestroyContext(ContextsService contextsService, ThreadContext threadContext) {
+            this.contextsService = contextsService;
+            this.threadContext = threadContext;
         }
     }
 }

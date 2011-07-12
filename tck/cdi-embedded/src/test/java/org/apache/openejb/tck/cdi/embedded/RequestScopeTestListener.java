@@ -21,14 +21,19 @@ import org.apache.openejb.BeanType;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.spi.ContextsService;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+
+import javax.enterprise.context.RequestScoped;
 
 public class RequestScopeTestListener implements ITestListener {
 
     private boolean entered = false;
     private ThreadContext oldContext;
+    private ContextsService contextsService;
 
     @Override
     public void onTestStart(ITestResult iTestResult) {
@@ -48,9 +53,10 @@ public class RequestScopeTestListener implements ITestListener {
 
         if (context == null) return;
 
-        ThreadContext newContext = new ThreadContext(context, null);
-        oldContext = ThreadContext.enter(newContext);
+        final WebBeansContext webBeansContext = context.getModuleContext().getAppContext().getWebBeansContext();
+        contextsService = webBeansContext.getContextsService();
 
+        contextsService.startContext(RequestScoped.class, null);
     }
 
     @Override
@@ -60,7 +66,7 @@ public class RequestScopeTestListener implements ITestListener {
 
     private void exit() {
         try {
-            ThreadContext.exit(oldContext);
+            contextsService.endContext(RequestScoped.class, null);
         } catch (Exception e) {
         }
     }
