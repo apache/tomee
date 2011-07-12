@@ -18,19 +18,21 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.Injection;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
 
+import javax.naming.Context;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 /**
  * @author Romain Manni-Bucau
@@ -63,28 +65,39 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     }
 
-    public ResourceProvider getResourceProvider(Object o) {
+    // TODO
+    public ResourceProvider getResourceProvider(Object o, Collection<Injection> injections, Context context) {
         switch (scope) {
             case SINGLETON:
                 return new SingletonResourceProvider(o);
             case PROTOTYPE:
             default:
-                return new PerRequestResourceProvider(o.getClass());
+                return new OpenEJBPerRequestResourceProvider(getRESTClass(o), injections, context);
         }
     }
 
-    public void deploy(String address, Object o, Application app) {
+    private Class<?> getRESTClass(Object o) {
+        if (o instanceof Class) {
+            return Class.class.cast(o);
+        }
+        return o.getClass();
+    }
+
+    public void deploy(String address, Object o, Application app, Collection<Injection> injections, Context context) {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
         factory.setResourceClasses(o.getClass());
-        factory.setResourceProvider(getResourceProvider(o));
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
-        factory.setServiceBean(o);
+        factory.setResourceProvider(getResourceProvider(o, injections, context));
+        if (scope == Scope.PROTOTYPE) {
+            factory.setServiceClass(Class.class.cast(o));
+        } else {
+            factory.setServiceBean(o);
+        }
         if (app != null) {
             factory.setApplication(app);
         }
-        // factory.setServiceFactory(serviceFactory); // TODO: injections, ...
 
         server = factory.create();
         destination = (AbstractHTTPDestination) server.getDestination();

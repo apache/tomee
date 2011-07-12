@@ -14,24 +14,24 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
+package org.apache.openejb.server.cxf.rs.beans;
 
-package org.apache.openejb.server.rest;
-
-import org.apache.openejb.Injection;
-import org.apache.openejb.server.httpd.HttpListener;
-
-import javax.naming.Context;
-import javax.ws.rs.core.Application;
-import java.util.Collection;
+import javax.annotation.PostConstruct;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
 /**
  * @author Romain Manni-Bucau
  */
-public interface RsHttpListener extends HttpListener {
-    public static enum Scope {
-        SINGLETON, PROTOTYPE
+@Path("/hooked")
+public class HookedRest {
+    private boolean post = false;
+
+    @PostConstruct public void post() {
+        post  = true;
     }
 
-    void deploy(String address, Object o, Application app, Collection<Injection> injections, Context ctx);
-    void undeploy();
+    @Path("/post") @GET public boolean wasPosted() {
+        return post;
+    }
 }

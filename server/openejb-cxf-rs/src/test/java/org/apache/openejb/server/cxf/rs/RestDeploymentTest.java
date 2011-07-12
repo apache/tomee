@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.FacilitiesInfo;
@@ -26,20 +27,27 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AnnotationDeployer;
+import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.WebModule;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServiceDaemon;
 import org.apache.openejb.server.ServiceException;
+import org.apache.openejb.server.cxf.rs.beans.HookedRest;
 import org.apache.openejb.server.cxf.rs.beans.MyExpertRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MyFirstRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MyNonListedRestClass;
 import org.apache.openejb.server.cxf.rs.beans.MyRESTApplication;
 import org.apache.openejb.server.cxf.rs.beans.MySecondRestClass;
+import org.apache.openejb.server.cxf.rs.beans.RestWithInjections;
+import org.apache.openejb.server.cxf.rs.beans.SimpleEJB;
 import org.apache.openejb.server.httpd.HttpServer;
 import org.apache.openejb.server.httpd.HttpServerFactory;
 import org.apache.openejb.server.httpd.OpenEJBHttpServer;
@@ -50,10 +58,15 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
@@ -76,7 +89,7 @@ public class RestDeploymentTest {
                 Thread.currentThread().getContextClassLoader(), "myapp", webApp.getId());
         webModule.setFinder(new AnnotationFinder(new ClassesArchive(
                 MyFirstRestClass.class, MySecondRestClass.class, MyNonListedRestClass.class,
-                MyRESTApplication.class, MyExpertRestClass.class)).link());
+                MyRESTApplication.class, MyExpertRestClass.class, HookedRest.class, RestWithInjections.class)).link());
 
         Assembler assembler = new Assembler();
         SystemInstance.get().setComponent(Assembler.class, assembler);
@@ -89,16 +102,35 @@ public class RestDeploymentTest {
 
         webModule = annotationDeployer.deploy(webModule);
 
-        ConfigurationFactory factory = new ConfigurationFactory(true);
-        AppInfo appInfo = new AppInfo();
-        appInfo.appId = "rest";
-        appInfo.webApps.add(factory.configureApplication(webModule));
+        EjbJar ejbJar = new EjbJar("ejb");
+        ejbJar.addEnterpriseBean(new StatelessBean(SimpleEJB.class));
+
+        ConfigurationFactory factory = new ConfigurationFactory(false);
+
+        AppModule appModule = new AppModule(Thread.currentThread().getContextClassLoader(), "foo");
+        appModule.setModuleId("rest");
+        appModule.getWebModules().add(webModule);
+        appModule.getEjbModules().add(new EjbModule(ejbJar));
+        annotationDeployer.deploy(appModule);
+
+        AppInfo appInfo = factory.configureApplication(appModule);
         assembler.createApplication(appInfo);
+
+        Context ctx = (Context) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{Context.class}, new InvocationHandler() {
+            @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (args.length == 1 && args[0].equals("SimpleEJBLocalBean")) {
+                    return new SimpleEJB();
+                }
+                return method.invoke(new InitialContext(), args);
+            }
+        });
 
         CoreContainerSystem containerSystem = new CoreContainerSystem(new IvmJndiFactory());
         WebContext webContext = new WebContext();
         webContext.setId(webApp.getId());
         webContext.setClassLoader(webModule.getClassLoader());
+        webContext.getInjections().add(new Injection("SimpleEJBLocalBean", "simple", RestWithInjections.class));
+        webContext.setJndiEnc(ctx);
         containerSystem.addWebDeployment(webContext);
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
 
@@ -155,5 +187,13 @@ public class RestDeploymentTest {
 
     @Test public void nonListed() { // default handler from openejb-http
         assertEquals("", WebClient.create(BASE_URL).path("/non-listed/yata/foo").get(String.class));
+    }
+
+    @Test public void hooked() {
+        assertEquals(true, WebClient.create(BASE_URL).path("/hooked/post").get(Boolean.class).booleanValue());
+    }
+
+    @Test public void injectEjb() {
+        assertEquals(true, WebClient.create(BASE_URL).path("/inject/ejb").get(Boolean.class).booleanValue());
     }
 }
