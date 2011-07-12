@@ -16,32 +16,6 @@
  */
 package org.apache.openejb.core.managed;
 
-import java.lang.reflect.Method;
-import java.lang.management.ManagementFactory;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.rmi.dgc.VMID;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.Transaction;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
@@ -51,15 +25,10 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.core.ExceptionType;
-import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
-import static org.apache.openejb.core.ExceptionType.SYSTEM;
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.managed.Cache.CacheFilter;
@@ -67,21 +36,53 @@ import org.apache.openejb.core.managed.Cache.CacheListener;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import org.apache.openejb.core.transaction.EjbUserTransaction;
-import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.JtaTransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy.TransactionSynchronization;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Duration;
+
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.RemoveException;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.Transaction;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.dgc.VMID;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
+import static org.apache.openejb.core.ExceptionType.SYSTEM;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 public class ManagedContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -343,7 +344,7 @@ public class ManagedContainer implements RpcContainer {
             checkAuthorization(callMethod, interfaceType);
 
             // Create the extended entity managers for this instance
-            Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(beanContext);
+            Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = createEntityManagers(beanContext);
 
             // Register the newly created entity managers
             if (entityManagers != null) {
@@ -738,29 +739,33 @@ public class ManagedContainer implements RpcContainer {
         }
     }
 
-    private Index<EntityManagerFactory, EntityManager> createEntityManagers(BeanContext beanContext) {
+    private Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> createEntityManagers(BeanContext beanContext) {
         // create the extended entity managers
         Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        Index<EntityManagerFactory, EntityManager> entityManagers = null;
+        Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = null;
         if (factories != null && factories.size() > 0) {
-            entityManagers = new Index<EntityManagerFactory, EntityManager>(new ArrayList<EntityManagerFactory>(factories.keySet()));
+            entityManagers  = new Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>(new ArrayList<EntityManagerFactory>(factories.keySet()));
             for (Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
                 EntityManagerFactory entityManagerFactory = entry.getKey();
                 Map properties = entry.getValue();
 
 
-                EntityManager entityManager = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
-                if (entityManager == null) {
+                JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
+                EntityManager entityManager;
+                if (entityManagerTracker == null) {
                     if (properties != null) {
                         entityManager = entityManagerFactory.createEntityManager(properties);
                     } else {
                         entityManager = entityManagerFactory.createEntityManager();
                     }
+                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager);
+                } else {
+                    entityManagerTracker.incCounter();
                 }
-                entityManagers.put(entityManagerFactory, entityManager);
+                entityManagers .put(entityManagerFactory, entityManagerTracker);
             }
         }
-        return entityManagers;
+        return entityManagers ;
     }
 
     private void registerEntityManagers(Instance instance, ThreadContext callContext) throws OpenEJBException {
@@ -773,7 +778,7 @@ public class ManagedContainer implements RpcContainer {
         if (factories == null) return;
 
         // get the managers for the factories
-        Map<EntityManagerFactory, EntityManager> entityManagers = instance.getEntityManagers(factories);
+        Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = instance.getEntityManagers(factories);
         if (entityManagers == null) return;
 
         // register them

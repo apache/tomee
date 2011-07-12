@@ -16,37 +16,6 @@
  */
 package org.apache.openejb.core.stateful;
 
-import java.lang.reflect.Method;
-import java.lang.management.ManagementFactory;
-import java.rmi.NoSuchObjectException;
-import java.rmi.RemoteException;
-import java.rmi.dgc.VMID;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.RemoveException;
-import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
-import javax.ejb.ConcurrentAccessTimeoutException;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.spi.Bean;
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.transaction.Transaction;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.ContainerType;
@@ -57,17 +26,10 @@ import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.cdi.CdiEjbBean;
-import org.apache.openejb.config.rules.CheckDependsOn;
-import org.apache.openejb.monitoring.StatsInterceptor;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.ManagedMBean;
 import org.apache.openejb.core.ExceptionType;
-import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
-import static org.apache.openejb.core.ExceptionType.SYSTEM;
-
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.stateful.Cache.CacheFilter;
@@ -75,21 +37,57 @@ import org.apache.openejb.core.stateful.Cache.CacheListener;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 import org.apache.openejb.core.transaction.EjbTransactionUtil;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 import org.apache.openejb.core.transaction.EjbUserTransaction;
-import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.JtaTransactionPolicy;
+import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionPolicy.TransactionSynchronization;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.persistence.EntityManagerAlreadyRegisteredException;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Duration;
+
+import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.RemoveException;
+import javax.ejb.SessionBean;
+import javax.ejb.SessionContext;
+import javax.enterprise.context.Dependent;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.Transaction;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.dgc.VMID;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+
+import static org.apache.openejb.core.ExceptionType.APPLICATION_ROLLBACK;
+import static org.apache.openejb.core.ExceptionType.SYSTEM;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
 public class StatefulContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -363,7 +361,7 @@ public class StatefulContainer implements RpcContainer {
             checkAuthorization(callMethod, interfaceType);
 
             // Create the extended entity managers for this instance
-            Index<EntityManagerFactory, EntityManager> entityManagers = createEntityManagers(beanContext);
+            Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = createEntityManagers(beanContext);
 
             // Register the newly created entity managers
             if (entityManagers != null) {
@@ -427,6 +425,9 @@ public class StatefulContainer implements RpcContainer {
             } catch (Throwable e) {
                 handleException(createContext, txPolicy, e);
             } finally {
+                // un register EntityManager
+                unregisterEntityManagers(instance, createContext);
+
                 afterInvoke(createContext, txPolicy, instance);
             }
 
@@ -558,12 +559,27 @@ public class StatefulContainer implements RpcContainer {
                         callContext.setCurrentOperation(Operation.REMOVE);
                     }
 
-                    // todo destroy extended persistence contexts
                     discardInstance(callContext);
                 }
 
+                // un register EntityManager
+                Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> unregisteredEntityManagers = unregisterEntityManagers(instance, callContext);
+
                 // Commit transaction
                 afterInvoke(callContext, txPolicy, instance);
+
+                // Un register and close extended persistence contexts
+                /*
+                7.6.2 Container-managed Extended Persistence Context
+                A container-managed extended persistence context can only be initiated within the scope of a stateful
+                session bean. It exists from the point at which the stateful session bean that declares a dependency on an
+                entity manager of type PersistenceContextType.EXTENDED is created, and is said to be bound
+                to the stateful session bean. The dependency on the extended persistence context is declared by means
+                of the PersistenceContext annotation or persistence-context-ref deployment descriptor element.
+                The persistence context is closed by the container when the @Remove method of the stateful session
+                bean completes (or the stateful session bean instance is otherwise destroyed).
+                */
+                closeEntityManagers(unregisteredEntityManagers);
             }
 
             return returnValue;
@@ -600,6 +616,7 @@ public class StatefulContainer implements RpcContainer {
 
                 // Register the entity managers
                 registerEntityManagers(instance, callContext);
+
                 // Register for synchronization callbacks
                 registerSessionSynchronization(instance, callContext);
 
@@ -619,6 +636,9 @@ public class StatefulContainer implements RpcContainer {
             } catch (Throwable e) {
                 handleException(callContext, txPolicy, e);
             } finally {
+                // un register EntityManager
+                unregisterEntityManagers(instance, callContext);
+
                 // Commit transaction
                 afterInvoke(callContext, txPolicy, instance);
             }
@@ -777,7 +797,6 @@ public class StatefulContainer implements RpcContainer {
 
     private void afterInvoke(ThreadContext callContext, TransactionPolicy txPolicy, Instance instance) throws OpenEJBException {
         try {
-            unregisterEntityManagers(instance, callContext);
             if (instance != null && txPolicy instanceof BeanTransactionPolicy) {
                 // suspend the currently running transaction if any
                 SuspendedTransaction suspendedTransaction = null;
@@ -801,26 +820,30 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private Index<EntityManagerFactory, EntityManager> createEntityManagers(BeanContext beanContext) {
+    private Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> createEntityManagers(BeanContext beanContext) {
         // create the extended entity managers
         Index<EntityManagerFactory, Map> factories = beanContext.getExtendedEntityManagerFactories();
-        Index<EntityManagerFactory, EntityManager> entityManagers = null;
+        Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = null;
         if (factories != null && factories.size() > 0) {
-            entityManagers = new Index<EntityManagerFactory, EntityManager>(new ArrayList<EntityManagerFactory>(factories.keySet()));
+            entityManagers = new Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>(new ArrayList<EntityManagerFactory>(factories.keySet()));
             for (Map.Entry<EntityManagerFactory, Map> entry : factories.entrySet()) {
                 EntityManagerFactory entityManagerFactory = entry.getKey();
                 Map properties = entry.getValue();
 
 
-                EntityManager entityManager = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
-                if (entityManager == null) {
+                JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker = entityManagerRegistry.getInheritedEntityManager(entityManagerFactory);
+                EntityManager entityManager;
+                if (entityManagerTracker == null) {
                     if (properties != null) {
                         entityManager = entityManagerFactory.createEntityManager(properties);
                     } else {
                         entityManager = entityManagerFactory.createEntityManager();
                     }
+                    entityManagerTracker = new JtaEntityManagerRegistry.EntityManagerTracker(entityManager);
+                } else {
+                    entityManagerTracker.incCounter();
                 }
-                entityManagers.put(entityManagerFactory, entityManager);
+                entityManagers.put(entityManagerFactory, entityManagerTracker);
             }
         }
         return entityManagers;
@@ -836,7 +859,7 @@ public class StatefulContainer implements RpcContainer {
         if (factories == null) return;
 
         // get the managers for the factories
-        Map<EntityManagerFactory, EntityManager> entityManagers = instance.getEntityManagers(factories);
+        Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = instance.getEntityManagers(factories);
         if (entityManagers == null) return;
 
         // register them
@@ -847,16 +870,26 @@ public class StatefulContainer implements RpcContainer {
         }
     }
 
-    private void unregisterEntityManagers(Instance instance, ThreadContext callContext) {
-        if (entityManagerRegistry == null) return;
-        if (instance == null) return;
+    private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> unregisterEntityManagers(Instance instance, ThreadContext callContext) {
+        if (entityManagerRegistry == null) return null;
+        if (instance == null) return null;
 
         BeanContext beanContext = callContext.getBeanContext();
 
         // register them
-        entityManagerRegistry.removeEntityManagers((String) beanContext.getDeploymentID(), instance.primaryKey);
+        return entityManagerRegistry.removeEntityManagers((String) beanContext.getDeploymentID(), instance.primaryKey);
     }
 
+    private void closeEntityManagers(Map<EntityManagerFactory,JtaEntityManagerRegistry.EntityManagerTracker> unregisteredEntityManagers) {
+        if (unregisteredEntityManagers == null) return;
+
+        // iterate throughout all EM to close EntityManager
+        for (JtaEntityManagerRegistry.EntityManagerTracker entityManagerTracker : unregisteredEntityManagers.values()) {
+            if(entityManagerTracker.decCounter() == 0) {
+                entityManagerTracker.getEntityManager().close();
+            }
+        }
+    }
 
     private void registerSessionSynchronization(Instance instance, ThreadContext callContext)  {
         TransactionPolicy txPolicy = callContext.getTransactionPolicy();

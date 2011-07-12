@@ -17,23 +17,24 @@
  */
 package org.apache.openejb.core.managed;
 
-import java.io.Serializable;
-import java.io.ObjectStreamException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.transaction.Transaction;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.BeanTransactionPolicy.SuspendedTransaction;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.PojoSerialization;
+
+import javax.persistence.EntityManagerFactory;
+import javax.transaction.Transaction;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Instance implements Serializable {
     private static final long serialVersionUID = 2862563626506556542L;
@@ -45,15 +46,15 @@ public class Instance implements Serializable {
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
     private Stack<Transaction> transaction = new Stack<Transaction>();
-    private final Lock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
     // This would require that we crete an id and that we track it
     // alternatively, we could use ImmutableArtifact with some read/write replace magic
-    private Map<EntityManagerFactory, EntityManager> entityManagers;
-    private final EntityManager[] entityManagerArray;
+    private Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers;
+    private final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
-    public Instance(BeanContext beanContext, Object primaryKey, Object bean, Map<String, Object> interceptors, Map<EntityManagerFactory, EntityManager> entityManagers) {
+    public Instance(BeanContext beanContext, Object primaryKey, Object bean, Map<String, Object> interceptors, Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers) {
         this.beanContext = beanContext;
         this.primaryKey = primaryKey;
         this.bean = bean;
@@ -62,7 +63,7 @@ public class Instance implements Serializable {
         this.entityManagerArray = null;
     }
 
-    public Instance(Object deploymentId, Object primaryKey, Object bean, Map<String, Object> interceptors, EntityManager[] entityManagerArray) {
+    public Instance(Object deploymentId, Object primaryKey, Object bean, Map<String, Object> interceptors, JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray) {
         this.beanContext = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(deploymentId);
         if (beanContext == null) {
             throw new IllegalArgumentException("Unknown deployment " + deploymentId);
@@ -71,6 +72,10 @@ public class Instance implements Serializable {
         this.bean = bean;
         this.interceptors = interceptors;
         this.entityManagerArray = entityManagerArray;
+    }
+
+    public Duration getTimeOut() {
+        return beanContext.getStatefulTimeout();
     }
 
     public synchronized boolean isInUse() {
@@ -107,15 +112,20 @@ public class Instance implements Serializable {
         } else if (transaction != null){
             this.transaction.push(transaction);
         }
-
     }
 
-    public synchronized Map<EntityManagerFactory, EntityManager> getEntityManagers(Index<EntityManagerFactory, Map> factories) {
+    public synchronized void releaseLock() {
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
+        }
+    }
+
+    public synchronized Map<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> getEntityManagers(Index<EntityManagerFactory, Map> factories) {
         if (entityManagers == null && entityManagerArray != null) {
-            entityManagers = new HashMap<EntityManagerFactory, EntityManager>();
+            entityManagers = new HashMap<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>();
             for (int i = 0; i < entityManagerArray.length; i++) {
                 EntityManagerFactory entityManagerFactory = factories.getKey(i);
-                EntityManager entityManager = entityManagerArray[i];
+                JtaEntityManagerRegistry.EntityManagerTracker entityManager = entityManagerArray[i];
                 entityManagers.put(entityManagerFactory, entityManager);
             }
         }
@@ -138,33 +148,37 @@ public class Instance implements Serializable {
         public final Object primaryKey;
         public final Object bean;
         public final Map<String, Object> interceptors;
-        public final EntityManager[] entityManagerArray;
+        public final JtaEntityManagerRegistry.EntityManagerTracker[] entityManagerArray;
 
         public Serialization(Instance i) {
             deploymentId = i.beanContext.getDeploymentID();
             primaryKey = i.primaryKey;
-            if (i.bean instanceof Serializable) {
-                bean = i.bean;
-            } else {
-                bean = new PojoSerialization(i.bean);
-            }
+            bean = toSerializable(i.bean);
 
-            interceptors = new HashMap(i.interceptors.size());
+            interceptors = new HashMap<String, Object>(i.interceptors.size());
             for (Map.Entry<String, Object> e : i.interceptors.entrySet()) {
                 if (e.getValue() == i.bean) {
                     // need to use the same wrapped reference or well get two copies.
                     interceptors.put(e.getKey(), bean);
-                } else if (!(e.getValue() instanceof Serializable)) {
-                    interceptors.put(e.getKey(), new PojoSerialization(e.getValue()));
+                } else {
+                    interceptors.put(e.getKey(), toSerializable(e.getValue()));
                 }
             }
 
             if (i.entityManagerArray != null) {
                 entityManagerArray = i.entityManagerArray;
             } else if (i.entityManagers != null) {
-                entityManagerArray = i.entityManagers.values().toArray(new EntityManager[i.entityManagers.values().size()]);
+                entityManagerArray = i.entityManagers.values().toArray(new JtaEntityManagerRegistry.EntityManagerTracker[i.entityManagers.values().size()]);
             } else {
                 entityManagerArray = null;
+            }
+        }
+
+        private static Object toSerializable(Object obj) {
+            if (obj instanceof Serializable) {
+                return obj;
+            } else {
+                return new PojoSerialization(obj);
             }
         }
 
