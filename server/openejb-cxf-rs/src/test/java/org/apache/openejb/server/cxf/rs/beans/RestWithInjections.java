@@ -14,24 +14,20 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
+package org.apache.openejb.server.cxf.rs.beans;
 
-package org.apache.openejb.server.rest;
-
-import org.apache.openejb.Injection;
-import org.apache.openejb.server.httpd.HttpListener;
-
-import javax.naming.Context;
-import javax.ws.rs.core.Application;
-import java.util.Collection;
+import javax.ejb.EJB;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
 /**
  * @author Romain Manni-Bucau
  */
-public interface RsHttpListener extends HttpListener {
-    public static enum Scope {
-        SINGLETON, PROTOTYPE
-    }
+@Path("/inject")
+public class RestWithInjections {
+    @EJB private SimpleEJB simple;
 
-    void deploy(String address, Object o, Application app, Collection<Injection> injections, Context ctx);
-    void undeploy();
+    @Path("/ejb") @GET public boolean ejb() {
+        return simple != null && "ok".equals(simple.ok());
+    }
 }

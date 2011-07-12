@@ -17,6 +17,7 @@
 
 package org.apache.openejb.server.rest;
 
+import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.DeploymentListener;
@@ -33,6 +34,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.naming.Context;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
@@ -43,10 +45,9 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -66,7 +67,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
 
-    private Map<String, Object> restInstances = new HashMap<String, Object>();
+    private List<String> services = new ArrayList<String>();
 
     @Override public void afterApplicationCreated(final AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
@@ -81,6 +82,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 }
 
                 final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
+                Collection<Injection> injections = webContext.getInjections();
+                Context context = webContext.getJndiEnc();
 
                 // The spec says:
                 //
@@ -97,7 +100,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 if (webApp.restApplications.isEmpty()) {
                     for (String clazz : webApp.restClass) {
                         try {
-                            deployRestObject(webApp.contextRoot, load(classLoader, clazz), null, classLoader, RsHttpListener.Scope.PROTOTYPE);
+                            deploy(webApp.contextRoot, classLoader.loadClass(clazz), null, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
                         } catch (ClassNotFoundException e) {
                             throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                         }
@@ -113,12 +116,12 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                         }
 
                         for (Object o : appInstance.getSingletons()) {
-                            deployRestObject(webApp.contextRoot, o, appInstance, classLoader, RsHttpListener.Scope.SINGLETON);
-                            LOGGER.info("deploying REST singleton: " + o);
+                            deploy(webApp.contextRoot, o, appInstance, classLoader, RsHttpListener.Scope.SINGLETON, injections, context);
+                            LOGGER.info("deployed REST singleton: " + o);
                         }
                         for (Class<?> clazz : appInstance.getClasses()) {
-                            deployRestObject(webApp.contextRoot, instantiate(clazz), appInstance, classLoader, RsHttpListener.Scope.PROTOTYPE);
-                            LOGGER.info("deploying REST class: " + clazz);
+                            deploy(webApp.contextRoot, clazz, appInstance, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
+                            LOGGER.info("deployed REST class: " + clazz);
                         }
 
                         LOGGER.info("REST application deployed: " + app);
@@ -128,14 +131,23 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
     }
 
-    private void deployRestObject(String context, Object o, Application app, ClassLoader classLoader, RsHttpListener.Scope scope) {
-        final String nopath = getAddress(NOPATH_PREFIX + context, o) + "/.*";
+    /**
+     * @param context the webapp context
+     * @param o the class if scope == prototype or the instance if scope == singleton
+     * @param app the Application if exists
+     * @param classLoader the webapp classloader
+     * @param scope the scope
+     * @param injections webapp injections
+     * @param ctx webapp context
+     */
+    private void deploy(String context, Object o, Application app, ClassLoader classLoader, RsHttpListener.Scope scope, Collection<Injection> injections, Context ctx) {
+        final String nopath = getAddress(NOPATH_PREFIX + context, o, scope) + "/.*";
         final RsHttpListener listener = createHttpListener(o, scope);
         final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1));
         final String address = HttpUtil.selectSingleAddress(addresses);
 
-        restInstances.put(address, o);
-        listener.deploy(getFullContext(address, context), o, app);
+        services.add(address);
+        listener.deploy(getFullContext(address, context), o, app, injections, ctx);
     }
 
     protected abstract RsHttpListener createHttpListener(Object o, RsHttpListener.Scope scope);
@@ -150,9 +162,14 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return base + context;
     }
 
-    private String getAddress(String context, Object o) {
+    private String getAddress(String context, Object o, RsHttpListener.Scope scope) {
+        Class<?> clazz = o.getClass();
+        if (scope == RsHttpListener.Scope.PROTOTYPE) {
+            clazz = Class.class.cast(o);
+        }
+
         try {
-            return UriBuilder.fromUri(new URI(context)).path(o.getClass()).build().toURL().toString();
+            return UriBuilder.fromUri(new URI(context)).path(clazz).build().toURL().toString();
         } catch (MalformedURLException e) {
             throw new OpenEJBRestRuntimeException("url is malformed", e);
         } catch (URISyntaxException e) {
@@ -198,9 +215,9 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     @Override public void beforeApplicationDestroyed(AppInfo appInfo) {
         if (deployedApplications.contains(appInfo)) {
             for (WebAppInfo webApp : appInfo.webApps) {
-                for (Map.Entry<String, Object> instances : restInstances.entrySet()) {
-                    if (instances.getKey().endsWith(webApp.contextRoot)) {
-                        undeployRestObject(instances.getKey());
+                for (String address : services) {
+                    if (address.endsWith(webApp.contextRoot)) {
+                        undeployRestObject(address);
                     }
                 }
             }

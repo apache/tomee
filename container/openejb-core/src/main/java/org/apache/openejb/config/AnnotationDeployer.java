@@ -1437,6 +1437,29 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             ClassLoader classLoader = webModule.getClassLoader();
 
+            for (String application : webModule.getRestApplications()) {
+                if (application != null) {
+                    Class<?> clazz = null;
+                    try {
+                        clazz = classLoader.loadClass(application);
+                        classes.add(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new OpenEJBException("Unable to load Application class: " + application, e);
+                    }
+
+                    if (clazz != null) {
+                        try {
+                            Application app = Application.class.cast(clazz.newInstance());
+                            classes.addAll(app.getClasses());
+                        } catch (InstantiationException e) {
+                            throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
+                        } catch (IllegalAccessException e) {
+                            throw new OpenEJBException("Unable to access Application class: " + application, e);
+                        }
+                    }
+                }
+            }
+
             /*
              * Servlet classes are scanned
              */

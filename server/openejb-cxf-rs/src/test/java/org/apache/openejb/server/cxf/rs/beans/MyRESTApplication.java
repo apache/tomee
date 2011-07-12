@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class MyRESTApplication extends Application {
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(MyExpertRestClass.class));
+        return new HashSet<Class<?>>(Arrays.asList(MyExpertRestClass.class, HookedRest.class, RestWithInjections.class));
     }
 
     public Set<Object> getSingletons() {
