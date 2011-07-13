@@ -151,7 +151,25 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-rest</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-transport</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
