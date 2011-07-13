@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collection;
 import java.util.Map;
@@ -616,4 +617,13 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
         jspConfigs.get(0).getTaglib().add(taglib);
     }
 
+    public Map<String, String> contextParamsAsMap() {
+        Map<String, String> map = new HashMap<String, String>();
+        if (contextParam != null) {
+            for (ParamValue pv : contextParam) {
+                map.put(pv.getParamName(), pv.getParamValue());
+            }
+        }
+        return map;
+    }
 }
