@@ -177,6 +177,7 @@ import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -1437,9 +1438,15 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             ClassLoader classLoader = webModule.getClassLoader();
 
+            final String webXmlApplication = webApp.contextParamsAsMap().get("javax.ws.rs.Application");
+            if (webXmlApplication != null) {
+                webModule.getRestApplications().clear();
+                webModule.getRestApplications().add(webXmlApplication);
+            }
+
             for (String application : webModule.getRestApplications()) {
                 if (application != null) {
-                    Class<?> clazz = null;
+                    Class<?> clazz;
                     try {
                         clazz = classLoader.loadClass(application);
                         classes.add(clazz);
@@ -1447,15 +1454,13 @@ public class AnnotationDeployer implements DynamicDeployer {
                         throw new OpenEJBException("Unable to load Application class: " + application, e);
                     }
 
-                    if (clazz != null) {
-                        try {
-                            Application app = Application.class.cast(clazz.newInstance());
-                            classes.addAll(app.getClasses());
-                        } catch (InstantiationException e) {
-                            throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
-                        } catch (IllegalAccessException e) {
-                            throw new OpenEJBException("Unable to access Application class: " + application, e);
-                        }
+                    try {
+                        Application app = Application.class.cast(clazz.newInstance());
+                        classes.addAll(app.getClasses());
+                    } catch (InstantiationException e) {
+                        throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
+                    } catch (IllegalAccessException e) {
+                        throw new OpenEJBException("Unable to access Application class: " + application, e);
                     }
                 }
             }
