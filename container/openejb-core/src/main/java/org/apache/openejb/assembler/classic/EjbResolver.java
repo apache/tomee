@@ -83,7 +83,7 @@ public class EjbResolver {
         }
     }
 
-    private void add(EjbJarInfo ejbJarInfo) {
+    public void add(EjbJarInfo ejbJarInfo) {
         for (EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
             index(ejbJarInfo.moduleUri, bean);
         }
