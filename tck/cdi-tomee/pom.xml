@@ -16,8 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -27,26 +26,32 @@
   <artifactId>cdi-tomee</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI TomEE</name>
-
   <properties>
     <!-- where we will unpack tomcat -->
-    <openejb.home>${project.build.directory}/apache-tomee-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}\apache-tomee-${project.version}</openejb.home>
   </properties>
-
   <dependencies>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
       <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tck-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.jboss.jsr299.tck</groupId>
       <artifactId>jsr299-tck-impl</artifactId>
@@ -59,27 +64,23 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
-       <groupId>org.testng</groupId>
-       <artifactId>testng</artifactId>
-       <version>6.0.1</version>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.0.1</version>
+      <scope>test</scope>
     </dependency>
-
   </dependencies>
-
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1</version>
-
+        <version>2.3</version>
         <executions>
           <execution>
             <id>unpack</id>
-            <phase>pre-integration-test</phase>
+            <phase>initialize</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -88,6 +89,7 @@
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
                   <artifactId>apache-tomee</artifactId>
+                  <version>${project.version}</version>
                   <type>zip</type>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
@@ -96,18 +98,21 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
+            <!-- <suiteXmlFile>src/test/resources/web-profile.xml</suiteXmlFile> -->
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
-            <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>-->
+            <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile> -->
           </suiteXmlFiles>
+          <forkMode>once</forkMode>
+          <systemPropertyVariables>
+            <openejb.home>${project.build.directory}\apache-tomee-${project.version}</openejb.home>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>
