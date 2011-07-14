@@ -183,12 +183,12 @@ public class RemoteServer {
                     argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
                     argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
                     argsList.add("-classpath");
-
+                    String ps = File.pathSeparator;
                     if (commonsLoggingJar.exists()) {
-                        argsList.add(bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath() + ":" + commonsLoggingJar.getAbsolutePath());
+                        argsList.add(bootstrapJar.getAbsolutePath() + ps + juliJar.getAbsolutePath() + ps + commonsLoggingJar.getAbsolutePath());
 
                     } else {
-                        argsList.add(bootstrapJar.getAbsolutePath() + ":" + juliJar.getAbsolutePath());
+                        argsList.add(bootstrapJar.getAbsolutePath() + ps + juliJar.getAbsolutePath());
                     }
 
                     argsList.add("org.apache.catalina.startup.Bootstrap");
@@ -277,7 +277,6 @@ public class RemoteServer {
             out.close();
             if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));
         } catch (Exception e) {
-            //System.out.println(e.getMessage());
             if (tries < 2) {
                 if (verbose) System.out.println("[] CONNECT ATTEMPTS FAILED ( " + (this.tries - tries) + " tries)");
                 return false;
