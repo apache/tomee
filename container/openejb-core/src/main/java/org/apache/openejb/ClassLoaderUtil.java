@@ -315,7 +315,7 @@ public class ClassLoaderUtil {
         try {
             final Class jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
 
-            synchronized (jarFileFactory.this) {
+            synchronized (jarFileFactory) {
 
                 Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
 
@@ -448,7 +448,7 @@ public class ClassLoaderUtil {
      * @param fieldName the name of the cache field
      */
     public static void clearSunSoftCache(final Class clazz, String fieldName) {
-        synchronized (clazz.this) {
+        synchronized (clazz) {
             try {
                 Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
