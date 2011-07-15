@@ -330,7 +330,8 @@ public class ClassLoaderUtil {
                 File file;
                 URL url;
 
-                for (final Object item : fileCache.keySet()) {
+                final Set keys = new HashSet(fileCache.keySet());
+                for (final Object item : keys) {
 
                     //Due to several different implementation changes in various JDK releases
                     //the 'item' can be one of the following (so far):
@@ -371,6 +372,7 @@ public class ClassLoaderUtil {
                         //unknown kind of url
                         return;
                     }
+
                     if (null != file && null != url && isParent(jarLocation, file)) {
                         urls.add(url);
                     }
