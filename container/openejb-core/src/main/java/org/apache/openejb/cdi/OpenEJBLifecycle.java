@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.el.ELResolver;
+import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
@@ -56,6 +57,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.config.WebBeansFinder;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.container.InjectionResolver;
+import org.apache.webbeans.ejb.common.component.EjbBeanCreatorImpl;
 import org.apache.webbeans.ejb.common.util.EjbUtility;
 import org.apache.webbeans.intercept.InterceptorData;
 import org.apache.webbeans.logger.WebBeansLogger;
@@ -255,6 +257,28 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
 
                 webBeansContext.getWebBeansUtil().setInjectionTargetBeanEnableFlag(bean);
+
+                Class clazz = beanContext.getBeanClass();
+                while (clazz.isAnnotationPresent(Specializes.class)) {
+                    clazz = clazz.getSuperclass();
+
+                    if (clazz == null || Object.class.equals(clazz)) break;
+
+                    final CdiEjbBean<Object> superBean = new CdiEjbBean<Object>(beanContext, webBeansContext, clazz);
+
+                    EjbBeanCreatorImpl<?> ejbBeanCreator = new EjbBeanCreatorImpl(superBean);
+
+                    //Define meta-data
+                    ejbBeanCreator.defineSerializable();
+                    ejbBeanCreator.defineStereoTypes();
+                    ejbBeanCreator.defineScopeType("Session Bean implementation class : " + clazz.getName() + " stereotypes must declare same @ScopeType annotations", false);
+                    ejbBeanCreator.defineQualifier();
+                    ejbBeanCreator.defineName(WebBeansUtil.getManagedBeanDefaultName(clazz.getSimpleName()));
+
+                    bean.specialize(superBean);
+
+                    EjbUtility.defineSpecializedData(clazz, bean);
+                }
             }
 
             //Check Specialization

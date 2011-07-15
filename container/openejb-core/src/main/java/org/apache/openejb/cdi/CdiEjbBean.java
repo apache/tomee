@@ -19,37 +19,28 @@ package org.apache.openejb.cdi;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
-import org.apache.webbeans.annotation.DependentScopeLiteral;
-import org.apache.webbeans.component.AbstractOwbBean;
-import org.apache.webbeans.component.WebBeansType;
 import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.ejb.common.component.BaseEjbBean;
-import org.apache.webbeans.inject.InjectableConstructor;
 
 import javax.ejb.Remove;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.New;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.SessionBeanType;
-import javax.enterprise.util.AnnotationLiteral;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> {
     private final BeanContext beanContext;
 
     public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext) {
-        super(beanContext.getBeanClass(), toSessionType(beanContext.getComponentType()), webBeansContext);
+        this(beanContext, webBeansContext, beanContext.getBeanClass());
+    }
+
+    public CdiEjbBean(BeanContext beanContext, WebBeansContext webBeansContext, Class beanClass) {
+        super(beanClass, toSessionType(beanContext.getComponentType()), webBeansContext);
         this.beanContext = beanContext;
 
 
@@ -90,7 +81,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
 
     @Override
     public String getId() {
-        return (String) beanContext.getDeploymentID();
+        return (String) beanContext.getDeploymentID() + this.getReturnType().getName();
     }
 
     @Override
@@ -173,6 +164,18 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         }
 
         return points;
+    }
+
+    protected void specialize(CdiEjbBean<?> superBean) {
+        final CdiEjbBean<T> bean = this;
+        bean.setName(superBean.getName());
+        bean.setSerializable(superBean.isSerializable());
+
+        this.implScopeType = superBean.implScopeType;
+        this.scopeClass = superBean.scopeClass;
+        this.implQualifiers.addAll(superBean.getImplQualifiers());
+        this.stereoTypeClasses.addAll(superBean.stereoTypeClasses);
+        this.stereoTypes.addAll(superBean.stereoTypes);
     }
 
     /* (non-Javadoc)

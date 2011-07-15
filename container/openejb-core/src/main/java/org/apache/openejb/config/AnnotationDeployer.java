@@ -90,6 +90,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.enterprise.inject.Specializes;
+import javax.enterprise.inject.spi.Decorator;
+import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -1008,10 +1011,53 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             IAnnotationFinder finder = ejbModule.getFinder();
 
+
+            final List<String> managedClasses;
+            {
+                final Beans beans = ejbModule.getBeans();
+
+                if (beans != null) {
+                    managedClasses = beans.getManagedClasses();
+                    final List<String> classNames = finder.getAnnotatedClassNames();
+                    for (String className : classNames) {
+                        try {
+                            final ClassLoader loader = ejbModule.getClassLoader();
+                            final Class<?> clazz = loader.loadClass(className);
+
+                            // The following can NOT be beans in CDI
+
+                            // 1. Non-static inner classes
+                            if (clazz.getEnclosingClass() != null && !Modifier.isStatic(clazz.getModifiers())) continue;
+//
+//                            // 2. Abstract classes (unless they are an @Decorator)
+//                            if (Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotationPresent(javax.decorator.Decorator.class)) continue;
+//
+//                            // 3. Implementations of Extension
+//                            if (Extension.class.isAssignableFrom(clazz)) continue;
+
+                            managedClasses.add(className);
+                        } catch (ClassNotFoundException e) {
+                            // todo log debug warning
+                        }
+                    }
+                } else {
+                    managedClasses = new ArrayList<String>();
+                }
+            }
+
+            final Set<Class<?>> specializingClasses = new HashSet<Class<?>>();
+
             /* 19.2:  ejb-name: Default is the unqualified name of the bean class */
 
             EjbJar ejbJar = ejbModule.getEjbJar();
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Singleton.class)) {
+
+                if (beanClass.isAnnotationPresent(Specializes.class)) {
+                    managedClasses.remove(beanClass.get().getName());
+                    specializingClasses.add(beanClass.get());
+                    continue;
+                }
+
                 Singleton singleton = beanClass.getAnnotation(Singleton.class);
                 String ejbName = getEjbName(singleton, beanClass.get());
 
@@ -1037,6 +1083,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateless.class)) {
+
+                if (beanClass.isAnnotationPresent(Specializes.class)) {
+                    managedClasses.remove(beanClass.get().getName());
+                    specializingClasses.add(beanClass.get());
+                    continue;
+                }
+
                 Stateless stateless = beanClass.getAnnotation(Stateless.class);
                 String ejbName = getEjbName(stateless, beanClass.get());
 
@@ -1061,7 +1114,21 @@ public class AnnotationDeployer implements DynamicDeployer {
                 LegacyProcessor.process(beanClass.get(), enterpriseBean);
             }
 
+            // The Specialization code is good, but it possibly needs to be moved to after the full processing of the bean
+            // the plus is that it would get the required interfaces.  The minus is that it would get all the other items
+
+            // Possibly study alternatives.  Alternatives might have different meta data completely while it seems Specializing beans inherit all meta-data
+
+            // Anyway.. the qualifiers aren't getting inherited, so we need to fix that
+
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(Stateful.class)) {
+
+                if (beanClass.isAnnotationPresent(Specializes.class)) {
+                    managedClasses.remove(beanClass.get().getName());
+                    specializingClasses.add(beanClass.get());
+                    continue;
+                }
+
                 Stateful stateful = beanClass.getAnnotation(Stateful.class);
                 String ejbName = getEjbName(stateful, beanClass.get());
 
@@ -1087,6 +1154,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(ManagedBean.class)) {
+
+                if (beanClass.isAnnotationPresent(Specializes.class)) {
+                    managedClasses.remove(beanClass.get().getName());
+                    specializingClasses.add(beanClass.get());
+                    continue;
+                }
+
                 ManagedBean managed = beanClass.getAnnotation(ManagedBean.class);
                 String ejbName = getEjbName(managed, beanClass.get());
 
@@ -1110,6 +1184,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (Annotated<Class<?>> beanClass : finder.findMetaAnnotatedClasses(MessageDriven.class)) {
+
+                if (beanClass.isAnnotationPresent(Specializes.class)) {
+                    managedClasses.remove(beanClass.get().getName());
+                    specializingClasses.add(beanClass.get());
+                    continue;
+                }
+
                 MessageDriven mdb = beanClass.getAnnotation(MessageDriven.class);
                 String ejbName = getEjbName(mdb, beanClass.get());
 
@@ -1124,6 +1205,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                     messageBean.setEjbClass(beanClass.get());
                 }
                 LegacyProcessor.process(beanClass.get(), messageBean);
+            }
+
+
+            for (Class<?> specializingClass : sortClassesParentFirst(new ArrayList<Class<?>>(specializingClasses))) {
+                for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
+
+                    final String ejbClass = enterpriseBean.getEjbClass();
+
+                    if (ejbClass != null && ejbClass.equals(specializingClass.getSuperclass().getName())) {
+                        managedClasses.remove(ejbClass);
+                        enterpriseBean.setEjbClass(specializingClass.getName());
+                    }
+                }
             }
 
             AssemblyDescriptor assemblyDescriptor = ejbModule.getEjbJar().getAssemblyDescriptor();
@@ -1144,15 +1238,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                     mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
                 }
             }
-
-            {
-                final Beans beans = ejbModule.getBeans();
-
-                if (beans != null) {
-                    beans.getManagedClasses().addAll(finder.getAnnotatedClassNames());
-                }
-            }
-
 
             return ejbModule;
         }
@@ -4383,6 +4468,16 @@ public class AnnotationDeployer implements DynamicDeployer {
             @Override
             public int compare(Annotated<Class<?>> o1, Annotated<Class<?>> o2) {
                 return compareClasses(o1.get(), o2.get());
+            }
+        });
+        return list;
+    }
+
+    public static List<Class<?>> sortClassesParentFirst(List<Class<?>> list) {
+        Collections.sort(list, new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> o1, Class<?> o2) {
+                return compareClasses(o2, o1);
             }
         });
         return list;

@@ -22,6 +22,7 @@ import org.apache.openejb.junit.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.Stateful;
 import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -51,12 +52,12 @@ public class SpecializationTest extends TestCase {
     public static interface Color {
     }
 
-    //    @Stateful
+    @Stateful
     public static class RedBean implements Color {
     }
 
     @Specializes
-//    @Stateful
+    @Stateful
     public static class CrimsonBean extends RedBean implements Color {
     }
 

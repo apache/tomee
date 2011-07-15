@@ -112,16 +112,6 @@
           <exclude name="testSessionScopeActiveDuringServiceMethod"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.broken.nonEmptyNamed.NonEmptyNamedTest">
-        <methods>
-          <exclude name="testStereotypeWithNonEmptyNamed"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.broken.tooManyScopes.TooManyScopeTypesTest">
-        <methods>
-          <exclude name="testStereotypeWithTooManyScopeTypes"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest">
         <methods>
           <exclude name="test"/>
@@ -159,17 +149,6 @@
           <exclude name="testProduceResourceProxy"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationIntegrationTest">
-        <methods>
-          <exclude name="testSpecializedBeanNotInstantiated"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationTest">
-        <methods>
-          <exclude name="testSpecializingBeanHasBindingsOfSpecializedAndSpecializingBean"/>
-          <exclude name="testSpecializingBeanHasNameOfSpecializedBean"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest">
         <methods>
           <exclude name="testSpecializingClassDirectlyExtendsNothing"/>
@@ -183,16 +162,6 @@
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest">
         <methods>
           <exclude name="testSpecializingClassImplementsInterfaceAndExtendsNothing"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.sameName.SameNameTest">
-        <methods>
-          <exclude name="testSpecializingAndSpecializedBeanHasName"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.nonExistantClassInBeansXml.NonExistantClassInBeansXmlTest">
-        <methods>
-          <exclude name="testNonExistantClassInBeansXmlNotOk"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">

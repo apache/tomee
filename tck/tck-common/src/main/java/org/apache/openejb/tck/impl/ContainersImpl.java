@@ -145,6 +145,18 @@ public class ContainersImpl implements Containers {
         writeonlybuffer.compact();
     }
 
+    private File writeToFile2(InputStream archive, String name) throws IOException {
+        final File file = File.createTempFile("deploy", "-" + name);
+        final FileOutputStream outputStream = new FileOutputStream(file);
+
+        int i = 0;
+        while ((i = archive.read()) != -1) {
+            outputStream.write(i);
+        }
+        outputStream.close();
+        return file;
+    }
+
     private File writeToFile(InputStream archive, String name) throws IOException {
         final File file = File.createTempFile("deploy", "-" + name);
         file.deleteOnExit();
