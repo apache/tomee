@@ -342,7 +342,7 @@ public class BeansDeployer {
                 //superClassList is used to handle the case: Car, CarToyota, Bus, SchoolBus, CarFord
                 //for which case, the owb should throw exception that both CarToyota and CarFord are
                 //specialize Car.
-                Class<?> superClass = null;
+                Class<?> superClass;
                 ArrayList<Class<?>> superClassList = new ArrayList<Class<?>>();
                 ArrayList<Class<?>> specialClassList = new ArrayList<Class<?>>();
                 for (Class<?> specialClass : beanClasses) {
@@ -362,13 +362,10 @@ public class BeansDeployer {
                 webBeansContext.getWebBeansUtil().configureSpecializations(specialClassList);
             }
 
-            // XML Defined Specializations
-            checkXMLSpecializations();
 
             //configure specialized producer beans.
             webBeansContext.getWebBeansUtil().configureProducerMethodSpecializations();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new WebBeansDeploymentException(e);
         }
 
@@ -376,36 +373,6 @@ public class BeansDeployer {
         logger.debug("Checking Specialization constraints has ended.");
     }
 
-
-    /**
-     * Check xml specializations.
-     * NOTE : Currently XML is not used in configuration.
-     */
-    protected void checkXMLSpecializations()
-    {
-        //TODO Update
-        // Check XML specializations
-//        Set<Class<?>> clazzes = webBeansContext.getxMLSpecializesManager().getXMLSpecializationClasses();
-//        Iterator<Class<?>> it = clazzes.iterator();
-//        Class<?> superClass = null;
-//        Class<?> specialClass = null;
-//        ArrayList<Class<?>> specialClassList = new ArrayList<Class<?>>();
-//        while (it.hasNext()) {
-//            specialClass = it.next();
-//
-//            if (superClass == null) {
-//                superClass = specialClass.getSuperclass();
-//            } else {
-//                if (superClass.equals(specialClass.getSuperclass())) {
-//                    throw new InconsistentSpecializationException(logger.getTokenString(OWBLogConst.EXCEPT_XML)
-//                            + logger.getTokenString(OWBLogConst.EXCEPT_0005)
-//                            + superClass.getName());
-//                }
-//            }
-//            specialClassList.add(specialClass);
-//        }
-//        webBeansContext.getWebBeansUtil().configureSpecializations(specialClassList);
-    }
 
     /**
      * Check passivations.
