@@ -26,12 +26,12 @@
         <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
     <!--</packages>-->
     <classes>
-      <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>
+      <!--<class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest"/>-->
+      <!--<class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest"/>-->
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest"/>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest"/>
       <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest"/>
+      <!--<class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest"/>-->
     </classes>
   </test>
 </suite>

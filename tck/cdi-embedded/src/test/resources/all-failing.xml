@@ -43,9 +43,6 @@
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.env.EnvInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest"/>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.resource.InjectionOfResourceTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest"/>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.ResolutionByNameTest"/>
       <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest"/>
