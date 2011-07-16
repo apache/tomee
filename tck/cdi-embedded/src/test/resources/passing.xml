@@ -149,21 +149,6 @@
           <exclude name="testProduceResourceProxy"/>
         </methods>
       </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsNothing.DirectlyExtendsNothingTest">
-        <methods>
-          <exclude name="testSpecializingClassDirectlyExtendsNothing"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.directlyExtendsSimpleBean.DirectlyExtendsSimpleBeanTest">
-        <methods>
-          <exclude name="testSpecializingClassDirectlyExtendsSimpleBean"/>
-        </methods>
-      </class>
-      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.broken.implementInterfaceAndExtendsNothing.ImplementsInterfaceAndExtendsNothingTest">
-        <methods>
-          <exclude name="testSpecializingClassImplementsInterfaceAndExtendsNothing"/>
-        </methods>
-      </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">
         <methods>
           <exclude name="testInvocationIsProcessedOnCurrentInstance"/>

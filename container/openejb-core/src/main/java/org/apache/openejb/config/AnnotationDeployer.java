@@ -1209,14 +1209,28 @@ public class AnnotationDeployer implements DynamicDeployer {
 
 
             for (Class<?> specializingClass : sortClassesParentFirst(new ArrayList<Class<?>>(specializingClasses))) {
+
+                final Class<?> parent = specializingClass.getSuperclass();
+
+                if (parent == null || parent.equals(Object.class)) {
+                    ejbModule.getValidation().fail(specializingClass.getSimpleName(), "specializes.extendsNothing", specializingClass.getName());
+                }
+
+                boolean found = false;
+
                 for (EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
 
                     final String ejbClass = enterpriseBean.getEjbClass();
 
-                    if (ejbClass != null && ejbClass.equals(specializingClass.getSuperclass().getName())) {
+                    if (ejbClass != null && ejbClass.equals(parent.getName())) {
                         managedClasses.remove(ejbClass);
                         enterpriseBean.setEjbClass(specializingClass.getName());
+                        found = true;
                     }
+                }
+
+                if (!found) {
+                    ejbModule.getValidation().fail(specializingClass.getSimpleName(), "specializes.extendsSimpleBean", specializingClass.getName());
                 }
             }
 
