@@ -35,6 +35,6 @@ public class PojoWsContainer extends CxfWsContainer {
     }
 
     protected PojoEndpoint createEndpoint() {
-        return new PojoEndpoint(bus, port, context, target);
+        return new PojoEndpoint(bus, port, context, target, httpTransportFactory);
     }
 }

@@ -32,7 +32,6 @@ public class EjbWsContainer extends CxfWsContainer {
     }
 
     protected EjbEndpoint createEndpoint() {
-    	EjbEndpoint ep = new EjbEndpoint(bus, port, beanContext, httpTransportFactory);
-        return ep;
+    	return new EjbEndpoint(bus, port, beanContext, httpTransportFactory);
     }
 }
