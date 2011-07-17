@@ -139,11 +139,6 @@ public abstract class CxfEndpoint {
 			// disable CXF resource injection
 			doInit = false;
 		}
-		
-		@Override
-		protected BindingInfo createBindingInfo() {
-			return super.createBindingInfo();
-		}
 	}
 
 	protected void doPublish(String address) {

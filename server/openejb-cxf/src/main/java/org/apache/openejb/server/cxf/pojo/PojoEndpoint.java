@@ -20,6 +20,7 @@ package org.apache.openejb.server.cxf.pojo;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.InjectionProcessor;
 import static org.apache.openejb.InjectionProcessor.unwrap;
 import org.apache.openejb.core.webservices.JaxWsUtils;
@@ -34,8 +35,8 @@ import javax.xml.ws.WebServiceException;
 public class PojoEndpoint extends CxfEndpoint {
     private InjectionProcessor<Object> injectionProcessor;
 
-    public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance) {
-    	super(bus, port, context, instance, null);
+    public PojoEndpoint(Bus bus, PortData port, Context context, Class<?> instance, HTTPTransportFactory httpTransportFactory) {
+    	super(bus, port, context, instance, httpTransportFactory);
 
         String bindingURI = null;
         if (port.getBindingID() != null) {
