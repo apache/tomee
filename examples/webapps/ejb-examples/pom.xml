@@ -54,6 +54,24 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.googlecode.t7mp</groupId>
+        <artifactId>maven-t7-plugin</artifactId>
+        <version>0.9.6</version>
+        <configuration>
+          <tomcatHttpPort>9999</tomcatHttpPort>
+          <tomcatShutdownPort>9998</tomcatShutdownPort>
+          <tomcatVersion>7.0.16</tomcatVersion>
+          <webapps>
+            <webappArtifact>
+              <groupId>org.apache.openejb</groupId>
+              <artifactId>openejb-tomcat-webapp</artifactId>
+              <version>4.0.0-SNAPSHOT</version>
+              <contextPath>openejb</contextPath>
+            </webappArtifact>
+          </webapps>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
