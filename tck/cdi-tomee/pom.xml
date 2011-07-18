@@ -28,7 +28,7 @@
   <name>OpenEJB :: TCK :: CDI TomEE</name>
   <properties>
     <!-- where we will unpack tomcat -->
-    <openejb.home>${project.build.directory}\apache-tomee-${project.version}</openejb.home>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
   </properties>
   <dependencies>
     <dependency>
@@ -53,10 +53,20 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.jboss.test-harness</groupId>
+      <artifactId>jboss-test-harness</artifactId>
+      <version>1.1.0-CR5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.jsr299.tck</groupId>
       <artifactId>jsr299-tck-impl</artifactId>
       <version>1.0.4.SP1</version>
-      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.testng</groupId>
@@ -68,7 +78,6 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.0.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -80,7 +89,7 @@
         <executions>
           <execution>
             <id>unpack</id>
-            <phase>initialize</phase>
+            <phase>pre-integration-test</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -100,18 +109,116 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>tck-common</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>cdi-tomee</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- TomEE embedds a lot of applications in. We should remove all not necessary web
+           application for TCK (ie. all but openejb and ROOT -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>remove-apps</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete dir="${openejb.home}/webapps/docs"/>
+                <delete dir="${openejb.home}/webapps/manager"/>
+                <delete dir="${openejb.home}/webapps/host-manager"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.9</version>
         <configuration>
           <suiteXmlFiles>
             <!-- <suiteXmlFile>src/test/resources/web-profile.xml</suiteXmlFile> -->
             <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
             <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile> -->
           </suiteXmlFiles>
-          <forkMode>once</forkMode>
+          <!--<forkMode>once</forkMode>-->
+          <systemProperties>
+            <property>
+              <name>org.jboss.testharness.standalone</name>
+              <value>false</value>
+            </property>
+            <property>
+              <name>org.jboss.testharness.runIntegrationTests</name>
+              <value>true</value>
+            </property>
+            <property>
+                <name>org.jboss.testharness.container.forceRestart</name>
+                <value>true</value>
+            </property>
+            <property>
+                <name>org.jboss.testharness.libraryDirectory</name>
+                <value>${project.build.directory}/dependency/lib</value>
+            </property>
+            <!--<property>-->
+                <!--<name>org.jboss.testharness.outputDirectory</name>-->
+                <!--<value>target</value>-->
+            <!--</property>-->
+            <property>
+                <name>deleteArtifacts</name>
+                <value>true</value>
+            </property>
+          </systemProperties>
           <systemPropertyVariables>
-            <openejb.home>${project.build.directory}\apache-tomee-${project.version}</openejb.home>
+            <!--<openejb.server.debug>true</openejb.server.debug>-->
+            <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
           </systemPropertyVariables>
         </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
