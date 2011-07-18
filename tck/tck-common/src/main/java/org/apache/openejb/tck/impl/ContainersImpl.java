@@ -69,6 +69,12 @@ public class ContainersImpl implements Containers {
 
     @Override
     public boolean deploy(InputStream archive, String name) {
+        try {
+            final File file = writeToFile2(archive, name);
+            System.out.println(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (!OpenEJB.isInitialized()) stuck = name;
         else System.out.println("STUCK " + stuck);
 
