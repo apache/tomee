@@ -18,7 +18,6 @@ package org.apache.openejb.config;
 
 import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.ClassFinder;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.loader.SystemInstance;
@@ -47,7 +46,7 @@ public class FinderFactory {
         if (module instanceof WebModule) {
             WebModule webModule = (WebModule) module;
             final ClassLoader webClassLoader = webModule.getClassLoader();
-            return new AnnotationFinder(new ClasspathArchive(webClassLoader, webModule.getUrls())).link();
+            return new AnnotationFinder(new AggregatedArchive(webClassLoader, webModule.getUrls())).link();
         }
         
         if (module instanceof ConnectorModule) {
@@ -76,4 +75,5 @@ public class FinderFactory {
             return new AnnotationFinder(new ClassesArchive()).link();
         }
     }
+
 }
