@@ -346,18 +346,18 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
         // Load any potentially misplaced extensions -- TCK seems to be full of them
         // This could perhaps be improved or addressed elsewhere
-        final String s = "WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension";
-        final ArrayList<URL> list = Collections.list(appContext.getClassLoader().getResources(s));
-        for (URL url : list) {
-            final String className = readContents(url).trim();
-
-            final Class<?> extensionClass = appContext.getClassLoader().loadClass(className);
-
-            if (Extension.class.isAssignableFrom(extensionClass)) {
-                final Extension extension = (Extension) extensionClass.newInstance();
-                extensionLoader.addExtension(extension);
-            }
-        }
+//        final String s = "WEB-INF/classes/META-INF/services/javax.enterprise.inject.spi.Extension";
+//        final ArrayList<URL> list = Collections.list(appContext.getClassLoader().getResources(s));
+//        for (URL url : list) {
+//            final String className = readContents(url).trim();
+//
+//            final Class<?> extensionClass = appContext.getClassLoader().loadClass(className);
+//
+//            if (Extension.class.isAssignableFrom(extensionClass)) {
+//                final Extension extension = (Extension) extensionClass.newInstance();
+//                extensionLoader.addExtension(extension);
+//            }
+//        }
     }
 
     private void deployManagedBeans(Set<Class<?>> beanClasses, List<BeanContext> ejbs) {

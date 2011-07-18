@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -224,6 +225,7 @@ import org.apache.xbean.finder.AnnotationFinder;
 import org.apache.xbean.finder.ClassFinder;
 import org.apache.xbean.finder.IAnnotationFinder;
 import org.apache.xbean.finder.MetaAnnotatedClass;
+import org.apache.xbean.finder.archive.Archive;
 import org.apache.xbean.finder.archive.ClassesArchive;
 
 /**
@@ -1018,7 +1020,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
-                    final List<String> classNames = finder.getAnnotatedClassNames();
+                    final List<String> classNames = getBeanClasses(finder);
                     for (String className : classNames) {
                         try {
                             final ClassLoader loader = ejbModule.getClassLoader();
@@ -1032,12 +1034,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 //                            // 2. Abstract classes (unless they are an @Decorator)
 //                            if (Modifier.isAbstract(clazz.getModifiers()) && !clazz.isAnnotationPresent(javax.decorator.Decorator.class)) continue;
 //
-//                            // 3. Implementations of Extension
-//                            if (Extension.class.isAssignableFrom(clazz)) continue;
+                            // 3. Implementations of Extension
+                            if (Extension.class.isAssignableFrom(clazz)) continue;
 
                             managedClasses.add(className);
                         } catch (ClassNotFoundException e) {
                             // todo log debug warning
+                        } catch (java.lang.NoClassDefFoundError e) {
+
                         }
                     }
                 } else {
@@ -1254,6 +1258,48 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             return ejbModule;
+        }
+
+        private List<String> getBeanClasses(IAnnotationFinder finder) {
+
+            //  What we're hoping in this method is to get lucky and find
+            //  that our 'finder' instances is an AnnotationFinder that is
+            //  holding an AggregatedArchive so we can get the classes that
+            //  that pertain to each URL for CDI purposes.
+            //
+            //  If not we call finder.getAnnotatedClassNames() which may return
+            //  more classes than actually apply to CDI.  This can "pollute"
+            //  the CDI class space and break injection points
+
+            if (!(finder instanceof AnnotationFinder)) return finder.getAnnotatedClassNames();
+
+            final AnnotationFinder annotationFinder = (AnnotationFinder) finder;
+
+            final Archive archive = annotationFinder.getArchive();
+
+            if (!(archive instanceof AggregatedArchive)) return finder.getAnnotatedClassNames();
+
+            final List<String> classes = new ArrayList<String>();
+
+            final AggregatedArchive aggregatedArchive = (AggregatedArchive) archive;
+            final Map<URL, List<String>> map = aggregatedArchive.getClassesMap();
+
+            for (Map.Entry<URL, List<String>> entry : map.entrySet()) {
+
+                if (hasBeansXml(entry.getKey())) classes.addAll(entry.getValue());
+            }
+
+            return classes;
+        }
+
+        private boolean hasBeansXml(URL url) {
+            if (url.getPath().endsWith("WEB-INF/classes/")) return true;
+            try {
+                final URLClassLoader loader = new URLClassLoader(new URL[]{url});
+                return loader.findResource("/WEB-INF/beans.xml") != null || loader.findResource("/META-INF/beans.xml") != null;
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         private String getEjbName(MessageDriven mdb, Class<?> beanClass) {
