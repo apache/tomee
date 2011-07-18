@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.tck.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,9 +27,6 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import org.apache.openejb.NoSuchApplicationException;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
@@ -45,6 +41,8 @@ public class ContainersImplTomEE implements Containers {
     private final RemoteServer server;
     private Deployer deployer = null;
     private static final String tmpDir = System.getProperty("java.io.tmpdir");
+    private DeploymentException exception;
+
     public ContainersImplTomEE() {
         System.out.println("Initialized ContainersImplTomEE " + (++count));
         server = new RemoteServer(10, true);
@@ -62,23 +60,29 @@ public class ContainersImplTomEE implements Containers {
     }
     @Override
     public boolean deploy(InputStream archive, String name) throws IOException {
+        exception = null;
+
         System.out.println("Deploying " + archive + " with name " + name);
-        String fileName = getName(name);
+
+        File fileName = getFile(name);
         System.out.println(fileName);
         writeToFile(fileName, archive);
         try {
             if (deployer == null) {
                 deployer = lookup();
             }
-            deployer.deploy(fileName);
-        } catch (OpenEJBException e) {
-            throw new RuntimeException(e);
+            deployer.deploy(fileName.getAbsolutePath());
+        } catch (Exception e) {
+            exception = (DeploymentException) new DeploymentException("deploy failed").initCause(e);
+            e.printStackTrace();
+            return false;
         }
         return true;
     }
-    private void writeToFile(String fileName, InputStream archive) {
+
+    private void writeToFile(File file, InputStream archive) {
         try {
-            FileOutputStream fos = new FileOutputStream(fileName);
+            FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[4096];
             int bytesRead = -1;
             while ((bytesRead = archive.read(buffer)) > -1) {
@@ -89,22 +93,25 @@ public class ContainersImplTomEE implements Containers {
             throw new RuntimeException(e);
         }
     }
-    private String getName(String name) {
-        return tmpDir + File.separator + name;
+    private File getFile(String name) {
+        final File dir = new File(tmpDir, Math.random()+"");
+        dir.mkdir();
+
+        return new File(dir, name);
     }
+
     @Override
     public DeploymentException getDeploymentException() {
-        System.out.println("getDeploymentException()");
-        return new DeploymentException("There is some problem");
+        return exception;
     }
+
     @Override
     public void undeploy(String name) throws IOException {
         System.out.println("Undeploying " + name);
         try {
-            deployer.undeploy(getName(name));
-        } catch (UndeployException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchApplicationException e) {
+            deployer.undeploy(getFile(name).getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

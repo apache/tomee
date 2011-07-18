@@ -38,6 +38,17 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.jboss.jsr299.tck</groupId>
+      <artifactId>jsr299-tck-impl</artifactId>
+      <version>1.0.4.SP1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>
