@@ -141,9 +141,10 @@ class SetupCommand {
 		ant.echo("Assigning execute privileges to scripts in Tomcat bin directory")
 		ant.chmod(dir: "${project.build.directory}/apache-tomcat-${tomcatVersion}/bin", perm: "u+x", includes: "**/*.sh")
 
-		ant.echo("Deploying the examples war")
-		ant.unzip(src: "${localRepo}/org/superbiz/ejb-examples/${examplesVersion}/ejb-examples-${examplesVersion}.war",
-				dest: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
+//		ant.echo("Deploying the examples war")
+//		ant.unzip(src: "${localRepo}/org/superbiz/ejb-examples/${examplesVersion}/ejb-examples-${examplesVersion}.war",
+//				dest: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/ejb-examples")
+        ant.delete(dir: "${project.build.directory}/apache-tomcat-${tomcatVersion}/webapps/examples")
 	}
 }
 
