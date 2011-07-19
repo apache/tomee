@@ -34,7 +34,7 @@
     <module>jsf</module>
     <module>struts</module>
     <module>moviefun</module>
-    <module>rest-example</module>
+    <!--module>rest-example</module-->
   </modules>
 
   <!--
