@@ -35,7 +35,7 @@
     <module>openejb-tomcat-catalina</module>
     <module>openejb-tomcat-common</module>
     <module>openejb-tomcat-webapp</module>
-    <!--module>openejb-tomcat-bundle</module-->
+    <module>openejb-tomcat-bundle</module>
   </modules>
 
   <repositories>
