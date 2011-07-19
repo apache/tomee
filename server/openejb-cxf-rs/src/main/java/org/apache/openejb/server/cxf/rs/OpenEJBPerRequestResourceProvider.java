@@ -22,7 +22,12 @@ import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.WebApplicationException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -37,12 +42,30 @@ public class OpenEJBPerRequestResourceProvider extends PerRequestResourceProvide
         super(clazz);
         injections = injectionCollection;
         context = ctx;
+        if (ctx == null) {
+            // TODO: context shouldn't be null here so it should be removed
+            context = (Context) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{Context.class}, new InvocationHandler() {
+                @Override public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    Context ctx = new InitialContext();
+                    if (method.getName().equals("lookup")) {
+                        if (args[0].getClass().equals(String.class)) {
+                            try {
+                                return ctx.lookup("java:" + String.class.cast(args[0]));
+                            } catch (NamingException ne) {
+                                // let try it in the normal way (without java:)
+                            }
+                        }
+                    }
+                    return method.invoke(ctx, args);
+                }
+            });
+        }
     }
 
     protected Object createInstance(Message m) {
         Object o = super.createInstance(m);
         try {
-            InjectionProcessor<?> injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), context);
+            InjectionProcessor<?> injector = new InjectionProcessor<Object>(o, new ArrayList<Injection>(injections), InjectionProcessor.unwrap(context));
             injector.createInstance();
             injector.postConstruct();
             return injector.getInstance();

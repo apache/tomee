@@ -66,84 +66,88 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
     private Assembler assembler;
     private CoreContainerSystem containerSystem;
     private RsRegistry rsRegistry;
-
     private List<String> services = new ArrayList<String>();
+    private String virtualHost;
+
+    public void afterApplicationCreated(final WebAppInfo webApp) {
+        final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
+        if (webContext == null) {
+            return;
+        }
+
+        if (!deployedWebApps.add(webApp)) {
+            return;
+        }
+
+        final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
+        Collection<Injection> injections = webContext.getInjections();
+        Context context = webContext.getJndiEnc();
+
+        // The spec says:
+        //
+        // "The resources and providers that make up a JAX-RS application are configured via an application-supplied
+        // subclass of Application. An implementation MAY provide alternate mechanisms for locating resource
+        // classes and providers (e.g. runtime class scanning) but use of Application is the only portable means of
+        //  configuration."
+        //
+        //  The choice here is to deploy using the Application if it exists or to use the scanned classes
+        //  if there is no Application.
+        //
+        //  Like this providing an Application subclass user can totally control deployed services.
+
+        if (webApp.restApplications.isEmpty()) {
+            for (String clazz : webApp.restClass) {
+                try {
+                    deploy(webApp.contextRoot, classLoader.loadClass(clazz), null, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
+                }
+                LOGGER.info("REST service deployed: " + clazz);
+            }
+        } else {
+            for (String app : webApp.restApplications) { // normally a unique one but we support more
+                Application appInstance;
+                try {
+                    appInstance = Application.class.cast(load(classLoader, app));
+                } catch (ClassNotFoundException e) {
+                    throw new OpenEJBRestRuntimeException("can't find class " + app, e);
+                }
+
+                for (Object o : appInstance.getSingletons()) {
+                    deploy(webApp.contextRoot, o, appInstance, classLoader, RsHttpListener.Scope.SINGLETON, injections, context);
+                    LOGGER.info("deployed REST singleton: " + o);
+                }
+                for (Class<?> clazz : appInstance.getClasses()) {
+                    deploy(webApp.contextRoot, clazz, appInstance, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
+                    LOGGER.info("deployed REST class: " + clazz);
+                }
+
+                LOGGER.info("REST application deployed: " + app);
+            }
+        }
+    }
 
     @Override public void afterApplicationCreated(final AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
             for (final WebAppInfo webApp : appInfo.webApps) {
-                final WebContext webContext = containerSystem.getWebContext(webApp.moduleId);
-                if (webContext == null) {
-                    return;
-                }
-
-                if (!deployedWebApps.add(webApp)) {
-                    return;
-                }
-
-                final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
-                Collection<Injection> injections = webContext.getInjections();
-                Context context = webContext.getJndiEnc();
-
-                // The spec says:
-                //
-                // "The resources and providers that make up a JAX-RS application are configured via an application-supplied
-                // subclass of Application. An implementation MAY provide alternate mechanisms for locating resource
-                // classes and providers (e.g. runtime class scanning) but use of Application is the only portable means of
-                //  configuration."
-                //
-                //  The choice here is to deploy using the Application if it exists or to use the scanned classes
-                //  if there is no Application.
-                //
-                //  Like this providing an Application subclass user can totally control deployed services.
-
-                if (webApp.restApplications.isEmpty()) {
-                    for (String clazz : webApp.restClass) {
-                        try {
-                            deploy(webApp.contextRoot, classLoader.loadClass(clazz), null, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
-                        } catch (ClassNotFoundException e) {
-                            throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
-                        }
-                        LOGGER.info("REST service deployed: " + clazz);
-                    }
-                } else {
-                    for (String app : webApp.restApplications) { // normally a unique one but we support more
-                        Application appInstance;
-                        try {
-                            appInstance = Application.class.cast(load(classLoader, app));
-                        } catch (ClassNotFoundException e) {
-                            throw new OpenEJBRestRuntimeException("can't find class " + app, e);
-                        }
-
-                        for (Object o : appInstance.getSingletons()) {
-                            deploy(webApp.contextRoot, o, appInstance, classLoader, RsHttpListener.Scope.SINGLETON, injections, context);
-                            LOGGER.info("deployed REST singleton: " + o);
-                        }
-                        for (Class<?> clazz : appInstance.getClasses()) {
-                            deploy(webApp.contextRoot, clazz, appInstance, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
-                            LOGGER.info("deployed REST class: " + clazz);
-                        }
-
-                        LOGGER.info("REST application deployed: " + app);
-                    }
-                }
+                afterApplicationCreated(webApp);
             }
         }
     }
 
     /**
-     * @param context the webapp context
-     * @param o the class if scope == prototype or the instance if scope == singleton
-     * @param app the Application if exists
+     * @param context     the webapp context
+     * @param o           the class if scope == prototype or the instance if scope == singleton
+     * @param app         the Application if exists
      * @param classLoader the webapp classloader
-     * @param scope the scope
-     * @param injections webapp injections
-     * @param ctx webapp context
+     * @param scope       the scope
+     * @param injections  webapp injections
+     * @param ctx         webapp context
      */
     private void deploy(String context, Object o, Application app, ClassLoader classLoader, RsHttpListener.Scope scope, Collection<Injection> injections, Context ctx) {
         final String nopath = getAddress(NOPATH_PREFIX + context, o, scope) + "/.*";
         final RsHttpListener listener = createHttpListener(o, scope);
-        final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1));
+        final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
         final String address = HttpUtil.selectSingleAddress(addresses);
 
         services.add(address);
@@ -220,11 +224,14 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                         undeployRestObject(address);
                     }
                 }
+                deployedWebApps.remove(webApp);
             }
         }
     }
 
     @Override public void start() throws ServiceException {
+        SystemInstance.get().setComponent(RESTService.class, this);
+
         beforeStart();
 
         containerSystem = (CoreContainerSystem) SystemInstance.get().getComponent(ContainerSystem.class);
@@ -269,7 +276,15 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return PORT;
     }
 
-    @Override public void init(Properties properties) throws Exception {
-        // no-op
+    @Override public void init(Properties props) throws Exception {
+        virtualHost = props.getProperty("virtualHost");
+    }
+
+    public String getVirtualHost() {
+        return virtualHost;
+    }
+
+    public void setVirtualHost(String virtualHost) {
+        this.virtualHost = virtualHost;
     }
 }

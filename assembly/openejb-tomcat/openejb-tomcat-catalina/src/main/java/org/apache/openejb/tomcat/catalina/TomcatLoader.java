@@ -36,6 +36,7 @@ import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServiceManager;
 import org.apache.openejb.server.ejbd.EjbServer;
+import org.apache.openejb.server.rest.RsRegistry;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.tomcat.installer.Installer;
 import org.apache.openejb.tomcat.installer.Paths;
@@ -49,6 +50,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -93,6 +96,9 @@ public class TomcatLoader implements Loader {
      * Platform OpenEJB works
      */
     private final String platform;
+
+    /** other services */
+    private List<ServerService> services = new ArrayList<ServerService> ();
 
     /**
      * Creates a new instance.
@@ -185,6 +191,12 @@ public class TomcatLoader implements Loader {
             SystemInstance.get().setComponent(WsRegistry.class, tomcatSoapHandler);
         }
 
+        TomcatRsRegistry tomcatRestHandler = (TomcatRsRegistry) SystemInstance.get().getComponent(RsRegistry.class);
+        if (tomcatRestHandler == null) {
+            tomcatRestHandler = new TomcatRsRegistry();
+            SystemInstance.get().setComponent(RsRegistry.class, tomcatRestHandler);
+        }
+
         // Start OpenEJB
         ejbServer = new EjbServer();
         SystemInstance.get().setComponent(EjbServer.class, ejbServer);
@@ -196,7 +208,7 @@ public class TomcatLoader implements Loader {
         ejbServer.init(ejbServerProps);
 
         // Add our naming context listener to the server which registers all Tomcat resources with OpenEJB
-        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
+        StandardServer standardServer = TomcatHelper.getServer();
         OpenEJBNamingContextListener namingContextListener = new OpenEJBNamingContextListener(standardServer);
         // Standard server has no state property, so we check global naming context to determine if server is started yet
         if (standardServer.getGlobalNamingContext() != null) {
@@ -213,13 +225,26 @@ public class TomcatLoader implements Loader {
             manager.init();
             manager.start(false);
         } else {
+            // WS
             try {
-                ServerService serverService = (ServerService) Class.forName("org.apache.openejb.server.cxf.CxfService").newInstance();
-                serverService.start();
+                ServerService cxfService = (ServerService) Class.forName("org.apache.openejb.server.cxf.CxfService").newInstance();
+                cxfService.start();
+                services.add(cxfService);
             } catch (ClassNotFoundException ignored) {
             } catch (Exception e) {
                 Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
                 logger.error("Webservices failed to start", e);
+            }
+
+            // REST
+            try {
+                ServerService restService = (ServerService) Class.forName("org.apache.openejb.server.cxf.rs.CxfRSService").newInstance();
+                restService.start();
+                services.add(restService);
+            } catch (ClassNotFoundException ignored) {
+            } catch (Exception e) {
+                Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, getClass());
+                logger.error("REST failed to start", e);
             }
         }
 
@@ -237,11 +262,20 @@ public class TomcatLoader implements Loader {
      * Destroy system.
      */
     public void destroy() {
+        for (ServerService s : services) {
+            try {
+                s.stop();
+            } catch (ServiceException ignored) {
+                // no-op
+            }
+        }
+
         //Stop ServiceManager
         if (manager != null) {
             try {
                 manager.stop();
             } catch (ServiceException e) {
+                // no-op
             }
             manager = null;
         }
@@ -251,6 +285,7 @@ public class TomcatLoader implements Loader {
             try {
                 ejbServer.stop();
             } catch (ServiceException e) {
+                // no-op
             }
             ejbServer = null;
         }

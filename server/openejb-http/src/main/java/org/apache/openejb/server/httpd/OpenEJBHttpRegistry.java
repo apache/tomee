@@ -39,7 +39,7 @@ public class OpenEJBHttpRegistry {
                 }
             }
         } catch (Exception e) {
-            log.error("Unable to build base URIs for Web Service registry", e);
+            log.error("Unable to build base URIs for " + getClass().getSimpleName() + " registry", e);
         }
         registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
     }

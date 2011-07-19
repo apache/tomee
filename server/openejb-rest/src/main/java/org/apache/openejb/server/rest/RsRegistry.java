@@ -25,6 +25,6 @@ import java.util.List;
  * @author Romain Manni-Bucau
  */
 public interface RsRegistry {
-    List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path);
+    List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost);
     HttpListener removeListener(String context);
 }

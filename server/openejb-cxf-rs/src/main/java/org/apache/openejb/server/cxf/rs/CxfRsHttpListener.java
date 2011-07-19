@@ -20,6 +20,8 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.cxf.jaxrs.provider.JSONProvider;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.Injection;
@@ -30,14 +32,17 @@ import org.apache.openejb.server.rest.RsHttpListener;
 import javax.naming.Context;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.Application;
+import javax.xml.bind.Marshaller;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * @author Romain Manni-Bucau
  */
 public class CxfRsHttpListener implements RsHttpListener {
+    private static final List<?> PROVIDERS = createProviderList();
+
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
     private Server server;
@@ -65,7 +70,6 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     }
 
-    // TODO
     public ResourceProvider getResourceProvider(Object o, Collection<Injection> injections, Context context) {
         switch (scope) {
             case SINGLETON:
@@ -77,7 +81,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private Class<?> getRESTClass(Object o) {
-        if (o instanceof Class) {
+        if (scope == Scope.PROTOTYPE) {
             return Class.class.cast(o);
         }
         return o.getClass();
@@ -85,11 +89,12 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     public void deploy(String address, Object o, Application app, Collection<Injection> injections, Context context) {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
-        factory.setResourceClasses(o.getClass());
+        factory.setResourceClasses(getRESTClass(o));
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
         factory.setResourceProvider(getResourceProvider(o, injections, context));
+        factory.setProviders(PROVIDERS);
         if (scope == Scope.PROTOTYPE) {
             factory.setServiceClass(Class.class.cast(o));
         } else {
@@ -105,5 +110,17 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     public void undeploy() {
         server.stop();
+    }
+
+    private static List<?> createProviderList() {
+        JAXBElementProvider jaxb = new JAXBElementProvider();
+        Map<String, Object> jaxbProperties = new HashMap<String, Object> ();
+        jaxbProperties.put(Marshaller.JAXB_FRAGMENT, true);
+        jaxb.setMarshallerProperties(jaxbProperties);
+
+        JSONProvider json = new JSONProvider();
+        json.setSerializeAsArray(true);
+
+        return Arrays.asList(jaxb, json);
     }
 }
