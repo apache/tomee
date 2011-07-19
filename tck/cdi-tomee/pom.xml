@@ -53,17 +53,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.test-harness</groupId>
-      <artifactId>jboss-test-harness</artifactId>
-      <version>1.1.0-CR5</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.jsr299.tck</groupId>
       <artifactId>jsr299-tck-impl</artifactId>
       <version>1.0.4.SP1</version>
@@ -71,6 +60,10 @@
         <exclusion>
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.ejb3</groupId>
+          <artifactId>jboss-ejb3-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

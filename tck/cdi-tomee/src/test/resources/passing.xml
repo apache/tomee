@@ -16,16 +16,49 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<suite name="CDI TCK" verbose="2">
-
+<suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
-    <packages>
+    <!--<packages>-->
         <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
         <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
-    </packages>
-
+    <!--</packages>-->
     <classes>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.AroundInvokeInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.exception.ExceptionTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.order.InvocationOrderTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.definition.DefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.invocationContext.InvocationContextTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.LifecycleCallbackInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.exceptions.LifecycleCallbackInterceptorExceptionTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.order.InvocationOrderTest"/>
+      <class name="org.jboss.jsr299.tck.interceptors.tests.method.MethodLevelInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.GetOnInactiveContextTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.custom.CustomDecoratorTest"/>
       <class name="org.jboss.jsr299.tck.tests.decorators.definition.DecoratorDefinitionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateConstructor.DelegateInjectionPointTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateField.DelegateFieldInjectionPointTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateInitializerMethod.DelegateInjectionPointTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.interceptor.DecoratorAndInterceptorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.observer.DecoratorInvocationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.producer.method.DecoratorInvocationTest"/>
+      <class name="org.jboss.jsr299.tck.tests.decorators.resolution.DecoratorResolutionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.constructorHasDisposesParameter.ConstructorHasDisposesParameterTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.constructorHasObservesParameter.ConstructorHasObservesParameterTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.dependentWithPublicField.DependentWithPublicFieldTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.tooManyInitializerAnnotatedConstructors.TooManyInitializerAnnotatedConstructorsTest"/>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.lifecycle.unproxyable.UnproxyableManagedBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.binding.members.annotation.BindingAnnotationWithMemberTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.binding.members.array.BindingAnnotationWithMemberTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicateNameResolution.DuplicateNameResolutionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicatePrefixResolution.DuplicateNamePrefixResolutionTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.array.ArrayTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalClass.FinalClassTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalMethod.FinalMethodTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.primitive.UnproxyableTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.privateConstructor.PrivateConstructorTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.nullableBean.NullableBeanTest"/>
+      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.decorator.DecoratorNotInjectedTest"/>
     </classes>
   </test>
 </suite>

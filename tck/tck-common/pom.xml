@@ -35,16 +35,9 @@
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.jsr299.tck</groupId>
-      <artifactId>jsr299-tck-impl</artifactId>
-      <version>1.0.4.SP1</version>
-      <exclusions>
         <exclusion>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
+          <groupId>org.jboss.ejb3</groupId>
+          <artifactId>jboss-ejb3-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -57,6 +50,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

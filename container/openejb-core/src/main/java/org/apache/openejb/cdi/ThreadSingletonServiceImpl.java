@@ -27,11 +27,14 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ResourceInjectionService;
 import org.apache.webbeans.spi.SecurityService;
 import org.apache.webbeans.spi.ValidatorService;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -122,11 +125,21 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
 
             final List<AppContext> appContexts = containerSystem.getAppContexts();
 
-            if (appContexts.size() > 0) return appContexts.get(0).getWebBeansContext();
+            if (appContexts.size() > 0) return getWebBeansContext(appContexts);
 
             throw new IllegalStateException("On a thread without an initialized context");
         }
         return context;
+    }
+
+    private static WebBeansContext getWebBeansContext(List<AppContext> appContexts) {
+        Collections.sort(appContexts, new Comparator<AppContext>() {
+            @Override
+            public int compare(AppContext appContext, AppContext appContext1) {
+                return appContext1.getWebBeansContext().getBeanManagerImpl().getBeans().size() - appContext.getWebBeansContext().getBeanManagerImpl().getBeans().size();
+            }
+        });
+        return appContexts.get(0).getWebBeansContext();
     }
 
     @Override
