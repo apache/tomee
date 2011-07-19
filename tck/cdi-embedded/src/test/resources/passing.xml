@@ -26,6 +26,49 @@
         <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
     </packages>
     <classes>
+      <class name="org.jboss.jsr299.tck.tests.context.ContextDestroysBeansTest">
+        <methods>
+          <exclude name="testContextDestroysBeansWhenDestroyed"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.ContextTest">
+        <methods>
+          <exclude name="testBuiltInContexts"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContext2Test">
+        <methods>
+          <exclude name="testDestroyForSameCreationalContextOnly"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContextTest">
+        <methods>
+          <exclude name="testDestroyForSameCreationalContextOnly"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyedInstanceReturnedByGetTest">
+        <methods>
+          <exclude name="testDestroyedInstanceMustNotBeReturnedByGet"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.GetFromContextualTest">
+        <methods>
+          <exclude name="testGetMayNotCreateNewInstanceUnlessCreationalContextGiven"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.GetWithNoCreationalContextTest">
+        <methods>
+          <exclude name="testGetWithoutCreationalContextReturnsNull"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.NormalContextTest">
+        <methods>
+          <exclude name="testGetMayNotReturnNullUnlessContextualCreateReturnsNull"/>
+          <exclude name="testGetReturnsExistingInstance"/>
+          <exclude name="testGetWithCreationalContextReturnsNewInstance"/>
+          <exclude name="testSameNormalScopeBeanInjectedEverywhere"/>
+        </methods>
+      </class>
       <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest">
         <methods>
           <exclude name="testApplicationContextSharedBetweenServletRequests"/>
@@ -81,6 +124,13 @@
           <exclude name="testInstanceUsedForElEvaluationNotShared"/>
         </methods>
       </class>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.PassivatingContextTest">
+        <methods>
+          <exclude name="testNonSerializableProducerFieldDeclaredPassivatingThrowsIllegalProductException"/>
+          <exclude name="testPassivatingScopeProducerMethodReturnsUnserializableObjectNotOk"/>
+          <exclude name="testPassivationOccurs"/>
+        </methods>
+      </class>
       <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
         <methods>
           <exclude name="test"/>
@@ -127,6 +177,29 @@
           <exclude name="testCreateSFSB"/>
         </methods>
       </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanICTest">
+        <methods>
+          <exclude name="testNewBeanHasNoDisposalMethods"/>
+          <exclude name="testNewBeanHasNoProducerMethods"/>
+          <exclude name="testNewBeanHasSameInitializers"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest">
+        <methods>
+          <exclude name="testApplicationCannotCallRemoveMethodOnNonDependentScopedSessionEnterpriseBean"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.lifecycle.SimpleBeanLifecycleTest">
+        <methods>
+          <exclude name="testSerializeSessionScoped"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.newSimpleBean.NewSimpleBeanTest">
+        <methods>
+          <exclude name="testNewBeanHasSameConstructor"/>
+          <exclude name="testNewBeanHasSameInitializers"/>
+        </methods>
+      </class>
       <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.env.EnvInjectionTest">
         <methods>
           <exclude name="testInjectionOfEnv"/>
@@ -147,6 +220,16 @@
           <exclude name="testInjectionOfResource"/>
           <exclude name="testPassivatingResource"/>
           <exclude name="testProduceResourceProxy"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
+        <methods>
+          <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.circular.CircularDependencyTest">
+        <methods>
+          <exclude name="testCircularInjectionOnTwoNormalBeans"/>
         </methods>
       </class>
       <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">
