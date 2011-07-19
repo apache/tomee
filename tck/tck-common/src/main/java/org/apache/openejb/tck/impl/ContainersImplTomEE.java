@@ -28,6 +28,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.apache.openejb.assembler.Deployer;
+import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.RemoteServer;
 import org.jboss.testharness.api.DeploymentException;
@@ -42,6 +43,7 @@ public class ContainersImplTomEE implements Containers {
     private Deployer deployer = null;
     private static final String tmpDir = System.getProperty("java.io.tmpdir");
     private DeploymentException exception;
+    private AppInfo appInfo;
 
     public ContainersImplTomEE() {
         System.out.println("Initialized ContainersImplTomEE " + (++count));
@@ -61,6 +63,7 @@ public class ContainersImplTomEE implements Containers {
     @Override
     public boolean deploy(InputStream archive, String name) throws IOException {
         exception = null;
+        appInfo = null;
 
         System.out.println("Deploying " + archive + " with name " + name);
 
@@ -71,7 +74,7 @@ public class ContainersImplTomEE implements Containers {
             if (deployer == null) {
                 deployer = lookup();
             }
-            deployer.deploy(fileName.getAbsolutePath());
+            appInfo = deployer.deploy(fileName.getAbsolutePath());
         } catch (Exception e) {
             exception = (DeploymentException) new DeploymentException("deploy failed").initCause(e);
             e.printStackTrace();
@@ -107,9 +110,14 @@ public class ContainersImplTomEE implements Containers {
 
     @Override
     public void undeploy(String name) throws IOException {
+        if (appInfo == null) {
+            System.out.println("Nothing to undeploy" + name);
+            return;
+        }
+
         System.out.println("Undeploying " + name);
         try {
-            deployer.undeploy(getFile(name).getAbsolutePath());
+            deployer.undeploy(appInfo.path);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

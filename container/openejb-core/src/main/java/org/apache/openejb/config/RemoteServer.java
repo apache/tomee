@@ -182,8 +182,8 @@ public class RemoteServer {
                     argsList.add("-Dcatalina.home=" + home.getAbsolutePath());
                     argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
                     argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
+                    argsList.add("-ea");
                     argsList.add("-classpath");
-                    argsList.add("-ea"); 
                     String ps = File.pathSeparator;
                     if (commonsLoggingJar.exists()) {
                         argsList.add(bootstrapJar.getAbsolutePath() + ps + juliJar.getAbsolutePath() + ps + commonsLoggingJar.getAbsolutePath());

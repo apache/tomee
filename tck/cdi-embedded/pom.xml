@@ -49,11 +49,14 @@
       <groupId>org.jboss.jsr299.tck</groupId>
       <artifactId>jsr299-tck-impl</artifactId>
       <version>1.0.4.SP1</version>
-      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.testng</groupId>
           <artifactId>testng</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.ejb3</groupId>
+          <artifactId>jboss-ejb3-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

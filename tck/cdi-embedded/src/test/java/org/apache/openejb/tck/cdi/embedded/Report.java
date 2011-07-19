@@ -49,6 +49,7 @@ public class Report {
 //        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
         final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
 //        final File file = new File("/Users/dblevins/work/uber/testng-results.xml");
+//        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-tomee/target/failsafe-reports/testng-results.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
@@ -68,9 +69,10 @@ public class Report {
 
         Collections.sort(classes);
 
-        textReport(file);
+//        textReport(file);
         passingXml(file);
-        failingXml(file);
+//        passingXml2(file);
+//        failingXml(file);
 //        printResults(System.out);
 
     }
@@ -79,6 +81,35 @@ public class Report {
         final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", ".txt"));
         final PrintStream out = new PrintStream(new FileOutputStream(report));
         printResults(out);
+        out.close();
+    }
+
+    private void passingXml2(File file) throws FileNotFoundException {
+        final File report = new File(file.getParentFile(), file.getName().replaceAll(".xml$", "-passing.xml"));
+        final PrintStream out = new PrintStream(new FileOutputStream(report));
+
+        out.println("" +
+                "<suite name=\"CDI TCK\" verbose=\"0\">\n" +
+                "  <listeners>\n" +
+                "    <listener class-name=\"org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener\" />\n" +
+                "  </listeners>\n" +
+                "  <test name=\"CDI TCK\">\n" +
+                "    <!--<packages>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.tests.*\"/>-->\n" +
+                "        <!--<package name=\"org.jboss.jsr299.tck.interceptors.tests.*\"/>-->\n" +
+                "    <!--</packages>-->\n" +
+                "    <classes>");
+
+        for (TestClass testClass : classes) {
+
+            if (!contains(testClass, Status.FAIL)) {
+                out.printf("      <class name=\"%s\"/>\n", testClass.name);
+            }
+        }
+        out.println("    </classes>");
+        out.println("  </test>");
+        out.println("</suite>");
+
         out.close();
     }
 
