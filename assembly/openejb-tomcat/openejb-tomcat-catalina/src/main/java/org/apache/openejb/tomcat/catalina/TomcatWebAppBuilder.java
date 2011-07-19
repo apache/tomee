@@ -1,19 +1,18 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ *     contributor license agreements.  See the NOTICE file distributed with
+ *     this work for additional information regarding copyright ownership.
+ *     The ASF licenses this file to You under the Apache License, Version 2.0
+ *     (the "License"); you may not use this file except in compliance with
+ *     the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *     Unless required by applicable law or agreed to in writing, software
+ *     distributed under the License is distributed on an "AS IS" BASIS,
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *     See the License for the specific language governing permissions and
+ *     limitations under the License.
  */
 package org.apache.openejb.tomcat.catalina;
 
@@ -22,10 +21,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.core.ContainerBase;
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.core.*;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -53,6 +49,7 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.server.rest.RESTService;
 import org.apache.openejb.server.webservices.WsService;
 import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
@@ -135,6 +132,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * WsService
      */
     private WsService wsService;
+
+    private RESTService rsService;
 
     /**
      * Creates a new web application builder
@@ -364,17 +363,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return;
         }
 
-        // required for Pojo Web Services because when Assembler creates the application
-        // the CoreContainerSystem does not contain the WebContext
-        // see also the start method getContainerSystem().addWebDeployment(webContext);
-        WsService wsService = getWsService();
-        if (wsService != null) {
-            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
-            for (WebAppInfo webApp : webApps) {
-                wsService.afterApplicationCreated(webApp);
-            }
-        }
-
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
         String listenerName = getNamingContextListener(standardContext).getName();
@@ -387,18 +375,25 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             Context root = (Context) ContextBindings.getClassLoader().lookup("");
             safeBind(root, "openejb", openejbContext);
 
+            // TODO: else (=NamingException) if it doesn't exist create it to bind TransactionManager...
             Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
 
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
-                // Bean Validation
-                standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT + webAppInfo.moduleId));
-
-                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
+                boolean isRoot = isRootApplication(standardContext);
+                if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRoot) {
                     WebContext webContext = getContainerSystem().getWebContext(webAppInfo.moduleId);
                     if (webContext != null) {
-                        webContext.setJndiEnc(comp);
+                        // webContext.setJndiEnc(comp);
                     }
+
+                    try {
+                        // Bean Validation
+                        standardContext.getServletContext().setAttribute("javax.faces.validator.beanValidator.ValidatorFactory", openejbContext.lookup(Assembler.VALIDATOR_FACTORY_NAMING_CONTEXT.replaceFirst("openejb", "") + webAppInfo.uniqueId));
+                    } catch (NamingException ne) {
+                        logger.warning("no validator factory found for webapp " + webAppInfo.moduleId);
+                    }
+
                     break;
                 }
             }
@@ -416,6 +411,25 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         } catch (NamingException e) {
         }
         ContextAccessController.setReadOnly(listenerName);
+
+        // required for Pojo Web Services because when Assembler creates the application
+        // the CoreContainerSystem does not contain the WebContext
+        // see also the start method getContainerSystem().addWebDeployment(webContext);
+        WsService wsService = getWsService();
+        if (wsService != null) {
+            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
+            for (WebAppInfo webApp : webApps) {
+                wsService.afterApplicationCreated(webApp);
+            }
+        }
+
+        RESTService rsService = getRsService();
+        if (rsService != null) {
+            List<WebAppInfo> webApps = contextInfo.appInfo.webApps;
+            for (WebAppInfo webApp : webApps) {
+                rsService.afterApplicationCreated(webApp);
+            }
+        }
 
         if (!TomcatVersion.hasAnnotationProcessingSupport()) {
             try {
@@ -751,21 +765,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     private void safeBind(Context comp, String name, Object value) {
         try {
-        	Object lookup = null;
-        	
-        	try {
-				lookup = comp.lookup(name);
-			} catch (Exception e) {
-			}
-			
-			if (lookup != null) {
-				logger.info(name + " already bound, ignoring");
-				return;
-			}
-			
-            comp.bind(name, value);
-        } catch (NamingException e) {
-            logger.error("Error in safeBind method", e);
+            comp.lookup(name);
+            logger.info(name + " already bound, ignoring");
+        } catch (Exception e) {
+            try {
+                comp.bind(name, value);
+            } catch (NamingException ne) {
+                logger.error("Error in safeBind method", e);
+            }
         }
     }
 
@@ -803,6 +810,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             wsService = SystemInstance.get().getComponent(WsService.class);
         }
         return wsService;
+    }
+
+    private RESTService getRsService() {
+        if (rsService == null) {
+            rsService = SystemInstance.get().getComponent(RESTService.class);
+        }
+        return rsService;
     }
 
     /**

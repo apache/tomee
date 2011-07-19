@@ -101,10 +101,6 @@
           <artifactId>jetty-util</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.codehaus.jettison</groupId>
-          <artifactId>jettison</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.xmlbeans</groupId>
           <artifactId>xmlbeans</artifactId>
         </exclusion>

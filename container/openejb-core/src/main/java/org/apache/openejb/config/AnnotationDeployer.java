@@ -1589,26 +1589,41 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webModule.getRestApplications().add(webXmlApplication);
             }
 
-            for (String application : webModule.getRestApplications()) {
-                if (application != null) {
-                    Class<?> clazz;
-                    try {
-                        clazz = classLoader.loadClass(application);
-                        classes.add(clazz);
-                    } catch (ClassNotFoundException e) {
-                        throw new OpenEJBException("Unable to load Application class: " + application, e);
+            Collection<String> restApp = webModule.getRestApplications();
+            if (restApp.isEmpty()) {
+                for (String className : webModule.getRestClasses()) {
+                    if (className != null) {
+                        Class<?> clazz;
+                        try {
+                            clazz = classLoader.loadClass(className);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load REST class: " + className, e);
+                        }
                     }
-
-                    try {
-                        Application app = Application.class.cast(clazz.newInstance());
-                        classes.addAll(app.getClasses());
-                    } catch (InstantiationException e) {
-                        throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
-                    } catch (IllegalAccessException e) {
-                        throw new OpenEJBException("Unable to access Application class: " + application, e);
+                }
+            } else {
+                for (String application : restApp) {
+                    if (application != null) {
+                        Class<?> clazz;
+                        try {
+                            clazz = classLoader.loadClass(application);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load Application class: " + application, e);
+                        }
+                        try {
+                            Application app = Application.class.cast(clazz.newInstance());
+                            classes.addAll(app.getClasses());
+                        } catch (InstantiationException e) {
+                            throw new OpenEJBException("Unable to instantiate Application class: " + application, e);
+                        } catch (IllegalAccessException e) {
+                            throw new OpenEJBException("Unable to access Application class: " + application, e);
+                        }
                     }
                 }
             }
+
 
             /*
              * Servlet classes are scanned

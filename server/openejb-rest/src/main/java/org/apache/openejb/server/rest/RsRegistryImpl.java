@@ -26,7 +26,7 @@ import java.util.List;
  * @author Romain Manni-Bucau
  */
 public class RsRegistryImpl extends OpenEJBHttpRegistry implements RsRegistry {
-    @Override public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path) {
+    @Override public List<String> createRsHttpListener(HttpListener listener, ClassLoader classLoader, String path, String virtualHost) {
         addWrappedHttpListener(listener, classLoader, path);
         return getResolvedAddresses(path);
     }
