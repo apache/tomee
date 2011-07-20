@@ -365,18 +365,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
 
         // bind extra stuff at the java:comp level which can only be
         // bound after the context is created
-        String listenerName = getNamingContextListener(standardContext).getName();
+        NamingContextListener ncl = getNamingContextListener(standardContext);
+        String listenerName = ncl.getName();
         ContextAccessController.setWritable(listenerName, standardContext);
         try {
 
             Context openejbContext = getContainerSystem().getJNDIContext();
             openejbContext = (Context) openejbContext.lookup("openejb");
 
-            Context root = (Context) ContextBindings.getClassLoader().lookup("");
-            safeBind(root, "openejb", openejbContext);
+            // Context root = (Context) ContextBindings.getClassLoader().lookup("");
+            // Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
 
-            // TODO: else (=NamingException) if it doesn't exist create it to bind TransactionManager...
-            Context comp = (Context) ContextBindings.getClassLoader().lookup("comp");
+            Context root = ncl.getNamingContext();
+            Context comp = (Context) root.lookup("comp");
+            safeBind(root, "openejb", openejbContext);
 
             // add context to WebDeploymentInfo
             for (WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
@@ -384,7 +386,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 if (("/" + webAppInfo.contextRoot).equals(standardContext.getPath()) || isRoot) {
                     WebContext webContext = getContainerSystem().getWebContext(webAppInfo.moduleId);
                     if (webContext != null) {
-                        // webContext.setJndiEnc(comp);
+                        webContext.setJndiEnc(root);
                     }
 
                     try {
