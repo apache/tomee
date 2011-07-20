@@ -21,13 +21,20 @@
   xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+    <bean name="address" factory-bean="org.apache.openejb.util.NetworkUtil" factory-method="getLocalAddress">
+      <constructor-arg value="tcp://"/>
+      <constructor-arg value=""/>
+    </bean>
+
     <bean name="broker" class="org.apache.activemq.xbean.XBeanBrokerService">
         <property name="persistent" value="false"/>
         <property name="brokerName" value="localhost"/>
         <property name="transportConnectors">
             <list>
                 <bean name="openwire" class="org.apache.activemq.broker.TransportConnector">
-                    <property name="uri" value="tcp://localhost:61616"/>
+                    <property name="uri" ref="address"/>
                 </bean>
             </list>
         </property>
