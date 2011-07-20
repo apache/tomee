@@ -31,7 +31,6 @@ import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.naming.factory.Constants;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
-import org.apache.tomcat.JarScanner;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
