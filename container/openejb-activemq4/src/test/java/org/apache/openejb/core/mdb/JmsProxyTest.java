@@ -24,8 +24,6 @@ import javax.jms.Session;
 
 public class JmsProxyTest extends JmsTest {
 
-    // set up in the parent class
-
     public void testProxy() throws Exception {
         // create reciever object
         JmsProxyTest.TestObject testObject = new JmsProxyTest.TestObject("foo");
