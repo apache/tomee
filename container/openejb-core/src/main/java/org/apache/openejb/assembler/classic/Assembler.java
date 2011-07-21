@@ -62,6 +62,7 @@ import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
@@ -963,6 +964,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         fireBeforeApplicationDestroyed(appInfo);
 
+        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
         for (AppInfo info : deployedApplications.values()) {
@@ -1047,7 +1049,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        // Clear out naming for all components first
+        if (appContext != null) for (WebContext webContext : appContext.getWebContexts()) {
+            containerSystem.removeWebContext(webContext);
+        }
+
+    // Clear out naming for all components first
         for (BeanContext deployment : deployments) {
             String deploymentID = deployment.getDeploymentID() + "";
             try {

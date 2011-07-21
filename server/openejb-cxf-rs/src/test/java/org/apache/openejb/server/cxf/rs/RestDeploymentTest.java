@@ -131,7 +131,7 @@ public class RestDeploymentTest {
         webContext.setClassLoader(webModule.getClassLoader());
         webContext.getInjections().add(new Injection("SimpleEJBLocalBean", "simple", RestWithInjections.class));
         webContext.setJndiEnc(ctx);
-        containerSystem.addWebDeployment(webContext);
+        containerSystem.addWebContext(webContext);
         SystemInstance.get().setComponent(ContainerSystem.class, containerSystem);
 
         ServiceInfo serviceInfo = new ServiceInfo();

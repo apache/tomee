@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.config.WebBeansContext;
 
@@ -48,6 +49,7 @@ public class AppContext extends DeploymentContext {
 
     // TODO perhaps to be deleted
     private final List<BeanContext> deployments = new ArrayList<BeanContext>();
+    private final List<WebContext> webcontexts = new ArrayList<WebContext>();
 
     public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
         super(id, systemInstance.getOptions());
@@ -70,6 +72,10 @@ public class AppContext extends DeploymentContext {
 
     public void setWebBeansContext(WebBeansContext webBeansContext) {
         this.webBeansContext = webBeansContext;
+    }
+
+    public List<WebContext> getWebContexts() {
+        return webcontexts;
     }
 
     @Override

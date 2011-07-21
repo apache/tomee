@@ -115,11 +115,11 @@ public class CoreContainerSystem implements org.apache.openejb.spi.ContainerSyst
         return webDeployments.values().toArray(new WebContext[webDeployments.size()]);
     }
 
-    public void addWebDeployment(WebContext webDeployment) {
+    public void addWebContext(WebContext webDeployment) {
         this.webDeployments.put(webDeployment.getId(), webDeployment);
     }
 
-    public void removeWebDeploymentInfo(WebContext info){
+    public void removeWebContext(WebContext info){
         this.webDeployments.remove(info.getId());
     }
 
