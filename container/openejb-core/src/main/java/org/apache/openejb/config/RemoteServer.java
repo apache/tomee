@@ -172,6 +172,10 @@ public class RemoteServer {
                         argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005");
                     }
 
+                    if (false) {
+                        argsList.add("-agentpath:/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/libyjpagent.jnilib=disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
+                    }
+
                     argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());
                     argsList.add("-Dcom.sun.management.jmxremote");
                     argsList.add("-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager");

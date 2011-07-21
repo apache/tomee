@@ -30,6 +30,7 @@ import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
@@ -297,6 +298,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             return;
         }
 
+        AppContext appContext = null;
         //Look for context info, maybe context is already scanned
         ContextInfo contextInfo = getContextInfo(standardContext);
         if (contextInfo == null) {
@@ -307,7 +309,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     AppInfo appInfo = configurationFactory.configureApplication(appModule);
                     contextInfo.appInfo = appInfo;
 
-                    a.createApplication(contextInfo.appInfo, standardContext.getLoader().getClassLoader());
+                    appContext = a.createApplication(contextInfo.appInfo, standardContext.getLoader().getClassLoader());
                     // todo add watched resources to context
                 } catch (Exception e) {
                     logger.error("Unable to deploy collapsed ear in war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
@@ -343,7 +345,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 webContext.setId(webAppInfo.moduleId);
                 webContext.setClassLoader(standardContext.getLoader().getClassLoader());
                 webContext.getInjections().addAll(injections);
-                getContainerSystem().addWebDeployment(webContext);
+                appContext.getWebContexts().add(webContext);
+                getContainerSystem().addWebContext(webContext);
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }
