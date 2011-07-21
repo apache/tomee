@@ -18,15 +18,12 @@
 package org.apache.openejb.resource.activemq;
 
 import junit.framework.TestCase;
-import org.apache.openejb.util.NetworkUtil;
 
 public class ActiveMQResourceAdapterTest extends TestCase {
     public void test() throws Exception {
         ActiveMQResourceAdapter resourceAdapter = new ActiveMQResourceAdapter();
         resourceAdapter.setServerUrl("vm://localhost?async=true");
-
-        String brokerAddress = NetworkUtil.getLocalAddress("broker:(tcp://", ")?useJmx=false");
-        resourceAdapter.setBrokerXmlConfig(brokerAddress);
+        resourceAdapter.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
 
         //    DataSource Default Unmanaged JDBC Database
         //
