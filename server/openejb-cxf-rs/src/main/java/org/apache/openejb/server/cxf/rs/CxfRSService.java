@@ -57,7 +57,7 @@ public class CxfRSService extends RESTService {
         httpTransportFactory = new HttpTransportFactory(CxfUtil.getBus());
     }
 
-    @Override protected RsHttpListener createHttpListener(Object o, RsHttpListener.Scope scope) {
-        return new CxfRsHttpListener(scope, httpTransportFactory);
+    @Override protected RsHttpListener createHttpListener() {
+        return new CxfRsHttpListener(httpTransportFactory);
     }
 }

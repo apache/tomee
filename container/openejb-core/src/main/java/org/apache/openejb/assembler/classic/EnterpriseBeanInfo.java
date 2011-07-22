@@ -88,4 +88,6 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public TimeoutInfo statefulTimeout;    
     public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
 
+    public boolean restService;
+
 }

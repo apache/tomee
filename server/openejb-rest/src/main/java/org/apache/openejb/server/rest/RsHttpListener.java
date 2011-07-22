@@ -17,21 +17,22 @@
 
 package org.apache.openejb.server.rest;
 
-import org.apache.openejb.Injection;
-import org.apache.openejb.server.httpd.HttpListener;
-
+import java.util.Collection;
 import javax.naming.Context;
 import javax.ws.rs.core.Application;
-import java.util.Collection;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.Injection;
+import org.apache.openejb.server.httpd.HttpListener;
 
 /**
  * @author Romain Manni-Bucau
  */
 public interface RsHttpListener extends HttpListener {
-    public static enum Scope {
-        SINGLETON, PROTOTYPE
-    }
+    void deploySingleton(String fullContext, Object o, Application appInstance);
 
-    void deploy(String address, Object o, Application app, Collection<Injection> injections, Context ctx);
+    void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context);
+
+    void deployEJB(String fullContext, BeanContext beanContext);
+
     void undeploy();
 }

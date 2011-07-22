@@ -16,29 +16,28 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
-import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
-import org.apache.cxf.message.Message;
-import org.apache.openejb.Injection;
-import org.apache.openejb.InjectionProcessor;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.ws.rs.WebApplicationException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.ws.rs.WebApplicationException;
+import org.apache.cxf.jaxrs.lifecycle.PerRequestResourceProvider;
+import org.apache.cxf.message.Message;
+import org.apache.openejb.Injection;
+import org.apache.openejb.InjectionProcessor;
 
 /**
  * @author Romain Manni-Bucau
  */
-public class OpenEJBPerRequestResourceProvider extends PerRequestResourceProvider {
-    private Collection<Injection> injections;
-    private Context context;
+public class OpenEJBPerRequestPojoResourceProvider extends PerRequestResourceProvider {
+    protected Collection<Injection> injections;
+    protected Context context;
 
-    public OpenEJBPerRequestResourceProvider(Class<?> clazz, Collection<Injection> injectionCollection, Context ctx) {
+    public OpenEJBPerRequestPojoResourceProvider(Class<?> clazz, Collection<Injection> injectionCollection, Context ctx) {
         super(clazz);
         injections = injectionCollection;
         context = ctx;

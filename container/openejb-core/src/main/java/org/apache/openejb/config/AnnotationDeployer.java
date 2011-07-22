@@ -987,7 +987,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              *REST
              */
             // get by annotations
-            webModule.getRestClasses().addAll(findRestClasses(finder));
+            webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
             // Applications
             List<Class<? extends Application>> applications = finder.findSubclasses(Application.class);
             for (Class<? extends Application> app : applications) {
@@ -2063,6 +2063,16 @@ public class AnnotationDeployer implements DynamicDeployer {
                                 sessionBean.setDependsOn(dependsOn.value());
                             } else {
                                 sessionBean.setDependsOn(Collections.EMPTY_LIST);
+                            }
+                        }
+
+                        /**
+                         * Annotations for singletons and stateless
+                         */
+                        if (sessionBean.getSessionType() != SessionType.STATEFUL) {
+                            // REST can be fun
+                            if (annotationFinder.isAnnotationPresent(Path.class) || !annotationFinder.findAnnotatedMethods(Path.class).isEmpty()) {
+                                sessionBean.setRestService(true);
                             }
                         }
 
@@ -4578,7 +4588,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         return 0;
     }
 
-    private static Collection<String> findRestClasses(IAnnotationFinder finder) {
+    private static Collection<String> findRestClasses(WebModule webModule, IAnnotationFinder finder) {
         Collection<String> classes = new HashSet<String>();
 
         // annotations on classes
@@ -4586,7 +4596,11 @@ public class AnnotationDeployer implements DynamicDeployer {
         for (Class<?> clazz : annotatedClasses) {
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
-                classes.add(clazz.getName());
+                if (isEJB(clazz)) {
+                    classes.add(clazz.getName());
+                } else {
+                    webModule.getEjbRestServices().add(clazz.getName());
+                }
             }
         }
 
@@ -4597,10 +4611,20 @@ public class AnnotationDeployer implements DynamicDeployer {
             Class<?> clazz = method.getDeclaringClass();
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
-                classes.add(clazz.getName());
+                if (isEJB(clazz)) {
+                    classes.add(clazz.getName());
+                } else {
+                    webModule.getEjbRestServices().add(clazz.getName());
+                }
             }
         }
 
         return classes;
+    }
+
+    private static boolean isEJB(Class<?> clazz) {
+        return clazz.isAnnotationPresent(Stateless.class)
+            || clazz.isAnnotationPresent(Singleton.class)
+            || clazz.isAnnotationPresent(Stateful.class); // what a weird idea!
     }
 }

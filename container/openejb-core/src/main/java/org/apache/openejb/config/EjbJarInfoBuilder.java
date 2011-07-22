@@ -92,6 +92,7 @@ import org.apache.openejb.jee.SecurityRole;
 import org.apache.openejb.jee.SecurityRoleRef;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.jee.Timeout;
 import org.apache.openejb.jee.Timer;
 import org.apache.openejb.jee.TimerSchedule;
@@ -637,6 +638,8 @@ public class EjbJarInfoBuilder {
         bean.properties.putAll(d.getProperties());
 
         bean.statefulTimeout = toInfo(s.getStatefulTimeout());
+
+        bean.restService = s.isRestService() && !(s instanceof StatefulBean);
 
         return bean;
     }
