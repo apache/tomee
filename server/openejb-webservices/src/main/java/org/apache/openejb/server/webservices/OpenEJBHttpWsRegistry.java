@@ -31,7 +31,7 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
     public void clearWsContainer(String virtualHost, String contextRoot, String servletName) {
     }
 
-    public List<String> addWsContainer(String path, HttpListener httpListener, String virtualHost, // ignored
+    public List<String> addWsContainer(String context, String path, HttpListener httpListener, String virtualHost, // ignored
             String realmName, // ignored
             String transportGuarantee, // ignored
             String authMethod, // ignored
@@ -44,7 +44,15 @@ public class OpenEJBHttpWsRegistry extends OpenEJBHttpRegistry implements WsRegi
             httpListener = new BasicAuthHttpListenerWrapper(httpListener, realmName);
         }
 
-        addWrappedHttpListener(httpListener, classLoader, path);
+        StringBuilder deployedPath = new StringBuilder("");
+        if (context != null) {
+            deployedPath.append(context);
+            if (!context.endsWith("/")) {
+                deployedPath.append("/");
+            }
+        }
+        deployedPath.append(path);
+        addWrappedHttpListener(httpListener, classLoader, deployedPath.toString());
 
         // register wsdl locations for service-ref resolution
         return getResolvedAddresses(path);

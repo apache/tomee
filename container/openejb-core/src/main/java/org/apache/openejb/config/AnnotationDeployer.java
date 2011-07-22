@@ -962,8 +962,10 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             for (Class<?> webServiceClass : classes) {
                 // If this class is also annotated @Stateless or @Singleton, we should skip it
-                if (webServiceClass.isAnnotationPresent(Singleton.class)) continue;
-                if (webServiceClass.isAnnotationPresent(Stateless.class)) continue;
+                if (webServiceClass.isAnnotationPresent(Singleton.class) || webServiceClass.isAnnotationPresent(Stateless.class)) {
+                    webModule.getEjbWebServices().add(webServiceClass.getName());
+                    continue;
+                }
 
                 int modifiers = webServiceClass.getModifiers();
                 if (!Modifier.isPublic(modifiers) || Modifier.isFinal(modifiers) || isAbstract(modifiers)) {

@@ -49,6 +49,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
     private IAnnotationFinder finder;
     private final Set<String> restClasses = new TreeSet<String>();
+    private final Set<String> ejbWebServices = new TreeSet<String>();
     private final Set<String> restApplications = new TreeSet<String>();
 
     private ID id;
@@ -184,5 +185,9 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public Set<String> getRestApplications() {
         return restApplications;
+    }
+
+    public Set<String> getEjbWebServices() {
+        return ejbWebServices;
     }
 }

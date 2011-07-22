@@ -82,7 +82,7 @@ public class WsServlet implements Servlet {
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         HttpListener service = getService();
         if (service == null) throw new ServletException("WebServiceContainer has not been set");
-        
+
         ServletEndpointContext context = getContext();
         endpointContext.set(new InvocationContext((HttpServletRequest) req));
         try {

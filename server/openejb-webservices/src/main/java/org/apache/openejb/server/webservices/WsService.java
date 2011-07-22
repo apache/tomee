@@ -18,6 +18,7 @@
 package org.apache.openejb.server.webservices;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServiceException;
@@ -196,6 +197,13 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
 
     public void afterApplicationCreated(AppInfo appInfo) {
         if (deployedApplications.add(appInfo)) {
+            Map<String, String> webContextByEjb = new HashMap<String, String>();
+            for (WebAppInfo webApp : appInfo.webApps) {
+                for (String ejb : webApp.ejbWebServices) {
+                    webContextByEjb.put(ejb, webApp.contextRoot);
+                }
+            }
+
             Map<String,String> contextData = new HashMap<String,String>();
             contextData.put("appId", appInfo.path);
             for (EjbJarInfo ejbJar : appInfo.ejbJars) {
@@ -253,9 +261,9 @@ public abstract class WsService implements ServerService, SelfManaging, Deployme
                                     transport = portInfo.transportGuarantee;
                                 }
 
-                                List<String> addresses = wsRegistry.addWsContainer(location, container, virtualHost, realm, transport, auth, classLoader);
+                                List<String> addresses = wsRegistry.addWsContainer(webContextByEjb.get(bean.ejbClass), location, container, virtualHost, realm, transport, auth, classLoader);
 
-                                // one of the registered addresses to be the connonical address
+                                // one of the registered addresses to be the cannonical address
                                 String address = HttpUtil.selectSingleAddress(addresses);
 
                                 if (address != null) {

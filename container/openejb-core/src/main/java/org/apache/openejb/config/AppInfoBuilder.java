@@ -303,6 +303,7 @@ class AppInfoBuilder {
             webAppInfo.uniqueId = webModule.getUniqueId();
             webAppInfo.restApplications.addAll(webModule.getRestApplications());
             webAppInfo.restClass.addAll(webModule.getRestClasses());
+            webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();

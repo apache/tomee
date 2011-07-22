@@ -17,6 +17,13 @@
  */
 package org.apache.openejb.tomcat.catalina;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
@@ -36,8 +43,6 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.openejb.ClassLoaderUtil;
-import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
@@ -46,20 +51,13 @@ import org.apache.openejb.tomcat.loader.TomcatHelper;
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getServlet;
 import static org.apache.openejb.tomcat.catalina.TomcatWebAppBuilder.IGNORE_CONTEXT;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class TomcatWsRegistry implements WsRegistry {
-    private final Map<String, StandardContext> webserviceContexts = new TreeMap<String, StandardContext>();
+    private final Map<String, Context> webserviceContexts = new TreeMap<String, Context>();
     private Engine engine;
     private List<Connector> connectors;
 
     public TomcatWsRegistry() {
-        StandardServer standardServer = (StandardServer) TomcatHelper.getServer();
+        StandardServer standardServer = TomcatHelper.getServer();
         for (Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 connectors = Arrays.asList(service.findConnectors());
@@ -134,7 +132,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
     }
 
-    public List<String> addWsContainer(String path, HttpListener httpListener, String virtualHost, String realmName, String transportGuarantee, String authMethod, ClassLoader classLoader) throws Exception {
+    public List<String> addWsContainer(String webContext, String path, HttpListener httpListener, String virtualHost, String realmName, String transportGuarantee, String authMethod, ClassLoader classLoader) throws Exception {
         if (path == null) throw new NullPointerException("contextRoot is null");
         if (httpListener == null) throw new NullPointerException("httpListener is null");
 
@@ -148,7 +146,27 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
         }
 
-        // build the context
+        List<String> addresses = new ArrayList<String>();
+
+        // build contexts
+        // - old way (/*)
+        Context context = createNewContext(path, classLoader, authMethod, transportGuarantee, realmName);
+        host.addChild(context);
+        addServlet(host, context, "/*", httpListener, path, addresses);
+
+        // - new way (/<webappcontext>/webservices/*) if webcontext is specified
+        if (webContext != null) {
+            String root = webContext;
+            if (!root.startsWith("/")) {
+                root = '/' + root;
+            }
+            Context webAppContext = (Context) host.findChild(root);
+            addServlet(host, webAppContext, "/webservices/*", httpListener, path, addresses);
+        }
+        return addresses;
+    }
+
+    private static Context createNewContext(String path, ClassLoader classLoader, String authMethod, String transportGuarantee, String realmName) {
         StandardContext context = new StandardContext();
         context.setPath(path);
         context.setDocBase("");
@@ -160,12 +178,12 @@ public class TomcatWsRegistry implements WsRegistry {
         context.addLifecycleListener(new LifecycleListener() {
             public void lifecycleEvent(LifecycleEvent event) {
             	Context context = (Context) event.getLifecycle();
-            	
+
             	if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-            		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");	
+            		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
             	}
-            	
-            	
+
+
             	if (event.getType().equals(Lifecycle.START_EVENT) || event.getType().equals(Lifecycle.BEFORE_START_EVENT) || event.getType().equals("configure_start")) {
                     context.setConfigured(true);
                 }
@@ -221,8 +239,10 @@ public class TomcatWsRegistry implements WsRegistry {
             throw new IllegalArgumentException("Invalid authMethod: " + authMethod);
         }
 
-        // Mark this as a dynamic context that should not be inspected by the TomcatWebAppBuilder
+        return context;
+    }
 
+    private void addServlet(Container host, Context context, String mapping, HttpListener httpListener, String path, List<String> addresses) {
         // build the servlet
         Wrapper wrapper = context.createWrapper();
         wrapper.setName("webservice");
@@ -230,27 +250,26 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // add servlet to context
         context.addChild(wrapper);
-        wrapper.addMapping("/*");
-        context.addServletMapping("/*", "webservice");
+        wrapper.addMapping(mapping);
+        context.addServletMapping(mapping, "webservice");
 
         String webServicecontainerID = wrapper.getName() + WsServlet.WEBSERVICE_CONTAINER + httpListener.hashCode();
         wrapper.addInitParameter(WsServlet.WEBSERVICE_CONTAINER, webServicecontainerID);
-        
-        // add context to host
-        host.addChild(context);
 
-		context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
-		setWsContainer(context, wrapper, httpListener);
-		
+        context.getServletContext().setAttribute(IGNORE_CONTEXT, "true");
+        setWsContainer(context, wrapper, httpListener);
+
         webserviceContexts.put(path, context);
 
         // register wsdl locations for service-ref resolution
-        List<String> addresses = new ArrayList<String>();
         for (Connector connector : connectors) {
-            URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), path, null, null);
-            addresses.add(address.toString());
+            try {
+                URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), path, null, null);
+                addresses.add(address.toString());
+            } catch (URISyntaxException ignored) {
+                // no-op
+            }
         }
-        return addresses;
     }
 
     public void removeWsContainer(String path) {
@@ -263,7 +282,7 @@ public class TomcatWsRegistry implements WsRegistry {
         	return;
         }
         
-        StandardContext context = webserviceContexts.remove(path);
+        Context context = webserviceContexts.remove(path);
         try {
             context.stop();
             context.destroy();
