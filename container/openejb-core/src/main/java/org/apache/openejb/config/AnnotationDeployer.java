@@ -4596,7 +4596,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         for (Class<?> clazz : annotatedClasses) {
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
-                if (isEJB(clazz)) {
+                if (!isEJB(clazz)) {
                     classes.add(clazz.getName());
                 } else {
                     webModule.getEjbRestServices().add(clazz.getName());
@@ -4611,7 +4611,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             Class<?> clazz = method.getDeclaringClass();
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
-                if (isEJB(clazz)) {
+                if (!isEJB(clazz)) {
                     classes.add(clazz.getName());
                 } else {
                     webModule.getEjbRestServices().add(clazz.getName());
