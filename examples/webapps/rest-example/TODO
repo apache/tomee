@@ -1,0 +1,7 @@
+TODO list:
+-----------
+
+- run automatically init.sh (probably with cxf client API)
+- implement javascript MVC part (only the list and delete post links works)
+- update the css
+- and so on ;)...

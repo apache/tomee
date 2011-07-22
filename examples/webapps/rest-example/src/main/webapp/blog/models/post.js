@@ -38,8 +38,8 @@ $.Model.extend('Blog.Models.Post',
      */
 	update: function( id, attrs, success, error ){
 		$.ajax({
-			url: '/posts/'+id,
-			type: 'put',
+			url: '/rest-example-1.1-SNAPSHOT/api/post/update/' + id,
+			type: 'post',
 			dataType: 'json',
 			data: attrs,
 			success: success,
@@ -54,7 +54,7 @@ $.Model.extend('Blog.Models.Post',
 	 */
 	destroy: function( id, success, error ){
 		$.ajax({
-			url: '/posts/'+id,
+			url: '/rest-example-1.1-SNAPSHOT/api/post/delete/' + id,
 			type: 'delete',
 			dataType: 'json',
 			success: success,
@@ -69,8 +69,8 @@ $.Model.extend('Blog.Models.Post',
 	 */
 	create: function( attrs, success, error ){
 		$.ajax({
-			url: '/posts',
-			type: 'post',
+			url: '/rest-example-1.1-SNAPSHOT/api/post/create',
+			type: 'put',
 			dataType: 'json',
 			success: success,
 			error: error,
