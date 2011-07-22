@@ -16,26 +16,31 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.naming.Context;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.ws.rs.core.Application;
+import javax.xml.bind.Marshaller;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.JSONProvider;
+import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.server.httpd.HttpRequest;
 import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.rest.RsHttpListener;
-
-import javax.naming.Context;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.ws.rs.core.Application;
-import javax.xml.bind.Marshaller;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
 
 /**
  * @author Romain Manni-Bucau
@@ -46,11 +51,9 @@ public class CxfRsHttpListener implements RsHttpListener {
     private HTTPTransportFactory transportFactory;
     private AbstractHTTPDestination destination;
     private Server server;
-    private Scope scope;
 
-    public CxfRsHttpListener(Scope scp, HTTPTransportFactory httpTransportFactory) {
+    public CxfRsHttpListener(HTTPTransportFactory httpTransportFactory) {
         transportFactory = httpTransportFactory;
-        scope = scp;
     }
 
     @Override public void onMessage(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
@@ -70,38 +73,38 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     }
 
-    public ResourceProvider getResourceProvider(Object o, Collection<Injection> injections, Context context) {
-        switch (scope) {
-            case SINGLETON:
-                return new SingletonResourceProvider(o);
-            case PROTOTYPE:
-            default:
-                return new OpenEJBPerRequestResourceProvider(getRESTClass(o), injections, context);
-        }
+    @Override public void deploySingleton(String fullContext, Object o, Application appInstance) {
+        deploy(o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null);
     }
 
-    private Class<?> getRESTClass(Object o) {
-        if (scope == Scope.PROTOTYPE) {
-            return Class.class.cast(o);
-        }
-        return o.getClass();
+    @Override public void deployPojo(String fullContext, Class<?> loadedClazz, Application app, Collection<Injection> injections, Context context) {
+        deploy(loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loadedClazz, injections, context), null, app, null);
     }
 
-    public void deploy(String address, Object o, Application app, Collection<Injection> injections, Context context) {
+    @Override public void deployEJB(String fullContext, BeanContext beanContext) {
+        deploy(beanContext.getBeanClass(), fullContext, null, null, null, new OpenEJBEJBInvoker(beanContext));
+    }
+
+    private void deploy(Class<?> clazz, String address, ResourceProvider rp, Object serviceBean, Application app, Invoker invoker) {
         JAXRSServerFactoryBean factory = new JAXRSServerFactoryBean();
-        factory.setResourceClasses(getRESTClass(o));
+        factory.setResourceClasses(clazz);
         factory.setDestinationFactory(transportFactory);
         factory.setBus(transportFactory.getBus());
         factory.setAddress(address);
-        factory.setResourceProvider(getResourceProvider(o, injections, context));
         factory.setProviders(PROVIDERS);
-        if (scope == Scope.PROTOTYPE) {
-            factory.setServiceClass(Class.class.cast(o));
-        } else {
-            factory.setServiceBean(o);
+        if (rp != null) {
+            factory.setResourceProvider(rp);
         }
         if (app != null) {
             factory.setApplication(app);
+        }
+        if (invoker != null) {
+            factory.setInvoker(invoker);
+        }
+        if (serviceBean != null) {
+            factory.setServiceBean(serviceBean);
+        } else {
+            factory.setServiceClass(clazz);
         }
 
         server = factory.create();

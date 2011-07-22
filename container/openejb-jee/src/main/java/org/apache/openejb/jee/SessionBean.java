@@ -253,6 +253,9 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     private List<LifecycleCallback> afterCompletion;
 
+    @XmlTransient
+    private boolean restService = false;
+
     public SessionBean() {
     }
 
@@ -883,5 +886,13 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public String getTimerConsumerName() {
         return ejbName;
+    }
+
+    public boolean isRestService() {
+        return restService;
+    }
+
+    public void setRestService(boolean restService) {
+        this.restService = restService;
     }
 }

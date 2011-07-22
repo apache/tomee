@@ -17,10 +17,31 @@
 
 package org.apache.openejb.server.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import javax.naming.Context;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.DeploymentListener;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
+import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.WebContext;
@@ -33,23 +54,6 @@ import org.apache.openejb.server.httpd.util.HttpUtil;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-
-import javax.naming.Context;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author Romain Manni-Bucau
@@ -80,8 +84,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         }
 
         final ClassLoader classLoader = getClassLoader(webContext.getClassLoader());
-        Collection<Injection> injections = webContext.getInjections();
-        Context context = webContext.getJndiEnc();
+        final Collection<Injection> injections = webContext.getInjections();
+        final Context context = webContext.getJndiEnc();
 
         // The spec says:
         //
@@ -98,7 +102,8 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         if (webApp.restApplications.isEmpty()) {
             for (String clazz : webApp.restClass) {
                 try {
-                    deploy(webApp.contextRoot, classLoader.loadClass(clazz), null, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
+                    Class<?> loadedClazz = classLoader.loadClass(clazz);
+                    deployPojo(webApp.contextRoot, loadedClazz, null, classLoader, injections, context);
                 } catch (ClassNotFoundException e) {
                     throw new OpenEJBRestRuntimeException("can't find class " + clazz, e);
                 }
@@ -114,11 +119,11 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 }
 
                 for (Object o : appInstance.getSingletons()) {
-                    deploy(webApp.contextRoot, o, appInstance, classLoader, RsHttpListener.Scope.SINGLETON, injections, context);
+                    deploySingleton(webApp.contextRoot, o, appInstance, classLoader);
                     LOGGER.info("deployed REST singleton: " + o);
                 }
                 for (Class<?> clazz : appInstance.getClasses()) {
-                    deploy(webApp.contextRoot, clazz, appInstance, classLoader, RsHttpListener.Scope.PROTOTYPE, injections, context);
+                    deployPojo(webApp.contextRoot, clazz, appInstance, classLoader, injections, context);
                     LOGGER.info("deployed REST class: " + clazz);
                 }
 
@@ -132,32 +137,71 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
             for (final WebAppInfo webApp : appInfo.webApps) {
                 afterApplicationCreated(webApp);
             }
+
+            Map<String, String> webContextByEjb = new HashMap<String, String>();
+            for (WebAppInfo webApp : appInfo.webApps) {
+                for (String ejb : webApp.ejbRestServices) {
+                    webContextByEjb.put(ejb, webApp.contextRoot);
+                }
+            }
+
+            for (EjbJarInfo ejbJar : appInfo.ejbJars) {
+                for (EnterpriseBeanInfo bean : ejbJar.enterpriseBeans) {
+                    if (bean.restService) {
+                        BeanContext beanContext = containerSystem.getBeanContext(bean.ejbDeploymentId);
+                        if (beanContext == null) {
+                            continue;
+                        }
+
+                        deployEJB(webContextByEjb.get(bean.ejbClass), beanContext);
+                    }
+                }
+            }
         }
     }
 
-    /**
-     * @param context     the webapp context
-     * @param o           the class if scope == prototype or the instance if scope == singleton
-     * @param app         the Application if exists
-     * @param classLoader the webapp classloader
-     * @param scope       the scope
-     * @param injections  webapp injections
-     * @param ctx         webapp context
-     */
-    private void deploy(String context, Object o, Application app, ClassLoader classLoader, RsHttpListener.Scope scope, Collection<Injection> injections, Context ctx) {
-        final String nopath = getAddress(NOPATH_PREFIX + context, o, scope) + "/.*";
-        final RsHttpListener listener = createHttpListener(o, scope);
+    private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
+        final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";
+        final RsHttpListener listener = createHttpListener();
         final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
         final String address = HttpUtil.selectSingleAddress(addresses);
 
         services.add(address);
-        listener.deploy(getFullContext(address, context), o, app, injections, ctx);
+        listener.deploySingleton(getFullContext(address, contextRoot), o, appInstance);
     }
 
-    protected abstract RsHttpListener createHttpListener(Object o, RsHttpListener.Scope scope);
+    private void deployPojo(String contextRoot, Class<?> loadedClazz, Application app, ClassLoader classLoader, Collection<Injection> injections, Context context) {
+        final String nopath = getAddress(contextRoot, loadedClazz) + "/.*";
+        final RsHttpListener listener = createHttpListener();
+        final List<String> addresses = rsRegistry.createRsHttpListener(listener, classLoader, nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+        final String address = HttpUtil.selectSingleAddress(addresses);
 
+        services.add(address);
+        listener.deployPojo(getFullContext(address, contextRoot), loadedClazz, app, injections, context);
+    }
+
+    private void deployEJB(String context, BeanContext beanContext) {
+        final String nopath = getAddress(context, beanContext.getBeanClass()) + "/.*";
+        final RsHttpListener listener = createHttpListener();
+        final List<String> addresses = rsRegistry.createRsHttpListener(listener, beanContext.getClassLoader(), nopath.substring(NOPATH_PREFIX.length() - 1), virtualHost);
+        final String address = HttpUtil.selectSingleAddress(addresses);
+
+        services.add(address);
+        listener.deployEJB(getFullContext(address, context), beanContext);
+    }
+
+    /**
+     * It creates the service container (http listener).
+     *
+     * @return the service container
+     */
+    protected abstract RsHttpListener createHttpListener();
 
     private static String getFullContext(String address, String context) {
+        if (context == null) {
+            return address;
+        }
+
         int idx = address.indexOf(context);
         String base = address.substring(0, idx);
         if (!base.endsWith("/") && !context.startsWith("/")) {
@@ -166,14 +210,13 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
         return base + context;
     }
 
-    private String getAddress(String context, Object o, RsHttpListener.Scope scope) {
-        Class<?> clazz = o.getClass();
-        if (scope == RsHttpListener.Scope.PROTOTYPE) {
-            clazz = Class.class.cast(o);
+    private String getAddress(String context, Class<?> clazz) {
+        String root = NOPATH_PREFIX;
+        if (context != null) {
+            root += context;
         }
-
         try {
-            return UriBuilder.fromUri(new URI(context)).path(clazz).build().toURL().toString();
+            return UriBuilder.fromUri(new URI(root)).path(clazz).build().toURL().toString();
         } catch (MalformedURLException e) {
             throw new OpenEJBRestRuntimeException("url is malformed", e);
         } catch (URISyntaxException e) {

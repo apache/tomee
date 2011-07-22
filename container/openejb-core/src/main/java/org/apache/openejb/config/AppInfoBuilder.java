@@ -304,6 +304,7 @@ class AppInfoBuilder {
             webAppInfo.restApplications.addAll(webModule.getRestApplications());
             webAppInfo.restClass.addAll(webModule.getRestClasses());
             webAppInfo.ejbWebServices.addAll(webModule.getEjbWebServices());
+            webAppInfo.ejbRestServices.addAll(webModule.getEjbRestServices());
 
             webAppInfo.host = webModule.getHost();
             webAppInfo.contextRoot = webModule.getContextRoot();
