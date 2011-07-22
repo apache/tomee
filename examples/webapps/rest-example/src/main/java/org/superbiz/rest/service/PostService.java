@@ -60,8 +60,8 @@ public class PostService {
 
     @Path("/update/{id}") @POST public Post update(@PathParam("id") long id,
                                         @QueryParam("userId") long userId,
-                                        @QueryParam("name") String title,
-                                        @QueryParam("pwd") String content) {
+                                        @QueryParam("title") String title,
+                                        @QueryParam("content") String content) {
         return dao.update(id, userId, title, content);
     }
 }
