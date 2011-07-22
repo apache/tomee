@@ -54,7 +54,7 @@ public class PostDAO {
     public Post update(long id, long userId, String title, String content) {
         User user = dao.find(User.class, userId);
         if (user == null) {
-            throw  new IllegalArgumentException("setUser id " + id + " not found");
+            throw  new IllegalArgumentException("user id " + id + " not found");
         }
 
         Post post = dao.find(Post.class, id);
