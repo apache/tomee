@@ -161,8 +161,8 @@
         <configuration>
           <suiteXmlFiles>
             <!-- <suiteXmlFile>src/test/resources/web-profile.xml</suiteXmlFile> -->
-            <!--<suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>-->
-            <suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
+            <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>-->
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
           <systemProperties>
