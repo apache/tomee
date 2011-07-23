@@ -17,48 +17,566 @@
     limitations under the License.
 -->
 <suite name="CDI TCK" verbose="0">
+  <listeners>
+    <listener class-name="org.apache.openejb.tck.cdi.embedded.RequestScopeTestListener" />
+  </listeners>
   <test name="CDI TCK">
-    <!--<packages>-->
-        <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
-        <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
-    <!--</packages>-->
+    <packages>
+        <package name="org.jboss.jsr299.tck.tests.*"/>
+        <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
+    </packages>
     <classes>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.AroundInvokeInterceptorTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.exception.ExceptionTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.aroundInvoke.order.InvocationOrderTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.definition.DefinitionTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.invocationContext.InvocationContextTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.LifecycleCallbackInterceptorTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.exceptions.LifecycleCallbackInterceptorExceptionTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.lifecycleCallback.order.InvocationOrderTest"/>
-      <class name="org.jboss.jsr299.tck.interceptors.tests.method.MethodLevelInterceptorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.context.GetOnInactiveContextTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.custom.CustomDecoratorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.definition.DecoratorDefinitionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateConstructor.DelegateInjectionPointTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateField.DelegateFieldInjectionPointTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.definition.inject.delegateInitializerMethod.DelegateInjectionPointTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.interceptor.DecoratorAndInterceptorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.observer.DecoratorInvocationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.producer.method.DecoratorInvocationTest"/>
-      <class name="org.jboss.jsr299.tck.tests.decorators.resolution.DecoratorResolutionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.constructorHasDisposesParameter.ConstructorHasDisposesParameterTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.constructorHasObservesParameter.ConstructorHasObservesParameterTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.dependentWithPublicField.DependentWithPublicFieldTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.tooManyInitializerAnnotatedConstructors.TooManyInitializerAnnotatedConstructorsTest"/>
-      <class name="org.jboss.jsr299.tck.tests.implementation.simple.lifecycle.unproxyable.UnproxyableManagedBeanTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.binding.members.annotation.BindingAnnotationWithMemberTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.binding.members.array.BindingAnnotationWithMemberTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicateNameResolution.DuplicateNameResolutionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.byname.duplicatePrefixResolution.DuplicateNamePrefixResolutionTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.array.ArrayTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalClass.FinalClassTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.finalMethod.FinalMethodTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.primitive.UnproxyableTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.unproxyable.privateConstructor.PrivateConstructorTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.injection.nullableBean.NullableBeanTest"/>
-      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.decorator.DecoratorNotInjectedTest"/>
+      <class name="org.jboss.jsr299.tck.tests.context.ContextDestroysBeansTest">
+        <methods>
+          <exclude name="testContextDestroysBeansWhenDestroyed"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.ContextTest">
+        <methods>
+          <exclude name="testBuiltInContexts"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContext2Test">
+        <methods>
+          <exclude name="testDestroyForSameCreationalContextOnly"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContextTest">
+        <methods>
+          <exclude name="testDestroyForSameCreationalContextOnly"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.DestroyedInstanceReturnedByGetTest">
+        <methods>
+          <exclude name="testDestroyedInstanceMustNotBeReturnedByGet"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.GetFromContextualTest">
+        <methods>
+          <exclude name="testGetMayNotCreateNewInstanceUnlessCreationalContextGiven"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.GetWithNoCreationalContextTest">
+        <methods>
+          <exclude name="testGetWithoutCreationalContextReturnsNull"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.NormalContextTest">
+        <methods>
+          <exclude name="testGetMayNotReturnNullUnlessContextualCreateReturnsNull"/>
+          <exclude name="testGetReturnsExistingInstance"/>
+          <exclude name="testGetWithCreationalContextReturnsNewInstance"/>
+          <exclude name="testSameNormalScopeBeanInjectedEverywhere"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest">
+        <methods>
+          <exclude name="testApplicationContextSharedBetweenServletRequests"/>
+          <exclude name="testApplicationScopeActiveDuringDoFilterMethod"/>
+          <exclude name="testApplicationScopeActiveDuringHttpSessionListenerInvocation"/>
+          <exclude name="testApplicationScopeActiveDuringServiceMethod"/>
+          <exclude name="testApplicationScopeActiveDuringServletContextListenerInvocation"/>
+          <exclude name="testApplicationScopeActiveDuringServletRequestListenerInvocation"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.application.ejb.ApplicationContextSharedTest">
+        <methods>
+          <exclude name="testApplicationContextShared"/>
+          <exclude name="testApplicationScopeActiveDuringCallToEjbTimeoutMethod"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest">
+        <methods>
+          <exclude name="testBeanWithDefaultQualifier"/>
+          <exclude name="testBeanWithNameJavaxEnterpriseContextConversation"/>
+          <exclude name="testBeanWithRequestScope"/>
+          <exclude name="testBeginAlreadyLongRunningConversationThrowsException"/>
+          <exclude name="testConversationActiveDuringNonFacesRequest"/>
+          <exclude name="testConversationBeginMakesConversationLongRunning"/>
+          <exclude name="testConversationEndMakesConversationTransient"/>
+          <exclude name="testConversationHasDefaultTimeout"/>
+          <exclude name="testConversationIdMayBeSetByApplication"/>
+          <exclude name="testConversationIdMayBeSetByContainer"/>
+          <exclude name="testConversationIdSetByContainerIsUnique"/>
+          <exclude name="testConversationsDontCrossSessionBoundary1"/>
+          <exclude name="testConversationsDontCrossSessionBoundary2"/>
+          <exclude name="testEndTransientConversationThrowsException"/>
+          <exclude name="testLongRunningConversationInstancesNotDestroyedAtRequestEnd"/>
+          <exclude name="testSetConversationTimeoutOverride"/>
+          <exclude name="testTransientConversationHasNullId"/>
+          <exclude name="testTransientConversationInstancesDestroyedAtRequestEnd"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest">
+        <methods>
+          <exclude name="testInvalidatingSessionDestroysConversation"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
+        <methods>
+          <exclude name="testConversationPropagated"/>
+          <exclude name="testConversationPropagatedOverRedirect"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest">
+        <methods>
+          <exclude name="testManualCidPropagation"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.dependent.DependentContextTest">
+        <methods>
+          <exclude name="testContextIsActiveWhenEvaluatingElExpression"/>
+          <exclude name="testDependentsDestroyedWhenElEvaluationCompletes"/>
+          <exclude name="testInstanceUsedForElEvaluationNotShared"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.dependent.ejb.DependentContextEjbTest">
+        <methods>
+          <exclude name="testDestroyingEjbDestroysDependentSimples"/>
+          <exclude name="testDestroyingEjbDestroysDependents"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.PassivatingContextTest">
+        <methods>
+          <exclude name="testBeanWithNonSerializableImplementationInjectedIntoTransientFieldOK"/>
+          <exclude name="testInjectionOfDependentPrimitiveProductIntoNormalBean"/>
+          <exclude name="testInjectionOfDependentSerializableProductIntoNormalBean"/>
+          <exclude name="testManagedBeanWithSerializableDecoratorOK"/>
+          <exclude name="testManagedBeanWithSerializableImplementationClassOK"/>
+          <exclude name="testManagedBeanWithSerializableInterceptorClassOK"/>
+          <exclude name="testNonSerializableProducerFieldDeclaredPassivatingThrowsIllegalProductException"/>
+          <exclude name="testPassivatingScopeProducerMethodReturnsUnserializableObjectNotOk"/>
+          <exclude name="testPassivationCapableProducerFieldIsOK"/>
+          <exclude name="testPassivationCapableProducerMethodIsOK"/>
+          <exclude name="testPassivationOccurs"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
+        <methods>
+          <exclude name="test"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest">
+        <methods>
+          <exclude name="test"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.request.RequestContextTest">
+        <methods>
+          <exclude name="testRequestScopeActiveDuringServiceMethod"/>
+          <exclude name="testRequestScopeActiveDuringServletFilter"/>
+          <exclude name="testRequestScopeIsDestroyedAfterServletRequest"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest">
+        <methods>
+          <exclude name="testRequestScopeActiveDuringCallToEjbTimeoutMethod"/>
+          <exclude name="testRequestScopeDestroyedAfterCallToEjbTimeoutMethod"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.context.session.SessionContextTest">
+        <methods>
+          <exclude name="testSessionContextDestroyedWhenHttpSessionInvalidated"/>
+          <exclude name="testSessionContextDestroyedWhenHttpSessionTimesOut"/>
+          <exclude name="testSessionContextSharedBetweenServletRequestsInSameHttpSession"/>
+          <exclude name="testSessionScopeActiveDuringDoFilterMethod"/>
+          <exclude name="testSessionScopeActiveDuringServiceMethod"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.decorators.invocation.EJBDecoratorInvocationTest">
+        <methods>
+          <exclude name="testEJBDecoratorInvocation"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.definition.qualifier.enterprise.EnterpriseQualifierDefinitionTest">
+        <methods>
+          <exclude name="testQualifierDeclaredInheritedIsIndirectlyInherited"/>
+          <exclude name="testQualifierDeclaredInheritedIsInherited"/>
+          <exclude name="testQualifierNotDeclaredInheritedIsNotIndirectlyInherited"/>
+          <exclude name="testQualifierNotDeclaredInheritedIsNotInherited"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.definition.scope.enterprise.EnterpriseScopeDefinitionTest">
+        <methods>
+          <exclude name="testScopeTypeDeclaredInheritedIsIndirectlyInherited"/>
+          <exclude name="testScopeTypeDeclaredInheritedIsInherited"/>
+          <exclude name="testScopeTypeNotDeclaredInheritedIsNotIndirectlyInherited"/>
+          <exclude name="testScopeTypeNotDeclaredInheritedIsNotInherited"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.definition.stereotype.enterprise.EnterpriseStereotypeDefinitionTest">
+        <methods>
+          <exclude name="testStereotypeDeclaredInheritedIsIndirectlyInherited"/>
+          <exclude name="testStereotypeDeclaredInheritedIsInherited"/>
+          <exclude name="testStereotypeNotDeclaredInheritedIsNotIndirectlyInherited"/>
+          <exclude name="testStereotypeNotDeclaredInheritedIsNotInherited"/>
+          <exclude name="testStereotypeScopeIsOverriddenByIndirectlyInheritedScope"/>
+          <exclude name="testStereotypeScopeIsOverriddenByInheritedScope"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInEarTest">
+        <methods>
+          <exclude name="test"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.deployment.packaging.bundledLibrary.LibraryInWarTest">
+        <methods>
+          <exclude name="test"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.bindingTypes.EventBindingTypesTest">
+        <methods>
+          <exclude name="testNonRuntimeBindingTypeIsNotAnEventBindingType"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.eventTypes.EventTypesTest">
+        <methods>
+          <exclude name="testEventTypeIsConcreteTypeWithNoTypeVariables"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.fires.FireEventTest">
+        <methods>
+          <exclude name="testBeanManagerFireEvent"/>
+          <exclude name="testEventProvidesMethodForFiringEventsWithCombinationOfTypeAndBindings"/>
+          <exclude name="testEventSelectedFiresAndObserversNotified"/>
+          <exclude name="testInjectedAnyEventCanFireEvent"/>
+          <exclude name="testInjectedEventAcceptsEventObject"/>
+          <exclude name="testInjectedEventCanHaveBindings"/>
+          <exclude name="testInjectedEventCanSpecifyBindingsDynamically"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.implicit.ImplicitEventTest">
+        <methods>
+          <exclude name="testImplicitEventHasImplementation"/>
+          <exclude name="testImplicitEventIsPassivationCapable"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.observer.ObserverTest">
+        <methods>
+          <exclude name="testObserverNotifiedWhenEventTypeAndAllBindingsMatch"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.observer.conditional.ConditionalObserverTest">
+        <methods>
+          <exclude name="testConditionalObserver"/>
+          <exclude name="testObserverMethodInvokedOnReturnedInstanceFromContext"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.observer.enterprise.EnterpriseEventInheritenceTest">
+        <methods>
+          <exclude name="testNonStaticObserverMethodIndirectlyInherited"/>
+          <exclude name="testNonStaticObserverMethodInherited"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.event.select.SelectEventTest">
+        <methods>
+          <exclude name="testEventSelectReturnsEventOfSameType"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.extensions.alternative.metadata.AlternativeMetadataTest">
+        <methods>
+          <exclude name="testExtraQualifierAppliedToObservesMethodParameter"/>
+          <exclude name="testGetAnnotationUsedForGettingInterceptorInformation"/>
+          <exclude name="testGetBaseTypeUsedToDetermineTypeOfInjectionPoint"/>
+          <exclude name="testInjectCreatesInitializerMethod"/>
+          <exclude name="testObserverMethod"/>
+          <exclude name="testPreviouslyNonInjectAnnotatedConstructorIsUsed"/>
+          <exclude name="testPreviouslyNonInjectAnnotatedFieldIsInjected"/>
+          <exclude name="testQualifierAddedToInitializerParameter"/>
+          <exclude name="testQualifierIsAppliedToProducerMethodParameter"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.extensions.container.event.ContainerEventTest">
+        <methods>
+          <exclude name="testGetEJBName"/>
+          <exclude name="testGetSessionBeanType"/>
+          <exclude name="testProcessAnnotatedTypeFiredForSessionBean"/>
+          <exclude name="testProcessAnnotatedTypeFiredForSessionBeanInterceptor"/>
+          <exclude name="testProcessInjectionTargetFiredForManagedBean"/>
+          <exclude name="testProcessInjectionTargetFiredForSessionBean"/>
+          <exclude name="testProcessInjectionTargetFiredForSessionBeanInterceptor"/>
+          <exclude name="testProcessManagedBeanFired"/>
+          <exclude name="testProcessSessionBeanFiredForStatefulSessionBean"/>
+          <exclude name="testProcessSessionBeanFiredForStatelessSessionBean"/>
+          <exclude name="testTypeOfProcessInjectionTargetParameter"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.extensions.processBean.ProcessSessionBeanTest">
+        <methods>
+          <exclude name="testProcessSessionBeanEvent"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest">
+        <methods>
+          <exclude name="testDefaultValidatorBean"/>
+          <exclude name="testDefaultValidatorFactoryBean"/>
+          <exclude name="testPrincipalBean"/>
+          <exclude name="testUserTransactionBean"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.definition.EnterpriseBeanDefinitionTest">
+        <methods>
+          <exclude name="testBeanTypesAreLocalInterfacesWithoutWildcardTypesOrTypeVariablesWithSuperInterfaces"/>
+          <exclude name="testBeanWithNamedAnnotation"/>
+          <exclude name="testBeanWithQualifiers"/>
+          <exclude name="testBeanWithScopeAnnotation"/>
+          <exclude name="testBeanWithStereotype"/>
+          <exclude name="testConstructorAnnotatedInjectCalled"/>
+          <exclude name="testDefaultName"/>
+          <exclude name="testEnterpriseBeanClassLocalView"/>
+          <exclude name="testObjectIsInAPITypes"/>
+          <exclude name="testRemoteInterfacesAreNotInAPITypes"/>
+          <exclude name="testSingletonWithApplicationScopeOK"/>
+          <exclude name="testSingletonWithDependentScopeOK"/>
+          <exclude name="testStatelessMustBeDependentScoped"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.definition.EnterpriseBeanViaXmlTest">
+        <methods>
+          <exclude name="testEjbDeclaredInXmlNotSimpleBean"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">
+        <methods>
+          <exclude name="testCreateSFSB"/>
+          <exclude name="testCreateSLSB"/>
+          <exclude name="testDependentObjectsDestroyed"/>
+          <exclude name="testDestroyRemovesSFSB"/>
+          <exclude name="testDirectSubClassInheritsPostConstructOnSuperclass"/>
+          <exclude name="testIndirectSubClassInheritsPostConstructOnSuperclass"/>
+          <exclude name="testIndirectSubClassInheritsPreDestroyOnSuperclass"/>
+          <exclude name="testInitializerMethodsCalledWithCurrentParameterValues"/>
+          <exclude name="testRemovedEjbIgnored"/>
+          <exclude name="testSerializeSFSB"/>
+          <exclude name="testSubClassInheritsPreDestroyOnSuperclass"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanICTest">
+        <methods>
+          <exclude name="testNewBeanHasNoDisposalMethods"/>
+          <exclude name="testNewBeanHasNoProducerMethods"/>
+          <exclude name="testNewBeanHasSameConstructor"/>
+          <exclude name="testNewBeanHasSameInitializers"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
+        <methods>
+          <exclude name="testForEachEnterpriseBeanANewBeanExists"/>
+          <exclude name="testNewBeanHasNoBeanELName"/>
+          <exclude name="testNewBeanHasNoObservers"/>
+          <exclude name="testNewBeanHasNoStereotypes"/>
+          <exclude name="testNewBeanIsDependentScoped"/>
+          <exclude name="testNewBeanIsHasOnlyNewBinding"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.remove.EnterpriseBeanRemoveMethodTest">
+        <methods>
+          <exclude name="testApplicationCannotCallRemoveMethodOnNonDependentScopedSessionEnterpriseBean"/>
+          <exclude name="testApplicationMayCallAnyRemoveMethodOnDependentScopedSessionEnterpriseBeans"/>
+          <exclude name="testApplicationMayCallRemoveMethodOnDependentScopedSessionEnterpriseBeansButNoParametersArePassed"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.initializer.EjbInitializerMethodTest">
+        <methods>
+          <exclude name="testInitializerMethodNotABusinessMethod"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.initializer.InitializerMethodTest">
+        <methods>
+          <exclude name="testBindingTypeOnInitializerParameter"/>
+          <exclude name="testMultipleInitializerMethodsAreCalled"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.definition.enterprise.EnterpriseProducerFieldDefinitionTest">
+        <methods>
+          <exclude name="testStaticProducerField"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.field.lifecycle.ProducerFieldLifecycleTest">
+        <methods>
+          <exclude name="testProducerFieldReturnsNullIsNotDependent"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.ProducerMethodDefinitionTest">
+        <methods>
+          <exclude name="testNonDependentProducerReturnsNullValue"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest">
+        <methods>
+          <exclude name="testNonStaticProducerMethodInheritedBySpecializingSubclass"/>
+          <exclude name="testNonStaticProducerMethodNotIndirectlyInherited"/>
+          <exclude name="testNonStaticProducerMethodNotInherited"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.lifecycle.SimpleBeanLifecycleTest">
+        <methods>
+          <exclude name="testContextCreatesNewInstanceForInjection"/>
+          <exclude name="testContextualDestroyCatchesException"/>
+          <exclude name="testCreateInjectsFieldsDeclaredInJava"/>
+          <exclude name="testManagedBean"/>
+          <exclude name="testSerializeRequestScoped"/>
+          <exclude name="testSerializeSessionScoped"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.newSimpleBean.NewSimpleBeanTest">
+        <methods>
+          <exclude name="testNewBeanCreatedForDisposerMethod"/>
+          <exclude name="testNewBeanCreatedForObserverMethod"/>
+          <exclude name="testNewBeanCreatedForProducerMethod"/>
+          <exclude name="testNewBeanHasNoDisposerMethods"/>
+          <exclude name="testNewBeanHasNoProducerFields"/>
+          <exclude name="testNewBeanHasNoProducerMethods"/>
+          <exclude name="testNewBeanHasSameConstructor"/>
+          <exclude name="testNewBeanHasSameInitializers"/>
+          <exclude name="testNewBeanIsDependentScoped"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest">
+        <methods>
+          <exclude name="testInjectionOfEjbs"/>
+          <exclude name="testPassivationOfEjbs"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.persistenceContext.PersistenceContextInjectionTest">
+        <methods>
+          <exclude name="testBeanTypesAndBindingTypesOfPersistenceContext"/>
+          <exclude name="testInjectionOfPersistenceContext"/>
+          <exclude name="testInjectionOfPersistenceUnit"/>
+          <exclude name="testPassivationOfPersistenceContext"/>
+          <exclude name="testPassivationOfPersistenceUnit"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.resource.InjectionOfResourceTest">
+        <methods>
+          <exclude name="testInjectionOfResource"/>
+          <exclude name="testPassivatingResource"/>
+          <exclude name="testProduceResourceProxy"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationIntegrationTest">
+        <methods>
+          <exclude name="testSpecializedBeanNotInstantiated"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.inheritance.specialization.enterprise.EnterpriseBeanSpecializationTest">
+        <methods>
+          <exclude name="testSpecializingBeanHasBindingsOfSpecializedAndSpecializingBean"/>
+          <exclude name="testSpecializingBeanHasNameOfSpecializedBean"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.interceptorOrder.SessionBeanInterceptorOrderTest">
+        <methods>
+          <exclude name="testInterceptorsDeclaredUsingInterceptorsCalledBeforeInterceptorBinding"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest">
+        <methods>
+          <exclude name="testNonContextualSessionBeanReferenceIsIntercepted"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.simpleInterception.SessionBeanInterceptorDefinitionTest">
+        <methods>
+          <exclude name="testSessionBeanIsIntercepted"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.circular.CircularDependencyTest">
+        <methods>
+          <exclude name="testCircularInjectionOnTwoNormalBeans"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.ClientProxyTest">
+        <methods>
+          <exclude name="testClientProxyInvocation"/>
+          <exclude name="testClientProxyUsedForNormalScope"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.clientProxy.incontainer.ClientProxyTest">
+        <methods>
+          <exclude name="testInvocationIsProcessedOnCurrentInstance"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.el.ResolutionByNameTest">
+        <methods>
+          <exclude name="testContextCreatesNewInstanceForInjection"/>
+          <exclude name="testELResolverReturnsContextualInstance"/>
+          <exclude name="testQualifiedNameLookup"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
+        <methods>
+          <exclude name="testELResolverRegisteredWithJsf"/>
+          <exclude name="testELResolverRegisteredWithServletContainer"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.enterprise.SessionBeanInjectionOrderingTest">
+        <methods>
+          <exclude name="testInitializerCalledAfterFieldInjectionOfSuperclass"/>
+          <exclude name="testInitializerCalledAfterResourceInjection"/>
+          <exclude name="testPostConstructCalledAfterInitializerOfSuperclass"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.enterprise.SessionBeanInjectionTest">
+        <methods>
+          <exclude name="testFieldDeclaredInSuperclassIndirectlyInjected"/>
+          <exclude name="testFieldDeclaredInSuperclassInjected"/>
+          <exclude name="testInjectionOnContextualSessionBean"/>
+          <exclude name="testInjectionOnEJBInterceptor"/>
+          <exclude name="testInjectionOnNonContextualSessionBean"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
+        <methods>
+          <exclude name="testFilterInitializerMethodCalled"/>
+          <exclude name="testInjectionIntoFilter"/>
+          <exclude name="testInjectionIntoJSFManagedBean"/>
+          <exclude name="testInjectionIntoServlet"/>
+          <exclude name="testInjectionIntoServletListener"/>
+          <exclude name="testInjectionIntoTagHandler"/>
+          <exclude name="testInjectionIntoTagLibraryListener"/>
+          <exclude name="testServletInitializerMethodCalled"/>
+          <exclude name="testServletListenerInitializerMethodCalled"/>
+          <exclude name="testTagLibraryListenerInitializerMethodCalled"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
+        <methods>
+          <exclude name="testInjectionIntoWebServiceEndpoint"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.InjectableReferenceTest">
+        <methods>
+          <exclude name="testGetInjectableReferenceOnBeanManager"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.InjectionPointTest">
+        <methods>
+          <exclude name="testApiTypeInjectionPoint"/>
+          <exclude name="testCurrentBinding"/>
+          <exclude name="testGetAnnotatedField"/>
+          <exclude name="testGetBean"/>
+          <exclude name="testGetBindingTypes"/>
+          <exclude name="testGetMemberField"/>
+          <exclude name="testGetType"/>
+          <exclude name="testIsTransient"/>
+          <exclude name="testPassivationCapability"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest">
+        <methods>
+          <exclude name="testDefinitionErrorDetected"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.manager.jndi.ManagerTest">
+        <methods>
+          <exclude name="testManagerLookupInJndi"/>
+        </methods>
+      </class>
+      <class name="org.jboss.jsr299.tck.tests.lookup.typesafe.resolution.EnterpriseResolutionByTypeTest">
+        <methods>
+          <exclude name="testBeanTypesOnSessionBean"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>
