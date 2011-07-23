@@ -31,7 +31,11 @@ import java.util.Properties;
  */
 public class RemoteServer {
     private static final boolean DEBUG = System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE");
+    private static final boolean PROFILE = System.getProperty("openejb.server.profile","false").equalsIgnoreCase("TRUE");
     private static final boolean TOMCAT;
+    public static final String YOURKIT_HOME = System.getProperty("yourkit.home","/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
+    public static final String JAVA_OPTS = System.getProperty("java.opts");
+
     static {
         File home = getHome();
         TOMCAT = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
@@ -172,8 +176,15 @@ public class RemoteServer {
                         argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005");
                     }
 
-                    if (false) {
-                        argsList.add("-agentpath:/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/libyjpagent.jnilib=disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
+                    if (PROFILE) {
+                        argsList.add("-agentpath:" + YOURKIT_HOME + "libyjpagent.jnilib=disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
+                    }
+
+                    if (JAVA_OPTS != null) {
+                        final String[] strings = JAVA_OPTS.split(" +");
+                        for (String string : strings) {
+                            argsList.add(string);
+                        }
                     }
 
                     argsList.add("-javaagent:" + javaagentJar.getAbsolutePath());

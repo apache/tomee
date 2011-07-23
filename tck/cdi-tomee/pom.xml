@@ -161,8 +161,8 @@
         <configuration>
           <suiteXmlFiles>
             <!-- <suiteXmlFile>src/test/resources/web-profile.xml</suiteXmlFile> -->
-            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
-            <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile> -->
+            <!--<suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>-->
+            <suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
           <systemProperties>
@@ -193,6 +193,7 @@
           </systemProperties>
           <systemPropertyVariables>
             <!--<openejb.server.debug>true</openejb.server.debug>-->
+            <java.opts>-Xmx128m -XX:MaxPermSize=128m</java.opts>
             <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
           </systemPropertyVariables>
         </configuration>

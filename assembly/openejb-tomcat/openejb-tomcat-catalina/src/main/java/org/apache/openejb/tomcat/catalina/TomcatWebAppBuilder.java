@@ -21,6 +21,8 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.*;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -28,6 +30,7 @@ import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.naming.ContextAccessController;
 import org.apache.naming.ContextBindings;
 import org.apache.openejb.AppContext;
@@ -58,13 +61,36 @@ import org.apache.openejb.tomcat.loader.TomcatHelper;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.webbeans.component.InjectionPointBean;
+import org.apache.webbeans.config.OWBLogConst;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.conversation.ConversationManager;
+import org.apache.webbeans.el.ELContextStore;
+import org.apache.webbeans.logger.WebBeansLogger;
+import org.apache.webbeans.spi.ContainerLifecycle;
+import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.FailOverService;
+import org.apache.webbeans.util.WebBeansUtil;
+import org.apache.webbeans.web.context.WebContextsService;
 import org.omg.CORBA.ORB;
 
 import javax.ejb.spi.HandleDelegate;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
@@ -453,9 +479,31 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             } catch (NamingException e) {
             }
         }
+
+
+        final WebBeansListener webBeansListener = getWebBeansContext(contextInfo);
+
+        if (webBeansListener != null) {
+            standardContext.addApplicationEventListener(webBeansListener);
+            standardContext.addApplicationLifecycleListener(webBeansListener);
+        }
+
         OpenEJBValve openejbValve = new OpenEJBValve();
         standardContext.getPipeline().addValve(openejbValve);
     }
+
+    private WebBeansListener getWebBeansContext(ContextInfo contextInfo) {
+        final AppContext appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
+
+        if (appContext == null) return null;
+
+        final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+
+        if (webBeansContext == null) return null;
+
+        return new WebBeansListener(webBeansContext);
+    }
+
 
     private static boolean isIgnored(StandardContext standardContext) {
         // useful to disable web applications deployment
