@@ -18,26 +18,27 @@
 -->
 <suite name="CDI TCK" verbose="0">
   <test name="CDI TCK">
-    <!--<packages>-->
-        <!--<package name="org.jboss.jsr299.tck.tests.*"/>-->
-        <!--<package name="org.jboss.jsr299.tck.interceptors.tests.*"/>-->
-    <!--</packages>-->
+    <packages>
+        <package name="org.jboss.jsr299.tck.tests.*"/>
+        <package name="org.jboss.jsr299.tck.interceptors.tests.*"/>
+    </packages>
     <classes>
-      <!--<class name="org.jboss.jsr299.tck.tests.context.dependent.ejb.DependentContextEjbTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">-->
-        <!--<methods>-->
-          <!--<exclude name="testCreateSFSB"/>-->
-        <!--</methods>-->
-      <!--</class>-->
-      <class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest"/>
-      <!--<class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest"/>-->
-      <!--<class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest"/>-->
+      <!--<class name="org.jboss.jsr299.tck.tests.decorators.invocation.EJBDecoratorInvocationTest"/>-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerFieldReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.context.passivating.broken.dependentScopedProducerMethodReturnsNonSerializableObjectForInjectionIntoStatefulSessionBean.EnterpriseBeanWithIllegalDependencyTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.extensions.producer.ProducerTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.implementation.builtin.BuiltInBeansTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">&ndash;&gt;-->
+        <!--&lt;!&ndash;<methods>&ndash;&gt;-->
+          <!--&lt;!&ndash;<exclude name="testCreateSFSB"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;</methods>&ndash;&gt;-->
+      <!--&lt;!&ndash;</class>&ndash;&gt;-->
+      <!--<class name="org.jboss.jsr299.tck.tests.context.application.ApplicationContextTest"/>-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.implementation.producer.method.definition.enterprise.EnterpriseProducerMethodDefinitionTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.implementation.simple.resource.ejb.EjbInjectionTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.interceptors.definition.enterprise.nonContextualReference.SessionBeanInterceptorOnNonContextualEjbReferenceTest"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;<class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest"/>&ndash;&gt;-->
     </classes>
   </test>
 </suite>

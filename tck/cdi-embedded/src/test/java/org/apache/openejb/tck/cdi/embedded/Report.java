@@ -47,9 +47,9 @@ public class Report {
 
     private void main() throws Exception {
 //        final File file = new File("/Users/dblevins/work/uber/geronimo-tck-public-trunk/jcdi-tck-runner/target/surefire-reports/testng-results.xml");
-        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
+//        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-embedded/target/surefire-reports/testng-results.xml");
 //        final File file = new File("/Users/dblevins/work/uber/testng-results.xml");
-//        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-tomee/target/failsafe-reports/testng-results.xml");
+        final File file = new File("/Users/dblevins/work/uber/openejb/tck/cdi-tomee/target/failsafe-reports/testng-results.xml");
 
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 
