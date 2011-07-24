@@ -30,6 +30,7 @@ import javax.naming.InitialContext;
 import org.apache.openejb.assembler.Deployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
+import org.apache.openejb.config.Deploy;
 import org.apache.openejb.config.RemoteServer;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
@@ -42,7 +43,7 @@ public class ContainersImplTomEE implements Containers {
     private final RemoteServer server;
     private Deployer deployer = null;
     private static final String tmpDir = System.getProperty("java.io.tmpdir");
-    private DeploymentException exception;
+    private Exception exception;
     private AppInfo appInfo;
 
     public ContainersImplTomEE() {
@@ -76,8 +77,18 @@ public class ContainersImplTomEE implements Containers {
             }
             appInfo = deployer.deploy(fileName.getAbsolutePath());
         } catch (Exception e) {
-            exception = (DeploymentException) new DeploymentException("deploy failed").initCause(e);
-            e.printStackTrace();
+
+            if (name.contains(".broken.")) {
+                // Tests that contain the name '.broken.' are expected to fail deployment
+                // This is how the TCK verifies the container is doing the required error checking
+                exception = (DeploymentException) new DeploymentException("deploy failed").initCause(e);
+            } else {
+                // This on the other hand is not good ....
+                System.out.println("FIX Deployment of " + name);
+                e.printStackTrace();
+                exception = e;
+            }
+
             return false;
         }
         return true;
@@ -96,6 +107,7 @@ public class ContainersImplTomEE implements Containers {
             throw new RuntimeException(e);
         }
     }
+
     private File getFile(String name) {
         final File dir = new File(tmpDir, Math.random()+"");
         dir.mkdir();
@@ -105,13 +117,20 @@ public class ContainersImplTomEE implements Containers {
 
     @Override
     public DeploymentException getDeploymentException() {
-        return exception;
+        try {
+            return (DeploymentException) exception;
+        } catch (Exception e) {
+            System.out.println("BADCAST");
+            return new DeploymentException("", exception);
+        }
     }
 
     @Override
     public void undeploy(String name) throws IOException {
         if (appInfo == null) {
-            System.out.println("Nothing to undeploy" + name);
+            if (!(exception instanceof DeploymentException)) {
+                System.out.println("Nothing to undeploy" + name);
+            }
             return;
         }
 
