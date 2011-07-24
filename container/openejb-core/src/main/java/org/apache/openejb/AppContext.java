@@ -18,6 +18,7 @@ package org.apache.openejb;
 
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.webbeans.config.WebBeansContext;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -59,7 +60,7 @@ public class AppContext extends DeploymentContext {
         this.appJndiContext = appJndiContext;
         this.standaloneModule = standaloneModule;
         this.blockingQueue = new LinkedBlockingQueue<Runnable>();
-        this.asynchPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue);
+        this.asynchPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue, new DaemonThreadFactory("@Asynch", id));
     }
 
     public BeanManager getBeanManager() {

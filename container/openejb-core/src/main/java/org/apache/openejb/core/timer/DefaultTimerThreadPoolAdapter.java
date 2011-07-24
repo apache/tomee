@@ -23,6 +23,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.quartz.SchedulerConfigException;
@@ -48,7 +49,7 @@ public class DefaultTimerThreadPoolAdapter implements ThreadPool {
     public DefaultTimerThreadPoolAdapter() {
         executor = SystemInstance.get().getComponent(Executor.class);
         if (executor == null) {
-            executor = Executors.newFixedThreadPool(10);
+            executor = Executors.newFixedThreadPool(10, new DaemonThreadFactory(DefaultTimerThreadPoolAdapter.class));
             SystemInstance.get().setComponent(Executor.class, executor);
         }
         threadPoolExecutorUsed = executor instanceof ThreadPoolExecutor;

@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -53,7 +54,14 @@ public abstract class EJBObjectHandler extends EJBInvocationHandler {
 
     //TODO figure out how to configure and manage the thread pool on the client side
     protected static final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<Runnable>();
-    protected static final ExecutorService executorService = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue);
+    protected static final ExecutorService executorService = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, blockingQueue, new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable runnable) {
+            final Thread thread = new Thread(runnable, "EJB Client");
+            thread.setDaemon(true);
+            return thread;
+        }
+    });
     /*
     * The registryId is a logical identifier that is used as a key when placing EntityEJBObjectHandler into
     * the BaseEjbProxyHanlder's liveHandleRegistry.  EntityEJBObjectHandlers that represent the same
