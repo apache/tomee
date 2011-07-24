@@ -132,7 +132,7 @@ public class Pool<T> {
     private Executor createExecutor() {
         return new ThreadPoolExecutor(5, 10,
                                       0L, TimeUnit.SECONDS,
-                                      new LinkedBlockingQueue<Runnable>());
+                                      new LinkedBlockingQueue<Runnable>(), new DaemonThreadFactory("o.a.openejb.util.Pool", hashCode()));
     }
 
     private void greater(String maxName, long max, String minName, long min) {
