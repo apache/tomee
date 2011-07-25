@@ -31,7 +31,7 @@
 
   <modules>
     <module>cdi-embedded</module>
-    <module>cdi-tomee</module>
+    <!-- <module>cdi-tomee</module> -->
     <module>bval-embedded</module>
     <module>tck-common</module>
   </modules>
