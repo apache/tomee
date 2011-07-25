@@ -18,12 +18,11 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
-import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.InterfaceType;
-import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.CoreUserTransaction;
-import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.ClassReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
 import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
@@ -40,6 +39,7 @@ import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.IntrospectionSupport;
 import org.apache.openejb.util.LogCategory;
@@ -61,15 +61,14 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.io.Serializable;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -316,10 +315,6 @@ public class JndiEncBuilder {
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        String moduleId = null;
-        if (moduleUri != null) {
-            moduleId = moduleUri.toString();
-        }
         for (PersistenceUnitReferenceInfo referenceInfo : jndiEnc.persistenceUnitRefs) {
             if (referenceInfo.location != null){
                 Reference reference = buildReferenceLocation(referenceInfo.location);
