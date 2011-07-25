@@ -17,6 +17,12 @@
  */
 package org.apache.openejb.config;
 
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -101,6 +107,13 @@ public class AutoConfig implements DynamicDeployer {
         // Bean Validation is automatically handled
         ignoredReferenceTypes.add(Validator.class.getName());
         ignoredReferenceTypes.add(ValidatorFactory.class.getName());
+        // REST injections done via @Context and bound into a resource env...
+        ignoredReferenceTypes.add(Request.class.getName());
+        ignoredReferenceTypes.add(UriInfo.class.getName());
+        ignoredReferenceTypes.add(HttpHeaders.class.getName());
+        ignoredReferenceTypes.add(SecurityContext.class.getName());
+        ignoredReferenceTypes.add(ContextResolver.class.getName());
+        ignoredReferenceTypes.add(Application.class.getName());
     }
 
     private final ConfigurationFactory configFactory;

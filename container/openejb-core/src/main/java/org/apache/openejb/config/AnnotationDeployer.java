@@ -119,6 +119,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
@@ -3140,6 +3141,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             //
+            // @Context (REST)
+            //
+            for (Annotated<Field> field : annotationFinder.findMetaAnnotatedFields(Context.class)) {
+                Member member = new FieldMember(field.get());
+                buildContext(consumer, member);
+            }
+
+            //
             // @WebServiceRef
             //
 
@@ -3233,6 +3242,19 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
 
+        }
+
+        private void buildContext(JndiConsumer consumer, Member member) {
+            ResourceRef ref = new ResourceRef();
+            ref.setName(member.getDeclaringClass().getName() + "/" + member.getName());
+            ref.setLookupName("java:openejb/Resource/rest/context/" + member.getType().getSimpleName());
+
+            InjectionTarget target = new InjectionTarget();
+            target.setInjectionTargetClass(member.getDeclaringClass().getName());
+            target.setInjectionTargetName(member.getName());
+            ref.getInjectionTarget().add(target);
+
+            consumer.getResourceRef().add(ref);
         }
 
         /**
@@ -4592,8 +4614,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         Collection<String> classes = new HashSet<String>();
 
         // annotations on classes
-        List<Class<?>> annotatedClasses = finder.findAnnotatedClasses(Path.class);
-        for (Class<?> clazz : annotatedClasses) {
+        List<Annotated<Class<?>>> annotatedClasses = finder.findMetaAnnotatedClasses(Path.class);
+        for (Annotated<Class<?>> aClazz : annotatedClasses) {
+            Class<?> clazz = aClazz.get();
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {
                 if (!isEJB(clazz)) {
@@ -4605,9 +4628,9 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         // methods annotations: inheritance is managed like it to be more efficient
-        List<Method> methods = new ArrayList<Method>();
-        methods.addAll(finder.findAnnotatedMethods(Path.class));
-        for (Method method : methods) {
+        List<Annotated<Method>> methods = finder.findMetaAnnotatedMethods(Path.class);
+        for (Annotated<Method> aMethod : methods) {
+            Method method = aMethod.get();
             Class<?> clazz = method.getDeclaringClass();
             int modifiers = clazz.getModifiers();
             if (!Modifier.isAbstract(modifiers)) {

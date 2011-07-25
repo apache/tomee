@@ -19,6 +19,8 @@ package org.apache.openejb.server.cxf.rs.beans;
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * @author Romain Manni-Bucau
@@ -26,8 +28,9 @@ import javax.ws.rs.Path;
 @Path("/inject")
 public class RestWithInjections {
     @EJB private SimpleEJB simple;
+    @Context UriInfo uriInfo;
 
     @Path("/ejb") @GET public boolean ejb() {
-        return simple != null && "ok".equals(simple.ok());
+        return simple != null && "ok".equals(simple.ok()) && uriInfo != null;
     }
 }

@@ -1221,7 +1221,7 @@ public class BeanContext extends DeploymentContext {
 
             // Create bean instance
 
-            final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
+             final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
 
             final Object beanInstance = injectionProcessor.createInstance();
 

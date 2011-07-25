@@ -16,29 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.ValidationException;
-import javax.validation.ValidatorFactory;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
@@ -80,6 +57,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
@@ -98,6 +76,29 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkManager;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidationException;
+import javax.validation.ValidatorFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -753,7 +754,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
 //                Debug.printContext(context);
 
-                containerSystem.getJNDIContext().bind("openejb/client/" + clientInfo.moduleId, context);
+                containerSystemContext.bind("openejb/client/" + clientInfo.moduleId, context);
 
                 if (clientInfo.path != null) {
                     context.bind("info/path", clientInfo.path);
@@ -767,14 +768,23 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 context.bind("info/injections", injections);
 
                 for (String clientClassName : clientInfo.remoteClients) {
-                    containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
+                    containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                 }
 
                 for (String clientClassName : clientInfo.localClients) {
-                    containerSystem.getJNDIContext().bind("openejb/client/" + clientClassName, clientInfo.moduleId);
+                    containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
             }
+
+            // REST context resources
+            containerSystemContext.bind("openejb/Resource/rest/context/Request", ThreadLocalContextManager.REQUEST);
+            containerSystemContext.bind("openejb/Resource/rest/context/UriInfo", ThreadLocalContextManager.URI_INFO);
+            containerSystemContext.bind("openejb/Resource/rest/context/HttpHeaders", ThreadLocalContextManager.HTTP_HEADERS);
+            containerSystemContext.bind("openejb/Resource/rest/context/SecurityContext", ThreadLocalContextManager.SECURITY_CONTEXT);
+            // TODO:
+            // containerSystemContext.bind("openejb/Resource/rest/context/ContextResolver", ThreadLocalContextManager.CONTEXT_RESOLVER);
+            // containerSystemContext.bind("openejb/Resource/rest/context/Application", ThreadLocalContextManager.APPLICATION);
 
             SystemInstance systemInstance = SystemInstance.get();
 

@@ -70,7 +70,6 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
         }, httpResponse);
-
     }
 
     @Override public void deploySingleton(String fullContext, Object o, Application appInstance) {
