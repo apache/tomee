@@ -46,11 +46,14 @@ import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
+import org.apache.openejb.util.NetworkUtil;
 
 public class JmsTest extends TestCase {
-    private ConnectionFactory connectionFactory;
-    private static final String REQUEST_QUEUE_NAME = "request";
-    private ActiveMQResourceAdapter ra;
+    protected static final String REQUEST_QUEUE_NAME = "request";
+    protected ConnectionFactory connectionFactory;
+    protected ActiveMQResourceAdapter ra;
+    protected String brokerAddress = NetworkUtil.getLocalAddress("tcp://", "");
+    protected String brokerXmlConfig = "broker:(" + brokerAddress + ")?useJmx=false";
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -62,15 +65,14 @@ public class JmsTest extends TestCase {
         ra = new ActiveMQResourceAdapter();
 
         // initialize properties
-        ra.setServerUrl("tcp://localhost:61616");
-        ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
+        ra.setServerUrl(brokerAddress);
+        ra.setBrokerXmlConfig(brokerXmlConfig);
 
 
         // create a thead pool for ActiveMQ
         Executor threadPool = Executors.newFixedThreadPool(30);
 
         // create a work manager which ActiveMQ uses to dispatch message delivery jobs
-        
         TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(transactionManager);
         GeronimoWorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
 
@@ -84,7 +86,7 @@ public class JmsTest extends TestCase {
             throw new OpenEJBException(e);
         }
         // Create a ConnectionFactory
-        connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
     }
 
     protected void tearDown() throws Exception {
@@ -156,7 +158,7 @@ public class JmsTest extends TestCase {
         }
     }
 
-    
+
     private Destination createListener(Connection connection) throws JMSException {
         final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
