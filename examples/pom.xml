@@ -84,6 +84,7 @@
     <module>bean-validation-design-by-contract</module>
     <module>cdi-example</module>
 	<module>cdi-interceptors</module>
+    <module>rest-on-ejb</module>
   </modules>
   <profiles>
     <profile>
