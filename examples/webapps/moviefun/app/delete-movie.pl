@@ -20,7 +20,7 @@
 use SOAP::Lite;
 
 my $ID = $ARGV[0];
-
+print $ID;
 my $namespace = 'http://superbiz.org/wsdl';
 
 my $service = SOAP::Lite-> uri($namespace) 
@@ -30,7 +30,7 @@ my $service = SOAP::Lite-> uri($namespace)
 my $method = SOAP::Data->name("ns1:deleteMovieId") 
     ->attr({'xmlns:ns1' => $namespace}); 
 
-my @params = (SOAP::Data->name('arg0'=> $ID));
+my @params = (SOAP::Data->name('arg0'=> $ID)->type('long'));
 
 
 my $response =  $service->call($method=>@params);
