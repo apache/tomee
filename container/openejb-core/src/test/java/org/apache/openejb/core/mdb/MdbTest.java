@@ -54,52 +54,7 @@ import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.resource.activemq.ActiveMQResourceAdapter;
 
-public class MdbTest extends TestCase {
-    private static final String REQUEST_QUEUE_NAME = "request";
-    private ConnectionFactory connectionFactory;
-    private ActiveMQResourceAdapter ra;
-
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        // create a transaction manager
-        GeronimoTransactionManager transactionManager = new GeronimoTransactionManager();
-
-        // create the ActiveMQ resource adapter instance
-        ra = new ActiveMQResourceAdapter();
-
-        // initialize properties
-        ra.setServerUrl("tcp://localhost:61616");
-        ra.setBrokerXmlConfig("broker:(tcp://localhost:61616)?useJmx=false");
-
-        // create a thead pool for ActiveMQ
-        Executor threadPool = Executors.newFixedThreadPool(30);
-
-        // create a work manager which ActiveMQ uses to dispatch message delivery jobs
-        TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(transactionManager);
-        GeronimoWorkManager workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
-
-        // wrap the work mananger and transaction manager in a bootstrap context (connector spec thing)
-        BootstrapContext bootstrapContext = new GeronimoBootstrapContext(workManager, transactionManager, transactionManager);
-
-        // start the resource adapter
-        try {
-            ra.start(bootstrapContext);
-        } catch (ResourceAdapterInternalException e) {
-            throw new OpenEJBException(e);
-        }
-        // Create a ConnectionFactory
-        connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
-    }
-
-    protected void tearDown() throws Exception {
-        connectionFactory = null;
-        if (ra != null) {
-            ra.stop();
-            ra = null;
-        }
-        super.tearDown();
-    }
+public class MdbTest extends JmsTest {
 
     public void testProxy() throws Exception {
         createListener();
@@ -115,7 +70,7 @@ public class MdbTest extends TestCase {
             connection = connectionFactory.createConnection();
             connection.start();
 
-           // create request
+            // create request
             Map<String, Object> request = new TreeMap<String, Object>();
             request.put("args", new Object[]{"cheese"});
 
@@ -143,7 +98,7 @@ public class MdbTest extends TestCase {
             Serializable object = responseMessage.getObject();
             assertNotNull("Response ObjectMessage contains a null object");
             assertTrue("Response ObjectMessage does not contain an instance of Map", object instanceof Map);
-            Map response = (Map) object;
+            Map<String, String> response = (Map<String, String>) object;
 
             // process results
             String returnValue = (String) response.get("return");
@@ -175,8 +130,8 @@ public class MdbTest extends TestCase {
         ra.endpointActivation(endpointFactory, activationSpec);
     }
 
-    public static class JmsEndpointFactory implements MessageEndpointFactory {
-        private final ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+    public class JmsEndpointFactory implements MessageEndpointFactory {
+        private final ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerAddress);
 
         public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
             try {
@@ -186,7 +141,7 @@ public class MdbTest extends TestCase {
                 throw new UnavailableException(e);
             }
         }
-        
+
         public MessageEndpoint createEndpoint(XAResource xaResource, long timeout) throws UnavailableException {
             return createEndpoint(xaResource);
         }
@@ -214,7 +169,7 @@ public class MdbTest extends TestCase {
             try {
                 // process request
                 ObjectMessage requestMessage = (ObjectMessage) message;
-                Map request = (Map) requestMessage.getObject();
+                Map<String, Object[]> request = (Map<String, Object[]>) requestMessage.getObject();
                 Object[] args = (Object[]) request.get("args");
                 String returnValue = "test-" + args[0];
 
