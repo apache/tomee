@@ -29,7 +29,6 @@ public class AmqXmlTest extends JmsProxyTest {
         // TODO move so there is not a build time dependency on spring in the openejb-core module
     }
 
-    @Override
     protected String getBrokerXmlConfig() {
         // note activemq uses classpath xml loader
         return "xbean:org/apache/openejb/core/mdb/activemq.xml";
