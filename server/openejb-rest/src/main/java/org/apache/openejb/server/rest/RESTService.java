@@ -158,7 +158,7 @@ public abstract class RESTService implements ServerService, SelfManaging, Deploy
                 }
             }
         }
-    }
+    }   
 
     private void deploySingleton(String contextRoot, Object o, Application appInstance, ClassLoader classLoader) {
         final String nopath = getAddress(contextRoot, o.getClass()) + "/.*";

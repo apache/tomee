@@ -1,16 +1,5 @@
 package org.apache.openejb.server.cxf.rs;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ContextResolver;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
@@ -19,10 +8,19 @@ import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.Injection;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.rest.ThreadLocalContextManager;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Romain Manni-Bucau
@@ -40,15 +38,16 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
         final Method method = cri.getMethodDispatcher().getMethod(ori);
         final RpcContainer container = RpcContainer.class.cast(context.getContainer());
 
-        List<?> params;
+        Object[] parameters;
         if (request instanceof List) {
-            params = CastUtils.cast((List<?>) request);
+            List<Object> params = CastUtils.cast((List<?>) request);
+            parameters = params.toArray(new Object[params.size()]);
         } else if (request != null) {
-            params = new MessageContentsList(request);
+            List<Object> params = new MessageContentsList(request);
+            parameters = params.toArray(new Object[params.size()]);
         } else {
-            params = new ArrayList<Object>();
+            parameters = new Object[0];
         }
-        Object[] parameters = params.toArray(new Object[params.size()]);
 
         // injecting context parameters
         super.insertExchange(method, parameters, exchange);
@@ -68,11 +67,9 @@ public class OpenEJBEJBInvoker extends JAXRSInvoker {
             } else if (SecurityContext.class.equals(type)) {
                 SecurityContext binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, SecurityContext.class);
                 ThreadLocalContextManager.SECURITY_CONTEXT.set(binding);
-            } else if (Application.class.equals(type)) {
-                Application binding = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Application.class);
-                ThreadLocalContextManager.APPLICATION.set(binding);
             } else if (ContextResolver.class.equals(type)) {
-                // TODO
+                ContextResolver<?> binding = JAXRSUtils.createContextValue(exchange.getInMessage(), type, ContextResolver.class);
+                ThreadLocalContextManager.CONTEXT_RESOLVER.set(binding);
             }
         }
 

@@ -350,7 +350,11 @@ public class HttpRequestImpl implements HttpRequest {
             method = Method.GET.name();
         } else if (token.equalsIgnoreCase("POST")) {
             method = Method.POST.name();
-        } else {
+        } /* else if (token.equalsIgnoreCase("PUT")) {
+            method = Method.PUT.name();
+        } else if (token.equalsIgnoreCase("DELETE")) {
+            method = Method.DELETE.name();
+        } */ else {
             method = Method.UNSUPPORTED.name();
             throw new IOException("Unsupported HTTP Request Method :" + token);
         }

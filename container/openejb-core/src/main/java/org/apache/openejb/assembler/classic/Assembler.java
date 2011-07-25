@@ -777,19 +777,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            // REST context resources
-            try {
-                containerSystemContext.bind("openejb/Resource/rest/context/Request", ThreadLocalContextManager.REQUEST);
-                containerSystemContext.bind("openejb/Resource/rest/context/UriInfo", ThreadLocalContextManager.URI_INFO);
-                containerSystemContext.bind("openejb/Resource/rest/context/HttpHeaders", ThreadLocalContextManager.HTTP_HEADERS);
-                containerSystemContext.bind("openejb/Resource/rest/context/SecurityContext", ThreadLocalContextManager.SECURITY_CONTEXT);
-                // TODO:
-                // containerSystemContext.bind("openejb/Resource/rest/context/ContextResolver", ThreadLocalContextManager.CONTEXT_RESOLVER);
-                // containerSystemContext.bind("openejb/Resource/rest/context/Application", ThreadLocalContextManager.APPLICATION);
-            } catch (NameAlreadyBoundException ignored) {
-                // no-op
-            }
-
             SystemInstance systemInstance = SystemInstance.get();
 
             // WebApp
@@ -1084,19 +1071,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     undeployException.getCauses().add(new Exception("bean: " + deploymentID + ": " + t.getMessage(), t));
                 }
             }
-        }
-
-        // REST context resources
-        try {
-            globalContext.unbind("openejb/Resource/rest/context/Request");
-            globalContext.unbind("openejb/Resource/rest/context/UriInfo");
-            globalContext.unbind("openejb/Resource/rest/context/HttpHeaders");
-            globalContext.unbind("openejb/Resource/rest/context/SecurityContext");
-            // TODO:
-            // globalContext.unbind("openejb/Resource/rest/context/ContextResolver");
-            // globalContext.unbind("openejb/Resource/rest/context/Application");
-        } catch (Throwable ignored) {
-            // no-op
         }
 
         for (PersistenceUnitInfo unitInfo : appInfo.persistenceUnits) {

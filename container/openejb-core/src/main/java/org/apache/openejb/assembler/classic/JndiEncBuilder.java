@@ -29,6 +29,7 @@ import org.apache.openejb.core.ivm.naming.IntraVmJndiReference;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.ivm.naming.JndiReference;
 import org.apache.openejb.core.ivm.naming.JndiUrlReference;
+import org.apache.openejb.core.ivm.naming.ObjectReference;
 import org.apache.openejb.core.ivm.naming.PersistenceContextReference;
 import org.apache.openejb.core.ivm.naming.Reference;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
@@ -39,6 +40,7 @@ import org.apache.openejb.core.webservices.ServiceRefData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
+import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.IntrospectionSupport;
@@ -59,6 +61,11 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.ContextResolver;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
 import java.io.Serializable;
@@ -267,6 +274,16 @@ public class JndiEncBuilder {
                 ManagedBean managed = type.getAnnotation(ManagedBean.class);
                 String name = managed.value().length() == 0 ? type.getSimpleName() : managed.value();
                 reference = new LinkRef("module/" + name);
+            } else if (Request.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.REQUEST);
+            } else if (UriInfo.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.URI_INFO);
+            } else if (HttpHeaders.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.HTTP_HEADERS);
+            } else if (SecurityContext.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.SECURITY_CONTEXT);
+            } else if (ContextResolver.class.equals(type)) {
+                reference = new ObjectReference(ThreadLocalContextManager.CONTEXT_RESOLVER);
             } else if (referenceInfo.resourceID != null) {
                 String jndiName = "openejb/Resource/" + referenceInfo.resourceID;
                 reference = new IntraVmJndiReference(jndiName);
