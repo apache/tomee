@@ -116,7 +116,10 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <!-- Used mainly in assembly/openejb-tomcat* projects  -->
+    <!-- to change easily the javaee api version -->
+    <javaee-api.version>${javaee-api.version}</javaee-api.version>
+	
+	<!-- Used mainly in assembly/openejb-tomcat* projects  -->
     <tomcat.version>7.0.16</tomcat.version>
 
     <!-- used mainly by jetty modules -->

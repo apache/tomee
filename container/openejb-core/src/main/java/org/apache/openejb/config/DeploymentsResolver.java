@@ -335,7 +335,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         urlSet = urlSet.exclude(".*/hsqldb(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/idb(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/idea_rt.jar(!/)?");
-        urlSet = urlSet.exclude(".*/javaee-api-[\\d.-]+.jar(!/)?");
+        urlSet = urlSet.exclude(".*/javaee-api(-embedded)?-[\\d.-]+.jar(!/)?");
         urlSet = urlSet.exclude(".*/javassist[^/]*.jar(!/)?");
         urlSet = urlSet.exclude(".*/jaxb-(impl|api)(-[\\d.]+)?.jar(!/)?");
         urlSet = urlSet.exclude(".*/jboss-[^/]*.jar(!/)?");

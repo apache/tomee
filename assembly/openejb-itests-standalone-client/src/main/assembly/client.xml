@@ -53,7 +53,7 @@
 
       <unpack>true</unpack>
       <includes>
-          <include>org.apache.openejb:javaee-api</include>
+          <include>org.apache.openejb:javaee-api-embedded</include>
           <include>org.apache.xbean:xbean-finder-shaded</include>
           <include>org.apache.xbean:xbean-asm-shaded</include>
           <include>junit:junit</include>
