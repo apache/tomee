@@ -27,7 +27,7 @@
     <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>javaee-api-embedded-libs</artifactId>
+  <artifactId>javaee-api-libs</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Assembly :: Java EE API Libraries</name>
   <build>
@@ -68,7 +68,7 @@
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptor>src/main/assembly/bin.xml</descriptor>
-          <finalName>javaee-api-embedded-libs-${project.version}</finalName>
+          <finalName>javaee-api-libs-${project.version}</finalName>
         </configuration>
       </plugin>
     </plugins>
