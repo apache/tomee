@@ -26,7 +26,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>javaee-api-embedded-embedded</artifactId>
+  <artifactId>javaee-api-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Dependencies :: JavaEE Embedded API</name>
   <version>${javaee-api.version}</version>
@@ -95,7 +95,7 @@
             </goals>
             <configuration>
               <tasks>
-                <unzip src="${project.build.directory}/javaee-api-embedded-embedded-${project.version}.jar"
+                <unzip src="${project.build.directory}/javaee-api-embedded-${project.version}.jar"
                        dest="${project.build.directory}/classes"/>
               </tasks>
             </configuration>
