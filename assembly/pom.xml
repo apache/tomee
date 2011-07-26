@@ -35,7 +35,7 @@
     <module>openejb-itests-standalone-client</module>
     <module>openejb-tomcat</module>
     <module>openejb-jetty</module>
-    <module>javaee-api-libs</module>
+    <module>javaee-api-embedded-libs</module>
     <module>openejb-standalone</module>
     <module>openejb-lite</module>
     <module>openejb-logging</module>

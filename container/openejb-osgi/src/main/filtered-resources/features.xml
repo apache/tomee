@@ -20,7 +20,7 @@
     -->
 <features>
     <repository>mvn:org.apache.openejb/openejb-core-osgi/${version}/xml/features</repository>
-    <feature name="javaee-api" version="5.0-2">
+    <feature name="javaee-api-embedded" version="5.0-2">
         <!--
         <bundle>mvn:org.apache.axis2/axis2-jaxws-api/1.3</bundle>
         <bundle>mvn:org.apache.axis2/axis2-saaj-api/1.3</bundle>
@@ -45,7 +45,7 @@
     </feature>
     <!--
     <feature name="openejb-loader" version="${version}">
-        <feature version="5.0-2">javaee-api</feature>
+        <feature version="5.0-2">javaee-api-embedded</feature>
         <bundle>mvn:org.apache.openejb/openejb-loader/${version}</bundle>
     </feature>
     -->
@@ -56,15 +56,15 @@
         <bundle>mvn:org.apache.openejb/openejb-javaagent/${version}</bundle>
     </feature>
     <feature name="openejb-jee" version="${version}">
-        <feature version="5.0-2">javaee-api</feature>
+        <feature version="5.0-2">javaee-api-embedded</feature>
         <bundle>mvn:org.apache.openejb/openejb-jee/${version}</bundle>
     </feature>
     <feature name="ejb31-api-experimental" version="${version}">
-        <feature version="5.0-2">javaee-api</feature>
+        <feature version="5.0-2">javaee-api-embedded</feature>
         <bundle>mvn:org.apache.openejb/ejb31-api-experimental/${version}</bundle>
     </feature>
     <feature name="openejb-core" version="${version}">
-        <feature version="5.0-2">javaee-api</feature>
+        <feature version="5.0-2">javaee-api-embedded</feature>
         <feature version="${version}">ejb31-api-experimental</feature>
         <feature version="${version}">openejb-api</feature>
         <feature version="${version}">openejb-javaagent</feature>

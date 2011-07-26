@@ -158,7 +158,7 @@ public class TomcatHelper {
 		StringBuilder builder = new StringBuilder();
 		
 		for (File f : libFolder.listFiles()) {
-			if (f.getName().startsWith("javaee-api")) continue;
+			if (f.getName().startsWith("javaee-api-embedded")) continue;
 			if (f.getName().startsWith("myfaces")) continue;
 			
 			
