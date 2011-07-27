@@ -18,6 +18,7 @@ package org.apache.openejb.server.httpd;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
 import java.net.URL;
@@ -33,13 +34,10 @@ public class HttpResponseImpl implements HttpResponse {
     private String responseString = "OK";
 
     /** Code */
-    private int code = 200;
+    private int code = HttpServletResponse.SC_OK;
 
     /** Response headers */
     private final Map<String,String> headers = new HashMap<String,String>();
-
-    /** Response body */
-    private byte[] body = new byte[0];
 
     /** the writer for the response */
     private transient PrintWriter writer;
@@ -397,8 +395,8 @@ public class HttpResponseImpl implements HttpResponse {
         if (content == null){
             writer.flush();
             writer.close();
-            body = sosi.getOutputStream().toByteArray();
-            setHeader("Content-Length", body.length+"");
+            int length = sosi.getOutputStream().toByteArray().length;
+            setHeader("Content-Length", length + "");
         } else {
             setHeader("Content-Length", content.getContentLength()+"");
         }
@@ -457,7 +455,7 @@ public class HttpResponseImpl implements HttpResponse {
     private void writeBody(DataOutput out) throws IOException{
         out.writeBytes(CRLF);
         if (content == null){
-            out.write(body);
+            out.write(sosi.getOutputStream().toByteArray());
         } else {
             InputStream in = content.getInputStream();
             byte buf[] = new byte[1024];
@@ -596,7 +594,7 @@ public class HttpResponseImpl implements HttpResponse {
 
         /** Response body */
         writer.flush();
-        body = sosi.getOutputStream().toByteArray();
+        byte[] body = sosi.getOutputStream().toByteArray();
         //System.out.println("[] body "+body.length );
         out.writeObject( body );
     }
@@ -620,7 +618,7 @@ public class HttpResponseImpl implements HttpResponse {
         this.headers.putAll(headers);
 
         /** Response body */
-        body = (byte[]) in.readObject();
+        byte[] body = (byte[]) in.readObject();
         //System.out.println("[] body "+body.length );
         sosi = new ServletByteArrayOutputStream();
         sosi.write(body);

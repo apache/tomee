@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,22 +69,35 @@ public class UserService {
     }
 
     @Path("/show/{id}") @GET public User find(@PathParam("id") long id) {
-        return em.find(User.class, id).copy();
-    }
-
-    @Path("/delete") @DELETE public void delete(long id) {
-        em.remove(id);
-    }
-
-    @Path("/update") @POST public User update(long id, String name, String pwd, String mail) {
         User user = em.find(User.class, id);
         if (user == null) {
-            throw  new IllegalArgumentException("setUser id " + id + " not found");
+            return null;
+        }
+        return user.copy();
+
+    }
+
+    @Path("/delete/{id}") @DELETE public void delete(@PathParam("id") long id) {
+        User user = em.find(User.class, id);
+        if (user != null) {
+            em.remove(user);
+        }
+    }
+
+    @Path("/update/{id}") @POST public Response update(@PathParam("id") long id,
+                                                       @QueryParam("name") String name,
+                                                       @QueryParam("pwd") String pwd,
+                                                       @QueryParam("mail") String mail) {
+        User user = em.find(User.class, id);
+        if (user == null) {
+            throw  new IllegalArgumentException("user id " + id + " not found");
         }
 
         user.setFullname(name);
         user.setPassword(pwd);
         user.setEmail(mail);
-        return em.merge(user);
+        em.merge(user);
+
+        return Response.ok(user.copy()).build();
     }
 }
