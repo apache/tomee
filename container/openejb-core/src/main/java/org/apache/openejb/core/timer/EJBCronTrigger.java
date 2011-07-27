@@ -474,14 +474,15 @@ public class EJBCronTrigger extends Trigger {
                     
                     if (value == null) {
                         value = newDayOfMonth;
-                    } else {
+                    } else if (clonedCalendarDayOfWeek.get(expressions[1].field)==calendar.get(expressions[1].field)){
                         value = Math.min(value, newDayOfMonth);
-                    }
-                    //Next valid DayOfWeek might exist in next month.
+                    } 
                     
+                    //Next valid DayOfWeek might exist in next month.
                     if(expressions[1].getNextValue(clonedCalendarDayOfWeek)==null){
                         return null;
-                    }else {
+                    } else if (value != calendar.get(expressions[2].field)
+                            && clonedCalendarDayOfWeek.get(expressions[1].field) > calendar.get(expressions[1].field)) {
                         calendar.set(Calendar.MONTH, clonedCalendarDayOfWeek.get(Calendar.MONTH));
                     }
                 }
