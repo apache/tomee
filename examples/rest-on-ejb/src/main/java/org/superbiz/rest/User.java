@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "user.list", query = "select u from User u")
 })
 @XmlRootElement(name = "user")
-public class User implements Cloneable{
+public class User implements Cloneable {
     @Id @GeneratedValue private long id;
     private String fullname;
     private String password;
@@ -77,5 +77,22 @@ public class User implements Cloneable{
         user.setPassword(getPassword());
         user.setId(getId());
         return user;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        User user = (User) o;
+
+        return id == user.id;
+    }
+
+    @Override public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }
