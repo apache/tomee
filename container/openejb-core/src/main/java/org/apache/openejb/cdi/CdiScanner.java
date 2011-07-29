@@ -20,6 +20,7 @@
 
 package org.apache.openejb.cdi;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -180,7 +181,7 @@ public class CdiScanner implements ScannerService {
     }
 
     @Override
-    public Set<String> getBeanXmls() {
+    public Set<URL> getBeanXmls() {
         return Collections.EMPTY_SET; // Unused
     }
 
