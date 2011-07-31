@@ -693,17 +693,26 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 for (String repository : ejbJar.repositories) {
                     try {
                         Class<?> proxied = classLoader.loadClass(repository);
-                        // TODO: move it in config
+
+                        // TODO: move it in config?
                         Repository annotation = proxied.getAnnotation(Repository.class);
                         PersistenceContext pc = annotation.context();
+                        String unitName = pc.unitName();
+                        if ("".equals(pc.unitName())) {
+                            if (appInfo.persistenceUnits.size() == 1) {
+                                unitName = appInfo.persistenceUnits.iterator().next().name;
+                            } else {
+                                throw new OpenEJBException("specify a unit name for repository " + repository);
+                            }
+                        }
 
                         // create the em
                         Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
                         EntityManagerFactory factory;
                         try {
-                            factory = (EntityManagerFactory) context.lookup(units.get(pc.unitName()));
+                            factory = (EntityManagerFactory) context.lookup(units.get(unitName));
                         } catch (NamingException e) {
-                            throw new OpenEJBException("PersistenceUnit '" + pc.unitName() + "' not found");
+                            throw new OpenEJBException("PersistenceUnit '" + unitName + "' not found");
                         }
                         Map<String, String> properties = new LinkedHashMap<String, String>();
                         for (PersistenceProperty property : pc.properties()) {
@@ -720,7 +729,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         if (jndi == null || jndi.isEmpty()) {
                             jndi = "openejb/Repository/" + repository;
                         }
-                        containerSystemContext.bind(jndi, proxy); // TODO in a better way
+
+                        // TODO in a better way
+                        containerSystemContext.bind(jndi, proxy);
                         repositoryNames.add(jndi);
                         logger.info("Bound @Repository " + repository + " to " + jndi);
                         appContext.getGlobalJndiContext().bind("global/" + jndi, proxy);
