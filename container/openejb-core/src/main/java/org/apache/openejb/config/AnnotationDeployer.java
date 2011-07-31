@@ -129,6 +129,7 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.api.LocalClient;
 import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.api.Repository;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
 import org.apache.openejb.jee.ActivationConfig;
@@ -1258,6 +1259,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 } else {
                     mergeApplicationExceptionAnnotation(assemblyDescriptor, exceptionClass, annotation);
                 }
+            }
+
+            //
+            // @Repository
+            //
+            List<Annotated<Class<?>>> repositories = finder.findMetaAnnotatedClasses(Repository.class);
+            for (Annotated<Class<?>> clazz : repositories) {
+                ejbModule.getRepositories().add(clazz.get().getName());
             }
 
             return ejbModule;

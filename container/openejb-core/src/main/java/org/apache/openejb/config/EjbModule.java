@@ -55,6 +55,8 @@ public class EjbModule extends Module implements WsModule {
     private ClientModule clientModule;
     private ID id;
 
+    private final Set<String> repositories = new TreeSet<String>();
+
     public EjbModule(EjbJar ejbJar) {
         this(Thread.currentThread().getContextClassLoader(), null, ejbJar, null);
     }
@@ -180,6 +182,10 @@ public class EjbModule extends Module implements WsModule {
 
     public Set<String> getWatchedResources() {
         return watchedResources;
+    }
+
+    public Set<String> getRepositories() {
+        return repositories;
     }
 
     @Override

@@ -169,6 +169,7 @@ class AppInfoBuilder {
                 ejbJarInfo.validationInfo = ValidatorBuilder.getInfo(ejbModule.getValidationConfig());
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 ejbJarInfo.uniqueId = ejbModule.getUniqueId();
+                ejbJarInfo.repositories = ejbModule.getRepositories();
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
