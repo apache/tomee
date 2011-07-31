@@ -25,10 +25,18 @@
     <groupId>org.apache.openejb</groupId>
     <version>4.0.0-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-api</artifactId>
-  <packaging>jar</packaging>
   <name>OpenEJB :: Container :: API</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jpa_2.0_spec</artifactId>
+      <version>1.1</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>
 

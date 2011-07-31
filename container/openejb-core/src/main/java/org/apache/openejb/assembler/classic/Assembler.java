@@ -32,6 +32,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.api.Repository;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -54,20 +55,14 @@ import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.javaagent.Agent;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.persistence.JtaEntityManager;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
 import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
-import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.AsmParameterNameLoader;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.Messages;
-import org.apache.openejb.util.OpenEJBErrorHandler;
-import org.apache.openejb.util.References;
-import org.apache.openejb.util.SafeToolkit;
+import org.apache.openejb.util.*;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.config.WebBeansContext;
@@ -88,6 +83,10 @@ import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.PersistenceProperty;
+import javax.persistence.metamodel.Type;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -105,21 +104,11 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -152,6 +141,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
     private final Set<String> moduleIds = new HashSet<String>();
+    private final Set<String> repositoryNames = new HashSet<String>();
     private static final String GLOBAL_UNIQUE_ID = "global";
 
 
@@ -569,11 +559,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             
             // JPA - Persistence Units MUST be processed first since they will add ClassFileTransformers
             // to the class loader which must be added before any classes are loaded
+            Map<String, String> units = new HashMap<String, String>();
             PersistenceBuilder persistenceBuilder = new PersistenceBuilder(persistenceClassLoaderHandler);
             for (PersistenceUnitInfo info : appInfo.persistenceUnits) {
                 try {
                     EntityManagerFactory factory = persistenceBuilder.createEntityManagerFactory(info, classLoader);
                     containerSystem.getJNDIContext().bind(PERSISTENCE_UNIT_NAMING_CONTEXT + info.id, factory);
+                    units.put(info.name, PERSISTENCE_UNIT_NAMING_CONTEXT + info.id);
                 } catch (NameAlreadyBoundException e) {
                     throw new OpenEJBException("PersistenceUnit already deployed: " + info.persistenceUnitRootUrl);
                 } catch (Exception e) {
@@ -693,6 +685,48 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         }
                     } catch (ClassNotFoundException e) {
                         logger.error("createApplication.invalidClass", e, exceptionInfo.exceptionClass, e.getMessage());
+                    }
+                }
+
+                // @Repository
+                JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
+                for (String repository : ejbJar.repositories) {
+                    try {
+                        Class<?> proxied = classLoader.loadClass(repository);
+                        // TODO: move it in config
+                        Repository annotation = proxied.getAnnotation(Repository.class);
+                        PersistenceContext pc = annotation.context();
+
+                        // create the em
+                        Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
+                        EntityManagerFactory factory;
+                        try {
+                            factory = (EntityManagerFactory) context.lookup(units.get(pc.unitName()));
+                        } catch (NamingException e) {
+                            throw new OpenEJBException("PersistenceUnit '" + pc.unitName() + "' not found");
+                        }
+                        Map<String, String> properties = new LinkedHashMap<String, String>();
+                        for (PersistenceProperty property : pc.properties()) {
+                            properties.put(property.name(), property.value());
+                        }
+
+                        JtaEntityManager jtaEntityManager = new JtaEntityManager(pc.unitName(), jtaEntityManagerRegistry, factory, properties, pc.type() == PersistenceContextType.EXTENDED);
+
+                        Object proxy = Proxy.newProxyInstance(classLoader,
+                                new Class<?>[] { proxied },
+                                new QueryProxy(jtaEntityManager));
+
+                        String jndi = annotation.jndiName();
+                        if (jndi == null || jndi.isEmpty()) {
+                            jndi = "openejb/Repository/" + repository;
+                        }
+                        containerSystemContext.bind(jndi, proxy); // TODO in a better way
+                        repositoryNames.add(jndi);
+                        logger.info("Bound @Repository " + repository + " to " + jndi);
+                        appContext.getGlobalJndiContext().bind("global/" + jndi, proxy);
+                        logger.info("Bound @Repository " + repository + " to global/" + jndi);
+                    } catch (ClassNotFoundException cnfe) {
+                        logger.error("cant' instantiate repository interface " + repository, cnfe);
                     }
                 }
 
@@ -1095,6 +1129,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
         moduleIds.clear();
+
+        for (String repoName : repositoryNames) {
+            try {
+                globalContext.unbind(repoName);
+                appContext.getGlobalJndiContext().unbind("global/" + repoName);
+            } catch (NamingException e) {
+                undeployException.getCauses().add(new Exception("repository: " + repoName + ": " + e.getMessage(), e));
+            }
+        }
+        repositoryNames.clear();
 
 
         try {

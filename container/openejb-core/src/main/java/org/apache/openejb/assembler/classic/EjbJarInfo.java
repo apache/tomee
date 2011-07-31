@@ -43,5 +43,6 @@ public class EjbJarInfo extends ValidationInfoObject {
     public final Set<String> watchedResources = new TreeSet<String>();
     public final JndiEncInfo moduleJndiEnc = new JndiEncInfo();
 
-    public BeansInfo beans;    
+    public BeansInfo beans;
+    public Set<String> repositories = new TreeSet<String>();
 }
