@@ -19,7 +19,8 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>openejb-tomcat</artifactId>
     <groupId>org.apache.openejb</groupId>
@@ -114,34 +115,6 @@
       <artifactId>openejb-tomcat-catalina</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-kernel</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-webservices</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-naming</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-timer</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.modules</groupId>
-          <artifactId>geronimo-security</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -265,5 +238,93 @@
       <version>10.6.1.0</version>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>openjpa</id>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>openejb-core</artifactId>
+          <version>${project.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-kernel</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-webservices</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-naming</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-timer</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-security</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>hibernate</id>
+      <dependencies>
+        <dependency> <!-- to avoid to force exclusions everywhere -->
+          <groupId>${project.groupId}</groupId>
+          <artifactId>openejb-core</artifactId>
+          <version>${project.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.openjpa</groupId>
+              <artifactId>openjpa</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.bval</groupId>
+              <artifactId>bval-core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.bval</groupId>
+              <artifactId>bval-jsr303</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>openejb-core-hibernate</artifactId>
+          <type>pom</type>
+          <version>${project.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-kernel</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-webservices</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-naming</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-timer</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.geronimo.modules</groupId>
+              <artifactId>geronimo-security</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
 
