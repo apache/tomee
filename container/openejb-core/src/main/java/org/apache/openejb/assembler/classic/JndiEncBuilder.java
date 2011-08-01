@@ -449,6 +449,12 @@ public class JndiEncBuilder {
                 bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
             }
         }
+
+        for (RepositoryReferenceInfo repositoryInfo : jndiEnc.repositoryRefs) {
+            Reference reference = new IntraVmJndiReference(Assembler.REPOSITORY_NAMING_CONTEXT + repositoryInfo.repository);
+            bindings.put(normalize(repositoryInfo.referenceName), reference);
+        }
+
         return bindings;
     }
 

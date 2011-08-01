@@ -60,4 +60,7 @@ public interface JndiConsumer {
 
     Collection<DataSource> getDataSource();
     Map<String,DataSource> getDataSourceMap();
+
+    Collection<RepositoryRef> getRepositoryRef();
+    Map<String, RepositoryRef> getRepositoryRefMap();
 }

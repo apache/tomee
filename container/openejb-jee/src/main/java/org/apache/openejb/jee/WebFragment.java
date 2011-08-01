@@ -185,7 +185,8 @@ public class WebFragment implements WebCommon {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version;
 
-
+    @XmlTransient
+    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
 
 
     @Override
@@ -613,4 +614,15 @@ public class WebFragment implements WebCommon {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public Collection<RepositoryRef> getRepositoryRef() {
+        return repositoryRefs;
+    }
+
+    @Override
+    public Map<String, RepositoryRef> getRepositoryRefMap() {
+        return repositoryRefs.toMap();
+    }
+
 }
