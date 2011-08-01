@@ -133,6 +133,8 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlID
     protected String id;
 
+    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
+
     public Interceptor() {
     }
 
@@ -333,6 +335,22 @@ public class Interceptor implements JndiConsumer, Session {
         return this.dataSource.toMap();
     }
 
+    @Override
+    public Collection<RepositoryRef> getRepositoryRef() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs;
+    }
+
+    @Override
+    public Map<String, RepositoryRef> getRepositoryRefMap() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs.toMap();
+    }
+
     public List<LifecycleCallback> getPostConstruct() {
         if (postConstruct == null) {
             postConstruct = new ArrayList<LifecycleCallback>();
@@ -437,4 +455,6 @@ public class Interceptor implements JndiConsumer, Session {
         assert interceptorClass != null : "Set the interceptorClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(interceptorClass, method));
     }
+
+
 }

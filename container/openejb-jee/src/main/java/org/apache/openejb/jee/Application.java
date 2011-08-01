@@ -147,6 +147,9 @@ public class Application implements JndiConsumer, NamedModule {
     @XmlSchemaType(name = "ID")
     protected java.lang.String id;
 
+    @XmlTransient
+    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
+
     public Application() {
     }
 
@@ -418,4 +421,19 @@ public class Application implements JndiConsumer, NamedModule {
         this.id = value;
     }
 
+    @Override
+    public Collection<RepositoryRef> getRepositoryRef() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs;
+    }
+
+    @Override
+    public Map<String, RepositoryRef> getRepositoryRefMap() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs.toMap();
+    }
 }

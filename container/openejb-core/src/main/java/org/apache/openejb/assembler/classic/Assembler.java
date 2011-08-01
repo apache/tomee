@@ -127,9 +127,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String VALIDATOR_FACTORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "ValidatorFactory/";
     public static final String VALIDATOR_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Validator/";
 
+    public static final String REPOSITORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Repository/";
+
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
+
     Messages messages = new Messages(Assembler.class.getPackage().getName());
 
     private final CoreContainerSystem containerSystem;
@@ -694,7 +697,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     try {
                         Class<?> proxied = classLoader.loadClass(repository);
 
-                        // TODO: move it in config?
                         Repository annotation = proxied.getAnnotation(Repository.class);
                         PersistenceContext pc = annotation.context();
                         String unitName = pc.unitName();
@@ -727,7 +729,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                         String jndi = annotation.jndiName();
                         if (jndi == null || jndi.isEmpty()) {
-                            jndi = "openejb/Repository/" + repository;
+                            jndi = REPOSITORY_NAMING_CONTEXT + repository;
                         }
 
                         // TODO in a better way

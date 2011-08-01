@@ -186,7 +186,8 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String version = "3.0";
 
-
+    @XmlTransient
+    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
 
 
     @Override
@@ -585,6 +586,22 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
             dataSource = new KeyedCollection<String,DataSource>();
         }
         return this.dataSource.toMap();
+    }
+
+    @Override
+    public Collection<RepositoryRef> getRepositoryRef() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs;
+    }
+
+    @Override
+    public Map<String, RepositoryRef> getRepositoryRefMap() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs.toMap();
     }
 
     public AbsoluteOrdering getAbsoluteOrdering() {

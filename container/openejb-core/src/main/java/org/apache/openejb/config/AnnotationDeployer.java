@@ -132,91 +132,7 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.api.Repository;
 import org.apache.openejb.cdi.CdiBeanInfo;
 import org.apache.openejb.core.webservices.JaxWsUtils;
-import org.apache.openejb.jee.ActivationConfig;
-import org.apache.openejb.jee.ActivationSpec;
-import org.apache.openejb.jee.AdminObject;
-import org.apache.openejb.jee.ApplicationClient;
-import org.apache.openejb.jee.AroundInvoke;
-import org.apache.openejb.jee.AroundTimeout;
-import org.apache.openejb.jee.AssemblyDescriptor;
-import org.apache.openejb.jee.AsyncMethod;
-import org.apache.openejb.jee.AuthenticationMechanism;
-import org.apache.openejb.jee.Beans;
-import org.apache.openejb.jee.ConcurrencyManagementType;
-import org.apache.openejb.jee.ConcurrentLockType;
-import org.apache.openejb.jee.ConcurrentMethod;
-import org.apache.openejb.jee.ConfigProperty;
-import org.apache.openejb.jee.ContainerConcurrency;
-import org.apache.openejb.jee.ContainerTransaction;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EjbReference;
-import org.apache.openejb.jee.Empty;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.ExcludeList;
-import org.apache.openejb.jee.FacesConfig;
-import org.apache.openejb.jee.FacesManagedBean;
-import org.apache.openejb.jee.Filter;
-import org.apache.openejb.jee.Handler;
-import org.apache.openejb.jee.HandlerChains;
-import org.apache.openejb.jee.Icon;
-import org.apache.openejb.jee.InboundResourceadapter;
-import org.apache.openejb.jee.InitMethod;
-import org.apache.openejb.jee.Injectable;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.InterceptorBinding;
-import org.apache.openejb.jee.Invokable;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.License;
-import org.apache.openejb.jee.Lifecycle;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.Listener;
-import org.apache.openejb.jee.MessageAdapter;
-import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.MessageListener;
-import org.apache.openejb.jee.MethodAttribute;
-import org.apache.openejb.jee.MethodParams;
-import org.apache.openejb.jee.MethodPermission;
-import org.apache.openejb.jee.NamedMethod;
-import org.apache.openejb.jee.OutboundResourceAdapter;
-import org.apache.openejb.jee.ParamValue;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.PortComponent;
-import org.apache.openejb.jee.Property;
-import org.apache.openejb.jee.RemoteBean;
-import org.apache.openejb.jee.RemoveMethod;
-import org.apache.openejb.jee.ResAuth;
-import org.apache.openejb.jee.ResSharingScope;
-import org.apache.openejb.jee.ResourceAdapter;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.SecurityIdentity;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.Servlet;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.SessionType;
-import org.apache.openejb.jee.SingletonBean;
-import org.apache.openejb.jee.StatefulBean;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Tag;
-import org.apache.openejb.jee.Text;
-import org.apache.openejb.jee.Timeout;
-import org.apache.openejb.jee.Timer;
-import org.apache.openejb.jee.TimerConsumer;
-import org.apache.openejb.jee.TimerSchedule;
-import org.apache.openejb.jee.TldTaglib;
-import org.apache.openejb.jee.TransAttribute;
-import org.apache.openejb.jee.TransactionSupportType;
-import org.apache.openejb.jee.TransactionType;
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Join;
@@ -3251,6 +3167,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
 
+            //
+            // @Repository
+            //
+            for (Annotated<Field> field : annotationFinder.findMetaAnnotatedFields(Repository.class)) {
+                Repository repo = field.getAnnotation(Repository.class);
+                Member member = new FieldMember(field.get());
+                buildRepository(consumer, repo, member);
+            }
+
         }
 
         private void buildContext(JndiConsumer consumer, Member member) {
@@ -3498,6 +3423,34 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private void fail(String component, String key, Object... details) {
             getValidationContext().fail(component, key, details);
+        }
+
+        private void buildRepository(JndiConsumer consumer, Repository repo, Member member) {
+            String refName = member.getDeclaringClass().getName() + "/" + member.getName();
+            refName = normalize(refName);
+
+            RepositoryRef reference = consumer.getRepositoryRefMap().get(refName);
+            if (reference == null && member != null) {
+                reference = new RepositoryRef();
+                reference.setRepository(member.getType().getName());
+                reference.setName(refName);
+                consumer.getRepositoryRef().add(reference);
+            }
+
+            if (member != null) {
+                InjectionTarget target = new InjectionTarget();
+                target.setInjectionTargetClass(member.getDeclaringClass().getName());
+                target.setInjectionTargetName(member.getName());
+                reference.getInjectionTarget().add(target);
+            }
+
+            // Override the lookup name if not set
+            if (reference.getLookupName() == null) {
+                String lookupName = repo.jndiName();
+                if (!lookupName.equals("")) {
+                    reference.setLookupName(lookupName);
+                }
+            }
         }
 
         /**

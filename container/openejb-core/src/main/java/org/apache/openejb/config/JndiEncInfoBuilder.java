@@ -19,43 +19,9 @@ package org.apache.openejb.config;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EAR;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.InjectableInfo;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.jee.*;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
-import org.apache.openejb.assembler.classic.EjbReferenceInfo;
-import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
-import org.apache.openejb.assembler.classic.EnvEntryInfo;
-import org.apache.openejb.assembler.classic.InjectionInfo;
-import org.apache.openejb.assembler.classic.JndiEncInfo;
-import org.apache.openejb.assembler.classic.PersistenceContextReferenceInfo;
-import org.apache.openejb.assembler.classic.PersistenceUnitReferenceInfo;
-import org.apache.openejb.assembler.classic.PortRefInfo;
-import org.apache.openejb.assembler.classic.ReferenceLocationInfo;
-import org.apache.openejb.assembler.classic.ResourceEnvReferenceInfo;
-import org.apache.openejb.assembler.classic.ResourceReferenceInfo;
-import org.apache.openejb.assembler.classic.ServiceReferenceInfo;
-import org.apache.openejb.assembler.classic.EjbResolver;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.Injectable;
-import org.apache.openejb.jee.InjectionTarget;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.JndiReference;
-import org.apache.openejb.jee.MessageDestinationRef;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceContextType;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.PortComponentRef;
-import org.apache.openejb.jee.Property;
-import org.apache.openejb.jee.ResAuth;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.ServiceRef;
-import org.apache.openejb.jee.EjbReference;
-import org.apache.openejb.jee.SessionBean;
-import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Messages;
@@ -132,6 +98,22 @@ public class JndiEncInfoBuilder {
 
         buildServiceRefInfos(jndiConsumer, moduleJndiEnc, compJndiEnc);
 
+        buildRepositoryRefInfos(jndiConsumer, compJndiEnc);
+
+    }
+
+    private void buildRepositoryRefInfos(JndiConsumer jndiConsumer, JndiEncInfo comp) {
+        for (RepositoryRef repoRef : jndiConsumer.getRepositoryRef()) {
+            RepositoryReferenceInfo info = new RepositoryReferenceInfo();
+            info.repository = repoRef.getRepository();
+            info.referenceName = repoRef.getName();
+            if (!info.referenceName.startsWith("java:")) {
+                info.referenceName = "comp/env/" + info.referenceName;
+            }
+            info.targets.addAll(buildInjectionInfos(repoRef));
+
+            comp.repositoryRefs.add(info);
+        }
     }
 
     private void buildEjbRefs(JndiConsumer jndiConsumer, URI moduleUri, String moduleId, String ejbName, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {

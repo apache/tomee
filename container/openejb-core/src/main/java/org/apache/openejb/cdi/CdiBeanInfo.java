@@ -17,22 +17,9 @@
 package org.apache.openejb.cdi;
 
 import org.apache.openejb.Injection;
-import org.apache.openejb.jee.DataSource;
-import org.apache.openejb.jee.EjbLocalRef;
-import org.apache.openejb.jee.EjbRef;
-import org.apache.openejb.jee.EnvEntry;
-import org.apache.openejb.jee.JndiConsumer;
-import org.apache.openejb.jee.KeyedCollection;
-import org.apache.openejb.jee.LifecycleCallback;
-import org.apache.openejb.jee.MessageDestinationRef;
-import org.apache.openejb.jee.PersistenceContextRef;
-import org.apache.openejb.jee.PersistenceUnitRef;
-import org.apache.openejb.jee.ResourceEnvRef;
-import org.apache.openejb.jee.ResourceRef;
-import org.apache.openejb.jee.SecurityIdentity;
-import org.apache.openejb.jee.SecurityRoleRef;
-import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.*;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,6 +46,7 @@ public class CdiBeanInfo implements JndiConsumer {
     private String beanName;
     private ClassLoader classLoader;
     private List<Injection> injections;
+    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
 
     public String getBeanName() {
         return beanName;
@@ -287,5 +275,21 @@ public class CdiBeanInfo implements JndiConsumer {
 
     public Class<?> getBeanClass() {
         return this.beanClass;
+    }
+
+    @Override
+    public Collection<RepositoryRef> getRepositoryRef() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs;
+    }
+
+    @Override
+    public Map<String, RepositoryRef> getRepositoryRefMap() {
+        if (repositoryRefs == null) {
+            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
+        }
+        return repositoryRefs.toMap();
     }
 }
