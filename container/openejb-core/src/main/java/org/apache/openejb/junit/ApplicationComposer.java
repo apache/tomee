@@ -23,7 +23,6 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.config.AppModule;
-import org.apache.openejb.config.ClientModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
@@ -32,7 +31,6 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.Application;
-import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EjbJar;
@@ -94,7 +92,7 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
         int appModules = 0;
         int modules = 0;
-        Class[] moduleTypes = {EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
+        Class[] moduleTypes = {EjbModule.class, EjbJar.class, EnterpriseBean.class, Persistence.class, PersistenceUnit.class, Connector.class, Beans.class, Application.class, Class[].class};
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Module.class)) {
 
             modules++;
@@ -181,7 +179,11 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
 
                 final Object obj = method.invokeExplosively(testInstance);
 
-                if (obj instanceof EjbJar) {
+                if (obj instanceof EjbModule) {
+
+                    appModule.getEjbModules().add(EjbModule.class.cast(obj));
+
+                } else if (obj instanceof EjbJar) {
 
                     final EjbJar ejbJar = (EjbJar) obj;
                     setId(ejbJar, method);
