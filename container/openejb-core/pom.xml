@@ -210,14 +210,6 @@
       <version>4.0.0-SNAPSHOT</version>
   </dependency>
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr303</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api-embedded</artifactId>
       <version>${javaee-api.version}</version>
@@ -293,10 +285,6 @@
           <artifactId>spring-context</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -431,6 +419,18 @@
     <dependency>
     	<groupId>org.beanshell</groupId>
     	<artifactId>bsh</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openjpa</groupId>
+      <artifactId>openjpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-jsr303</artifactId>
     </dependency>
   </dependencies>
   <profiles>
