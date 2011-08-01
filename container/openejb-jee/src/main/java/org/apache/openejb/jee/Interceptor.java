@@ -133,6 +133,7 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlID
     protected String id;
 
+    @XmlTransient
     protected KeyedCollection<String, RepositoryRef> repositoryRefs;
 
     public Interceptor() {
