@@ -37,7 +37,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -53,11 +52,9 @@ public class RepositoryTest {
 
     @EJB private InitUserDAO init;
     @EJB private UserChecker checker;
-    @PersistenceContext private EntityManager em;
-    private UserDAO dao;
+    @Repository private UserDAO dao;
 
-    @Before public void checkTestInjection() {
-        dao = (UserDAO) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { UserDAO.class }, new QueryProxy(em));
+    @Before public void initDatabaseIfNotDone() {
         if (!initDone) {
             init.init();
             initDone = true;
