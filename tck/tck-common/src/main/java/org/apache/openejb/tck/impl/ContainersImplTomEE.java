@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.Deploy;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.loader.Options;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
 
@@ -51,9 +52,10 @@ public class ContainersImplTomEE implements Containers {
         server = new RemoteServer(10, true);
     }
     private Deployer lookup() {
+        final Options options = new Options(System.getProperties());
         Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        props.put(Context.PROVIDER_URL, "http://localhost:8080/openejb/ejb");
+        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:8080/openejb/ejb"));
         try {
             InitialContext context = new InitialContext(props);
             return (Deployer) context.lookup("openejb/DeployerBusinessRemote");

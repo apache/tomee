@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.Pipe;
 
@@ -30,15 +31,12 @@ import java.util.Properties;
  * @version $Rev$ $Date$
  */
 public class RemoteServer {
-    private static final boolean DEBUG = System.getProperty("openejb.server.debug","false").equalsIgnoreCase("TRUE");
-    private static final boolean PROFILE = System.getProperty("openejb.server.profile","false").equalsIgnoreCase("TRUE");
-    private static final boolean TOMCAT;
-    public static final String JAVA_OPTS = System.getProperty("java.opts");
+    private static final Options options = new Options(System.getProperties());
 
-    static {
-        File home = getHome();
-        TOMCAT = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
-    }
+    private final boolean debug = options.get("openejb.server.debug", false);
+    private final boolean profile = options.get("openejb.server.profile", false);
+    private final boolean tomcat;
+    private final String javaOpts = System.getProperty("java.opts");
 
     /**
      * Has the remote server's instance been already running ?
@@ -49,21 +47,26 @@ public class RemoteServer {
     private Process server;
     private final int tries;
     private final boolean verbose;
+    private final int shutdownPort;
 
     public RemoteServer() {
-        this(10, false);
+        this(options.get("connect.tries", 10), options.get("verbose", false));
     }
 
     public RemoteServer(int tries, boolean verbose) {
         this.tries = tries;
         this.verbose = verbose;
+        File home = getHome();
+        tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
+
+        shutdownPort = options.get("server.shutdown.port", tomcat ? 8005 : 4200);
     }
 
     public void init(Properties props) {
         properties = props;
 
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-        props.put("java.naming.provider.url", "127.0.0.1:4201");
+        props.put("java.naming.provider.url", options.get("java.naming.provider.url", "127.0.0.1:4201"));
         props.put("java.naming.security.principal", "testuser");
         props.put("java.naming.security.credentials", "testpassword");
     }
@@ -104,7 +107,7 @@ public class RemoteServer {
                 File javaagentJar = null;
 
                 File lib;
-                if (!TOMCAT) {
+                if (!tomcat) {
                     lib = new File(home, "lib");
                 } else {
                     lib = new File(new File(new File(home, "webapps"), "openejb"), "lib");
@@ -131,14 +134,15 @@ public class RemoteServer {
                 //DMB: If you don't use an array, you get problems with jar paths containing spaces
                 // the command won't parse correctly
                 String[] args;
-                if (!TOMCAT) {
-                    if (DEBUG) {
+                final int debugPort = options.get("server.debug.port", 5005);
+                if (!tomcat) {
+                    if (debug) {
                         args = new String[]{"java",
                                 "-XX:+HeapDumpOnOutOfMemoryError",
                                 "-Xdebug",
                                 "-Xnoagent",
                                 "-Djava.compiler=NONE",
-                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
+                                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort,
 
                                 "-javaagent:" + javaagentJar.getAbsolutePath(),
 
@@ -168,22 +172,22 @@ public class RemoteServer {
                     argsList.add("java");
                     argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
-                    if (DEBUG) {
+                    if (debug) {
                         argsList.add("-Xdebug");
                         argsList.add("-Xnoagent");
                         argsList.add("-Djava.compiler=NONE");
-                        argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005");
+                        argsList.add("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=" + debugPort);
                     }
 
-                    if (PROFILE) {
-                        String yourkitHome = System.getProperty("yourkit.home","/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
+                    if (profile) {
+                        String yourkitHome = options.get("yourkit.home","/Applications/YourKit_Java_Profiler_9.5.6.app/bin/mac/");
                         if (!yourkitHome.endsWith("/")) yourkitHome += "/";
-                        final String yourkitOpts = System.getProperty("yourkit.opts","disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
+                        final String yourkitOpts = options.get("yourkit.opts", "disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=Tomcat");
                         argsList.add("-agentpath:" + yourkitHome + "libyjpagent.jnilib=" + yourkitOpts);
                     }
 
-                    if (JAVA_OPTS != null) {
-                        final String[] strings = JAVA_OPTS.split(" +");
+                    if (javaOpts != null) {
+                        final String[] strings = javaOpts.split(" +");
                         for (String string : strings) {
                             argsList.add(string);
                         }
@@ -226,7 +230,7 @@ public class RemoteServer {
             } catch (Exception e) {
                 throw (RuntimeException)new RuntimeException("Cannot start the server.  Exception: "+e.getClass().getName()+": "+e.getMessage()).initCause(e);
             }
-            if (DEBUG) {
+            if (debug) {
                 if (!connect(Integer.MAX_VALUE)) throw new RuntimeException("Could not connect to server");
             } else {
                 if (!connect(tries)) throw new RuntimeException("Could not connect to server");
@@ -251,17 +255,9 @@ public class RemoteServer {
             try {
                 System.out.println("[] STOP SERVER");
 
-                int port;
-                String command;
-                if (!TOMCAT) {
-                    port = 4200;
-                    command = "Stop";
-                } else {
-                    port = 8005;
-                    command = "SHUTDOWN";
-                }
+                String command = "SHUTDOWN";
 
-                Socket socket = new Socket("localhost", port);
+                Socket socket = new Socket("localhost", shutdownPort);
                 OutputStream out = socket.getOutputStream();
                 out.write(command.getBytes());
 
@@ -283,14 +279,8 @@ public class RemoteServer {
         if (verbose) System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries));
         //System.out.println("CONNECT "+ tries);
         try {
-            int port;
-            if (!TOMCAT) {
-                port = 4200;
-            } else {
-                port = 8005;
-            }
 
-            Socket socket = new Socket("localhost", port);
+            Socket socket = new Socket("localhost", shutdownPort);
             OutputStream out = socket.getOutputStream();
             out.close();
             if (verbose) System.out.println("[] CONNECTED IN " + (this.tries - tries));

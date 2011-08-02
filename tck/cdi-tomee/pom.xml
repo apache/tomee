@@ -148,6 +148,10 @@
                 <delete dir="${openejb.home}/webapps/docs"/>
                 <delete dir="${openejb.home}/webapps/manager"/>
                 <delete dir="${openejb.home}/webapps/host-manager"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8080" value="8180"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8443" value="8143"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8005" value="8105"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8009" value="8109"/>
               </target>
             </configuration>
           </execution>
@@ -193,6 +197,8 @@
           </systemProperties>
           <systemPropertyVariables>
             <!--<openejb.server.debug>true</openejb.server.debug>-->
+            <java.naming.provider.url>http://localhost:8180/openejb/ejb</java.naming.provider.url>
+            <server.shutdown.port>8105</server.shutdown.port>
             <java.opts>-Xmx128m -XX:MaxPermSize=128m</java.opts>
             <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
           </systemPropertyVariables>
