@@ -27,6 +27,7 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.PersistenceModule;
+import org.apache.openejb.core.InstanceContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
@@ -284,18 +285,23 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
                     final BeanContext context = containerSystem.getBeanContext(javaClass.getName());
 
-                    final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
-
-                    processor.createInstance();
-
+                    ThreadContext callContext = new ThreadContext(context, null, Operation.INJECTION);
+                    ThreadContext oldContext = ThreadContext.enter(callContext);
                     try {
-                        OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
-                        beanInjector.inject(testInstance);
-                    } catch (Throwable t) {
-                        // TODO handle this differently
-                        // this is temporary till the injector can be rewritten
-                    }
+                        final InjectionProcessor processor = new InjectionProcessor(testInstance, context.getInjections(), context.getJndiContext());
 
+                        processor.createInstance();
+
+                        try {
+                            OWBInjector beanInjector = new OWBInjector(appContext.getWebBeansContext());
+                            beanInjector.inject(testInstance);
+                        } catch (Throwable t) {
+                            // TODO handle this differently
+                            // this is temporary till the injector can be rewritten
+                        }
+                    } finally {
+                        ThreadContext.exit(oldContext);
+                    }
 
                     System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
