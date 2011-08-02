@@ -198,6 +198,7 @@
           <systemPropertyVariables>
             <!--<openejb.server.debug>true</openejb.server.debug>-->
             <java.naming.provider.url>http://localhost:8180/openejb/ejb</java.naming.provider.url>
+            <connect.tries>90</connect.tries>
             <server.shutdown.port>8105</server.shutdown.port>
             <java.opts>-Xmx128m -XX:MaxPermSize=128m</java.opts>
             <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
