@@ -97,23 +97,6 @@ public class JndiEncInfoBuilder {
         buildPersistenceContextRefInfos(jndiConsumer, moduleUri, moduleJndiEnc, compJndiEnc);
 
         buildServiceRefInfos(jndiConsumer, moduleJndiEnc, compJndiEnc);
-
-        buildRepositoryRefInfos(jndiConsumer, compJndiEnc);
-
-    }
-
-    private void buildRepositoryRefInfos(JndiConsumer jndiConsumer, JndiEncInfo comp) {
-        for (RepositoryRef repoRef : jndiConsumer.getRepositoryRef()) {
-            RepositoryReferenceInfo info = new RepositoryReferenceInfo();
-            info.repository = repoRef.getRepository();
-            info.referenceName = repoRef.getName();
-            if (!info.referenceName.startsWith("java:")) {
-                info.referenceName = "comp/env/" + info.referenceName;
-            }
-            info.targets.addAll(buildInjectionInfos(repoRef));
-
-            comp.repositoryRefs.add(info);
-        }
     }
 
     private void buildEjbRefs(JndiConsumer jndiConsumer, URI moduleUri, String moduleId, String ejbName, JndiEncInfo moduleJndiEnc, JndiEncInfo compJndiEnc) throws OpenEJBException {

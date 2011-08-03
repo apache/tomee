@@ -34,6 +34,8 @@ import javax.ejb.EJBObject;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.jws.WebService;
+import javax.persistence.PersistenceContext;
+
 import static java.lang.reflect.Modifier.isAbstract;
 import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
@@ -212,16 +214,17 @@ public class CheckClasses extends ValidationBase {
         String ejbName = b.getEjbName();
 
         Class<?> beanClass = lookForClass(b.getEjbClass(), "ejb-class", ejbName);
+        boolean isDynamicProxyImpl = beanClass.getAnnotation(PersistenceContext.class) != null;
 
         if (beanClass == null) return null;
         
-        if (beanClass.isInterface()){
+        if (beanClass.isInterface() && !isDynamicProxyImpl){
             fail(ejbName, "interfaceDeclaredAsBean", beanClass.getName());
         }
 
         if (isCmp(b)) return beanClass;
 
-        if (isAbstract(beanClass.getModifiers())){
+        if (isAbstract(beanClass.getModifiers()) && !isDynamicProxyImpl){
             fail(ejbName, "abstractDeclaredAsBean", beanClass.getName());
         }
 

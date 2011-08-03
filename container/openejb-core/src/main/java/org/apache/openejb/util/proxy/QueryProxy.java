@@ -1,6 +1,8 @@
-package org.apache.openejb.util;
+package org.apache.openejb.util.proxy;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -12,12 +14,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -140,5 +140,9 @@ public class QueryProxy implements InvocationHandler {
 
     @Override public String toString() {
         return "OpenEJB :: QueryProxy";
+    }
+
+    @Override public InvocationHandler getInvocationHandler() {
+        return this;
     }
 }

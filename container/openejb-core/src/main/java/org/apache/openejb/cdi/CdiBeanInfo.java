@@ -46,7 +46,6 @@ public class CdiBeanInfo implements JndiConsumer {
     private String beanName;
     private ClassLoader classLoader;
     private List<Injection> injections;
-    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
 
     public String getBeanName() {
         return beanName;
@@ -275,21 +274,5 @@ public class CdiBeanInfo implements JndiConsumer {
 
     public Class<?> getBeanClass() {
         return this.beanClass;
-    }
-
-    @Override
-    public Collection<RepositoryRef> getRepositoryRef() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs;
-    }
-
-    @Override
-    public Map<String, RepositoryRef> getRepositoryRefMap() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs.toMap();
     }
 }

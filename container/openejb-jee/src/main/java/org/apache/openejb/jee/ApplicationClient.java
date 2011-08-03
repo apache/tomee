@@ -147,9 +147,6 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
     @XmlTransient
     protected String mainClass;
 
-    @XmlTransient
-    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
-
     public ApplicationClient() {
     }
 
@@ -426,21 +423,5 @@ public class ApplicationClient implements JndiConsumer, Lifecycle, NamedModule {
 
     public void setMainClass(String mainClass) {
         this.mainClass = mainClass;
-    }
-
-    @Override
-    public Collection<RepositoryRef> getRepositoryRef() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs;
-    }
-
-    @Override
-    public Map<String, RepositoryRef> getRepositoryRefMap() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs.toMap();
     }
 }

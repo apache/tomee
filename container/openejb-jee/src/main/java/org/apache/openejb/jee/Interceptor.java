@@ -133,9 +133,6 @@ public class Interceptor implements JndiConsumer, Session {
     @XmlID
     protected String id;
 
-    @XmlTransient
-    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
-
     public Interceptor() {
     }
 
@@ -334,22 +331,6 @@ public class Interceptor implements JndiConsumer, Session {
             dataSource = new KeyedCollection<String,DataSource>();
         }
         return this.dataSource.toMap();
-    }
-
-    @Override
-    public Collection<RepositoryRef> getRepositoryRef() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs;
-    }
-
-    @Override
-    public Map<String, RepositoryRef> getRepositoryRefMap() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs.toMap();
     }
 
     public List<LifecycleCallback> getPostConstruct() {

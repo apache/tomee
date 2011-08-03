@@ -96,14 +96,6 @@ public class InjectionBuilder {
             }
         }
 
-        for (RepositoryReferenceInfo info : jndiEnc.repositoryRefs) {
-            for (InjectionInfo target : info.targets) {
-                Class targetClass = loadClass(target.className);
-                Injection injection = new Injection(info.referenceName, target.propertyName, targetClass);
-                injections.add(injection);
-            }
-        }
-
         return injections;
     }
 

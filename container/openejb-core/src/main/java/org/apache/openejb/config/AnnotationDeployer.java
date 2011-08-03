@@ -16,35 +16,107 @@
  */
 package org.apache.openejb.config;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.util.Arrays.asList;
-import static org.apache.openejb.util.Join.join;
-
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.LocalClient;
+import org.apache.openejb.api.RemoteClient;
+import org.apache.openejb.cdi.CdiBeanInfo;
+import org.apache.openejb.core.webservices.JaxWsUtils;
+import org.apache.openejb.jee.ActivationConfig;
+import org.apache.openejb.jee.ActivationSpec;
+import org.apache.openejb.jee.AdminObject;
+import org.apache.openejb.jee.ApplicationClient;
+import org.apache.openejb.jee.AroundInvoke;
+import org.apache.openejb.jee.AroundTimeout;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.AsyncMethod;
+import org.apache.openejb.jee.AuthenticationMechanism;
+import org.apache.openejb.jee.Beans;
+import org.apache.openejb.jee.ConcurrencyManagementType;
+import org.apache.openejb.jee.ConcurrentLockType;
+import org.apache.openejb.jee.ConcurrentMethod;
+import org.apache.openejb.jee.ConfigProperty;
+import org.apache.openejb.jee.ContainerConcurrency;
+import org.apache.openejb.jee.ContainerTransaction;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbLocalRef;
+import org.apache.openejb.jee.EjbRef;
+import org.apache.openejb.jee.EjbReference;
+import org.apache.openejb.jee.Empty;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.EnvEntry;
+import org.apache.openejb.jee.ExcludeList;
+import org.apache.openejb.jee.FacesConfig;
+import org.apache.openejb.jee.FacesManagedBean;
+import org.apache.openejb.jee.Filter;
+import org.apache.openejb.jee.Handler;
+import org.apache.openejb.jee.HandlerChains;
+import org.apache.openejb.jee.Icon;
+import org.apache.openejb.jee.InboundResourceadapter;
+import org.apache.openejb.jee.InitMethod;
+import org.apache.openejb.jee.Injectable;
+import org.apache.openejb.jee.InjectionTarget;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.Invokable;
+import org.apache.openejb.jee.JndiConsumer;
+import org.apache.openejb.jee.JndiReference;
+import org.apache.openejb.jee.License;
+import org.apache.openejb.jee.Lifecycle;
+import org.apache.openejb.jee.LifecycleCallback;
+import org.apache.openejb.jee.Listener;
+import org.apache.openejb.jee.MessageAdapter;
+import org.apache.openejb.jee.MessageDrivenBean;
+import org.apache.openejb.jee.MessageListener;
+import org.apache.openejb.jee.MethodAttribute;
+import org.apache.openejb.jee.MethodParams;
+import org.apache.openejb.jee.MethodPermission;
+import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.PersistenceContextRef;
+import org.apache.openejb.jee.PersistenceContextType;
+import org.apache.openejb.jee.PersistenceUnitRef;
+import org.apache.openejb.jee.PortComponent;
+import org.apache.openejb.jee.Property;
+import org.apache.openejb.jee.RemoteBean;
+import org.apache.openejb.jee.RemoveMethod;
+import org.apache.openejb.jee.ResAuth;
+import org.apache.openejb.jee.ResSharingScope;
+import org.apache.openejb.jee.ResourceAdapter;
+import org.apache.openejb.jee.ResourceEnvRef;
+import org.apache.openejb.jee.ResourceRef;
+import org.apache.openejb.jee.SecurityIdentity;
+import org.apache.openejb.jee.SecurityRoleRef;
+import org.apache.openejb.jee.ServiceRef;
+import org.apache.openejb.jee.Servlet;
+import org.apache.openejb.jee.SessionBean;
+import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
+import org.apache.openejb.jee.StatelessBean;
+import org.apache.openejb.jee.Tag;
+import org.apache.openejb.jee.Text;
+import org.apache.openejb.jee.Timeout;
+import org.apache.openejb.jee.Timer;
+import org.apache.openejb.jee.TimerConsumer;
+import org.apache.openejb.jee.TimerSchedule;
+import org.apache.openejb.jee.TldTaglib;
+import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.TransactionSupportType;
+import org.apache.openejb.jee.TransactionType;
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.jee.WebserviceDescription;
+import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.xbean.finder.Annotated;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.IAnnotationFinder;
+import org.apache.xbean.finder.MetaAnnotatedClass;
+import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.ClassesArchive;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -92,7 +164,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.enterprise.inject.Specializes;
-import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
@@ -112,11 +183,6 @@ import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.work.WorkContext;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
@@ -124,27 +190,34 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.api.LocalClient;
-import org.apache.openejb.api.RemoteClient;
-import org.apache.openejb.api.Repository;
-import org.apache.openejb.cdi.CdiBeanInfo;
-import org.apache.openejb.core.webservices.JaxWsUtils;
-import org.apache.openejb.jee.*;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.util.Join;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
-import org.apache.xbean.finder.Annotated;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.finder.IAnnotationFinder;
-import org.apache.xbean.finder.MetaAnnotatedClass;
-import org.apache.xbean.finder.archive.Archive;
-import org.apache.xbean.finder.archive.ClassesArchive;
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.util.Arrays.asList;
+import static org.apache.openejb.util.Join.join;
 
 /**
  * @version $Rev$ $Date$
@@ -1177,14 +1250,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            //
-            // @Repository
-            //
-            List<Annotated<Class<?>>> repositories = finder.findMetaAnnotatedClasses(Repository.class);
-            for (Annotated<Class<?>> clazz : repositories) {
-                ejbModule.getRepositories().add(clazz.get().getName());
-            }
-
             return ejbModule;
         }
 
@@ -1281,7 +1346,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (beanClass.get().isInterface()) {
+            if (beanClass.get().getAnnotation(PersistenceContext.class) == null // not a dynamic proxy implemented bean
+                    && beanClass.get().isInterface()) {
                 ejbModule.getValidation().fail(ejbName, "interfaceAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
             }
@@ -3152,6 +3218,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 PersistenceContext persistenceContext = clazz.getAnnotation(PersistenceContext.class);
                 persistenceContextList.add(persistenceContext);
                 pcFactory.addAnnotations(clazz.get());
+
+                // dynamic proxy implementation
+                if (clazz.get().isInterface()) {
+                    Member member = new FilledMember("em", EntityManager.class, clazz.get());
+                    buildPersistenceContext(consumer, pcFactory.create(persistenceContext, member), member);
+                }
             }
             for (PersistenceContext pCtx : persistenceContextList) {
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, null), null);
@@ -3166,16 +3238,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 Member member = new MethodMember(method.get());
                 buildPersistenceContext(consumer, pcFactory.create(pCtx, member), member);
             }
-
-            //
-            // @Repository
-            //
-            for (Annotated<Field> field : annotationFinder.findMetaAnnotatedFields(Repository.class)) {
-                Repository repo = field.getAnnotation(Repository.class);
-                Member member = new FieldMember(field.get());
-                buildRepository(consumer, repo, member);
-            }
-
         }
 
         private void buildContext(JndiConsumer consumer, Member member) {
@@ -3423,34 +3485,6 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private void fail(String component, String key, Object... details) {
             getValidationContext().fail(component, key, details);
-        }
-
-        private void buildRepository(JndiConsumer consumer, Repository repo, Member member) {
-            String refName = member.getDeclaringClass().getName() + "/" + member.getName();
-            refName = normalize(refName);
-
-            RepositoryRef reference = consumer.getRepositoryRefMap().get(refName);
-            if (reference == null && member != null) {
-                reference = new RepositoryRef();
-                reference.setRepository(member.getType().getName());
-                reference.setName(refName);
-                consumer.getRepositoryRef().add(reference);
-            }
-
-            if (member != null) {
-                InjectionTarget target = new InjectionTarget();
-                target.setInjectionTargetClass(member.getDeclaringClass().getName());
-                target.setInjectionTargetName(member.getName());
-                reference.getInjectionTarget().add(target);
-            }
-
-            // Override the lookup name if not set
-            if (reference.getLookupName() == null) {
-                String lookupName = repo.jndiName();
-                if (!lookupName.equals("")) {
-                    reference.setLookupName(lookupName);
-                }
-            }
         }
 
         /**
@@ -4457,11 +4491,44 @@ public class AnnotationDeployer implements DynamicDeployer {
      * the same code.
      */
     public static interface Member {
-        Class getDeclaringClass();
+        Class<?> getDeclaringClass();
 
         String getName();
 
-        Class getType();
+        Class<?> getType();
+    }
+
+    public static class FilledMember implements Member {
+        private String name;
+        private Class<?> type;
+        private Class<?> declaringClass;
+
+        public FilledMember(String name, Class<?> type, Class<?> declaringClass) {
+            this.name = name;
+            this.type = type;
+            this.declaringClass = declaringClass;
+        }
+
+        public Class getDeclaringClass() {
+            return declaringClass;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Class getType() {
+            return type;
+        }
+
+        @Override
+        public String toString() {
+            return "FilledMember{" +
+                "name='" + name + '\'' +
+                ", type=" + type.getName() +
+                ", declaringClass=" + declaringClass.getName() +
+            '}';
+        }
     }
 
     /**
@@ -4475,11 +4542,11 @@ public class AnnotationDeployer implements DynamicDeployer {
             this.setter = method;
         }
 
-        public Class getType() {
+        public Class<?> getType() {
             return setter.getParameterTypes()[0];
         }
 
-        public Class getDeclaringClass() {
+        public Class<?> getDeclaringClass() {
             return setter.getDeclaringClass();
         }
 
@@ -4516,7 +4583,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             this.field = field;
         }
 
-        public Class getType() {
+        public Class<?> getType() {
             return field.getType();
         }
 
@@ -4524,7 +4591,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             return field.toString();
         }
 
-        public Class getDeclaringClass() {
+        public Class<?> getDeclaringClass() {
             return field.getDeclaringClass();
         }
 

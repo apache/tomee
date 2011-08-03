@@ -17,10 +17,9 @@
  */
 package org.apache.openejb.util;
 
-import org.apache.openejb.api.Repository;
-import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -32,6 +31,7 @@ import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
@@ -47,16 +47,15 @@ import static junit.framework.Assert.assertNotNull;
  * @author rmannibucau
  */
 @RunWith(ApplicationComposer.class)
-public class RepositoryTest {
+public class DynamicEJBImplTest {
     private static boolean initDone = false;
 
-    @EJB private InitUserDAO init;
-    @EJB private UserChecker checker;
-    @Repository private UserDAO dao;
+    @EJB private UtilBean util;
+    @EJB private UserDAO dao;
 
     @Before public void initDatabaseIfNotDone() {
         if (!initDone) {
-            init.init();
+            util.init();
             initDone = true;
         }
     }
@@ -90,12 +89,12 @@ public class RepositoryTest {
     }
 
     @Test public void checkInjections() {
-        UserDAO injection = checker.getDao();
+        UserDAO injection = util.getDao();
         assertNotNull(injection);
         assertEquals(10, injection.findAll().size());
     }
 
-    @Repository public static interface UserDAO {
+    @Stateless @PersistenceContext(name = "pu") public static interface UserDAO {
         User findById(long id);
 
         Collection<User> findByName(String name);
@@ -143,27 +142,14 @@ public class RepositoryTest {
             this.info = info;
         }
 
-        @Override
-        public String toString() {
-            return "User{" +
-                    "age=" + age +
-                    ", info='" + info + '\'' +
-                    ", name='" + name + '\'' +
-                    ", id=" + id +
-                    '}';
+        @Override public String toString() {
+            return "User{age=" + age + ", info='" + info + '\'' + ", name='" + name + '\'' + ", id=" + id + '}';
         }
     }
 
-    @Singleton public static class Persister {
+    @Singleton public static class UtilBean {
         @PersistenceContext private EntityManager em;
-
-        public void insert(User user) {
-            em.persist(user);
-        }
-    }
-
-    @Singleton public static class InitUserDAO {
-        @PersistenceContext private EntityManager em;
+        @EJB private UserDAO dao;
 
         public void init() {
             for (int i = 0; i < 10; i++) {
@@ -178,10 +164,6 @@ public class RepositoryTest {
                 em.persist(u);
             }
         }
-    }
-
-    @Singleton public static class UserChecker {
-        @Repository private UserDAO dao;
 
         public UserDAO getDao() {
             return dao;
@@ -196,18 +178,15 @@ public class RepositoryTest {
         return p;
     }
 
-    @Module public EjbModule app() throws Exception {
-        EjbJar ejbJar = new EjbJar("repository");
-        ejbJar.addEnterpriseBean(new SingletonBean(InitUserDAO.class));
-        ejbJar.addEnterpriseBean(new SingletonBean(UserChecker.class));
-
-        EjbModule module = new EjbModule(ejbJar);
-        module.getRepositories().add(UserDAO.class.getName());
-        return module;
+    @Module public EjbJar app() throws Exception {
+        EjbJar ejbJar = new EjbJar("dynamic");
+        ejbJar.addEnterpriseBean(new SingletonBean(UtilBean.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(UserDAO.class));
+        return ejbJar;
     }
 
     @Module public Persistence persistence() {
-        PersistenceUnit unit = new PersistenceUnit("repository-unit");
+        PersistenceUnit unit = new PersistenceUnit("pu");
         unit.addClass(User.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.setExcludeUnlistedClasses(true);

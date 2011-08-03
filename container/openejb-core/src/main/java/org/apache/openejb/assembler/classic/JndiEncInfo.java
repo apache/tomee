@@ -34,5 +34,4 @@ public class JndiEncInfo extends InfoObject {
     public final List<PersistenceContextReferenceInfo> persistenceContextRefs = new ArrayList<PersistenceContextReferenceInfo>();
     public final List<ResourceEnvReferenceInfo> resourceEnvRefs = new ArrayList<ResourceEnvReferenceInfo>();
     public final List<ServiceReferenceInfo> serviceRefs = new ArrayList<ServiceReferenceInfo>();
-    public final List<RepositoryReferenceInfo> repositoryRefs = new ArrayList<RepositoryReferenceInfo>();
 }

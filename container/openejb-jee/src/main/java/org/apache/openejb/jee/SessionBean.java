@@ -256,9 +256,6 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
     @XmlTransient
     private boolean restService = false;
 
-    @XmlTransient
-    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
-
     public SessionBean() {
     }
 
@@ -897,21 +894,5 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
 
     public void setRestService(boolean restService) {
         this.restService = restService;
-    }
-
-    @Override
-    public Collection<RepositoryRef> getRepositoryRef() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs;
-    }
-
-    @Override
-    public Map<String, RepositoryRef> getRepositoryRefMap() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs.toMap();
     }
 }

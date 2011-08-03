@@ -180,9 +180,6 @@ public class EntityBean implements RemoteBean {
     @XmlID
     protected String id;
 
-    @XmlTransient
-    protected KeyedCollection<String, RepositoryRef> repositoryRefs;
-
     public EntityBean() {
         Set<String> publicIds = JaxbJavaee.currentPublicId.get();
         if (publicIds != null && publicIds.contains("-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN")) {
@@ -604,21 +601,5 @@ public class EntityBean implements RemoteBean {
     }
 
     public void setTransactionType(TransactionType type){
-    }
-
-    @Override
-    public Collection<RepositoryRef> getRepositoryRef() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs;
-    }
-
-    @Override
-    public Map<String, RepositoryRef> getRepositoryRefMap() {
-        if (repositoryRefs == null) {
-            repositoryRefs = new KeyedCollection<String,RepositoryRef>();
-        }
-        return repositoryRefs.toMap();
     }
 }
