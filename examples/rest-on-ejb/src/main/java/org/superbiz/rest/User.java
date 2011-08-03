@@ -83,7 +83,7 @@ public class User implements Cloneable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || !User.class.isAssignableFrom(o.getClass())) {
             return false;
         }
 
