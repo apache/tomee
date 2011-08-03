@@ -232,7 +232,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             deployManagedBeans(scannerService.getBeanClasses(), stuff.getBeanContexts());
 
             for (BeanContext beanContext : stuff.getBeanContexts()) {
-                if (!beanContext.getComponentType().isSession()) continue;
+                if (!beanContext.getComponentType().isSession() || beanContext.isDynamicallyImplemented()) continue;
 
                 final Class implClass = beanContext.getBeanClass();
 
@@ -291,7 +291,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
             deployer.validateInjectionPoints();
 
             for (BeanContext beanContext : stuff.getBeanContexts()) {
-                if (!beanContext.getComponentType().isSession()) continue;
+                if (!beanContext.getComponentType().isSession() || beanContext.isDynamicallyImplemented()) continue;
                 final CdiEjbBean bean = beanContext.get(CdiEjbBean.class);
 
                 // The interceptor stack is empty until validateInjectionPoints is called as it does more than validate.

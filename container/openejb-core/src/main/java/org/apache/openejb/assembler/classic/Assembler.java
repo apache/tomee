@@ -32,7 +32,6 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.api.Repository;
 import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
@@ -62,9 +61,16 @@ import org.apache.openejb.resource.GeronimoConnectionManagerFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
-import org.apache.openejb.util.*;
+import org.apache.openejb.util.AsmParameterNameLoader;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Messages;
+import org.apache.openejb.util.OpenEJBErrorHandler;
+import org.apache.openejb.util.References;
+import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+import org.apache.openejb.util.proxy.QueryProxy;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
@@ -86,7 +92,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.PersistenceProperty;
-import javax.persistence.metamodel.Type;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -107,8 +112,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -127,8 +144,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String VALIDATOR_FACTORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "ValidatorFactory/";
     public static final String VALIDATOR_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Validator/";
 
-    public static final String REPOSITORY_NAMING_CONTEXT = JAVA_OPENEJB_NAMING_CONTEXT + "Repository/";
-
     private static final String OPENEJB_URL_PKG_PREFIX = "org.apache.openejb.core.ivm.naming";
 
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, Assembler.class);
@@ -141,10 +156,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     private TransactionManager transactionManager;
     private SecurityService securityService;
     protected OpenEjbConfigurationFactory configFactory;
-    private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo>();
+    private final Map<String, AppInfo> deployedApplications = new HashMap<String, AppInfo> ();
     private final List<DeploymentListener> deploymentListeners = new ArrayList<DeploymentListener>();
     private final Set<String> moduleIds = new HashSet<String>();
-    private final Set<String> repositoryNames = new HashSet<String>();
     private static final String GLOBAL_UNIQUE_ID = "global";
 
 
@@ -691,58 +705,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
 
-                // @Repository
-                JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
-                for (String repository : ejbJar.repositories) {
-                    try {
-                        Class<?> proxied = classLoader.loadClass(repository);
-
-                        Repository annotation = proxied.getAnnotation(Repository.class);
-                        PersistenceContext pc = annotation.context();
-                        String unitName = pc.unitName();
-                        if ("".equals(pc.unitName())) {
-                            if (appInfo.persistenceUnits.size() == 1) {
-                                unitName = appInfo.persistenceUnits.iterator().next().name;
-                            } else {
-                                throw new OpenEJBException("specify a unit name for repository " + repository);
-                            }
-                        }
-
-                        // create the em
-                        Context context = SystemInstance.get().getComponent(ContainerSystem.class).getJNDIContext();
-                        EntityManagerFactory factory;
-                        try {
-                            factory = (EntityManagerFactory) context.lookup(units.get(unitName));
-                        } catch (NamingException e) {
-                            throw new OpenEJBException("PersistenceUnit '" + unitName + "' not found");
-                        }
-                        Map<String, String> properties = new LinkedHashMap<String, String>();
-                        for (PersistenceProperty property : pc.properties()) {
-                            properties.put(property.name(), property.value());
-                        }
-
-                        JtaEntityManager jtaEntityManager = new JtaEntityManager(pc.unitName(), jtaEntityManagerRegistry, factory, properties, pc.type() == PersistenceContextType.EXTENDED);
-
-                        Object proxy = Proxy.newProxyInstance(classLoader,
-                                new Class<?>[] { proxied },
-                                new QueryProxy(jtaEntityManager));
-
-                        String jndi = annotation.jndiName();
-                        if (jndi == null || jndi.isEmpty()) {
-                            jndi = REPOSITORY_NAMING_CONTEXT + repository;
-                        }
-
-                        // TODO in a better way
-                        containerSystemContext.bind(jndi, proxy);
-                        repositoryNames.add(jndi);
-                        logger.info("Bound @Repository " + repository + " to " + jndi);
-                        appContext.getGlobalJndiContext().bind("global/" + jndi, proxy);
-                        logger.info("Bound @Repository " + repository + " to global/" + jndi);
-                    } catch (ClassNotFoundException cnfe) {
-                        logger.error("cant' instantiate repository interface " + repository, cnfe);
-                    }
-                }
-
                 allDeployments.addAll(deployments.values());
             }
 
@@ -912,7 +874,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         // Sort all the beans with references to the back of the list.  Beans
         // without references to ther beans will be deployed first.
-        deployments = References.sort(deployments, new References.Visitor<BeanContext>(){
+        deployments = References.sort(deployments, new References.Visitor<BeanContext>() {
             public String getName(BeanContext t) {
                 return (String) t.getDeploymentID();
             }
@@ -1142,17 +1104,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
         moduleIds.clear();
-
-        for (String repoName : repositoryNames) {
-            try {
-                globalContext.unbind(repoName);
-                appContext.getGlobalJndiContext().unbind("global/" + repoName);
-            } catch (NamingException e) {
-                undeployException.getCauses().add(new Exception("repository: " + repoName + ": " + e.getMessage(), e));
-            }
-        }
-        repositoryNames.clear();
-
 
         try {
             if (globalContext instanceof IvmContext) {
@@ -1655,7 +1606,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private static class PersistenceClassLoaderHandlerImpl implements PersistenceClassLoaderHandler {
-        private final Map<String,List<ClassFileTransformer>> transformers = new TreeMap<String,List<ClassFileTransformer>>();
+        private final Map<String,List<ClassFileTransformer>> transformers = new TreeMap<String, List<ClassFileTransformer>> ();
 
         public void addTransformer(String unitId, ClassLoader classLoader, ClassFileTransformer classFileTransformer) {
             Instrumentation instrumentation = Agent.getInstrumentation();

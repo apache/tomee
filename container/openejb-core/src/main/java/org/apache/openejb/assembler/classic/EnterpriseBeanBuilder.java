@@ -91,6 +91,9 @@ class EnterpriseBeanBuilder {
 
         Class localhome = null;
         Class local = null;
+        if (ejbClass.isInterface()) { // dynamic proxy implementation
+            local = ejbClass;
+        }
         if (bean.localHome != null) {
             localhome = loadClass(bean.localHome, "classNotFound.localHome");
             local = loadClass(bean.local, "classNotFound.local");

@@ -16,35 +16,6 @@
  */
 package org.apache.openejb;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.LockType;
-import javax.ejb.MessageDrivenBean;
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.naming.Context;
-import javax.persistence.EntityManagerFactory;
-
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.openejb.cdi.OWBInjector;
@@ -67,14 +38,40 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.webbeans.component.AbstractInjectionTargetBean;
-import org.apache.webbeans.component.EnterpriseBeanMarker;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.inject.AbstractInjectable;
-import org.apache.webbeans.proxy.JavassistProxyFactory;
 import org.apache.xbean.recipe.ConstructionException;
+
+import javax.ejb.EJBHome;
+import javax.ejb.EJBLocalHome;
+import javax.ejb.EJBLocalObject;
+import javax.ejb.EJBObject;
+import javax.ejb.LockType;
+import javax.ejb.MessageDrivenBean;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.enterprise.context.spi.Contextual;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.naming.Context;
+import javax.persistence.EntityManagerFactory;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Future;
 
 
 public class BeanContext extends DeploymentContext {
@@ -82,6 +79,10 @@ public class BeanContext extends DeploymentContext {
 
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
+
+    public boolean isDynamicallyImplemented() {
+        return getBeanClass().equals(getLocalInterface());
+    }
 
     public interface BusinessLocalHome extends javax.ejb.EJBLocalHome {
         Object create();
@@ -860,6 +861,8 @@ public class BeanContext extends DeploymentContext {
 
         if (localInterface != null) {
             mapObjectInterface(localInterface);
+        }
+        if (localHomeInterface != null) {
             mapHomeInterface(localHomeInterface);
         }
 
@@ -1198,34 +1201,41 @@ public class BeanContext extends DeploymentContext {
         ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
         ThreadContext oldContext = ThreadContext.enter(callContext);
 
-        WebBeansContext webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
+        WebBeansContext webBeansContext = null;
+        AbstractInjectionTargetBean<Object> beanDefinition = null;
+        ConstructorInjectionBean<Object> beanConstructor = null;
+        if (!beanClass.equals(localInterface)) { // not a dynamic proxy implementation
+            webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
-        AbstractInjectionTargetBean<Object> beanDefinition = get(CdiEjbBean.class);
+            beanDefinition = get(CdiEjbBean.class);
 
-        final ConstructorInjectionBean<Object> beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
+            beanConstructor = new ConstructorInjectionBean<Object>(webBeansContext, beanClass);
 
-        if (beanDefinition == null) {
-            beanDefinition = beanConstructor;
+            if (beanDefinition == null) {
+                beanDefinition = beanConstructor;
+            }
         }
 
         try {
-            final CreationalContext<Object> creationalContext;
-            if (get(CreationalContext.class) == null) {
-                creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
-            } else {
-                creationalContext = get(CreationalContext.class);
-            }
-
             final Context ctx = this.getJndiEnc();
             final Class beanClass = this.getBeanClass();
 
+            CreationalContext<Object> creationalContext = get(CreationalContext.class);
+            if (webBeansContext != null && creationalContext == null) {
+                creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
+            }
+
             // Create bean instance
+            final Object beanInstance;
+            if (beanConstructor != null) {
+                final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
 
-             final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
+                beanInstance = injectionProcessor.createInstance();
 
-            final Object beanInstance = injectionProcessor.createInstance();
-
-            inject(beanInstance, creationalContext);
+                inject(beanInstance, creationalContext);
+            } else {
+                beanInstance = DynamicProxyImplFactory.newProxy(this);
+            }
 
             // Create interceptors
             final HashMap<String, Object> interceptorInstances = new HashMap<String, Object>();

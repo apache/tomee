@@ -16,35 +16,35 @@
  */
 package org.apache.openejb.core.ivm;
 
-import java.io.ObjectStreamException;
-import java.lang.reflect.Method;
-import java.rmi.AccessException;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-
-import javax.ejb.AccessLocalException;
-import javax.ejb.EJBAccessException;
-import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
-
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.BeanType;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.ProxyInfo;
 import org.apache.openejb.core.ServerFederation;
+import org.apache.openejb.core.entity.EntityEjbHomeHandler;
 import org.apache.openejb.core.managed.ManagedHomeHandler;
 import org.apache.openejb.core.singleton.SingletonEjbHomeHandler;
-import org.apache.openejb.core.entity.EntityEjbHomeHandler;
-import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.core.stateful.StatefulEjbHomeHandler;
+import org.apache.openejb.core.stateless.StatelessEjbHomeHandler;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
+
+import javax.ejb.AccessLocalException;
+import javax.ejb.EJBAccessException;
+import javax.ejb.EJBException;
+import javax.ejb.EJBHome;
+import java.io.ObjectStreamException;
+import java.lang.reflect.Method;
+import java.rmi.AccessException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -132,7 +132,9 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
             EjbObjectProxyHandler handler = newEjbObjectHandler(getBeanContext(), primaryKey, objectInterfaceType, this.getInterfaces(), mainInterface);
 
             // TODO Is it correct for ManagedBean injection via managed bean class?
-            if (InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED)) {
+            if (getBeanContext().isDynamicallyImplemented()) { // dynamic proxy implementation
+                return DynamicProxyImplFactory.newProxy(getBeanContext());
+            } if (InterfaceType.LOCALBEAN.equals(objectInterfaceType) || getBeanContext().getComponentType().equals(BeanType.MANAGED)) {
                 return LocalBeanProxyFactory.newProxyInstance(handler.getBeanContext().getClassLoader(), handler.getBeanContext().getBeanClass(), handler);
             } else {
                 List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 1);
