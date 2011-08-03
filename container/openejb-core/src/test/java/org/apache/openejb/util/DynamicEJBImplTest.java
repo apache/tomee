@@ -38,9 +38,13 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
@@ -148,6 +152,23 @@ public class DynamicEJBImplTest {
         assertEquals(10, injection.findAll().size());
     }
 
+    @Test public void query() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("name", "foo");
+
+        Collection<User> users = dao.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
+        assertEquals(4, users.size());
+
+        users = dao.namedQuery("dynamic-ejb-impl-test.query", params);
+        assertEquals(4, users.size());
+
+        users = dao.namedQuery("dynamic-ejb-impl-test.query", params, 0, 2);
+        assertEquals(2, users.size());
+
+        users = dao.namedQuery("dynamic-ejb-impl-test.query", 0, 2, params);
+        assertEquals(2, users.size());
+    }
+
     @Stateless @PersistenceContext(name = "pu") public static interface UserDAO {
         User findById(long id);
 
@@ -158,6 +179,10 @@ public class DynamicEJBImplTest {
         Collection<User> findAll();
         Collection<User> findAll(int first, int max);
 
+        Collection<User> namedQuery(String name, Map<String, ?> params, int first, int max);
+        Collection<User> namedQuery(String name, int first, int max, Map<String, ?> params);
+        Collection<User> namedQuery(String name, Map<String, ?> params);
+
         void save(User u);
 
         void delete(User u);
@@ -165,6 +190,7 @@ public class DynamicEJBImplTest {
         User update(User u);
     }
 
+    @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name")
     @Entity public static class User {
         @Id @GeneratedValue private long id;
         private String name;

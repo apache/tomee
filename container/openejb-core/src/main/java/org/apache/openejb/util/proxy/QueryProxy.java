@@ -14,10 +14,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.SingularAttribute;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -39,6 +36,8 @@ public class QueryProxy implements InvocationHandler {
     public static final String PERSIST_NAME = "save";
     public static final String MERGE_NAME = "update";
     public static final String REMOVE_NAME = "delete";
+    public static final String NAMED_QUERY_NAME = "namedQuery";
+
     public static final String FIND_PREFIX = "find";
     public static final String BY = "By";
     public static final String AND = "And";
@@ -76,6 +75,10 @@ public class QueryProxy implements InvocationHandler {
             return null; // void
         }
 
+        if (NAMED_QUERY_NAME.equals(methodName)) {
+            return query(method, args);
+        }
+
         // other cases (finders)
         if (methodName.startsWith(FIND_PREFIX)) {
             return find(method, args);
@@ -84,9 +87,70 @@ public class QueryProxy implements InvocationHandler {
         throw new IllegalArgumentException("method not yet managed");
     }
 
-    private Object find(Method method, Object[] args) {
-        final String methodName = method.getName();
+    /**
+     * @param args queryName (String) -> first parameter, parameters (Map<String, ?>) or (Object[]), first and max (int) -> max follows first
+     * @param method the method
+     * @return the expected result
+     */
+    private Object query(Method method, Object[] args) {
+        if (args.length < 1) {
+            throw new IllegalArgumentException("query() needs at least the query name");
+        }
 
+        int matched = 0;
+        Query query;
+        if (String.class.isAssignableFrom(args[0].getClass())) {
+            query = em.createNamedQuery((String) args[0]);
+            matched++;
+            for (int i = 1; i < args.length; i++) {
+                if (args[i] == null) {
+                    continue;
+                }
+
+                if (Map.class.isAssignableFrom(args[i].getClass())) {
+                    for (Map.Entry<String, ?> entry : ((Map<String, ?>) args[i]).entrySet()) {
+                        query = query.setParameter(entry.getKey(), entry.getValue());
+                    }
+                    matched++;
+                } else if (args[i].getClass().isArray()) {
+                    Object[] array = (Object[]) args[i];
+                    for (int j = 0; j <  array.length; j++) {
+                        query = query.setParameter(j, array[j]);
+                    }
+                    matched++;
+                } else if (isInt(args[i].getClass())) {
+                    int next = i + 1;
+                    if (args.length == next || !isInt(args[next].getClass())) {
+                        throw new IllegalArgumentException("if you provide a firstResult (first int parameter)" +
+                                "you should provide a maxResult too");
+                    }
+                    int first = (Integer) args[i];
+                    int max = (Integer) args[next];
+
+                    query = query.setFirstResult(first);
+                    query = query.setMaxResults(max);
+
+                    matched += 2;
+                    i++;
+                } else {
+                    throw new IllegalArgumentException("not managed parameter " + args[i]
+                                + " of type " + args[i].getClass());
+                }
+            }
+
+            if (matched != args.length) {
+                throw new IllegalArgumentException("all argument was not used, please check you signature looks like:" +
+                        " <ReturnType> query(String name, Map<String, ?> parameters, int firstResult, int maxResult)");
+            }
+        } else {
+            throw new IllegalArgumentException("query() needs at least the query name of type String");
+        }
+
+        return getQueryResult(method, query);
+    }
+
+    private Class<?> getReturnedType(Method method) {
+        final String methodName = method.getName();
         Class<?> type;
         if (RETURN_TYPES.containsKey(methodName)) {
             type = RETURN_TYPES.get(methodName);
@@ -94,21 +158,29 @@ public class QueryProxy implements InvocationHandler {
             type =  getGenericType(method.getGenericReturnType());
             RETURN_TYPES.put(methodName, type);
         }
+        return type;
+    }
 
-        Query query = createFinderQuery(em, methodName, type, args);
-
+    private Object getQueryResult(Method method, Query query) {
         if (Collection.class.isAssignableFrom(method.getReturnType())) {
             return query.getResultList();
         }
         return query.getSingleResult();
     }
 
+    private Object find(Method method, Object[] args) {
+        final String methodName = method.getName();
+        final Class<?> type = getReturnedType(method);
+        final Query query = createFinderQuery(em, methodName, type, args);
+        return getQueryResult(method, query);
+    }
+
     private void remove(Object[] args, Class<?> returnType) {
         if (args != null && args.length == 1 && returnType.equals(Void.TYPE)) {
             Object entity = args[0];
-            if (!em.contains(entity)) { // should not be done (that's why it is not cached) but can be easier...
+            if (!em.contains(entity)) { // reattach the entity if possible
                 final Class<?> entityClass = entity.getClass();
-                final EntityType<? extends Object> et = em.getMetamodel().entity(entity.getClass());
+                final EntityType<? extends Object> et = em.getMetamodel().entity(entityClass);
 
                 if (!et.hasSingleIdAttribute()) {
                     throw new IllegalArgumentException("Dynamic EJB doesn't manage IdClass yet");
