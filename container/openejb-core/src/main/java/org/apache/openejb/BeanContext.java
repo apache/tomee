@@ -1204,7 +1204,7 @@ public class BeanContext extends DeploymentContext {
         WebBeansContext webBeansContext = null;
         AbstractInjectionTargetBean<Object> beanDefinition = null;
         ConstructorInjectionBean<Object> beanConstructor = null;
-        if (!beanClass.equals(localInterface)) { // not a dynamic proxy implementation
+        if (!isDynamicallyImplemented()) { // not a dynamic proxy implementation
             webBeansContext = getModuleContext().getAppContext().getWebBeansContext();
 
             beanDefinition = get(CdiEjbBean.class);
@@ -1221,13 +1221,13 @@ public class BeanContext extends DeploymentContext {
             final Class beanClass = this.getBeanClass();
 
             CreationalContext<Object> creationalContext = get(CreationalContext.class);
-            if (webBeansContext != null && creationalContext == null) {
+            if (creationalContext == null && !isDynamicallyImplemented()) {
                 creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
             }
 
             // Create bean instance
             final Object beanInstance;
-            if (beanConstructor != null) {
+            if (!isDynamicallyImplemented()) {
                 final InjectionProcessor injectionProcessor = new InjectionProcessor(beanConstructor.create(creationalContext), this.getInjections(), InjectionProcessor.unwrap(ctx));
 
                 beanInstance = injectionProcessor.createInstance();

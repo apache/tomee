@@ -25,23 +25,29 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.junit.Configuration;
 import org.apache.openejb.junit.Module;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * @author rmannibucau
@@ -60,6 +66,11 @@ public class DynamicEJBImplTest {
         }
     }
 
+    @After public void checkAll() {
+        Collection<User> users = dao.findAll();
+        assertEquals(10, users.size());
+    }
+
     @Test public void simple() {
         User user = dao.findById(1);
         assertNotNull(user);
@@ -69,6 +80,49 @@ public class DynamicEJBImplTest {
     @Test public void findAll() {
         Collection<User> users = dao.findAll();
         assertEquals(10, users.size());
+    }
+
+    @Test public void pagination() {
+        Collection<User> users = dao.findAll(0, 5);
+        assertEquals(5, users.size());
+
+        users = dao.findAll(6, 1);
+        assertEquals(1, users.size());
+        assertEquals(7, users.iterator().next().getId());
+    }
+
+    @Test public void persist() {
+        User u = new User();
+        dao.save(u);
+        assertNotNull(u.getId());
+        util.remove(u);
+    }
+
+    @Test public void remove() {
+        User u = new User();
+        dao.save(u);
+        assertNotNull(u.getId());
+        dao.delete(u);
+        try {
+            dao.findById(u.getId());
+            fail();
+        } catch (EJBException ee) {
+            assertTrue(ee.getCause() instanceof NoResultException);
+        }
+    }
+
+    @Test public void merge() {
+        User u = new User();
+        u.setInfo("one");
+        dao.save(u);
+        assertEquals("one", u.getInfo());
+        assertNotNull(u.getId());
+
+        u.setInfo("another one");
+        dao.update(u);
+        assertEquals("another one", u.getInfo());
+
+        dao.delete(u);
     }
 
     @Test public void oneCriteria() {
@@ -102,6 +156,13 @@ public class DynamicEJBImplTest {
         Collection<User> findByNameAndInfo(String name, String info);
 
         Collection<User> findAll();
+        Collection<User> findAll(int first, int max);
+
+        void save(User u);
+
+        void delete(User u);
+
+        User update(User u);
     }
 
     @Entity public static class User {
@@ -167,6 +228,10 @@ public class DynamicEJBImplTest {
 
         public UserDAO getDao() {
             return dao;
+        }
+
+        public void remove(User u) {
+            em.remove(em.find(u.getClass(), u.getId()));
         }
     }
 
