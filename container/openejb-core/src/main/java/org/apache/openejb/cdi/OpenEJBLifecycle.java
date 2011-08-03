@@ -363,7 +363,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
     private void deployManagedBeans(Set<Class<?>> beanClasses, List<BeanContext> ejbs) {
         Set<Class<?>> managedBeans = new HashSet<Class<?>>(beanClasses);
         for (BeanContext beanContext: ejbs) {
-            if (beanContext.getComponentType().isSession()) {
+            if (beanContext.getComponentType().isSession() && !beanContext.isDynamicallyImplemented()) {
                 managedBeans.remove(beanContext.getBeanClass());
             }
         }
