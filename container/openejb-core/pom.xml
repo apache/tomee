@@ -107,16 +107,10 @@
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>-Xmx256m "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>openejb.home</name>
-              <value>${basedir}/target/test-classes</value>
-            </property>
-            <property>
-              <name>log4j.configuration</name>
-              <value>file:///${basedir}/target/classes/embedded.logging.properties</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <openejb.home>${basedir}/target/test-classes</openejb.home>
+            <log4j.configuration>file:///${basedir}/target/classes/embedded.logging.properties</log4j.configuration>
+          </systemPropertyVariables>
           <excludes>
             <exclude>**/TestHandler.java</exclude>
             <exclude>org/apache/openejb/cdi/**</exclude>
