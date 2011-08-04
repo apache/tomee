@@ -49,7 +49,7 @@ public class ContainersImplTomEE implements Containers {
 
     public ContainersImplTomEE() {
         System.out.println("Initialized ContainersImplTomEE " + (++count));
-        server = new RemoteServer(10, true);
+        server = new RemoteServer(20, true);
     }
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
