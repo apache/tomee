@@ -55,8 +55,7 @@ public class ContainersImplTomEE implements Containers {
         final Options options = new Options(System.getProperties());
         Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        props.put(Context.PROVIDER_URL,
-options.get(Context.PROVIDER_URL,"http://localhost:7180/openejb/ejb"));
+        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:7180/openejb/ejb"));
         try {
             InitialContext context = new InitialContext(props);
             return (Deployer) context.lookup("openejb/DeployerBusinessRemote");
