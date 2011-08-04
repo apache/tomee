@@ -169,33 +169,14 @@
             <!--<suiteXmlFile>src/test/resources/failing.xml</suiteXmlFile>-->
           </suiteXmlFiles>
           <!--<forkMode>once</forkMode>-->
-          <systemProperties>
-            <property>
-              <name>org.jboss.testharness.standalone</name>
-              <value>false</value>
-            </property>
-            <property>
-              <name>org.jboss.testharness.runIntegrationTests</name>
-              <value>true</value>
-            </property>
-            <property>
-                <name>org.jboss.testharness.container.forceRestart</name>
-                <value>true</value>
-            </property>
-            <property>
-                <name>org.jboss.testharness.libraryDirectory</name>
-                <value>${project.build.directory}/dependency/lib</value>
-            </property>
-            <!--<property>-->
-                <!--<name>org.jboss.testharness.outputDirectory</name>-->
-                <!--<value>target</value>-->
-            <!--</property>-->
-            <property>
-                <name>deleteArtifacts</name>
-                <value>true</value>
-            </property>
-          </systemProperties>
           <systemPropertyVariables>
+            <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
+            <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
+            <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
+            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
+            <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
+            <deleteArtifacts>true</deleteArtifacts>
+
             <!--<openejb.server.debug>true</openejb.server.debug>-->
             <java.naming.provider.url>http://localhost:8180/openejb/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>

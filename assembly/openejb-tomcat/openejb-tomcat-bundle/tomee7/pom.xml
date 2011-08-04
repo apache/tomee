@@ -129,7 +129,9 @@
             <id>bin</id>
             <phase>package</phase>
             <configuration>
-              <descriptor>src/main/assembly/tomee.xml</descriptor>
+              <descriptors>
+                <descriptor>src/main/assembly/tomee.xml</descriptor>
+              </descriptors>
               <appendAssemblyId>false</appendAssemblyId>
               <finalName>apache-tomee-${project.version}</finalName>
             </configuration>

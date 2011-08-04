@@ -59,13 +59,13 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <tstamp>
                   <format property="TSTAMP" pattern="hh:mm" />
                 </tstamp>
                 <replace file="target/classes/META-INF/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
                 <replace file="target/classes/META-INF/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>
