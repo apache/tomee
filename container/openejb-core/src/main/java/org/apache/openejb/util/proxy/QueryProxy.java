@@ -37,6 +37,8 @@ public class QueryProxy implements InvocationHandler {
     public static final String MERGE_NAME = "update";
     public static final String REMOVE_NAME = "delete";
     public static final String NAMED_QUERY_NAME = "namedQuery";
+    public static final String NATIVE_QUERY_NAME = "nativeQuery";
+    public static final String QUERY_NAME = "query";
 
     public static final String FIND_PREFIX = "find";
     public static final String BY = "By";
@@ -47,6 +49,10 @@ public class QueryProxy implements InvocationHandler {
     private final Map<String, List<String>> CONDITIONS = new ConcurrentHashMap<String, List<String>>();
 
     private EntityManager em;
+
+    private static enum QueryType {
+        NAMED, NATIVE, OTHER
+    }
 
     public QueryProxy(EntityManager entityManager) {
         em = entityManager;
@@ -75,11 +81,20 @@ public class QueryProxy implements InvocationHandler {
             return null; // void
         }
 
+        // queries
         if (NAMED_QUERY_NAME.equals(methodName)) {
-            return query(method, args);
+            return query(method, args, QueryType.NAMED);
         }
 
-        // other cases (finders)
+        if (NATIVE_QUERY_NAME.equals(methodName)) {
+            return query(method, args, QueryType.NATIVE);
+        }
+
+        if (QUERY_NAME.equals(methodName)) {
+            return query(method, args, QueryType.OTHER);
+        }
+
+        // finders
         if (methodName.startsWith(FIND_PREFIX)) {
             return find(method, args);
         }
@@ -88,11 +103,13 @@ public class QueryProxy implements InvocationHandler {
     }
 
     /**
-     * @param args queryName (String) -> first parameter, parameters (Map<String, ?>) or (Object[]), first and max (int) -> max follows first
+     *
      * @param method the method
+     * @param args queryName (String) -> first parameter, parameters (Map<String, ?>) or (Object[]), first and max (int) -> max follows first
+     * @param type the query type
      * @return the expected result
      */
-    private Object query(Method method, Object[] args) {
+    private Object query(Method method, Object[] args, QueryType type) {
         if (args.length < 1) {
             throw new IllegalArgumentException("query() needs at least the query name");
         }
@@ -100,8 +117,21 @@ public class QueryProxy implements InvocationHandler {
         int matched = 0;
         Query query;
         if (String.class.isAssignableFrom(args[0].getClass())) {
-            query = em.createNamedQuery((String) args[0]);
+            switch (type) {
+                case NAMED:
+                    query = em.createNamedQuery((String) args[0]);
+                break;
+
+                case NATIVE:
+                    query = em.createNativeQuery((String) args[0]);
+                break;
+
+                default:
+                    query = em.createQuery((String) args[0]);
+            }
+
             matched++;
+
             for (int i = 1; i < args.length; i++) {
                 if (args[i] == null) {
                     continue;
