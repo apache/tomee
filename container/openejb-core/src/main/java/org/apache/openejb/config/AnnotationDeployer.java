@@ -1353,7 +1353,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return false;
             }
 
-            if (isAbstract(beanClass.get().getModifiers())) {
+            if (!beanClass.get().isInterface() && isAbstract(beanClass.get().getModifiers())) {
                 ejbModule.getValidation().fail(ejbName, "abstractAnnotatedAsBean", annotationClass.getSimpleName(), beanClass.get().getName());
                 return false;
             }
