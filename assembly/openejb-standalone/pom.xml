@@ -54,19 +54,19 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks>
+              <target>
                 <mkdir dir="${basedir}/target/classes/empty"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
           <execution>
             <id>cleanup-target</id>
             <phase>package</phase>
             <configuration>
-              <tasks>
+              <target>
                 <delete dir="${basedir}/target/classes"/>
                 <delete dir="${basedir}/target/archive-tmp"/>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
