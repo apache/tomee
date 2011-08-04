@@ -118,9 +118,9 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <tasks name="generate keys">
+              <target name="generate keys">
                 <ant antfile="create-keystores.xml" target="run"/>
-              </tasks>
+              </target>
             </configuration>
           </execution>
         </executions>

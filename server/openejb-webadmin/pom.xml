@@ -61,12 +61,9 @@
           <!-- DEBUG: Uncomment this line and comment out the next -->
           <!--<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -javaagent:${project.build.directory}/target/openejb-javaagent-${version}.jar=foo=bar</argLine>-->
           <argLine>"-javaagent:${project.build.directory}/openejb-javaagent-${project.version}.jar=foo=bar"</argLine>
-          <systemProperties>
-            <property>
-              <name>openejb.home</name>
-              <value>${project.build.directory}/test-classes</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <openejb.home>${project.build.directory}/test-classes</openejb.home>
+          </systemPropertyVariables>
           <basedir>${project.build.directory}</basedir>
         </configuration>
       </plugin>

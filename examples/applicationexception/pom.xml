@@ -47,12 +47,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>openejb.applicationexceptions.inherited</name>
-              <value>true</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <openejb.applicationexceptions.inherited>true</openejb.applicationexceptions.inherited>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

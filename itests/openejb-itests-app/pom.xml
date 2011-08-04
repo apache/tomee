@@ -45,11 +45,11 @@
         </executions>
         <configuration>
           <modules>
-            <javaModule>
+            <jarModule>
               <groupId>junit</groupId>
               <artifactId>junit</artifactId>
               <bundleDir>META-INF/lib</bundleDir>
-            </javaModule>
+            </jarModule>
             <ejbModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-beans</artifactId>
@@ -58,11 +58,11 @@
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-interceptor-beans</artifactId>
             </ejbModule>
-            <javaModule>
+            <jarModule>
               <groupId>org.apache.openejb</groupId>
               <artifactId>openejb-itests-client</artifactId>
               <includeInApplicationXml>true</includeInApplicationXml>
-            </javaModule>
+            </jarModule>
           </modules>
         </configuration>
       </plugin>

@@ -112,7 +112,9 @@
         </executions>
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
-          <descriptor>src/main/assembly/bin.xml</descriptor>
+          <descriptors>
+            <descriptor>src/main/assembly/bin.xml</descriptor>
+          </descriptors>
           <archive>
             <manifest>
               <mainClass>org.apache.openejb.test.Main</mainClass>
