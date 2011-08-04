@@ -108,6 +108,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -2609,7 +2610,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         && all.remote.isEmpty()
                         ) {
 
-                    if (interfaces.size() == 0) {
+                    if (interfaces.size() == 0 || AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null) {
                         // No interfaces?  Then @LocalBean
 
                         sessionBean.setLocalBean(new Empty());
@@ -3313,6 +3314,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             boolean localbean = isKnownLocalBean(interfce);
+            boolean dynamicallyImplemented = isKnownDynamicallyImplemented(interfce);
 
             if ((!localbean) && interfce != null && !isValidEjbInterface(name, interfce, ejbRef.getName())) {
                 return;
@@ -3340,6 +3342,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                     ejbRef.setRefType(EjbReference.Type.LOCAL);
                 } else if (localbean) {
+                    ejbRef.setRefType(EjbReference.Type.LOCAL);
+                    ejbRef.setRemote(interfce.getName());
+                } else if (dynamicallyImplemented) {
                     ejbRef.setRefType(EjbReference.Type.LOCAL);
                     ejbRef.setRemote(interfce.getName());
                 } else {
@@ -3412,6 +3417,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return refName;
             }
             return "java:comp/env/" + refName;
+        }
+
+        private boolean isKnownDynamicallyImplemented(Class<?> clazz) {
+            return clazz.isInterface() && AnnotationUtil.getAnnotation(PersistenceContext.class, clazz) != null;
         }
 
         private boolean isKnownLocalBean(Class clazz) {

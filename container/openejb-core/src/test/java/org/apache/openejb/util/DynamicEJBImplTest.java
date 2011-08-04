@@ -49,7 +49,6 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -60,8 +59,9 @@ import static junit.framework.Assert.fail;
 public class DynamicEJBImplTest {
     private static boolean initDone = false;
 
-    @EJB private UtilBean util;
-    @EJB private UserDAO dao;
+    @EJB private UserDAO dao = null;
+    @EJB private UtilBean util = null;
+    @EJB private UserDAOChild child = null;
 
     @Before public void initDatabaseIfNotDone() {
         if (!initDone) {
@@ -167,6 +167,39 @@ public class DynamicEJBImplTest {
 
         users = dao.namedQuery("dynamic-ejb-impl-test.query", 0, 2, params);
         assertEquals(2, users.size());
+
+        users = dao.namedQuery("dynamic-ejb-impl-test.all");
+        assertEquals(10, users.size());
+
+        params.remove("name");
+        params.put("info", "0");
+        users = dao.query("SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.info LIKE :info", params);
+        assertEquals(4, users.size());
+    }
+
+    @Test public void inheritance() {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("name", "foo");
+
+        Collection<User> users = child.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
+        assertEquals(4, users.size());
+
+        users = child.namedQuery("dynamic-ejb-impl-test.query", params);
+        assertEquals(4, users.size());
+
+        users = child.namedQuery("dynamic-ejb-impl-test.query", params, 0, 2);
+        assertEquals(2, users.size());
+
+        users = child.namedQuery("dynamic-ejb-impl-test.query", 0, 2, params);
+        assertEquals(2, users.size());
+
+        users = child.namedQuery("dynamic-ejb-impl-test.all");
+        assertEquals(10, users.size());
+
+        params.remove("name");
+        params.put("info", "0");
+        users = child.query("SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.info LIKE :info", params);
+        assertEquals(4, users.size());
     }
 
     @Stateless @PersistenceContext(name = "pu") public static interface UserDAO {
@@ -182,6 +215,9 @@ public class DynamicEJBImplTest {
         Collection<User> namedQuery(String name, Map<String, ?> params, int first, int max);
         Collection<User> namedQuery(String name, int first, int max, Map<String, ?> params);
         Collection<User> namedQuery(String name, Map<String, ?> params);
+        Collection<User> namedQuery(String name);
+
+        Collection<User> query(String value, Map<String, ?> params);
 
         void save(User u);
 
@@ -190,12 +226,18 @@ public class DynamicEJBImplTest {
         User update(User u);
     }
 
-    @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name")
+    @Stateless @PersistenceContext(name = "pu") public static interface UserDAOChild extends UserDAO {
+        // just inherited methods
+    }
+
+    @NamedQueries({
+        @NamedQuery(name = "dynamic-ejb-impl-test.query", query = "SELECT u FROM DynamicEJBImplTest$User AS u WHERE u.name LIKE :name"),
+        @NamedQuery(name = "dynamic-ejb-impl-test.all", query = "SELECT u FROM DynamicEJBImplTest$User AS u")
+    })
     @Entity public static class User {
         @Id @GeneratedValue private long id;
         private String name;
         private String info;
-        private int age;
 
         public long getId() {
             return id;
@@ -213,14 +255,6 @@ public class DynamicEJBImplTest {
             this.name = name;
         }
 
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
         public String getInfo() {
             return info;
         }
@@ -230,18 +264,17 @@ public class DynamicEJBImplTest {
         }
 
         @Override public String toString() {
-            return "User{age=" + age + ", info='" + info + '\'' + ", name='" + name + '\'' + ", id=" + id + '}';
+            return "User{info='" + info + '\'' + ", name='" + name + '\'' + ", id=" + id + '}';
         }
     }
 
     @Singleton public static class UtilBean {
         @PersistenceContext private EntityManager em;
-        @EJB private UserDAO dao;
+        @EJB private UserDAO dao = null;
 
         public void init() {
             for (int i = 0; i < 10; i++) {
                 User u = new User();
-                u.setAge(i * 8);
                 if (i % 3 == 0) {
                     u.setName("foo");
                 } else {
@@ -273,6 +306,7 @@ public class DynamicEJBImplTest {
         EjbJar ejbJar = new EjbJar("dynamic");
         ejbJar.addEnterpriseBean(new SingletonBean(UtilBean.class));
         ejbJar.addEnterpriseBean(new StatelessBean(UserDAO.class));
+        ejbJar.addEnterpriseBean(new StatelessBean(UserDAOChild.class));
         return ejbJar;
     }
 

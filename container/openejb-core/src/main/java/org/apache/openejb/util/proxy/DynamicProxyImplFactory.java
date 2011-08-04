@@ -13,11 +13,11 @@ import java.util.List;
 public class DynamicProxyImplFactory {
     public static Object newProxy(BeanContext context) {
         List<Injection> injection = context.getInjections(); // the entity manager
-        if (injection.size() != 1) {
+        if (injection.size() < 1) {
             throw new RuntimeException("a dynamic bean should have at least one PersistenceContext annotation");
         }
 
-        String emLookupName = injection.iterator().next().getJndiName();
+        String emLookupName = injection.get(injection.size() - 1).getJndiName();
         EntityManager em;
         try {
             em = (EntityManager) context.getJndiEnc().lookup(emLookupName);
