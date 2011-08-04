@@ -71,7 +71,7 @@
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
       <excludes>
-          <exclude>org.mortbay.jetty:jetty</exclude>
+          <exclude>org.eclipse.jetty:jetty</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
