@@ -85,6 +85,7 @@
     <module>cdi-example</module>
 	<module>cdi-interceptors</module>
     <module>rest-on-ejb</module>
+    <module>dynamic-dao-implementation</module>
   </modules>
   <profiles>
     <profile>
