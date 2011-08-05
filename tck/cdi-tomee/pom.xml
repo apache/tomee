@@ -195,10 +195,11 @@
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
             <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
-            <org.jboss.testharness.host>http://localhost:${tomee.http.port}/</org.jboss.testharness.host>
+            <org.jboss.testharness.host>localhost:${tomee.http.port}</org.jboss.testharness.host>
             <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
             <deleteArtifacts>true</deleteArtifacts>
 
+            <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
             <!--<openejb.server.debug>true</openejb.server.debug>-->
             <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>
