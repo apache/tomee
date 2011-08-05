@@ -29,8 +29,6 @@
   <properties>
     <!-- where we will unpack tomcat -->
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
-    <tomee.port>7180</tomee.port>
-    <tomee.shutdown.port>7105</tomee.shutdown.port>
   </properties>
   <dependencies>
     <dependency>
@@ -84,6 +82,28 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
+         <executions>
+          <execution>
+            <id>reserve-network-port</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <configuration>
+              <portNames>
+                <portName>tomee.ssl.port</portName>
+                <portName>tomee.ajp.port</portName>
+                <portName>tomee.http.port</portName>
+                <portName>tomee.shutdown.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.3</version>
@@ -106,13 +126,6 @@
               </artifactItems>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
           <execution>
             <id>copy</id>
             <phase>pre-integration-test</phase>
@@ -156,10 +169,10 @@
                 <delete dir="${openejb.home}/webapps/docs"/>
                 <delete dir="${openejb.home}/webapps/manager"/>
                 <delete dir="${openejb.home}/webapps/host-manager"/>
-                <replace file="${openejb.home}/conf/server.xml" token="8080" value="${tomee.port}"/>
-                <replace file="${openejb.home}/conf/server.xml" token="8443" value="7143"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8080" value="${tomee.http.port}"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8443" value="${tomee.ssl.port}"/>
                 <replace file="${openejb.home}/conf/server.xml" token="8005" value="${tomee.shutdown.port}"/>
-                <replace file="${openejb.home}/conf/server.xml" token="8009" value="7109"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}"/>
               </target>
             </configuration>
           </execution>
@@ -182,12 +195,12 @@
             <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
             <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
             <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
-            <org.jboss.testharness.host>http://localhost:${tomee.port}/openejb/ejb</org.jboss.testharness.host>
+            <org.jboss.testharness.host>http://localhost:${tomee.http.port}/openejb/ejb</org.jboss.testharness.host>
             <!--<org.jboss.testharness.outputDirectory>target</org.jboss.testharness.outputDirectory>-->
             <deleteArtifacts>true</deleteArtifacts>
 
             <!--<openejb.server.debug>true</openejb.server.debug>-->
-            <java.naming.provider.url>http://localhost:${tomee.port}/openejb/ejb</java.naming.provider.url>
+            <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
             <java.opts>-Xmx128m -XX:MaxPermSize=128m</java.opts>
