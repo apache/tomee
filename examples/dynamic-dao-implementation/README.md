@@ -7,6 +7,7 @@ OpenEBJ support EJB annotations on interfaces (in particular @Stateless and @Sin
 The interface has to be annotated with @PersistenceContext to define which EntityManager to use.
 
 Methods should respect these conventions:
+
   * void save(Foo foo): persist foo
   * Foo update(Foo foo): merge foo
   * void delete(Foo foo): remove foo, if foo is detached it tries to attach it
