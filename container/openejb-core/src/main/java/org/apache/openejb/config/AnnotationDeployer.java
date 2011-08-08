@@ -736,10 +736,14 @@ public class AnnotationDeployer implements DynamicDeployer {
 							}
 							
 							javax.resource.spi.ConfigProperty annotation = propertyDescriptor.getWriteMethod().getAnnotation(javax.resource.spi.ConfigProperty.class);
-							if (annotation == null && clazz.getDeclaredField(name) != null) {
-								// if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
-								annotation = clazz.getDeclaredField(name).getAnnotation(javax.resource.spi.ConfigProperty.class);
-							}
+                            if (annotation == null) {
+                                try {
+                                    // if there's no annotation on the setter, we'll try and scrape one off the field itself (assuming the same name)
+                                    annotation = clazz.getDeclaredField(name).getAnnotation(javax.resource.spi.ConfigProperty.class);
+                                } catch (Exception ignored) {
+                                    // no-op : getDeclaredField() throws exceptions and does not return null
+                                }
+                            }
 							
 							configProperty.setConfigPropertyName(name);
 							configProperty.setConfigPropertyType(getConfigPropertyType(annotation, type));
