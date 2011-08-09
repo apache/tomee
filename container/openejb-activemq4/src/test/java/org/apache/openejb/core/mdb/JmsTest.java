@@ -81,7 +81,7 @@ public class JmsTest extends TestCase {
         // start the resource adapter
         try {
             ra.start(bootstrapContext);
-        } catch (ResourceAdapterInternalException e) {
+        } catch (Exception e) {
             throw new OpenEJBException(e);
         }
         // Create a ConnectionFactory
