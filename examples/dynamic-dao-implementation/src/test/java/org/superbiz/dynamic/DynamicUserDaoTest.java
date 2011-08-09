@@ -141,8 +141,8 @@ public class DynamicUserDaoTest {
     @Stateless public static class Util {
         @PersistenceContext private EntityManager em;
 
-        public void remove(Object o) {
-            em.remove(o);
+        public void remove(User o) {
+            em.remove(em.find(User.class, o.getId()));
         }
 
         public void init() {
