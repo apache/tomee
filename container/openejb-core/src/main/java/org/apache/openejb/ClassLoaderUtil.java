@@ -19,7 +19,6 @@ package org.apache.openejb;
 import org.apache.openejb.core.TempClassLoader;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.UrlCache;
 
 import java.beans.Introspector;
@@ -29,13 +28,12 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
-import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 /**
  * @version $Revision$ $Date$
@@ -45,7 +43,7 @@ public class ClassLoaderUtil {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, ClassLoaderUtil.class);
     private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
     private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
-    private static final UrlCache urlCache = new UrlCache();
+    private static final UrlCache localUrlCache = new UrlCache();
 
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
@@ -58,15 +56,15 @@ public class ClassLoaderUtil {
     }
 
     public static File getUrlCachedName(String appId, URL url) {
-        return urlCache.getUrlCachedName(appId, url);
+        return localUrlCache.getUrlCachedName(appId, url);
     }
 
     public static boolean isUrlCached(String appId, URL url) {
-        return urlCache.isUrlCached(appId, url);
+        return localUrlCache.isUrlCached(appId, url);
     }
 
     public static URLClassLoader createClassLoader(String appId, URL[] urls, ClassLoader parent) {
-        urls = urlCache.cacheUrls(appId, urls);
+        urls = localUrlCache.cacheUrls(appId, urls);
         URLClassLoader classLoader = new URLClassLoader(urls, parent);
 
         List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
@@ -264,7 +262,7 @@ public class ClassLoaderUtil {
             }
         }
 
-        urlCache.releaseUrls(appId);
+        localUrlCache.releaseUrls(appId);
         clearSunJarFileFactoryCache(appId);
     }
 
@@ -308,111 +306,95 @@ public class ClassLoaderUtil {
      * @param jarLocation String
      * @param attempt     int
      */
-    private static void clearSunJarFileFactoryCacheImpl(final String jarLocation, final int attempt) {
+    @SuppressWarnings({"unchecked"})
+    private static synchronized void clearSunJarFileFactoryCacheImpl(final String jarLocation, final int attempt) {
         logger.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
 
         try {
             final Class jarFileFactory = Class.forName("sun.net.www.protocol.jar.JarFileFactory");
 
-            synchronized (jarFileFactory) {
+            //Do not generify these maps as their contents are NOT stable across runtimes.
+            final Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
+            fileCacheField.setAccessible(true);
+            final Map fileCache = (Map) fileCacheField.get(null);
+            final Map fileCacheCopy = new HashMap(fileCache);
 
-                Field fileCacheField = jarFileFactory.getDeclaredField("fileCache");
+            final Field urlCacheField = jarFileFactory.getDeclaredField("urlCache");
+            urlCacheField.setAccessible(true);
+            final Map urlCache = (Map) urlCacheField.get(null);
+            final Map urlCacheCopy = new HashMap(urlCache);
 
-                fileCacheField.setAccessible(true);
-                Map fileCache = (Map) fileCacheField.get(null);
+            //The only stable item we have here is the JarFile/ZipFile in this map
+            Iterator iterator = urlCacheCopy.entrySet().iterator();
+            final List urlCacheRemoveKeys = new ArrayList();
 
-                Field urlCacheField = jarFileFactory.getDeclaredField("urlCache");
-                urlCacheField.setAccessible(true);
-                Map ucf = (Map) urlCacheField.get(null);
+            while (iterator.hasNext()) {
+                final Map.Entry entry = (Map.Entry) iterator.next();
+                final Object key = entry.getKey();
 
-                List<URL> urls = new ArrayList<URL>();
-                File file;
-                URL url;
-
-                final Set keys = new HashSet(fileCache.keySet());
-                for (final Object item : keys) {
-
-                    //Due to several different implementation changes in various JDK releases
-                    //the 'item' can be one of the following (so far):
-                    //1. A URL that points to a file.
-                    //2. An ASCII String URI that points to a file
-                    //3. A String that is used as a key to a JarFile
-
-                    url = null;
-
-                    if (item instanceof URL) {
-                        url = (URL) item;
-                    } else if (item instanceof String) {
-
-                        JarFile jf = (JarFile) fileCache.get(item);
-
-                        if (null != jf) {
-                            url = (URL) ucf.get(jf);
-                            jf.close();
-                        } else {
-                            //This may now also be a plain ASCII URI in later JDKs
-                            try {
-                                url = new URI((String) item).toURL();
-                            } catch (Exception e) {
-                                logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " from Sun JarFileFactory cache, skipping");
-                                continue;
-                            }
-                        }
-
-                    } else {
-                        logger.warning("Don't know how to handle object: " + item.toString() + " of type: " + item.getClass().getCanonicalName() + " in Sun JarFileFactory cache, skipping");
-                        continue;
+                if (key instanceof ZipFile) {
+                    final ZipFile zf = (ZipFile) key;
+                    final File file = new File(zf.getName());  //getName returns File.getPath()
+                    if (isParent(jarLocation, file)) {
+                        //Flag for removal
+                        urlCacheRemoveKeys.add(key);
                     }
-
-                    file = null;
-                    try {
-                        file = URLs.toFile(url);
-                    } catch (IllegalArgumentException e) {
-                        //unknown kind of url
-                        return;
-                    }
-
-                    if (null != file && null != url && isParent(jarLocation, file)) {
-                        urls.add(url);
-                    }
+                } else {
+                    logger.warning("Unexpected key type: " + key);
                 }
+            }
 
-                JarFile jarFile;
-                String key;
-                for (final URL jar : urls) {
+            iterator = fileCacheCopy.entrySet().iterator();
+            final List fileCacheRemoveKeys = new ArrayList();
 
-                    //Fudge together a sun.net.www.protocol.jar.JarFileFactory compatible key option...
-                    key = ("file:///" + new File(URI.create(jar.toString())).getAbsolutePath().replace('\\', '/'));
-                    jarFile = (JarFile) fileCache.remove(key);
+            while (iterator.hasNext()) {
+                final Map.Entry entry = (Map.Entry) iterator.next();
+                final Object value = entry.getValue();
 
-                    if (jarFile == null) {
+                if (urlCacheRemoveKeys.contains(value)) {
+                    fileCacheRemoveKeys.add(entry.getKey());
+                }
+            }
 
-                        //Try next known option...
-                        key = jar.toExternalForm();
-                        jarFile = (JarFile) fileCache.remove(key);
+            //Use these unstable values as the keys for the fileCache values.
+            iterator = fileCacheRemoveKeys.iterator();
+            while (iterator.hasNext()) {
 
-                        if (jarFile == null) {
+                final Object next = iterator.next();
 
-                            //Try next known option...
-                            jarFile = (JarFile) fileCache.remove(jar);
-
-                            if (jarFile == null) {
-                                //To be continued...
-                                //If you find another 'fileCache.remove(?)' option then add it here.
-                                continue;
-                            }
-                        }
+                try {
+                    final Object remove = fileCache.remove(next);
+                    if (null != remove) {
+                        logger.debug("Removed item from fileCache: " + remove);
                     }
+                } catch (Throwable e) {
+                    logger.warning("Failed to remove item from fileCache: " + next);
+                }
+            }
 
-                    ucf.remove(jarFile);
+            iterator = urlCacheRemoveKeys.iterator();
+            while (iterator.hasNext()) {
+
+                final Object next = iterator.next();
+
+                try {
+                    final Object remove = urlCache.remove(next);
 
                     try {
-                        jarFile.close();
+                        ((ZipFile) next).close();
                     } catch (Throwable e) {
                         //Ignore
                     }
+
+                    if (null != remove) {
+                        logger.debug("Removed item from urlCache: " + remove);
+                    }
+                } catch (Throwable e) {
+                    logger.warning("Failed to remove item from urlCache: " + next);
                 }
+
             }
+
         } catch (ConcurrentModificationException e) {
             if (attempt > 0) {
                 clearSunJarFileFactoryCacheImpl(jarLocation, (attempt - 1));
