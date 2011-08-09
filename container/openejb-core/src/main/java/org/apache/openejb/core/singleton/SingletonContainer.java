@@ -284,13 +284,13 @@ public class SingletonContainer implements RpcContainer {
             try {
                 lockAcquired = lock.tryLock(accessTimeout.getTime(), accessTimeout.getUnit());
             } catch (InterruptedException e) {
-                throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException().initCause(e);
+                throw (ConcurrentAccessTimeoutException) new ConcurrentAccessTimeoutException("Unable to get lock within specified time on: " + instance).initCause(e);
             }
         }
 
         // Did we acquire the lock to the current execution?
         if (!lockAcquired) {
-            throw new ConcurrentAccessTimeoutException("Unable to get lock.");
+            throw new ConcurrentAccessTimeoutException("Unable to get lock on: " + instance);
         }
 
         return lock;
