@@ -91,8 +91,11 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
         requestContext.remove();
         sessionContext.set(null);
         sessionContext.remove();
-        conversationContext.set(null);
-        conversationContext.remove();
+
+        if (null != conversationContext) {
+            conversationContext.set(null);
+            conversationContext.remove();
+        }
 
     }
 
@@ -235,8 +238,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
 //        singletonContext.remove();
 
         //Conversation context
-        conversationContext.set(null);
-        conversationContext.remove();
+        if (null != conversationContext) {
+            conversationContext.set(null);
+            conversationContext.remove();
+        }
     }
 
     /**
@@ -338,8 +343,10 @@ public class CdiAppContextsService extends AbstractContextsService implements Co
             context.destroy();
         }
 
-        conversationContext.set(null);
-        conversationContext.remove();
+        if (null != conversationContext) {
+            conversationContext.set(null);
+            conversationContext.remove();
+        }
     }
 
 
