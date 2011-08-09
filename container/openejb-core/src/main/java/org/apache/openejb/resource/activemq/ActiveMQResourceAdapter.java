@@ -16,6 +16,9 @@
  */
 package org.apache.openejb.resource.activemq;
 
+import org.apache.activemq.broker.BrokerService;
+import org.apache.kahadb.util.Scheduler;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.URISupport;
 
 import javax.resource.spi.BootstrapContext;
@@ -25,8 +28,6 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-import org.apache.activemq.broker.BrokerService;
-import org.apache.openejb.util.LogCategory;
 
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
 
@@ -45,7 +46,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         this.useDatabaseLock = useDatabaseLock;
     }
 
-//   DMB:  Work in progress.  These all should go into the service-jar.xml
+    //   DMB:  Work in progress.  These all should go into the service-jar.xml
 //   Sources of info:
 //         - http://activemq.apache.org/resource-adapter-properties.html
 //         - http://activemq.apache.org/camel/maven/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html
@@ -188,8 +189,8 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         stopThread.start();
 
         try {
-            //Block for a maximum of 5 seconds waiting for this thread to die.
-            stopThread.join(5000);
+            //Block for a maximum of 10 seconds waiting for this thread to die.
+            stopThread.join(10000);
         } catch (InterruptedException ex) {
             org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").warning("Gave up on ActiveMQ shutdown", ex);
             return;
@@ -213,6 +214,8 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
 
             it.remove();
         }
+
+        Scheduler.shutdown();
 
         org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources").info("Stopped ActiveMQ");
     }
