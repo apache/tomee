@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.persistence;
 
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -238,10 +240,7 @@ public class JtaEntityManager implements EntityManager {
     public boolean contains(Object entity) {
         final Timer timer = Op.contains.start(this);
         try {
-            if (!extended &&  !isTransactionActive()) {
-                return false;
-            }
-            return getEntityManager().contains(entity);
+            return !(!extended && !isTransactionActive()) && getEntityManager().contains(entity);
         } finally {
             timer.stop();
         }
@@ -322,9 +321,28 @@ public class JtaEntityManager implements EntityManager {
         }
     }
 
+    public boolean isContainerManaged() {
+        ThreadContext threadContext = ThreadContext.getThreadContext();
+        if (threadContext == null) {
+            return false;
+        }
+
+        BeanContext di = threadContext.getBeanContext();
+        return di != null && di.isBeanManagedTransaction();
+    }
+
     public void close() {
         if (logger.isDebugEnabled()) {
             logger.debug("PersistenceUnit(name=" + unitName + ") - entityManager.close() call ignored - not applicable to a JTA Managed EntityManager",  new Exception().fillInStackTrace());
+        }
+
+        if (isContainerManaged()) {
+            // with OpenJPA or ElcipseLink or Hibernate
+            // if a method is closed after close() invocation
+            // it throws an IllegalStateException which is spec compliant
+            getEntityManager().close();
+        } else {
+            throw new IllegalStateException("PersistenceUnit(name=" + unitName + ") - entityManager.close() call - See JPA 2.0 section 7.9.1", new Exception().fillInStackTrace());
         }
     }
 
