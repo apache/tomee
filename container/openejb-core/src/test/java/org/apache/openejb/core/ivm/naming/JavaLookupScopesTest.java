@@ -69,7 +69,7 @@ public class JavaLookupScopesTest extends TestCase {
             app = assembler.createApplication(config.configureApplication(module));
         }
 
-        BeanContext bean = app.getDeployments().get(0);
+        BeanContext bean = app.getBeanContexts().get(0);
 
         ModuleContext module = bean.getModuleContext();
 
