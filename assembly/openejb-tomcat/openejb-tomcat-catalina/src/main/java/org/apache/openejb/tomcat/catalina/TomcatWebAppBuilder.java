@@ -28,6 +28,7 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.valves.ValveBase;
@@ -223,6 +224,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
+                standardContext.setNamingResources(new OpenEJBNamingResource());
+
                 String s = File.pathSeparator;
                 File contextXmlFile = new File(webApp.path + s + "META-INF" + s + "context.xml");
                 if (contextXmlFile.exists()) {
@@ -357,6 +360,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         }
 
         if (webAppInfo != null) {
+            if (appContext == null) {
+                appContext = getContainerSystem().getAppContext(contextInfo.appInfo.appId);
+            }
+
             try {
                 // determind the injections
                 InjectionBuilder injectionBuilder = new InjectionBuilder(standardContext.getLoader().getClassLoader());
