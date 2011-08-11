@@ -968,13 +968,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         destroyApplication(appInfo);
     }
 
+    public void destroyApplication(AppContext appContext) throws UndeployException {
+        final AppInfo appInfo = deployedApplications.remove(appContext.getId());
+        destroyApplication(appInfo, appContext);
+    }
+
     public void destroyApplication(AppInfo appInfo) throws UndeployException {
+        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+        destroyApplication(appInfo, appContext);
+    }
+
+    private void destroyApplication(final AppInfo appInfo, final AppContext appContext) throws UndeployException {
+        assert appInfo != null;
+        assert appContext != null;
+
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
 
         fireBeforeApplicationDestroyed(appInfo);
-
-        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
         for (AppInfo info : deployedApplications.values()) {
