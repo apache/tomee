@@ -46,6 +46,7 @@
       javax.xml.registry*;resolution:=optional,
       javax.xml.rpc*;resolution:=optional,
       org.apache.activemq*;resolution:=optional,
+      org.apache.kahadb*;resolution:=optional,
       org.apache.catalina*;resolution:=optional,
       org.apache.commons.dbcp*;resolution:=optional,
       org.apache.xerces*;resolution:=optional,
