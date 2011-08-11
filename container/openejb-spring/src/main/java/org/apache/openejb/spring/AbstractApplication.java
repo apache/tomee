@@ -111,7 +111,7 @@ public abstract class AbstractApplication implements ApplicationContextAware {
         for (AppInfo appInfo : appInfos) {
             try {
                 AppContext appContext = assembler.createApplication(appInfo, assembler.createAppClassLoader(appInfo), true);
-				List<BeanContext> deployments = appContext.getDeployments();
+				List<BeanContext> deployments = appContext.getBeanContexts();
                 if (export) {
                     for (BeanContext deployment : deployments) {
                         JndiNameStrategy strategy = createStrategy(appInfo, deployments, deployment);

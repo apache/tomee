@@ -49,7 +49,7 @@ public class AppContext extends DeploymentContext {
     private ExecutorService asynchPool;
 
     // TODO perhaps to be deleted
-    private final List<BeanContext> deployments = new ArrayList<BeanContext>();
+    private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
     private final List<WebContext> webcontexts = new ArrayList<WebContext>();
 
     public AppContext(String id, SystemInstance systemInstance, ClassLoader classLoader, Context globalJndiContext, Context appJndiContext, boolean standaloneModule) {
@@ -88,8 +88,13 @@ public class AppContext extends DeploymentContext {
         return classLoader;
     }
 
+    @Deprecated
     public List<BeanContext> getDeployments() {
-        return deployments;
+        return getBeanContexts();
+    }
+
+    public List<BeanContext> getBeanContexts() {
+        return beanContexts;
     }
 
     public SystemInstance getSystemInstance() {

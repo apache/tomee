@@ -60,7 +60,7 @@ public class GlobalLookupScopesTest extends TestCase {
         AppContext squareApp = createApp("square", config, assembler);
 
         {
-            BeanContext bean = squareApp.getDeployments().get(0);
+            BeanContext bean = squareApp.getBeanContexts().get(0);
 
             Context context = bean.getJndiContext();
 
