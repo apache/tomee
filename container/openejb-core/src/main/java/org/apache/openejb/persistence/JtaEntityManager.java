@@ -106,7 +106,14 @@ public class JtaEntityManager implements EntityManager {
     }
 
     public EntityManager getDelegate() {
-        return getEntityManager();
+        final Timer timer = Op.getDelegate.start(this);
+        try {
+            EntityManager em = getEntityManager();
+            em.getDelegate(); // exception if not open etc... to respect the spec
+            return em;
+        } finally {
+            timer.stop();
+        }
     }
 
     public void persist(Object entity) {
@@ -316,8 +323,11 @@ public class JtaEntityManager implements EntityManager {
     }
 
     public void joinTransaction() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("PersistenceUnit(name=" + unitName + ") - entityManager.joinTransaction() call ignored - not applicable to a JTA Managed EntityManager",  new Exception().fillInStackTrace());
+        final Timer timer = Op.joinTransaction.start(this);
+        try {
+            getDelegate().joinTransaction();
+        } finally {
+            timer.stop();
         }
     }
 
@@ -612,7 +622,7 @@ public class JtaEntityManager implements EntityManager {
     }
 
     private static enum Op {
-        clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel;
+        clear, close, contains, createNamedQuery, createNativeQuery, createQuery, find, flush, getFlushMode, getReference, getTransaction, lock, merge, refresh, remove, setFlushMode, persist, detach, getLockMode, unwrap, setProperty, getCriteriaBuilder, getProperties, getMetamodel, joinTransaction, getDelegate;
 
         public Timer start(JtaEntityManager em) {
             return new Timer(this, em);
