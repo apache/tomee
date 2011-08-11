@@ -16,6 +16,7 @@
  */
 package org.apache.openejb;
 
+import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
 import org.apache.openejb.cdi.OWBInjector;
@@ -622,6 +623,13 @@ public class BeanContext extends DeploymentContext {
         return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces, this.beanClass);
     }
 
+    public BusinessLocalHome getBusinessLocalHome(Class mainInterface) {
+        List<Class> localInterfaces = this.getBusinessLocalInterfaces();
+
+        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, localInterfaces);
+        return this.getBusinessLocalHome(interfaces, mainInterface);
+    }
+    
     public BusinessLocalHome getBusinessLocalHome(List<Class> interfaces, Class mainInterface) {
         if (getBusinessLocalInterfaces().size() == 0){
             throw new IllegalStateException("This component has no business local interfaces: " + getDeploymentID());
@@ -643,6 +651,13 @@ public class BeanContext extends DeploymentContext {
         return getBusinessRemoteHome(getBusinessRemoteInterfaces(), null);
     }
 
+    public BusinessRemoteHome getBusinessRemoteHome(Class mainInterface) {
+        List<Class> remoteInterfaces = this.getBusinessRemoteInterfaces();
+
+        List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(this.getBeanClass(), mainInterface, remoteInterfaces);
+        return this.getBusinessRemoteHome(interfaces, mainInterface);
+    }
+    
     public BusinessRemoteHome getBusinessRemoteHome(List<Class> interfaces, Class mainInterface) {
         if (getBusinessRemoteInterfaces().size() == 0){
             throw new IllegalStateException("This component has no business remote interfaces: " + getDeploymentID());

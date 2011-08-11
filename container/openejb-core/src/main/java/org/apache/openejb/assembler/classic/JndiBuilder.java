@@ -413,13 +413,10 @@ public class JndiBuilder {
         }
 
         try {
-            List<Class> localInterfaces = bean.getBusinessLocalInterfaces();
-            Class beanClass = bean.getBeanClass();
 
             for (Class interfce : bean.getBusinessLocalInterfaces()) {
 
-                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, localInterfaces);
-                BeanContext.BusinessLocalHome home = bean.getBusinessLocalHome(interfaces, interfce);
+                BeanContext.BusinessLocalHome home = bean.getBusinessLocalHome(interfce);
                 BusinessLocalReference ref = new BusinessLocalReference(home);
 
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), interfce.getName()));
@@ -439,13 +436,9 @@ public class JndiBuilder {
 
         try {
 
-            List<Class> remoteInterfaces = bean.getBusinessRemoteInterfaces();
-            Class beanClass = bean.getBeanClass();
-
             for (Class interfce : bean.getBusinessRemoteInterfaces()) {
 
-                List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanClass, interfce, remoteInterfaces);
-                BeanContext.BusinessRemoteHome home = bean.getBusinessRemoteHome(interfaces, interfce);
+                BeanContext.BusinessRemoteHome home = bean.getBusinessRemoteHome(interfce);
                 BusinessRemoteReference ref = new BusinessRemoteReference(home);
 
                 optionalBind(bindings, ref, "openejb/Deployment/" + format(bean.getDeploymentID(), interfce.getName(), null));
