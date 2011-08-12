@@ -14,33 +14,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.cdi.example;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.superbiz.cdi.basic;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 
-public class Faculty {
-    private List<String> facultyMembers;
-    private String facultyName;
+@Stateless
+public class Course {
+
+    @Inject
+    private Faculty faculty;
+
+    private String courseName;
+
+    private int capacity;
+
     @PostConstruct
-    public void initialize() {
-        setFacultyMembers(new ArrayList<String>());
-        getFacultyMembers().add("Ian Schultz");
-        getFacultyMembers().add("Diane Reyes");
-        facultyName = "Computer Science";
+    private void init() {
+        assert faculty != null;
+
+        // These strings can be externalized
+        // We'll see how to do that later
+        this.courseName = "CDI 101 - Introduction to CDI";
+        this.capacity = 100;
     }
-    public List<String> getFacultyMembers() {
-        return facultyMembers;
+
+    public String getCourseName() {
+        return courseName;
     }
-    public void setFacultyMembers(List<String> facultyMembers) {
-        this.facultyMembers = facultyMembers;
+
+    public int getCapacity() {
+        return capacity;
     }
-    public String getFacultyName() {
-        return facultyName;
-    }
-    public void setFacultyName(String facultyName) {
-        this.facultyName = facultyName;
+
+    public Faculty getFaculty() {
+        return faculty;
     }
 }
