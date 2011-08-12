@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.cdi.example;
+package org.superbiz.cdi.basic;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
@@ -24,18 +24,32 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 
-public class UndergradCourseTest extends TestCase {
+public class CourseTest extends TestCase {
+
     @EJB
-    Course csCourse;
+    private Course course;
+
     @Before
     public void setUp() throws Exception {
-        Object object = EJBContainer.createEJBContainer().getContext().lookup("java:global/cdi-example/CsUndergradCourse!org.superbiz.cdi.example.Course");
-        assertTrue(object instanceof Course);
-        csCourse = (Course) object;
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
     }
+
     @Test
-    public void testPostConstruct() {
-        assertTrue(csCourse != null);
-        assertEquals(csCourse.getFaculty().getFacultyName(), "Computer Science");
+    public void test() {
+
+        // Was the EJB injected?
+        assertTrue(course != null);
+
+        // Was the Course @PostConstruct called?
+        assertNotNull(course.getCourseName());
+        assertTrue(course.getCapacity() > 0);
+
+        // Was a Faculty instance injected into Course?
+        final Faculty faculty = course.getFaculty();
+        assertTrue(faculty != null);
+
+        // Was the @PostConstruct called on Faculty?
+        assertEquals(faculty.getFacultyName(), "Computer Science");
+        assertEquals(faculty.getFacultyMembers().size(), 2);
     }
 }
