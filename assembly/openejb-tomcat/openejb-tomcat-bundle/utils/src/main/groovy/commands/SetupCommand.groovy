@@ -122,7 +122,7 @@ class SetupCommand {
 			source = "http://archive.apache.org/dist/tomcat/tomcat-5/v${tomcatVersion}/bin/apache-tomcat-${tomcatVersion}.zip"
 		}
 
-		ant.get(src: source, dest: dest)
+//		ant.get(src: source, dest: dest)
 
 		ant.unzip(src: dest, dest: "${project.build.directory}")
 
