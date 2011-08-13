@@ -962,23 +962,20 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     public void destroyApplication(AppContext appContext) throws UndeployException {
-        final AppInfo appInfo = deployedApplications.remove(appContext.getId());
-        destroyApplication(appInfo, appContext);
+        AppInfo appInfo = deployedApplications.remove(appContext.getId());
+        if (appInfo == null) {
+            throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
+        }
+        destroyApplication(appInfo);
     }
 
     public void destroyApplication(AppInfo appInfo) throws UndeployException {
-        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
-        destroyApplication(appInfo, appContext);
-    }
-
-    private void destroyApplication(final AppInfo appInfo, final AppContext appContext) throws UndeployException {
-        if (appInfo != null) throw new NullPointerException("appInfo cannot be null");
-        if (appContext != null) throw new NullPointerException("appContext cannot be null");
-
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
 
         fireBeforeApplicationDestroyed(appInfo);
+
+        final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
 
         EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
         for (AppInfo info : deployedApplications.values()) {
