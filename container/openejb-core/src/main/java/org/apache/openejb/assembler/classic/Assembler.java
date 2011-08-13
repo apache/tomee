@@ -972,8 +972,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyApplication(final AppInfo appInfo, final AppContext appContext) throws UndeployException {
-        assert appInfo != null;
-        assert appContext != null;
+        if (appInfo != null) throw new NullPointerException("appInfo cannot be null");
+        if (appContext != null) throw new NullPointerException("appContext cannot be null");
 
         deployedApplications.remove(appInfo.path);
         logger.info("destroyApplication.start", appInfo.path);
