@@ -17,6 +17,8 @@
 package org.apache.openejb.loader;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -24,8 +26,8 @@ import java.security.PrivilegedAction;
 
 public abstract class BasicURLClassPath implements ClassPath {
     public static ClassLoader getContextClassLoader() {
-        return (ClassLoader) java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
-            public Object run() {
+        return java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<ClassLoader>() {
+            public ClassLoader run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
@@ -34,7 +36,27 @@ public abstract class BasicURLClassPath implements ClassPath {
     private java.lang.reflect.Field ucpField;
 
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
-        this.getURLClassPath(loader).addURL(jar);
+        Object cp = getURLClassPath(loader);
+        Method addURLMethod = getAddURLMethod(loader);
+        addURLMethod.invoke(cp, new URL[] { jar });
+    }
+
+    private Method getAddURLMethod(final URLClassLoader loader) {
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                Object cp;
+                try {
+                    cp = getURLClassPath(loader);
+                    Class<?> clazz = cp.getClass();
+                    return clazz.getDeclaredMethod("addURL", URL.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+        });
     }
 
     protected void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
@@ -52,22 +74,21 @@ public abstract class BasicURLClassPath implements ClassPath {
             jars[j] = new File(dir, jarNames[j]).toURI().toURL();
         }
 
-        sun.misc.URLClassPath path = getURLClassPath(loader);
-        for (int i = 0; i < jars.length; i++) {
-
-            path.addURL(jars[i]);
+        Object cp = getURLClassPath(loader);
+        Method addURLMethod = getAddURLMethod(loader);
+        for (URL jar : jars) {
+            addURLMethod.invoke(cp, new URL[] { jar });
         }
     }
 
-    protected sun.misc.URLClassPath getURLClassPath(URLClassLoader loader) throws Exception {
-        return (sun.misc.URLClassPath) getUcpField().get(loader);
+    protected Object getURLClassPath(URLClassLoader loader) throws Exception {
+        return getUcpField().get(loader);
     }
 
     private java.lang.reflect.Field getUcpField() throws Exception {
         if (ucpField == null) {
-
-            ucpField = (java.lang.reflect.Field) AccessController.doPrivileged(new PrivilegedAction() {
-                public Object run() {
+            ucpField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
+                public Field run() {
                     java.lang.reflect.Field ucp = null;
                     try {
                         ucp = URLClassLoader.class.getDeclaredField("ucp");

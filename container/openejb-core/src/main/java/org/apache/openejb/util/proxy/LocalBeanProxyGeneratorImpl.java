@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,18 +39,50 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 
     static final String BUSSINESS_HANDLER_NAME = "businessHandler";    
     static final String NON_BUSINESS_HANDLER_NAME = "nonBusinessHandler";
-    
-    private static final sun.misc.Unsafe unsafe;
+
+    // sun.misc.Unsafe
+    private static final Object unsafe;
+    private static final Method defineClass;
 
     static {
-        unsafe = (sun.misc.Unsafe) AccessController.doPrivileged(new PrivilegedAction() {
+        final Class<?> unsafeClass;
+        try {
+            unsafeClass = AccessController.doPrivileged(new PrivilegedAction<Class<?>>() {
+                public Class<?> run() {
+                    try {
+                        return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
+                    } catch (Exception e) {
+                        try {
+                            return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
+                        } catch (ClassNotFoundException e1) {
+                            throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
+        }
+
+        unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
-                    Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                    Field field = unsafeClass.getDeclaredField("theUnsafe");
                     field.setAccessible(true);
                     return field.get(null);
                 } catch (Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
+                }
+            }
+        });
+        defineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ClassLoader.class, ProtectionDomain.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.defineClass", e);
                 }
             }
         });
@@ -74,8 +107,8 @@ public class LocalBeanProxyGeneratorImpl implements LocalBeanProxyGenerator, Opc
 
         try {
             byte[] proxyBytes = generateProxy(clsToProxy, clsName);
-            return (Class<?>) unsafe.defineClass(proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
-        } catch (ProxyGenerationException e) {
+            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getClassLoader(), clsToProxy.getProtectionDomain());
+        } catch (Exception e) {
             throw new InternalError(e.toString());
         }
     }
