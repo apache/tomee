@@ -165,12 +165,12 @@ public class TomcatJndiBuilder {
             naming.addEnvironment(environment);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeEnvironment(environment.getName());
             namingContextListener.addEnvironment(environment);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     public void mergeRef(NamingResources naming, EjbReferenceInfo ref) {
@@ -205,12 +205,12 @@ public class TomcatJndiBuilder {
             naming.addEjb(ejb);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeEjb(ejb.getName());
             namingContextListener.addEjb(ejb);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     public void mergeRef(NamingResources naming, EjbLocalReferenceInfo ref) {
@@ -244,12 +244,12 @@ public class TomcatJndiBuilder {
             naming.addEjb(ejb);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeEjb(ejb.getName());
             namingContextListener.addEjb(ejb);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -296,12 +296,12 @@ public class TomcatJndiBuilder {
             naming.addResource(resource);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeResource(resource.getName());
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -341,12 +341,12 @@ public class TomcatJndiBuilder {
             naming.addResource(resource);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeResource(resource.getName());
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     public void mergeRef(NamingResources naming, ResourceReferenceInfo ref) {
@@ -380,12 +380,12 @@ public class TomcatJndiBuilder {
             naming.addResource(resource);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeResource(resource.getName());
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     public void mergeRef(NamingResources naming, ResourceEnvReferenceInfo ref) {
@@ -419,12 +419,12 @@ public class TomcatJndiBuilder {
             naming.addResourceEnvRef(resourceEnv);
         }
 
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeResourceEnvRef(resourceEnv.getName());
             namingContextListener.addResourceEnvRef(resourceEnv);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     public void mergeRef(NamingResources naming, ServiceReferenceInfo ref) {
@@ -510,12 +510,12 @@ public class TomcatJndiBuilder {
         }
 
         // or replace the exisitng resource entry
-        /*if (replaceEntry) {
+        if (replaceEntry) {
             ContextAccessController.setWritable(namingContextListener.getName(), standardContext);
             if (!addEntry) namingContextListener.removeResource(resource.getName());
             namingContextListener.addResource(resource);
             ContextAccessController.setReadOnly(namingContextListener.getName());
-        }*/
+        }
     }
 
     private URL getWsdlUrl(ServiceReferenceInfo ref) {
