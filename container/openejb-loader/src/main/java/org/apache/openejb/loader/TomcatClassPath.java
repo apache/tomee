@@ -151,10 +151,29 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
     }
 
+    private Method getGetURLsMethod() {
+
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+
+            public Method run() {
+                try {
+                    Object cp = getURLClassPath((URLClassLoader) getClassLoader());
+                    Class<?> clazz = cp.getClass();
+                    return clazz.getDeclaredMethod("getURLs", URL.class);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        });
+    }
+
     protected void rebuild() {
         try {
-            sun.misc.URLClassPath cp = getURLClassPath((URLClassLoader) getCommonLoader());
-            URL[] urls = cp.getURLs();
+            Object cp = getURLClassPath((URLClassLoader) getClassLoader());
+            Method getURLsMethod = getGetURLsMethod();
+            URL[] urls = (URL[])getURLsMethod.invoke(cp, null);
 
             if (urls.length < 1)
                 return;
@@ -185,7 +204,6 @@ public class TomcatClassPath extends BasicURLClassPath {
                     Class clazz = URLClassLoader.class;
                     method = clazz.getDeclaredMethod("addURL", URL.class);
                     method.setAccessible(true);
-                    return method;
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }

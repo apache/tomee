@@ -16,10 +16,13 @@
  */
 package org.apache.openejb.loader;
 
+import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.io.File;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /*-------------------------------------------------------*/
 /* System ClassLoader Support */
@@ -56,27 +59,47 @@ public class SystemClassPath extends BasicURLClassPath {
     }
 
     private void rebuildJavaClassPathVariable() throws Exception {
-        sun.misc.URLClassPath cp = getURLClassPath(getSystemLoader());
-        URL[] urls = cp.getURLs();
+        URLClassLoader loader = getSystemLoader();
+        Object cp = getURLClassPath(loader);
+        Method getURLsMethod = getGetURLsMethod();
+        URL[] urls = (URL[]) getURLsMethod.invoke(cp);
 
         if (urls.length < 1)
             return;
 
-        StringBuffer path = new StringBuffer(urls.length * 32);
+        StringBuilder path = new StringBuilder(urls.length * 32);
 
-        File s = new File(URLDecoder.decode(urls[0].getFile()));
+        File s = new File(URLDecoder.decode(urls[0].getFile(), "UTF-8"));
         path.append(s.getPath());
 
         for (int i = 1; i < urls.length; i++) {
             path.append(File.pathSeparator);
 
-            s = new File(URLDecoder.decode(urls[i].getFile()));
+            s = new File(URLDecoder.decode(urls[i].getFile(), "UTF-8"));
 
             path.append(s.getPath());
         }
         try {
             System.setProperty("java.class.path", path.toString());
         } catch (Exception e) {
+            // no-op
         }
+    }
+
+    private Method getGetURLsMethod() {
+        return AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    URLClassLoader loader = getSystemLoader();
+                    Object cp = getURLClassPath(loader);
+                    Class<?> clazz = cp.getClass();
+                    return clazz.getDeclaredMethod("getURLs", URL.class);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        });
     }
 }

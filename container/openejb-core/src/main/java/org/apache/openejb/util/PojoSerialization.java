@@ -21,7 +21,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.lang.Class;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -35,17 +37,169 @@ public class PojoSerialization implements Serializable {
 
     private Object object;
 
-    private static final sun.misc.Unsafe unsafe;
+    // sun.misc.Unsafe unsafe;
+    private static final Object unsafe;
+    private static final Method allocateInstance;
+    private static final Method objectFieldOffset;
+    private static final Method putInt;
+    private static final Method putLong;
+    private static final Method putShort;
+    private static final Method putChar;
+    private static final Method putByte;
+    private static final Method putFloat;
+    private static final Method putDouble;
+    private static final Method putBoolean;
+    private static final Method putObject;
 
     static {
-        unsafe = (sun.misc.Unsafe) AccessController.doPrivileged(new PrivilegedAction() {
+        final Class<?> unsafeClass;
+        try {
+            unsafeClass = AccessController.doPrivileged(new PrivilegedAction<Class<?>>() {
+                public Class<?> run() {
+                    try {
+                        return Thread.currentThread().getContextClassLoader().loadClass("sun.misc.Unsafe");
+                    } catch (Exception e) {
+                        try {
+                            return ClassLoader.getSystemClassLoader().loadClass("sun.misc.Unsafe");
+                        } catch (ClassNotFoundException e1) {
+                            throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot get sun.misc.Unsafe class", e);
+        }
+
+        unsafe = AccessController.doPrivileged(new PrivilegedAction<Object>() {
             public Object run() {
                 try {
-                    Field field = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+                    Field field = unsafeClass.getDeclaredField("theUnsafe");
                     field.setAccessible(true);
                     return field.get(null);
                 } catch (Exception e) {
                     throw new IllegalStateException("Cannot get sun.misc.Unsafe", e);
+                }
+            }
+        });
+        allocateInstance = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("allocateInstance", Class.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.allocateInstance", e);
+                }
+            }
+        });
+        objectFieldOffset = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("objectFieldOffset", Field.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.objectFieldOffset", e);
+                }
+            }
+        });
+        putInt = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putInt", Object.class, long.class, int.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putInt", e);
+                }
+            }
+        });
+        putLong = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putLong", Object.class, long.class, long.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putLong", e);
+                }
+            }
+        });
+        putShort = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putShort", Object.class, long.class, short.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putShort", e);
+                }
+            }
+        });
+        putChar = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putChar", Object.class, long.class, char.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putChar", e);
+                }
+            }
+        });
+        putByte = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putByte", Object.class, long.class, byte.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putByte", e);
+                }
+            }
+        });
+        putFloat = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putFloat", Object.class, long.class, float.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putFloat", e);
+                }
+            }
+        });
+        putDouble = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putDouble", Object.class, long.class, double.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putDouble", e);
+                }
+            }
+        });
+        putBoolean = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putBoolean", Object.class, long.class, boolean.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putBoolean", e);
+                }
+            }
+        });
+        putObject = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            public Method run() {
+                try {
+                    Method mtd = unsafeClass.getDeclaredMethod("putObject", Object.class, long.class, Object.class);
+                    mtd.setAccessible(true);
+                    return mtd;
+                } catch (Exception e) {
+                    throw new IllegalStateException("Cannot get sun.misc.Unsafe.putObject", e);
                 }
             }
         });
@@ -81,7 +235,7 @@ public class PojoSerialization implements Serializable {
 
         Object object;
         try {
-            object = unsafe.allocateInstance(clazz);
+            object = allocateInstance.invoke(unsafe, clazz);
         } catch (Exception e) {
             throw (IOException) new IOException("Cannot construct " + clazz.getName()).initCause(e);
         }
@@ -96,7 +250,7 @@ public class PojoSerialization implements Serializable {
                     try {
                         field = clazz.getDeclaredField(fieldName);
                     } catch (NoSuchFieldException e) {
-                        throw (IOException) new IOException("Cannot find field " + field.getName()).initCause(e);
+                        throw (IOException) new IOException("Cannot find field " + fieldName).initCause(e);
                     }
                     setValue(field, object, value);
                 }
@@ -143,34 +297,38 @@ public class PojoSerialization implements Serializable {
     private void setValue(Field field, Object object, Object value) {
         long offset;
         try {
-            offset = unsafe.objectFieldOffset(field);
+            offset = (Long) objectFieldOffset.invoke(unsafe, field);
         } catch (Exception e) {
             throw new IllegalStateException("Failed getting offset for: field=" + field.getName() + "  class=" + field.getDeclaringClass().getName(), e);
         }
 
         Class type = field.getType();
-        if (type.isPrimitive()) {
-            if (type.equals(Integer.TYPE)) {
-                unsafe.putInt(object, offset, ((Integer) value).intValue());
-            } else if (type.equals(Long.TYPE)) {
-                unsafe.putLong(object, offset, ((Long) value).longValue());
-            } else if (type.equals(Short.TYPE)) {
-                unsafe.putShort(object, offset, ((Short) value).shortValue());
-            } else if (type.equals(Character.TYPE)) {
-                unsafe.putChar(object, offset, ((Character) value).charValue());
-            } else if (type.equals(Byte.TYPE)) {
-                unsafe.putByte(object, offset, ((Byte) value).byteValue());
-            } else if (type.equals(Float.TYPE)) {
-                unsafe.putFloat(object, offset, ((Float) value).floatValue());
-            } else if (type.equals(Double.TYPE)) {
-                unsafe.putDouble(object, offset, ((Double) value).doubleValue());
-            } else if (type.equals(Boolean.TYPE)) {
-                unsafe.putBoolean(object, offset, ((Boolean) value).booleanValue());
+        try {
+            if (type.isPrimitive()) {
+                if (type.equals(Integer.TYPE)) {
+                    putInt.invoke(unsafe, object, offset, ((Integer) value).intValue());
+                } else if (type.equals(Long.TYPE)) {
+                    putLong.invoke(unsafe, object, offset, ((Long) value).longValue());
+                } else if (type.equals(Short.TYPE)) {
+                    putShort.invoke(unsafe, object, offset, ((Short) value).shortValue());
+                } else if (type.equals(Character.TYPE)) {
+                    putChar.invoke(unsafe, object, offset, ((Character) value).charValue());
+                } else if (type.equals(Byte.TYPE)) {
+                    putByte.invoke(unsafe, object, offset, ((Byte) value).byteValue());
+                } else if (type.equals(Float.TYPE)) {
+                    putFloat.invoke(unsafe, object, offset, ((Float) value).floatValue());
+                } else if (type.equals(Double.TYPE)) {
+                    putDouble.invoke(unsafe, object, offset, ((Double) value).doubleValue());
+                } else if (type.equals(Boolean.TYPE)) {
+                    putBoolean.invoke(unsafe, object, offset, ((Boolean) value).booleanValue());
+                } else {
+                    throw new IllegalStateException("Unknown primitive type: " + type.getName());
+                }
             } else {
-                throw new IllegalStateException("Unknown primitive type: " + type.getName());
+                putObject.invoke(unsafe, object, offset, value);
             }
-        } else {
-            unsafe.putObject(object, offset, value);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
