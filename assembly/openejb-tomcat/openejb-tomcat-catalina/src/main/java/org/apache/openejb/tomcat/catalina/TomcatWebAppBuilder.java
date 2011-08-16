@@ -256,7 +256,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     contextInfo.standardContext = standardContext;
                     deployer.manageApp(standardContext);
                 }
- value            }
+            }
         }
     }
 
