@@ -239,6 +239,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.setDocBase(webApp.path);
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
+                standardContext.setName(webApp.moduleId); // to have a better toString()
 
                 String host = webApp.host;
                 if (host == null) {
@@ -255,7 +256,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                     contextInfo.standardContext = standardContext;
                     deployer.manageApp(standardContext);
                 }
-            }
+ value            }
         }
     }
 
