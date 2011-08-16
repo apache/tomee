@@ -256,7 +256,7 @@ public class QueryProxy implements InvocationHandler {
                     throw new IllegalArgumentException("can't access field/method to get entity id");
                 }
 
-                entity = em.find(et.getJavaType(), idValue);
+                entity = em.getReference(et.getJavaType(), idValue);
                 if (entity == null) {
                     throw new IllegalArgumentException("entity " + entity + " is not managed and can't be found.");
                 }
