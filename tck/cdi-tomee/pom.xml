@@ -203,8 +203,9 @@
             <!--<openejb.server.debug>true</openejb.server.debug>-->
             <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
             <connect.tries>90</connect.tries>
+            <server.http.port>${tomee.http.port}</server.http.port>
             <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
-            <java.opts>-Xmx128m -XX:MaxPermSize=128m</java.opts>
+            <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
             <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
           </systemPropertyVariables>
         </configuration>
