@@ -49,7 +49,7 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public Set<String> getAllAnnotations(String className) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     @Override
@@ -179,8 +179,8 @@ public class CdiScanner implements ScannerService {
     }
 
     @Override
-    public Set<String> getBeanXmls() {
-        return Collections.EMPTY_SET; // Unused
+    public Set<URL> getBeanXmls() {
+        return Collections.emptySet(); // Unused
     }
 
     @Override
