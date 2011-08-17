@@ -239,7 +239,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.setDocBase(webApp.path);
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
-                standardContext.setName(webApp.moduleId); // to have a better toString()
+//                standardContext.setName(webApp.moduleId); // to have a better toString()
 
                 String host = webApp.host;
                 if (host == null) {
