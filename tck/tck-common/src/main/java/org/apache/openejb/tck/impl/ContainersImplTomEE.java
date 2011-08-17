@@ -55,7 +55,12 @@ public class ContainersImplTomEE implements Containers {
         final Options options = new Options(System.getProperties());
         Properties props = new Properties();
         props.put(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-        props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:7180/openejb/ejb"));
+        String port = System.getProperty("server.http.port");
+        if (port != null) {
+            props.put(Context.PROVIDER_URL, options.get(Context.PROVIDER_URL,"http://localhost:" + port + "/openejb/ejb"));
+        } else {
+            throw new RuntimeException("Please set the tomee port as a system property");
+        }
         try {
             InitialContext context = new InitialContext(props);
             return (Deployer) context.lookup("openejb/DeployerBusinessRemote");
