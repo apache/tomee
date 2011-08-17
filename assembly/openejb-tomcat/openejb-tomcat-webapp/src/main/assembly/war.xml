@@ -72,6 +72,7 @@
       <scope>runtime</scope>
       <excludes>
           <exclude>org.apache.tomcat:tomcat-catalina</exclude>
+          <exclude>org.apache.openejb:javaee-api</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

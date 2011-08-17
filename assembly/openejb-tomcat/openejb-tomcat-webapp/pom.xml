@@ -109,12 +109,6 @@
       <artifactId>openejb-tomcat-loader</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>javaee-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
