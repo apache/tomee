@@ -94,8 +94,16 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> {
         List<Class> interfaces = ProxyInterfaceResolver.getInterfaces(beanContext.getBeanClass(), mainInterface, classes);
         BeanContext.BusinessLocalHome home = beanContext.getBusinessLocalHome(interfaces, mainInterface);
 
-        beanContext.set(CreationalContext.class, creationalContext);
-        return (T) home.create();
+        CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
+
+        CreationalContext existing = currentCreationalContext.get();
+        try {
+            currentCreationalContext.set(creationalContext);
+
+            return (T) home.create();
+        } finally {
+            currentCreationalContext.set(existing);
+        }
     }
 
     @Override

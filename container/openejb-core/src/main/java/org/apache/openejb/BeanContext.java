@@ -19,6 +19,7 @@ package org.apache.openejb;
 import org.apache.openejb.assembler.classic.ProxyInterfaceResolver;
 import org.apache.openejb.cdi.CdiEjbBean;
 import org.apache.openejb.cdi.ConstructorInjectionBean;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.cdi.OWBInjector;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.InstanceContext;
@@ -1235,7 +1236,9 @@ public class BeanContext extends DeploymentContext {
             final Context ctx = this.getJndiEnc();
             final Class beanClass = this.getBeanClass();
 
-            CreationalContext<Object> creationalContext = get(CreationalContext.class);
+            CurrentCreationalContext<Object> currentCreationalContext = get(CurrentCreationalContext.class);
+            CreationalContext<Object> creationalContext = (currentCreationalContext != null) ? currentCreationalContext.get() : null;
+
             if (creationalContext == null && !isDynamicallyImplemented()) {
                 creationalContext = webBeansContext.getBeanManagerImpl().createCreationalContext(beanDefinition);
             }

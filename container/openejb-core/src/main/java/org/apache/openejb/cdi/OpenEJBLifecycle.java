@@ -249,7 +249,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
                 CdiEjbBean<Object> bean = new CdiEjbBean<Object>(beanContext, webBeansContext);
 
                 beanContext.set(CdiEjbBean.class, bean);
-
+                beanContext.set(CurrentCreationalContext.class, new CurrentCreationalContext());
                 beanContext.addSystemInterceptor(new CdiInterceptor(bean, beanManager, cdiPlugin.getContexsServices()));
 
                 EjbUtility.fireEvents((Class<Object>) implClass, bean, (ProcessAnnotatedTypeImpl<Object>) processAnnotatedEvent);
