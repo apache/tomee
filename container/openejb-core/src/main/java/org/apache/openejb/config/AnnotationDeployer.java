@@ -73,6 +73,7 @@ import org.apache.openejb.jee.MethodParams;
 import org.apache.openejb.jee.MethodPermission;
 import org.apache.openejb.jee.NamedMethod;
 import org.apache.openejb.jee.OutboundResourceAdapter;
+import org.apache.openejb.jee.ParamValue;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceContextType;
 import org.apache.openejb.jee.PersistenceUnitRef;
@@ -1635,6 +1636,15 @@ public class AnnotationDeployer implements DynamicDeployer {
                         classes.add(clazz);
                     } catch (ClassNotFoundException e) {
                         throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
+                    }
+
+                    // if the servlet is a rest init servlet don't deploy rest classes automatically
+                    for (ParamValue param : servlet.getInitParam()) {
+                        if (param.getParamName().equals(Application.class.getName())) {
+                            webModule.getRestApplications().clear();
+                            webModule.getRestApplications().add(param.getParamValue());
+                            break;
+                        }
                     }
                 }
             }
