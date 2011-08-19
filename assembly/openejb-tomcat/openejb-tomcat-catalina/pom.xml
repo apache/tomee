@@ -47,7 +47,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api-embedded</artifactId>
+      <artifactId>javaee-api</artifactId>
+      <classifier>embedded</classifier>
       <version>${javaee-api.version}</version>
     </dependency>
     <dependency>

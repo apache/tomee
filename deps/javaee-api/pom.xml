@@ -27,30 +27,112 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>javaee-api</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Dependencies :: JavaEE Full API</name>
+  <name>OpenEJB :: Dependencies :: JavaEE Full API (zip file)</name>
   <version>6.0-SNAPSHOT</version>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
+
+      <!-- filtering LICENSE, ... -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <id>filter-resources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+	  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>javaee-api-libs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+			<configuration>
+              <finalName>javaee-api-libs-${project.version}</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptor>src/main/assembly/javaee-api-libs.xml</descriptor>
+            </configuration>
+          </execution>
+		</executions>
+      </plugin>
+	  
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.4</version>
         <executions>
-          <execution>
+		  <execution>
+			<id>javaee-api-embedded</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
             <configuration>
-              <filters>
-                <filter>
-                  <artifact>org.apache.geronimo.specs:geronimo-ejb_3.1_spec</artifact>
-                  <includes>
-                    <include>javax/ejb/**</include>
-                  </includes>
-                </filter>
-              </filters>
+			  <shadedArtifactAttached>true</shadedArtifactAttached>
+			  <shadedClassifierName>embedded</shadedClassifierName>
+			  <artifactSet>
+			    <excludes>
+                  <exclude>*:geronimo-el*</exclude>
+                  <exclude>*:geronimo-jsp*</exclude>
+                  <exclude>*:geronimo-servlet*</exclude>
+                </excludes>
+			  </artifactSet>
+			  <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Export-Package>javax.xml, javax.xml.ws, javax.xml.ws.handler, javax.xml.ws.handler.soap,
+                      javax.xml.ws.spi, javax.xml.ws.http, javax.xml.ws.soap,javax.xml.soap, javax.xml.namespace,
+                      javax.xml.registry, javax.xml.registry.infomodel, javax.xml.rpc, javax.xml.rpc.encoding,
+                      javax.xml.rpc.handler, javax.xml.rpc.handler.soap, javax.xml.rpc.holders, javax.xml.rpc.server,
+                      javax.xml.rpc.soap, javax.xml.stream, javax.xml.stream.events, javax.xml.stream.util,
+                      javax.xml.bind, javax.xml.bind.annotation, javax.xml.bind.annotation.adapters,
+                      javax.xml.bind.attachment, javax.xml.bind.helpers, javax.xml.bind.util, javax.mail,
+                      javax.mail.event, javax.mail.internet, javax.mail.search, javax.mail.util, javax.activation,
+                      javax.annotation, javax.annotation.security, javax.ejb, javax.ejb.spi, javax.interceptor,
+                      javax.resource, javax.resource.cci, javax.resource.spi, javax.resource.spi.endpoint,
+                      javax.resource.spi.security, javax.resource.spi.work, javax.enterprise, javax.enterprise.deploy,
+                      javax.enterprise.deploy.model, javax.enterprise.deploy.model.exceptions,
+                      javax.enterprise.deploy.shared, javax.enterprise.deploy.shared.factories,
+                      javax.enterprise.deploy.spi, javax.enterprise.deploy.spi.exceptions,
+                      javax.enterprise.deploy.spi.factories, javax.enterprise.deploy.spi.status, javax.management,
+                      javax.management.j2ee, javax.management.j2ee.statistics, javax.security, javax.security.jacc,
+                      javax.jms, javax.persistence, javax.persistence.spi, javax.transaction;version="5.0",
+                      javax.transaction.xa;version="5.0",
+                      javax.jws, javax.jws.soap, org.apache.geronimo, org.apache.geronimo.mail,
+                      org.apache.geronimo.mail.handlers, org.apache.geronimo.mail.util
+                    </Export-Package>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+          <execution>
+			<id>javaee-api</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
@@ -82,6 +164,8 @@
           </execution>
         </executions>
       </plugin>
+	  
+	  <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -101,6 +185,7 @@
           </execution>
         </executions>
       </plugin>
+	  -->
     </plugins>
   </build>
 
@@ -108,7 +193,7 @@
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-el_2.2_spec</artifactId>
-      <version>1.0</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -120,13 +205,128 @@
       <artifactId>geronimo-servlet_3.0_spec</artifactId>
       <version>1.0</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api-embedded</artifactId>
-      <version>${javaee-api.version}</version>
+    
+	<dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-activation_1.1_spec</artifactId>
+      <version>1.1</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-annotation_1.1_spec</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-atinject_1.0_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ccpp_1.0_spec</artifactId>
+      <version>1.0-beta</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ejb_3.1_spec</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jacc_1.4_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaspic_1.0_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-deployment_1.1_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxb_2.2_spec</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxr_1.0_spec</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxrpc_1.1_spec</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxws_2.2_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jpa_2.0_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-saaj_1.3_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-stax-api_1.2_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-validation_1.0_spec</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jaxrs_1.1_spec</artifactId>
+      <version>1.0</version>
+    </dependency>
+	
   </dependencies>
 
 </project>
