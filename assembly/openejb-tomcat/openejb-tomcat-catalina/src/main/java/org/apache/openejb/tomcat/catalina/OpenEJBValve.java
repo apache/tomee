@@ -37,21 +37,16 @@ public class OpenEJBValve extends ValveBase {
     }
 
     public void invoke(Request request, Response response) throws IOException, ServletException {
+        OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
         if (!request.isAsync()) {
-            Object oldState = null;
-            if (securityService != null && request.getWrapper() != null) {
-                oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
-            }
-
+            listener.enter();
             try {
                 getNext().invoke(request, response);
             } finally {
-                if (securityService != null) {
-                    securityService.exitWebApp(oldState);
-                }
+                listener.exit();
             }
         } else {
-            // for async request security should be initialized elsewhere
+            request.getAsyncContext().addListener(new OpenEJBSecurityListener(securityService, request));
             getNext().invoke(request, response);
         }
     }
