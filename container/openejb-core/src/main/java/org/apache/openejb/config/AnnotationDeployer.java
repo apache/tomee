@@ -1631,11 +1631,13 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Servlet servlet : webApp.getServlet()) {
                 String servletClass = servlet.getServletClass();
                 if (servletClass != null) {
-                    try {
-                        Class clazz = classLoader.loadClass(servletClass);
-                        classes.add(clazz);
-                    } catch (ClassNotFoundException e) {
-                        throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
+                    if (!"org.apache.openejb.server.rest.OpenEJBRestServlet".equals(servletClass)) {
+                        try {
+                            Class clazz = classLoader.loadClass(servletClass);
+                            classes.add(clazz);
+                        } catch (ClassNotFoundException e) {
+                            throw new OpenEJBException("Unable to load servlet class: " + servletClass, e);
+                        }
                     }
 
                     // if the servlet is a rest init servlet don't deploy rest classes automatically
