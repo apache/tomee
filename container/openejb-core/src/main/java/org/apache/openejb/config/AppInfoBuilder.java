@@ -564,6 +564,10 @@ class AppInfoBuilder {
 
 
     public static class PersistenceProviderProperties {
+        public static final String OPENJPA_RUNTIME_UNENHANCED_CLASSES = "openjpa.RuntimeUnenhancedClasses";
+        public static final String DEFAULT_RUNTIME_UNENHANCED_CLASSES = "supported";
+        public static final String REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES = "disable";
+
         private static void apply(PersistenceUnitInfo info) {
             // The result is that OpenEJB-specific configuration can be avoided when
             // using OpenEJB + Hibernate or another vendor.  A second benefit is that
@@ -611,14 +615,16 @@ class AppInfoBuilder {
                 }
             }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
 
-                String property = "openjpa.RuntimeUnenhancedClasses";
-                String value = "supported";
-
-                String existing = info.properties.getProperty(property);
+                String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
 
                 if (existing == null){
-                    info.properties.setProperty(property, value);
-                    logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+property+"="+value);
+                    info.properties.setProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES, DEFAULT_RUNTIME_UNENHANCED_CLASSES);
+                    logger.debug("Adjusting PersistenceUnit(name=" + info.name + ") property to "
+                        + OPENJPA_RUNTIME_UNENHANCED_CLASSES + "=" + DEFAULT_RUNTIME_UNENHANCED_CLASSES);
+                } else if (REMOVE_DEFAULT_RUNTIME_UNENHANCED_CLASSES.equals(existing.trim())) {
+                    info.properties.remove(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
+                    logger.info("Adjusting PersistenceUnit(name=" + info.name + ") removing property "
+                                                                    + OPENJPA_RUNTIME_UNENHANCED_CLASSES);
                 }
 
                 final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
