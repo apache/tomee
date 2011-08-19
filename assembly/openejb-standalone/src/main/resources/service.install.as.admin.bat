@@ -104,6 +104,8 @@ ECHO Installing service using JVM: %jvm%
 REM Allow file access to Local System 
 cacls "%openejb%" /E /P System:F
 
+REM Extensive documentation can be found here - http://commons.apache.org/daemon/procrun.html
+
 %proc% //IS//OpenEJBServer --DisplayName="OpenEJB Server" ^
 	--Install=%proc% ^
 	--Startup auto ^
@@ -118,6 +120,7 @@ cacls "%openejb%" /E /P System:F
 	--LogPrefix=service ^
 	--LogPath="%logs%" --StdOutput="%logs%\service.out.log" --StdError="%logs%\service.err.log" --PidFile=service.pid ^
 	--LogLevel=Info ^
+	--LibraryPath="%openejb%\bin" ^
 	++JvmOptions=-Dopenejb.home="%openejb%";-Xms128M;-Xmx512M;-XX:MaxPermSize=256M
 	REM ++DependsOn=AnotherServiceName
 	REM Add ^ symbol to end of ++JvmOptions line if ++DependsOn is uncommented 
