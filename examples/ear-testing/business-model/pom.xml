@@ -34,7 +34,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api-embedded</artifactId>
+      <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

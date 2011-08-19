@@ -89,7 +89,7 @@
                          storepass="openejb"/>
                 <signjar jar="${project.build.directory}/${project.build.finalName}/openejb-client.jar" alias="mykey"
                          storepass="openejb"/>
-                <signjar jar="${project.build.directory}/${project.build.finalName}/javaee-api-embedded.jar" alias="mykey"
+                <signjar jar="${project.build.directory}/${project.build.finalName}/javaee-api.jar" alias="mykey"
                          storepass="openejb"/>
               </tasks>
             </configuration>
@@ -118,10 +118,10 @@
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.apache.openejb</groupId>
-                  <artifactId>javaee-api-embedded</artifactId>
+                  <artifactId>javaee-api</artifactId>
                   <version>6.0-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-                  <destFileName>javaee-api-embedded.jar</destFileName>
+                  <destFileName>javaee-api.jar</destFileName>
                 </artifactItem>
               </artifactItems>
             </configuration>
