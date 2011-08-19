@@ -59,7 +59,7 @@
     <!-- spec dependencies -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>javaee-api-embedded</artifactId>
+      <artifactId>javaee-api</artifactId>
       <version>${javaee-api.version}</version>
     </dependency>
     <dependency>

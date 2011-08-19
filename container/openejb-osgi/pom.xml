@@ -110,7 +110,7 @@
                 <goals> <goal>add-features-to-repo</goal> </goals>
                 <configuration> <descriptors>
                 <descriptor>file:${basedir}/target/classes/features.xml</descriptor>
-                </descriptors> <features> <feature>javaee-api-embedded</feature>
+                </descriptors> <features> <feature>javaee-api</feature>
                 <feature>openejb-core</feature> </features>
                 <repository>target/features-repo</repository> </configuration>
                 </execution> </executions> </plugin>
