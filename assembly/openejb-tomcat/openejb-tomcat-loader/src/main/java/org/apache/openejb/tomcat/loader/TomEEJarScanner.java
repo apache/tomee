@@ -28,12 +28,15 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 public class TomEEJarScanner extends StandardJarScanner {
 
 	public void scan(ServletContext context, ClassLoader classLoader, JarScannerCallback callback, Set<String> jarsToIgnore) {
+		String openejbWar = System.getProperty("openejb.war");
+		
 		Set<String> newIgnores = new HashSet<String>();
 		if (jarsToIgnore != null) {
 			newIgnores.addAll(jarsToIgnore);
 		}
-		if ("FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
-			File openejbApp = new File(System.getProperty("openejb.war"));
+		
+		if (openejbWar != null && "FragmentJarScannerCallback".equals(callback.getClass().getSimpleName())) {
+			File openejbApp = new File(openejbWar);
 			File libFolder = new File(openejbApp, "lib");
 			for (File f : libFolder.listFiles()) {
 				if (f.getName().toLowerCase().endsWith(".jar")) {
