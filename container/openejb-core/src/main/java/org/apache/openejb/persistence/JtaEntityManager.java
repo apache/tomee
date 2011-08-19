@@ -346,7 +346,7 @@ public class JtaEntityManager implements EntityManager {
             logger.debug("PersistenceUnit(name=" + unitName + ") - entityManager.close() call ignored - not applicable to a JTA Managed EntityManager",  new Exception().fillInStackTrace());
         }
 
-        if (isContainerManaged()) {
+        if (!isContainerManaged()) {
             // with OpenJPA or ElcipseLink or Hibernate
             // if a method is closed after close() invocation
             // it throws an IllegalStateException which is spec compliant
