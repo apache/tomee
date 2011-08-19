@@ -35,30 +35,26 @@ public class FileUtils {
 
     public FileUtils(String homeDir, String defaultDir, Hashtable env) {
         String homePath = null;
-        try {
-            homePath = (String) env.get(homeDir);
-            if (homePath == null) {
-                homePath = (String) env.get(defaultDir);
-            }
+        homePath = (String) env.get(homeDir);
+        if (homePath == null) {
+            homePath = (String) env.get(defaultDir);
+        }
 
-            if (homePath == null) {
-                homePath = System.getProperty("user.dir");
-            }
+        if (homePath == null) {
+            homePath = System.getProperty("user.dir");
+        }
 
+        home = new File(homePath);
+        if (!home.exists() || (home.exists() && !home.isDirectory())) {
+            homePath = System.getProperty("user.dir");
             home = new File(homePath);
-            if (!home.exists() || (home.exists() && !home.isDirectory())) {
-                homePath = System.getProperty("user.dir");
-                home = new File(homePath);
-            }
+        }
 
-            try {
-                home = home.getCanonicalFile();
-            } catch (IOException e) {
-                // this shouldn't happen, but let's get absolute file
-                home = home.getAbsoluteFile();
-            }
-        } catch (SecurityException e) {
-
+        try {
+            home = home.getCanonicalFile();
+        } catch (IOException e) {
+            // this shouldn't happen, but let's get absolute file
+            home = home.getAbsoluteFile();
         }
     }
 
