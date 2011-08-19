@@ -331,32 +331,11 @@ public class JtaEntityManager implements EntityManager {
         }
     }
 
-    public boolean isBeanManagedTransaction() {
-        ThreadContext threadContext = ThreadContext.getThreadContext();
-        if (threadContext == null) { // we don't know
-            return false;
-        }
-
-        BeanContext di = threadContext.getBeanContext();
-        return di != null && di.isBeanManagedTransaction();
-    }
-
+    /**
+     * close throws an IllegalStateException if the em is container managed otherwise (emf.newEM()) it is delegated to the user
+     */
     public void close() {
-        if (ThreadContext.getThreadContext() == null) {
-            // we don't know, we suppose the user manage it so we force it
-            getEntityManager().close();
-        }
-
-        if (isBeanManagedTransaction()) {
-            // with OpenJPA or ElcipseLink or Hibernate
-            // if a method is invocated after close() invocation
-            // it throws an IllegalStateException which is spec compliant
-            if (!extended) {
-                getEntityManager().close();
-            }
-        } else { // container managed
-            throw new IllegalStateException("PersistenceUnit(name=" + unitName + ") - entityManager.close() call - See JPA 2.0 section 7.9.1", new Exception().fillInStackTrace());
-        }
+        throw new IllegalStateException("PersistenceUnit(name=" + unitName + ") - entityManager.close() call - See JPA 2.0 section 7.9.1", new Exception().fillInStackTrace());
     }
 
     public boolean isOpen() {
