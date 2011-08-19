@@ -27,6 +27,7 @@ import javax.ejb.AfterCompletion;
 import javax.ejb.BeforeCompletion;
 import javax.ejb.EJBException;
 import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
@@ -121,6 +122,11 @@ public class StatefulSessionSynchronizationTest extends TestCase {
         StatefulBean subBeanH = new StatefulBean(SubBeanH.class);
         ejbJar.addEnterpriseBean(subBeanH);
 
+        //Test SessionSynchronization interface but methods are in the parent class
+        //using @LocalBean
+        StatefulBean subBeanI = new StatefulBean(SubBeanI.class);
+        ejbJar.addEnterpriseBean(subBeanI);
+
         EjbJarInfo ejbJarInfo = config.configureApplication(ejbJar);
         assembler.createApplication(ejbJarInfo);
         InitialContext context = new InitialContext();
@@ -181,11 +187,23 @@ public class StatefulSessionSynchronizationTest extends TestCase {
             result.clear();
         }
 
+        List<Call> synchAndArroundInvokeResult = Arrays.asList(
+            Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN,
+            Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD,
+            Call.BEAN_AROUND_INVOKE_AFTER,
+            Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.BEAN_BEFORE_COMPLETION,
+            Call.BEAN_AFTER_COMPLETION);
         {
-            BeanInterface beanG = (BeanInterface) context.lookup("SubBeanHLocal");
-            beanG.simpleMethod();
-            assertEquals(Arrays.asList(Call.BEAN_AFTER_BEGIN, Call.INTERCEPTOR_AROUND_INVOKE_BEGIN, Call.BEAN_AROUND_INVOKE_BEGIN, Call.BEAN_METHOD, Call.BEAN_AROUND_INVOKE_AFTER,
-                    Call.INTERCEPTOR_AROUND_INVOKE_AFTER, Call.BEAN_BEFORE_COMPLETION, Call.BEAN_AFTER_COMPLETION), result);
+            BeanInterface beanH = (BeanInterface) context.lookup("SubBeanHLocal");
+            beanH.simpleMethod();
+            assertEquals(synchAndArroundInvokeResult, result);
+            result.clear();
+        }
+
+        {
+            BeanInterface beanI = (BeanInterface) context.lookup("SubBeanILocalBean");
+            beanI.simpleMethod();
+            assertEquals(synchAndArroundInvokeResult, result);
             result.clear();
         }
     }
@@ -395,6 +413,11 @@ public class StatefulSessionSynchronizationTest extends TestCase {
     @Stateful
     @Local(BeanInterface.class)
     public static class SubBeanH extends BaseBeanB implements SessionSynchronization {
+    }
+
+    @Stateful
+    @LocalBean
+    public static class SubBeanI extends BaseBeanB implements SessionSynchronization {
     }
 
     public static enum Call {
