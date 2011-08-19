@@ -28,6 +28,7 @@ import org.apache.openejb.tomcat.loader.TomcatHelper;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -227,7 +228,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
         }
     }
 
-    private static class WebAppState {
+    private static class WebAppState implements Serializable {
         private final Identity oldIdentity;
         private final boolean hadRunAs;
 

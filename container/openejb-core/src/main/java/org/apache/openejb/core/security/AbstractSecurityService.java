@@ -32,6 +32,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.jacc.PolicyContext;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
+import java.io.Serializable;
 import java.security.AccessControlContext;
 import java.security.PrivilegedAction;
 import java.security.AccessController;
@@ -339,7 +340,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    protected static class Identity {
+    protected static class Identity implements Serializable {
         private final Subject subject;
         private final UUID token;
 

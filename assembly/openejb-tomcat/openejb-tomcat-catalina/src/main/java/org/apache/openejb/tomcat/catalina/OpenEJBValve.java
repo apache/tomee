@@ -32,21 +32,27 @@ public class OpenEJBValve extends ValveBase {
     protected static final String info = OpenEJBValve.class.getName() + "/" + OpenEjbVersion.get().getVersion();
 
     public OpenEJBValve() {
+        super(true);
         securityService = getSecurityService();
     }
 
     public void invoke(Request request, Response response) throws IOException, ServletException {
-        Object oldState = null;
-        if (securityService != null && request.getWrapper() != null) {
-            oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
-        }
-
-        try {
-            getNext().invoke(request, response);
-        } finally {
-            if (securityService != null) {
-                securityService.exitWebApp(oldState);
+        if (!request.isAsync()) {
+            Object oldState = null;
+            if (securityService != null && request.getWrapper() != null) {
+                oldState = securityService.enterWebApp(request.getWrapper().getRealm(), request.getPrincipal(), request.getWrapper().getRunAs());
             }
+
+            try {
+                getNext().invoke(request, response);
+            } finally {
+                if (securityService != null) {
+                    securityService.exitWebApp(oldState);
+                }
+            }
+        } else {
+            // for async request security should be initialized elsewhere
+            getNext().invoke(request, response);
         }
     }
 
