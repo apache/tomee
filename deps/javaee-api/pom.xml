@@ -116,8 +116,8 @@
                       javax.enterprise.deploy.spi, javax.enterprise.deploy.spi.exceptions,
                       javax.enterprise.deploy.spi.factories, javax.enterprise.deploy.spi.status, javax.management,
                       javax.management.j2ee, javax.management.j2ee.statistics, javax.security, javax.security.jacc,
-                      javax.jms, javax.persistence, javax.persistence.spi, javax.transaction;version="5.0",
-                      javax.transaction.xa;version="5.0",
+                      javax.jms, javax.persistence, javax.persistence.spi, javax.transaction,
+                      javax.transaction.xa,
                       javax.jws, javax.jws.soap, org.apache.geronimo, org.apache.geronimo.mail,
                       org.apache.geronimo.mail.handlers, org.apache.geronimo.mail.util
                     </Export-Package>
