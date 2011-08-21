@@ -55,11 +55,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,6 +73,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import static org.apache.openejb.util.URLs.toFile;
 
@@ -185,16 +184,48 @@ public class DeploymentLoader implements DeploymentFilterable {
                 AppModule appModule = new AppModule(OpenEJB.class.getClassLoader(), file.getAbsolutePath(), new Application(), true);
                 addWebModule(appModule, baseUrl, OpenEJB.class.getClassLoader(), getContextRoot(), getModuleName());
 
-                File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
-                if (persistenceXml.exists() && persistenceXml.isFile()) {
+                URL persistenceUrl = null;
+                if (file.isDirectory()) {
+                    File persistenceXml = new File(file, "WEB-INF/classes/META-INF/persistence.xml");
+                    if (persistenceXml.exists() && persistenceXml.isFile()) {
+                        try {
+                            persistenceUrl = persistenceXml.toURI().toURL();
+                        } catch (MalformedURLException e) {
+                            // no-op
+                        }
+                    }
+                } else { // .war
+                    JarFile jf = null;
+                    try {
+                        jf = new JarFile(file);
+                    } catch (IOException e) {
+                        return appModule;
+                    }
+                    ZipEntry entry = jf.getEntry("WEB-INF/classes/META-INF/persistence.xml");
+                    if (entry != null) {
+                        String base = baseUrl.toString();
+                        if (!base.startsWith("jar:")) {
+                            base = "jar:" + base;
+                        }
+
+                        try {
+                            persistenceUrl = new URL(base + "!/WEB-INF/classes/META-INF/persistence.xml");
+                        } catch (MalformedURLException e) {
+                            // no-op
+                        }
+                    }
+                }
+
+                if (persistenceUrl != null) {
                     List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get("persistence.xml");
                     if (persistenceUrls == null) {
                         persistenceUrls = new ArrayList<URL>();
                         appModule.getAltDDs().put("persistence.xml", persistenceUrls);
                     }
                     try {
-                        persistenceUrls.add(persistenceXml.toURI().toURL());
+                        persistenceUrls.add(persistenceUrl);
                     } catch (Exception e) {
+                        // no-op
                     }
                 }
                 addPersistenceUnits(appModule, baseUrl);

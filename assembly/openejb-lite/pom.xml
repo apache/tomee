@@ -71,10 +71,6 @@
           <groupId>org.apache.activemq</groupId>
           <artifactId>activemq-ra</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.apache.openjpa</groupId>
-          <artifactId>openjpa</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
