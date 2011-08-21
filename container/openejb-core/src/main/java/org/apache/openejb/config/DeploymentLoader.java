@@ -206,6 +206,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                         String base = baseUrl.toString();
                         if (!base.startsWith("jar:")) {
                             base = "jar:" + base;
+                            try {
+                                baseUrl = new URL(base + "!/WEB-INF/classes");
+                            } catch (MalformedURLException e) {
+                                // ignored
+                            }
                         }
 
                         try {
