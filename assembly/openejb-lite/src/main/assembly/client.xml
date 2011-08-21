@@ -61,6 +61,7 @@
           <include>org.apache.openejb:openejb-itests-servlets</include>
           <include>org.apache.openejb:openejb-itests-client</include>
           <include>org.apache.openejb:openejb-client</include>
+          <include>org.apache.openjpa:openjpa</include>
 
           <!-- ActiveMQ -->
           <include>org.apache.activemq:activemq-core</include>
