@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.jms.ConnectionFactory;
@@ -43,6 +44,9 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.ProxyInfo;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
+
+import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.ValidationInfo;
 import org.apache.openejb.client.CallbackMetaData;
 import org.apache.openejb.client.DataSourceMetaData;
 import org.apache.openejb.client.EJBMetaDataImpl;

@@ -18,22 +18,33 @@ package org.apache.openejb.client;
 
 import org.omg.CORBA.ORB;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.ConnectException;
-import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.reflect.Constructor;
-import javax.naming.*;
+import javax.naming.AuthenticationException;
+import javax.naming.Binding;
+import javax.naming.CompoundName;
+import javax.naming.ConfigurationException;
+import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameNotFoundException;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
+import javax.naming.Reference;
+import javax.naming.ServiceUnavailableException;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import java.lang.reflect.Constructor;
+import java.net.ConnectException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Properties;
 
 /** 
  * @version $Rev$ $Date$
@@ -41,8 +52,6 @@ import javax.validation.ValidatorFactory;
 public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
-
-    private static ValidatorFactory DEFAULT_VALIDATOR_FACTORY;
 
     private String tail = "/";
     private ServerMetaData server;
@@ -246,13 +255,6 @@ public class JNDIContext implements InitialContextFactory, Context {
                 String type = (String) res.getResult();
                 value = System.getProperty("Resource/" + type);
                 if (value == null) {
-                    if (Validator.class.getName().equals(type)) {
-                        return getValidatorFactory().getValidator();
-                    } else {
-                        if (ValidatorFactory.class.getName().equals(type)) {
-                            return getValidatorFactory();
-                        }
-                    }
                     return null;
                 }
                 return parseEntry(prop, value);
@@ -284,17 +286,6 @@ public class JNDIContext implements InitialContextFactory, Context {
             default:
                 throw new RuntimeException("Invalid response from server: " + res.getResponseCode());
         }
-    }
-
-    private ValidatorFactory getValidatorFactory() {
-        if (DEFAULT_VALIDATOR_FACTORY == null) {
-            synchronized (this) {
-                if (DEFAULT_VALIDATOR_FACTORY == null) {
-                    DEFAULT_VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
-                }
-            }
-        }
-        return DEFAULT_VALIDATOR_FACTORY;
     }
 
     private Object parseEntry(String name, String value) throws NamingException {
