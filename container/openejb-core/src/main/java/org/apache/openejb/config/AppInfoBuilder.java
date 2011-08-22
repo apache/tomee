@@ -632,6 +632,12 @@ class AppInfoBuilder {
                     if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
                         final Object o = info.properties.remove(key);
                         logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + key + "=" + o + "  [not valid in a container environment]");
+                    } else { // try to convert it if necessary
+                        JPAPropertyConverter.Pair pair = JPAPropertyConverter.toOpenJPAValue(key, info.properties.getProperty(key));
+                        if (pair != null) {
+                            info.properties.remove(key);
+                            info.properties.setProperty(pair.getKey(), pair.getValue());
+                        }
                     }
                 }
             }
