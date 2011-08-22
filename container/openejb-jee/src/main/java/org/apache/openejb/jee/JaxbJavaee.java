@@ -113,7 +113,10 @@ public class JaxbJavaee {
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         unmarshaller.setEventHandler(new ValidationEventHandler(){
             public boolean handleEvent(ValidationEvent validationEvent) {
-                System.out.println(validationEvent);
+                String verbose = System.getProperty("openejb.validation.output.level");
+                if (verbose != null && "VERBOSE".equals(verbose.toUpperCase())) {
+                    System.err.println(validationEvent);
+                }
                 return false;
             }
         });
