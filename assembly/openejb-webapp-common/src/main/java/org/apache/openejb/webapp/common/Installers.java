@@ -130,6 +130,24 @@ public class Installers {
         }
     }
 
+     public static void copy(File srcFile, File destFile) throws IOException {
+        if (destFile.exists() && destFile.isDirectory()) {
+            throw new IOException("Destination '" + destFile + "' exists but is a directory");
+        }
+
+        FileInputStream input = new FileInputStream(srcFile);
+        try {
+            FileOutputStream output = new FileOutputStream(destFile);
+            try {
+                writeAll(input, output);
+            } finally {
+                close(output);
+            }
+        } finally {
+            close(input);
+        }
+    }
+
     public static String readAll(InputStream in) throws IOException {
         // SwizzleStream block read methods are broken so read byte at a time
         StringBuilder sb = new StringBuilder();
