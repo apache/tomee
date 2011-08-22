@@ -92,7 +92,7 @@ public class Installer {
         installConfigFiles();
 
         removeAnnotationApiJar();
-        addJavaeeInEndorsed();
+        // addJavaeeInEndorsed();
         
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
