@@ -21,11 +21,21 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.webapp.common.Alerts;
 import org.apache.openejb.webapp.common.Installers;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Flushable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class Installer {
     private final Alerts alerts = new Alerts();
@@ -92,27 +102,102 @@ public class Installer {
         installConfigFiles();
 
         removeAnnotationApiJar();
-        // addJavaeeInEndorsed();
+        addJavaeeInEndorsed();
         
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
         }
     }
 
-    private void addJavaeeInEndorsed() {
-        File lib = paths.getCatalinaLibDir();
-        for (File f : lib.listFiles()) {
-            if (f.getName().startsWith("javaee-api") && f.getName().endsWith(".jar")) {
-                return;
-            }
-        }
+    public static void main(String[] args) throws IOException {
+        File src = new File("/Users/dblevins/.m2/repository/org/apache/openejb/javaee-api-embedded/6.0-SNAPSHOT/javaee-api-embedded-6.0-SNAPSHOT.jar");
+        File dest = new File("/tmp/annotations.jar");
 
-        File javaeeApi = paths.getJavaEEAPIJAr();
+
+        copyClasses2(src, dest, "javax/annotation/.*");
+    }
+    private void addJavaeeInEndorsed() {
+
+        File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
+        endorsed.mkdir();
+
+        File sourceJar = paths.getJavaEEAPIJAr();
+
+        copyClasses(sourceJar, new File(endorsed, "annotation-api.jar"), "javax/annotation/.*");
+//        copyClasses(sourceJar, new File(endorsed, "jaxb-api.jar"), "javax/xml/bind/.*");
+    }
+
+    private void copyClasses(File sourceJar, File destinationJar, String pattern) {
+
+        if (destinationJar.exists()) return;
+
         try {
-            Installers.copy(javaeeApi, new File(lib, javaeeApi.getName()));
+            copyClasses2(sourceJar, destinationJar, pattern);
         } catch (IOException e) {
             alerts.addError(e.getMessage());
         }
+    }
+
+    private static File copyClasses2(File sourceFile, File destinationFile, String pattern) throws IOException {
+
+        try {
+            final ZipInputStream source = new ZipInputStream(new FileInputStream(sourceFile));
+
+            final ByteArrayOutputStream destinationBuffer = new ByteArrayOutputStream(524288);
+            final ZipOutputStream destination = new ZipOutputStream(destinationBuffer);
+
+            for (ZipEntry entry; (entry = source.getNextEntry()) != null; ) {
+                String entryName = entry.getName();
+
+                if (!entryName.matches(pattern)) continue;
+
+                destination.putNextEntry(new ZipEntry(entryName));
+
+                copy(source, destination);
+            }
+
+            close(source);
+            close(destination);
+
+            writeToFile(destinationFile, destinationBuffer);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return destinationFile;
+    }
+
+    public static void copy(InputStream from, OutputStream to) throws IOException {
+        byte[] buffer = new byte[1024];
+        int length = 0;
+        while ((length = from.read(buffer)) != -1) {
+            to.write(buffer, 0, length);
+        }
+    }
+
+    public static void close(Closeable closeable) throws IOException {
+        if (closeable == null) return;
+        try {
+            if (closeable instanceof Flushable) {
+                ((Flushable) closeable).flush();
+            }
+        } catch (IOException e) {
+            // no-op
+        }
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            // no-op
+        }
+    }
+
+
+    private static void writeToFile(File file, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
+        final byte[] bytes = byteArrayOutputStream.toByteArray();
+
+        final FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(bytes);
+        fileOutputStream.close();
     }
 
     /**
