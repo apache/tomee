@@ -1535,6 +1535,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            /* TODO: still useful?
             List<String> unusableTypes = new ArrayList<String>(knownResourceEnvTypes);
             unusableTypes.remove("javax.jms.Topic");
             unusableTypes.remove("javax.jms.Queue");
@@ -1555,6 +1556,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
                 }
             }
+            */
         }
 
         public ConnectorModule deploy(ConnectorModule connectorModule) throws OpenEJBException {
@@ -3673,6 +3675,9 @@ public class AnnotationDeployer implements DynamicDeployer {
             try {
                 return cls.getMethod("lookup", null);
             } catch (NoSuchMethodException e) {
+                logger.error("lookup method is not available for " + cls.getName()
+                        + ". You probably have an old API in the classpath."
+                        + "Tomcat is known to have an old annotation-api.jar, maybe you should replace it.");
                 return null;
             }
         }

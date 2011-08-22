@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import org.omg.CORBA.ORB;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.ConnectException;
@@ -32,6 +31,9 @@ import javax.naming.*;
 import javax.naming.spi.InitialContextFactory;
 import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /** 
  * @version $Rev$ $Date$
@@ -39,6 +41,8 @@ import javax.sql.DataSource;
 public class JNDIContext implements InitialContextFactory, Context {
 
     public static final String DEFAULT_PROVIDER_URL = "ejbd://localhost:4201";
+
+    private static ValidatorFactory DEFAULT_VALIDATOR_FACTORY;
 
     private String tail = "/";
     private ServerMetaData server;
@@ -242,6 +246,13 @@ public class JNDIContext implements InitialContextFactory, Context {
                 String type = (String) res.getResult();
                 value = System.getProperty("Resource/" + type);
                 if (value == null) {
+                    if (Validator.class.getName().equals(type)) {
+                        return getValidatorFactory().getValidator();
+                    } else {
+                        if (ValidatorFactory.class.getName().equals(type)) {
+                            return getValidatorFactory();
+                        }
+                    }
                     return null;
                 }
                 return parseEntry(prop, value);
@@ -273,6 +284,17 @@ public class JNDIContext implements InitialContextFactory, Context {
             default:
                 throw new RuntimeException("Invalid response from server: " + res.getResponseCode());
         }
+    }
+
+    private ValidatorFactory getValidatorFactory() {
+        if (DEFAULT_VALIDATOR_FACTORY == null) {
+            synchronized (this) {
+                if (DEFAULT_VALIDATOR_FACTORY == null) {
+                    DEFAULT_VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
+                }
+            }
+        }
+        return DEFAULT_VALIDATOR_FACTORY;
     }
 
     private Object parseEntry(String name, String value) throws NamingException {

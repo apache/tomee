@@ -35,6 +35,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.resource.Referenceable;
 import javax.sql.DataSource;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.openejb.BeanContext;
@@ -226,6 +228,14 @@ class JndiRequestHandler {
             } else if (object instanceof ORB){
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ORB.class.getName());
+                return;
+            } else if (object instanceof ValidatorFactory) {
+                res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
+                res.setResult(ValidatorFactory.class.getName());
+                return;
+            } else if (object instanceof Validator) {
+                res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
+                res.setResult(Validator.class.getName());
                 return;
             }
 
