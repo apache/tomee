@@ -26,6 +26,10 @@ public final class JPAPropertyConverter {
         public String getValue() {
             return value;
         }
+
+        @Override public String toString() {
+            return key + '=' + value;
+        }
     }
 
     // TODO: manage more properties

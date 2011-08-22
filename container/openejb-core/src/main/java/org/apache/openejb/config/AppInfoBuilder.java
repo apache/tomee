@@ -634,7 +634,9 @@ class AppInfoBuilder {
                         logger.warning("Removing PersistenceUnit(name=" + info.name + ") property " + key + "=" + o + "  [not valid in a container environment]");
                     } else { // try to convert it if necessary
                         JPAPropertyConverter.Pair pair = JPAPropertyConverter.toOpenJPAValue(key, info.properties.getProperty(key));
-                        if (pair != null) {
+                        if (pair != null && !info.properties.containsKey(pair.getKey())) {
+                            logger.info("Converting PersistenceUnit(name=" + info.name + ") property "
+                                    + key + "=" + info.properties.getProperty(key) +  " to " + pair.toString());
                             info.properties.remove(key);
                             info.properties.setProperty(pair.getKey(), pair.getValue());
                         }
