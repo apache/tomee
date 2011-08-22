@@ -3675,18 +3675,15 @@ public class AnnotationDeployer implements DynamicDeployer {
             try {
                 return cls.getMethod("lookup", null);
             } catch (NoSuchMethodException e) {
-                if (!cls.equals(Resource.class)) {
-                    logger.error("lookup method is not available for " + cls.getName()
-                        + ". You probably have an old API in the classpath."
-                        + "Tomcat is known to have an old annotations-api.jar, maybe you should replace it.");
-                }
+                logger.error("lookup method is not available for " + cls.getName()
+                    + ". You probably have an old API in the classpath."
+                    + "Tomcat is known to have an old annotations-api.jar, maybe you should replace it.");
                 return null;
             }
         }
 
         private static String getLookupName(Resource resource) {
             String value = "";
-            // TODO: how could it work????
             Method lookupMethod = getLookupMethod(Resource.class);
             if (lookupMethod != null) {
                 try {
