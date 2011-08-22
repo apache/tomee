@@ -321,6 +321,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
     @Override
     public void start(StandardContext standardContext) {
         if (isIgnored(standardContext)) return;
+        
+        CoreContainerSystem cs = getContainerSystem();
 
         Assembler a = getAssembler();
         if (a == null) {
@@ -346,6 +348,13 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 }
             }
         }
+        
+        if (appContext == null) {
+        	String contextRoot = standardContext.getName();
+        	if (contextRoot.startsWith("/")) {
+        		contextRoot = contextRoot.replaceAll("^/+", "");
+        	}
+        }
 
         contextInfo.standardContext = standardContext;
 
@@ -355,6 +364,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
             for (WebAppInfo w : contextInfo.appInfo.webApps) {
                 if (("/" + w.contextRoot).equals(standardContext.getPath()) || isRootApplication(standardContext)) {
                     webAppInfo = w;
+                    
+                    if (appContext == null) {
+                    	appContext = cs.getAppContext(contextInfo.appInfo.appId);
+                    }
+                    
                     break;
                 }
             }
@@ -380,7 +394,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 webContext.setClassLoader(standardContext.getLoader().getClassLoader());
                 webContext.getInjections().addAll(injections);
                 appContext.getWebContexts().add(webContext);
-                getContainerSystem().addWebContext(webContext);
+                cs.addWebContext(webContext);
             } catch (Exception e) {
                 logger.error("Error merging OpenEJB JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
             }

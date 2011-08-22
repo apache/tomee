@@ -24,6 +24,8 @@ import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import org.apache.geronimo.connector.work.GeronimoWorkManager;
+
 public class SimpleBootstrapContext implements BootstrapContext {
     private final WorkManager workManager;
     private final XATerminator xaTerminator;
@@ -58,8 +60,12 @@ public class SimpleBootstrapContext implements BootstrapContext {
         return null;
     }
 
-    public boolean isContextSupported(Class<? extends WorkContext> arg0) {
-        // TODO: add work context support
+    public boolean isContextSupported(Class<? extends WorkContext> cls) {
+        if (workManager instanceof GeronimoWorkManager) {
+        	GeronimoWorkManager geronimoWorkManager = (GeronimoWorkManager) workManager;
+        	return geronimoWorkManager.isContextSupported(cls);
+        }
+        
         return false;
     }
 }

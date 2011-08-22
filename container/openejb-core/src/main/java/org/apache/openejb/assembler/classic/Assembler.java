@@ -16,7 +16,59 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.XATerminator;
+import javax.resource.spi.work.WorkManager;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidationException;
+import javax.validation.ValidatorFactory;
+
+import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
+import org.apache.geronimo.connector.work.HintsContextHandler;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
 import org.apache.geronimo.connector.work.WorkContextHandler;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
@@ -42,6 +94,7 @@ import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.core.ivm.naming.IvmJndiFactory;
+import org.apache.openejb.core.security.SecurityContextHandler;
 import org.apache.openejb.core.timer.EjbTimerServiceImpl;
 import org.apache.openejb.core.timer.NullEjbTimerServiceImpl;
 import org.apache.openejb.core.timer.ScheduleData;
@@ -1345,7 +1398,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (transactionManager instanceof GeronimoTransactionManager) {
                 GeronimoTransactionManager geronimoTransactionManager = (GeronimoTransactionManager) transactionManager;
                 TransactionContextHandler txWorkContextHandler = new TransactionContextHandler(geronimoTransactionManager);
-                workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, Collections.<WorkContextHandler>singletonList(txWorkContextHandler));
+                
+                // use id as default realm name if realm is not specified in service properties
+                String securityRealmName = getStringProperty(serviceInfo.properties, "realm", serviceInfo.id);
+                                
+                SecurityContextHandler securityContextHandler = new SecurityContextHandler(securityRealmName);
+                HintsContextHandler hintsContextHandler = new HintsContextHandler();
+                
+                Collection<WorkContextHandler> workContextHandlers = new ArrayList<WorkContextHandler>();
+                workContextHandlers.add(txWorkContextHandler);
+                workContextHandlers.add(securityContextHandler);
+                workContextHandlers.add(hintsContextHandler);
+                
+                workManager = new GeronimoWorkManager(threadPool, threadPool, threadPool, workContextHandlers);
             } else {
                 workManager = new SimpleWorkManager(threadPool);
             }
@@ -1353,7 +1418,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // BootstrapContext: wraps the WorkMananger and XATerminator
             BootstrapContext bootstrapContext;
-            if (transactionManager instanceof XATerminator) {
+            if (transactionManager instanceof GeronimoTransactionManager) {
+            	bootstrapContext = new GeronimoBootstrapContext((GeronimoWorkManager)workManager, (GeronimoTransactionManager)transactionManager, (GeronimoTransactionManager)transactionManager);
+            } else if (transactionManager instanceof XATerminator) {
                 bootstrapContext = new SimpleBootstrapContext(workManager, (XATerminator) transactionManager);
             } else {
                 bootstrapContext = new SimpleBootstrapContext(workManager);
@@ -1361,7 +1428,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // start the resource adapter
             try {
-                logger.debug("createResource.startingResourceAdapter", serviceInfo.id, service.getClass().getName());
+            	logger.debug("createResource.startingResourceAdapter", serviceInfo.id, service.getClass().getName());
                 resourceAdapter.start(bootstrapContext);
             } catch (ResourceAdapterInternalException e) {
                 throw new OpenEJBException(e);
@@ -1423,7 +1490,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private int getIntProperty(Properties properties, String propertyName, int defaultValue) {
-        String propertyValue = properties.getProperty(propertyName);
+        String propertyValue = getStringProperty(properties, propertyName, Integer.toString(defaultValue));
         if (propertyValue == null) {
             return defaultValue;
         }
@@ -1434,6 +1501,15 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    private String getStringProperty(Properties properties, String propertyName, String defaultValue) {
+        String propertyValue = properties.getProperty(propertyName);
+        if (propertyValue == null) {
+            return defaultValue;
+        }
+
+        return propertyValue;
+    }
+    
     public void createConnectionManager(ConnectionManagerInfo serviceInfo) throws OpenEJBException {
 
         ObjectRecipe serviceRecipe = createRecipe(serviceInfo);
