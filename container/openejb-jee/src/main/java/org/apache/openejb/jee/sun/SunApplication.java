@@ -16,13 +16,13 @@
  */
 package org.apache.openejb.jee.sun;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -30,7 +30,15 @@ import javax.xml.bind.annotation.XmlType;
     "passByReference",
     "uniqueId",
     "securityRoleMapping",
-    "realm"
+    "realm",
+    "ejbRef",
+    "resourceRef",
+    "resourceEnvRef",
+    "serviceRef",
+    "messageDestinationRef",
+    "messageDestination",
+    "archiveName",
+    "compatibility"
 })
 @XmlRootElement(name = "sun-application")
 public class SunApplication {
@@ -42,6 +50,21 @@ public class SunApplication {
     @XmlElement(name = "security-role-mapping")
     protected List<SecurityRoleMapping> securityRoleMapping;
     protected String realm;
+    @XmlElement(name = "ejb-ref")
+    protected List<EjbRef> ejbRef;
+    @XmlElement(name = "resource-ref")
+    protected List<ResourceRef> resourceRef;
+    @XmlElement(name = "resource-env-ref")
+    protected List<ResourceEnvRef> resourceEnvRef;
+    @XmlElement(name = "service-ref")
+    protected List<ServiceRef> serviceRef;
+    @XmlElement(name = "message-destination-ref")
+    protected List<MessageDestinationRef> messageDestinationRef;
+    @XmlElement(name = "message-destination")
+    protected List<MessageDestination> messageDestination;
+    @XmlElement(name = "archive-name")
+    protected String archiveName;
+    protected String compatibility;
 
     public List<Web> getWeb() {
         if (web == null) {
@@ -79,5 +102,63 @@ public class SunApplication {
 
     public void setRealm(String value) {
         this.realm = value;
+    }
+
+    public List<EjbRef> getEjbRef() {
+        if (ejbRef == null) {
+            ejbRef = new ArrayList<EjbRef>();
+        }
+        return this.ejbRef;
+    }
+
+    public List<ResourceRef> getResourceRef() {
+        if (resourceRef == null) {
+            resourceRef = new ArrayList<ResourceRef>();
+        }
+        return this.resourceRef;
+    }
+
+    public List<ResourceEnvRef> getResourceEnvRef() {
+        if (resourceEnvRef == null) {
+            resourceEnvRef = new ArrayList<ResourceEnvRef>();
+        }
+        return this.resourceEnvRef;
+    }
+
+    public List<ServiceRef> getServiceRef() {
+        if (serviceRef == null) {
+            serviceRef = new ArrayList<ServiceRef>();
+        }
+        return this.serviceRef;
+    }
+
+    public List<MessageDestinationRef> getMessageDestinationRef() {
+        if (messageDestinationRef == null) {
+            messageDestinationRef = new ArrayList<MessageDestinationRef>();
+        }
+        return this.messageDestinationRef;
+    }
+
+    public List<MessageDestination> getMessageDestination() {
+        if (messageDestination == null) {
+            messageDestination = new ArrayList<MessageDestination>();
+        }
+        return this.messageDestination;
+    }
+
+    public String getArchiveName() {
+        return archiveName;
+    }
+
+    public void setArchiveName(String archiveName) {
+        this.archiveName = archiveName;
+    }
+
+    public String getCompatibility() {
+        return compatibility;
+    }
+
+    public void setCompatibility(String compatibility) {
+        this.compatibility = compatibility;
     }
 }
