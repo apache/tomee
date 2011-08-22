@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.ApplicationClient;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EjbReference;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
 import org.apache.openejb.jee.JndiReference;
@@ -61,6 +62,7 @@ import org.apache.openejb.jee.sun.EjbRef;
 import org.apache.openejb.jee.sun.EntityMapping;
 import org.apache.openejb.jee.sun.Finder;
 import org.apache.openejb.jee.sun.JaxbSun;
+import org.apache.openejb.jee.sun.MessageDestination;
 import org.apache.openejb.jee.sun.MessageDestinationRef;
 import org.apache.openejb.jee.sun.OneOneFinders;
 import org.apache.openejb.jee.sun.PortInfo;
@@ -77,6 +79,8 @@ import org.apache.openejb.jee.sun.Web;
 import org.apache.openejb.jee.sun.WebserviceEndpoint;
 import org.apache.openejb.jee.sun.WsdlPort;
 
+import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -107,6 +111,122 @@ public class SunConversion implements DynamicDeployer {
                     if (webUri.equals(webModule.getModuleId()))  {
                         webModule.setContextRoot(web.getContextRoot());
                         break;
+                    }
+                }
+            }
+
+            for (ClientModule clientModule : appModule.getClientModules()) {
+                ApplicationClient applicationClient = clientModule.getApplicationClient();
+                if (applicationClient == null) {
+                    continue;
+                }
+
+                // map ejb-refs
+                Map<String,org.apache.openejb.jee.EjbRef> refMap = applicationClient.getEjbRefMap();
+
+                // map ejb-ref jndi name declaration to deploymentId
+                for (EjbRef ref : sunApplication.getEjbRef()) {
+                    if (ref.getJndiName() != null) {
+                        String refName = ref.getEjbRefName();
+                        refName = normalize(refName);
+                        org.apache.openejb.jee.EjbRef ejbRef = refMap.get(refName);
+
+                        // try to match from lookup name
+                        for (Map.Entry<String, org.apache.openejb.jee.EjbRef> aRef : refMap.entrySet()) {
+                            if (refName.equals(aRef.getValue().getLookupName())) {
+                                ejbRef = aRef.getValue();
+                                break;
+                            }
+                        }
+
+                        if (ejbRef == null) {
+                            ejbRef = new org.apache.openejb.jee.EjbRef();
+                            ejbRef.setEjbRefName(refName);
+                            refMap.put(refName, ejbRef);
+                            applicationClient.getEjbRef().add(ejbRef);
+                        }
+                        ejbRef.setMappedName(ref.getJndiName());
+                    }
+                }
+
+                // map resource-env-refs and message-destination-refs
+                Map<String,JndiReference> resEnvMap = new TreeMap<String,JndiReference>();
+                resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
+                resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
+
+                for (ResourceRef ref : sunApplication.getResourceRef()) {
+                    if (ref.getJndiName() != null) {
+                        String refName = ref.getResRefName();
+                        refName = normalize(refName);
+                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        if (resEnvRef != null) {
+                            resEnvRef.setMappedName(ref.getJndiName());
+                        }
+                    }
+                }
+                for (ResourceEnvRef ref : sunApplication.getResourceEnvRef()) {
+                    if (ref.getJndiName() != null) {
+                        String refName = ref.getResourceEnvRefName();
+                        refName = normalize(refName);
+                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        if (resEnvRef != null) {
+                            resEnvRef.setMappedName(ref.getJndiName());
+                        }
+                    }
+                }
+                for (MessageDestinationRef ref : sunApplication.getMessageDestinationRef()) {
+                    if (ref.getJndiName() != null) {
+                        String refName = ref.getMessageDestinationRefName();
+                        refName = normalize(refName);
+                        JndiReference resEnvRef = resEnvMap.get(refName);
+                        if (resEnvRef != null) {
+                            resEnvRef.setMappedName(ref.getJndiName());
+                        }
+                    }
+                }
+                for (MessageDestination destination : sunApplication.getMessageDestination()) {
+                    if (destination.getJndiName() != null) {
+                        String name = destination.getMessageDestinationName();
+                        name = normalize(name);
+                        JndiReference ref = resEnvMap.get(name);
+                        if (ref != null) {
+                            ref.setMappedName(destination.getJndiName());
+                        }
+                    }
+                }
+
+                Map<String, ServiceRef> serviceRefMap = applicationClient.getServiceRefMap();
+                for (org.apache.openejb.jee.sun.ServiceRef ref : sunApplication.getServiceRef()) {
+                    String refName = ref.getServiceRefName();
+                    refName = normalize(refName);
+                    ServiceRef serviceRef = serviceRefMap.get(refName);
+                    if (serviceRef != null) {
+                        Map<String,PortComponentRef> ports = new TreeMap<String,PortComponentRef>();
+                        for (PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
+                            ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
+                        }
+
+                        for (PortInfo portInfo : ref.getPortInfo()) {
+                            PortComponentRef portComponentRef = ports.get(portInfo.getServiceEndpointInterface());
+                            if (portComponentRef != null) {
+                                WsdlPort wsdlPort = portInfo.getWsdlPort();
+                                if (wsdlPort != null) {
+                                    QName qname = new QName(wsdlPort.getNamespaceURI(), wsdlPort.getLocalpart());
+                                    portComponentRef.setQName(qname);
+                                }
+                                for (StubProperty stubProperty : portInfo.getStubProperty()) {
+                                    String name = stubProperty.getName();
+                                    String value = stubProperty.getValue();
+                                    portComponentRef.getProperties().setProperty(name, value);
+                                }
+                            }
+                        }
+
+                        String wsdlOverride = ref.getWsdlOverride();
+                        if (wsdlOverride != null && wsdlOverride.length() > 0) {
+                            String serviceId = extractServiceId(wsdlOverride);
+                            serviceRef.setMappedName(serviceId);
+                        }
                     }
                 }
             }
