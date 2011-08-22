@@ -90,9 +90,24 @@ public class Installer {
         installJavaagent();
 
         installConfigFiles();
+
+        removeAnnotationApiJar();
         
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
+        }
+    }
+
+    /**
+     * javaee-api* contains all classes in annotation-api which is outdated so we simply strip it.
+     */
+    private void removeAnnotationApiJar() {
+        File annotationApi = new File(paths.getCatalinaLibDir(), "annotations-api.jar");
+        if (annotationApi.exists()) {
+            if (!annotationApi.delete()) {
+                annotationApi.deleteOnExit();
+                System.err.println("Please restart the server or delete manually annotation-api.jar");
+            }
         }
     }
 

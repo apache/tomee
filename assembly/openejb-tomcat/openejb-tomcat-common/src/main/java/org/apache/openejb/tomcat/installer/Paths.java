@@ -241,16 +241,6 @@ public class Paths {
 
         return openejbLoaderJar;
     }
-    /**
-     * Returns the {@link #openejbWarDir}/tomcat/annotations-api.jar file. 
-     * Returns null if {@link #openejbWarDir} is null
-     * @return the {@link #openejbWarDir}/tomcat/annotations-api.jar file.
-     */
-    public File getUpdatedAnnotationApiJar() {
-        if (openejbWarDir == null) return null;
-
-        return new File(openejbWarDir, "tomcat/annotations-api.jar");
-    }
     /**Verifies the following:
      * <ul>
      * 	<li>{@link #openejbWarDir} is unpacked</li>
@@ -318,8 +308,6 @@ public class Paths {
             verifyFile("OpenEJB core jar", openejbCoreJar);
         }
 
-        verifyFile("Updated Tomcat annotation-api jar", getUpdatedAnnotationApiJar());
-        
         return !hasErrors();
     }
     /**
