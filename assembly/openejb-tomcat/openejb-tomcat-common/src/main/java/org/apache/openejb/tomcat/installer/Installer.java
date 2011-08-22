@@ -92,9 +92,33 @@ public class Installer {
         installConfigFiles();
 
         removeAnnotationApiJar();
+        addJavaeeInEndorsed();
         
         if (!alerts.hasErrors()) {
             status = Status.REBOOT_REQUIRED;
+        }
+    }
+
+    private void addJavaeeInEndorsed() {
+        File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed/");
+        if (!endorsed.exists()) {
+            if (!endorsed.mkdirs()) {
+                alerts.addError("can't add endorsed folder");
+                return;
+            }
+        }
+
+        for (File f : endorsed.listFiles()) {
+            if (f.getName().startsWith("javaee-api") && f.getName().endsWith(".jar")) {
+                return;
+            }
+        }
+
+        File javaeeApi = paths.getJavaEEAPIJAr();
+        try {
+            Installers.copy(javaeeApi, new File(endorsed, javaeeApi.getName()));
+        } catch (IOException e) {
+            alerts.addError(e.getMessage());
         }
     }
 

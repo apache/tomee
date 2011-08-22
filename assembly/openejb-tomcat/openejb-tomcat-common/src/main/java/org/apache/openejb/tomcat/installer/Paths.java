@@ -213,6 +213,9 @@ public class Paths {
     public File getOpenEJBTomcatLoaderJar() {
         return findOpenEJBJar("openejb-tomcat-loader");
     }
+    public File getJavaEEAPIJAr() {
+        return findOpenEJBJar("javaee-api");
+    }
     /**
      * Returns the openejb-javaagent.jar file
      * @return the openejb-javaagent.jar file
