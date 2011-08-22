@@ -100,15 +100,8 @@ public class Installer {
     }
 
     private void addJavaeeInEndorsed() {
-        File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed/");
-        if (!endorsed.exists()) {
-            if (!endorsed.mkdirs()) {
-                alerts.addError("can't add endorsed folder");
-                return;
-            }
-        }
-
-        for (File f : endorsed.listFiles()) {
+        File lib = paths.getCatalinaLibDir();
+        for (File f : lib.listFiles()) {
             if (f.getName().startsWith("javaee-api") && f.getName().endsWith(".jar")) {
                 return;
             }
@@ -116,7 +109,7 @@ public class Installer {
 
         File javaeeApi = paths.getJavaEEAPIJAr();
         try {
-            Installers.copy(javaeeApi, new File(endorsed, javaeeApi.getName()));
+            Installers.copy(javaeeApi, new File(lib, javaeeApi.getName()));
         } catch (IOException e) {
             alerts.addError(e.getMessage());
         }
