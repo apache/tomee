@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.jee.bval;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
