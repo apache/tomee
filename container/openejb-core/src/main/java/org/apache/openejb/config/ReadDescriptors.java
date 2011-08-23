@@ -103,7 +103,7 @@ public class ReadDescriptors implements DynamicDeployer {
             for (URL persistenceUrl : persistenceUrls) {
                 String moduleName = "";
                 String path;
-                if ("file".equals(persistenceUrl.getProtocol())) {
+                if (!persistenceUrl.toString().contains("!")) {
                     File file = URLs.toFile(persistenceUrl);
                     path = file.getAbsolutePath();
 
