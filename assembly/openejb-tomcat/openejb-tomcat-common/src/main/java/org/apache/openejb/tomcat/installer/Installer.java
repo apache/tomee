@@ -208,7 +208,7 @@ public class Installer {
         if (annotationApi.exists()) {
             if (!annotationApi.delete()) {
                 annotationApi.deleteOnExit();
-                System.err.println("Please restart the server or delete manually annotation-api.jar");
+                System.err.println("Please restart the server or delete manually annotations-api.jar");
             }
         }
     }

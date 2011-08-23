@@ -89,7 +89,6 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         namingResources.addPropertyChangeListener(this);
         processInitialNamingResources();
 
-
         running = true;
     }
 
