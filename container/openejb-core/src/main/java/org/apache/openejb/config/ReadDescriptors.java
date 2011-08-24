@@ -16,22 +16,6 @@
  */
 package org.apache.openejb.config;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import javax.wsdl.Definition;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.core.webservices.WsdlResolver;
@@ -56,13 +40,34 @@ import org.apache.openejb.jee.oejb2.JaxbOpenejbJar2;
 import org.apache.openejb.jee.oejb2.OpenejbJarType;
 import org.apache.openejb.jee.oejb3.JaxbOpenejbJar3;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+
 public class ReadDescriptors implements DynamicDeployer {
+    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, ReadDescriptors.class);
+
     @SuppressWarnings({"unchecked"})
     public AppModule deploy(AppModule appModule) throws OpenEJBException {
         for (EjbModule ejbModule : appModule.getEjbModules()) {
@@ -132,13 +137,19 @@ public class ReadDescriptors implements DynamicDeployer {
             return;
         }
         URL url = (URL) module.getAltDDs().get("validation.xml");
+        if (url == null) { // library but not a module case
+            url = module.getClassLoader().getResource("META-INF/validation.xml");
+            if (url != null) {
+                module.getAltDDs().put("validation.xml", url);
+            }
+        }
         if (url != null) {
             ValidationConfigType validationConfigType;
             try {
-                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, url.openStream());
+                validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, url.openStream(), false);
                 module.setValidationConfig(validationConfigType);
-            } catch (Throwable t) {
-                throw new OpenEJBException("Unable to create module ValidatorFactory instance.  Using default factory");
+            } catch (Exception e) {
+                logger.warning("can't read " + url.toString() + " to construct a validation factory, it will be ignored");
             }
         }
     }

@@ -1109,7 +1109,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
     }
 
-    private static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
+    public static Map<String, URL> getDescriptors(URL moduleUrl) throws OpenEJBException {
 
         ResourceFinder finder = new ResourceFinder(moduleUrl);
         return getDescriptors(finder);
@@ -1136,7 +1136,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         if (map.size() == 0) {
 
-            String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence.xml"};
+            String[] known = {"web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence.xml", "validation.xml"};
             for (String descriptor : known) {
 
                 final URL url = finder.getResource(ddDir + descriptor);

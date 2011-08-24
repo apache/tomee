@@ -36,7 +36,6 @@ public class ConnectorModule extends Module implements DeploymentModule {
     private final ValidationContext validation;
 
     private Connector connector;
-    private ClassLoader classLoader;
     private final List<URL> libraries = new ArrayList<URL>();
     private final Set<String> watchedResources = new TreeSet<String>();
 
@@ -50,7 +49,7 @@ public class ConnectorModule extends Module implements DeploymentModule {
 
     public ConnectorModule(Connector connector, ClassLoader classLoader, String jarLocation, String moduleId) {
         this.connector = connector;
-        this.classLoader = classLoader;
+        setClassLoader(classLoader);
 
         File file = (jarLocation == null) ? null : new File(jarLocation);
         this.id = new ID(null, connector, moduleId, file, null, this);
@@ -83,14 +82,6 @@ public class ConnectorModule extends Module implements DeploymentModule {
 
     public void setConnector(Connector connector) {
         this.connector = connector;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     public List<URL> getLibraries() {

@@ -31,9 +31,10 @@
 
   <modules>
     <module>cdi-embedded</module>
-     <module>cdi-tomee</module>
+    <module>cdi-tomee</module>
     <module>bval-embedded</module>
     <module>tck-common</module>
+    <module>bval-tomee</module>
   </modules>
 
   <repositories>
@@ -54,4 +55,21 @@
       </snapshots>
     </repository>
   </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.6.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>6.0.1</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

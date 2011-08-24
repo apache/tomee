@@ -41,6 +41,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.EJBHome;
 import javax.ejb.NoSuchEJBException;
 import javax.ejb.EJBTransactionRolledbackException;
+import javax.validation.ValidationException;
 
 public abstract class EJBInvocationHandler implements InvocationHandler, Serializable {
 
@@ -230,6 +231,7 @@ public abstract class EJBInvocationHandler implements InvocationHandler, Seriali
             if (e instanceof AccessException) {
                 return new AccessLocalException(e.getMessage()).initCause(getCause(e));
             }
+
             return new EJBException(e.getMessage()).initCause(getCause(e));
         }
 

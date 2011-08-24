@@ -32,6 +32,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.client.RemoteInitialContextFactory;
 import org.apache.openejb.config.Deploy;
 import org.apache.openejb.config.RemoteServer;
+import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.Options;
 import org.jboss.testharness.api.DeploymentException;
 import org.jboss.testharness.spi.Containers;
@@ -83,7 +84,11 @@ public class ContainersImplTomEE implements Containers {
                 deployer = lookup();
             }
             appInfo = deployer.deploy(fileName.getAbsolutePath());
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            Exception e = ex;
+            if (e.getCause() instanceof ValidationException) {
+                e = (Exception) e.getCause();
+            }
 
             if (name.contains(".broken.")) {
                 // Tests that contain the name '.broken.' are expected to fail deployment

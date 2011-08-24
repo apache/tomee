@@ -26,6 +26,8 @@ public class Module {
     
     private boolean isStandaloneModule = true;
 
+    private ClassLoader classLoader;
+
     private ValidationConfigType validationConfig;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private String uniqueId;
@@ -57,6 +59,13 @@ public class Module {
     public void setStandaloneModule(boolean isStandalone) {
         isStandaloneModule = isStandalone;
     }    
-    
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
        
 }

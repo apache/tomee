@@ -19,6 +19,7 @@ package org.apache.openejb.assembler;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Map;
@@ -39,7 +40,9 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
 import org.apache.openejb.config.DeploymentModule;
+import org.apache.openejb.config.ValidationException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.xbean.finder.ResourceFinder;
 
 @Stateless(name = "openejb/Deployer")
 @Remote(Deployer.class)
@@ -155,7 +158,14 @@ public class DeployerEjb implements Deployer {
 
             e.printStackTrace();
 
+            if (e instanceof javax.validation.ValidationException) {
+                throw (javax.validation.ValidationException) e;
+            }
+
             if (e instanceof OpenEJBException) {
+                if (e.getCause() instanceof javax.validation.ValidationException) {
+                    throw (javax.validation.ValidationException) e.getCause();
+                }
                 throw (OpenEJBException) e;
             }
             throw new OpenEJBException(e);
