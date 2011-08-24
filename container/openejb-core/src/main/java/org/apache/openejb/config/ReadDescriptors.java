@@ -137,7 +137,7 @@ public class ReadDescriptors implements DynamicDeployer {
             return;
         }
         URL url = (URL) module.getAltDDs().get("validation.xml");
-        if (url == null) { // library but not a module case
+        if (url == null && module.getClassLoader() != null) { // library but not a module case
             url = module.getClassLoader().getResource("META-INF/validation.xml");
             if (url != null) {
                 module.getAltDDs().put("validation.xml", url);
