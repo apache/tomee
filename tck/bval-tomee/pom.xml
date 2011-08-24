@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>tck</artifactId>
+    <groupId>org.apache.openejb</groupId>
+    <version>4.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>bval-tomee</artifactId>
+  <name>OpenEJB :: TCK :: Bean Validation TomEE</name>
+  <description>Aggregates dependencies and runs the JSR-303 TCK in TomEE</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-core</artifactId>
+      <version>0.3-incubating</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.bval</groupId>
+      <artifactId>bval-jsr303</artifactId>
+      <version>0.3-incubating</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tck-common</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.test-harness</groupId>
+          <artifactId>jboss-test-harness</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>apache-tomee</artifactId>
+      <type>zip</type>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.jsr303.tck</groupId>
+      <artifactId>jsr303-tck</artifactId>
+      <version>1.0.3.GA</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.validation</groupId>
+          <artifactId>validation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>reserve-network-port</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <configuration>
+              <portNames>
+                <portName>tomee.ssl.port</portName>
+                <portName>tomee.ajp.port</portName>
+                <portName>tomee.http.port</portName>
+                <portName>tomee.shutdown.port</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>apache-tomee</artifactId>
+                  <version>${project.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>tck-common</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.apache.openejb</groupId>
+                  <artifactId>bval-tomee</artifactId>
+                  <version>${project.version}</version>
+                  <outputDirectory>${project.build.directory}/dependency/lib</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>remove-apps</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete dir="${openejb.home}/webapps/docs"/>
+                <delete dir="${openejb.home}/webapps/manager"/>
+                <delete dir="${openejb.home}/webapps/host-manager"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8080" value="${tomee.http.port}"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8443" value="${tomee.ssl.port}"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8005" value="${tomee.shutdown.port}"/>
+                <replace file="${openejb.home}/conf/server.xml" token="8009" value="${tomee.ajp.port}"/>
+
+                <!-- validator provider property -->
+                <copy file="src/main/tomcat/conf/system.properties" tofile="${project.build.directory}/apache-tomee-${project.version}/conf/system.properties"/>
+
+                <!-- replacing ValidationParser of apache bval -->
+                <mkdir dir="${project.build.directory}/bval-jsr303"/>
+                <unjar src="${settings.localRepository}/org/apache/bval/bval-jsr303/0.3-incubating/bval-jsr303-0.3-incubating.jar"
+dest="${project.build.directory}/bval-jsr303">
+                    <patternset>
+                        <include name="**/**"/>
+                        <exclude name="**/ValidationParser.class"/>
+                    </patternset>
+                </unjar>
+                <copy file="${project.build.directory}/classes/org/apache/bval/jsr303/xml/ValidationParser.class" tofile="${project.build.directory}/bval-jsr303/org/apache/bval/jsr303/xml/ValidationParser.class"/>
+                <jar destfile="${project.build.directory}/apache-tomee-${project.version}/webapps/openejb/lib/bval-jsr303-0.3-incubating-patched.jar"
+                     basedir="${project.build.directory}/bval-jsr303"/>
+                <delete file="${project.build.directory}/apache-tomee-${project.version}/webapps/openejb/lib/bval-jsr303-0.3-incubating.jar" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/jsr303-tck-suite.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <systemPropertyVariables>
+            <org.jboss.testharness.standalone>false</org.jboss.testharness.standalone>
+            <org.jboss.testharness.runIntegrationTests>true</org.jboss.testharness.runIntegrationTests>
+            <org.jboss.testharness.container.forceRestart>true</org.jboss.testharness.container.forceRestart>
+            <org.jboss.testharness.libraryDirectory>${project.build.directory}/dependency/lib</org.jboss.testharness.libraryDirectory>
+            <org.jboss.testharness.host>localhost:${tomee.http.port}</org.jboss.testharness.host>
+            <deleteArtifacts>true</deleteArtifacts>
+
+            <validation.provider>org.apache.bval.jsr303.ApacheValidationProvider</validation.provider>
+            <force.deployment>true</force.deployment>
+
+            <!--<maven.failsafe.debug>true</maven.failsafe.debug>-->
+            <!--<openejb.server.debug>true</openejb.server.debug>-->
+            <java.naming.provider.url>http://localhost:${tomee.http.port}/openejb/ejb</java.naming.provider.url>
+            <connect.tries>90</connect.tries>
+            <server.http.port>${tomee.http.port}</server.http.port>
+            <server.shutdown.port>${tomee.shutdown.port}</server.shutdown.port>
+            <java.opts>-Xmx512m -Xms256m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:ReservedCodeCacheSize=64m</java.opts>
+            <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+          </systemPropertyVariables>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>verify</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <properties>
+    <openejb.home>${project.build.directory}${file.separator}apache-tomee-${project.version}</openejb.home>
+  </properties>
+</project>
