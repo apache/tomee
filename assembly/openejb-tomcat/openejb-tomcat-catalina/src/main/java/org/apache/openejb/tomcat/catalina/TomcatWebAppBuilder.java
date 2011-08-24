@@ -57,7 +57,6 @@ import org.apache.openejb.tomcat.common.LegacyAnnotationProcessor;
 import org.apache.openejb.tomcat.common.TomcatVersion;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.loader.TomcatHelper;
-import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.LinkResolver;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -96,6 +95,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
+    public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
     /**
      * Context information for web applications
      */
@@ -201,6 +201,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
         for (WebAppInfo webApp : appInfo.webApps) {
             if (getContextInfo(webApp) == null) {
                 StandardContext standardContext = new StandardContext();
+                standardContext.setCrossContext(Boolean.parseBoolean(System.getProperty(OPENEJB_CROSSCONTEXT_PROPERTY, "false")));
                 standardContext.setNamingResources(new OpenEJBNamingResource());
 
                 String s = File.pathSeparator;
