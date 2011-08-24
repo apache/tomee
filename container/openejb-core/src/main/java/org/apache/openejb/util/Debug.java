@@ -16,20 +16,24 @@
  */
 package org.apache.openejb.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.lang.reflect.Field;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @version $Rev$ $Date$
@@ -96,5 +100,139 @@ public class Debug {
         fields.addAll(getFields(clazz.getSuperclass()));
 
         return fields;
+    }
+
+
+    public static class Trace {
+
+        private static final Trace trace = new Trace();
+
+        private final Map<String, Node> elements = new LinkedHashMap<String, Node>();
+
+        public static void mark() {
+            Throwable throwable = new Exception().fillInStackTrace();
+            List<StackTraceElement> stackTraceElements = new ArrayList<StackTraceElement>(Arrays.asList(throwable.getStackTrace()));
+            Collections.reverse(stackTraceElements);
+
+            Iterator<StackTraceElement> iterator = stackTraceElements.iterator();
+            while (iterator.hasNext()) {
+                StackTraceElement element = iterator.next();
+                if (!element.getClassName().startsWith("org.apache")) iterator.remove();
+                if (element.getClassName().endsWith("Debug") && element.getMethodName().equals("mark")) iterator.remove();
+            }
+
+            trace.link(stackTraceElements);
+        }
+
+        public void print(PrintStream out) {
+            Set<Node> seen = new HashSet<Node>();
+
+            for (Node node : elements.values()) {
+                if (node.parent == null) {
+                    out.println("<ul>");
+                    print(seen, out, node, "- ");
+                    out.println("</ul>");
+                }
+            }
+        }
+
+        private void print(Set<Node> seen, PrintStream out, Node node, String s) {
+            if (!seen.add(node)) return;
+
+            out.print("<li>\n");
+
+            StackTraceElement e = node.getElement();
+            out.printf("<b>%s</b> <i>%s <font color='gray'>(%s)</font></i>\n", escape(e.getMethodName()), reverse(e.getClassName()), e.getLineNumber());
+
+            if (node.children.size()> 0) {
+                out.println("<ul>");
+                for (Node child : node.children) {
+                    print(seen, out, child, s);
+                }
+                out.println("</ul>");
+            }
+
+            out.print("</li>\n");
+        }
+
+        private String escape(String methodName) {
+            return methodName.replace("<","&lt;").replace(">","&gt;");
+        }
+
+        private void printTxt(Set<Node> seen, PrintStream out, Node node, String s) {
+            if (!seen.add(node)) return;
+
+            out.print(s);
+            StackTraceElement e = node.getElement();
+            out.printf("**%s** *%s* (%s)\n", e.getMethodName(), reverse(e.getClassName()), e.getLineNumber());
+            s = "  " + s;
+            for (Node child : node.children) {
+                print(seen, out, child, s);
+            }
+        }
+
+        private String reverse2(String className) {
+            List<String> list = Arrays.asList(className.split("\\."));
+            Collections.reverse(list);
+
+            String string = Join.join(".", list);
+            string = string.replaceAll("(.*?)(\\..*)","$1<font color=\"gray\">$2</font>");
+            return string;
+        }
+
+        private String reverse(String string) {
+            string = string.replaceAll("(.*)\\.([^.]+)","$2 <font color=\"gray\">$1</font>");
+            return string;
+        }
+
+        public static class Node {
+            private Node parent;
+            private final String trace;
+            private final StackTraceElement element;
+
+            private final List<Node> children = new ArrayList<Node>();
+
+
+            public Node(StackTraceElement element) {
+                this.element = element;
+                this.trace = element.toString();
+            }
+
+            public String getTrace() {
+                return trace;
+            }
+
+            public StackTraceElement getElement() {
+                return element;
+            }
+
+            public Node addChild(Node node) {
+                node.parent = this;
+                children.add(node);
+                return node;
+            }
+        }
+
+        public void link(List<StackTraceElement> elements) {
+            Iterator<StackTraceElement> iterator = elements.iterator();
+            if (!iterator.hasNext()) return;
+
+            Node parent = get(iterator.next());
+
+            while (iterator.hasNext()) {
+
+                parent = parent.addChild(get(iterator.next()));
+            }
+        }
+
+        private Node get(StackTraceElement element) {
+            String key = element.toString();
+            Node node = elements.get(key);
+            if (node == null) {
+                node = new Node(element);
+                elements.put(key, node);
+            }
+            return node;
+        }
     }
 }
