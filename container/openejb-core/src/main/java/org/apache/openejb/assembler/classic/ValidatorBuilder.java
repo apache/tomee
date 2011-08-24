@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
@@ -24,7 +25,10 @@ import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
+import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
+import javax.validation.bootstrap.GenericBootstrap;
+import javax.validation.spi.ValidationProvider;
 import javax.xml.bind.JAXBElement;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
@@ -68,7 +72,17 @@ public final class ValidatorBuilder {
                 factory = Validation.buildDefaultValidatorFactory();
             } else {
                 Configuration<?> configuration = getConfig(config);
-                factory = configuration.buildValidatorFactory();
+                try {
+                    factory = configuration.buildValidatorFactory();
+                } catch (ValidationException ve) {
+                    Thread.currentThread().setContextClassLoader(ValidatorBuilder.class.getClassLoader());
+                    factory = Validation.buildDefaultValidatorFactory();
+                    Thread.currentThread().setContextClassLoader(classLoader);
+
+                    logger.warning("Unable create validator factory with config " + config
+                        + " (" + ve.getMessage() + ")."
+                        + " Default factory will be used.");
+                }
                 configuration.ignoreXmlConfiguration();
             }
         } finally {
@@ -90,12 +104,21 @@ public final class ValidatorBuilder {
                 target = Validation.byProvider(clazz).configure();
                 logger.info("Using " + providerClassName + " as validation provider.");
             } catch (ClassNotFoundException e) {
-                logger.warning("Unable to load provider class "+providerClassName, e);
+                logger.warning("Unable to load provider class " + providerClassName, e);
+            } catch (ValidationException ve) {
+                logger.warning("Unable create validator factory with provider " + providerClassName
+                        + " (" + ve.getMessage() + ")."
+                        + " Default one will be used.");
             }
         }
         if (target == null) {
+            // force to use container provider to ignore any conflicting configuration
+            Thread.currentThread().setContextClassLoader(ValidatorBuilder.class.getClassLoader());
             target = Validation.byDefaultProvider().configure();
+            Thread.currentThread().setContextClassLoader(classLoader);
         }
+        // config is manage here so ignore provider parsing
+        target.ignoreXmlConfiguration();
 
         String messageInterpolatorClass = info.messageInterpolatorClass;
         if (messageInterpolatorClass != null) {
@@ -146,9 +169,10 @@ public final class ValidatorBuilder {
             }
             InputStream in = classLoader.getResourceAsStream(mappingFileName);
             if (in == null) {
-                throw new ValidationException("Unable to open input stream for mapping file " + mappingFileName);
+                logger.warning("Unable to open input stream for mapping file " + mappingFileName + ". It will be ignored");
+            } else {
+                target.addMapping(in);
             }
-            target.addMapping(in);
         }
 
         return target;

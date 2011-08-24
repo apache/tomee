@@ -42,7 +42,6 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private Webservices webservices;
     private String host;
     private String contextRoot;
-    private ClassLoader classLoader;
     private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
     private final Set<String> watchedResources = new TreeSet<String>();
     // List of all faces configuration files found in this web module
@@ -76,7 +75,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
         }
         if (contextRoot.startsWith("/")) contextRoot = contextRoot.substring(1);
         this.contextRoot = contextRoot;
-        this.classLoader = classLoader;
+        setClassLoader(classLoader);
 
         if (webApp != null) webApp.setContextRoot(contextRoot);
     }
@@ -132,14 +131,6 @@ public class WebModule extends Module implements WsModule, RESTModule {
 
     public void setWebservices(Webservices webservices) {
         this.webservices = webservices;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     public String getContextRoot() {

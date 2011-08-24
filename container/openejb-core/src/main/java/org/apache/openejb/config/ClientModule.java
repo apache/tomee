@@ -35,7 +35,6 @@ import java.io.File;
 public class ClientModule extends Module implements DeploymentModule {
     private final ValidationContext validation;
     private ApplicationClient applicationClient;
-    private ClassLoader classLoader;
     private String mainClass;
     private boolean ejbModuleGenerated;
     private AtomicReference<IAnnotationFinder> finder;
@@ -46,7 +45,7 @@ public class ClientModule extends Module implements DeploymentModule {
 
     public ClientModule(ApplicationClient applicationClient, ClassLoader classLoader, String jarLocation, String mainClass, String moduleId) {
         this.applicationClient = applicationClient;
-        this.classLoader = classLoader;
+        setClassLoader(classLoader);
         this.mainClass = mainClass;
         
         File file = (jarLocation == null) ? null : new File(jarLocation);
@@ -112,14 +111,6 @@ public class ClientModule extends Module implements DeploymentModule {
 
     public Set<String> getRemoteClients() {
         return remoteClients;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     public String getMainClass() {

@@ -41,8 +41,6 @@ public class EjbModule extends Module implements WsModule {
 
     private final ValidationContext validation;
 
-    private ClassLoader classLoader;
-
     private EjbJar ejbJar;
     private OpenejbJar openejbJar;
     private Webservices webservices;
@@ -68,7 +66,7 @@ public class EjbModule extends Module implements WsModule {
         if (classLoader == null) {
             throw new NullPointerException("classLoader is null");
         }
-        this.classLoader = classLoader;
+        setClassLoader(classLoader);
         this.ejbJar = ejbJar;
         this.openejbJar = openejbJar;
 
@@ -114,14 +112,6 @@ public class EjbModule extends Module implements WsModule {
 
     public ValidationContext getValidation() {
         return validation;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
     }
 
     public EjbJar getEjbJar() {

@@ -302,8 +302,7 @@ public abstract class JaxbOpenejb {
         return jaxbContext;
     }
 
-    @SuppressWarnings({"unchecked"})
-    public static <T> T unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    public static <T> T unmarshal(Class<T> type, InputStream in, boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
         InputSource inputSource = new InputSource(in);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -320,18 +319,26 @@ public abstract class JaxbOpenejb {
             }
         });
 
-
-        NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
-        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
-
-        SAXSource source = new SAXSource(xmlFilter, inputSource);
+        SAXSource source;
+        if (filter) {
+            NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
+            xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+            source = new SAXSource(xmlFilter, inputSource);
+        } else {
+            source = new SAXSource(inputSource);
+        }
 
         currentPublicId.set(new TreeSet<String>());
         try {
-            return (T) unmarshaller.unmarshal(source);
+            return unmarshaller.unmarshal(source, type).getValue();
         } finally {
             currentPublicId.set(null);
         }
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static <T> T unmarshal(Class<T> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        return unmarshal(type, in, true);
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
