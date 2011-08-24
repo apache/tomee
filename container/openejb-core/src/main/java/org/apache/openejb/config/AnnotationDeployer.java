@@ -1766,7 +1766,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                         "javax.faces.bean.ManagedBean",
                         "javax.servlet.annotation.WebServlet",
                         "javax.servlet.annotation.WebServletContextListener",
-                        "javax.servlet.annotation.ServletFilter",
+                        "javax.servlet.annotation.WebFilter",
                 };
 
                 List<Class<? extends Annotation>> annotations = new ArrayList<Class<? extends Annotation>>();
