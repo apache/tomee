@@ -97,4 +97,6 @@ public interface ContextListener {
      * @param standardHost host
      */
     void checkHost(StandardHost standardHost);
+
+    void configureStart(StandardContext standardContext);
 }

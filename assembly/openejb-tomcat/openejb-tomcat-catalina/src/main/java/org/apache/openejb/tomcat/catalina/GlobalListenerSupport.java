@@ -117,13 +117,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             } else if (DESTROY_EVENT.equals(type) || Lifecycle.AFTER_DESTROY_EVENT.equals(type)) {
                 contextListener.destroy(standardContext);
             } else if (Lifecycle.CONFIGURE_START_EVENT.equals(type)) {
-            	if (TomcatHelper.isTomcat7()) {
-            		TomcatHelper.configureJarScanner(standardContext);
-            		
-            		ContextTransaction contextTransaction = new ContextTransaction();
-                    contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
-                    standardContext.getNamingResources().setTransaction(contextTransaction);
-            	}
+                contextListener.configureStart(standardContext);
             }
         } else if (source instanceof StandardHost) {
             StandardHost standardHost = (StandardHost) source;

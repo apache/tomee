@@ -113,11 +113,11 @@ public class TomcatLoader implements Loader {
     public void init(Properties properties) throws Exception {
 
         // Enable System EJBs like the MEJB and DeployerEJB
-        properties.setProperty("openejb.deployments.classpath", "true");
-        properties.setProperty("openejb.deployments.classpath.filter.systemapps", "false");
+        setIfNull(properties, "openejb.deployments.classpath", "true");
+        setIfNull(properties, "openejb.deployments.classpath.filter.systemapps", "false");
 
         //Sets default service provider
-        System.setProperty("openejb.provider.default", "org.apache.openejb." + platform);
+        setIfNull(properties, "openejb.provider.default", "org.apache.openejb." + platform);
 
         // Loader maybe the first thing executed in a new classloader
         // so we must attempt to initialize the system instance.
@@ -256,6 +256,10 @@ public class TomcatLoader implements Loader {
                 }
             }
         });
+    }
+
+    private void setIfNull(Properties properties, String key, String value) {
+        if (!properties.containsKey(key)) properties.setProperty(key, value);
     }
 
     /**
