@@ -48,10 +48,6 @@ public class ContainersImplTomEE implements Containers {
     private Exception exception;
     private AppInfo appInfo;
 
-    public ContainersImplTomEE() {
-        System.out.println("Initialized ContainersImplTomEE " + (++count));
-        server = new RemoteServer(20, true);
-    }
     private Deployer lookup() {
         final Options options = new Options(System.getProperties());
         Properties props = new Properties();
@@ -68,6 +64,10 @@ public class ContainersImplTomEE implements Containers {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    public ContainersImplTomEE() {
+        System.out.println("Initialized ContainersImplTomEE " + (++count));
+        server = new RemoteServer();
     }
     @Override
     public boolean deploy(InputStream archive, String name) throws IOException {
