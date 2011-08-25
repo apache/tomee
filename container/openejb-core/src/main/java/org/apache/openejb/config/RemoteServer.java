@@ -205,6 +205,11 @@ public class RemoteServer {
                     argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
                     argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
                     argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
+                    addIfSet(argsList, "javax.net.ssl.keyStore");
+                    addIfSet(argsList, "javax.net.ssl.keyStorePassword");
+                    addIfSet(argsList, "javax.net.ssl.trustStore");
+                    addIfSet(argsList, "javax.net.ssl.trustStore");
+
                     argsList.add("-ea");
                     argsList.add("-classpath");
                     String ps = File.pathSeparator;
@@ -239,6 +244,12 @@ public class RemoteServer {
             }
         } else {
             if (verbose) System.out.println("[] FOUND STARTED SERVER");
+        }
+    }
+
+    private void addIfSet(List<String> argsList, String key) {
+        if (System.getProperties().containsKey("key")) {
+            argsList.add("-D" + key + "=" + System.getProperty(key));
         }
     }
 
