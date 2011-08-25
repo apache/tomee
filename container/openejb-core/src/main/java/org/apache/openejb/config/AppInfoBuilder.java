@@ -64,7 +64,6 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.References;
-import sun.tools.jconsole.Plotter;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
