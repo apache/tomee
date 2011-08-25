@@ -243,7 +243,14 @@ public abstract class TimerData {
         return trigger;
     }
 
-    public Date getNextTimeout() {       
+    public Date getNextTimeout() {    
+        
+        try {
+            // give the trigger 1 ms to init itself to set correct nextTimeout value.
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            log.warning("Interrupted exception when waiting 1ms for the trigger to init", e);
+        }
         
         Date nextTimeout = null;
         
