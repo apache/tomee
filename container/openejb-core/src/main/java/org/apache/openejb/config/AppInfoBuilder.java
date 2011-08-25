@@ -42,7 +42,6 @@ import org.apache.openejb.jee.ConnectionDefinition;
 import org.apache.openejb.jee.Connector;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.InboundResourceadapter;
-import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.MessageListener;
 import org.apache.openejb.jee.OutboundResourceAdapter;
 import org.apache.openejb.jee.PortComponent;
@@ -65,6 +64,7 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.References;
+import sun.tools.jconsole.Plotter;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -78,7 +78,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 
 import static org.apache.openejb.util.URLs.toFile;
 
@@ -541,18 +540,6 @@ class AppInfoBuilder {
                 // Handle Properties
                 info.properties.putAll(persistenceUnit.getProperties());
 
-                Properties overrides = ConfigurationFactory.getSystemProperties(info.name, "PersistenceUnit");
-                for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
-                    Object property = entry.getKey();
-                    Object value = entry.getValue();
-                    if (info.properties.contains(property)){
-                        logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
-                    } else {
-                        logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
-                    }
-                    info.properties.put(property, value);
-                }
-
                 PersistenceProviderProperties.apply(info);
 
 
@@ -561,7 +548,6 @@ class AppInfoBuilder {
             }
         }
     }
-
 
     public static class PersistenceProviderProperties {
         public static final String OPENJPA_RUNTIME_UNENHANCED_CLASSES = "openjpa.RuntimeUnenhancedClasses";
@@ -581,6 +567,9 @@ class AppInfoBuilder {
             // providers listed.
             if ("org.hibernate.ejb.HibernatePersistence".equals(info.provider)){
 
+                // Apply the overrides that apply to all persistence units of this provider
+                override(info, "hibernate");
+
                 String lookupProperty = "hibernate.transaction.manager_lookup_class";
                 String openejbLookupClass = MakeTxLookup.HIBERNATE_FACTORY;
 
@@ -593,6 +582,9 @@ class AppInfoBuilder {
             } else if ("oracle.toplink.essentials.PersistenceProvider".equals(info.provider) ||
                     "oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider".equals(info.provider) ){
 
+                // Apply the overrides that apply to all persistence units of this provider
+                override(info, "toplink");
+
                 String lookupProperty = "toplink.target-server";
                 String openejbLookupClass = MakeTxLookup.TOPLINK_FACTORY;
 
@@ -604,6 +596,9 @@ class AppInfoBuilder {
                 }
             } else if ("org.eclipse.persistence.jpa.PersistenceProvider".equals(info.provider) || "org.eclipse.persistence.jpa.osgi.PersistenceProvider".equals(info.provider)){
 
+                // Apply the overrides that apply to all persistence units of this provider
+                override(info, "eclipselink");
+
                 String lookupProperty = "eclipselink.target-server";
                 String openejbLookupClass = MakeTxLookup.ECLIPSELINK_FACTORY;
 
@@ -614,6 +609,9 @@ class AppInfoBuilder {
                     logger.debug("Adjusting PersistenceUnit(name="+info.name+") property to "+lookupProperty+"="+openejbLookupClass);
                 }
             }  else if (info.provider == null || "org.apache.openjpa.persistence.PersistenceProviderImpl".equals(info.provider)){
+
+                // Apply the overrides that apply to all persistence units of this provider
+                override(info, "openjpa");
 
                 String existing = info.properties.getProperty(OPENJPA_RUNTIME_UNENHANCED_CLASSES);
 
@@ -642,6 +640,31 @@ class AppInfoBuilder {
                         }
                     }
                 }
+            }
+
+            // Apply the overrides that apply to just this persistence unit
+            override(info);
+        }
+
+        private static void override(PersistenceUnitInfo info) {
+            override(info, info.name);
+        }
+
+        private static void override(PersistenceUnitInfo info, String prefix) {
+
+            Properties overrides = ConfigurationFactory.getSystemProperties(prefix, "PersistenceUnit");
+
+            for (Map.Entry<Object, Object> entry : overrides.entrySet()) {
+
+                final Object property = (prefix.equalsIgnoreCase(info.name)) ? entry.getKey() : prefix + "." + entry.getKey();
+                final Object value = entry.getValue();
+
+                if (info.properties.contains(property)){
+                    logger.debug("Overriding persistence-unit "+info.name +" property " + property + "="+value);
+                } else {
+                    logger.debug("Adding persistence-unit "+info.name +" property " + property + "="+value);
+                }
+                info.properties.put(property, value);
             }
         }
     }
