@@ -202,8 +202,9 @@ public class RemoteServer {
                     argsList.add("-Dcatalina.base=" + home.getAbsolutePath());
                     argsList.add("-Dcatalina.home=" + home.getAbsolutePath());
                     argsList.add("-Dcatalina.ext.dirs=" + tlib.getAbsolutePath());
-                    argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
                     argsList.add("-Dopenejb.servicemanager.enabled=" + Boolean.getBoolean("openejb.servicemanager.enabled"));
+                    argsList.add("-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true");
+                    argsList.add("-Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true");
                     argsList.add("-ea");
                     argsList.add("-classpath");
                     String ps = File.pathSeparator;
