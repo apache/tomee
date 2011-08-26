@@ -19,6 +19,7 @@ package org.apache.openejb.config;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
+import org.apache.openejb.assembler.classic.CommonInfoObject;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
@@ -168,6 +169,7 @@ class AppInfoBuilder {
                 ejbJarInfo.portInfos.addAll(configureWebservices(ejbModule.getWebservices()));
                 ejbJarInfo.uniqueId = ejbModule.getUniqueId();
                 ejbJarInfo.repositories = ejbModule.getRepositories();
+                copyDatasources(ejbModule, ejbJarInfo);
                 configureWebserviceSecurity(ejbJarInfo, ejbModule);
 
                 ejbJarInfos.put(ejbModule, ejbJarInfo);
@@ -266,6 +268,45 @@ class AppInfoBuilder {
         logger.info("config.appLoaded", appInfo.path);
         return appInfo;
 
+    }
+
+    private void copyDatasources(Module module, CommonInfoObject info) {
+        for (DatasourceDefinition def : module.getDatasources()) {
+            ResourceInfo resourceInfo = new ResourceInfo();
+            resourceInfo.id = def.getName();
+
+            int idx;
+            if (resourceInfo.id != null) {
+                idx = resourceInfo.id.indexOf(':');
+                if (idx > -1) {
+                    resourceInfo.id = resourceInfo.id.substring(idx + 1);
+                }
+            }
+
+            resourceInfo.service = "Resource";
+            resourceInfo.types.add("javax.sql.DataSource");
+
+            resourceInfo.properties = new Properties();
+            resourceInfo.properties.put("transactional", def.isTransactional());
+            resourceInfo.properties.put("initialPoolSize", def.getInitialPoolSize());
+            resourceInfo.properties.put("isolationLevel", def.getIsolationLevel());
+            resourceInfo.properties.put("maxIdleTime", def.getMaxIdleTime());
+            resourceInfo.properties.put("maxPoolSize", def.getMaxPoolSize());
+            resourceInfo.properties.put("maxStatements", def.getMaxStatements());
+            resourceInfo.properties.put("minPoolSize", def.getMinPoolSize());
+            resourceInfo.properties.put("portNumber", def.getPortNumber());
+            resourceInfo.properties.put("databaseName", def.getDatabaseName());
+            resourceInfo.properties.put("description", def.getDescription());
+            resourceInfo.properties.put("password", def.getPassword());
+            resourceInfo.properties.put("serverName", def.getServerName());
+            resourceInfo.properties.put("url", def.getUrl());
+            resourceInfo.properties.put("user", def.getUser());
+            resourceInfo.properties.put("properties", def.getProperties());
+            resourceInfo.properties.put("className", def.getClassName());
+            resourceInfo.properties.put("name", def.getName());
+
+            info.datasourceDefinitions.add(resourceInfo);
+        }
     }
 
     private void buildClientModules(AppModule appModule, AppInfo appInfo, JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {

@@ -21,7 +21,7 @@ import java.util.TreeSet;
 import java.util.List;
 import java.util.ArrayList;
 
-public class WebAppInfo extends ValidationInfoObject {
+public class WebAppInfo extends CommonInfoObject {
     public String path;
     public String description;
     public String displayName;

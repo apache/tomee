@@ -23,7 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class EjbJarInfo extends ValidationInfoObject {
+public class EjbJarInfo extends CommonInfoObject {
     public final Properties properties = new Properties();
 
     public String moduleName;
