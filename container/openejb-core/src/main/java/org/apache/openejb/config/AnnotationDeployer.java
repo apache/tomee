@@ -1694,7 +1694,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             Class clazz = classLoader.loadClass(listenerClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
-                            throw new OpenEJBException("Unable to load tag library servlet listener class: " + listenerClass, e);
+                            logger.error("Unable to load tag library servlet listener class: " + listenerClass);
                         }
                     }
                 }
@@ -1709,7 +1709,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                             Class clazz = classLoader.loadClass(tagClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
-                            throw new OpenEJBException("Unable to load tag library tag class: " + tagClass, e);
+                            logger.error("Unable to load tag library tag class: " + tagClass);
                         }
                     }
                 }
@@ -1753,9 +1753,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                             Class clazz = classLoader.loadClass(managedBeanClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
-                            // throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
-
-                            // delegate management to jsf implementation
                             logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
                         }
                     }
