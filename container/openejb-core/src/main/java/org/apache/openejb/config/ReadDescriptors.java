@@ -114,9 +114,15 @@ public class ReadDescriptors implements DynamicDeployer {
                 }
                 String  moduleName = file.toURI().toString();
 
+                String rootUrl = moduleName;
+
+                if (persistenceUrl.toExternalForm().contains("WEB-INF/classes/META-INF/")) {
+                    rootUrl = persistenceUrl.toExternalForm().replace("(WEB-INF/classes)/META-INF/.*", "$1");
+                }
+
                 try {
                     Persistence persistence = JaxbPersistenceFactory.getPersistence(persistenceUrl);
-                    PersistenceModule persistenceModule = new PersistenceModule(moduleName, persistence);
+                    PersistenceModule persistenceModule = new PersistenceModule(rootUrl, persistence);
                     persistenceModule.getWatchedResources().add(moduleName);
                     if ("file".equals(persistenceUrl.getProtocol())) {
                         persistenceModule.getWatchedResources().add(path);
