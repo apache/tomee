@@ -17,6 +17,7 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.openejb.assembler.classic.SingletonSessionContainerInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
@@ -133,6 +134,27 @@ public class ConfigureServiceTest extends TestCase {
         assertNotNull(myStatelessContainer.properties);
         assertNotNull(myStatelessContainer.properties.getProperty("myProperty"));
         assertEquals("Yummy Cheese", myStatelessContainer.properties.getProperty("myProperty"));
+        assertNotNull(myStatelessContainer.properties.getProperty("anotherProperty"));
+        assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
+    }
+
+    public void testConfigureServiceAddedPropertyViaURI2() throws Exception {
+        ConfigurationFactory factory = new ConfigurationFactory();
+
+        URI uri = new URI("new://Container?type=STATELESS&provider=org.acme%23CheddarContainer&myProperty=Queso");
+
+        Container container = (Container) factory.toConfigDeclaration("MyContainer", uri);
+
+        container.getProperties().setProperty("anotherProperty", "Cheese is good");
+        StatelessSessionContainerInfo myStatelessContainer = factory.configureService(container,  StatelessSessionContainerInfo.class);
+
+        assertNotNull(myStatelessContainer);
+        assertEquals("MyContainer", myStatelessContainer.id);
+        assertEquals("org.acme.SuperContainer", myStatelessContainer.className);
+        assertNotNull(myStatelessContainer.constructorArgs);
+        assertNotNull(myStatelessContainer.properties);
+        assertNotNull(myStatelessContainer.properties.getProperty("myProperty"));
+        assertEquals("Queso", myStatelessContainer.properties.getProperty("myProperty"));
         assertNotNull(myStatelessContainer.properties.getProperty("anotherProperty"));
         assertEquals("Cheese is good", myStatelessContainer.properties.getProperty("anotherProperty"));
     }
