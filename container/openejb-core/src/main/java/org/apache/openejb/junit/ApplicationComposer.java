@@ -191,7 +191,10 @@ public class ApplicationComposer extends BlockJUnit4ClassRunner {
                     final EnterpriseBean bean = (EnterpriseBean) obj;
                     final EjbJar ejbJar = new EjbJar(method.getName());
                     ejbJar.addEnterpriseBean(bean);
-                    appModule.getEjbModules().add(new EjbModule(ejbJar));
+                    EjbModule ejbModule = new EjbModule(ejbJar);
+                    Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(bean.getEjbClass());
+                    ejbModule.setFinder(new AnnotationFinder(new ClassesArchive(clazz)).link());
+                    appModule.getEjbModules().add(ejbModule);
 
                 } else if (obj instanceof Application) {
 
