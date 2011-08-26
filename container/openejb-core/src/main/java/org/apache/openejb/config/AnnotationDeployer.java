@@ -130,6 +130,8 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.annotation.security.RunAs;
+import javax.annotation.sql.DataSourceDefinition;
+import javax.annotation.sql.DataSourceDefinitions;
 import javax.ejb.AccessTimeout;
 import javax.ejb.AfterBegin;
 import javax.ejb.AfterCompletion;
@@ -260,8 +262,14 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
     private final MBeanDeployer mBeanDeployer;
+    private final AutoConfig autoConfig;
 
     public AnnotationDeployer() {
+        this(null);
+    }
+
+    public AnnotationDeployer(AutoConfig autoConfig) {
+        this.autoConfig = autoConfig;
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
@@ -333,7 +341,6 @@ public class AnnotationDeployer implements DynamicDeployer {
         return jndiName.startsWith("java:global/") || jndiName.startsWith("java:app/") || jndiName.startsWith("java:module/");
     }
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
-
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
                 setModule(ejbModule);
@@ -416,6 +423,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                     clientModule.setApplicationClient(new ApplicationClient());
                 }
             }
+
+            addDatasourceDefinitions(clientModule, finder);
 
             return clientModule;
         }
@@ -681,6 +690,8 @@ public class AnnotationDeployer implements DynamicDeployer {
 					process(connectorModule.getClassLoader(), activationSpec.getActivationSpecClass(), activationSpec);
 				}
         	}
+
+            addDatasourceDefinitions(connectorModule, finder);
         	
             return connectorModule;
         }
@@ -981,7 +992,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             /*
-             *REST
+             * REST
              */
             // get by annotations
             webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
@@ -990,6 +1001,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             for (Class<? extends Application> app : applications) {
                 webModule.getRestApplications().add(app.getName());
             }
+
+            addDatasourceDefinitions(webModule, finder);
 
             return webModule;
         }
@@ -1256,7 +1269,53 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
+            addDatasourceDefinitions(ejbModule, finder);
+
             return ejbModule;
+        }
+
+        private void addDatasourceDefinitions(Module module, IAnnotationFinder finder) {
+            List<DataSourceDefinition> datasources = new ArrayList<DataSourceDefinition>();
+
+            List<Annotated<Class<?>>> dataSourceDefinitionsClasses = finder.findMetaAnnotatedClasses(DataSourceDefinitions.class);
+            for (Annotated<Class<?>> dsDefsClass : dataSourceDefinitionsClasses) {
+                DataSourceDefinitions defs = dsDefsClass.getAnnotation(DataSourceDefinitions.class);
+                for (DataSourceDefinition dsDef : defs.value()) {
+                    datasources.add(dsDef);
+                }
+            }
+
+            List<Annotated<Class<?>>> dataSourceDefinitionClasses = finder.findMetaAnnotatedClasses(DataSourceDefinition.class);
+            for (Annotated<Class<?>> dsDefsClass : dataSourceDefinitionClasses) {
+                datasources.add(dsDefsClass.getAnnotation(DataSourceDefinition.class));
+            }
+
+            for (DataSourceDefinition dsDef : datasources) {
+                DatasourceDefinition def = getDatasourceDefinitaion(dsDef);
+                module.getDatasources().add(def);
+            }
+        }
+
+        private DatasourceDefinition getDatasourceDefinitaion(DataSourceDefinition dsDef) {
+            DatasourceDefinition def = new DatasourceDefinition();
+            def.setTransactional(dsDef.transactional());
+            def.setInitialPoolSize(dsDef.initialPoolSize());
+            def.setIsolationLevel(dsDef.isolationLevel());
+            def.setMaxIdleTime(dsDef.maxIdleTime());
+            def.setMaxPoolSize(dsDef.maxPoolSize());
+            def.setMaxStatements(dsDef.maxStatements());
+            def.setMinPoolSize(dsDef.minPoolSize());
+            def.setPortNumber(dsDef.portNumber());
+            def.setDatabaseName(dsDef.databaseName());
+            def.setDescription(dsDef.description());
+            def.setPassword(dsDef.password());
+            def.setServerName(dsDef.serverName());
+            def.setUrl(dsDef.url());
+            def.setUser(dsDef.user());
+            def.setProperties(dsDef.properties());
+            def.setClassName(dsDef.className());
+            def.setName(dsDef.name());
+            return def;
         }
 
         private List<String> getBeanClasses(IAnnotationFinder finder) {

@@ -16,10 +16,7 @@
  */
 package org.apache.openejb.assembler.dynamic;
 
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.openejb.assembler.classic.ServiceInfo;
 

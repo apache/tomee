@@ -19,7 +19,9 @@ package org.apache.openejb.config;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Module {
     private static int currentId = 1; // unique id to be able to bind something for each module in the jndi tree
@@ -31,6 +33,7 @@ public class Module {
     private ValidationConfigType validationConfig;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private String uniqueId;
+    private Set<DatasourceDefinition> datasources = new HashSet<DatasourceDefinition>();
 
     public Module() {
         uniqueId = Integer.toString(currentId++);
@@ -67,5 +70,8 @@ public class Module {
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
-       
+
+    public Set<DatasourceDefinition> getDatasources() {
+        return datasources;
+    }
 }

@@ -61,6 +61,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
+import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.validation.ValidationException;
@@ -84,7 +85,9 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
+import org.apache.openejb.assembler.dynamic.PassthroughFactory;
 import org.apache.openejb.cdi.CdiBuilder;
+import org.apache.openejb.config.DatasourceDefinitionHelper;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -127,55 +130,6 @@ import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 import org.apache.xbean.recipe.UnsetPropertiesRecipe;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.validation.ValidationException;
-import javax.validation.ValidatorFactory;
-import java.io.File;
-import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Assembler extends AssemblerTool implements org.apache.openejb.spi.Assembler {
 
@@ -654,6 +608,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     for (ResourceInfo adminObject : connector.adminObject) {
                         createResource(adminObject);
                     }
+                    createDatasources(connector.datasourceDefinitions, classLoader);
                 } finally {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
@@ -751,6 +706,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
 
+                createDatasources(ejbJar.datasourceDefinitions, classLoader);
+
                 allDeployments.addAll(deployments.values());
             }
 
@@ -830,6 +787,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
+
+                createDatasources(clientInfo.datasourceDefinitions, classLoader);
             }
 
             SystemInstance systemInstance = SystemInstance.get();
@@ -863,6 +822,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
+        }
+    }
+
+    private void createDatasources(Set<ResourceInfo> datasourceDefinitions, ClassLoader classLoader) throws OpenEJBException {
+        for (ResourceInfo dataSource : datasourceDefinitions) {
+            DataSource ds = DatasourceDefinitionHelper.newInstance(dataSource, classLoader);
+            if (ds == null) {
+                logger.error("can't instantiate " + dataSource.id);
+                continue;
+            }
+            PassthroughFactory.add(dataSource, ds);
+            createResource(dataSource);
         }
     }
 

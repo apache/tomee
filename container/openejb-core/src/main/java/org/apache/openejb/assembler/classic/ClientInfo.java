@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class ClientInfo extends ValidationInfoObject {
+public class ClientInfo extends CommonInfoObject {
 
     public String path;
     public String description;
