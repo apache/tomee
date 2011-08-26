@@ -1753,7 +1753,10 @@ public class AnnotationDeployer implements DynamicDeployer {
                             Class clazz = classLoader.loadClass(managedBeanClass);
                             classes.add(clazz);
                         } catch (ClassNotFoundException e) {
-                            throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
+                            // throw new OpenEJBException("Unable to load JSF managed bean class: " + managedBeanClass, e);
+
+                            // delegate management to jsf implementation
+                            logger.error("Unable to load JSF managed bean class: " + managedBeanClass);
                         }
                     }
                 }
