@@ -35,6 +35,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
+      <version>1.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
