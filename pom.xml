@@ -138,7 +138,7 @@
     <junit.version>4.8.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <org.apache.openwebbeans.version>1.1.1-SNAPSHOT</org.apache.openwebbeans.version>
-    <geronimo.connector.version>3.1</geronimo.connector.version>
+    <geronimo.connector.version>3.1.1-SNAPSHOT/geronimo.connector.version>
   </properties>
 
   <build>
