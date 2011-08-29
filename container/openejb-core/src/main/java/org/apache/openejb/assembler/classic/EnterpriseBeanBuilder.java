@@ -54,12 +54,14 @@ class EnterpriseBeanBuilder {
     private final List<Exception> warnings = new ArrayList<Exception>();
     private final ModuleContext moduleContext;
     private final List<Injection> moduleInjections;
+    private final Set<ResourceInfo> datasourceDefinitions;
 
-    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections) {
+    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections, Set<ResourceInfo> dataSourceDefs) {
         this.moduleContext = moduleContext;
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
         this.moduleInjections = moduleInjections;
+        datasourceDefinitions = dataSourceDefs;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
             ejbType = BeanType.STATEFUL;
@@ -141,7 +143,7 @@ class EnterpriseBeanBuilder {
         }
 
         // build the enc
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader(), moduleContext.getAppContext());
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader(), datasourceDefinitions);
         Context compJndiContext = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
         bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
         bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());
