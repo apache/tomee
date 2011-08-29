@@ -79,6 +79,18 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <compilerArguments>
+            <endorseddirs>${openejb.build.endorsed}</endorseddirs>
+          </compilerArguments>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -106,7 +118,7 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <testNGArtifactName>none:none</testNGArtifactName>
-          <argLine>-Xmx256m "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -enableassertions</argLine>
+          <argLine>-Xmx256m -Djava.endorsed.dirs=${openejb.build.endorsed} "-javaagent:${basedir}/target/openejb-javaagent-${project.version}.jar" -enableassertions</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
           <systemPropertyVariables>
             <openejb.home>${basedir}/target/test-classes</openejb.home>
