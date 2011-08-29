@@ -208,7 +208,7 @@ public class RemoteServer {
                     addIfSet(argsList, "javax.net.ssl.keyStore");
                     addIfSet(argsList, "javax.net.ssl.keyStorePassword");
                     addIfSet(argsList, "javax.net.ssl.trustStore");
-                    addIfSet(argsList, "javax.net.ssl.trustStore");
+                    addIfSet(argsList, "java.protocol.handler.pkgs");
 
                     argsList.add("-ea");
                     argsList.add("-classpath");
@@ -248,7 +248,7 @@ public class RemoteServer {
     }
 
     private void addIfSet(List<String> argsList, String key) {
-        if (System.getProperties().containsKey("key")) {
+        if (System.getProperties().containsKey(key)) {
             argsList.add("-D" + key + "=" + System.getProperty(key));
         }
     }
