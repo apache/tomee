@@ -18,9 +18,10 @@ import java.util.Map;
  * @author rmannibucau
  */
 public final class DatasourceDefinitionHelper {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, DatasourceDefinitionHelper.class.getPackage().getName());
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, DatasourceDefinitionHelper.class.getPackage().getName());
 
-    private static final Collection<String> MANUALLY_SET_PROPERTIES = Arrays.asList("serName", "portNumber", "url");
+    private static final String FORCE_DBCP_DATASOURCE = "openejb.datasource-definition.force-dbcp";
+    private static final Collection<String> MANUALLY_SET_PROPERTIES = Arrays.asList("userName", "portNumber", "url");
 
     private DatasourceDefinitionHelper() {
         // no-op
@@ -49,7 +50,12 @@ public final class DatasourceDefinitionHelper {
             return null;
         }
 
-        if (!BasicDataSource.class.isAssignableFrom(clazz)) {
+        boolean forceDbcp = false;
+        if (resourceInfo.properties.getProperty(FORCE_DBCP_DATASOURCE) != null) {
+            forceDbcp = Boolean.parseBoolean(resourceInfo.properties.getProperty(FORCE_DBCP_DATASOURCE));
+        }
+
+        if (!BasicDataSource.class.isAssignableFrom(clazz) && !forceDbcp) {
             ObjectRecipe objectRecipe = new ObjectRecipe(className);
             objectRecipe.allow(Option.FIELD_INJECTION);
             objectRecipe.allow(Option.PRIVATE_PROPERTIES);
@@ -117,6 +123,7 @@ public final class DatasourceDefinitionHelper {
             }
             bd.setPassword(resourceInfo.properties.getProperty("password"));
             bd.setUsername(resourceInfo.properties.getProperty("user"));
+            bd.setDriverClassName(resourceInfo.properties.getProperty("className"));
         }
 
         return ds;

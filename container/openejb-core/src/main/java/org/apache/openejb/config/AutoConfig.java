@@ -48,6 +48,7 @@ import org.apache.openejb.jee.PersistenceType;
 import org.apache.openejb.jee.ResourceAdapter;
 import org.apache.openejb.jee.ResourceRef;
 import org.apache.openejb.jee.SessionType;
+import org.apache.openejb.jee.jba.cmp.EnterpriseBeans;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
@@ -1755,6 +1756,31 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
 
+            for (EjbModule module : appModule.getEjbModules()) {
+                EnterpriseBean[] enterpriseBeans = module.getEjbJar().getEnterpriseBeans();
+                OpenejbJar openejbJar = module.getOpenejbJar();
+                Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+
+                for (DatasourceDefinition ds : module.getDatasources()) {
+                    final String id = module.getUniqueId() + '/' + ds.getName().replace("java:", "");
+                    if (resourceIdsByType.get("javax.sql.DataSource") == null) {
+                        resourceIdsByType.put("javax.sql.DataSource", new ArrayList<String>());
+                    }
+                    resourceIdsByType.get("javax.sql.DataSource").add(id);
+
+                    for (EnterpriseBean bean : enterpriseBeans) {
+                        EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
+                        for (ResourceRef ref : bean.getResourceRef()) {
+                            if (ds.getName().equals(ref.getName())) {
+                                ResourceLink link = new ResourceLink();
+                                link.setResId(id);
+                                link.setResRefName(ds.getName());
+                                ejbDeployment.addResourceLink(link);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public List<String> getResourceIds(String type) {

@@ -25,5 +25,5 @@ import java.util.Set;
 public class CommonInfoObject extends InfoObject {
     public ValidationInfo validationInfo;
     public String uniqueId;
-    public Set<ResourceInfo> datasourceDefinitions = new HashSet<ResourceInfo>();
+    public final Set<ResourceInfo> datasourceDefinitions = new HashSet<ResourceInfo>();
 }
