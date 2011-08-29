@@ -753,7 +753,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 List<Injection> injections = injectionBuilder.buildInjections(clientInfo.jndiEnc);
 
                 // build the enc
-                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader, appContext);
+                JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(clientInfo.jndiEnc, injections, "Bean", clientInfo.moduleId, null, clientInfo.uniqueId, classLoader);
                 // if there is at least a remote client classes
                 // or if there is no local client classes
                 // then, we can set the client flag

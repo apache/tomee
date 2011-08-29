@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import org.apache.openejb.AppContext;
 import org.apache.openejb.Injection;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
@@ -73,6 +72,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -103,25 +103,22 @@ public class JndiEncBuilder {
     private final String uniqueId;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
-    private final AppContext appContext;
-    private Set<ResourceInfo> datasourceDefinitions = new HashSet<ResourceInfo>();
+    private Set<ResourceInfo> datasourceDefinitions;
 
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, null);
+        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, Collections.<ResourceInfo>emptySet());
     }
 
-    public JndiEncBuilder(JndiEncInfo moduleJndiEnc, List<Injection> moduleInjections, String moduleName, URI moduleUri, String uniqueId, ClassLoader classLoader, Set<ResourceInfo> datasourceDefs) throws OpenEJBException {
-        this(moduleJndiEnc, moduleInjections, moduleName, moduleUri, uniqueId, classLoader);
-        datasourceDefinitions = datasourceDefs;
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
+        this(jndiEnc, injections, transactionType, moduleId, moduleUri, uniqueId, classLoader, Collections.<ResourceInfo>emptySet());
     }
 
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
+    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader, Set<ResourceInfo> datasourceDefs) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
-        this.appContext = appContext;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
 
         this.moduleId = moduleId;
@@ -129,6 +126,7 @@ public class JndiEncBuilder {
 
         this.uniqueId = uniqueId;
         this.classLoader = classLoader;
+        datasourceDefinitions = datasourceDefs;
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -181,7 +179,7 @@ public class JndiEncBuilder {
 
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbReferences) {
 
-            Reference reference = null;
+            Reference reference;
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
@@ -199,7 +197,7 @@ public class JndiEncBuilder {
         }
 
         for (EjbReferenceInfo referenceInfo : jndiEnc.ejbLocalReferences) {
-            Reference reference = null;
+            Reference reference;
 
             if (referenceInfo.location != null) {
                 reference = buildReferenceLocation(referenceInfo.location);
@@ -227,7 +225,7 @@ public class JndiEncBuilder {
 
             try {
                 Class type = Classes.deprimitivize(getType(entry.type, entry));
-                Object obj = null;
+                Object obj;
                 if (type == String.class)
                     obj = new String(entry.value);
                 else if (type == Double.class) {
@@ -275,7 +273,7 @@ public class JndiEncBuilder {
 
             Class<?> type = getType(referenceInfo.referenceType, referenceInfo);
 
-            Object reference = null;
+            Object reference;
             if (URL.class.equals(type)) {
                 reference = new URLReference(referenceInfo.resourceID);
             } else if (type.isAnnotationPresent(ManagedBean.class)) {
@@ -303,7 +301,7 @@ public class JndiEncBuilder {
         }
 
         for (ResourceInfo referenceInfo : datasourceDefinitions) {
-            String jndiName = "openejb/Resource/" + uniqueId + '/' + referenceInfo.id;
+            String jndiName = "openejb/Resource/" + referenceInfo.id;
             Object reference = new IntraVmJndiReference(jndiName);
             String boundName = normalize(referenceInfo.properties.getProperty("name"));
             bindings.put(boundName, reference);
@@ -319,7 +317,7 @@ public class JndiEncBuilder {
 
             Class<?> type = getType(referenceInfo.resourceEnvRefType, referenceInfo);
 
-            Object reference = null;
+            Object reference;
             if (EJBContext.class.isAssignableFrom(type)) {
                 String jndiName = "comp/EJBContext";
                 reference = new LinkRef(jndiName);
@@ -484,9 +482,8 @@ public class JndiEncBuilder {
         bindings.put("comp/Validator", new IntraVmJndiReference(Assembler.VALIDATOR_NAMING_CONTEXT + uniqueId));
 
         // bind UserTransaction if bean managed transactions
-        UserTransaction userTransaction = null;
         if (beanManagedTransactions) {
-            userTransaction = new CoreUserTransaction(transactionManager);
+            UserTransaction userTransaction = new CoreUserTransaction(transactionManager);
             bindings.put("comp/UserTransaction", userTransaction);
         }
     }
@@ -522,6 +519,7 @@ public class JndiEncBuilder {
         try {
             return context.lookup(contextName) != null;
         } catch (NamingException e) {
+            // no-op
         }
         return false;
     }
@@ -554,9 +552,8 @@ public class JndiEncBuilder {
     private Class inferType(InjectableInfo injectable) throws OpenEJBException {
         for (InjectionInfo injection : injectable.targets) {
             try {
-                Class target = classLoader.loadClass(injection.className.trim());
-                Class type = IntrospectionSupport.getPropertyType(target, injection.propertyName.trim());
-                return type;
+                Class<?> target = classLoader.loadClass(injection.className.trim());
+                return IntrospectionSupport.getPropertyType(target, injection.propertyName.trim());
             } catch (ClassNotFoundException e) {
                 // ignore
             } catch (NoSuchFieldException e) {
