@@ -273,15 +273,7 @@ class AppInfoBuilder {
     private void copyDatasources(Module module, CommonInfoObject info) {
         for (DatasourceDefinition def : module.getDatasources()) {
             ResourceInfo resourceInfo = new ResourceInfo();
-            resourceInfo.id = def.getName();
-
-            int idx;
-            if (resourceInfo.id != null) {
-                idx = resourceInfo.id.indexOf(':');
-                if (idx > -1) {
-                    resourceInfo.id = resourceInfo.id.substring(idx + 1);
-                }
-            }
+            resourceInfo.id = module.getUniqueId() + "/" + def.getName().replace("java:", "");
 
             resourceInfo.service = "Resource";
             resourceInfo.types.add("javax.sql.DataSource");
@@ -304,6 +296,7 @@ class AppInfoBuilder {
             resourceInfo.properties.put("properties", def.getProperties());
             resourceInfo.properties.put("className", def.getClassName());
             resourceInfo.properties.put("name", def.getName());
+            resourceInfo.properties.put("loginTimeout", def.getLoginTimeout());
 
             info.datasourceDefinitions.add(resourceInfo);
         }
@@ -361,6 +354,7 @@ class AppInfoBuilder {
                 webAppInfo.servlets.add(servletInfo);
             }
 
+            appInfo.webApps.add(webAppInfo);
             appInfo.webApps.add(webAppInfo);
         }
     }

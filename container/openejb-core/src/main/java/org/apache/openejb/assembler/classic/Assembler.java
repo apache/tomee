@@ -1449,7 +1449,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         try {
-            containerSystem.getJNDIContext().bind("openejb/Resource/" + serviceInfo.id, service);
+            final String name = "openejb/Resource/" + serviceInfo.id;
+            containerSystem.getJNDIContext().bind(name, service);
         } catch (NamingException e) {
             throw new OpenEJBException("Cannot bind resource adapter with id " + serviceInfo.id, e);
         }

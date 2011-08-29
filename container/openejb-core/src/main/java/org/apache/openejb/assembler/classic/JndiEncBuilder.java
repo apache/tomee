@@ -74,8 +74,10 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names
@@ -102,12 +104,18 @@ public class JndiEncBuilder {
     private final List<Injection> injections;
     private final ClassLoader classLoader;
     private final AppContext appContext;
+    private Set<ResourceInfo> datasourceDefinitions = new HashSet<ResourceInfo>();
 
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
         this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, null);
+    }
+
+    public JndiEncBuilder(JndiEncInfo moduleJndiEnc, List<Injection> moduleInjections, String moduleName, URI moduleUri, String uniqueId, ClassLoader classLoader, Set<ResourceInfo> datasourceDefs) throws OpenEJBException {
+        this(moduleJndiEnc, moduleInjections, moduleName, moduleUri, uniqueId, classLoader);
+        datasourceDefinitions = datasourceDefs;
     }
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader, AppContext appContext) throws OpenEJBException {
@@ -292,6 +300,13 @@ public class JndiEncBuilder {
                 reference = new IntraVmJndiReference(jndiName);
             }
             bindings.put(normalize(referenceInfo.referenceName), reference);
+        }
+
+        for (ResourceInfo referenceInfo : datasourceDefinitions) {
+            String jndiName = "openejb/Resource/" + uniqueId + '/' + referenceInfo.id;
+            Object reference = new IntraVmJndiReference(jndiName);
+            String boundName = normalize(referenceInfo.properties.getProperty("name"));
+            bindings.put(boundName, reference);
         }
 
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
