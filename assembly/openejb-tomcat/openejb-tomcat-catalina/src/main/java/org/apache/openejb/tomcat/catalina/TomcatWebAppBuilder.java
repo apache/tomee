@@ -21,7 +21,11 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.core.*;
+import org.apache.catalina.core.ContainerBase;
+import org.apache.catalina.core.NamingContextListener;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
+import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
@@ -68,14 +72,17 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
+import javax.servlet.SessionTrackingMode;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static org.apache.openejb.tomcat.catalina.BackportUtil.getNamingContextListener;
@@ -86,6 +93,8 @@ import static org.apache.openejb.tomcat.catalina.BackportUtil.getNamingContextLi
  * @version $Rev$ $Date$
  */
 public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
+    public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
+    public static final String OPENEJB_JSESSION_ID_SUPPORT = "openejb.jsessionid-support";
 
     /**
      * Flag for ignore context
@@ -95,7 +104,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      * Logger instance
      */
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
-    public static final String OPENEJB_CROSSCONTEXT_PROPERTY = "openejb.crosscontext";
+
     /**
      * Context information for web applications
      */
@@ -293,6 +302,15 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
      */
     @Override
     public void beforeStart(StandardContext standardContext) {
+        ServletContext sc = standardContext.getServletContext();
+        if (sc != null && !Boolean.parseBoolean(System.getProperty(OPENEJB_JSESSION_ID_SUPPORT, "true"))) {
+            Set<SessionTrackingMode> defaultTrackingModes = sc.getEffectiveSessionTrackingModes();
+            if (defaultTrackingModes.contains(SessionTrackingMode.URL)) {
+                Set<SessionTrackingMode> newModes = new HashSet<SessionTrackingMode>();
+                newModes.remove(SessionTrackingMode.URL);
+                sc.setSessionTrackingModes(newModes);
+            }
+        }
     }
 
     @Override
