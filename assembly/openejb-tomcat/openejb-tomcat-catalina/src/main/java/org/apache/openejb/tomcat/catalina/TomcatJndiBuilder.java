@@ -94,7 +94,7 @@ import static org.apache.openejb.tomcat.common.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.setStaticValue;
 
 public class TomcatJndiBuilder {
-    private static final Map<Context, Collection<String>> ALREADY_BOUND = new HashMap<Context, Collection<String>>();
+    private static final Collection<BeanContext> ALREADY_BOUND = new ArrayList<BeanContext>();
 
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
@@ -172,6 +172,11 @@ public class TomcatJndiBuilder {
         }
 
         for (BeanContext bc : cs.deployments()) {
+            if (ALREADY_BOUND.contains(bc)) {
+                continue;
+            }
+            ALREADY_BOUND.add(bc);
+
             ModuleContext mc = bc.getModuleContext();
             AppContext ac = mc.getAppContext();
 
@@ -179,7 +184,11 @@ public class TomcatJndiBuilder {
             // copyContext("", moduleContext, root); // TODO: manage map<????, context> + a facade context?
 
             Context appContext = ac.getAppJndiContext();
-            // copyContext("", appContext, root); // TODO: manage map<classloader, context> + a facade context?
+            try {
+                copyContext("", appContext, root);
+            } catch (NamingException ignored) {
+                // no-op
+            }
 
             Context globalContext = ac.getGlobalJndiContext();
             try {
@@ -213,18 +222,10 @@ public class TomcatJndiBuilder {
                 copyContext(contextPrefix, (Context) object, to);
             } else {
                 String name = usedPrefix + binding.getName();
-                Collection<String> alreadyBound = ALREADY_BOUND.get(to);
-                if (alreadyBound == null) {
-                    alreadyBound = new ArrayList<String>();
-                    ALREADY_BOUND.put(to, alreadyBound);
-                }
-                if (!alreadyBound.contains(name)) {
-                    try {
-                        to.bind(name, object);
-                        alreadyBound.add(name);
-                    } catch (NamingException ne) {
-                        // ignored
-                    }
+                try {
+                    to.bind(name, object);
+                } catch (NamingException ne) {
+                    // ignored
                 }
             }
         }
