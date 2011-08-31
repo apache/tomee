@@ -3,8 +3,6 @@ package org.apache.openejb.config;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.resource.jdbc.DataSourceFactory;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -13,14 +11,16 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author rmannibucau
  */
 public final class DatasourceDefinitionHelper {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, DatasourceDefinitionHelper.class.getPackage().getName());
-
     private static final String FORCE_DBCP_DATASOURCE = "openejb.datasource-definition.force-dbcp";
+    private static final String DATASOURCE_OVERRIDE_PREFIX = "openejb.datasource_definition.";
+    private static final String DATASOURCE_OVERRIDE_GLOBAL_PREFIX = "openejb.global_datasource_definition.";
+
     private static final Collection<String> MANUALLY_SET_PROPERTIES = Arrays.asList("userName", "portNumber", "url");
 
     private DatasourceDefinitionHelper() {
@@ -36,6 +36,7 @@ public final class DatasourceDefinitionHelper {
      * @return the datasource defined by dsDef
      */
     public static DataSource newInstance(ResourceInfo resourceInfo, ClassLoader classLoader) {
+        override(resourceInfo.properties, resourceInfo.properties.getProperty("name"));
         String className = resourceInfo.properties.getProperty("className");
         String url = resourceInfo.properties.getProperty("url");
         String server = resourceInfo.properties.getProperty("serverName");
@@ -127,5 +128,20 @@ public final class DatasourceDefinitionHelper {
         }
 
         return ds;
+    }
+
+    private static void override(Properties properties, String name) {
+        final String prefix = DATASOURCE_OVERRIDE_PREFIX + name + ".";
+        for (String key : properties.stringPropertyNames()) {
+            String value = System.getProperty(prefix + key);
+            if (value != null) {
+                properties.setProperty(key, value);
+            } else {
+                String globalValue = System.getProperty(DATASOURCE_OVERRIDE_GLOBAL_PREFIX + "." + name);
+                if (globalValue != null) {
+                    properties.setProperty(key, value);
+                }
+            }
+        }
     }
 }
