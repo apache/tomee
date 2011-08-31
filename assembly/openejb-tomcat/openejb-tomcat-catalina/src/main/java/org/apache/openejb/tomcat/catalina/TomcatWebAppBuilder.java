@@ -230,7 +230,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener {
                 standardContext.setDocBase(webApp.path);
                 standardContext.setParentClassLoader(classLoader);
                 standardContext.setDelegate(true);
-//                standardContext.setName(webApp.moduleId); // to have a better toString()
+
+                // force manually the namingContextListener to merge jndi in an easier way
+                NamingContextListener ncl = new NamingContextListener();
+                ncl.setName(standardContext.getName());
+                standardContext.setNamingContextListener(ncl);
+                standardContext.addLifecycleListener(ncl);
+                standardContext.addLifecycleListener(new TomcatJavaJndiBinder());
+
 
                 String host = webApp.host;
                 if (host == null) {
