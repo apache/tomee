@@ -26,8 +26,12 @@ import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.naming.ContextAccessController;
+import org.apache.naming.ContextBindings;
 import org.apache.naming.factory.Constants;
+import org.apache.openejb.AppContext;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.Injection;
+import org.apache.openejb.ModuleContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.EjbLocalReferenceInfo;
 import org.apache.openejb.assembler.classic.EjbReferenceInfo;
@@ -54,7 +58,10 @@ import org.apache.openejb.tomcat.common.ResourceFactory;
 import org.apache.openejb.tomcat.common.UserTransactionFactory;
 import org.apache.openejb.tomcat.common.WsFactory;
 
+import javax.naming.Binding;
 import javax.naming.Context;
+import javax.naming.NameAlreadyBoundException;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -64,7 +71,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.openejb.tomcat.common.NamingUtil.DEPLOYMENT_ID;
 import static org.apache.openejb.tomcat.common.NamingUtil.EXTENDED;
@@ -84,6 +94,8 @@ import static org.apache.openejb.tomcat.common.NamingUtil.WS_QNAME;
 import static org.apache.openejb.tomcat.common.NamingUtil.setStaticValue;
 
 public class TomcatJndiBuilder {
+    private static final Map<Context, Collection<String>> ALREADY_BOUND = new HashMap<Context, Collection<String>>();
+
     private final StandardContext standardContext;
     private final WebAppInfo webAppInfo;
     private final List<Injection> injections;
@@ -147,6 +159,75 @@ public class TomcatJndiBuilder {
         ContextTransaction contextTransaction = new ContextTransaction();
         contextTransaction.setProperty(Constants.FACTORY, UserTransactionFactory.class.getName());
         naming.setTransaction(contextTransaction);
+    }
+
+    public static void mergeJava(StandardContext standardContext) {
+        ContainerSystem cs = SystemInstance.get().getComponent(org.apache.openejb.spi.ContainerSystem.class);
+        ContextAccessController.setWritable(standardContext.getNamingContextListener().getName(), standardContext);
+        Context root = null;
+        try {
+            root = (Context) ContextBindings.getClassLoader().lookup("");
+        } catch (NamingException ignored) { // shouldn't occur
+            // no-op
+        }
+
+        for (BeanContext bc : cs.deployments()) {
+            ModuleContext mc = bc.getModuleContext();
+            AppContext ac = mc.getAppContext();
+
+            Context moduleContext = mc.getModuleJndiContext();
+            // copyContext("", moduleContext, root); // TODO: manage map<????, context> + a facade context?
+
+            Context appContext = ac.getAppJndiContext();
+            // copyContext("", appContext, root); // TODO: manage map<classloader, context> + a facade context?
+
+            Context globalContext = ac.getGlobalJndiContext();
+            try {
+                copyContext("", globalContext, root);
+            } catch (NamingException ignored) {
+                // no-op
+            }
+        }
+        ContextAccessController.setReadOnly(standardContext.getNamingContextListener().getName());
+    }
+
+    private static void copyContext(String prefix, Context from, Context to) throws NamingException {
+        String usedPrefix;
+        if (prefix.isEmpty()) {
+            usedPrefix = prefix;
+        } else {
+            usedPrefix = prefix + "/";
+        }
+
+        NamingEnumeration<Binding> bindings = from.listBindings("");
+        while (bindings.hasMoreElements()) {
+            Binding binding = bindings.nextElement();
+            Object object = binding.getObject();
+            if (object instanceof Context) {
+                String contextPrefix = usedPrefix + binding.getName();
+                try {
+                    to.createSubcontext(contextPrefix);
+                } catch (NameAlreadyBoundException ne) {
+                    // ignored
+                }
+                copyContext(contextPrefix, (Context) object, to);
+            } else {
+                String name = usedPrefix + binding.getName();
+                Collection<String> alreadyBound = ALREADY_BOUND.get(to);
+                if (alreadyBound == null) {
+                    alreadyBound = new ArrayList<String>();
+                    ALREADY_BOUND.put(to, alreadyBound);
+                }
+                if (!alreadyBound.contains(name)) {
+                    try {
+                        to.bind(name, object);
+                        alreadyBound.add(name);
+                    } catch (NamingException ne) {
+                        // ignored
+                    }
+                }
+            }
+        }
     }
 
     public void mergeRef(NamingResources naming, EnvEntryInfo ref) {

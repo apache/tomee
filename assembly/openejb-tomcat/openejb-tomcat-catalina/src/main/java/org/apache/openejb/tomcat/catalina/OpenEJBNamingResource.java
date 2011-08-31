@@ -8,7 +8,7 @@ import org.apache.catalina.deploy.NamingResources;
  */
 public class OpenEJBNamingResource extends NamingResources {
     public void addEnvironment(ContextEnvironment environment) {
-        // tomcat use a hastable to store entry type, null values are not allowed
+        // tomcat uses a hastable to store entry type, null values are not allowed
         if (environment.getType() == null) {
             environment.setType("");
         }
