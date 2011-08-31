@@ -16,48 +16,56 @@
  */
 package org.apache.openejb.core.stateless;
 
+import junit.framework.TestCase;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.ProxyFactoryInfo;
 import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.jee.StatelessBean;
-import org.apache.openejb.jee.Interceptor;
-import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.EnterpriseBean;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
 import org.apache.openejb.jee.NamedMethod;
+import org.apache.openejb.jee.StatelessBean;
 import org.junit.Test;
-import org.junit.Before;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJBException;
+import javax.ejb.Local;
 import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
-import javax.naming.InitialContext;
+import javax.interceptor.InvocationContext;
 import javax.naming.Context;
-import javax.ejb.EJBException;
-import javax.ejb.Local;
-import java.util.*;
-
-import junit.framework.TestCase;
+import javax.naming.InitialContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @version $Rev$ $Date$
  */
 public class StatelessInterceptorTest extends TestCase {
 
-    InitialContext ctx;
+    private static InitialContext ctx;
+    private static boolean init = false;
 
-    @Before
+
     public void setUp() throws Exception {
+        if (init) {
+            return;
+        }
+        init = true;
+
         ConfigurationFactory config = new ConfigurationFactory();
         Assembler assembler = new Assembler();
 
@@ -215,9 +223,9 @@ public class StatelessInterceptorTest extends TestCase {
 
     }
 
-    public EjbModule buildTestApp() throws Exception {
+    public static EjbModule buildTestApp() throws Exception {
         EjbJar ejbJar = new EjbJar();
-        ejbJar.setId(this.getClass().getName());
+        ejbJar.setId(StatelessInterceptorTest.class.getName());
         
         AssemblyDescriptor ad = ejbJar.getAssemblyDescriptor();
 
