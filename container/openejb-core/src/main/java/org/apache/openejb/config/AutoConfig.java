@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.config;
 
+import javax.sql.DataSource;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
@@ -765,6 +766,8 @@ public class AutoConfig implements DynamicDeployer {
             ejbModule.setOpenejbJar(openejbJar);
         }
 
+        processDataSourceDefinitions(ejbModule);
+
         Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
 
         for (EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
@@ -822,6 +825,100 @@ public class AutoConfig implements DynamicDeployer {
             }
 
         }
+    }
+
+    private void processDataSourceDefinitions(Module module) throws OpenEJBException {
+        Set<DatasourceDefinition> datasources = module.getDatasources();
+
+        for (DatasourceDefinition datasource : datasources) {
+
+            String name = datasource.getName();
+            name = name.replaceFirst("java:comp/env/", "");
+            name = name.replaceFirst("java:", "");
+
+            Resource resource = new Resource(name, DataSource.class.getName());
+            Properties properties = resource.getProperties();
+            for (String s : datasource.getProperties()) {
+                final String key = s.substring(0, s.indexOf('='));
+                final String value = s.substring(s.indexOf('='));
+                properties.put(key, value);
+            }
+
+            properties.put("JtaManaged", datasource.isTransactional());
+            set(properties, "InitialSize", datasource.getInitialPoolSize());
+            set(properties, "DefaultIsolationLevel", datasource.getIsolationLevel());
+            set(properties, "LoginTimeout", datasource.getLoginTimeout(), 1);
+            set(properties, "MinEvictableIdleTimeMillis", datasource.getMaxIdleTime());
+            set(properties, "MaxIdle", datasource.getMaxPoolSize());
+            set(properties, "MinIdle", datasource.getMinPoolSize());
+            set(properties, "MaxStatements", datasource.getMaxStatements());
+            set(properties, "Password", datasource.getPassword());
+            set(properties, "JdbcUrl", datasource.getUrl());
+            set(properties, "UserName", datasource.getUser());
+            set(properties, "JdbcDriver", datasource.getClassName());
+
+            if (properties.get("JdbcUrl") == null) {
+                properties.put("JdbcUrl", getVendorUrl(datasource));
+            }
+
+            ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+            installResource(module.getUniqueId(), resourceInfo);
+        }
+
+        datasources.clear();
+    }
+
+    private String getVendorUrl(DatasourceDefinition d) {
+
+        final String driver = d.getClassName();
+        final String serverName = d.getServerName();
+        final int port = d.getPortNumber();
+        final boolean remote = port != -1;
+        final String databaseName = d.getDatabaseName();
+
+        if (driver == null || driver.equals("org.hsqldb.jdbcDriver")) {
+            if (remote) {
+                return String.format("jdbc:hsqldb:hsql://%s:%s/%s", serverName, port, databaseName);
+            } else {
+                return String.format("jdbc:hsqldb:mem:%s", databaseName);
+            }
+        }
+
+        if (driver.equals("org.apache.derby.jdbc.EmbeddedDriver")) {
+            return String.format("jdbc:derby:%s;create=true", databaseName);
+        }
+
+        if (driver.equals("org.apache.derby.jdbc.ClientDriver")) {
+            return String.format("jdbc:derby://%s:%s/%s;create=true", serverName, port, databaseName);
+        }
+
+        if (driver.equals("com.mysql.jdbc.Driver")) {
+            return String.format("jdbc:mysql://%s:%s/%s", serverName, port, databaseName);
+        }
+
+        if (driver.equals("com.postgresql.jdbc.Driver")) {
+            return String.format("jdbc:postgresql://%s:%s/%s", serverName, port, databaseName);
+        }
+
+        if (driver.equals("oracle.jdbc.OracleDriver")) {
+            return String.format("jdbc:oracle:thin:@//%s:%s/%s", serverName, port, databaseName);
+        }
+
+        return null;
+    }
+
+    private void set(Properties properties, String key, String value) {
+        if (value == null || value.length() == 0) return;
+        properties.put(key, value);
+    }
+
+    private void set(Properties properties, String key, int value) {
+        set(properties, key, value, 0);
+    }
+
+    private void set(Properties properties, String key, int value, int min) {
+        if (value < min) return;
+        properties.put(key, value);
     }
 
     private String createContainer(Class<? extends ContainerInfo> containerInfoType, EjbDeployment ejbDeployment, EnterpriseBean bean) throws OpenEJBException {
@@ -1754,31 +1851,31 @@ public class AutoConfig implements DynamicDeployer {
                 }
             }
 
-            for (EjbModule module : appModule.getEjbModules()) {
-                EnterpriseBean[] enterpriseBeans = module.getEjbJar().getEnterpriseBeans();
-                OpenejbJar openejbJar = module.getOpenejbJar();
-                Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
-
-                for (DatasourceDefinition ds : module.getDatasources()) {
-                    final String id = module.getUniqueId() + '/' + ds.getName().replace("java:", "");
-                    if (resourceIdsByType.get("javax.sql.DataSource") == null) {
-                        resourceIdsByType.put("javax.sql.DataSource", new ArrayList<String>());
-                    }
-                    resourceIdsByType.get("javax.sql.DataSource").add(id);
-
-                    for (EnterpriseBean bean : enterpriseBeans) {
-                        EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
-                        for (ResourceRef ref : bean.getResourceRef()) {
-                            if (ds.getName().equals(ref.getName())) {
-                                ResourceLink link = new ResourceLink();
-                                link.setResId(id);
-                                link.setResRefName(ds.getName());
-                                ejbDeployment.addResourceLink(link);
-                            }
-                        }
-                    }
-                }
-            }
+//            for (EjbModule module : appModule.getEjbModules()) {
+//                EnterpriseBean[] enterpriseBeans = module.getEjbJar().getEnterpriseBeans();
+//                OpenejbJar openejbJar = module.getOpenejbJar();
+//                Map<String, EjbDeployment> deployments = openejbJar.getDeploymentsByEjbName();
+//
+//                for (DatasourceDefinition ds : module.getDatasources()) {
+//                    final String id = module.getUniqueId() + '/' + ds.getName().replace("java:", "");
+//                    if (resourceIdsByType.get("javax.sql.DataSource") == null) {
+//                        resourceIdsByType.put("javax.sql.DataSource", new ArrayList<String>());
+//                    }
+//                    resourceIdsByType.get("javax.sql.DataSource").add(id);
+//
+//                    for (EnterpriseBean bean : enterpriseBeans) {
+//                        EjbDeployment ejbDeployment = deployments.get(bean.getEjbName());
+//                        for (ResourceRef ref : bean.getResourceRef()) {
+//                            if (ds.getName().equals(ref.getName())) {
+//                                ResourceLink link = new ResourceLink();
+//                                link.setResId(id);
+//                                link.setResRefName(ds.getName());
+//                                ejbDeployment.addResourceLink(link);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
 
         public List<String> getResourceIds(String type) {

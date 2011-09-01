@@ -517,7 +517,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged"
+          constructor="JtaManaged, JdbcDriver"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
 
     # Determines wether or not this data source should be JTA managed
@@ -713,7 +713,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="JtaManaged"
+          constructor="JtaManaged, JdbcDriver"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
 
     JtaManaged = false
