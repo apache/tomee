@@ -850,6 +850,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             info.id = service.getId();
             info.properties = props;
             info.constructorArgs.addAll(parseConstructorArgs(provider));
+            if (info instanceof ResourceInfo && service instanceof Resource) {
+                ((ResourceInfo) info).jndiName = ((Resource) service).getJndi();
+            }
 
             specialProcessing(info);
 
