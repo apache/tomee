@@ -1301,6 +1301,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             def.setTransactional(dsDef.transactional());
             def.setInitialPoolSize(dsDef.initialPoolSize());
             def.setIsolationLevel(dsDef.isolationLevel());
+            def.setLoginTimeout(dsDef.loginTimeout());
             def.setMaxIdleTime(dsDef.maxIdleTime());
             def.setMaxPoolSize(dsDef.maxPoolSize());
             def.setMaxStatements(dsDef.maxStatements());
