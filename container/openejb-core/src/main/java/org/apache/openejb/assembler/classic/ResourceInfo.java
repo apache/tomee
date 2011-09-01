@@ -17,4 +17,13 @@
 package org.apache.openejb.assembler.classic;
 
 public class ResourceInfo extends ServiceInfo {
+
+    public static final String JNDI_NAME_KEY = "JndiName";
+
+    public String getJndiName() {
+        if (properties.containsKey(JNDI_NAME_KEY)) {
+            return properties.getProperty("JndiName");
+        }
+        return "";
+    }
 }

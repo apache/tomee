@@ -109,6 +109,7 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.jee.WebserviceDescription;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.util.AnnotationUtil;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.LogCategory;
@@ -187,6 +188,7 @@ import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.work.WorkContext;
+import javax.sql.DataSource;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
@@ -262,14 +264,8 @@ public class AnnotationDeployer implements DynamicDeployer {
     private final ProcessAnnotatedBeans processAnnotatedBeans;
     private final EnvEntriesPropertiesDeployer envEntriesPropertiesDeployer;
     private final MBeanDeployer mBeanDeployer;
-    private final AutoConfig autoConfig;
 
     public AnnotationDeployer() {
-        this(null);
-    }
-
-    public AnnotationDeployer(AutoConfig autoConfig) {
-        this.autoConfig = autoConfig;
         discoverAnnotatedBeans = new DiscoverAnnotatedBeans();
         processAnnotatedBeans = new ProcessAnnotatedBeans();
         envEntriesPropertiesDeployer = new EnvEntriesPropertiesDeployer();
@@ -1291,31 +1287,42 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             for (DataSourceDefinition dsDef : datasources) {
-                DatasourceDefinition def = getDatasourceDefinitaion(dsDef);
-                module.getDatasources().add(def);
+                org.apache.openejb.config.sys.Resource def = getDatasourceDefinitaion(dsDef);
+                module.getResources().add(def);
             }
         }
 
-        private DatasourceDefinition getDatasourceDefinitaion(DataSourceDefinition dsDef) {
-            DatasourceDefinition def = new DatasourceDefinition();
-            def.setTransactional(dsDef.transactional());
-            def.setInitialPoolSize(dsDef.initialPoolSize());
-            def.setIsolationLevel(dsDef.isolationLevel());
-            def.setLoginTimeout(dsDef.loginTimeout());
-            def.setMaxIdleTime(dsDef.maxIdleTime());
-            def.setMaxPoolSize(dsDef.maxPoolSize());
-            def.setMaxStatements(dsDef.maxStatements());
-            def.setMinPoolSize(dsDef.minPoolSize());
-            def.setPortNumber(dsDef.portNumber());
-            def.setDatabaseName(dsDef.databaseName());
-            def.setDescription(dsDef.description());
-            def.setPassword(dsDef.password());
-            def.setServerName(dsDef.serverName());
-            def.setUrl(dsDef.url());
-            def.setUser(dsDef.user());
-            def.setProperties(dsDef.properties());
-            def.setClassName(dsDef.className());
-            def.setName(dsDef.name());
+        private org.apache.openejb.config.sys.Resource getDatasourceDefinitaion(DataSourceDefinition dsDef) {
+            String name = dsDef.name();
+            name = name.replaceFirst("java:comp/env/", "");
+            name = name.replaceFirst("java:", "");
+
+            org.apache.openejb.config.sys.Resource def = new org.apache.openejb.config.sys.Resource(name, DataSource.class.getName());
+            def.setJndi(dsDef.name().replaceFirst("java:", ""));
+            def.setType("javax.sql.DataSource");
+
+            Properties properties = def.getProperties();
+            properties.put("JtaManaged", dsDef.transactional());
+            properties.put("InitialSize", dsDef.initialPoolSize());
+            properties.put("DefaultIsolationLevel", dsDef.isolationLevel());
+            properties.put("LoginTimeout", Math.max(dsDef.loginTimeout(), 1));
+            properties.put("MinEvictableIdleTimeMillis", dsDef.maxIdleTime());
+            properties.put("MaxIdle", dsDef.maxPoolSize());
+            properties.put("MinIdle", dsDef.minPoolSize());
+            properties.put("MaxStatements", dsDef.maxStatements());
+            properties.put("Password", dsDef.password());
+            properties.put("JdbcUrl", dsDef.url());
+            properties.put("UserName", dsDef.user());
+            properties.put("JdbcDriver", dsDef.className());
+            properties.put("PortNumber", dsDef.portNumber());
+            properties.put("DatabaseName", dsDef.databaseName());
+            properties.put("Description", dsDef.description());
+            properties.put("ServerName", dsDef.serverName());
+            properties.put("Properties", dsDef.properties());
+
+            // to force it to be bound in JndiEncBuilder
+            properties.put("JndiName", def.getJndi());
+
             return def;
         }
 

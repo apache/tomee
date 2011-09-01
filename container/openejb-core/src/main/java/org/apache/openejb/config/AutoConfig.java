@@ -828,53 +828,35 @@ public class AutoConfig implements DynamicDeployer {
     }
 
     private void processDataSourceDefinitions(Module module) throws OpenEJBException {
-        Set<DatasourceDefinition> datasources = module.getDatasources();
+        Collection<Resource> datasources = module.getResources();
 
-        for (DatasourceDefinition datasource : datasources) {
-
-            String name = datasource.getName();
-            name = name.replaceFirst("java:comp/env/", "");
-            name = name.replaceFirst("java:", "");
-
-            Resource resource = new Resource(name, DataSource.class.getName());
-            Properties properties = resource.getProperties();
-            for (String s : datasource.getProperties()) {
-                final String key = s.substring(0, s.indexOf('='));
-                final String value = s.substring(s.indexOf('='));
-                properties.put(key, value);
+        for (Resource datasource : datasources) {
+            if (!DataSource.class.getName().equals(datasource.getType())) {
+                continue;
             }
 
-            properties.put("JtaManaged", datasource.isTransactional());
-            set(properties, "InitialSize", datasource.getInitialPoolSize());
-            set(properties, "DefaultIsolationLevel", datasource.getIsolationLevel());
-            set(properties, "LoginTimeout", datasource.getLoginTimeout(), 1);
-            set(properties, "MinEvictableIdleTimeMillis", datasource.getMaxIdleTime());
-            set(properties, "MaxIdle", datasource.getMaxPoolSize());
-            set(properties, "MinIdle", datasource.getMinPoolSize());
-            set(properties, "MaxStatements", datasource.getMaxStatements());
-            set(properties, "Password", datasource.getPassword());
-            set(properties, "JdbcUrl", datasource.getUrl());
-            set(properties, "UserName", datasource.getUser());
-            set(properties, "JdbcDriver", datasource.getClassName());
-
+            Properties properties = datasource.getProperties();
             if (properties.get("JdbcUrl") == null) {
-                properties.put("JdbcUrl", getVendorUrl(datasource));
+                properties.put("JdbcUrl", getVendorUrl(properties));
             }
 
-            ResourceInfo resourceInfo = configFactory.configureService(resource, ResourceInfo.class);
+            // this property is not supported by dbcp
+            properties.remove("LoginTimeout");
+
+            ResourceInfo resourceInfo = configFactory.configureService(datasource, ResourceInfo.class);
             installResource(module.getUniqueId(), resourceInfo);
         }
 
         datasources.clear();
     }
 
-    private String getVendorUrl(DatasourceDefinition d) {
+    private static String getVendorUrl(Properties properties) {
 
-        final String driver = d.getClassName();
-        final String serverName = d.getServerName();
-        final int port = d.getPortNumber();
+        final String driver = properties.getProperty("JdbcDriver");
+        final String serverName = properties.getProperty("ServerName");
+        final int port = (Integer) properties.get("PortNumber");
         final boolean remote = port != -1;
-        final String databaseName = d.getDatabaseName();
+        final String databaseName = properties.getProperty("DatabaseName");
 
         if (driver == null || driver.equals("org.hsqldb.jdbcDriver")) {
             if (remote) {

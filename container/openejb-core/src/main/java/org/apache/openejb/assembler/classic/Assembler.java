@@ -87,7 +87,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.dynamic.PassthroughFactory;
 import org.apache.openejb.cdi.CdiBuilder;
-import org.apache.openejb.config.DatasourceDefinitionHelper;
 import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.core.CoreContainerSystem;
 import org.apache.openejb.core.CoreUserTransaction;
@@ -608,7 +607,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     for (ResourceInfo adminObject : connector.adminObject) {
                         createResource(adminObject);
                     }
-                    createDatasources(connector.datasourceDefinitions, classLoader);
                 } finally {
                     Thread.currentThread().setContextClassLoader(oldClassLoader);
                 }
@@ -706,8 +704,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
                 }
 
-                createDatasources(ejbJar.datasourceDefinitions, classLoader);
-
                 allDeployments.addAll(deployments.values());
             }
 
@@ -787,8 +783,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     containerSystemContext.bind("openejb/client/" + clientClassName, clientInfo.moduleId);
                     logger.getChildLogger("client").info("createApplication.createLocalClient", clientClassName, clientInfo.moduleId);
                 }
-
-                createDatasources(clientInfo.datasourceDefinitions, classLoader);
             }
 
             SystemInstance systemInstance = SystemInstance.get();
@@ -822,18 +816,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logger.debug("createApplication.undeployFailed", e1, appInfo.path);
             }
             throw new OpenEJBException(messages.format("createApplication.failed", appInfo.path), t);
-        }
-    }
-
-    private void createDatasources(Set<ResourceInfo> datasourceDefinitions, ClassLoader classLoader) throws OpenEJBException {
-        for (ResourceInfo dataSource : datasourceDefinitions) {
-            DataSource ds = DatasourceDefinitionHelper.newInstance(dataSource, classLoader);
-            if (ds == null) {
-                logger.error("can't instantiate " + dataSource.id);
-                continue;
-            }
-            PassthroughFactory.add(dataSource, ds);
-            createResource(dataSource);
         }
     }
 

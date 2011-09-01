@@ -40,7 +40,6 @@ import org.apache.openejb.ModuleContext;
 import org.apache.openejb.core.cmp.CmpUtil;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.util.Classes;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Index;
 import org.apache.openejb.util.Messages;
@@ -54,14 +53,12 @@ class EnterpriseBeanBuilder {
     private final List<Exception> warnings = new ArrayList<Exception>();
     private final ModuleContext moduleContext;
     private final List<Injection> moduleInjections;
-    private final Set<ResourceInfo> datasourceDefinitions;
 
-    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections, Set<ResourceInfo> dataSourceDefs) {
+    public EnterpriseBeanBuilder(EnterpriseBeanInfo bean, List<String> defaultInterceptors, ModuleContext moduleContext, List<Injection> moduleInjections) {
         this.moduleContext = moduleContext;
         this.bean = bean;
         this.defaultInterceptors = defaultInterceptors;
         this.moduleInjections = moduleInjections;
-        datasourceDefinitions = dataSourceDefs;
 
         if (bean.type == EnterpriseBeanInfo.STATEFUL) {
             ejbType = BeanType.STATEFUL;
@@ -143,7 +140,7 @@ class EnterpriseBeanBuilder {
         }
 
         // build the enc
-        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader(), datasourceDefinitions);
+        JndiEncBuilder jndiEncBuilder = new JndiEncBuilder(bean.jndiEnc, injections, transactionType, moduleContext.getId(), null, moduleContext.getUniqueId(), moduleContext.getClassLoader());
         Context compJndiContext = jndiEncBuilder.build(JndiEncBuilder.JndiScope.comp);
         bind(compJndiContext, "module", moduleContext.getModuleJndiContext());
         bind(compJndiContext, "app", moduleContext.getAppContext().getAppJndiContext());

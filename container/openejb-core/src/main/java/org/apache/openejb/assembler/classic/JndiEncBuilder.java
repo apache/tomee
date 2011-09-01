@@ -103,20 +103,15 @@ public class JndiEncBuilder {
     private final String uniqueId;
     private final List<Injection> injections;
     private final ClassLoader classLoader;
-    private Set<ResourceInfo> datasourceDefinitions;
 
     private boolean useCrossClassLoaderRef = true;
     private boolean client = false;
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader, Collections.<ResourceInfo>emptySet());
+        this(jndiEnc, injections, null, moduleId, moduleUri, uniqueId, classLoader);
     }
 
     public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader) throws OpenEJBException {
-        this(jndiEnc, injections, transactionType, moduleId, moduleUri, uniqueId, classLoader, Collections.<ResourceInfo>emptySet());
-    }
-
-    public JndiEncBuilder(JndiEncInfo jndiEnc, List<Injection> injections, String transactionType, String moduleId, URI moduleUri, String uniqueId, ClassLoader classLoader, Set<ResourceInfo> datasourceDefs) throws OpenEJBException {
         this.jndiEnc = jndiEnc;
         this.injections = injections;
         beanManagedTransactions = transactionType != null && transactionType.equalsIgnoreCase("Bean");
@@ -126,7 +121,6 @@ public class JndiEncBuilder {
 
         this.uniqueId = uniqueId;
         this.classLoader = classLoader;
-        datasourceDefinitions = datasourceDefs;
     }
 
     public boolean isUseCrossClassLoaderRef() {
@@ -300,13 +294,6 @@ public class JndiEncBuilder {
             bindings.put(normalize(referenceInfo.referenceName), reference);
         }
 
-        for (ResourceInfo referenceInfo : datasourceDefinitions) {
-            String jndiName = "openejb/Resource/" + referenceInfo.id;
-            Object reference = new IntraVmJndiReference(jndiName);
-            String boundName = normalize(referenceInfo.properties.getProperty("name"));
-            bindings.put(boundName, reference);
-        }
-
         for (ResourceEnvReferenceInfo referenceInfo : jndiEnc.resourceEnvRefs) {
 
             if (referenceInfo.location != null) {
@@ -460,6 +447,17 @@ public class JndiEncBuilder {
                         handlerChains,
                         portRefs);
                 bindings.put(normalize(referenceInfo.referenceName), serviceRefData);
+            }
+        }
+
+        OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+        for (ResourceInfo resource : config.facilities.resources) {
+            String jndiName = resource.getJndiName();
+            if (!jndiName.isEmpty()) {
+                String refName = "openejb/Resource/" + resource.id;
+                Object reference = new IntraVmJndiReference(refName);
+                String boundName = normalize(jndiName);
+                bindings.put(boundName, reference);
             }
         }
 
