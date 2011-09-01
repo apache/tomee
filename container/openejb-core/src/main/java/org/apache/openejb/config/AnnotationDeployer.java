@@ -339,6 +339,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     public static class DiscoverAnnotatedBeans implements DynamicDeployer {
         public AppModule deploy(AppModule appModule) throws OpenEJBException {
             for (EjbModule ejbModule : appModule.getEjbModules()) {
+                ejbModule.setAppModule(appModule);
                 setModule(ejbModule);
                 try {
                     deploy(ejbModule);
@@ -347,6 +348,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (ClientModule clientModule : appModule.getClientModules()) {
+                clientModule.setAppModule(appModule);
                 setModule(clientModule);
                 try {
                     deploy(clientModule);
@@ -355,6 +357,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (ConnectorModule connectorModule : appModule.getConnectorModules()) {
+                connectorModule.setAppModule(appModule);
                 setModule(connectorModule);
                 try {
                     deploy(connectorModule);
@@ -363,6 +366,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
             for (WebModule webModule : appModule.getWebModules()) {
+                webModule.setAppModule(appModule);
                 setModule(webModule);
                 try {
                     deploy(webModule);
@@ -1288,7 +1292,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             for (DataSourceDefinition dsDef : datasources) {
                 org.apache.openejb.config.sys.Resource def = getDatasourceDefinitaion(dsDef);
-                module.getResources().add(def);
+                module.addResource(def);
             }
         }
 
