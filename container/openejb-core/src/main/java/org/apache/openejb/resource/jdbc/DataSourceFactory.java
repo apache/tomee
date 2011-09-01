@@ -83,20 +83,24 @@ public class DataSourceFactory {
             }
         }
 
-        return create(managed);
+        org.apache.commons.dbcp.BasicDataSource ds = (org.apache.commons.dbcp.BasicDataSource) create(managed);
+        ds.setDriverClassName(impl.getName());
+        return ds;
     }
 
     public static DataSource create(boolean managed) {
+        org.apache.commons.dbcp.BasicDataSource ds;
         if (managed) {
             XAResourceWrapper xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
             if (xaResourceWrapper != null) {
-                return new ManagedDataSourceWithRecovery(xaResourceWrapper);
+                ds = new ManagedDataSourceWithRecovery(xaResourceWrapper);
             } else {
-                return new BasicManagedDataSource();
+                ds = new BasicManagedDataSource();
             }
         } else {
-            return new BasicDataSource();
+            ds = new BasicDataSource();
         }
+        return ds;
     }
 
     public static class DbcpDataSource extends BasicDataSource {
