@@ -452,8 +452,8 @@ public class JndiEncBuilder {
 
         OpenEjbConfiguration config = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
         for (ResourceInfo resource : config.facilities.resources) {
-            String jndiName = resource.getJndiName();
-            if (!jndiName.isEmpty()) {
+            String jndiName = resource.jndiName;
+            if (jndiName != null && !jndiName.isEmpty()) {
                 String refName = "openejb/Resource/" + resource.id;
                 Object reference = new IntraVmJndiReference(refName);
                 String boundName = normalize(jndiName);
