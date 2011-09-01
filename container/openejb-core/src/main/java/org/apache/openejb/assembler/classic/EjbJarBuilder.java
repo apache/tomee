@@ -48,7 +48,7 @@ public class EjbJarBuilder {
         InjectionBuilder injectionBuilder = new InjectionBuilder(context.getClassLoader());
         List<Injection> moduleInjections = injectionBuilder.buildInjections(ejbJar.moduleJndiEnc);
         moduleInjections.addAll(appInjections);
-        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context.getClassLoader(), ejbJar.datasourceDefinitions)
+        Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context.getClassLoader())
             .build(JndiEncBuilder.JndiScope.module);
 
         HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
@@ -60,7 +60,7 @@ public class EjbJarBuilder {
         
         for (EnterpriseBeanInfo ejbInfo : ejbJar.enterpriseBeans) {
             try {
-                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections, ejbJar.datasourceDefinitions);
+                EnterpriseBeanBuilder deploymentBuilder = new EnterpriseBeanBuilder(ejbInfo, new ArrayList<String>(), moduleContext, moduleInjections);
                 BeanContext bean = deploymentBuilder.build();
 
                 interceptorBindingBuilder.build(bean, ejbInfo);

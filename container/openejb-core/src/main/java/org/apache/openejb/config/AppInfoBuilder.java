@@ -66,6 +66,7 @@ import org.apache.openejb.util.MakeTxLookup;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.References;
 
+import javax.sql.DataSource;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
@@ -271,34 +272,17 @@ class AppInfoBuilder {
     }
 
     private void copyDatasources(Module module, CommonInfoObject info) {
-        for (DatasourceDefinition def : module.getDatasources()) {
+        for (Resource def : module.getResources()) {
+            if (!DataSource.class.getName().equals(def.getType())) {
+                continue;
+            }
+
             ResourceInfo resourceInfo = new ResourceInfo();
-            resourceInfo.id = module.getUniqueId() + "/" + def.getName().replace("java:", "");
+            resourceInfo.id = module.getUniqueId() + "/" + def.getJndi().replace("java:", "");
 
             resourceInfo.service = "Resource";
-            resourceInfo.types.add("javax.sql.DataSource");
-
-            resourceInfo.properties = new Properties();
-            resourceInfo.properties.put("transactional", def.isTransactional());
-            resourceInfo.properties.put("initialPoolSize", def.getInitialPoolSize());
-            resourceInfo.properties.put("isolationLevel", def.getIsolationLevel());
-            resourceInfo.properties.put("maxIdleTime", def.getMaxIdleTime());
-            resourceInfo.properties.put("maxPoolSize", def.getMaxPoolSize());
-            resourceInfo.properties.put("maxStatements", def.getMaxStatements());
-            resourceInfo.properties.put("minPoolSize", def.getMinPoolSize());
-            resourceInfo.properties.put("portNumber", def.getPortNumber());
-            resourceInfo.properties.put("databaseName", def.getDatabaseName());
-            resourceInfo.properties.put("description", def.getDescription());
-            resourceInfo.properties.put("password", def.getPassword());
-            resourceInfo.properties.put("serverName", def.getServerName());
-            resourceInfo.properties.put("url", def.getUrl());
-            resourceInfo.properties.put("user", def.getUser());
-            resourceInfo.properties.put("properties", def.getProperties());
-            resourceInfo.properties.put("className", def.getClassName());
-            resourceInfo.properties.put("name", def.getName());
-            resourceInfo.properties.put("loginTimeout", def.getLoginTimeout());
-
-            info.datasourceDefinitions.add(resourceInfo);
+            resourceInfo.types.add(def.getType());
+            resourceInfo.properties = def.getProperties();
         }
     }
 

@@ -16,14 +16,10 @@
  */
 package org.apache.openejb.assembler.classic;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Romain Manni-Bucau
  */
 public class CommonInfoObject extends InfoObject {
     public ValidationInfo validationInfo;
     public String uniqueId;
-    public final Set<ResourceInfo> datasourceDefinitions = new HashSet<ResourceInfo>();
 }

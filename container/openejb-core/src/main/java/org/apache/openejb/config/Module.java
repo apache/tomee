@@ -16,8 +16,11 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +36,7 @@ public class Module {
     private ValidationConfigType validationConfig;
     private final Map<String, Object> altDDs = new HashMap<String, Object>();
     private String uniqueId;
-    private Set<DatasourceDefinition> datasources = new HashSet<DatasourceDefinition>();
+    private final Collection<Resource> resources = new ArrayList<Resource>();
 
     public Module() {
         uniqueId = Integer.toString(currentId++);
@@ -71,7 +74,7 @@ public class Module {
         this.classLoader = classLoader;
     }
 
-    public Set<DatasourceDefinition> getDatasources() {
-        return datasources;
+    public Collection<Resource> getResources() {
+        return resources;
     }
 }

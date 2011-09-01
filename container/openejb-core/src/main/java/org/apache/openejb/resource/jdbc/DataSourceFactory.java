@@ -39,52 +39,21 @@ import java.util.Map;
 public class DataSourceFactory {
 
     public static DataSource create(boolean managed, Class impl) throws IllegalAccessException, InstantiationException {
-
-        // TODO This part needs to get reworked a bit
+        org.apache.commons.dbcp.BasicDataSource ds;
         if (DataSource.class.isAssignableFrom(impl)) {
-
-//            ObjectRecipe objectRecipe = new ObjectRecipe(className);
-//            objectRecipe.allow(Option.FIELD_INJECTION);
-//            objectRecipe.allow(Option.PRIVATE_PROPERTIES);
-//            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-//            objectRecipe.allow(Option.NAMED_PARAMETERS);
-//
-//            if (port <= 0) {
-//                objectRecipe.setProperty("url", url);
-//            } else {
-//                objectRecipe.setProperty("serverName", server);
-//                objectRecipe.setProperty("portNumber", port);
-//            }
-//
-//            for (Map.Entry<Object, Object> prop : resourceInfo.properties.entrySet()) {
-//                String name = (String) prop.getKey();
-//                if (!MANUALLY_SET_PROPERTIES.contains(name)) {
-//                    Object value = prop.getValue();
-//                    if (value != null
-//                            && ((value instanceof Number && ((Number) value).intValue() > 0)
-//                                || !(value instanceof Number))) {
-//                        objectRecipe.setProperty(name, value);
-//                    }
-//                    if (name.endsWith("Name")) {
-//                        // depending of implementations...
-//                        objectRecipe.setProperty(name.substring(0, name.length() - 4), value);
-//                    }
-//                }
-//            }
-//
-//            ds = (DataSource) objectRecipe.create(classLoader);
-
             DataSource dataSource = (DataSource) impl.newInstance();
-
             if (managed) {
-                return new DbcpManagedDataSource(dataSource);
+                ds = new DbcpManagedDataSource(dataSource);
             } else {
-                return new DbcpDataSource(dataSource);
+                ds = new DbcpDataSource(dataSource);
             }
+        } else {
+            ds = (org.apache.commons.dbcp.BasicDataSource) create(managed);
         }
 
-        org.apache.commons.dbcp.BasicDataSource ds = (org.apache.commons.dbcp.BasicDataSource) create(managed);
+        // force the driver class to be set
         ds.setDriverClassName(impl.getName());
+
         return ds;
     }
 
